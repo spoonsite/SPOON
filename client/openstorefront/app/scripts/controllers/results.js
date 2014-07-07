@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global isEmpty, setupPopovers, openClick:true, setupResults, moveButtons,
+/* global isEmpty, setupPopovers, openClick:true, moveButtons,
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resizeAnimations*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
@@ -146,6 +146,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.watches            = null;
   $scope.ratingsFilter      = 0;
   $scope.isLanding          = false;
+  $scope.single             = false;
 
 
   /***************************************************************
@@ -206,20 +207,24 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     *******************************************************************************/
     if (!isEmpty($scope.searchGroup)) {
       // grab all of the keys in the filters
+      $scope.searchKey          = $scope.searchGroup[0].key;
+      $scope.searchCode         = $scope.searchGroup[0].code;
       var keys = _.pluck($scope.filters, 'key');
       var foundFilter = null;
       var foundCollection = null;
       var type = '';
-
-      if (_.contains(keys, $scope.searchGroup[0].key)) {
-        $scope.searchKey          = $scope.searchGroup[0].key;
-        $scope.searchCode         = $scope.searchGroup[0].code;
+      
+      if ($scope.searchKey === 'single') {
+        $scope.updateDetails($scope.searchCode);
+        $scope.single = true;
+      } else if (_.contains(keys, $scope.searchKey)) {
         $scope.searchGroupItem    = _.where($scope.filters, {'key': $scope.searchKey})[0];
         $scope.searchType         = $scope.searchGroupItem.name;
         $scope.showSearch         = true;
         
         foundFilter = _.where($scope.filters, {'key': $scope.searchGroup[0].key})[0];
         foundCollection = _.where(foundFilter.collection, {'code': $scope.searchGroup[0].code})[0];
+
 
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all') {
@@ -273,6 +278,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     $scope.applyFilters();
+    $scope.$broadcast('dataloaded', !$scope.single);
   };
 
   /***************************************************************
@@ -569,15 +575,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     if (!openClick) {
       buttonOpen();
     }
-    var temp =  _.where($scope.data, {'id': id})[0];
+
+    var temp =  _.where($scope.data, {'id': parseInt(id)})[0];
+    
     if (temp)
     {
       $scope.details = temp;
     }
     $scope.showDetails = true;
     $scope.getEvaluationState();
-    resizeAnimations();
-
   };
 
   /***************************************************************
@@ -691,6 +697,5 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   callSearch();
-  setupResults();
 }]);
 

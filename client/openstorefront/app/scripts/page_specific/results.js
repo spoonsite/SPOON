@@ -21,7 +21,55 @@ setLeftOpenWidth, resetAnimations, resetAnimGlobals, unStretchFilterbutton,
 closeFilter */
 
 /* exported setupResults */
+
+/*********************
+* This reszies the paged divs in order to maintain the correct view
+*********************/
+var resizeAnimations = function () {
+  var details = $('.page2');
+  var results = $('.page1');
+  var filters = $('.filters');
+
+  var offset = $(window).height() - $('.top').height() - 40;
+
+  if ($(window).width() < 767) {
+    if (!fullClick) {
+      resetAnimations(details, results, filters);
+      resetAnimGlobals();
+    }
+  } else {
+    if (!fullClick) {
+      setPageMargin(details, -offset);
+    } else {
+      setPageMargin(details, 0);
+    }
+  }
+  if ($(window).width() <= 992) {
+    if (openClick && filtClick) {
+      var paginationDiv = $('.pagination');
+      var windowWidth = $(window).width();
+      unStretchFilterbutton();
+      closeFilter(filters, results, details, paginationDiv, windowWidth);
+      filtClick = 0;
+    }
+  }
+  setPageHeight($('.resultsContainer'), 0);
+  setRightOpenWidth(details);
+  setLeftOpenWidth(results);
+  setPageHeight(filters, 0);
+  setPageHeight(results, 40);
+  setPageHeight(details, 0);
+
+  $('#filtersButton').data('offset', '0');
+  floatBelowTop($('#filtersButton'), 3000, $('.page1'), 52);
+  moveButtons($('#showPageRight'), $('.page1'));
+  moveButtons($('#showPageLeft'), $('.page2'));
+};
+
+
 var setupResults = function(){
+  console.log('We hit the function');
+  
   /**********************
   * This handles the animation for the filter button.
   * on-hover it shifts into view, and then shifts out.
@@ -76,49 +124,7 @@ var setupResults = function(){
     moveButtons($('#showPageLeft'), this);
   });
 
-  /*********************
-  * This reszies the paged divs in order to maintain the correct view
-  *********************/
-  var resizeAnimations = function () {
-    var details = $('.page2');
-    var results = $('.page1');
-    var filters = $('.filters');
 
-    var offset = $(window).height() - $('.top').height() - 40;
-
-    if ($(window).width() < 767) {
-      if (!fullClick) {
-        resetAnimations(details, results, filters);
-        resetAnimGlobals();
-      }
-    } else {
-      if (!fullClick) {
-        setPageMargin(details, -offset);
-      } else {
-        setPageMargin(details, 0);
-      }
-    }
-    if ($(window).width() <= 992) {
-      if (openClick && filtClick) {
-        var paginationDiv = $('.pagination');
-        var windowWidth = $(window).width();
-        unStretchFilterbutton();
-        closeFilter(filters, results, details, paginationDiv, windowWidth);
-        filtClick = 0;
-      }
-    }
-    setPageHeight($('.resultsContainer'), 0);
-    setRightOpenWidth(details);
-    setLeftOpenWidth(results);
-    setPageHeight(filters, 0);
-    setPageHeight(results, 40);
-    setPageHeight(details, 0);
-
-    $('#filtersButton').data('offset', '0');
-    floatBelowTop($('#filtersButton'), 3000, $('.page1'), 52);
-    moveButtons($('#showPageRight'), $('.page1'));
-    moveButtons($('#showPageLeft'), $('.page2'));
-  };
 
   $(document).ready(function(){
     //resize the animations when we load the page
