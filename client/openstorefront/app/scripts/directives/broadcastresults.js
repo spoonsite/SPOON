@@ -2,7 +2,6 @@
 
 /*global setupResults, fullDetailsToggle*/
 
-
 app.directive('broadcastResults', ['$timeout', function ($timeout) {
   return {
     template: '<div></div>',
