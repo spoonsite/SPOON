@@ -264,7 +264,7 @@ var closePartialDetails = function(results, details, filters, windowWidth) {
     padding = 250;
   }
   results.css({'display': 'inherit'});
-  filters.css({'display': 'inherit'})
+  filters.css({'display': 'inherit'});
   var offset = $(window).height() - $('.top').height() - 40;
   setPageMargin(details, -offset);
   results.stop(true, true).animate({
