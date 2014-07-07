@@ -386,7 +386,10 @@ limitations under the License.
 <div modal controller-name="ResultsCtrl" modalId='descModal' modal-classes="classlist">
 </div>
 </div>
-<span broadcast-results></span>
+
+<!-- This is replaced with a div that triggers the dom manipulation elements -->
+<!-- This is the best way to handle these kind of things with angular... -->
+<div broadcast-results></div>
 <!-- End Results Container -->
 
 <!-- build:css({.tmp,app}) styles/results.css -->
