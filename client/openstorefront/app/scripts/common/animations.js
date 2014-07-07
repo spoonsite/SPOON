@@ -222,7 +222,7 @@ var closeDetails = function(results, details, windowWidth) {
   details.stop(true, true).animate({
     'width': '0px',
     'margin-left': '100%'
-  }, 200 , function() { details.css({'width': '100%', 'display': 'none'}); });
+  }, 200 , function() { details.css({'width': '100%'}); });
 };
 
 
@@ -243,7 +243,7 @@ var openFullDetails = function(results, details, filters, windowWidth) {
     filters.css({'display': 'none'});
   });
   details.stop(true, true).animate({
-    'width': windowWidth + 'px',
+    'width': '100%',
     'margin-left': '0px'
   }, 200 , function() {/*complete animation*/});
 };
@@ -392,9 +392,11 @@ var fullDetailsToggle = function () {
   moveButtons($('#showPageRight'), $('.page1'));
   moveButtons($('#showPageLeft'), $('.page2'));
   var windowWidth = $(window).width();
+  var windowHeight = $(window).height();
   var filters = $('.filters');
   var results = $('.page1');
   var details = $('.page2');
+  details.css({'height': (windowHeight - 52) + 'px'});
   var paginationDiv = $('.pagination');
   setTimeout(function() {
     if (fullClick === 0) {

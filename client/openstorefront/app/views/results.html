@@ -133,7 +133,7 @@ limitations under the License.
   <div class='page2'>
 
     <!-- This is the show page button, and needs to stay here -->
-    <div class="showPage">
+    <div ng-show="!single" class="showPage">
       <button id="showPageLeft" class="showPageLeft btn btn-primary" ng-click="doButtonClose()">
         <i class="fa fa-caret-right"></i> 
       </button>
@@ -386,6 +386,7 @@ limitations under the License.
 <div modal controller-name="ResultsCtrl" modalId='descModal' modal-classes="classlist">
 </div>
 </div>
+<span broadcast-results></span>
 <!-- End Results Container -->
 
 <!-- build:css({.tmp,app}) styles/results.css -->
