@@ -122,7 +122,9 @@ var setupResults = function(){
 
   $(document).ready(function(){
     //resize the animations when we load the page
-    resizeAnimations();
+    setTimeout(function() {
+      resizeAnimations();
+    }, 300);
   });
   $(window).resize(function() {
     //resize the animations when the window size changes

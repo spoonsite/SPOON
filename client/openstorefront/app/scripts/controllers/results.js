@@ -141,6 +141,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.searchGroup        = null;
   $scope.searchKey          = null;
   $scope.filters            = null;
+  $scope.resetFilters       = null;
   $scope.total              = null;
   $scope.watches            = null;
   $scope.ratingsFilter      = 0;
@@ -401,6 +402,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filters = _.reject($scope.filters, function(item) {
         return item.key === $scope.searchGroup[0].key;
       });
+      $scope.resetFilters = JSON.parse(JSON.stringify($scope.filters));
     }
   };
 
@@ -641,10 +643,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.ratingsFilter = null;
     $scope.tagsFilter = null;
     $scope.query = null;
-    _.each($scope.filters, function(item) {
-      item.checked = false;
-      $scope.toggleChecks(item.collection, true);
-    });
+    $scope.filters = JSON.parse(JSON.stringify($scope.resetFilters));
     $scope.applyFilters();
   };
 

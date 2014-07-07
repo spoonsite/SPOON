@@ -450,7 +450,7 @@ MOCKDATA.filters.push({
 });
 
 MOCKDATA.filters.push({
-  'name': 'Categories',
+  'name': 'DI2E SvcV-4 High Level Mapping',
   'key': 'categories',
   'src': 'images/icon/pastel/table-multiple.png',
   'icon': 'fa fa-list-alt',
