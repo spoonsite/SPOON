@@ -16,7 +16,7 @@
 'use strict';
 
 /* global isEmpty, setupPopovers, openClick:true, setupResults, moveButtons,
-fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass*/
+fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resizeAnimations*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
   // Set up the results controller's variables.
@@ -37,7 +37,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   $scope.lastUsed = new Date();
 
- // $scope.date1 = moment();
+  // $scope.date1 = moment();
 
   $scope.expertise = [
     //
@@ -99,7 +99,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     { title:'DETAILS', content:'2', relpath:'views/details/details.html' },
     { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html' },
     { title:'COMMENTS', content:'4', relpath:'views/details/comments.html' },
-   /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
+    /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
   //
   ];
   $scope.tab = $scope.tabs2[0];
@@ -576,6 +576,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
     $scope.showDetails = true;
     $scope.getEvaluationState();
+    resizeAnimations();
+
   };
 
   /***************************************************************
