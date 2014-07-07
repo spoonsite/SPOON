@@ -1,0 +1,157 @@
+/* 
+* Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the 'License');
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an 'AS IS' BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+
+/***************************************************************
+* This css was used to do the 'more' buttons on the landing pages, but it will have
+* to be re-done with javascript. The css is very limited by 'id' and 'class' specificity,
+* and to much work has gone into forcing the html to work with this css.
+***************************************************************/
+
+
+
+/* css only show/hide*/
+
+.moreContent * {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.moreContent {
+  /*max-width: 480px;*/
+  /*width: 90%;*/
+  /*margin: 3em auto;*/
+  /*font-size: 75%;*/
+  /*line-height: 1.3rem;*/
+  /*font-family: sans-serif;*/
+  /*position: relative;*/
+  /**zoom: 1;*/
+
+  -webkit-transition: 1s linear;
+  -moz-transition: 1s linear;
+  -ms-transition: 1s linear;
+  -o-transition: 1s linear;
+  transition: 1s linear;
+
+}
+
+
+.moreContent:before, .moreContent:after {
+  content: "";
+  display: table;
+}
+
+.moreContent:after { clear: both }
+
+p { margin-bottom: 1.3rem }
+
+.moreContentArticle {
+  margin-bottom: 3rem;
+  position: relative;
+  *zoom: 1;
+}
+
+.moreContentArticle:before, .moreContentArticle:after {
+  content: "";
+  display: table;
+}
+
+.moreContentArticle:after { clear: both }
+
+.moreContentSection:nth-child(-n+3) {
+  display: table-row;
+  visibility: visible;
+}
+
+.moreContentSection {
+  display: none;
+  visibility: hidden;
+}
+
+.moreContentSection {
+  -webkit-transition: 1s linear;
+  -moz-transition: 1s linear;
+  -ms-transition: 1s linear;
+  -o-transition: 1s linear;
+  transition: 1s linear;
+}
+
+.moreContent input[type=checkbox] {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+}
+
+.moreContent label {
+
+  width: 80px;
+  height: 40px;
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  margin-left: -40px;
+  text-align: center;
+  padding: .65rem;
+  line-height: 30px;
+  box-shadow: inset 1px 1px rgba(0, 0, 0, 0.1), inset -1px -1px rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, .5);
+  opacity: .7;
+    -webkit-transition: opacity .3s ease-in-out;
+       -moz-transition: opacity .3s ease-in-out;
+        -ms-transition: opacity .3s ease-in-out;
+         -o-transition: opacity .3s ease-in-out;
+            transition: opacity .3s ease-in-out;
+}
+
+.moreContent label:hover {
+  opacity: 1;
+  color: rgb(255,255,255);
+}
+
+.moreContent:not(.active) label span:last-of-type {
+  display: none;
+  visibility: hidden;
+}
+
+.moreContent.active label span:first-of-type {
+  display: none;
+  visibility: hidden;
+}
+
+.moreContent.active input[type=checkbox]:checked ~ .min table .moreContentSection {
+  display: table-row;
+  visibility: visible;
+  width: 100%;
+}
+
+.moreContent.active input[type=checkbox]:checked ~ [for="read_more"] span:first-of-type {
+  display: none;
+  visibility: hidden;
+}
+
+.moreContent.active input[type=checkbox]:checked ~ [for="read_more"] span:last-of-type {
+  display: block;
+  visibility: visible;
+}

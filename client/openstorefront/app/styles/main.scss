@@ -1,0 +1,220 @@
+/* 
+* Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the 'License');
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an 'AS IS' BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+@import "compass";
+@import "customLanding.scss";
+@import "more.scss";
+@import "includes/nav.scss";
+@import "includes/tags.scss";
+@import "includes/typeahead.scss";
+@import "includes/raty.scss";
+@import "fonts/fontello.scss";
+/*@import "../bower_components/sass-bootstrap/lib/_mixins.scss";
+@import "../bower_components/sass-bootstrap/lib/_variables.scss";
+@import "../bower_components/sass-bootstrap/lib/_carousel.scss";
+*/
+
+
+
+
+
+
+/***************************************************************
+* Miscelaneous useful custom classes that are used throughout the site
+***************************************************************/
+
+.fullHeight {
+  margin-top: -52px;
+  padding-top: 52px;
+  /*height: 100%*/
+}
+
+
+
+.carousel-indicators {
+  top: auto;
+  bottom: 15px;
+}
+
+
+/***********************************************************************************/
+/* This pair is very useful for full width text that has no-wraping ellipsis when too long*/
+.overflow-pair-left{
+  display: block;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space:nowrap;
+}
+.overflow-pair-right{
+  float: right;
+  display: inline-block;
+}
+/***********************************************************************************/
+
+
+
+.imitateLink{
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
+.modal-header-override {
+  margin-left: -15px;
+  margin-right: -15px;
+  margin-bottom: -16px;
+}
+
+
+.redText {
+  color: red;
+}
+
+.fullWidthModal .modal-dialog {
+  width: 80%;
+}
+
+.firstNav {
+  margin-left: 10px;
+}
+
+
+.navbar-brand {
+  padding: 0px;
+}
+
+.navbar-brand .logo,
+.navbar-brand .logo-small{
+  font-family: WideLatin;
+}
+.navbar-brand .logo-small {
+  font-size: 15px;
+  margin-top: -4px;
+}
+.navbar-brand .logo {
+  font-size: 18px;
+  color: white;
+}
+
+
+.tooltip {
+  position: absolute;
+  z-index: 1030;
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  visibility: visible;
+  display: inline-table !important;
+}
+.tooltip-inner {
+  display: inline-block;
+  padding: 3px 5px;
+}
+
+
+
+.red.btn-default{
+  font-weight: bold;
+}
+
+.red.btn-default:hover,
+.red.btn-default:focus,
+.red.btn-default:active,
+.red.btn-default.active,
+.open > .dropdown-toggle.btn-default {
+  color: #333;
+  background-color: #c44848;
+  border-color: #555555;
+}
+
+
+
+
+.chromeframe {
+  text-align: center;
+  background: #d63d3d;
+  padding: 20px;
+  border:1px solid darkgray;
+}
+
+.chromeframe a{
+  color: inherit;
+}
+
+.chromeframe a:hover{
+  color: #ffffff;
+}
+
+.boxsizingBorder {
+  width:100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.circleBase {
+  border-radius: 50%;
+  behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+}
+
+.bottomCircleBase {
+  border-radius: 0 0 80px 80px;
+}
+
+.componentListTitle {
+  padding: 4px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.cke_button_label.cke_button__componentbutton_label {
+ display: inline-block !important;
+}
+
+small button {
+  padding: 2px 4px !important;
+  font-size: 10px !important;
+}
+
+
+
+
+/***************************************************************
+* Media queries to handle responsiveness for the site globally.
+***************************************************************/
+@media (max-width: 768px) {
+  .fullWidthModal .modal-dialog {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: auto;
+  }
+}
+/* Customize container */
+@media (min-width: 768px) {
+}
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+}
+
+

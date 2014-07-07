@@ -1,0 +1,13 @@
+  <!-- Bring in the navigation -->
+  <div ng-include="'views/nav.html'"></div>
+  
+<div ng-controller="LandingCtrl" id="landingBackground">
+</div>
+<div id="landingBox">
+  <div ng-include="landingRoute"></div>
+  <div id="resultsLink">
+    <button class="btn btn-primary" ng-click="sendToResults()">
+      Go to results page...
+    </button>
+  </div>
+</div>
