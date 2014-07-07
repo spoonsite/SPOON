@@ -1,0 +1,158 @@
+<!--
+Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+
+  <!-- Bring in the navigation -->
+  <div ng-include="'views/nav_main.html'"></div>
+
+
+<div class="search ">
+  <div class="center navSearch defaultSearch ">
+    <form ng-submit="goToSearch('search', searchKey)">
+      <div class="pull-right searchBoxButton">
+        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
+      </div>
+      <div class="navSearchBar">
+        <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key for key in typeahead" placeholder="Search All" bs-typeahead autofocus>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="nifty2col color_background_white" style="box-shadow: inset  0px 0px 9px 0px rgba(68,68,68,0.6); padding-bottom: 5px; padding-top: 5px;">
+	<div class="col-sm-6 first" style="padding-bottom: 30px;">
+    <div><h1>Highlights</h1> <hr></div>
+    <div class="content">
+      <div class="row">
+        <div  style="text-align: left">
+	<ul style="list-style-type:square;">
+              <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">		  
+		  <a>
+			  <span class="listing_short_title_text">IdAM Landing Page</span>			
+		  </a>
+		<div style="font-size: 12px; color: grey;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>		
+	  </li>
+	<li class="imitateLink" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">
+		  <a>
+			  <span class="listing_short_title_text">Google Chrome</span>			
+		  </a>
+		  <div style="font-size: 12px; color: grey;">Google released the majority of Chrome's source code as an open source project called Chromium, on which Chrome releases are still based...</div>
+	  </li>	  
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 second">
+    <div><h1>Knowledge Base</h1> <hr></div>
+    <div class="content">
+      <div class="row">
+        <ul style="list-style-type:square;">
+          <li class="imitateLink" style="padding-bottom: 20px;"  ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">
+            <a>
+              <span class="listing_short_title_text"> IdAM Landing Page</span>	
+            </a>
+	  <div style="font-size: 12px; color: grey;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>		
+          </li>
+          <li class="imitateLink" ng-click="goToLanding('views/temp/landingpage2.html', 'evaluationLevel', 'STATE3')">
+            <a>
+               <span class="listing_short_title_text"> Evaluation Level 3 Landing Page</span>	
+            </a>
+	  <div style="font-size: 12px; color: grey;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>		
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="liner">
+
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+
+
+
+<div class="row defaultContent defaultTitle">
+  <div>
+    Search by Attribute:
+  </div>
+</div>
+<div class="row defaultContent" ng-repeat="row in filters | partition:3">
+  <div class="col-sm-4" ng-repeat="type in row" style="padding-right: 30px;">
+    <div class="defaultGroupTitle">
+      <div class="icon" ng-click="goToSearch(type.key, 'all')">
+        <i class="{{type.icon}}" ></i>        
+      </div>
+      <div class="content">
+        {{type.name}} 
+      </div>
+    </div>
+    <ul class="groupItemList">
+      <li ng-repeat="item in type.collection" class="groupItem imitateLink">
+        <div ng-click="goToSearch(type.key, item.code);" >
+          <span class="item_bold">
+            <span class="listing_short_title_text">{{item.type}} <i ng-if="item.landing !== null && item.landing !== undefined" class="fa fa-info-circle" ng-click="goToLanding(item.landing, type.key, item.code); $event.stopPropagation();" data-toggle="tooltip" data-placement="top" title="Click here to go to the knowledge base for components with this attribute."></i></span>               
+          </span>
+          <div style="font-size: 12px; color: grey;">{{item.desc}}</div>
+        </div>
+<!--         <div ng-if="item.landing !== null && item.landing !== undefined">
+  <small><button class="btn btn-primary" ng-click="goToLanding(item.landing, type.key, item.code)">Go to Landing Page</button></small>
+  <small><button class="btn btn-primary" ng-click="goToSearch(type.key, item.code)">Go to Results Page</button></small>
+</div> -->
+      </li>
+    </ul>
+  </div>
+  <div class="defaultSpacer hidden-xs">&nbsp;</div>
+</div>
+
+<footer style="margin-top: 20px;padding-bottom: 20px;" class="home_footer">
+<div class="footer_content">
+	<div class="column"><div class="title">About Us</div>
+		<ul>
+			<li><a href="https://intellipedia.intelink.gov/wiki/Defense_Intelligence_Information_Enterprise" title="Requires Intellipedia authentication">What is DI2E?</a>&nbsp;<i class="icon-lock" title="Authentication Required"></i></li>
+			<li><a href="https://intellipedia.intelink.gov/wiki/DI2E_Framework" title="Requires Intellipedia authentication">What is DI2E Framework?</a>&nbsp;<i class="icon-lock"></i></li>
+		</ul>
+	</div>
+	<div class="column"><div class="title">Links</div>
+		<ul>
+			<li><a href="https://devtools.di2e.net">DI2E Dev tools</a></li>
+		</ul>
+	</div>
+	<div class="column"><div class="title">F.A.Q.</div>
+		<ul>
+			<li><a href="https://devtools.di2e.net/sla.php">Our Service Commitment</a></li>
+			<li><a href="https://devtools.di2e.net/onboarding.php">Our Onboarding Process</a></li>
+			<li><a href="https://devtools.di2e.net/privacy.php">Our Privacy Policy</a></li>
+			<li><a href="https://devtools.di2e.net/terms_of_service.php">Our Terms of Service</a></li>
+		</ul>
+	</div>
+	<div class="column"><div class="title">Contact Us</div>
+		<ul>
+			<li><a href="https://devtools.di2e.net/accounts.php">Request an Account</a></li>
+			<li><a href="mailto:di2eframeworkinfo@di2e.net">General Questions</a></li>
+			<li><a href="https://devtools.di2e.net/support.php">Contact Support</a></li>
+		</ul>
+	</div>
+	<div style="clear:both"></div>		
+</div>
+	<div class="copyright">&#169; DI2E&nbsp;|&nbsp;<a href="https://devtools.di2e.net/consent.php">Consent to Monitoring</a>&nbsp;|&nbsp;All rights reserved</div>
+</footer>
+
+<!-- build:css({.tmp,app}) styles/landing.css -->
+<link rel="stylesheet" href="styles/homepage.css">
+<!-- endbuild -->

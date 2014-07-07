@@ -1,0 +1,392 @@
+<!--
+Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+  <!-- Bring in the navigation -->
+  <div ng-include="'views/nav.html'"></div>
+
+<!-- Results Container -->
+<div class='container-fluid'>
+  <!-- Filters Div -->
+  <div id="filters" class="filters filterBack">
+    <div class="filterTableDiv firstFilter">
+      <label for="searchFilter">Sort By: </label>
+      <select ng-model="orderProp" class="form-control">
+        <option class="hidden-lg" selected disabled value="" hidden>Sort By</option>
+        <option value="+name">Name (A-Z)</option>
+        <option value="-name">Name (Z-A)</option>
+        <option value="-stats.averageRating">Rating (high-low)</option>
+        <option value="+stats.averageRating">Rating (low-high)</option>
+        <option value="age">Last Update</option>
+      </select>
+      <br>
+      <label for="searchFilter">Filter By Text: </label>
+      <input type="text" id="searchFilter" class="form-control" placeholder="Search" ng-model="query" ng-options="key for key in typeahead" bs-typeahead/>
+      <br>
+      <label for="tagsFilter">Filter By Tag: </label>
+      <tags-input class="bootstrap" min-length="1" ng-model="tagsFilter" replace-spaces-with-dashes="false" add-from-autocomplete-only="true" on-tag-added="applyFilters();" on-tag-removed="applyFilters();"><auto-complete min-length="1" source="checkTagsList($query, tagsFilter, tagsList)"></auto-complete></tags-input>
+      <br>
+      <label for="ratingsFilter">Filter By Rating: </label>
+      <br>
+      <raty class="average-raty" id="filterRating" style="min-width:110px; height: 100%;" score="{{ratingsFilter}}" ng-model="ratingsFilter" number="5" path="images/raty/">
+      </raty>
+    </div>
+
+
+    <!-- Added these divs for the ability to dynamically make the filters an accordian -->
+
+    <div class='filterTableDiv filterTable'>
+
+      <label for="accordian">Filter By Attribute: </label>
+      <div class="pane-group" id="accordion">
+        <div ng-class="$last? 'lastFilter': ''" class="panel panel-default" class="filterTableDiv" ng-repeat="filter in filters">
+          <table class="table">
+            <tr ng-class="filters.length > 2? 'panel-heading': ''">
+              <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" ><span class="btn btn-link" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}">{{filter.name}} <i class="fa fa-caret-down"></i></span> <input type="checkbox" ng-model="filter.checked" ng-change="toggleChecks(filter.collection)" /><small ng-show="filter.hasChecked">&nbsp;(applied)</small></th>
+            </tr>
+            <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}">
+              <tr  class="filtersTr" data-ng-repeat="type in filter.collection" >
+                <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
+                  <div class="checkbox filterCheckbox">
+                    <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{type.type}}" ng-change="applyFilters()"/>
+                    <label for="{{type.type}}">{{type.type}}</label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="lastFilter">
+      <button class="btn red btn-default col-sm-12" ng-click="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+  <!-- END Filters Div -->
+
+  <!-- Page 1 -->
+  <div class='page1'>
+    <!-- Placeholder for the pagination controls -->
+    <div class="pagination row row-centered">
+      <div style="text-align: center;">
+        <span class="glyphicon glyphicon-fast-backward imitateLink" ng-click="pageNumber=1">&nbsp;</span>
+        <span class="glyphicon glyphicon-chevron-left imitateLink" ng-click="pageNumber=pageNumber-1">&nbsp;</span>
+        <span class="imitateLink"> Page </span>
+        <span class="imitateLink"> 
+          <input type="text"  data-default="1" ng-model="pageNumber" min="1" max="{{maxPageNumber}}" style="width:21px">
+        </span>
+        <span class="imitateLink"> of </span>
+        <span class="imitateLink" ng-bind="maxPageNumber"></span>
+        <span class="glyphicon glyphicon-chevron-right imitateLink" ng-click="pageNumber=pageNumber+1">&nbsp;</span>
+        <span class="glyphicon glyphicon-fast-forward imitateLink"  ng-click="pageNumber=maxPageNumber">&nbsp;</span>          
+        <span class="imitateLink"> 
+          <input type="text" data-default="10" ng-model="rowsPerPage" style="width:25px" min="1"> Per page
+        </span> 
+      </div>
+    </div>
+    <!-- End Placeholder for the pagination controls -->
+    <div class="showPage" id="filtersButton" onclick="openFiltersToggle()">
+      <button  class=" btn btn-primary filtersButton">
+        Filters <i class="fa fa-caret-left"></i> 
+      </button>
+    </div>
+    <div class="showPage" ng-show="showDetails">
+      <button id="showPageRight" class="showPageRight btn btn-primary" ng-click="doButtonOpen()">
+        <i class="fa fa-caret-left"></i> 
+      </button>
+    </div>
+    <div ng-if="data.length == 0">
+      {{noDataMessage}}
+    </div>
+    <div class="page1Content" ng-if="data.length > 0">
+      <div class='container-fluid results'>
+        <div>
+          <div class="searchTitle">
+            Search &mdash; {{searchTitle}}
+          </div>
+          <div class="searchDescription">
+            <!-- fa fa-file-text, fa fa-book, fa fa-info-circle-->
+            <!-- glyphicon glyphicon-info-sign -->
+            <span ng-click="setupModal(''); openModal('descModal'); " class="imitateLink" > {{searchDescription}} <i class="glyphicon glyphicon-info-sign"></i></span>
+          </div>
+        </div>
+        <component-list click-callback="updateDetails" class-list="" data="data" cols="3" ></component-list>
+      </div>
+    </div>
+  </div>
+  <!-- End Page 1 -->
+
+  <!-- Page 2 -->
+  <div class='page2'>
+
+    <!-- This is the show page button, and needs to stay here -->
+    <div class="showPage">
+      <button id="showPageLeft" class="showPageLeft btn btn-primary" ng-click="doButtonClose()">
+        <i class="fa fa-caret-right"></i> 
+      </button>
+    </div>
+
+    <!-- This is the Title div with the tags, and needs to stay here -->
+    <div class="component-details">
+      <div class="container component-title">
+        <div class="col-sm-12">
+          <h1>{{details.name}}<span>{{details.owner}} ({{details.type[0].code}})</span>
+            <br><button class='btn btn-default' style="floag: right" ng-show="showWatchButton" ng-click="addToWatches(details.id)">Add To Watches <i class="fa fa-thumbs-o-up imitateLink"></i></button><button class='btn btn-default' style="floag: right" ng-show="!showWatchButton" ng-click="openModal('profileModal', 'Watches')">View Watches <i class="fa fa-eye imitateLink"></i></button><button class='btn btn-default' style="floag: right" ng-show="!showWatchButton" ng-click="removeFromWatches(details.id)">Remove From Watches <i class="fa fa-thumbs-o-down imitateLink"></i></button>
+          </h1>
+          <div style="padding: 0px 10px;">
+            <strong>
+              Tags:
+            </strong>
+            <tags-input class="bootstrap" min-length="1" ng-model="details.assetTags" replace-spaces-with-dashes="false" on-tag-added="saveTags(details.id, details.assetTags);" on-tag-removed="saveTags(details.id, details.assetTags);"><auto-complete min-length="1" source="checkTagsList($query, details.assetTags, tagsList)"></auto-complete></tags-input>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <br>
+          <div class="col-sm-12 eval-content-title eval-content-title-content ng-scope ng-binding">
+            <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal2">DI2E Evaluation Level</a>
+            <span style="font-size:12px">
+             <!--  <a href="javascript: void(0)" popover data-trigger="hover" data-target="#basicModal2"> -->
+ <!--               <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal2"> 
+                <span style="font-size:12px; vertical-align:super">DI2E Evaluation Level <i class="glyphicon glyphicon-info-sign"></i></span>
+              </a> -->
+            </span>
+            <span style="font-size:12px; color:black; margin-left:15px">Evaluation began 5/1/2014</span>
+            <div class="barborders" style="text-align: left; vertical-align:middle; padding-left:0px; ">
+              <progress>
+                <bar ng-repeat="rows in componentEvalProgressBar" class="{{rows.class1}}" type="{{rows.type}}" value="rows.currvalue" style="text-align:center; vertical-align:middle" >
+                  <span class="componentstate" >
+                <!--     {{rows.level}} -->
+                     <a  href="javascript:void(0)" class="helpcontent" 
+                      popover data-trigger="hover" 
+                      data-html="true" 
+                      data-selector="" 
+                      data-original-title="Evaluation Level {{rows.level}}" 
+                      data-content="<p class=''>
+                      <ul>
+                        <li><b>Supply Evaluation Level + Component Level info on hover.</li>
+                      </ul>
+        
+                    </p>"
+                    >
+                    {{rows.level}}<!-- <span style="font-size:12px; vertical-align:super"> <i class="glyphicon glyphicon-info-sign"></i></span> -->
+                  </a>
+                  </span>
+                </bar>
+              </progress>
+            </div>
+            <div class="barborder2" style="text-align: right; vertical-align:top; padding-left:0px; margin-top:-15px; border-style:none ">
+              <progress >
+                <bar ng-repeat="rows2 in componentEvalProgressBarDates" class="bar-transparentdate" type="bar-transparentdate" value="rows2.timedays" style="text-align:right; vertical-align:bottom" >
+                  <span class="componentstatess">{{rows2.currdate}}</span>
+                </bar>
+              </progress>
+            </div>           
+          </div>
+<!--           <div class="col-sm-6 eval-content-title eval-content-title-content ">DI2E Component Current State
+            <span style="font-size:12px"><a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal3"><i class="glyphicon glyphicon-info-sign"></i></a></span>
+            <div  ng-repeat="row in componentState" class="componentstate">{{row.desc}}</div>  
+            <br><br>
+          </div> -->
+
+          <!--  -->
+        </div>
+        <div class="col-sm-12">
+          <div class="col-sm-9 eval-content-title eval-content-title-content"> 
+            <a  href="javascript:void(0)" class="tt1" 
+            popover data-trigger="hover" 
+            data-html="true" 
+            data-selector="" 
+            data-original-title="Component Current State" 
+            data-content="<p class=''>
+            <ul>
+              <li><b>Not Evaluated.</b> Evaluation has not started.</li>
+            </ul>
+            <ul>
+              <li><b>DI2E Candidate.</b> Component is considered as a potential reuse candidate but has not completed the DI2E Framework Evaluation Process.</li>
+            </ul>
+            <ul>
+              <li><b>DI2E Component.</b> Component has been through the DI2E Evaluation Process and determined to be reusable and interoperable.</li>
+            </ul>
+            <ul>
+              <li><b>Not DI2E Reusable.</b> Component was evaluated and determined to not support reusability, is not interoperable, or does not conform to DI2E standards and specifications.</li>
+            </ul>
+            <ul>
+              <li><b>Obsolete.</b> Component has been retired, superseded, or is generally considered not reusable by DI2E.</li>
+            </ul>            
+          </p>"
+          >
+          Component Current State:<!-- <span style="font-size:12px; vertical-align:super"> <i class="glyphicon glyphicon-info-sign"></i></span> -->
+        </a>
+        <span  ng-repeat="row in componentState" class="componentstate">{{row.desc}} 
+          <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal3">
+          </a>
+        </span>
+        <!--  <div  ng-repeat="row in componentState" class="componentstate">{{row.desc}}</div>   -->
+        <br><br>
+      </div>
+    </div>
+
+    <!-- {{details.type[0].code}}     {{componentState.desc}}             -->
+    <!-- Modal legend for evaluation levels progress bar colors -->
+    <div class="row">
+      <div class="modal fade" id="basicModal2" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="glyphicon glyphicon-remove" text="lll" /></button>
+              <h4 class="modal-title" id="myModalLabel">DI2E Evaluation Level Details</h4>
+            </div>
+            <div class="modal-body">
+              <div class="col-sm-12">
+               <span class="">Progress bar color scheme</span>
+               <progress>
+                <bar class="barborder" value="25" type="success"><span>Completed</span></bar>
+                <bar class="barborder" value="25" type="info"><span>In Progress</span></bar>
+                <bar class="barborder" value="25" type="danger"><span>Halted</span></bar>
+                <bar class="bar-transparent" value="25" type="transparent"><span>Not Started</span></bar>
+              </progress> 
+            </div>  
+            <br><br>
+            <p class="">
+             <br><b>Level 0 – Available for Reuse/Not Evaluated</b>
+             <br>
+             <ul>
+              <li>Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
+              <li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li>
+              <li>Asset has completed the Component Prep and Analysis phase.</li>
+            </ul>
+            <br><b>Level 1 – Initial Reuse Analysis</b>
+            <br>
+            <ul>
+              <li>Inspection portion of DI2E Framework Evaluation Checklist complete.  </li>
+              <li>These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided.
+              </li>
+              <li>This level does not represent the pass or fail, the Consumer must read the Evaluation Report. </li>
+            </ul>
+            <br><b>Level 2 – Integration and Test</b>
+            <br>
+            <ul>
+              <li>Integration and Test portion of the DI2E Framework Evaluation Checklist complete.</li>
+              <li>These questions focus on the interoperability and ease of reuse, and will normally include an I&T plan.</li>
+              <li>This level does not indicate a pass or fail of the conformance test.</li>
+              <li>Consumer will read the Test Report linked in the storefront entry for program functionality.</li>
+            </ul>
+            <br><b>Level 3 – DI2E Framework Reference Implementation</b>
+            <br>
+            <ul>
+              <li>Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.</li>
+            </ul>
+            <br><b>NA – No Evaluation Planned</b>
+            <br>
+            <ul>
+              <li>Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Storefront (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.).</li>
+              <li>N/A indicates no evaluation is expected.</li>
+            </ul>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal legend for storefront component state details -->
+<div class="row">
+  <div class="modal fade" id="basicModal3" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="glyphicon glyphicon-remove" text="lll" /></button>
+          <h4 class="modal-title" id="myModalLabel3">DI2E Storefront Component State Details</h4>
+        </div>
+        <div class="modal-body">
+          <div class="col-sm-12">
+           <span class="">Progress bar color scheme</span>
+           <progress>
+            <bar class="barborder" value="25" type="success"><span>Completed</span></bar>
+            <bar class="barborder" value="25" type="info"><span>In Progress</span></bar>
+            <bar class="barborder" value="25" type="danger"><span>Halted</span></bar>
+            <bar class="bar-transparent" value="25" type="transparent"><span>Not Started</span></bar>
+          </progress> 
+        </div>  
+        <br><br>
+        <p class="">
+         <br><b>Level 0 – Available for Reuse/Not Evaluated </b>
+         <br>
+         <ul>
+          <li>Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
+          <li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li>
+          <li>Asset has completed the Component Prep and Analysis phase.</li>
+        </ul>
+        <br><b>Level 1 – Initial Reuse Analysis</b>
+        <br>
+        <ul>
+          <li>Inspection portion of DI2E Framework Evaluation Checklist complete.  </li>
+          <li>These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided.
+          </li>
+          <li>This level does not represent the pass or fail, the Consumer must read the Evaluation Report. </li>
+        </ul>
+        <br><b>Level 2 – Integration and Test</b>
+        <br>
+        <ul>
+          <li>Integration and Test portion of the DI2E Framework Evaluation Checklist complete.</li>
+          <li>These questions focus on the interoperability and ease of reuse, and will normally include an I&T plan.</li>
+          <li>This level does not indicate a pass or fail of the conformance test.</li>
+          <li>Consumer will read the Test Report linked in the storefront entry for program functionality.</li>
+        </ul>
+        <br><b>Level 3 – DI2E Framework Reference Implementation</b>
+        <br>
+        <ul>
+          <li>Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.</li>
+        </ul>
+        <br><b>NA – No Evaluation Planned</b>
+        <br>
+        <ul>
+          <li>Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Storefront (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.).</li>
+          <li>N/A indicates no evaluation is expected.</li>
+        </ul>
+      </p>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ******************************************************************* -->
+<!-- Tabbing for Results Page -->
+<div class="row">
+  <div class="col-md-12" style="margin-left:36px">
+    <tabset type="pills">  <!-- pills -->
+      <tab ng-repeat="tab3 in tabs2" heading="{{tab3.title}}">
+        <br>
+        <div ng-include="tab3.relpath"></div>
+      </tab>
+    </tabset>
+  </div>
+</div>
+<!-- ******************************************************************* -->
+
+  <!-- This is the end of what you can take out. The rest must stay -->
+
+</div>
+<!-- End Page 2 -->
+<!-- This is the results description modal (the contents are handled in this controller) -->
+<div modal controller-name="ResultsCtrl" modalId='descModal' modal-classes="classlist">
+</div>
+</div>
+<!-- End Results Container -->
+
+<!-- build:css({.tmp,app}) styles/results.css -->
+<link rel="stylesheet" href="styles/results.css">
+<!-- endbuild -->
