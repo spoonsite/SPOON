@@ -16,7 +16,7 @@
 'use strict';
 
 /* global isEmpty, setupPopovers, openClick:true, moveButtons,
-fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resizeAnimations*/
+fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
   // Set up the results controller's variables.
@@ -605,7 +605,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     var baseLen = $location.absUrl().length - $location.url().length;
     var root = $location.absUrl().substring(0, baseLen);
     root = root + '/results?type=single&code=' + id;
-    window.prompt("Copy to clipboard: Ctrl+C, Enter", root);
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', root);
   };
 
   /***************************************************************

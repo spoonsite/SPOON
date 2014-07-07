@@ -1,4 +1,5 @@
-/* 
+
+/*******************************************************************************
 * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
 *
 * Licensed under the Apache License, Version 2.0 (the 'License');
@@ -12,7 +13,8 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
-*/
+*******************************************************************************/
+
 'use strict';
 
 /*globals openFiltersToggle:true*/
@@ -233,7 +235,7 @@ var closeDetails = function(results, details, windowWidth) {
 * params: details -- a JQuery object that contains the details page
 * params: windowWidth -- an integer value detailing the window width
 **********************/
-var openFullDetails = function(results, details, filters, windowWidth) {
+var openFullDetails = function(results, details, filters, windowWidth) {/*jshint unused:false*/
   details.css({'display': 'inherit'});
   results.stop(true, true).animate({
     'width': '0px'
