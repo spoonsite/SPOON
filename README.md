@@ -1,4 +1,4 @@
-openstorefront
+Open-Storefront
 ==============
 
 This repository holds the current development version of the DI2E Storefront.
