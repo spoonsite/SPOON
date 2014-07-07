@@ -13,8 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-  <!-- Bring in the navigation -->
-  <div ng-include="'views/nav.html'"></div>
+<!-- Bring in the navigation -->
+<div ng-include="'views/nav.html'"></div>
 
 <!-- Results Container -->
 <div class='container-fluid'>
@@ -28,7 +28,8 @@ limitations under the License.
         <option value="-name">Name (Z-A)</option>
         <option value="-stats.averageRating">Rating (high-low)</option>
         <option value="+stats.averageRating">Rating (low-high)</option>
-        <option value="age">Last Update</option>
+        <option value="+updateDate">Last Update (newest)</option>
+        <option value="-updateDate">Last Update (oldest)</option>
       </select>
       <br>
       <label for="searchFilter">Filter By Text: </label>
@@ -53,7 +54,7 @@ limitations under the License.
         <div ng-class="$last? 'lastFilter': ''" class="panel panel-default" class="filterTableDiv" ng-repeat="filter in filters">
           <table class="table">
             <tr ng-class="filters.length > 2? 'panel-heading': ''">
-              <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" ><span class="btn btn-link" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}">{{filter.name}} <i class="fa fa-caret-down"></i></span> <input type="checkbox" ng-model="filter.checked" ng-change="toggleChecks(filter.collection)" /><small ng-show="filter.hasChecked">&nbsp;(applied)</small></th>
+              <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" ><span class="btn btn-link " data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}" style="max-width: 152px; padding-left: 0px;"><span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i></span><span class="overflow-pair-left" style="text-align: left;">{{filter.name}}</span></span><input type="checkbox" ng-model="filter.checked" ng-change="toggleChecks(filter.collection)" /><small ng-show="filter.hasChecked">&nbsp;(applied)</small></th>
             </tr>
             <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}">
               <tr  class="filtersTr" data-ng-repeat="type in filter.collection" >
@@ -167,33 +168,33 @@ limitations under the License.
               <progress>
                 <bar ng-repeat="rows in componentEvalProgressBar" class="{{rows.class1}}" type="{{rows.type}}" value="rows.currvalue" style="text-align:center; vertical-align:middle" >
                   <span class="componentstate" >
-                <!--     {{rows.level}} -->
-                     <a  href="javascript:void(0)" class="helpcontent" 
-                      popover data-trigger="hover" 
-                      data-html="true" 
-                      data-selector="" 
-                      data-original-title="Evaluation Level {{rows.level}}" 
-                      data-content="<p class=''>
-                      <ul>
-                        <li><b>Supply Evaluation Level + Component Level info on hover.</li>
-                      </ul>
-        
-                    </p>"
-                    >
-                    {{rows.level}}<!-- <span style="font-size:12px; vertical-align:super"> <i class="glyphicon glyphicon-info-sign"></i></span> -->
-                  </a>
-                  </span>
-                </bar>
-              </progress>
-            </div>
-            <div class="barborder2" style="text-align: right; vertical-align:top; padding-left:0px; margin-top:-15px; border-style:none ">
-              <progress >
-                <bar ng-repeat="rows2 in componentEvalProgressBarDates" class="bar-transparentdate" type="bar-transparentdate" value="rows2.timedays" style="text-align:right; vertical-align:bottom" >
-                  <span class="componentstatess">{{rows2.currdate}}</span>
-                </bar>
-              </progress>
-            </div>           
-          </div>
+                    <!--     {{rows.level}} -->
+                    <a  href="javascript:void(0)" class="helpcontent" 
+                    popover data-trigger="hover" 
+                    data-html="true" 
+                    data-selector="" 
+                    data-original-title="Evaluation Level {{rows.level}}" 
+                    data-content="<p class=''>
+                    <ul>
+                      <li><b>Supply Evaluation Level + Component Level info on hover.</li>
+                    </ul>
+
+                  </p>"
+                  >
+                  {{rows.level}}<!-- <span style="font-size:12px; vertical-align:super"> <i class="glyphicon glyphicon-info-sign"></i></span> -->
+                </a>
+              </span>
+            </bar>
+          </progress>
+        </div>
+        <div class="barborder2" style="text-align: right; vertical-align:top; padding-left:0px; margin-top:-15px; border-style:none ">
+          <progress >
+            <bar ng-repeat="rows2 in componentEvalProgressBarDates" class="bar-transparentdate" type="bar-transparentdate" value="rows2.timedays" style="text-align:right; vertical-align:bottom" >
+              <span class="componentstatess">{{rows2.currdate}}</span>
+            </bar>
+          </progress>
+        </div>           
+      </div>
 <!--           <div class="col-sm-6 eval-content-title eval-content-title-content ">DI2E Component Current State
             <span style="font-size:12px"><a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal3"><i class="glyphicon glyphicon-info-sign"></i></a></span>
             <div  ng-repeat="row in componentState" class="componentstate">{{row.desc}}</div>  
@@ -377,7 +378,7 @@ limitations under the License.
 </div>
 <!-- ******************************************************************* -->
 
-  <!-- This is the end of what you can take out. The rest must stay -->
+<!-- This is the end of what you can take out. The rest must stay -->
 
 </div>
 <!-- End Page 2 -->

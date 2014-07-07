@@ -233,13 +233,14 @@ var closeDetails = function(results, details, windowWidth) {
 * params: details -- a JQuery object that contains the details page
 * params: windowWidth -- an integer value detailing the window width
 **********************/
-var openFullDetails = function(results, details, windowWidth) {
+var openFullDetails = function(results, details, filters, windowWidth) {
   details.css({'display': 'inherit'});
   results.stop(true, true).animate({
     'width': '0px'
   }, 200 , function() {
     results.css({'display': 'none'});
     details.css({'margin-top': '0px'});
+    filters.css({'display': 'none'});
   });
   details.stop(true, true).animate({
     'width': windowWidth + 'px',
@@ -255,13 +256,15 @@ var openFullDetails = function(results, details, windowWidth) {
 * params: details -- a JQuery object that contains the details page
 * params: windowWidth -- an integer value detailing the window width
 **********************/
-var closePartialDetails = function(results, details, windowWidth) {
+var closePartialDetails = function(results, details, filters, windowWidth) {
   var width = 400;
+  var padding = 0;
   if (filtClick === 1)
   {
-    width = 650;
+    padding = 250;
   }
   results.css({'display': 'inherit'});
+  filters.css({'display': 'inherit'})
   var offset = $(window).height() - $('.top').height() - 40;
   setPageMargin(details, -offset);
   results.stop(true, true).animate({
@@ -269,7 +272,7 @@ var closePartialDetails = function(results, details, windowWidth) {
   }, 200 , function() {});
   details.stop(true, true).animate({
     'width': windowWidth - width + 'px',
-    'margin-left': width + 'px'
+    'margin-left': width + padding + 'px'
   }, 200 , function() {/*complete animation*/});
 };
 
@@ -395,13 +398,13 @@ var fullDetailsToggle = function () {
   var paginationDiv = $('.pagination');
   setTimeout(function() {
     if (fullClick === 0) {
-      unStretchFilterbutton();
-      closeFilter(filters, results, details, paginationDiv, windowWidth);
-      filtClick = 0;
-      openFullDetails(results, details, windowWidth);
+      //unStretchFilterbutton();
+      //closeFilter(filters, results, details, paginationDiv, windowWidth);
+      //filtClick = 0;
+      openFullDetails(results, details, filters, windowWidth);
       fullClick = 1;
     } else if (fullClick === 1) {
-      closePartialDetails(results, details, windowWidth);
+      closePartialDetails(results, details, filters, windowWidth);
       fullClick = 0;
     }
   }, 100);
