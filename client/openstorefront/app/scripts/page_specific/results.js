@@ -68,8 +68,6 @@ var resizeAnimations = function () {
 
 
 var setupResults = function(){
-  console.log('We hit the function');
-  
   /**********************
   * This handles the animation for the filter button.
   * on-hover it shifts into view, and then shifts out.
