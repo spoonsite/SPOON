@@ -110,13 +110,13 @@ var app = angular
 
 
   /***************************************************************
-  * This function is what is called when the view had finally been loaded
-  * So far all it does is set up the typeaheads for each input field with the
-  * class 'typeahead'
+  * This function is what is called when the view has finally been loaded
   ***************************************************************/
   $rootScope.$on('$viewContentLoaded', function() {
     $rootScope.typeahead = Business.typeahead();
-    setupParallax();
+    
+    // setupParallax();
+
     $timeout(function() {
       $('[data-toggle="tooltip"').tooltip();
     }, 300);
@@ -131,7 +131,6 @@ var app = angular
 
   /***************************************************************
   * This function is what is called when the modal event is fired
-  * class 'typeahead'
   ***************************************************************/
   $rootScope.$on('$viewModal', function(event, id) {
     $('#' + id).modal('show');
