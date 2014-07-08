@@ -429,10 +429,18 @@ border-bottom-color: transparent;
   overflow: auto;
 }
 
+#detailsTabs .nav.nav-tabs li:first-child {
+  margin-left: 26px;
+}
+
+#detailsTabs ul + div {
+  margin-left: 26px;
+}
+
 .eval-content-title{
   color: #3892d3;
   padding: 2px 5px 0px 21px;
-  /*margin-left:110px;*/
+  margin-left:5px;
 }
 .eval-content-title-content{ 
   font-size: 18px;
