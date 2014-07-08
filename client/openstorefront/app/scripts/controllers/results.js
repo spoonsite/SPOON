@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global isEmpty, setupPopovers, openClick:true, setupResults, moveButtons,
+/* global isEmpty, setupPopovers, openClick:true, moveButtons,
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
@@ -213,14 +213,17 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     *******************************************************************************/
     if (!isEmpty($scope.searchGroup)) {
       // grab all of the keys in the filters
+      $scope.searchKey          = $scope.searchGroup[0].key;
+      $scope.searchCode         = $scope.searchGroup[0].code;
       var keys = _.pluck($scope.filters, 'key');
       var foundFilter = null;
       var foundCollection = null;
       var type = '';
-
-      if (_.contains(keys, $scope.searchGroup[0].key)) {
-        $scope.searchKey          = $scope.searchGroup[0].key;
-        $scope.searchCode         = $scope.searchGroup[0].code;
+      
+      if ($scope.searchKey === 'single') {
+        $scope.updateDetails($scope.searchCode);
+        $scope.single = true;
+      } else if (_.contains(keys, $scope.searchKey)) {
         $scope.searchGroupItem    = _.where($scope.filters, {'key': $scope.searchKey})[0];
         $scope.searchType         = $scope.searchGroupItem.name;
         $scope.showSearch         = true;
@@ -280,6 +283,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     $scope.applyFilters();
+    $scope.$broadcast('dataloaded', !$scope.single);
   };
 
   /***************************************************************
@@ -404,6 +408,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filters = _.reject($scope.filters, function(item) {
         return item.key === $scope.searchGroup[0].key;
       });
+      $scope.resetFilters = JSON.parse(JSON.stringify($scope.filters));
     }
   };
 
@@ -570,7 +575,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     if (!openClick) {
       buttonOpen();
     }
-    var temp =  _.where($scope.data, {'id': id})[0];
+
+    var temp =  _.where($scope.data, {'id': parseInt(id)})[0];
+    
     if (temp)
     {
       $scope.details = temp;
@@ -589,6 +596,16 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
     $scope.showWatchButton = false;
     Business.setWatches($scope.watches);
+  };
+
+  /***************************************************************
+  * This function adds a component to the watch list and toggles the buttons
+  ***************************************************************/
+  $scope.grabPermenantLink = function(id){
+    var baseLen = $location.absUrl().length - $location.url().length;
+    var root = $location.absUrl().substring(0, baseLen);
+    root = root + '/results?type=single&code=' + id;
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', root);
   };
 
   /***************************************************************
@@ -644,10 +661,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.ratingsFilter = null;
     $scope.tagsFilter = null;
     $scope.query = null;
-    _.each($scope.filters, function(item) {
-      item.checked = false;
-      $scope.toggleChecks(item.collection, true);
-    });
+    $scope.filters = JSON.parse(JSON.stringify($scope.resetFilters));
     $scope.applyFilters();
   };
 
@@ -693,6 +707,5 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   callSearch();
-  setupResults();
 }]);
 
