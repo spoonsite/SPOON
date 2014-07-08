@@ -131,6 +131,7 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
       };
       
       scope.init();
+
     }
   };
 }]);

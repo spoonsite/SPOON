@@ -37,7 +37,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   $scope.lastUsed = new Date();
 
-  // $scope.date1 = moment();
+ // $scope.date1 = moment();
 
   $scope.expertise = [
     //
@@ -48,6 +48,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     {'value':'5', 'label': 'Less than 3 years'},
     {'value':'6', 'label': 'More than 3 years'}
   //
+  ];
+  
+  $scope.userRoles = [    
+    {'code':'ENDUSER', 'description': 'User'},
+    {'code':'DEV', 'description': 'Developer'},
+    {'code':'PM', 'description': 'Project Manager'}    
   ];
 
   $scope.tabs = {
@@ -99,7 +105,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     { title:'DETAILS', content:'2', relpath:'views/details/details.html' },
     { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html' },
     { title:'COMMENTS', content:'4', relpath:'views/details/comments.html' },
-    /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
+   /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
   //
   ];
   $scope.tab = $scope.tabs2[0];
@@ -224,7 +230,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         
         foundFilter = _.where($scope.filters, {'key': $scope.searchGroup[0].key})[0];
         foundCollection = _.where(foundFilter.collection, {'code': $scope.searchGroup[0].code})[0];
-
 
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all') {
@@ -358,11 +363,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.nav = {
         'current': 'Reviews',
         'bars': [
-          //
-          {
-            'title': 'Reviews',
-            'include': 'views/reviews/reviews.html'
-          },
           {
             'title': 'Write a Review',
             'include': 'views/reviews/newfeedback.html'
