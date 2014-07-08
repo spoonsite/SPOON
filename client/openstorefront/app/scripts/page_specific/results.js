@@ -31,9 +31,7 @@ var resizeAnimations = function () {
   var filters = $('.filters');
   var height = $(window).height();
   var width = $(window).width();
-  // This was used to keep the offset dynamic, but there is a timing issue...
-  var offset =  height /*top height*/ - 40;
-  
+
   if (width < 767) {
     if (!fullClick) {
       resetAnimations(details, results, filters);
@@ -41,16 +39,12 @@ var resizeAnimations = function () {
     }
   } else {
     if (!fullClick) {
-      // because of the timing issue, we're hard coding the offset
-      // which is the height of the navigation. (negative margin of course)
-      setTimeout(function() {
-        setPageMargin(details, -offset);
-      }, 300);
-      // setPageMargin(details, -52);
+      setPageMargin(details, true);
     } else {
-      setPageMargin(details, 0);
+      setPageMargin(details, false);
     }
   }
+
   if (width <= 992) {
     if (openClick && filtClick) {
       var paginationDiv = $('.pagination');
@@ -71,6 +65,7 @@ var resizeAnimations = function () {
   floatBelowTop($('#filtersButton'), 3000, $('.page1'), 52);
   moveButtons($('#showPageRight'), $('.page1'));
   moveButtons($('#showPageLeft'), $('.page2'));
+
 };
 
 
