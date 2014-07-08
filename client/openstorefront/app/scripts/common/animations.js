@@ -123,7 +123,7 @@ var setLeftOpenWidth = function(element) {
 * params: offset -- an integer value detailing the offset from the bottom
 **********************/
 var setPageHeight = function(element, offset) {
-  var windowHeight = $(window).height() - $('.top').height();
+  var windowHeight = $(window).height();
   element.css({
     'height': windowHeight - offset + 'px'
   });
@@ -137,6 +137,10 @@ var setPageHeight = function(element, offset) {
 **********************/
 var setPageMargin = function (element, showing) {
   var windowHeight = $(window).height() - 40;
+
+  console.log('window', $(window).height());
+  console.log('offset', windowHeight);
+  
 
   if (showing) {
     element.css({
