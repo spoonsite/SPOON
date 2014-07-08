@@ -106,7 +106,13 @@ var app = angular
     if (!$location.path() || $location.path() !== '/results') {
       $location.search({});
     }
+    if (!$location.path() || $location.path() === '/') {
+      $rootScope.$broadcast('$changenav', '/views/nav/nav_main.html');
+    } else {
+      $rootScope.$broadcast('$changenav', '/views/nav/nav.html');
+    }
   });
+
 
   /***************************************************************
   * This function is what is called when the view had finally been loaded
@@ -120,6 +126,11 @@ var app = angular
       $('[data-toggle="tooltip"').tooltip();
     }, 300);
 
+    if (!$location.path() || $location.path() === '/') {
+      $rootScope.$broadcast('$changenav', '/views/nav/nav_main.html');
+    } else {
+      $rootScope.$broadcast('$changenav', '/views/nav/nav.html');
+    }
   });
 
   /***************************************************************
