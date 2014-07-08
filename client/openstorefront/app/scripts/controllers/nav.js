@@ -23,6 +23,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * This Controller gives us a place to add functionality to the navbar
   *******************************************************************************/
   $scope._scopename = 'nav';
+  $scope.navLocation = "/views/nav/nav_main.html";
 
   // Here we grab the rootScope searchkey in order to preserve the last search
   $scope.searchkey = $rootScope.searchkey;
@@ -45,6 +46,13 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   $scope.$on('$typeahead.select', function(event, value, index) {
     $scope.goToSearch();
     $scope.$apply();
+  });
+  
+  /***************************************************************
+  * Catch the navigation location change event here
+  ***************************************************************/
+  $scope.$on('$changenav', function(event, value, index) {
+    $scope.navLocation = value;
   });
   
 
@@ -95,6 +103,10 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   // We have to manually connect the list item to the dropdown toggle because the
   // routing and nav load somehow delays it which makes the dropdown not work
   // until the second click. This makes it work on first click.
-  setUpDropdown('dropTheMenu');
+  $scope.$watch('navLocation', function() {
+    $timeout(function() {
+      setUpDropdown('dropTheMenu');
+    });
+  });
 
 }]);

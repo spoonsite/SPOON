@@ -138,8 +138,8 @@ var setPageHeight = function(element, offset) {
 var setPageMargin = function (element, showing) {
   var windowHeight = $(window).height() - 40;
 
-  console.log('window', $(window).height());
-  console.log('offset', windowHeight);
+  // console.log('window', $(window).height());
+  // console.log('offset', windowHeight);
   
 
   if (showing) {

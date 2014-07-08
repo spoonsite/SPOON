@@ -108,6 +108,7 @@ var app = angular
     }
   });
 
+
   /***************************************************************
   * This function is what is called when the view had finally been loaded
   * So far all it does is set up the typeaheads for each input field with the
@@ -120,6 +121,12 @@ var app = angular
       $('[data-toggle="tooltip"').tooltip();
     }, 300);
 
+    // once the content is loaded, make sure we have the right navigation!
+    if (!$location.path() || $location.path() === '/') {
+      $rootScope.$broadcast('$changenav', '/views/nav/nav_main.html');
+    } else {
+      $rootScope.$broadcast('$changenav', '/views/nav/nav.html');
+    }
   });
 
   /***************************************************************
