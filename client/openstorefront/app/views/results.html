@@ -381,11 +381,11 @@ limitations under the License.
 <!-- Tabbing for Results Page -->
 <div class="row">
   
-    <div class="col-md-12" style="margin-left:36px">
+    <div class="col-md-12" style="margin-left:32px">
        <tabset type="">  <!-- pills -->
-        <tab ng-repeat="tab3 in tabs2" heading="{{tab3.title}}" class="">
+        <tab ng-repeat="tab in detailResultsTabs" heading="{{tab.title}}" class="">
           <br>
-          <div ng-include="tab3.relpath"></div>
+          <div ng-include="tab.relpath"></div>
         </tab>
       </tabset>
   </div>
