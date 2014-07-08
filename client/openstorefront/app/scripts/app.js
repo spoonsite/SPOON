@@ -123,9 +123,9 @@ var app = angular
 
     // once the content is loaded, make sure we have the right navigation!
     if (!$location.path() || $location.path() === '/') {
-      $rootScope.$broadcast('$changenav', '/views/nav/nav_main.html');
+      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
     } else {
-      $rootScope.$broadcast('$changenav', '/views/nav/nav.html');
+      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
     }
   });
 
