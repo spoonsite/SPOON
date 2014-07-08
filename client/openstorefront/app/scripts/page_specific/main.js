@@ -15,18 +15,22 @@
 */
 'use strict';
 
-/*global floatBelowTop, setupParallax*/
+/*global floatBelowTop*/
 /*exported setupMain*/
 var setupMain = function() {
   /***************************************************************
   * This function handles the default-search offset on resizing the window
   ***************************************************************/
   $(window).resize(function() {
-    setupParallax();
+    // setupParallax();
     if ($('.defaultSearch') !== undefined) {
       setTimeout(function() {
-        $('.defaultSearch').data('offset', $('.defaultSearch').offset().top + parseInt($('.defaultSearch').css('padding-top'), 10) - 52);
-        floatBelowTop($('.defaultSearch'), 768, $(window), $('.top').height());
+        if ($('.defaultSearch').data('offset', $('.defaultSearch')) &&
+          $('.defaultSearch').data('offset', $('.defaultSearch').offset())) {
+            //
+          $('.defaultSearch').data('offset', $('.defaultSearch').offset().top + parseInt($('.defaultSearch').css('padding-top'), 10) - 52);
+          floatBelowTop($('.defaultSearch'), 768, $(window), $('.top').height());
+        }
       }, 10);
     }
   });
@@ -44,11 +48,15 @@ var setupMain = function() {
   * This function handles the default-search offset on load
   ***************************************************************/
   $(document).ready(function() {
-    setupParallax();    
+    // setupParallax();
     if ($('.defaultSearch')) {
       setTimeout(function() {
-        $('.defaultSearch').data('offset', $('.defaultSearch').offset().top + parseInt($('.defaultSearch').css('padding-top'), 10) - 52);
-        floatBelowTop($('.defaultSearch'), 768, $(window), $('.top').height());
+        if ($('.defaultSearch').data('offset', $('.defaultSearch')) &&
+         $('.defaultSearch').data('offset', $('.defaultSearch').offset())) {
+            //
+          $('.defaultSearch').data('offset', $('.defaultSearch').offset().top + parseInt($('.defaultSearch').css('padding-top'), 10) - 52);
+          floatBelowTop($('.defaultSearch'), 768, $(window), $('.top').height());
+        }
       }, 10);
     }
   });

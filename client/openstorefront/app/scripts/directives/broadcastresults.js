@@ -27,11 +27,11 @@ app.directive('broadcastResults', ['$timeout', function ($timeout) {
         if (input) {
           $timeout(function () { // You might need this timeout to be sure its run after DOM render.
             setupResults();
-          }, 100, false);
+          });
         } else {
           $timeout(function () { // You might need this timeout to be sure its run after DOM render.
             fullDetailsToggle();
-          }, 100, false);
+          });
         }
       });
     }

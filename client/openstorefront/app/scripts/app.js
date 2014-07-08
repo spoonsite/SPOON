@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global resetAnimGlobals, setupParallax */
+/* global resetAnimGlobals */
 /* exported app */
 
 /***************************************************************

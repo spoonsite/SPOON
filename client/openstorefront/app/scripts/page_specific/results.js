@@ -29,7 +29,7 @@ var resizeAnimations = function () {
   var details = $('.page2');
   var results = $('.page1');
   var filters = $('.filters');
-  var height = $(window).height();
+  // var height = $(window).height();
   var width = $(window).width();
 
   if (width < 767) {
