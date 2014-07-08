@@ -434,6 +434,15 @@ width: 100%;
   border-bottom-color: transparent;
 }
 
+.nav-tabs > li > a:hover {
+  border: 2px solid #ff4800;
+  border-bottom: 2px solid transparent;
+}
+.nav-tabs > li > a:active {
+  border: 2px solid #BB3500;
+  border-bottom: 2px solid transparent;
+}
+
 /* evaluations */
 .eval-status{
   /*margin: 34px 0px 10px 0px;*/
