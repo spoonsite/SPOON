@@ -50,10 +50,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //
   ];
   
-  $scope.userRoles = [    
+  $scope.userRoles = [
     {'code':'ENDUSER', 'description': 'User'},
     {'code':'DEV', 'description': 'Developer'},
-    {'code':'PM', 'description': 'Project Manager'}    
+    {'code':'PM', 'description': 'Project Manager'}
   ];
 
   $scope.tabs = {

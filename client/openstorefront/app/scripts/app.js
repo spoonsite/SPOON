@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global resetAnimGlobals, setupParallax */
+/* global resetAnimGlobals */
 /* exported app */
 
 /***************************************************************
@@ -110,28 +110,27 @@ var app = angular
 
 
   /***************************************************************
-  * This function is what is called when the view had finally been loaded
-  * So far all it does is set up the typeaheads for each input field with the
-  * class 'typeahead'
+  * This function is what is called when the view has finally been loaded
   ***************************************************************/
   $rootScope.$on('$viewContentLoaded', function() {
     $rootScope.typeahead = Business.typeahead();
-    setupParallax();
+    
+    // setupParallax();
+
     $timeout(function() {
       $('[data-toggle="tooltip"').tooltip();
     }, 300);
 
     // once the content is loaded, make sure we have the right navigation!
     if (!$location.path() || $location.path() === '/') {
-      $rootScope.$broadcast('$changenav', '/views/nav/nav_main.html');
+      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
     } else {
-      $rootScope.$broadcast('$changenav', '/views/nav/nav.html');
+      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
     }
   });
 
   /***************************************************************
   * This function is what is called when the modal event is fired
-  * class 'typeahead'
   ***************************************************************/
   $rootScope.$on('$viewModal', function(event, id) {
     $('#' + id).modal('show');
