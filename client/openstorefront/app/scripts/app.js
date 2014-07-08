@@ -121,12 +121,7 @@ var app = angular
       $('[data-toggle="tooltip"').tooltip();
     }, 300);
 
-    // once the content is loaded, make sure we have the right navigation!
-    if (!$location.path() || $location.path() === '/') {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
-    } else {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
-    }
+    $rootScope.setNav();
   });
 
   /***************************************************************
@@ -143,5 +138,14 @@ var app = angular
     $rootScope.$broadcast('$viewModal', id);
   };
 
+  $rootScope.setNav = function() {
+    // once the content is loaded, make sure we have the right navigation!
+    if (!$location.path() || $location.path() === '/') {
+      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
+    } else {
+      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
+    }
+  }
 
+  $rootScope.setNav();
 }]);
