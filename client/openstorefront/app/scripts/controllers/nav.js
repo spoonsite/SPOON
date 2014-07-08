@@ -23,7 +23,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * This Controller gives us a place to add functionality to the navbar
   *******************************************************************************/
   $scope._scopename = 'nav';
-  $scope.navLocation = "/views/nav/nav_main.html";
+  $scope.navLocation = "views/nav/nav_main.html";
 
   // Here we grab the rootScope searchkey in order to preserve the last search
   $scope.searchkey = $rootScope.searchkey;
