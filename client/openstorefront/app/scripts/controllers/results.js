@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global isEmpty, setupPopovers, openClick:true, moveButtons,
+/* global isEmpty, setupPopovers, openClick:true, setupResults, moveButtons,
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
@@ -37,7 +37,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   $scope.lastUsed = new Date();
 
-  // $scope.date1 = moment();
+ // $scope.date1 = moment();
 
   $scope.expertise = [
     //
@@ -48,6 +48,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     {'value':'5', 'label': 'Less than 3 years'},
     {'value':'6', 'label': 'More than 3 years'}
   //
+  ];
+  
+  $scope.userRoles = [    
+    {'code':'ENDUSER', 'description': 'User'},
+    {'code':'DEV', 'description': 'Developer'},
+    {'code':'PM', 'description': 'Project Manager'}    
   ];
 
   $scope.tabs = {
@@ -99,7 +105,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     { title:'DETAILS', content:'2', relpath:'views/details/details.html' },
     { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html' },
     { title:'COMMENTS', content:'4', relpath:'views/details/comments.html' },
-    /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
+   /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
   //
   ];
   $scope.tab = $scope.tabs2[0];
@@ -207,24 +213,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     *******************************************************************************/
     if (!isEmpty($scope.searchGroup)) {
       // grab all of the keys in the filters
-      $scope.searchKey          = $scope.searchGroup[0].key;
-      $scope.searchCode         = $scope.searchGroup[0].code;
       var keys = _.pluck($scope.filters, 'key');
       var foundFilter = null;
       var foundCollection = null;
       var type = '';
-      
-      if ($scope.searchKey === 'single') {
-        $scope.updateDetails($scope.searchCode);
-        $scope.single = true;
-      } else if (_.contains(keys, $scope.searchKey)) {
+
+      if (_.contains(keys, $scope.searchGroup[0].key)) {
+        $scope.searchKey          = $scope.searchGroup[0].key;
+        $scope.searchCode         = $scope.searchGroup[0].code;
         $scope.searchGroupItem    = _.where($scope.filters, {'key': $scope.searchKey})[0];
         $scope.searchType         = $scope.searchGroupItem.name;
         $scope.showSearch         = true;
         
         foundFilter = _.where($scope.filters, {'key': $scope.searchGroup[0].key})[0];
         foundCollection = _.where(foundFilter.collection, {'code': $scope.searchGroup[0].code})[0];
-
 
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all') {
@@ -278,7 +280,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     $scope.applyFilters();
-    $scope.$broadcast('dataloaded', !$scope.single);
   };
 
   /***************************************************************
@@ -358,11 +359,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.nav = {
         'current': 'Reviews',
         'bars': [
-          //
-          {
-            'title': 'Reviews',
-            'include': 'views/reviews/reviews.html'
-          },
           {
             'title': 'Write a Review',
             'include': 'views/reviews/newfeedback.html'
@@ -408,7 +404,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filters = _.reject($scope.filters, function(item) {
         return item.key === $scope.searchGroup[0].key;
       });
-      $scope.resetFilters = JSON.parse(JSON.stringify($scope.filters));
     }
   };
 
@@ -575,9 +570,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     if (!openClick) {
       buttonOpen();
     }
-
-    var temp =  _.where($scope.data, {'id': parseInt(id)})[0];
-    
+    var temp =  _.where($scope.data, {'id': id})[0];
     if (temp)
     {
       $scope.details = temp;
@@ -596,16 +589,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
     $scope.showWatchButton = false;
     Business.setWatches($scope.watches);
-  };
-
-  /***************************************************************
-  * This function adds a component to the watch list and toggles the buttons
-  ***************************************************************/
-  $scope.grabPermenantLink = function(id){
-    var baseLen = $location.absUrl().length - $location.url().length;
-    var root = $location.absUrl().substring(0, baseLen);
-    root = root + '/results?type=single&code=' + id;
-    window.prompt('Copy to clipboard: Ctrl+C, Enter', root);
   };
 
   /***************************************************************
@@ -661,7 +644,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.ratingsFilter = null;
     $scope.tagsFilter = null;
     $scope.query = null;
-    $scope.filters = JSON.parse(JSON.stringify($scope.resetFilters));
+    _.each($scope.filters, function(item) {
+      item.checked = false;
+      $scope.toggleChecks(item.collection, true);
+    });
     $scope.applyFilters();
   };
 
@@ -707,5 +693,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   callSearch();
+  setupResults();
 }]);
 
