@@ -81,7 +81,7 @@ MOCKDATA.componentEvalProgressBar = [
     'level': '0',
     'currvalue': 28.20512821,
     'desc':'Available for Reuse/Not Evaluated',
-    'fulldesc':'<ul><li>Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance.</li></ul>      <ul><li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li></ul>      <ul><li>Asset has completed the Component Prep and Analysis phase. </li></ul> ' 
+    'fulldesc':'<ul><li>Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance.</li></ul>      <ul><li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li></ul>      <ul><li>Asset has completed the Component Prep and Analysis phase. </li></ul> '
   },
   {
     'class1': 'barborder',
