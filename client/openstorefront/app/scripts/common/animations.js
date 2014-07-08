@@ -123,7 +123,7 @@ var setLeftOpenWidth = function(element) {
 * params: offset -- an integer value detailing the offset from the bottom
 **********************/
 var setPageHeight = function(element, offset) {
-  var windowHeight = $(window).height() - $('.top').height();
+  var windowHeight = $(window).height();
   element.css({
     'height': windowHeight - offset + 'px'
   });
@@ -135,10 +135,22 @@ var setPageHeight = function(element, offset) {
 * params: element -- a JQuery object
 * params: offset -- an integer value detailing the offset from the top
 **********************/
-var setPageMargin = function (element, offset) {
-  element.css({
-    'margin-top': offset + 'px'
-  });
+var setPageMargin = function (element, showing) {
+  var windowHeight = $(window).height() - 40;
+
+  console.log('window', $(window).height());
+  console.log('offset', windowHeight);
+  
+
+  if (showing) {
+    element.css({
+      'margin-top': '-'+windowHeight+'px',
+    });
+  } else {
+    element.css({
+      'margin-top': '0px',
+    });
+  }
 };
 
 /**********************
