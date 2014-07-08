@@ -37,8 +37,13 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   * Catch the enter/select event here
   ***************************************************************/
   $scope.$on('$typeahead.select', function(event, value, index) {
-    $scope.goToSearch('search', $scope.searchkey);
-    $scope.$apply();
+    if (value !== undefined) {
+      $scope.goToSearch('search', $scope.searchkey);
+      $scope.$apply();
+    } else {
+      $scope.goToSearch('search', 'All');
+      $scope.$apply();
+    }
   });
   
   // Set up the main controller's variables.
