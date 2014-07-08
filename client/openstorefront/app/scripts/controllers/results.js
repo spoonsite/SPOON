@@ -99,7 +99,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     return new Array(parseInt(n));
   };
 
-  $scope.tabs2 = [
+  $scope.detailResultsTabs = [
     //
     { title:'SUMMARY', content:'1', relpath:'views/details/summary.html' },
     { title:'DETAILS', content:'2', relpath:'views/details/details.html' },
@@ -108,7 +108,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
    /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
   //
   ];
-  $scope.tab = $scope.tabs2[0];
+  $scope.tab = $scope.detailResultsTabs[0];
 
   /***************************************************************
   * This function is looked at for auto suggestions for the tag list
