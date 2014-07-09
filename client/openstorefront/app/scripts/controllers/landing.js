@@ -43,4 +43,5 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     }
     $location.path('/results');
   };
+
 }]);
