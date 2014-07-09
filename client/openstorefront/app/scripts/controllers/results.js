@@ -291,9 +291,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   var callSearch = function() {
     Business.search(false, false, true).then(
-
     //This is the success function on returning a value from the business layer 
     function(key) {
+      
       var type = 'all';
       var code = '';
       var query = null;
@@ -315,6 +315,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         if (!isEmpty($location.search()))
         {
           query = $location.search();
+          console.log('key', query);
           if (query.type && query.code) {
             type = query.type;
             code = query.code;

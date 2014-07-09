@@ -423,6 +423,7 @@ width: 100%;
   border-radius: 4px 4px 0 0;
   border-bottom-color: transparent;
 }
+
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
   color: #555555;
   color: white;

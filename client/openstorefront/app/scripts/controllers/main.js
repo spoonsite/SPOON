@@ -18,7 +18,7 @@
 /*global setupMain*/
 
 app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
-  // Here we grab the rootScope searchkey in order to preserve the last search
+  // Here we grab the rootScope searchKey in order to preserve the last search
   $scope.searchKey  = $rootScope.searchKey;
   $scope.typeahead  = null;
 
@@ -38,7 +38,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   ***************************************************************/
   $scope.$on('$typeahead.select', function(event, value, index) {
     if (value !== undefined) {
-      $scope.goToSearch('search', $scope.searchkey);
+      $scope.goToSearch('search', $scope.searchKey);
       $scope.$apply();
     } else {
       $scope.goToSearch('search', 'All');
@@ -63,7 +63,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.goToSearch = function(searchType, searchKey){ /*jshint unused:false*/
     $(window).scrollTop(0);
     if (searchType === 'search') {
-      console.log('Search save', Business.search(searchType, $scope.searchKey));
+      Business.search(searchType, $scope.searchKey);
       $location.search('type', searchType);
       $location.path('/results');
       if ($scope.searchKey === '') {
@@ -86,10 +86,10 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   * data object with the search key 
   * params: type -- This is the code of the type that was clicked on
   *******************************************************************************/
-  $scope.goToLanding = function(route, searchType, searchkey){ /*jshint unused:false*/
+  $scope.goToLanding = function(route, searchType, searchKey){ /*jshint unused:false*/
     $(window).scrollTop(0);
     localCache.save('landingType', searchType);
-    localCache.save('landingCode', searchkey);
+    localCache.save('landingCode', searchKey);
     Business.landingPage('landing', route, true).then(function() {
       $location.path('/landing');
     });
