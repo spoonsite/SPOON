@@ -707,5 +707,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   callSearch();
+  
 }]);
 

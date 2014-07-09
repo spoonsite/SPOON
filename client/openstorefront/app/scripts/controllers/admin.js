@@ -88,14 +88,15 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     attributes.key = 'attributes';
     attributes.parentKey = null;
     attributes.data = $scope.filters;
-    attributes.gridOptions = { 
+    attributes.gridOptions = {
       data: 'myTree.getSelectedBranch().data',
       enableCellSelection: true,
       enableRowSelection: false,
       enableCellEdit: true,
+      multiSelect: true,
       columnDefs: [
         //
-        {field: 'name', displayName: 'Name', enableCellEdit: true}, 
+        {field: 'name', displayName: 'Name', enableCellEdit: true},
         {field:'key', displayName:'Key', enableCellEdit: true},
         {field:'src', displayName:'Icon Src', enableCellEdit: true},
         {field:'key', displayName:'Collection', cellTemplate: '<div class="ngCellText" ng-click="editCollection(row.getProperty(col.field))"><a>Edit Code Collection</a></div>', enableCellEdit: false, groupable: false, sortable: false}
