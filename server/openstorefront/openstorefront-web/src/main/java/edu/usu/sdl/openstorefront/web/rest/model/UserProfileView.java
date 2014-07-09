@@ -55,6 +55,10 @@ public class UserProfileView
 	@NotNull
 	@ParamTypeDescription("Timestamp (milliseconds since UNIX Epoch)")
 	private Date updateDts;
+	
+	@NotNull
+	@ParamTypeDescription("TEXT")
+	private String updateUser;
 
 	public UserProfileView()
 	{
@@ -128,6 +132,16 @@ public class UserProfileView
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getUpdateUser()
+	{
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser)
+	{
+		this.updateUser = updateUser;
 	}
 	
 }
