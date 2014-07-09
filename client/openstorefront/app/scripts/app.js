@@ -145,7 +145,7 @@ var app = angular
     } else {
       $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
     }
-  }
+  };
 
   $rootScope.setNav();
 }]);
