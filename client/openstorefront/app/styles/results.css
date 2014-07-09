@@ -575,3 +575,14 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
   color: #fff;
   background-color: #3d3d3d;
 }
+
+.section-headers {
+  padding: 8px;
+  color:black;
+  font-weight: bold;
+  line-height: 1.428571429;
+  vertical-align: top;
+/*  border-top: 1px solid #dddddd;*/
+  background-color: #cccccc;
+  border: 1px solid #c0c0c0;
+}
