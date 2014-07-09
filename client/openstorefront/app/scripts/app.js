@@ -23,7 +23,7 @@
 ***************************************************************/
 var app = angular
 // Here we add the dependancies for the app
-.module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor'])
+.module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor', 'ngGrid'])
 // Here we configure the route provider
 .config(function ($routeProvider, tagsInputConfigProvider) {
   $routeProvider
@@ -145,7 +145,7 @@ var app = angular
     } else {
       $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
     }
-  }
+  };
 
   $rootScope.setNav();
 }]);

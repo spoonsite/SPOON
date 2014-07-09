@@ -25,8 +25,8 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   $scope._scopename = 'nav';
   $scope.navLocation = 'views/nav/nav_main.html';
 
-  // Here we grab the rootScope searchkey in order to preserve the last search
-  $scope.searchkey = $rootScope.searchkey;
+  // Here we grab the rootScope searchKey in order to preserve the last search
+  $scope.searchKey = $rootScope.searchKey;
   
   $scope.typeahead  = null;
 
@@ -40,13 +40,21 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     $scope.typeahead  = Business.typeahead(Business.getData, 'name');
   }
 
+
   /***************************************************************
   * Catch the enter/select event here
   ***************************************************************/
   $scope.$on('$typeahead.select', function(event, value, index) {
-    $scope.goToSearch();
-    $scope.$apply();
+    $scope.searchKey = value;
+    if (value !== undefined) {
+      $scope.goToSearch();
+      $scope.$apply();
+    } else {
+      $scope.goToSearch();
+      $scope.$apply();
+    }
   });
+  
   
   /***************************************************************
   * Catch the navigation location change event here
@@ -61,8 +69,15 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * search key saved in the localCache
   ***************************************************************/
   $scope.goToSearch = function(){ /*jshint unused:false*/
-    $rootScope.searchkey = $scope.searchkey;
+    console.log('$scope.searchKey', $scope.searchKey);
+    
+    $rootScope.searchKey = $scope.searchKey;
+    $location.search({
+      'type': 'search',
+      'code': $scope.searchKey
+    });
     Business.search('search', $scope.searchKey, true).then(function (key) {
+
       if($location.path() === '/results') {
         $rootScope.$broadcast('$callSearch');
       } else {
@@ -106,7 +121,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   $scope.$watch('navLocation', function() {
     $timeout(function() {
       setUpDropdown('dropTheMenu');
-    });
+    }, 300);
   });
 
 }]);
