@@ -284,7 +284,7 @@ var closePartialDetails = function(results, details, filters, windowWidth) {
     'width': width + 'px'
   }, 200 , function() {});
   details.stop(true, true).animate({
-    'width': windowWidth - width + 'px',
+    'width': windowWidth - width - padding + 'px',
     'margin-left': width + padding + 'px'
   }, 200 , function() {/*complete animation*/});
 };
