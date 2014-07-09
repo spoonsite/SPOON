@@ -26,14 +26,14 @@ MOCKDATA.feedback = {
 
 };
 MOCKDATA.componentState = [
-   //
+  //
   {
     'id': 1,
     'state':'ssss',
     'desc':'DI2E Candidate'
   }
-   //  
-  ];
+//  
+];
 MOCKDATA.externalDepend = [
   //
   {
@@ -54,9 +54,9 @@ MOCKDATA.externalDepend = [
   }
   //  
   ];
-MOCKDATA.pointsContact = [
+  MOCKDATA.pointsContact = [
    //
-  {
+   {
     'position': 'Program POC',
     'name': 'Jill Sample',
     'email': 'jill.sample@someemail.com'
@@ -72,8 +72,8 @@ MOCKDATA.pointsContact = [
     'email': 'jennifer.sample@someemail.com'
   }
    //
-  ];
-MOCKDATA.componentEvalProgressBar = [
+   ];
+   MOCKDATA.componentEvalProgressBar = [
   //
   {
     'class1': 'barborder',
@@ -109,7 +109,7 @@ MOCKDATA.componentEvalProgressBar = [
   }
   //
   ];
-MOCKDATA.componentEvalProgressBarDates = [
+  MOCKDATA.componentEvalProgressBarDates = [
   //
   {
     'class1': 'barborder2',
@@ -137,6 +137,25 @@ MOCKDATA.componentEvalProgressBarDates = [
   }
   //
   ];
+  MOCKDATA.resultsComments = [
+  //
+  {
+    'name': 'Jill Sample',
+    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+    'date':'11:46 p.m. July 8, 2014'
+  },
+  {
+    'name': 'John Sample',
+    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+    'date':'7:46 a.m. July 9, 2014'
+  },
+  {
+    'name': 'Jackie Sample',
+    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+    'date':'8:07 a.m. July 10, 2014'
+  }
+//  
+];
 MOCKDATA.componentSummary = [
   //
   {
@@ -146,8 +165,8 @@ MOCKDATA.componentSummary = [
     'agency': 'AFRL JView Team',
     'di2emarketplace': 'https://storefront.di2e.net/marketplace/serviceItem/show/24'
   }
-  //
-  ];
+//
+];
 MOCKDATA.componentVitals = [
   //
   {
@@ -174,8 +193,8 @@ MOCKDATA.componentVitals = [
     'name': 'JCSFL Alignment',
     'desc': '8.9.5 Integrate Enterprise Applications'
   }
-  //
-  ];
+//
+];
 MOCKDATA.localAssetArtifacts = [
   //
   {
@@ -205,8 +224,8 @@ MOCKDATA.localAssetArtifacts = [
   {
     'name': 'Training',
     'desc':'none'}
-  //
-  ];
+//
+];
 MOCKDATA.scoreTable = [
   //
   {
@@ -314,8 +333,8 @@ MOCKDATA.scoreTable = [
     'ranking': 3,
     'icon': 'whatever'
   }
-  //  
-  ];
+//  
+];
 MOCKDATA.tagsList = [
   //
   'Application',

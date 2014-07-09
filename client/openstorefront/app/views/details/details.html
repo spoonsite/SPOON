@@ -1,85 +1,38 @@
 <!-- <p>This is the details/details view.</p> -->
-<!-- <div class="row"> -->
-<!-- 	<div class="col-md-12"> -->
-<div class="component-details">
-  <div class="component2-div row" style="margin-top: -10px">
+<div class="component-detailsd">
+  <div class="component2-divssss row" style="margin-top: 10px; margin-bottom:25px">
    <div class="col-md-3">
-
-
-    <div class="panel panel-default">
-      <div class="panel-heading">
-       <h3 class="panel-title">Categories</h3>
-     </div>
-     <div class="panel-body">
-      <div data-ng-repeat="tag in details.categories">
-                  <ul>
-            <li> <a href="">{{tag.desc}}</a></li>
-          </ul>
-<!--         <p style="margin: 0px 0px 0px 20px">
+    <div class="section-headers"><h4>Categories</h4></div>
+    <div data-ng-repeat="tag in details.categories" style="margin-left: 30px">
+      <ul>
+        <li> {{tag.desc}}</li>
+      </ul>                   
+    </div>
+      <!-- <div class="section-headers"><h4>Resources</h4></div> -->
+      <!--   <p style="margin-top: 5px; margin-bottom: 0px"><strong>Categories:</strong></p>
+        <div data-ng-repeat="tag in details.categories">
+         <p style="margin: 0px 0px 0px 20px">
           <a href="">
-            {{tag.desc}}
-          </a>
-        </p> -->
-      </div>
+           {{tag.desc}}
+         </a>
+       </p>
+      </div> -->
+</div>
+<div class="col-md-3">
+    <div class="section-headers"><h4>Features</h4></div>
+    <div data-ng-repeat="tag in details.features" style="margin-left: 30px">
+      <ul>
+        <li> {{tag.desc}}</li>
+      </ul>                   
     </div>
+</div>
+<div class="col-md-3">
+<div class="section-headers"><h4>Operational Status</h4></div>
+  <div style="margin-left: 30px">
+      <ul>
+        <li> {{details.operationStatus}}</li>
+      </ul>
   </div>
-
-<!--   <p style="margin-top: 5px; margin-bottom: 0px"><strong>Categories:</strong></p>
-  <div data-ng-repeat="tag in details.categories">
-   <p style="margin: 0px 0px 0px 20px">
-    <a href="">
-     {{tag.desc}}
-   </a>
- </p>
-</div> -->
-
-</div>
-
-
-
-
-
-
-
-<div class="col-md-3">
-
- <div class="panel panel-default">
-      <div class="panel-heading">
-       <h3 class="panel-title">Features</h3>
-     </div>
-     <div class="panel-body">
-<!-- 
-        <p style="margin-top: 5px; margin-bottom: 0px"><strong>Features:</strong></p> -->
-        <div data-ng-repeat="tag in details.features">
-
-          <ul>
-            <li> <a href="">{{tag.desc}}</a></li>
-          </ul>
-<!--              <p style="margin: 0px 0px 0px 20px">
-              <a href="">
-               {{tag.desc}}
-             </a>
-           </p> -->
-
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="col-md-3">
- <div class="panel panel-default">
-      <div class="panel-heading">
-       <h3 class="panel-title">Operational Status</h3>
-     </div>
-     <div class="panel-body">
-      <p style="margin-top: 5px">
-    <!--    <strong>
-        Operational Status:
-      </strong> -->
-      {{details.operationStatus}}
-    </p>
-    </div>
 </div>
 <!-- <p style="margin-top: -10px">
   <strong>
@@ -89,39 +42,22 @@
 </p>  
  -->
 
-</div>
 
 <div class="col-md-3">
- <div class="panel panel-default">
-      <div class="panel-heading">
-       <h3 class="panel-title">Component State</h3>
-     </div>
-     <div class="panel-body">
-      <p style="margin-top: 5px">
-    <!--    <strong>
-        Operational Status:
-      </strong> -->
+ <div class="section-headers"><h4>Component State</h4></div>
+  <div style="margin-left: 30px">
+      <ul>
+        <li> {{getEvaluationState()}}</li>
+      </ul>
+  </div> 
+<!--       <p style="margin-top: 5px">
        {{getEvaluationState()}}
-    </p>
-    </div>
+    </p> -->
+ </div>
+ 
 </div>
-<!-- <p style="margin-top: -10px">
-  <strong>
-    Component State:
-  </strong>
-  {{getEvaluationState()}}
-</p>  
- -->
-
 </div>
-
-
-
-
-
-
-    </div>
-  </div>
+</div>
   <!-- </div> -->
   <!-- </div> -->
 <!-- <div class="component2-div-title">DESCRIPTION</div>
@@ -130,7 +66,9 @@
     {{details.description}}
   </div>
 </div> -->
-<div class="component2-div-title">RESOURCES</div>
+
+
+<div class="section-headers"><h4>Resources</h4></div>
 <div class="container component2-div">
   <div class="col-sm-12">
 
@@ -177,7 +115,7 @@
     <div style="position: relative; clear: both"></div>
   </div>
 </div>
-<div class="component2-div-title">EVALUATION RESOURCES</div>
+<!-- <div class="component2-div-title">EVALUATION RESOURCES</div>
 <div class="container component2-div">
   <div class="col-sm-12">
     <div class="detailSection">
@@ -207,10 +145,10 @@
       </table>              
     </div>
   </div>
-</div>
-
-
-<div class="component2-div-title">RELATIONSHIPS</div>
+</div> -->
+<br>
+<div class="section-headers"><h4>Relationships</h4></div>
+<!-- <div class="component2-div-title">RELATIONSHIPS</div> -->
 <div class="container component2-div">
   <div class="col-sm-12">
     <div>
@@ -229,8 +167,9 @@
     </div>
   </div>
 </div>
-
-<div class="component2-div-title">SCREENSHOTS / MEDIA</div>
+<br>
+<div class="section-headers"><h4>Screenshots / Media</h4></div>
+<!-- <div class="component2-div-title">SCREENSHOTS / MEDIA</div> -->
 <div class="container component2-div">
   <div class="col-sm-6">
     <div class="detailSection">

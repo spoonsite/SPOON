@@ -70,6 +70,11 @@ app.factory('business', ['localCache', '$http', '$q', function (localCache, $htt
   business.getComponentEvalProgressBarDates = function() {
     return MOCKDATA.componentEvalProgressBarDates;
   };
+
+  business.getResultsComments = function() {
+    return MOCKDATA.resultsComments;
+  };
+
   business.getTagsList = function(){
     return MOCKDATA.tagsList;
   };
