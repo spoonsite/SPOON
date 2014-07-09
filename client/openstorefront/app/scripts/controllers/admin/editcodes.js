@@ -41,20 +41,22 @@ app.controller('AdminEditcodesCtrl', ['$scope','business',  function ($scope, Bu
     enableRowSelection: true,
     enableCellEdit: true,
     multiSelect: true,
+    selectWithCheckboxOnly: true,
+    showSelectionCheckbox: true,
     // showGroupPanel: true,
     columnDefs: [
       //
-      {field: 'type', displayName: 'Name', enableCellEdit: true},
-      {field:'code', displayName:'Code', enableCellEdit: true},
-      {field:'desc', displayName:'Description', enableCellEdit: true},
-      {field:'longDesc', displayName:'Long Description', enableCellEdit: true},
-      {field:'checked', displayName:'Start With Filter Applied', enableCellEdit: true, cellTemplate: '<input class="" type="checkbox" ng-checked="row.getProperty(col.field)" ng-model="COL_FIELD"/>'},
-      {field:'landing', displayName:'Collection', cellTemplate: '<div class="ngCellText" ng-click="editLanding(row.getProperty(col.field))"><a>Edit Landing Page</a></div>', enableCellEdit: false, groupable: false, sortable: false}
+      {field: 'type', displayName: 'Name', width: '***', resizable: false, enableCellEdit: true},
+      {field:'code', displayName:'Code', width: '**', resizable: false, enableCellEdit: true},
+      {field:'desc', displayName:'Description', width: '***', enableCellEdit: true},
+      {field:'longDesc', displayName:'Long Description', width: '****', enableCellEdit: true},
+      {field:'checked', displayName:'Apply Filter', width: '**', resizable: false, enableCellEdit: false, cellTemplate: '<div class="ngSelectionCell "><input class="" type="checkbox" ng-checked="row.getProperty(col.field)" ng-model="COL_FIELD"/></div>'},
+      {field:'landing', displayName:'Landing Page', width: '***', resizable: false, cellTemplate: '<div ng-if="row.getProperty(col.field)" class="imitateLink ngCellText " ng-click="editLanding(row.getProperty(col.field))"><a>Edit Landing Page</a></div> <div ng-if="!row.getProperty(col.field)" class="imitateLink ngCellText " ng-click="editLanding(\'\')"><a>Add Landing Page</a></div>', enableCellEdit: false, groupable: false, sortable: false}
     //
     ]
   };
 
-  $scope.$watch("collectionContent", function() {
+  $scope.$watch('collectionContent', function() {
     // This is where we know something changed on the model for the collection that
     // The user was editing. (Useful for inline editing, possibly useful for modal editing as well.)
     // console.log('Checks', $scope.collectionContent[0].longDesc);
