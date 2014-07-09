@@ -137,6 +137,25 @@ MOCKDATA.componentEvalProgressBarDates = [
   }
   //
   ];
+MOCKDATA.resultsComments = [
+  //
+  {
+    'name': 'Jill Sample',
+    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+    'date':'11:46 p.m. July 8, 2014'
+  },
+  {
+    'name': 'John Sample',
+    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+    'date':'7:46 a.m. July 9, 2014'
+  },
+  {
+    'name': 'Jackie Sample',
+    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+    'date':'8:07 a.m. July 10, 2014'
+  }
+  //  
+  ];  
 MOCKDATA.componentSummary = [
   //
   {

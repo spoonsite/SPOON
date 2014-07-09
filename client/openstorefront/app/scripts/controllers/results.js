@@ -32,6 +32,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.componentEvalProgressBar      = Business.getComponentEvalProgressBar();
   $scope.componentEvalProgressBarDates      = Business.getComponentEvalProgressBarDates();
   $scope.componentState      = Business.getComponentState();
+  $scope.resultsComments      = Business.getResultsComments();
 
   $scope.tagsList.sort();
 

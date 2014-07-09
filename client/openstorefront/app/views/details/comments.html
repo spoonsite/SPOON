@@ -1,11 +1,23 @@
 <!-- <p>This is the details/comments view.</p> -->
-    
-    <div class="component-div-title">Comments</div>
-    <div class="container component-div">
-      <div class="col-sm-12">
-        Add a comment<br>
-        <textarea cols="100"></textarea><br>
-        <br>
-        <button class="btn btn-primary">Post</button> 
-      </div>
-    </div>
+<div class="section-headers"><h4>Comments</h4></div>
+<!-- <div class="component-div-title">Comments</div> -->
+<div class="container component2-div">
+	<div class="col-sm-12">
+		<br>
+		<div data-ng-repeat="item in resultsComments" >
+			<span class="section-headers">{{item.name}}</span><br>
+			<p style="border-bottom: 1px lightgray solid;padding: 15px">
+				{{item.comment}}
+				<br><br>
+				{{item.date}}
+				<br>
+			</p>
+		</div>
+
+		<br>
+		<b>Add a comment</b><br>
+		<textarea cols="100"></textarea><br>
+		<br>
+		<button class="btn btn-primary">Post</button> 
+	</div>
+</div>
