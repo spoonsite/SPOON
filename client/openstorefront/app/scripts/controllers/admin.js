@@ -87,8 +87,8 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     attributes.key = 'attributes';
     attributes.parentKey = null;
     attributes.data = $scope.filters;
-    attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
     attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
+    attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
 
     var lookupTables = {
       label: 'Manage Lookups',
