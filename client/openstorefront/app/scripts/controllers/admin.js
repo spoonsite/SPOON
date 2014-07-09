@@ -88,22 +88,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     attributes.key = 'attributes';
     attributes.parentKey = null;
     attributes.data = $scope.filters;
-    attributes.gridOptions = {
-      data: 'myTree.getSelectedBranch().data',
-      enableCellSelection: true,
-      enableRowSelection: false,
-      enableCellEdit: true,
-      multiSelect: true,
-      columnDefs: [
-        //
-        {field: 'name', displayName: 'Name', enableCellEdit: true},
-        {field:'key', displayName:'Key', enableCellEdit: true},
-        {field:'src', displayName:'Icon Src', enableCellEdit: true},
-        {field:'key', displayName:'Collection', cellTemplate: '<div class="ngCellText" ng-click="editCollection(row.getProperty(col.field))"><a>Edit Code Collection</a></div>', enableCellEdit: false, groupable: false, sortable: false}
-      //
-      ],
-      showGroupPanel: true
-    };
     attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
     attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
 
@@ -162,9 +146,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * admin clicks on
   ***************************************************************/
   $scope.editor = function(branch) {
-    if(branch.gridOptions) {
-      $scope.gridOptions = JSON.parse(JSON.stringify(branch.gridOptions));
-    }
     $scope.incLoc = branch.location;
     if (branch.parentKey === 'attributes' && branch.key !== 'landing') {
       $scope.grabCollection($scope.collectionSelection.key);
