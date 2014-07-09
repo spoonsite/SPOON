@@ -121,7 +121,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   $scope.$watch('navLocation', function() {
     $timeout(function() {
       setUpDropdown('dropTheMenu');
-    });
+    }, 300);
   });
 
 }]);

@@ -315,7 +315,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         if (!isEmpty($location.search()))
         {
           query = $location.search();
-          console.log('key', query);
           if (query.type && query.code) {
             type = query.type;
             code = query.code;
