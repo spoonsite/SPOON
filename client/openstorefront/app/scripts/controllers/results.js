@@ -32,6 +32,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.componentEvalProgressBar      = Business.getComponentEvalProgressBar();
   $scope.componentEvalProgressBarDates      = Business.getComponentEvalProgressBarDates();
   $scope.componentState      = Business.getComponentState();
+  $scope.resultsComments      = Business.getResultsComments();
 
   $scope.tagsList.sort();
 
@@ -291,9 +292,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   var callSearch = function() {
     Business.search(false, false, true).then(
-
     //This is the success function on returning a value from the business layer 
     function(key) {
+      
       var type = 'all';
       var code = '';
       var query = null;
@@ -707,5 +708,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   callSearch();
+  
 }]);
 

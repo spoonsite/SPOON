@@ -1,0 +1,24 @@
+.gridStyle {
+  border: 1px solid rgb(212,212,212);
+  width: 100%;
+  display: inline-block;
+}
+.gridStyle .ngViewport {
+  max-height: 100%;
+  display:inline;
+}
+.gridStyle .ngViewport .ngCanvas {
+  width:100%;
+}
+
+.gridStyle .ngTopPanel{
+  width: 100%;
+}
+
+.gridStyle .ngViewport .ngCanvas .ngRow {
+  width: 100%;
+  border-bottom: 1px solid transparent;
+}
+.gridStyle .ngViewport .ngCanvas .ngRow .ngCell:last-child .ngCellElement input {
+  width: 100%;
+}
