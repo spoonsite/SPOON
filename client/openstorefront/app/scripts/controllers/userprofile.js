@@ -24,18 +24,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
   $scope.defaultTitle     = 'Browse Categories';
   $scope.watches          = Business.getWatches();
   $scope.total            = Business.getData();
-  $scope.feedbackDetails  = [
-    //
+  $scope.feedbackDetails  = [    
     {'id':'1','date':'Jan 4, 2014 8:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jim Calhoun'},
     {'id':'2','date':'01/05/2014 9:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jill Calhoun'},
     {'id':'3','date':'01/06/2014 10:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jay Calhoun'}
-    /*,
-    {'id':'4','date':'01/07/2014 11:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jade Calhoun'},
-    {'id':'5','date':'01/08/2014 12:25 pm','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jesse Calhoun'},
-    {'id':'6','date':'01/09/2014 8:25 pm','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'JaLayne Calhoun'}*/
-  //
   ];
-  $scope.user             = {
+  
+  $scope.user   = {
     'userName': 'John Q. Sample',
     'userRole': 'Admin',
     'userMemberSince': '01/10/2012',

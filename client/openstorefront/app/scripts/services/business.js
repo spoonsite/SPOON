@@ -17,11 +17,16 @@
 
 /*global isEmpty*/
 
-app.factory('business', ['localCache', '$http', '$q', function (localCache, $http, $q) { /*jshint unused: false*/
+app.factory('business', ['localCache', '$http', '$q', 'userservice',  function (localCache, $http, $q, userservice) { /*jshint unused: false*/
   // 60 seconds until expiration
   var expireTime = 60 * 1000;
   var business = {};
-
+  
+  //Services
+  business.userservice = userservice;
+  
+  
+  //Shared Services  
   business.getFilters = function() {
     return MOCKDATA.filters;
   };
