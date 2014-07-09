@@ -71,7 +71,7 @@ app.factory('business', ['localCache', '$http', '$q', function (localCache, $htt
     return MOCKDATA.componentEvalProgressBarDates;
   };
 
-    business.getResultsComments = function() {
+  business.getResultsComments = function() {
     return MOCKDATA.resultsComments;
   };
 
