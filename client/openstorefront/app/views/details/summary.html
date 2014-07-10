@@ -6,7 +6,7 @@
 					<table class="table table-bordered table-hover" ng-repeat="row in componentSummary">
 						<tbody>
 							<tr>
-								<td class="warning valign" colspan="3"><h4>Component Summary</h4></td>
+								<td class="warning" colspan="3"><h4>Component Summary</h4></td>
 							</tr>	 						
 							<tr>
 								<div class="col-md-4">
@@ -53,13 +53,24 @@
 				</div>	
 				<div>
 					<div class="section-headers"><h4>Component Description</h4></div>
-<!-- 					<p class="results-content-description">
-						<b>Component Description:</b>
-					</p> -->
 					<p class="results-content-description" style="margin-left: 0px">
-{{details.name}} is a Java-based API (application programmer’s interface) that was developed to reduce the time, cost, & effort associated with the creation of computer visualization applications.  JView provides the programmer with the ability to quickly develop 2-dimensional and 3-dimensional visualization applications that are tailored to address a specific problem.
-
+						{{details.description}}
 					</p>
+					<br>
+				</div>
+
+				<div>
+				<table class="table table-bordered table-hover">
+					<tbody>
+						<tr>
+							<td class="warning" colspan="2"><h4>Component Vitals</h4></td>
+						</tr>
+						<tr data-ng-repeat="row in componentVitals">
+							<td style="vertical-align:middle"  width="50%">{{row.name}}</td>
+							<td style="vertical-align:middle"  width="50%">{{row.desc}}</td>
+						</tr>
+					</tbody>
+				</table>
 				</div>
 <!-- 				<div>
 					<p>
@@ -83,7 +94,7 @@
 				</div> -->
 			</div>
 			<!-- table-striped -->
-      <div class="col-md-12">
+<!--       <div class="col-md-12">
         <table class="table table-bordered table-hover table-condensed">
           <tbody>
             <tr>
@@ -125,12 +136,12 @@
 				</tr>										
 			</tbody>
 		</table>
-	</div>
+	</div> -->
     </div>
   </div>
   <div class="col-md-3">
     <div class="table-responsive">
-     <table class="table table-bordered table-hover " ng-repeat="row in componentSummary">
+<!--      <table class="table table-bordered table-hover " ng-repeat="row in componentSummary">
       <tbody>
        <tr>
         <td class="warning"  colspan="3"><h4>Component Scoring</h4></td>
@@ -143,13 +154,17 @@
         <td class="success" style="vertical-align:middle"  colspan="2"><h5>Evaluation Date</h5></td>
         <td class="success"  colspan="1"><h5>{{row.evaluationdate}}</h5></td>
       </tr>
-   </tbody> <!-- ???? -->
- </table><!-- ???? -->
-
-<table class="table table-bordered table-hover " >
+   </tbody> 
+ </table>
+ -->
+<table class="table table-bordered table-hover">
       <tbody>
-      	<tr>
-        <td class="warning"  colspan="3"><h4>Component Score Card</h4></td>
+      <tr>
+        <td class="warning" colspan="3"><h4>Component Reusability Factor</h4></td>
+      </tr>
+       <tr data-ng-repeat="row in componentSummary">
+        <td class="success" style="vertical-align:middle"  colspan="2"><h5>Evaluation Date</h5></td>
+        <td class="success"  colspan="1"><h5>{{row.evaluationdate}}</h5></td>
       </tr>
       <tr data-ng-repeat="row in scoreCard">
         <!-- <td style="vertical-align:middle" width="50%">{{row.name}}</td> -->
@@ -164,7 +179,7 @@ data-original-title="<b>{{row.name}}</b> ranking = {{row.ranking}}"  data-conten
  </table>
 
 
- <table class="table table-bordered table-hover">
+<!--  <table class="table table-bordered table-hover">
   <tbody>
    <tr>
     <td class="warning" colspan="2"><h4>Component Vitals</h4></td>
@@ -175,7 +190,7 @@ data-original-title="<b>{{row.name}}</b> ranking = {{row.ranking}}"  data-conten
   </tr>
 </tbody>
 </table>
-</div>
+ --></div>
 </div>
 <div class="col-md-1"></div>
 </div>
