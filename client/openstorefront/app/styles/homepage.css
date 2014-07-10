@@ -240,7 +240,11 @@ color: gray;
   height: 50px;
 }
 .defaultSearch form div.navSearchBar{
-  margin-right: 165px;
+  margin-right: 175px;
+}
+
+.defaultSearch form div.searchAllButton{
+  margin-left: 10px;
 }
 
 
