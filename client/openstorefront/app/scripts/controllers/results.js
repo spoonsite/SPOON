@@ -606,7 +606,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $location.search({
       'type': 'single',
       'code': id
-    })
+    });
     $location.path('/results');
   };
 
