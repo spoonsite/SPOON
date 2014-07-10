@@ -53,6 +53,9 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
 
   // grab the custom filters (aka groups).
   $scope.filters    = Business.getFilters();
+  $scope.filters = _.filter($scope.filters, function(item) {
+    return item.showOnFront;
+  });
   $scope.goToLand   = false;
 
   /*******************************************************************************
