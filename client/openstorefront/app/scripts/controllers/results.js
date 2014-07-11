@@ -127,7 +127,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   // These variables are used for the pagination
   $scope.filteredTotal  = null;
-  $scope.data           = null;
+  $scope.data           = {};
   $scope.rowsPerPage    = 200;
   $scope.pageNumber     = 1;
   $scope.maxPageNumber  = 1;
@@ -162,9 +162,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
       /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
-        $scope.data = $scope.total;
-        $scope.data.data = $scope.data;
-        _.each($scope.data, function(item){
+        $scope.data.data = $scope.total;
+        _.each($scope.data.data, function(item){
           item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
         });
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
@@ -174,7 +173,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   $scope.$watch('data', function() {
-    if ($scope.data) {
+    if ($scope.data && $scope.data.data) {
       // max needs to represent the total number of results you want to load
       // on the initial search.
       var max = 20;
@@ -406,11 +405,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     if ($scope.filteredTotal) {
-      $scope.data = $scope.filteredTotal.slice(((page - 1) * $scope.rowsPerPage), (page * $scope.rowsPerPage));
-      $scope.data.data = $scope.data;
+      $scope.data.data = $scope.filteredTotal.slice(((page - 1) * $scope.rowsPerPage), (page * $scope.rowsPerPage));
     } else {
-      $scope.data = [];
-      $scope.data.data = $scope.data;
+      $scope.data.data = [];
     }
     $scope.applyFilters();
 
@@ -591,9 +588,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     // Set the data that will be displayed to the first 'n' results of the filtered data
-    $scope.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
-    $scope.data.data = $scope.data;
-
+    $scope.data.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
+    
     // after a slight wait, reapply the popovers for the results ratings.
     $timeout(function() {
       setupPopovers();
