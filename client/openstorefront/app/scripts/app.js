@@ -145,6 +145,20 @@ var app = angular
     $('#' + id).modal('show');
   });
 
+  /***************************************************************
+  * These functions trigger and untrigger loading masks
+  ***************************************************************/
+  $rootScope.$on('$TRIGGERLOAD', function(event, value){
+    $timeout(function() {
+      $rootScope.$broadcast('$LOAD', value);
+    }, 10);
+  });
+  $rootScope.$on('$TRIGGERUNLOAD', function(event, value){
+    $timeout(function() {
+      $rootScope.$broadcast('$UNLOAD', value);
+    }, 10);
+  });
+
   $rootScope.openModal = function(id, current) {
     $rootScope.current = current;
     $rootScope.$broadcast('$' + id);
