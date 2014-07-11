@@ -18,11 +18,11 @@
       <div class="col-sm-12">
         <h1>{{details.details.name}}<span>{{details.details.owner}} ({{details.details.type[0].code}})</span>
           <br>
-          <button class='btn btn-default' ng-show="showWatchButton" ng-click="addToWatches(details.details.id)">Add To Watches <i class="fa fa-thumbs-o-up imitateLink"></i>
+          <button class='btn btn-default' ng-show="!details.details.watched" ng-click="addToWatches(details.details.id)">Add To Watches <i class="fa fa-thumbs-o-up imitateLink"></i>
           </button>
-          <button class='btn btn-default' ng-show="!showWatchButton" ng-click="openModal('profileModal', 'Watches')">View Watches&nbsp;<i class="fa fa-eye imitateLink"></i>
+          <button class='btn btn-default' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')">View Watches&nbsp;<i class="fa fa-eye imitateLink"></i>
           </button>
-          <button class='btn btn-default' ng-show="!showWatchButton" ng-click="removeFromWatches(details.details.id)">Remove From Watches&nbsp;<i class="fa fa-thumbs-o-down imitateLink"></i>
+          <button class='btn btn-default' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.id)">Remove From Watches&nbsp;<i class="fa fa-thumbs-o-down imitateLink"></i>
           </button>
           <button class='btn btn-default' id="permenantLink" ng-click="goToFullPage(details.details.id)">Go To Full Page&nbsp;<i class="fa fa-copy"></i>
           </button>
@@ -117,4 +117,7 @@
       </div>
     </div>
   </div>
+</div>
+<!-- This is the results description modal (the contents are handled in this controller) -->
+<div modal controller-name="ResultsCtrl" modalId='descModal' modal-classes="classlist">
 </div>

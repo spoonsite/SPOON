@@ -16,33 +16,31 @@
 
 'use strict';
 
+/*global isEmpty*/
+
 app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
 
   // here we grab the default information
   $scope.data              = Business.getData();
-  $scope.watches           = Business.getWatches();
+  $scope.data.data         = $scope.data;
+  $scope.prosConsList      = Business.getProsConsList();
+
   $scope.single            = true;
   $scope.details           = {};
   $scope.details.details   = null;
+
+  $scope.modal             = {};
+  $scope.modal.isLanding   = false;
 
   /***************************************************************
   * This function is called once we have the search request from the business layer
   ***************************************************************/
   $scope.updateDetails = function(id){
-    console.log('id', id);
-    
-    $scope.showWatchButton = !!!(_.where($scope.watches, {'id': id}).length);
-    if (!openClick) {
-      buttonOpen();
-    }
-
-    var temp =  _.where($scope.data, {'id': parseInt(id)})[0];
-    
+    var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
     if (temp)
     {
       $scope.details.details = temp;
     }
-    $scope.showDetails = true;
   };
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search

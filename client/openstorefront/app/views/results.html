@@ -121,7 +121,7 @@ limitations under the License.
           <div class="searchDescription">
             <!-- fa fa-file-text, fa fa-book, fa fa-info-circle-->
             <!-- glyphicon glyphicon-info-sign -->
-            <span ng-click="setupModal(''); openModal('descModal'); " class="imitateLink" > {{searchDescription}} <i class="glyphicon glyphicon-info-sign"></i></span>
+            <span ng-click="setupModal(modal, ''); openModal('descModal'); " class="imitateLink" > {{searchDescription}} <i class="glyphicon glyphicon-info-sign"></i></span>
           </div>
         </div>
         <component-list click-callback="updateDetails" class-list="" data="data" cols="3" ></component-list>
@@ -136,11 +136,6 @@ limitations under the License.
     <div ng-include="'views/details/fulldetails.html'"></div>
   </div>
   <!-- End Page 2 -->
-  <!-- This is the results description modal (the contents are handled in this controller) -->
-  <div modal controller-name="ResultsCtrl" modalId='descModal' modal-classes="classlist">
-  </div>
-
-
 
   <!-- This is replaced with a div that triggers the dom manipulation elements -->
   <!-- This is the best way to handle these kind of things with angular... -->

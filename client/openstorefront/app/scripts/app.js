@@ -71,7 +71,7 @@ var app = angular
   });
 })
 // here we add the .run function for intial setup and other useful functions
-.run(['$rootScope', 'localCache', 'business', '$location', '$route', '$timeout', function ($rootScope, localCache, Business, $location, $route, $timeout) {/* jshint unused: false*/
+.run(['$rootScope', 'localCache', 'business', '$location', '$route', '$timeout', '$q', function ($rootScope, localCache, Business, $location, $route, $timeout, $q) {/* jshint unused: false*/
 
   $rootScope._scopename = 'root';
 
@@ -168,6 +168,35 @@ var app = angular
     $rootScope.$broadcast('$' + id);
     $rootScope.$broadcast('updateBody');
     $rootScope.$broadcast('$viewModal', id);
+  };
+
+  $rootScope.setupModal = function(modal, classNames) {
+    var deferred = $q.defer();
+    if (classNames !== '') {
+      modal.classes = classNames;
+      modal.nav = {
+        'current': 'Write a Review',
+        'bars': [
+          //
+          {
+            'title': 'Write a Review',
+            'include': 'views/reviews/newfeedback.html'
+          }
+        //  
+        ]
+      };
+      deferred.resolve();
+    } else {
+      modal.nav = '';
+      deferred.resolve();
+    }
+
+    if (classNames === '' && modal.isLanding) {
+      modal.classes = 'fullWidthModal';
+    } else if (classNames === '') {
+      modal.classes = '';
+    }
+    return deferred.promise;
   };
 
 }]);
