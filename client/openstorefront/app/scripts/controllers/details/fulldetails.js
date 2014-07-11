@@ -29,7 +29,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentEvalProgressBarDates = Business.getComponentEvalProgressBarDates();
   $scope.componentState                = Business.getComponentState();
   $scope.resultsComments               = Business.getResultsComments();
-  $scope.watches           = Business.getWatches();
+  $scope.watches                       = Business.getWatches();
 
 
   $scope.tabs = {

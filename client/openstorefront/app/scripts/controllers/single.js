@@ -36,6 +36,10 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   * This function is called once we have the search request from the business layer
   ***************************************************************/
   $scope.updateDetails = function(id){
+    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
+    $timeout(function() {
+      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+    }, 1500);
     var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
     if (temp)
     {
@@ -88,9 +92,5 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     });
     //
   };
-  $scope.$emit('$TRIGGERLOAD', 'singleLoader');
-  $timeout(function() {
     callSearch();
-    $scope.$emit('$TRIGGERUNLOAD', 'singleLoader');
-  }, 1500);
 }]);
