@@ -40,50 +40,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   // $scope.date1 = moment();
 
-  $scope.expertise = [
-    //
-    {'value':'1', 'label': 'Less than 1 month'},
-    {'value':'2', 'label': 'Less than 3 months'},
-    {'value':'3', 'label': 'Less than 6 months'},
-    {'value':'4', 'label': 'Less than 1 year'},
-    {'value':'5', 'label': 'Less than 3 years'},
-    {'value':'6', 'label': 'More than 3 years'}
-  //
-  ];
-  
-  $scope.userRoles = [
-    //
-    {'code':'ENDUSER', 'description': 'User'},
-    {'code':'DEV', 'description': 'Developer'},
-    {'code':'PM', 'description': 'Project Manager'}
-  //
-  ];
 
-  $scope.tabs = {
-    'current': null,
-    'bars': [
-      //
-      {
-        'title': 'Summary',
-        'include': 'views/details/summary.html'
-      },
-      {
-        'title': 'Details',
-        'include': 'views/details/details.html'
-      },
-      {
-        'title': 'Reviews',
-        'include': 'views/details/reviews.html'
-      },
-      {
-        'title': 'Comments',
-        'include': 'views/details/comments.html'
-      }
-    //
-    ]
-  };
 
-  $scope.selectedTab = $scope.tabs[0];
 
   //console.log("hi") ;
   $scope.setSelectedTab = function(tab) {
@@ -138,7 +96,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.searchCode         = null;
   $scope.searchTitle        = null;
   $scope.searchDescription  = null;
-  $scope.details            = null;
+  $scope.details            = {};
+  $scope.details.details    = null;
   $scope.isPage1            = true;
   $scope.showSearch         = false;
   $scope.showWatchButton    = false;
@@ -204,6 +163,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $timeout(function(){
       $scope.filters = Business.getFilters();
       $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
         $scope.data = $scope.total;
         _.each($scope.data, function(item){
@@ -211,13 +171,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         });
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
-      }, 1500);
-    }, 1500);
-    
-
-
-
-    /*This is simulating the wait time for building the data so that we get a loader*/
+      }, 10);
+    }, 10);
   };
 
   $scope.initializeData = function(key) {
@@ -242,10 +197,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       var foundCollection = null;
       var type = '';
       
-      if ($scope.searchKey === 'single') {
-        $scope.updateDetails($scope.searchCode);
-        $scope.single = true;
-      } else if (_.contains(keys, $scope.searchKey)) {
+      if (_.contains(keys, $scope.searchKey)) {
         $scope.searchGroupItem    = _.where($scope.filters, {'key': $scope.searchKey})[0];
         $scope.searchType         = $scope.searchGroupItem.name;
         $scope.showSearch         = true;
@@ -603,10 +555,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     
     if (temp)
     {
-      $scope.details = temp;
+      $scope.details.details = temp;
     }
     $scope.showDetails = true;
-    $scope.getEvaluationState();
   };
 
   /***************************************************************
@@ -626,10 +577,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.goToFullPage = function(id){
     $location.search({
-      'type': 'single',
-      'code': id
+      'id': id
     });
-    $location.path('/results');
+    $location.path('/single');
   };
 
   /***************************************************************
@@ -662,19 +612,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $location.path('/userprofile');
   };
 
-  /***************************************************************
-  * This function does the route redirection to the user profile path in order
-  * to allow the user to view their watches.
-  ***************************************************************/
-  $scope.getEvaluationState = function () {
-    if ($scope.details && $scope.details.evaluationLevel !== undefined) {
-      var code = $scope.details.evaluationLevel[0].code;
-      var stateFilter = _.where($scope.filters, {'key': 'evaluationLevel'})[0];
-      var item = _.where(stateFilter.collection, {'code': code})[0];
-      return item.type;
-    }
-    return '';
-  };
+
 
   /***************************************************************
   * This function resets the filters in the results page in order to clear

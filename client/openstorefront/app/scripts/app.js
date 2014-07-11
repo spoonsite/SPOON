@@ -47,6 +47,10 @@ var app = angular
     templateUrl: 'views/landing.html',
     controller: 'LandingCtrl'
   })
+  .when('/single', {
+    templateUrl: 'views/single.html',
+    controller: 'SingleCtrl'
+  })
   .otherwise({
     redirectTo: '/'
   });
@@ -107,7 +111,7 @@ var app = angular
     // console.log('next', next);
     // console.log('current', current);
     // console.log('path', $location.path());
-    if (!$location.path() || $location.path() !== '/results') {
+    if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single')) {
       $location.search({});
     }
     if (!$location.path() || $location.path() === '/') {
