@@ -38,13 +38,13 @@ angular.module('openstorefrontApp')
       * to remove and reapply the modal body.
       ***************************************************************/
       parent.$on('updateBody', function(event) { /* jshint unused: false */
-        if (parent.nav !== undefined && parent.nav !== null) {
-          scope.nav = parent.nav;
+        if (parent.modal && parent.modal.nav !== undefined && parent.modal.nav !== null) {
+          scope.nav = parent.modal.nav;
         }
         scope.body = null;
         scope.body = 'views/modalDefaults/body.html';
-        if (parent.classes !== undefined && parent.classes !== null) {
-          scope.classes = parent.classes;
+        if (parent.modal && parent.modal.classes !== undefined && parent.modal.classes !== null) {
+          scope.classes = parent.modal.classes;
         }
       });
 

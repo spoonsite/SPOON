@@ -23,16 +23,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope._scopename         = 'results';
   $scope.tagsList           = Business.getTagsList();
   $scope.prosConsList       = Business.getProsConsList();
-  $scope.scoreCard          = Business.getScoreCard();
-  $scope.externalDepend     = Business.getExternalDepend();
-  $scope.localAssetArtifacts = Business.getLocalAssetArtifacts();
-  $scope.componentVitals    = Business.getComponentVitals();
-  $scope.pointsContact      = Business.getPointsContact();
-  $scope.componentSummary      = Business.getComponentSummary();
-  $scope.componentEvalProgressBar      = Business.getComponentEvalProgressBar();
-  $scope.componentEvalProgressBarDates      = Business.getComponentEvalProgressBarDates();
-  $scope.componentState      = Business.getComponentState();
-  $scope.resultsComments      = Business.getResultsComments();
+
 
   $scope.tagsList.sort();
 
@@ -40,50 +31,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   // $scope.date1 = moment();
 
-  $scope.expertise = [
-    //
-    {'value':'1', 'label': 'Less than 1 month'},
-    {'value':'2', 'label': 'Less than 3 months'},
-    {'value':'3', 'label': 'Less than 6 months'},
-    {'value':'4', 'label': 'Less than 1 year'},
-    {'value':'5', 'label': 'Less than 3 years'},
-    {'value':'6', 'label': 'More than 3 years'}
-  //
-  ];
-  
-  $scope.userRoles = [
-    //
-    {'code':'ENDUSER', 'description': 'User'},
-    {'code':'DEV', 'description': 'Developer'},
-    {'code':'PM', 'description': 'Project Manager'}
-  //
-  ];
 
-  $scope.tabs = {
-    'current': null,
-    'bars': [
-      //
-      {
-        'title': 'Summary',
-        'include': 'views/details/summary.html'
-      },
-      {
-        'title': 'Details',
-        'include': 'views/details/details.html'
-      },
-      {
-        'title': 'Reviews',
-        'include': 'views/details/reviews.html'
-      },
-      {
-        'title': 'Comments',
-        'include': 'views/details/comments.html'
-      }
-    //
-    ]
-  };
 
-  $scope.selectedTab = $scope.tabs[0];
 
   //console.log("hi") ;
   $scope.setSelectedTab = function(tab) {
@@ -98,20 +47,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
   };
 
-  $scope.getTimes=function(n){
-    return new Array(parseInt(n));
-  };
-
-  $scope.detailResultsTabs = [
-    //
-    { title:'SUMMARY', content:'1', relpath:'views/details/summary.html' },
-    { title:'DETAILS', content:'2', relpath:'views/details/details.html' },
-    { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html' },
-    { title:'COMMENTS', content:'4', relpath:'views/details/comments.html' },
-    /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
-  //
-  ];
-  $scope.tab = $scope.detailResultsTabs[0];
 
   /***************************************************************
   * This function is looked at for auto suggestions for the tag list
@@ -138,10 +73,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.searchCode         = null;
   $scope.searchTitle        = null;
   $scope.searchDescription  = null;
-  $scope.details            = null;
+  $scope.details            = {};
+  $scope.details.details    = null;
   $scope.isPage1            = true;
   $scope.showSearch         = false;
-  $scope.showWatchButton    = false;
   $scope.showDetails        = false;
   $scope.orderProp          = '';
   $scope.query              = '';
@@ -154,8 +89,28 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.total              = null;
   $scope.watches            = null;
   $scope.ratingsFilter      = 0;
-  $scope.isLanding          = false;
+  $scope.modal              = {};
+  $scope.modal.isLanding    = false;
   $scope.single             = false;
+
+  $scope.expertise = [
+    //
+    {'value':'1', 'label': 'Less than 1 month'},
+    {'value':'2', 'label': 'Less than 3 months'},
+    {'value':'3', 'label': 'Less than 6 months'},
+    {'value':'4', 'label': 'Less than 1 year'},
+    {'value':'5', 'label': 'Less than 3 years'},
+    {'value':'6', 'label': 'More than 3 years'}
+  //
+  ];
+  
+  $scope.userRoles = [
+    //
+    {'code':'ENDUSER', 'description': 'User'},
+    {'code':'DEV', 'description': 'Developer'},
+    {'code':'PM', 'description': 'Project Manager'}
+  //
+  ];
 
 
   /***************************************************************
@@ -195,7 +150,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.searchGroup        = key;
     $scope.searchKey          = $rootScope.searchKey;
     $scope.total              = Business.getData();
-    $scope.watches            = Business.getWatches();
     $scope.filteredTotal      = $scope.total;
     
     /*Simulate wait for the filters*/
@@ -204,20 +158,17 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $timeout(function(){
       $scope.filters = Business.getFilters();
       $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
         $scope.data = $scope.total;
+        $scope.data.data = $scope.data;
         _.each($scope.data, function(item){
           item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
         });
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
-      }, 1500);
-    }, 1500);
-    
-
-
-
-    /*This is simulating the wait time for building the data so that we get a loader*/
+      }, 10);
+    }, 10);
   };
 
   $scope.initializeData = function(key) {
@@ -242,10 +193,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       var foundCollection = null;
       var type = '';
       
-      if ($scope.searchKey === 'single') {
-        $scope.updateDetails($scope.searchCode);
-        $scope.single = true;
-      } else if (_.contains(keys, $scope.searchKey)) {
+      if (_.contains(keys, $scope.searchKey)) {
         $scope.searchGroupItem    = _.where($scope.filters, {'key': $scope.searchKey})[0];
         $scope.searchType         = $scope.searchGroupItem.name;
         $scope.showSearch         = true;
@@ -257,23 +205,23 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         if ($scope.searchCode !== 'all') {
           $scope.searchColItem      = _.where($scope.searchGroupItem.collection, {'code': $scope.searchCode})[0];
           $scope.searchTitle        = $scope.searchType + ', ' + $scope.searchColItem.type;
-          $scope.modalTitle         = $scope.searchType + ', ' + $scope.searchColItem.type;
+          $scope.modal.modalTitle   = $scope.searchType + ', ' + $scope.searchColItem.type;
           $scope.searchDescription  = $scope.searchColItem.desc;
           if (foundCollection.landing !== undefined && foundCollection.landing !== null) {
             getBody(foundCollection.landing).then(function(result) {
-              $scope.modalBody = result;
-              $scope.isLanding = true;
+              $scope.modal.modalBody = result;
+              $scope.modal.isLanding = true;
             });
           } else {
-            $scope.modalBody          = $scope.searchColItem.longDesc;
-            $scope.isLanding = false;
+            $scope.modal.modalBody = $scope.searchColItem.longDesc;
+            $scope.modal.isLanding = false;
           }
         } else {
           $scope.searchTitle        = $scope.searchType + ', All';
-          $scope.modalTitle         = $scope.searchType + ', All';
+          $scope.modal.modalTitle   = $scope.searchType + ', All';
           $scope.searchDescription  = 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchType;
-          $scope.modalBody          = 'This will eventually hold a description for this attribute type.';
-          $scope.isLanding = false;
+          $scope.modal.modalBody          = 'This will eventually hold a description for this attribute type.';
+          $scope.modal.isLanding = false;
         }
         adjustFilters();
       } else if ($scope.searchGroup[0].key === 'search') {
@@ -282,26 +230,26 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.searchKey          = 'DOALLSEARCH';
         $scope.showSearch         = true;
         $scope.searchTitle        = $scope.searchGroup[0].code;
-        $scope.modalTitle         = $scope.searchGroup[0].code;
+        $scope.modal.modalTitle   = $scope.searchGroup[0].code;
         $scope.searchDescription  = 'Search resutls based on the search key: ' + $scope.searchGroup[0].code;
-        $scope.modalBody          = 'The restuls on this page are restricted by an implied filter on words similar to the search key \'' + $scope.searchGroup[0].code + '\'';
+        $scope.modal.modalBody    = 'The restuls on this page are restricted by an implied filter on words similar to the search key \'' + $scope.searchGroup[0].code + '\'';
       } else {
         // In this case, our tempData object exists, but has no useable data
         $scope.searchKey          = 'DOALLSEARCH';
         $scope.showSearch         = true;
         $scope.searchTitle        = 'All';
-        $scope.modalTitle         = 'All';
+        $scope.modal.modalTitle   = 'All';
         $scope.searchDescription  = 'Search all results';
-        $scope.modalBody          = 'The results found on this page are not restricted by any implied filters.';
+        $scope.modal.modalBody    = 'The results found on this page are not restricted by any implied filters.';
       }
     } else {
       // In this case, our tempData doesn't exist
       $scope.searchKey          = 'DOALLSEARCH';
       $scope.showSearch         = true;
       $scope.searchTitle        = 'All';
-      $scope.modalTitle         = 'All';
+      $scope.modal.modalTitle   = 'All';
       $scope.searchDescription  = 'Search all results';
-      $scope.modalBody          = 'The results found on this page are not restricted by any implied filters.';
+      $scope.modal.modalBody    = 'The results found on this page are not restricted by any implied filters.';
     }
 
     $scope.applyFilters();
@@ -377,36 +325,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     toggleclass(id, className);
   };
 
-
-  $scope.setupModal = function(classNames) {
-    var deferred = $q.defer();
-    if (classNames !== '') {
-      $scope.classes = classNames;
-      $scope.nav = {
-        'current': 'Reviews',
-        'bars': [
-          //
-          {
-            'title': 'Write a Review',
-            'include': 'views/reviews/newfeedback.html'
-          }
-        //  
-        ]
-      };
-      deferred.resolve();
-    } else {
-      $scope.nav = '';
-      deferred.resolve();
-    }
-
-    if (classNames === '' && $scope.isLanding) {
-      $scope.classes = 'fullWidthModal';
-    } else if (classNames === '') {
-      $scope.classes = '';
-    }
-    return deferred.promise;
-  };
-
   /***************************************************************
   * Event for callSearch caught here. This is triggered by the nav
   * search bar when you are already on the results page.
@@ -471,8 +389,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
     if ($scope.filteredTotal) {
       $scope.data = $scope.filteredTotal.slice(((page - 1) * $scope.rowsPerPage), (page * $scope.rowsPerPage));
+      $scope.data.data = $scope.data;
     } else {
       $scope.data = [];
+      $scope.data.data = $scope.data;
     }
     $scope.applyFilters();
 
@@ -531,18 +451,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     });
   }, true);
 
-  $scope.$on('$descModal', function(event) { /*jshint unused: false*/
-    // re-initialize the modal content here if we must
-    if ($scope.nav !== undefined && $scope.nav !== null) {
-
-      if ($rootScope.current) {
-        $scope.nav.current = $rootScope.current;
-      } else {
-        $scope.nav.current = 'Reviews';
-      }
-    }
-  });
-
   /***************************************************************
   * This funciton calls the global buttonOpen function that handles page 
   * flyout animations according to the state to open the details
@@ -594,31 +502,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function updates the details when a component title is clicked on
   ***************************************************************/
   $scope.updateDetails = function(id){
-    $scope.showWatchButton = !!!(_.where($scope.watches, {'id': id}).length);
     if (!openClick) {
       buttonOpen();
     }
-
-    var temp =  _.where($scope.data, {'id': parseInt(id)})[0];
-    
+    var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
     if (temp)
     {
-      $scope.details = temp;
+      $scope.details.details = temp;
     }
     $scope.showDetails = true;
-    $scope.getEvaluationState();
-  };
-
-  /***************************************************************
-  * This function adds a component to the watch list and toggles the buttons
-  ***************************************************************/
-  $scope.addToWatches = function(id){
-    var a = _.findWhere($scope.watches, {'id': id});
-    if (a === undefined  || isEmpty(a)) {
-      $scope.watches.push({'id': id, 'watched': true});
-    }
-    $scope.showWatchButton = false;
-    Business.setWatches($scope.watches);
   };
 
   /***************************************************************
@@ -626,54 +518,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.goToFullPage = function(id){
     $location.search({
-      'type': 'single',
-      'code': id
+      'id': id
     });
-    $location.path('/results');
-  };
-
-  /***************************************************************
-  * This function saves a component's tags
-  ***************************************************************/
-  $scope.saveTags = function(id, tags){
-    Business.saveTags(id, tags);
-    $scope.applyFilters();
-  };
-
-  /***************************************************************
-  * This function removes a component to the watch list and toggles the buttons
-  ***************************************************************/
-  $scope.removeFromWatches = function(id){
-    var a = _.findWhere($scope.watches, {'id': id});
-
-    if (a !== undefined  && !isEmpty(a)) {
-      $scope.watches.splice(_.indexOf($scope.watches, a), 1);
-    }
-
-    $scope.showWatchButton = true;
-    Business.setWatches($scope.watches);
-  };
-
-  /***************************************************************
-  * This function does the route redirection to the user profile path in order
-  * to allow the user to view their watches.
-  ***************************************************************/
-  $scope.viewWatches = function () {
-    $location.path('/userprofile');
-  };
-
-  /***************************************************************
-  * This function does the route redirection to the user profile path in order
-  * to allow the user to view their watches.
-  ***************************************************************/
-  $scope.getEvaluationState = function () {
-    if ($scope.details && $scope.details.evaluationLevel !== undefined) {
-      var code = $scope.details.evaluationLevel[0].code;
-      var stateFilter = _.where($scope.filters, {'key': 'evaluationLevel'})[0];
-      var item = _.where(stateFilter.collection, {'code': code})[0];
-      return item.type;
-    }
-    return '';
+    $location.path('/single');
   };
 
   /***************************************************************
@@ -723,6 +570,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
     // Set the data that will be displayed to the first 'n' results of the filtered data
     $scope.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
+    $scope.data.data = $scope.data;
 
     // after a slight wait, reapply the popovers for the results ratings.
     $timeout(function() {
