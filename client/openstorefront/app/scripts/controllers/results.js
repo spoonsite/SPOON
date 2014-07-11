@@ -38,7 +38,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   $scope.lastUsed = new Date();
 
- // $scope.date1 = moment();
+  // $scope.date1 = moment();
 
   $scope.expertise = [
     //
@@ -52,9 +52,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ];
   
   $scope.userRoles = [
+    //
     {'code':'ENDUSER', 'description': 'User'},
     {'code':'DEV', 'description': 'Developer'},
     {'code':'PM', 'description': 'Project Manager'}
+  //
   ];
 
   $scope.tabs = {
@@ -106,7 +108,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     { title:'DETAILS', content:'2', relpath:'views/details/details.html' },
     { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html' },
     { title:'COMMENTS', content:'4', relpath:'views/details/comments.html' },
-   /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
+    /* { title:'EVALUATION', content:'5', relpath:'views/details/evaluation.html' }*/
   //
   ];
   $scope.tab = $scope.detailResultsTabs[0];
@@ -196,7 +198,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.total              = Business.getData();
     $scope.watches            = Business.getWatches();
     $scope.filteredTotal      = $scope.total;
-    $scope.data               = $scope.total;
+
+
+    /*This is simulating the wait time for building the data so that we get a loader*/
+    $scope.$emit('$TRIGGERLOAD', 'mainLoader');
+    $timeout(function(){
+      $scope.data = $scope.total;
+      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+    }, 5000);
 
     _.each($scope.data, function(item){
       item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
@@ -294,7 +303,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     Business.search(false, false, true).then(
     //This is the success function on returning a value from the business layer 
     function(key) {
-      
+
       var type = 'all';
       var code = '';
       var query = null;
@@ -364,6 +373,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.nav = {
         'current': 'Reviews',
         'bars': [
+          //
           {
             'title': 'Write a Review',
             'include': 'views/reviews/newfeedback.html'
