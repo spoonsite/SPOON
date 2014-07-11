@@ -17,6 +17,8 @@ limitations under the License.
 <div class='container-fluid' style="margin-top: 0px;">
   <!-- Filters Div -->
   <div id="filters" class="filters filterBack">
+    <loader trigger="filtersLoad"></loader>
+
     <div class="filterTableDiv firstFilter">
       <label for="searchFilter">Sort By: </label>
       <select ng-model="orderProp" class="form-control">
@@ -76,6 +78,8 @@ limitations under the License.
 
   <!-- Page 1 -->
   <div class='page1'>
+    <loader trigger="mainLoader"></loader>
+    
     <!-- Placeholder for the pagination controls -->
     <div class="pagination row row-centered">
       <div style="text-align: center;">
