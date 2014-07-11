@@ -6,7 +6,6 @@
 					<table class="table table-bordered table-hover" ng-repeat="row in componentSummary">
 						<tbody> 
 							<tr>
- 
 								<td class="warning" colspan="3"><h4>Component Summary</h4></td>
 							</tr>	 						
 							<tr>
@@ -59,102 +58,49 @@
 					</p>
 					<br>
 				</div>
-
 				<div>
-				<table class="table table-bordered table-hover">
-					<tbody>
-						<tr>
-							<td class="warning" colspan="2"><h4>Component Vitals</h4></td>
-						</tr>
-						<tr data-ng-repeat="row in componentVitals">
-							<td style="vertical-align:middle"  width="50%">{{row.name}}</td>
-							<td style="vertical-align:middle"  width="50%">{{row.desc}}</td>
-						</tr>
-					</tbody>
-				</table>
+					<table class="table table-bordered table-hover">
+						<tbody>
+							<tr>
+								<td class="warning" colspan="2"><h4>Component Vitals</h4></td>
+							</tr>
+							<tr data-ng-repeat="row in componentVitals">
+								<td style="vertical-align:middle"  width="50%">{{row.name}}</td>
+								<td style="vertical-align:middle"  width="50%">{{row.desc}}</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="table-responsive">
-
-<table class="table table-bordered table-hover">
-      <tbody>
-      <tr>
-        <td class="warning" colspan="3"><h4>Component Reusability Factor</h4></td>
-      </tr>
-       <tr data-ng-repeat="row in componentSummary">
-        <td class="success" style="vertical-align:middle"  colspan="2"><h5>Evaluation Date</h5></td>
-        <td class="success"  colspan="1"><h5>{{row.evaluationdate}}</h5></td>
-      </tr>
-      <tr data-ng-repeat="row in scoreCard">
-        <!-- <td style="vertical-align:middle" width="50%">{{row.name}}</td> -->
-        <td style="vertical-align:middle" width="50%"><a  href="javascript:void(0)" class="helpcontent" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector=""  
-data-original-title="<b>{{row.name}}</b> ranking = {{row.ranking}}"  data-content="<p class=''>Provide some explanation as to why <b>{{row.name}}</b> is ranked as a <b>{{row.ranking}}</b></p>"> {{row.name}} </a></td>
-        <td style="vertical-align:middle" width="10%">{{row.ranking}}</td>
-        <td style="vertical-align:middle" width="40%" >
-         <i ng-repeat="t in getTimes(row.ranking) track by $index" class="fa fa-circle" style="color:#021233"></i>
-       </td>
-     </tr>							
-   </tbody>
- </table>
-
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover">
+				<tbody>
+					<tr>
+						<td class="warning" colspan="3"><h4>Component Reusability Factors</h4></td>
+					</tr>
+					<tr data-ng-repeat="row in componentSummary">
+						<td class="success" style="vertical-align:middle"  colspan="2"><h5>Evaluation Date</h5></td>
+						<td class="success"  colspan="1"><h5>{{row.evaluationdate}}</h5></td>
+					</tr>
+					<tr data-ng-repeat="row in scoreCard">
+						<td style="vertical-align:middle" width="50%"><a  href="javascript:void(0)" class="helpcontent" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector=""  
+							data-original-title="<b>{{row.name}}</b> ranking = {{row.ranking}}"  data-content="<p class=''>Provide some explanation as to why <b>{{row.name}}</b> is ranked as a <b>{{row.ranking}}</b></p>"> {{row.name}} </a></td>
+						<td style="vertical-align:middle" width="10%">{{row.ranking}}</td>
+						<td style="vertical-align:middle" width="40%" >
+							<i ng-repeat="t in getTimes(row.ranking) track by $index" class="fa fa-circle" style="color:#021233"></i>
+						</td>
+					</tr>							
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-1"></div>
 </div>
-</div>
+<!-- </div>
 <div class="col-md-1"></div>
- 
-<!--       <table class="table table-bordered table-hover " ng-repeat="row in componentSummary">
-        <tbody>
-          <tr>
-            <td class="warning"  colspan="3"><h4>Component Scoring</h4></td>
-          </tr>
-          <tr>
-            <td class="success" style="vertical-align:middle"  colspan="2"><h4>Overall Score</h4></td>
-            <td class="success"  colspan="1"><h4>46.7</h4>Out of 100</td>
-          </tr>	
-          <tr>
-            <td class="success" style="vertical-align:middle"  colspan="2"><h5>Evaluation Date</h5></td>
-            <td class="success"  colspan="1"><h5>{{row.evaluationdate}}</h5></td>
-          </tr>
-        </tbody>  
-      </table> -->
-
- <!--      <table class="table table-bordered table-hover " >
-        <tbody>
-          <tr>
-            <td class="warning"  colspan="3"><h4>Component Score Card</h4></td>
-          </tr>
-          <tr data-ng-repeat="row in scoreCard">
-         
-            <td style="vertical-align:middle" width="50%">
-              <a  href="javascript:void(0)" class="helpcontent" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector=""  
-              data-original-title="<b>{{row.name}}</b> ranking = {{row.ranking}}"  data-content="<p class=''>Provide some explanation as to why <b>{{row.name}}</b> is ranked as a <b>{{row.ranking}}</b></p>"> {{row.name}} </a>
-            </td>
-            <td style="vertical-align:middle" width="10%">{{row.ranking}}</td>
-            <td style="vertical-align:middle" width="40%" >
-              <i ng-repeat="t in getTimes(row.ranking) track by $index" class="fa fa-circle" style="color:#ff4800"></i>
-            </td>
-          </tr>							
-        </tbody>
-      </table> 
- -->
-
-<!--       <table class="table table-bordered table-hover">
-        <tbody>
-          <tr>
-            <td class="warning" colspan="2"><h4>Component Vitals</h4></td>
-          </tr>
-          <tr data-ng-repeat="row in componentVitals">
-            <td style="vertical-align:middle"  width="50%">{{row.name}}</td>
-            <td style="vertical-align:middle"  width="50%">{{row.desc}}</td>
-          </tr>
-        </tbody>
-      </table> -->
-    </div>
-  </div>
-  <div class="col-md-1"></div>
- 
 </div>
 <div class="row">
-</div>
+</div> -->
