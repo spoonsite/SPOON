@@ -169,8 +169,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         });
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
-      }, 0);
-    }, 0);
+      }, 1000);
+    }, 1000);
   };
 
   $scope.$watch('data', function() {
@@ -520,6 +520,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function updates the details when a component title is clicked on
   ***************************************************************/
   $scope.updateDetails = function(id){
+    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
+    $timeout(function() {
+      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+    }, 1500);
     if (!openClick) {
       buttonOpen();
     }
