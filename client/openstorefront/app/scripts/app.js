@@ -47,6 +47,10 @@ var app = angular
     templateUrl: 'views/landing.html',
     controller: 'LandingCtrl'
   })
+  .when('/single', {
+    templateUrl: 'views/single.html',
+    controller: 'SingleCtrl'
+  })
   .otherwise({
     redirectTo: '/'
   });
@@ -86,7 +90,8 @@ var app = angular
   });
 })
 // here we add the .run function for intial setup and other useful functions
-.run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend) {/* jshint unused: false*/
+
+.run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend','$q', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q) {/* jshint unused: false*/
 
   $rootScope._scopename = 'root';
 
@@ -126,7 +131,7 @@ var app = angular
     // console.log('next', next);
     // console.log('current', current);
     // console.log('path', $location.path());
-    if (!$location.path() || $location.path() !== '/results') {
+    if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single')) {
       $location.search({});
     }
     if (!$location.path() || $location.path() === '/') {
@@ -164,6 +169,20 @@ var app = angular
     $('#' + id).modal('show');
   });
 
+  /***************************************************************
+  * These functions trigger and untrigger loading masks
+  ***************************************************************/
+  $rootScope.$on('$TRIGGERLOAD', function(event, value){
+    $timeout(function() {
+      $rootScope.$broadcast('$LOAD', value);
+    }, 10);
+  });
+  $rootScope.$on('$TRIGGERUNLOAD', function(event, value){
+    $timeout(function() {
+      $rootScope.$broadcast('$UNLOAD', value);
+    }, 10);
+  });
+
   $rootScope.openModal = function(id, current) {
     $rootScope.current = current;
     $rootScope.$broadcast('$' + id);
@@ -189,4 +208,36 @@ var app = angular
     $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
     $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
     
+    ////////////////////////////////////////////////////////////////////////
+
+  $rootScope.setupModal = function(modal, classNames) {
+    var deferred = $q.defer();
+    if (classNames !== '') {
+      modal.classes = classNames;
+      modal.nav = {
+        'current': 'Write a Review',
+        'bars': [
+          //
+          {
+            'title': 'Write a Review',
+            'include': 'views/reviews/newfeedback.html'
+          }
+        //  
+        ]
+      };
+      deferred.resolve();
+    } else {
+      modal.nav = '';
+      deferred.resolve();
+    }
+
+    if (classNames === '' && modal.isLanding) {
+      modal.classes = 'fullWidthModal';
+    } else if (classNames === '') {
+      modal.classes = '';
+    }
+    return deferred.promise;
+  };
+
 }]);
+

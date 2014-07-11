@@ -1,0 +1,78 @@
+loader {
+  border-radius: inherit;
+}
+.loader-holder {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0;
+  bottom: 0;
+  z-index: 1030;
+  background-color: rgba(0, 0, 0, .3);
+  cursor: progress;
+  border-radius: inherit;
+}
+.loader {
+  position: absolute;
+  top: 50%;
+  left:50%;
+  height: 100px;
+  width: 100px;
+  border-radius: 50px;
+  margin-top: -50px;
+  margin-left: -50px;
+  background: rgba(0, 0, 0, .7);
+}
+
+.loader span{
+  color: white;
+  font-size: 25px;
+  position: relative;
+  left: -16px;
+  top: 31px;
+  background: rgba(0, 0, 0, .8);
+  border: 1px solid black;
+  border-radius: 5px;
+  z-index: 2;
+}
+
+.loader::before, .loader::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  content: '';
+}
+.loader::before {
+  width: 60px;
+  height: 60px;
+  margin-left: -30px;
+  margin-top: -30px;
+  /*border: 15px solid transparent;*/
+  border-right-color: #021233;
+  border-left-color: #ff4800;
+  -webkit-animation: rotation 3s linear infinite;
+  animation: rotation 3s linear infinite;
+}
+.loader::after {
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  border-top-color: #021233;
+  border-bottom-color: #ff4800;
+  -webkit-animation: rotation 2s linear infinite reverse;
+  animation: rotation 2s linear infinite reverse;
+}
+@-webkit-keyframes rotation {
+  0%    { -webkit-transform: rotate(0deg); }
+  50%   { -webkit-transform: rotate(180deg); }
+  100%  { -webkit-transform: rotate(360deg); }
+}
+@keyframes rotation {
+  0%    { transform: rotate(0deg); }
+  50%   { transform: rotate(180deg); }
+  100%  { transform: rotate(360deg); }
+}

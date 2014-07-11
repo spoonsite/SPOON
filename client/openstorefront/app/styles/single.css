@@ -1,0 +1,13 @@
+html{
+  overflow:auto;
+}
+
+.page2Styles{
+  margin-right: -1px;
+  border-left: 1px lightgray solid;
+  border-right: 1px lightgray solid;
+  border-bottom: 1px lightgray solid;
+  margin-left: 0px;
+  position: relative;
+  overflow:auto;
+}

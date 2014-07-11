@@ -1,0 +1,118 @@
+<div ng-controller="DetailsFulldetailsCtrl">
+  <!-- This is the show page button, and needs to stay here -->
+  <div ng-show="!single" class="showPage">
+    <button id="showPageLeft" class="showPageLeft btn btn-primary" ng-click="doButtonClose()">
+      <i class="fa fa-caret-right"></i> 
+    </button>
+  </div>
+
+  <!-- This is the Title div with the tags, and needs to stay here -->
+  <div class="component-details">
+    <!-- TITLE SECTOIN -->
+    <div class="container component-title">
+      <div class="col-sm-12">
+        <h1>{{details.details.name}}<span>{{details.details.owner}} ({{details.details.type[0].code}})</span>
+          <br>
+          <button class='btn btn-default' ng-show="!details.details.watched" ng-click="addToWatches(details.details.id)">Add To Watches <i class="fa fa-thumbs-o-up imitateLink"></i>
+          </button>
+          <button class='btn btn-default' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')">View Watches&nbsp;<i class="fa fa-eye imitateLink"></i>
+          </button>
+          <button class='btn btn-default' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.id)">Remove From Watches&nbsp;<i class="fa fa-thumbs-o-down imitateLink"></i>
+          </button>
+          <button class='btn btn-default' id="permenantLink" ng-click="goToFullPage(details.details.id)">Go To Full Page&nbsp;<i class="fa fa-copy"></i>
+          </button>
+        </h1>
+        <!-- injected evaluations start -->
+
+        <!-- injected evaluations start -->
+        <div style="padding: 0px 10px;">
+          <tags-input class="bootstrap" min-length="1" ng-model="details.details.assetTags" replace-spaces-with-dashes="false" on-tag-added="saveTags(details.details.id, details.details.assetTags);" on-tag-removed="saveTags(details.details.id, details.details.assetTags);"><auto-complete min-length="1" source="checkTagsList($query, details.details.assetTags, tagsList)"></auto-complete></tags-input>
+        </div>
+      </div>
+    </div>
+    <!-- END TITLE SECTION -->
+
+
+    <!-- ******************************************************************* -->
+    <!-- Tabbing for Results Page -->
+    <div class="col-md-12" style="background:white; margin-top: -11px;" id="detailsTabs">
+      <tabset type="">  <!-- pills -->
+        <tab ng-repeat="tab in detailResultsTabs" heading="{{tab.title}}">
+          <div ng-include="tab.relpath"></div>
+          <br>
+        </tab>
+      </tabset>
+    </div>
+
+    <!-- ******************************************************************* -->
+
+    <!-- This is the end of what you can take out. The rest must stay -->
+  </div>
+</div>
+
+<!-- Modal legend for evaluation levels progress bar colors -->
+<div class="modal fade" id="basicModal2" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></button>
+        <h4 class="modal-title" id="di2eEvaluationScheduleDetails">DI2E Evaluation Schedule Details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="col-sm-12"> 
+          <p><b>Progress bar color scheme and date indicators</b>
+            <br>The progress bar color scheme indicates current activity within any phase of the Evaluation Schedule. Also, there are
+            ending date indicators ( <b>mm/dd</b> ) under each bar and at the right end of the bar, to indicate the completion date (either actual or estimated).
+            <br>The horizontal length of each bar is proportional to the days required to complete a specific phase divided by total days of the entire evaluation schedule timeline.
+          </p>
+          <progress>
+            <bar class="barborder" value="25" type="success"><span>Completed</span></bar>
+            <bar class="barborder" value="25" type="info"><span>In Progress</span></bar>
+            <bar class="barborder" value="25" type="danger"><span>Halted</span></bar>
+            <bar class="bar-transparent" value="25" type="transparent"><span>Not Started</span></bar>
+          </progress> 
+        </div>  
+        <br><br>
+        <p class="">
+          <br><b>Level 0 – Available for Reuse/Not Evaluated</b>
+          <br>
+          <ul>
+            <li>Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
+            <li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li>
+            <li>Asset has completed the Component Prep and Analysis phase.</li>
+          </ul>
+          <br><b>Level 1 – Initial Reuse Analysis</b>
+          <br>
+          <ul>
+            <li>Inspection portion of DI2E Framework Evaluation Checklist complete.  </li>
+            <li>These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided.
+            </li>
+            <li>This level does not represent the pass or fail, the Consumer must read the Evaluation Report. </li>
+          </ul>
+          <br><b>Level 2 – Integration and Test</b>
+          <br>
+          <ul>
+            <li>Integration and Test portion of the DI2E Framework Evaluation Checklist complete.</li>
+            <li>These questions focus on the interoperability and ease of reuse, and will normally include an I&amp;T plan.</li>
+            <li>This level does not indicate a pass or fail of the conformance test.</li>
+            <li>Consumer will read the Test Report linked in the storefront entry for program functionality.</li>
+          </ul>
+          <br><b>Level 3 – DI2E Framework Reference Implementation</b>
+          <br>
+          <ul>
+            <li>Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.</li>
+          </ul>
+          <br><b>NA – No Evaluation Planned</b>
+          <br>
+          <ul>
+            <li>Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Storefront (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.).</li>
+            <li>N/A indicates no evaluation is expected.</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- This is the results description modal (the contents are handled in this controller) -->
+<div modal controller-name="ResultsCtrl" modalId='descModal' modal-classes="classlist">
+</div>
