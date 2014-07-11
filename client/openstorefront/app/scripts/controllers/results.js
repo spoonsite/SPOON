@@ -180,6 +180,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       var max = 20;
       if ($scope.data.data.length > max) {
         $scope.moreThan200 = true;
+      } else {
+        $scope.moreThan200 = false;
       }
     }
   }, true);
