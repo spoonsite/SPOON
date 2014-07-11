@@ -128,7 +128,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   // These variables are used for the pagination
   $scope.filteredTotal  = null;
   $scope.data           = null;
-  $scope.rowsPerPage    = 10;
+  $scope.rowsPerPage    = 200;
   $scope.pageNumber     = 1;
   $scope.maxPageNumber  = 1;
 
@@ -169,9 +169,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         });
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
-      }, 1500);
-    }, 1500);
+      }, 0);
+    }, 0);
   };
+
+  $scope.$watch('data', function() {
+    if ($scope.data) {
+      // max needs to represent the total number of results you want to load
+      // on the initial search.
+      var max = 20;
+      if ($scope.data.data.length > max) {
+        $scope.moreThan200 = true;
+      }
+    }
+  }, true);
 
   $scope.initializeData = function(key) {
 
