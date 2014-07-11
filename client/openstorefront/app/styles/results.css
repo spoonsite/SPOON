@@ -152,6 +152,7 @@ html, .resultsContainer {
 }
 .results-content-description {
   padding: 0px 5px;
+  text-align: left;
 }
 
 
