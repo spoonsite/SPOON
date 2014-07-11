@@ -178,6 +178,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // max needs to represent the total number of results you want to load
       // on the initial search.
       var max = 20;
+      // also, we'll probably check the total number of possible results that
+      // could come back from the server here instead of the length of the
+      // data we have already.
       if ($scope.data.data.length > max) {
         $scope.moreThan200 = true;
       } else {
