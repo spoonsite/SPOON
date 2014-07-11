@@ -109,10 +109,10 @@ limitations under the License.
         <i class="fa fa-caret-left"></i> 
       </button>
     </div>
-    <div ng-if="data.length == 0">
+    <div ng-if="data.data.length == 0">
       {{noDataMessage}}
     </div>
-    <div class="page1Content" ng-if="data.length > 0">
+    <div class="page1Content" ng-if="data.data.length > 0">
       <div class='container-fluid results'>
         <div>
           <div class="searchTitle">
@@ -124,7 +124,7 @@ limitations under the License.
             <span ng-click="setupModal(modal, ''); openModal('descModal'); " class="imitateLink" > {{searchDescription}} <i class="glyphicon glyphicon-info-sign"></i></span>
           </div>
         </div>
-        <component-list click-callback="updateDetails" class-list="" data="data" cols="3" ></component-list>
+        <component-list click-callback="updateDetails" class-list="" data="data.data" cols="3" ></component-list>
         <div ng-show="moreThan200" class="moreThan200">
           <button class="btn btn-default">Load More Results...</button>
         </div>

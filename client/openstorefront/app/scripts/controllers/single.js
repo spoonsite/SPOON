@@ -38,13 +38,13 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   $scope.updateDetails = function(id){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     $timeout(function() {
+      var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
+      if (temp)
+      {
+        $scope.details.details = temp;
+      }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
     }, 1500);
-    var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
-    if (temp)
-    {
-      $scope.details.details = temp;
-    }
   };
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search
@@ -92,5 +92,5 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     });
     //
   };
-    callSearch();
+  callSearch();
 }]);
