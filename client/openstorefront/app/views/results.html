@@ -172,7 +172,7 @@ limitations under the License.
       <div class="container component-title">
         <div class="col-sm-12">
           <h1>{{details.name}}<span>{{details.owner}} ({{details.type[0].code}})</span>
-            <br><button class='btn btn-default' ng-show="showWatchButton" ng-click="addToWatches(details.id)">Add To Watches <i class="fa fa-thumbs-o-up imitateLink"></i></button><button class='btn btn-default' ng-show="!showWatchButton" ng-click="openModal('profileModal', 'Watches')">View Watches&nbsp;<i class="fa fa-eye imitateLink"></i></button><button class='btn btn-default' ng-show="!showWatchButton" ng-click="removeFromWatches(details.id)">Remove From Watches&nbsp;<i class="fa fa-thumbs-o-down imitateLink"></i></button><button class='btn btn-default' id="permenantLink" ng-click="grabPermenantLink(details.id)">Grab Permanent Link&nbsp;<i class="fa fa-copy"></i></button>
+            <br><button class='btn btn-default' ng-show="showWatchButton" ng-click="addToWatches(details.id)">Add To Watches <i class="fa fa-thumbs-o-up imitateLink"></i></button><button class='btn btn-default' ng-show="!showWatchButton" ng-click="openModal('profileModal', 'Watches')">View Watches&nbsp;<i class="fa fa-eye imitateLink"></i></button><button class='btn btn-default' ng-show="!showWatchButton" ng-click="removeFromWatches(details.id)">Remove From Watches&nbsp;<i class="fa fa-thumbs-o-down imitateLink"></i></button><button class='btn btn-default' id="permenantLink" ng-click="goToFullPage(details.id)">Go To Full Page&nbsp;<i class="fa fa-copy"></i></button>
           </h1>
           <!-- injected evaluations start -->
 

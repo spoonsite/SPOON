@@ -69,6 +69,8 @@ var app = angular
 // here we add the .run function for intial setup and other useful functions
 .run(['$rootScope', 'localCache', 'business', '$location', '$route', '$timeout', function ($rootScope, localCache, Business, $location, $route, $timeout) {/* jshint unused: false*/
 
+  $rootScope._scopename = 'root';
+
   //We must initialize global scope variables.
   $rootScope.Current = null;
 
@@ -102,9 +104,17 @@ var app = angular
   $rootScope.$on('$locationChangeStart', function (event, next, current) {
     // console.log('path', $location.path());
     // console.log($location.path() === '/');
-    
+    // console.log('next', next);
+    // console.log('current', current);
+    // console.log('path', $location.path());
     if (!$location.path() || $location.path() !== '/results') {
       $location.search({});
+    }
+    if (!$location.path() || $location.path() === '/') {
+      // console.log('Broadcasting');
+      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
+    } else {
+      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
     }
   });
 
@@ -119,9 +129,13 @@ var app = angular
 
     $timeout(function() {
       $('[data-toggle="tooltip"').tooltip();
+      if (!$location.path() || $location.path() === '/') {
+        // console.log('Broadcasting');
+        $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
+      } else {
+        $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
+      }
     }, 300);
-
-    $rootScope.setNav();
   });
 
   /***************************************************************
@@ -138,14 +152,4 @@ var app = angular
     $rootScope.$broadcast('$viewModal', id);
   };
 
-  $rootScope.setNav = function() {
-    // once the content is loaded, make sure we have the right navigation!
-    if (!$location.path() || $location.path() === '/') {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
-    } else {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
-    }
-  };
-
-  $rootScope.setNav();
 }]);

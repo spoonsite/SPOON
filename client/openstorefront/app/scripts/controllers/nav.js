@@ -23,7 +23,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * This Controller gives us a place to add functionality to the navbar
   *******************************************************************************/
   $scope._scopename = 'nav';
-  $scope.navLocation = 'views/nav/nav_main.html';
+  $scope.navLocation = 'views/nav/nav.html';
 
   // Here we grab the rootScope searchKey in order to preserve the last search
   $scope.searchKey = $rootScope.searchKey;
@@ -77,7 +77,6 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       'code': $scope.searchKey
     });
     Business.search('search', $scope.searchKey, true).then(function (key) {
-
       if($location.path() === '/results') {
         $rootScope.$broadcast('$callSearch');
       } else {
@@ -121,7 +120,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   $scope.$watch('navLocation', function() {
     $timeout(function() {
       setUpDropdown('dropTheMenu');
-    }, 300);
+    }, 500);
   });
 
 }]);
