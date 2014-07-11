@@ -30,13 +30,9 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
     {'id':'3','date':'01/06/2014 10:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jay Calhoun'}
   ];
   
-  $scope.user   = {
-    'userName': 'John Q. Sample',
-    'userRole': 'Admin',
-    'userMemberSince': '01/10/2012',
-    'userEmail': 'john.q.sample@gmail.com'
-  };
-  $scope.userBackup       = jQuery.extend(true, {}, $scope.user);
+  
+  
+
   var immageHack          = 0;
   var images              = [
     //
@@ -97,6 +93,55 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
     });
   };
   resetData();
+
+/**
+ * Load the User profile 
+ */
+var loadUserProfile = function(){
+  
+  //show load mask on form
+  
+  Business.userservice.getCurrentUserProfile().then(function(profile){
+     $scope.userProfile = profile; 
+     $scope.userProfileForm = angular.copy(profile);     
+     
+     _.each($scope.userTypeCodes, function(element, index, list){
+          if (element.code === $scope.userProfileForm.userTypeCode){
+            $scope.userProfileForm.userRole =  element;
+          }
+     });
+    
+     
+     //hide load mask
+  });
+  
+};
+
+ Business.lookupservice.getUserTypeCodes().then(function(lookup){
+    $scope.userTypeCodes  = lookup; 
+    loadUserProfile();
+ });
+
+  $scope.saveUserProfile = function () {
+      //validate form
+      $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
+      
+      //mask form and disable save button
+      var success = function (data, status, headers, config){
+        loadUserProfile();  
+        
+        //Show message toaster
+          
+      };
+      
+      var failure = function (data, status, headers, config){
+          //mark fields that are bad (add error class) and show our error messages div
+          
+      };
+      
+      Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
+  };
+
 
   /***************************************************************
   * This function saves the profile changes in the scope by copying them from

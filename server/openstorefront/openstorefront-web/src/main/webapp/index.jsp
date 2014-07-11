@@ -57,7 +57,7 @@ limitations under the License.
 					<a href="attributeTypes.html">Attributes Types</a>
 				</li>	
 				<li>
-					<a href="lookup.html">Lookup Type </a>
+					<a href="#API.action?API&resourceClass=LookupType">Lookup Type </a>
 				</li>				
 			</ul>
 			<h5>Application Resources</h5>	

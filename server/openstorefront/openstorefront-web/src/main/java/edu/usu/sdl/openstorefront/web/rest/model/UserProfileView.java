@@ -59,6 +59,10 @@ public class UserProfileView
 	@NotNull
 	@ParamTypeDescription("TEXT")
 	private String updateUser;
+	
+	@NotNull
+	@ParamTypeDescription("BOOLEAN")
+	private boolean admin;
 
 	public UserProfileView()
 	{
@@ -142,6 +146,16 @@ public class UserProfileView
 	public void setUpdateUser(String updateUser)
 	{
 		this.updateUser = updateUser;
+	}
+
+	public boolean getAdmin()
+	{
+		return admin;
+	}
+
+	public void setAdmin(boolean admin)
+	{
+		this.admin = admin;
 	}
 	
 }

@@ -16,48 +16,65 @@
 'use strict';
 app.factory('userservice', ['localCache', '$http',  '$q', function (localCache, $http, $q) {
   
-  //Constant
+  //Constants
   var CURRENT_USER = "CURRENTUSER";
-  
- var currentUserProfile = null;
+  var MAX_USER_CACHE_TIME = (60*1000)*1440; //1 day
     
   /**
    *  Loads the current user
    */
-  var getCurrentUserProfile = function(){
+  var getCurrentUserProfile = function(forceReload){
       var deferred = $q.defer();
-      if (currentUserProfile === null){
-        loadProfile(CURRENT_USER, function(data, status, headers, config){
-          currentUserProfile = data;
-          deferred.resolve(currentUserProfile);
+      var currentUserProfile = localCache.get('currentUserProfile', 'object');
+      var loadProfileFlag = false;
+      
+      if (forceReload) {
+        loadProfileFlag = true;
+      } else {      
+        if (currentUserProfile) {
+            //check for expired
+            var cacheTime = localCache.get('currentUserProfile-time', 'date');
+            var timeDiff = new Date() - cacheTime;
+            if (timeDiff < MAX_USER_CACHE_TIME){
+              deferred.resolve(currentUserProfile);
+            }
+            else {
+              loadProfileFlag = true;
+            }
+        } else {
+          loadProfileFlag = true;
+        }        
+      }
+     
+      if (loadProfileFlag){
+        loadProfile(CURRENT_USER, function(data, status, headers, config){       
+           localCache.save('currentUserProfile', data);
+           localCache.save('currentUserProfile-time', new Date());                    
+           deferred.resolve(currentUserProfile);          
         });        
-      } else  {
-        deferred.resolve(currentUserProfile);
       }
       return deferred.promise;      
   };
   
   /**
-   * 
-   * @param boolean currentUser
+   *  Load profile from the server
+   * @param string username
    * @returns {undefined}
    */
  var loadProfile = function(username, successFunc){
-   var deferred = $q.defer();
-   $http.get('openstorefront-web/api/v1/resource/userprofiles/' + username).success(successFunc);
-  return deferred.promise;        
+   $http.get('/openstorefront-web/api/v1/resource/userprofiles/' + username).success(successFunc);  
  };
  
- var saveCurrentUserProfile = function(userProfile) {
-   saveProfile(CURRENT_USER, userProfile);
+ var saveCurrentUserProfile = function(userProfile, success, failure) {
+   saveProfile(CURRENT_USER, userProfile, success, failure);
  };
  
    /**
-   * 
-   * @param boolean currentUser
+   *  Save profile to the service and on success it reloads the profile
+   * @param string usernamer
    * @returns {undefined}
    */
- var saveProfile = function(username, userProfile){
+ var saveProfile = function(username, userProfile, success, failure){
     var deferred = $q.defer();
   
   

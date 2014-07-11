@@ -25,9 +25,9 @@ import javax.ws.rs.QueryParam;
  * @author dshurtleff
  */
 public class FilterQueryParams
-{
+{	
 	@QueryParam("max")
-	@DefaultValue("10000")		
+	@DefaultValue("2147483648")		
 	private int max;
 	
 	@QueryParam("sortField")
@@ -45,10 +45,6 @@ public class FilterQueryParams
 	@QueryParam("status")
 	@DefaultValue("A")		
 	private String status;
-	
-	@QueryParam("details")
-	@DefaultValue("A")		
-	private boolean details;
 
 	public FilterQueryParams()
 	{
@@ -102,16 +98,6 @@ public class FilterQueryParams
 	public void setStatus(String status)
 	{
 		this.status = status;
-	}
-
-	public boolean isDetails()
-	{
-		return details;
-	}
-
-	public void setDetails(boolean details)
-	{
-		this.details = details;
 	}
 		
 }

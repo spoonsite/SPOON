@@ -51,11 +51,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //
   ];
   
-  $scope.userRoles = [
-    {'code':'ENDUSER', 'description': 'User'},
-    {'code':'DEV', 'description': 'Developer'},
-    {'code':'PM', 'description': 'Project Manager'}
-  ];
+ Business.lookupservice.getUserTypeCodes().then(function(lookup){
+    $scope.userTypeCodes  = lookup; 
+    loadUserProfile();
+ });
 
   $scope.tabs = {
     'current': null,
