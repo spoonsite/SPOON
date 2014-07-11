@@ -52,7 +52,9 @@ html, .resultsContainer {
   width: 100%;
   position: relative;
   overflow:auto;
-  padding-bottom: 40px;
+
+  /*This line is needed for when you use pagination.*/
+  /*padding-bottom: 40px;*/
 }
 
 .page2Styles{
@@ -63,6 +65,11 @@ html, .resultsContainer {
   margin-left: 100%;
   position: relative;
   overflow:auto;
+}
+
+.moreThan200 {
+  margin-top: -15px;
+  margin-bottom: 15px;
 }
 
 .searchTitle {
