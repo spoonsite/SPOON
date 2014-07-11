@@ -15,12 +15,14 @@
 */
 'use strict';
 
-/* global isEmpty, setupPopovers, openClick:true, moveButtons,
+/* global isEmpty, setupPopovers, openClick:true, moveButtons, setupResults,
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
   // Set up the results controller's variables.
   $scope._scopename         = 'results';
+  setupResults();
+
   $scope.tagsList           = Business.getTagsList();
   $scope.prosConsList       = Business.getProsConsList();
 

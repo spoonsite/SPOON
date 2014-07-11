@@ -16,12 +16,17 @@
 
 'use strict';
 
-app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', function ($scope, Business, localCache, $location) {
+app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout',  function ($scope, Business, localCache, $location, $timeout)  {
   // set up the landing page route so that we include the right landing page.
   $scope.landingRoute = null;
-  Business.landingPage(false, false, true).then(function (result) {
-    $scope.landingRoute = result.value;
-  });
+  $scope.$emit('$TRIGGERLOAD', 'landingLoader');
+  $timeout(function() {
+    Business.landingPage(false, false, true).then(function (result) {
+      $scope.landingRoute = result.value;
+      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+      $scope.loaded = true;
+    });
+  }, 1000);
 
   /***************************************************************
   * This function is used to send the user to the results page with the correct

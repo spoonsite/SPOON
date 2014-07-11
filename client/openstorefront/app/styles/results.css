@@ -55,7 +55,7 @@ html, .resultsContainer {
   padding-bottom: 40px;
 }
 
-.page2{
+.page2Styles{
   margin-right: -1px;
   border-left: 1px lightgray solid;
   border-right: 1px lightgray solid;
@@ -250,7 +250,7 @@ width: 100%;
   width: 300px;
 }
 
-.page2 h1 {
+.page2Styles h1 {
   color: #ff4800;
   padding: 15px 10px;
   font-weight: 300;
@@ -262,7 +262,7 @@ width: 100%;
   /*word-spacing: -0.3em;*/
 }
 
-.page2 h1 span {
+.page2Styles h1 span {
   padding: 15px 10px;
   font-family: 'Satisfy', serif;
   font-weight: 400;
