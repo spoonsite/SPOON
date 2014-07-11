@@ -194,7 +194,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.reAdjust = function(key) {
     $scope.searchGroup        = key;
     $scope.searchKey          = $rootScope.searchKey;
-    $scope.filters            = Business.getFilters();
+    
+    /*Simulate wait for the filters*/
+    $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
+    $timeout(function(){
+      $scope.filters = Business.getFilters();
+      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+    }, 1500);
+    
+
     $scope.total              = Business.getData();
     $scope.watches            = Business.getWatches();
     $scope.filteredTotal      = $scope.total;
@@ -205,7 +213,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $timeout(function(){
       $scope.data = $scope.total;
       $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-    }, 5000);
+    }, 3000);
 
     _.each($scope.data, function(item){
       item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
