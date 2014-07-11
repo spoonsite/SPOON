@@ -522,17 +522,17 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.updateDetails = function(id){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     $timeout(function() {
+      if (!openClick) {
+        buttonOpen();
+      }
+      var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
+      if (temp)
+      {
+        $scope.details.details = temp;
+      }
+      $scope.showDetails = true;
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
     }, 1500);
-    if (!openClick) {
-      buttonOpen();
-    }
-    var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
-    if (temp)
-    {
-      $scope.details.details = temp;
-    }
-    $scope.showDetails = true;
   };
 
   /***************************************************************
