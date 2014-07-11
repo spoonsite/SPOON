@@ -19,7 +19,7 @@
 angular.module('openstorefrontApp')
 .directive('loader', function () {
   return {
-    template: '<div class="loader-holder modal-backdrop" ng-show="loading"><div class="loader"></div></div>',
+    template: '<div class="loader-holder modal-backdrop" ng-show="loading"><div class="loader"><!--[if lt IE 10]><span>...Loading...</span><![endif]--></div></div>',
     restrict: 'E',
     scope: {
       trigger: '@trigger'

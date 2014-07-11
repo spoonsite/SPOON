@@ -194,30 +194,34 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.reAdjust = function(key) {
     $scope.searchGroup        = key;
     $scope.searchKey          = $rootScope.searchKey;
-    
-    /*Simulate wait for the filters*/
-    $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
-    $timeout(function(){
-      $scope.filters = Business.getFilters();
-      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-    }, 1500);
-    
-
     $scope.total              = Business.getData();
     $scope.watches            = Business.getWatches();
     $scope.filteredTotal      = $scope.total;
+    
+    /*Simulate wait for the filters*/
+    $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
+    $scope.$emit('$TRIGGERLOAD', 'mainLoader');
+    $timeout(function(){
+      $scope.filters = Business.getFilters();
+      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      $timeout(function(){
+        $scope.data = $scope.total;
+        _.each($scope.data, function(item){
+          item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
+        });
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.initializeData(key);
+      }, 1500);
+    }, 1500);
+    
+
 
 
     /*This is simulating the wait time for building the data so that we get a loader*/
-    $scope.$emit('$TRIGGERLOAD', 'mainLoader');
-    $timeout(function(){
-      $scope.data = $scope.total;
-      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-    }, 3000);
+  };
 
-    _.each($scope.data, function(item){
-      item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
-    });
+  $scope.initializeData = function(key) {
+
     /*******************************************************************************
     * This is used to initialize the scope title, key, and code. Once we have a 
     * database, this is most likely where we'll do the first pull for data.
