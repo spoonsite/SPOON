@@ -167,8 +167,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         });
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
-      }, 10);
-    }, 10);
+      }, 1500);
+    }, 1500);
   };
 
   $scope.initializeData = function(key) {
