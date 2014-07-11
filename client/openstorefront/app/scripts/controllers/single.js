@@ -88,5 +88,9 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     });
     //
   };
-  callSearch();
+  $scope.$emit('$TRIGGERLOAD', 'singleLoader');
+  $timeout(function() {
+    callSearch();
+    $scope.$emit('$TRIGGERUNLOAD', 'singleLoader');
+  }, 1500);
 }]);
