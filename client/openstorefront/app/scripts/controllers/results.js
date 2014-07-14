@@ -44,10 +44,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //
   ];
   
- Business.lookupservice.getUserTypeCodes().then(function(lookup){
-    $scope.userTypeCodes  = lookup; 
+  Business.lookupservice.getUserTypeCodes().then(function(lookup){
+    $scope.userTypeCodes  = lookup;
     //TODO: chain load the review form    
- });
+  });
 
 
 

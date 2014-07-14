@@ -57,8 +57,8 @@ app.factory('localCache', function () {
         return new Date(cache.getItem(key));
       }
     } else {
-        data = undefined;
-    }    
+      data = undefined;
+    }
     return data;
   };
 

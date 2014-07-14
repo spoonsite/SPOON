@@ -55,24 +55,24 @@ var app = angular
     redirectTo: '/'
   });
   
-   /**
-    * Global errore
-    */
+  /**
+  * Global errore
+  */
   $httpProvider.interceptors.push(function($q) {
-    return { 
+    return {
       'responseError': function(response) {
-         //Handle the error (Mainly unexpected other may need different handling)
-         
-         //TODO: Add handling
-         
-//          if (canRecover(rejection)) {
-            return response || $q.when(response);
-//          }
-//          return $q.reject(rejection);
-      }
-    }
-  });  
-  
+        //Handle the error (Mainly unexpected other may need different handling)
+
+        //TODO: Add handling
+
+        // if (canRecover(rejection)) {
+          return response || $q.when(response);
+        // }
+        // return $q.reject(rejection);
+        } //
+    };
+  });
+
   tagsInputConfigProvider
   .setDefaults('tagsInput', {
     placeholder: 'Add a tag (single space for suggestions)'
@@ -202,13 +202,13 @@ var app = angular
   $rootScope.setNav();
   
   
-   //Mock Back End  (use passthough to route to server)
-    $httpBackend.whenGET(/views.*/).passThrough();
-    
-    $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
-    $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
-    
-    ////////////////////////////////////////////////////////////////////////
+  //Mock Back End  (use passthough to route to server)
+  $httpBackend.whenGET(/views.*/).passThrough();
+  
+  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
+  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
+  
+  ////////////////////////////////////////////////////////////////////////
 
   $rootScope.setupModal = function(modal, classNames) {
     var deferred = $q.defer();
