@@ -6,10 +6,6 @@
     "bower": "",
     "moment": "^2.7.0"
   },
-  "scripts": {
-    "test": "grunt test",
-    "postinstall": "bower install"
-  },
   "devDependencies": {
     "bower": "",
     "grunt": "~0.4.1",
@@ -40,7 +36,15 @@
     "karma-ng-scenario": "^0.1.0",
     "load-grunt-tasks": "~0.4.0",
     "node-zip": "^1.1.0",
+    "protractor": "0.24.2",
+    "grunt-protractor-runner": "0.2.5",
     "time-grunt": "~0.2.1"
+  },
+  "scripts": {
+    "test": "grunt test",
+    "postinstall": "bower install",
+    "install": "node ./node_modules/protractor/bin/webdriver-manager update",
+    "test": "grunt test-e2e"
   },
   "engines": {
     "node": ">=0.10.0"

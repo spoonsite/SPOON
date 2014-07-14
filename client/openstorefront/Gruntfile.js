@@ -23,6 +23,7 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   grunt.loadNpmTasks('grunt-war');
+  grunt.loadNpmTasks("grunt-protractor-runner");
 
   // Define the configuration for all the tasks
   grunt.initConfig({
@@ -350,6 +351,7 @@ module.exports = function (grunt) {
           'bower_components/fontawesome/fonts/*',
           'bower_components/bootstrap/dist/fonts/*',
           'bower_components/bootstrap/dist/css/bootstrap.css',
+          'bower_components/angular-mocks/angular-mocks.js',
           'bower_components/ckeditor/**/*',
           'bower_components/ng-ckeditor/ng-ckeditor.js',
           'styles/*.css',
@@ -436,7 +438,18 @@ module.exports = function (grunt) {
         configFile: 'karma.conf.js',
         singleRun: true
       }
-    }
+    },
+    protractor: {
+      options: {
+        keepAlive: true,
+        configFile: "test/protractor.conf.js",
+        args: {
+          seleniumServerJar: 'node_modules/protractor/selenium/selenium-server-standalone-2.42.0.jar',
+          chromeDriver: 'node_modules/protractor/selenium/chromedriver.exe'
+        }
+      },
+      run: {}
+    },
   });
 
 
@@ -466,6 +479,11 @@ grunt.registerTask('test', [
     // 'autoprefixer',
     'connect:test',
     'karma'
+    ]);
+    
+grunt.registerTask('test-e2e', [
+  'clean:server',
+  'protractor:run'
     ]);
 
 grunt.registerTask('build', function (target) {

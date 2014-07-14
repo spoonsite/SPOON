@@ -115,4 +115,6 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   // this calls the setup for the page-specific js
   setupMain();
 
+  // triggerAlert('Check out this alert!', '1', 'body');
+
 }]);

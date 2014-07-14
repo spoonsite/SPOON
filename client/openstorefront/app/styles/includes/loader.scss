@@ -1,3 +1,6 @@
+loader {
+  border-radius: inherit;
+}
 .loader-holder {
   position: absolute;
   top: 0px;
@@ -7,6 +10,7 @@
   z-index: 1030;
   background-color: rgba(0, 0, 0, .3);
   cursor: progress;
+  border-radius: inherit;
 }
 .loader {
   position: absolute;

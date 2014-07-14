@@ -40,13 +40,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *
+ *  User Profile Resource
  * @author dshurtleff
  */
 @Path("v1/resource/userprofiles")
 @APIDescription("A user profile contain information about the user and user specific data. A user profile is created at the time the user logins in.<br>"
 		           + "Note: id can be set to \"CURRENTUSER\" to perform operations on the currently logged in user.")
 public class UserProfile
+	extends BaseResource
 {
 	private static final String DEFAULT_USER = "CURRENTUSER";
 	
@@ -57,12 +58,10 @@ public class UserProfile
 	@DataType(UserProfileView.class)
 	public RestListResponse userProfiles()
 	{
-		RestListResponse restListResponse = new RestListResponse();
-		
 		List<UserProfileView> userProfileViews = new ArrayList<>();
 	
 		
-		return restListResponse;
+		return sendListResponse(userProfileViews);
 	}
 	
 	@GET
@@ -111,9 +110,9 @@ public class UserProfile
 			@RequiredParam		
 			String userId)
 	{
-		RestListResponse restListResponse = new RestListResponse();
+		List<UserWatchView> userWatchViews = new ArrayList<>();
 		
-		return restListResponse;
+		return sendListResponse(userWatchViews);		
 	}	
 	
 	@GET

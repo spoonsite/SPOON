@@ -36,11 +36,15 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   * This function is called once we have the search request from the business layer
   ***************************************************************/
   $scope.updateDetails = function(id){
-    var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
-    if (temp)
-    {
-      $scope.details.details = temp;
-    }
+    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
+    $timeout(function() {
+      var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
+      if (temp)
+      {
+        $scope.details.details = temp;
+      }
+      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+    }, 1500);
   };
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search

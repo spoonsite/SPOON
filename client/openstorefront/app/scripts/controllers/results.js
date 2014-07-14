@@ -15,12 +15,14 @@
 */
 'use strict';
 
-/* global isEmpty, setupPopovers, openClick:true, moveButtons,
+/* global isEmpty, setupPopovers, openClick:true, moveButtons, setupResults,
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
   // Set up the results controller's variables.
   $scope._scopename         = 'results';
+  setupResults();
+
   $scope.tagsList           = Business.getTagsList();
   $scope.prosConsList       = Business.getProsConsList();
 
@@ -30,6 +32,22 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.lastUsed = new Date();
 
   // $scope.date1 = moment();
+
+  $scope.expertise = [
+    //
+    {'value':'1', 'label': 'Less than 1 month'},
+    {'value':'2', 'label': 'Less than 3 months'},
+    {'value':'3', 'label': 'Less than 6 months'},
+    {'value':'4', 'label': 'Less than 1 year'},
+    {'value':'5', 'label': 'Less than 3 years'},
+    {'value':'6', 'label': 'More than 3 years'}
+  //
+  ];
+  
+  Business.lookupservice.getUserTypeCodes().then(function(lookup){
+    $scope.userTypeCodes  = lookup;
+    //TODO: chain load the review form    
+  });
 
 
 
@@ -125,8 +143,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   // These variables are used for the pagination
   $scope.filteredTotal  = null;
-  $scope.data           = null;
-  $scope.rowsPerPage    = 10;
+  $scope.data           = {};
+  $scope.rowsPerPage    = 200;
   $scope.pageNumber     = 1;
   $scope.maxPageNumber  = 1;
 
@@ -160,16 +178,31 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
       /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
-        $scope.data = $scope.total;
-        $scope.data.data = $scope.data;
-        _.each($scope.data, function(item){
+        $scope.data.data = $scope.total;
+        _.each($scope.data.data, function(item){
           item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
         });
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
-      }, 10);
-    }, 10);
+      }, 1000);
+    }, 1000);
   };
+
+  $scope.$watch('data', function() {
+    if ($scope.data && $scope.data.data) {
+      // max needs to represent the total number of results you want to load
+      // on the initial search.
+      var max = 20;
+      // also, we'll probably check the total number of possible results that
+      // could come back from the server here instead of the length of the
+      // data we have already.
+      if ($scope.data.data.length > max) {
+        $scope.moreThan200 = true;
+      } else {
+        $scope.moreThan200 = false;
+      }
+    }
+  }, true);
 
   $scope.initializeData = function(key) {
 
@@ -388,11 +421,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     if ($scope.filteredTotal) {
-      $scope.data = $scope.filteredTotal.slice(((page - 1) * $scope.rowsPerPage), (page * $scope.rowsPerPage));
-      $scope.data.data = $scope.data;
+      $scope.data.data = $scope.filteredTotal.slice(((page - 1) * $scope.rowsPerPage), (page * $scope.rowsPerPage));
     } else {
-      $scope.data = [];
-      $scope.data.data = $scope.data;
+      $scope.data.data = [];
     }
     $scope.applyFilters();
 
@@ -502,14 +533,18 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function updates the details when a component title is clicked on
   ***************************************************************/
   $scope.updateDetails = function(id){
+    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     if (!openClick) {
       buttonOpen();
     }
-    var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
-    if (temp)
-    {
-      $scope.details.details = temp;
-    }
+    $timeout(function() {
+      var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
+      if (temp)
+      {
+        $scope.details.details = temp;
+      }
+      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+    }, 1500);
     $scope.showDetails = true;
   };
 
@@ -569,9 +604,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     // Set the data that will be displayed to the first 'n' results of the filtered data
-    $scope.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
-    $scope.data.data = $scope.data;
-
+    $scope.data.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
+    
     // after a slight wait, reapply the popovers for the results ratings.
     $timeout(function() {
       setupPopovers();

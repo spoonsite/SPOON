@@ -18,6 +18,40 @@
 
 
 var MOCKDATA = {};
+
+
+MOCKDATA.userProfile = {
+  'username' : 'sample.user',
+  'firstname' : 'Sample',
+  'lastname' : 'User',
+  'email' : 'sample.user@test.net',
+  'userTypeCode' :  'USER',
+  'createDts' : 1405096596000,
+  'updateDts' : 1405096596000,
+  'updateUser' : 'sample.user',
+  'admin': false
+};
+
+MOCKDATA.userTypeCodes = {
+  'totalResults': '3',
+  'results': '3',
+  'data':  [
+  {
+    'code': 'USER',
+    'description': 'End User'
+  },
+  {
+    'code': 'DEV',
+    'description': 'Developer'
+  },
+  {
+    'code': 'PM',
+    'description': 'Project Manager'
+  }
+  ]
+};
+
+
 MOCKDATA.resources = {
 
 };
@@ -687,19 +721,6 @@ MOCKDATA.conformanceDetails = {
     name: 'Evaluated',
     docUrl: '',
     icon: ''
-  }
-  ]
-};
-
-MOCKDATA.userProfile = {
-  users: [
-  {
-    username: 'John.Tester',
-    firstname: 'John',
-    lastname: 'Tester',
-    email: 'john.tester@test.com',
-    type: 'Developer',
-    createDate: ' 01/01/2014'
   }
   ]
 };
