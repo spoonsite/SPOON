@@ -50,7 +50,7 @@
         <div class="row" style="margin:0px;">
           <label>Describe Yourself:&nbsp;</label>
         </div>
-        <button type="button" class="btn btn-default" style="width: 325px;" ng-model="review.userRole" data-html="1" ng-options="role.description for role in userRoles" data-animation="am-flip-x" bs-select>
+        <button type="button" class="btn btn-default" style="width: 325px;" ng-model="review.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes"  data-animation="am-flip-x" bs-select>
           Action <span class="caret"></span>
         </button>
       </div>
@@ -71,7 +71,9 @@
     </div>
     <div>
       <strong>Comments:</strong>      
-      <div><textarea name="" id="" rows="10" class="boxsizingBorder"></textarea></div>
-    </div>
-  </div>
+      <div><textarea name="" id="" rows="10" class="boxsizingBorder"></textarea></div>	  
+  </div>    
+	  <div class="text-center" style="padding-top: 20px;">
+		<button type="button" class="btn btn-primary" ng-click="">Post Review</button>									
+	</div>	  
 </div>

@@ -44,16 +44,22 @@ app.factory('localCache', function () {
   *         object will occur. "date" will convert it to a JS Date object.
   */
   var get = function (key, type) {
-    if (typeof key !== 'string') {
-      throw new Error('Key must be a string');
-    }
-    if ((typeof type !== 'undefined') && (type === 'object')) {
-      return JSON.parse(cache.getItem(key));
-    }
-    if ((typeof type !== 'undefined') && (type === 'date')) {
-      return new Date(cache.getItem(key));
-    }
-    return cache.getItem(key);
+    var data = cache.getItem(key);
+    if (data !== 'undefined')
+    {
+      if (typeof key !== 'string') {
+        throw new Error('Key must be a string');
+      }
+      if ((typeof type !== 'undefined') && (type === 'object')) {
+        return JSON.parse(cache.getItem(key));
+      }
+      if ((typeof type !== 'undefined') && (type === 'date')) {
+        return new Date(cache.getItem(key));
+      }
+    } else {
+        data = undefined;
+    }    
+    return data;
   };
 
   /**

@@ -23,9 +23,9 @@
 ***************************************************************/
 var app = angular
 // Here we add the dependancies for the app
-.module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor', 'ngGrid'])
+.module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor', 'ngGrid', 'ngMockE2E'])
 // Here we configure the route provider
-.config(function ($routeProvider, tagsInputConfigProvider) {
+.config(function ($routeProvider, tagsInputConfigProvider, $httpProvider) {
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
@@ -54,6 +54,25 @@ var app = angular
   .otherwise({
     redirectTo: '/'
   });
+  
+   /**
+    * Global errore
+    */
+  $httpProvider.interceptors.push(function($q) {
+    return { 
+      'responseError': function(response) {
+         //Handle the error (Mainly unexpected other may need different handling)
+         
+         //TODO: Add handling
+         
+//          if (canRecover(rejection)) {
+            return response || $q.when(response);
+//          }
+//          return $q.reject(rejection);
+      }
+    }
+  });  
+  
   tagsInputConfigProvider
   .setDefaults('tagsInput', {
     placeholder: 'Add a tag (single space for suggestions)'
@@ -71,7 +90,8 @@ var app = angular
   });
 })
 // here we add the .run function for intial setup and other useful functions
-.run(['$rootScope', 'localCache', 'business', '$location', '$route', '$timeout', '$q', function ($rootScope, localCache, Business, $location, $route, $timeout, $q) {/* jshint unused: false*/
+
+.run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend','$q', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q) {/* jshint unused: false*/
 
   $rootScope._scopename = 'root';
 
@@ -170,6 +190,26 @@ var app = angular
     $rootScope.$broadcast('$viewModal', id);
   };
 
+  $rootScope.setNav = function() {
+    // once the content is loaded, make sure we have the right navigation!
+    if (!$location.path() || $location.path() === '/') {
+      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
+    } else {
+      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
+    }
+  };
+
+  $rootScope.setNav();
+  
+  
+   //Mock Back End  (use passthough to route to server)
+    $httpBackend.whenGET(/views.*/).passThrough();
+    
+    $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
+    $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
+    
+    ////////////////////////////////////////////////////////////////////////
+
   $rootScope.setupModal = function(modal, classNames) {
     var deferred = $q.defer();
     if (classNames !== '') {
@@ -200,3 +240,4 @@ var app = angular
   };
 
 }]);
+

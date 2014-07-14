@@ -24,24 +24,15 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
   $scope.defaultTitle     = 'Browse Categories';
   $scope.watches          = Business.getWatches();
   $scope.total            = Business.getData();
-  $scope.feedbackDetails  = [
-    //
+  $scope.feedbackDetails  = [    
     {'id':'1','date':'Jan 4, 2014 8:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jim Calhoun'},
     {'id':'2','date':'01/05/2014 9:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jill Calhoun'},
     {'id':'3','date':'01/06/2014 10:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jay Calhoun'}
-    /*,
-    {'id':'4','date':'01/07/2014 11:25 am','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jade Calhoun'},
-    {'id':'5','date':'01/08/2014 12:25 pm','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'Jesse Calhoun'},
-    {'id':'6','date':'01/09/2014 8:25 pm','comments':'This VANTAGE WESS OZONE Widget is really cool','author':'JaLayne Calhoun'}*/
-  //
   ];
-  $scope.user             = {
-    'userName': 'John Q. Sample',
-    'userRole': 'Admin',
-    'userMemberSince': '01/10/2012',
-    'userEmail': 'john.q.sample@gmail.com'
-  };
-  $scope.userBackup       = jQuery.extend(true, {}, $scope.user);
+  
+  
+  
+
   var immageHack          = 0;
   var images              = [
     //
@@ -102,6 +93,55 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
     });
   };
   resetData();
+
+/**
+ * Load the User profile 
+ */
+var loadUserProfile = function(){
+  
+  //show load mask on form
+  
+  Business.userservice.getCurrentUserProfile().then(function(profile){
+     $scope.userProfile = profile; 
+     $scope.userProfileForm = angular.copy(profile);     
+     
+     _.each($scope.userTypeCodes, function(element, index, list){
+          if (element.code === $scope.userProfileForm.userTypeCode){
+            $scope.userProfileForm.userRole =  element;
+          }
+     });
+    
+     
+     //hide load mask
+  });
+  
+};
+
+ Business.lookupservice.getUserTypeCodes().then(function(lookup){
+    $scope.userTypeCodes  = lookup; 
+    loadUserProfile();
+ });
+
+  $scope.saveUserProfile = function () {
+      //validate form
+      $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
+      
+      //mask form and disable save button
+      var success = function (data, status, headers, config){
+        loadUserProfile();  
+        
+        //Show message toaster
+          
+      };
+      
+      var failure = function (data, status, headers, config){
+          //mark fields that are bad (add error class) and show our error messages div
+          
+      };
+      
+      Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
+  };
+
 
   /***************************************************************
   * This function saves the profile changes in the scope by copying them from
