@@ -16,7 +16,8 @@
 'use strict';
 
 
-/* exported setupPopovers, setupTypeahead, isEmpty, toggleclass, setUpDropdown, setupParallax*/
+/* exported setupPopovers, setupTypeahead, isEmpty, toggleclass, setUpDropdown,
+setupParallax, triggerAlert*/
 
 /*****************************
 * This function sets up the popovers for the results page, but could be 
@@ -116,4 +117,38 @@ var setupParallax = function() {
       mouseport: jQuery('#port')
     });
   }, 10);
+};
+
+/***************************************************************
+* Trigger an alert
+***************************************************************/
+var triggerAlert = function(text, uid, id) {
+  if (!text || !uid){
+    console.error('TRIGGER-ALERT Failed because the text or uid fields were not set');
+    return;
+  }
+  if (text !== 'fail') {
+    if ($(id).length === 0) {
+      id = 'body';
+    }
+    $('#alert_holder').remove();
+    $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+    $(document).on('click keypress', function(event) {
+      //this condition makes it so that if you click on the span, it won't close
+      //the alert. If you want it to close, we need to set it to false.
+      if ($(event.target).attr('id') !== 'alert_holder_'+uid && $(event.target).attr('id') !== 'alert_holder_'+uid+'_span' ) {
+        if ($('#alert_holder_'+uid).is(':visible')) {
+          if ( event.which === 13 ) {
+            event.preventDefault();
+          }
+          $('#alert_holder_'+uid).css('visiblility', 'hidden');
+          $('#alert_holder_'+uid).fadeOut(300);
+        }
+      }
+    });
+    console.log(text);
+    setTimeout(function() {
+      $('#alert_holder_'+uid).fadeOut(1000);
+    }, 4000);
+  }
 };
