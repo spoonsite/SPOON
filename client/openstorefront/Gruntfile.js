@@ -351,6 +351,7 @@ module.exports = function (grunt) {
           'bower_components/fontawesome/fonts/*',
           'bower_components/bootstrap/dist/fonts/*',
           'bower_components/bootstrap/dist/css/bootstrap.css',
+          'bower_components/angular-mocks/angular-mocks.js',
           'bower_components/ckeditor/**/*',
           'bower_components/ng-ckeditor/ng-ckeditor.js',
           'styles/*.css',

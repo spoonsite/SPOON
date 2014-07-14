@@ -21,34 +21,34 @@ var MOCKDATA = {};
 
 
 MOCKDATA.userProfile = {
-  "username" : 'sample.user',
-  "firstname" : 'Sample',
-  "lastname" : 'User',
-  "email" : 'sample.user@test.net',
-  "userTypeCode" :  'USER',
-  "createDts" : 1405096596000,
-  "updateDts" : 1405096596000,
-  "updateUser" : 'sample.user',
-  "admin": false
+  'username' : 'sample.user',
+  'firstname' : 'Sample',
+  'lastname' : 'User',
+  'email' : 'sample.user@test.net',
+  'userTypeCode' :  'USER',
+  'createDts' : 1405096596000,
+  'updateDts' : 1405096596000,
+  'updateUser' : 'sample.user',
+  'admin': false
 };
 
 MOCKDATA.userTypeCodes = {
-    "totalResults": '3',
-    "results": '3',
-    "data":  [
-      {
-        "code": 'USER',
-        "description": 'End User'
-      },
-      {
-        "code": 'DEV',
-        "description": 'Developer'
-      },
-      {
-        "code": 'PM',
-        "description": 'Project Manager'
-      }  
-    ]
+  'totalResults': '3',
+  'results': '3',
+  'data':  [
+  {
+    'code': 'USER',
+    'description': 'End User'
+  },
+  {
+    'code': 'DEV',
+    'description': 'Developer'
+  },
+  {
+    'code': 'PM',
+    'description': 'Project Manager'
+  }
+  ]
 };
 
 
