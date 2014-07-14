@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/*global setupMain*/
+/*global setupMain, triggerAlert*/
 
 app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
   // Here we grab the rootScope searchKey in order to preserve the last search
@@ -114,4 +114,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
 
   // this calls the setup for the page-specific js
   setupMain();
+
+  // triggerAlert('Check out this alert!', '1', 'body');
+
 }]);
