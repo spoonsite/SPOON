@@ -11,7 +11,6 @@
     "angular-cookies": "1.2.15",
     "angular-sanitize": "1.2.15",
     "angular-route": "1.2.15",
-    "angular-bootstrap-lightbox": "~0.2.1",
     "angular-mocks": "1.2.15",
     "underscore": "~1.6.0",
     "fontawesome": "~4.1.0",
@@ -23,7 +22,9 @@
     "ckeditor": "~4.4.2",
     "moment": "~2.6.0",
     "angular-moment": "~0.7.1",
-    "ng-grid": "~2.0.11"
+    "ng-grid": "~2.0.11",
+    "angular-touch": "~1.2.14",
+    "angular-loading-bar": "~0.3.0"
   },
   "devDependencies": {
     "angular-scenario": "1.2.15"
