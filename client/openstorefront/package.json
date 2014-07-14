@@ -6,10 +6,6 @@
     "bower": "",
     "moment": "^2.7.0"
   },
-  "scripts": {
-    "test": "grunt test",
-    "postinstall": "bower install"
-  },
   "devDependencies": {
     "bower": "",
     "grunt": "~0.4.1",
@@ -45,6 +41,8 @@
     "time-grunt": "~0.2.1"
   },
   "scripts": {
+    "test": "grunt test",
+    "postinstall": "bower install",
     "install": "node ./node_modules/protractor/bin/webdriver-manager update",
     "test": "grunt test-e2e"
   },
