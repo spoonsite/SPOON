@@ -23,9 +23,9 @@
 ***************************************************************/
 var app = angular
 // Here we add the dependancies for the app
-.module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor', 'ngGrid'])
+.module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor', 'ngGrid' , 'bootstrapLightbox' ])
 // Here we configure the route provider
-.config(function ($routeProvider, tagsInputConfigProvider) {
+.config(function ($routeProvider, tagsInputConfigProvider, LightboxProvider) {
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
@@ -69,6 +69,43 @@ var app = angular
     addOnEnter: true,
     removeTagSymbol: true
   });
+
+  // set a custom template
+  LightboxProvider.templateUrl = 'views/lightbox/lightbox.html';
+
+  /**
+   * Calculate the max and min limits to the width and height of the displayed
+   *   image (all are optional). The max dimensions override the min
+   *   dimensions if they conflict.
+   * @param  {Object} dimensions Contains the properties windowWidth,
+   *   windowHeight, imageWidth, imageHeight.
+   * @return {Object} May optionally contain the properties minWidth,
+   *   minHeight, maxWidth, maxHeight.
+   */
+  LightboxProvider.calculateImageDimensionLimits = function (dimensions) {
+    return {
+      'minWidth': 100,
+      'minHeight': 100,
+      'maxWidth': dimensions.windowWidth - 102,
+      'maxHeight': dimensions.windowHeight - 136
+    };
+  };
+
+  /**
+   * Calculate the width and height of the modal. This method gets called
+   *   after the width and height of the image, as displayed inside the modal,
+   *   are calculated. See the default method for cases where the width or
+   *   height are 'auto'.
+   * @param  {Object} dimensions Contains the properties windowWidth,
+   *   windowHeight, imageDisplayWidth, imageDisplayHeight.
+   * @return {Object} Must contain the properties width and height.
+   */
+  LightboxProvider.calculateModalDimensions = function (dimensions) {
+    return {
+      'width': Math.max(500, dimensions.imageDisplayWidth + 42),
+      'height': Math.max(500, dimensions.imageDisplayHeight + 76)
+    };
+  };
 })
 // here we add the .run function for intial setup and other useful functions
 .run(['$rootScope', 'localCache', 'business', '$location', '$route', '$timeout', '$q', function ($rootScope, localCache, Business, $location, $route, $timeout, $q) {/* jshint unused: false*/

@@ -26,6 +26,33 @@
 <div class="row">
   <div class="col-md-12">
     <div class="section-headers"><h4>Screenshots / Media</h4></div>
+
+      <div class="containers">
+        <ul ng-controller="GalleryCtrl">
+          <li ng-repeat="image in images">
+            <a ng-click="openLightboxModal($index)">
+              <img ng-src="{{image.thumbUrl}}" class="img-thumbnail" alt="">
+            </a>
+          </li>
+        </ul>
+<!-- 
+         <ul class="row">
+             <li class="col-lg-2 col-md-2 col-sm-3 col-xs-4"><img src="images/testpic1.png" /></li>
+             <li class="col-lg-2 col-md-2 col-sm-3 col-xs-4"><img src="images/testpic2.png" /></li>
+             <li class="col-lg-2 col-md-2 col-sm-3 col-xs-4"><img src="images/testpic3.png" /></li>
+         </ul> -->
+      </div>
+<!-- 
+       <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">         
+              <div class="modal-body"> 
+              asdfasdfasdf               
+              </div>
+            </div> 
+          </div> 
+        </div>  -->
+
   </div>
 </div>
 
@@ -81,7 +108,7 @@
     <div class="component2-div" style="margin-top: 10px; margin-bottom:25px">
       <div class="col-md-4">
        <div class="section-headers"><h4>Categories</h4></div>
-        <div data-ng-repeat="tag in details.categories" style="margin-left: 30px">
+        <div data-ng-repeat="tag in details.details.categories" style="margin-left: 30px">
           <ul>
             <li> {{tag.desc}}</li>
           </ul>                   
@@ -91,7 +118,7 @@
         <div class="section-headers"><h4>Operational Status</h4></div>
         <div style="margin-left: 30px">
           <ul>
-            <li> {{details.operationStatus}}</li>
+            <li> {{details.details.operationStatus}}</li>
           </ul>
         </div>
       </div>
@@ -107,7 +134,7 @@
 <!--   </div> -->
 </div>
 <br>
-<div class="row">
+<!-- <div class="row">
   <div class="container component2-div">
     <div class="section-headers"><h4>Resources</h4></div>
     <div class="col-sm-12">
@@ -154,7 +181,7 @@
       <div style="position: relative; clear: both"></div>
     </div>
   </div>
-</div>
+</div> -->
 <br>
 <div class="row">
   <div class="container component2-div">
@@ -164,13 +191,13 @@
         <h4>
           Parent Component:
         </h4>
-        <div data-ng-repeat="thing in details.componentOf">
+        <div data-ng-repeat="thing in details.details.componentOf">
           <a  href="">{{thing.name}}</a>
         </div>
         <h4>
           Child Component(s):
         </h4>
-        <div data-ng-repeat="subComponent in details.subComponents">
+        <div data-ng-repeat="subComponent in details.details.subComponents">
           <a  href="">{{subComponent.name}}</a>
         </div>
       </div>
