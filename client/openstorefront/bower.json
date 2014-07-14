@@ -11,6 +11,7 @@
     "angular-cookies": "1.2.15",
     "angular-sanitize": "1.2.15",
     "angular-route": "1.2.15",
+    "angular-mocks": "1.2.15",
     "underscore": "~1.6.0",
     "fontawesome": "~4.1.0",
     "ng-tags-input": "~2.0.1",

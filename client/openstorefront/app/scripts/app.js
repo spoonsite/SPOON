@@ -25,7 +25,7 @@ var app = angular
 // Here we add the dependancies for the app
 .module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor', 'ngGrid', 'ngMockE2E'])
 // Here we configure the route provider
-.config(function ($routeProvider, tagsInputConfigProvider, $httpProvider) {
+.config(function ($routeProvider, tagsInputConfigProvider) {
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
@@ -55,23 +55,23 @@ var app = angular
     redirectTo: '/'
   });
   
-  /**
-  * Global errore
-  */
-  $httpProvider.interceptors.push(function($q) {
-    return {
-      'responseError': function(response) {
-        //Handle the error (Mainly unexpected other may need different handling)
+  // /**
+  // * Global errore
+  // */
+  // $httpProvider.interceptors.push(function($q) {
+  //   return {
+  //     'responseError': function(response) {
+  //       //Handle the error (Mainly unexpected other may need different handling)
 
-        //TODO: Add handling
+  //       //TODO: Add handling
 
-        // if (canRecover(rejection)) {
-          return response || $q.when(response);
-        // }
-        // return $q.reject(rejection);
-        } //
-    };
-  });
+  //       // if (canRecover(rejection)) {
+  //         return response || $q.when(response);
+  //       // }
+  //       // return $q.reject(rejection);
+  //       }
+  //   };
+  // });
 
   tagsInputConfigProvider
   .setDefaults('tagsInput', {
