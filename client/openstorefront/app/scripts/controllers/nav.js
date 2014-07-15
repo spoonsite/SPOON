@@ -141,6 +141,15 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     $location.path(route);
   };
 
+  /***************************************************************
+  * Log out the user
+  ***************************************************************/
+  $scope.logout = function () {
+    Auth.logout();
+    $scope.user.isLoggedIn = false;
+    $route.reload();
+  };
+
   /*******************************************************************************
   * This function sets the rootScope's search key so that if you did it in the
   * controller search, it is still preserved across the page.
