@@ -31,6 +31,15 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'sofachrome';
+  src: font-url('sofachrome rg.eot');
+  src: local('☺'), font-url('sofachrome rg.woff') format('woff'), font-url('sofachrome rg.ttf') format('truetype'), font-url('sofachrome rg.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 
 /***************************************************************
 * This is used for the rating system in place of the fontawesome stars

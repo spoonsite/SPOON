@@ -17,7 +17,7 @@
 
 
 /* exported setupPopovers, setupTypeahead, isEmpty, toggleclass, setUpDropdown,
-setupParallax, triggerAlert, triggerError*/
+setupParallax, triggerAlert, triggerError, removeError*/
 
 /*****************************
 * This function sets up the popovers for the results page, but could be 
@@ -172,6 +172,16 @@ var triggerAlert = function(text, uid, id, delay) {
   }
 };
 
+
+/***************************************************************
+* This funciton gets rid of input error styling
+* params: id -- the id of the element that should be cleaned up
+***************************************************************/
+var removeError = function(id) {
+  $('#'+id).tooltip('destroy');
+  $('#'+id).removeClass('errorOnInput');
+};
+
 /***************************************************************
 * This function adds a tooltip and styling to an input element
 * when the serve responds with an error. This expects an error object
@@ -190,11 +200,6 @@ var triggerAlert = function(text, uid, id, delay) {
 ***************************************************************/
 var triggerError = function(errorObj) {
   var errors = errorObj.errors;
-
-  // $('.errorOnInput').each(function() {
-  //   $(this).tooltip('destroy');
-  //   $(this).removeClass('.errorOnInput');
-  // });
 
   _.each(errors, function(item) {
     for (var i in item) {

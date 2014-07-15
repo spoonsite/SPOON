@@ -99,12 +99,8 @@ limitations under the License.
 <div class="row defaultContent" ng-repeat="row in filters | partition:3">
   <div class="col-sm-4" ng-repeat="type in row" style="padding-right: 30px;">
     <div class="defaultGroupTitle">
-      <div class="icon" ng-click="goToSearch(type.key, 'all')">
-        <i class="{{type.icon}}" ></i>        
-      </div>
-      <div class="content">
-        {{type.name}} 
-      </div>
+      <div class="icon" ng-click="goToSearch(type.key, 'all')"><i class="{{type.icon}}" ></i></div>
+      <div class="content">&nbsp;{{type.name}}</div>
     </div>
     <ul class="groupItemList">
       <li ng-repeat="item in type.collection" class="groupItem imitateLink">
