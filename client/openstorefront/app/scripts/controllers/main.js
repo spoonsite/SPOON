@@ -117,4 +117,17 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
 
   // triggerAlert('Check out this alert!', '1', 'body');
 
+  var errorObject = {
+    'success': false,
+    'errors': [
+      //
+      {
+        'mainSearchBar' : 'Your input was invalid. Please try again.'
+      }
+    //
+    ]
+  };
+
+  // triggerError(errorObject);
+
 }]);
