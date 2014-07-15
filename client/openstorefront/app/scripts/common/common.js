@@ -120,6 +120,11 @@ var setupParallax = function() {
 };
 
 
+/***************************************************************
+* Hide an alert
+* params: uid -- the unique id of the alert box
+* params: delay -- How fast you want the alert to fade out
+***************************************************************/
 var hideAlert = function(uid, delay) {
   $('#alert_holder_'+uid).css('visiblility', 'hidden');
   $('#alert_holder_'+uid).stop(true, true).fadeOut(delay, function() {
@@ -127,8 +132,13 @@ var hideAlert = function(uid, delay) {
   });
 };
 
+
 /***************************************************************
 * Trigger an alert
+* params: text -- The text that will fill the alert box
+* params: uid -- the unique id for the alert box
+* params: id -- the id of the element to attach the alert box to
+* params: delay -- how long you want the alert to stay
 ***************************************************************/
 var triggerAlert = function(text, uid, id, delay) {
   delay = delay || 5000;
@@ -162,8 +172,30 @@ var triggerAlert = function(text, uid, id, delay) {
   }
 };
 
+/***************************************************************
+* This function adds a tooltip and styling to an input element
+* when the serve responds with an error. This expects an error object
+* params: errorObj -- the object that contains an errors array
+*  {
+*    'success': false,
+*    'errors': [
+*      {
+*        'mainSearchBar' : 'Your input was invalid. Please try again.'
+*      },
+*      {
+*        'element_id' : 'Error message to be displayed in the tooltip'
+*      }
+*    ]
+*  };
+***************************************************************/
 var triggerError = function(errorObj) {
   var errors = errorObj.errors;
+
+  // $('.errorOnInput').each(function() {
+  //   $(this).tooltip('destroy');
+  //   $(this).removeClass('.errorOnInput');
+  // });
+
   _.each(errors, function(item) {
     for (var i in item) {
       $('#'+i).addClass('errorOnInput');
