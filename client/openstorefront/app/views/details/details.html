@@ -28,9 +28,10 @@
 <div class="row">
   <div class="col-md-12">
     <div class="section-headers"><h4>Screenshots / Media</h4></div>
+    <br>
     <div class="containers">
       <ul ng-controller="GalleryCtrl" >
-        <li ng-repeat="image in images" style="display:inline">
+        <li ng-repeat="image in images" style="display:inline; padding:5px 10px 10px 0;">
           <a ng-click="openLightboxModal($index)" style="text-decoration:none; cursor:pointer">
             <img ng-src="{{image.thumbUrl}}" class="img-thumbnail" alt="description" title="description goes here">
           </a>
@@ -49,12 +50,8 @@
               <td class="warning valign" colspan="2"><h4>External Dependencies</h4></td>
             </tr>             
             <tr data-ng-repeat="row in externalDepend">
-              <div class="col-md-3">
                 <td class="text-left-bold">{{row.name}}</td>
-              </div>
-              <div class="col-md-9">
                 <td class="text-left">{{row.desc}}</td>
-              </div>
             </tr>
           </tbody>
         </table>  
@@ -64,12 +61,8 @@
               <td class="warning valign"  colspan="2"><h4>Location of Asset Artifacts</h4></td>
             </tr>             
             <tr data-ng-repeat="row in localAssetArtifacts">
-              <div class="col-md-3">
                 <td class="text-left-bold">{{row.name}}</td>
-              </div>
-              <div class="col-md-9">
                 <td class="text-left">{{row.desc}}</td>
-              </div>
             </tr>
           </tbody>
         </table>                  
@@ -123,14 +116,6 @@
         </div> 
       </div>
     </div>
-  </div>
-  <div class="col-md-4">
-    <div class="section-headers"><h4>Component State</h4></div>
-    <div style="margin-left: 30px">
-      <ul>
-        <li> {{getEvaluationState()}}</li>
-      </ul>
-    </div> 
   </div>
 </div>
 <!--   </div> -->

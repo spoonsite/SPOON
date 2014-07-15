@@ -9,44 +9,24 @@
 								<td class="warning" colspan="3"><h4>Component Summary</h4></td>
 							</tr>	 						
 							<tr>
-								<div class="col-md-4">
 									<td class="text-left-bold">Component Name</td>
-								</div>
-								<div class="col-md-8">
 									<td class="text-left">{{details.details.name}}</td>
-								</div>
 							</tr>
 							<tr >
-								<div class="col-md-4">
 									<td class="text-left-bold">Version</td>
-								</div>
-								<div class="col-md-8">
 									<td class="text-left" >{{row.versions}}</td>
-								</div>
 							</tr>
 							<tr class="valign">
-								<div class="col-md-4">
 									<td class="text-left-bold" >Component Type</td>
-								</div>
-								<div class="col-md-8">
 									<td class="text-left" >{{row.componenttype}}</td>
-								</div>
 							</tr>
 							<tr class="valign">
-								<div class="col-md-4">
 									<td class="text-left-bold" >Agency</td>
-								</div>
-								<div class="col-md-8">
 									<td class="text-left" >{{row.agency}}</td>
-								</div>
 							</tr>
 							<tr class="valign">
-								<div class="col-md-4">
 									<td class="text-left-bold" >DI2E Marketplace</td>
-								</div>
-								<div class="col-md-8">
 									<td class="text-left">{{row.di2emarketplace}}</td>
-								</div>
 							</tr>																					
 						</tbody>
 					</table>
@@ -65,12 +45,12 @@
 								<td class="warning" colspan="2"><h4>Component Vitals</h4></td>
 							</tr>
 							<tr data-ng-repeat="row in componentVitals">
-								<div class="col-md-4">
+								<!-- <div class="col-md-4"> -->
 									<td class="text-left-bold">{{row.name}}</td>
-								</div>
-								<div class="col-md-8">
+							<!-- 	</div>
+								<div class="col-md-8"> -->
 									<td class="text-left" >{{row.desc}}</td>
-								</div>
+								<!-- </div> -->
 							</tr>
 						</tbody>
 					</table>
@@ -83,19 +63,22 @@
 			<table class="table table-bordered table-hover">
 				<tbody>
 					<tr>
-						<td class="warning" colspan="3"><h4>Reusability Factors</h4></td>
+						<td class="warning" colspan="3"><h4>Reusability Factors (5=best)</h4></td>
 					</tr>
 					<tr data-ng-repeat="row in componentSummary">
 						<td class="success" style="vertical-align:middle"  colspan="2"><h5>Evaluation Date</h5></td>
 						<td class="success"  colspan="1"><h5>{{row.evaluationdate}}</h5></td>
 					</tr>
 					<tr data-ng-repeat="row in scoreCard">
-						<td colspan="2" style="vertical-align:middle" width="50%">
-							<a  href="javascript:void(0)" class="helpcontent" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector=""  data-original-title="<b>{{row.name}}</b> ranking = {{row.ranking}}"  data-content="<p class=''>Provide some explanation as to why <b>{{row.name}}</b> is ranked as a <b>{{row.ranking}}</b></p>"> {{row.name}} </a>
+						<td colspan="2" style="vertical-align:middle" >
+							<a  href="javascript:void(0)" class="helpcontent" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector=""  data-original-title="<b>{{row.name}}</b> ranking = {{row.ranking}}"  
+								data-content="<b>Questions</br></b><p class=''>{{row.questions}}</p><b>Ranking Criteria</br></b><p class=''>{{row.criteria}}</p>"> {{row.name}} </a>
 						</td>
 						<!-- <td style="vertical-align:middle" width="10%">{{row.ranking}}</td> -->
-						<td style="vertical-align:middle" width="40%" >
+						<!-- 	#4679B2	#021233 -->
+						<td style="vertical-align:middle"  >
 							<i ng-repeat="t in getTimes(row.ranking) track by $index" class="fa fa-circle" style="color:#021233"></i>
+							
 						</td>
 					</tr>							
 				</tbody>
