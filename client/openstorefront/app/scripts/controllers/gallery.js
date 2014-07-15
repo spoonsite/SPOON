@@ -21,23 +21,23 @@ app.controller('GalleryCtrl', ['$scope', 'business', 'localCache', '$location', 
 /*app.controller('GalleryCtrl', function ($scope, Lightbox) {*/
   $scope.images = [
     {
-      'url': 'images/testpic1.png', // required property
-      'width': 123,   // required property
-      'height': 456,  // required property
-      'thumbUrl': 'images/testpic1.png',
+      'url': 'images/pic1full.png', // required property
+      'width': 1216,   // required property
+      'height': 911,  // required property
+      'thumbUrl': 'images/pic1thumb.png',
       'caption': 'Optional caption'
     },
     {
-      'url': 'images/testpic2.png',
-      'width': 789,
-      'height': 1012,
-      'thumbUrl': 'images/testpic2.png'
+      'url': 'images/pic2full.png',
+      'width': 908,
+      'height': 856,
+      'thumbUrl': 'images/pic2thumb.png'
     },
     {
-      'url': 'images/testpic3.png',
-      'width': 345,
-      'height': 678,
-      'thumbUrl': 'images/testpic3.png'
+      'url': 'images/pic3full.png',
+      'width': 1805,
+      'height': 968,
+      'thumbUrl': 'images/pic3thumb.png'
     }
   ];
 /*  $scope.images = [

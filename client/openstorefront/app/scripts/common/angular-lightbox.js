@@ -1,3 +1,7 @@
+// Code here will be linted with JSHint.
+/* jshint ignore:start */
+// Code here will be linted with ignored by JSHint.
+
 angular.module('bootstrapLightbox', [
   'ngTouch',
   'ui.bootstrap',
@@ -325,3 +329,5 @@ angular.module('bootstrapLightbox')
     }
   };
 });
+
+/* jshint ignore:end */
