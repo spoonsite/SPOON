@@ -40,19 +40,17 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   });
 
   $scope.$on('$login', function(event, user){
-    console.log('Auth.signedIn()', Auth.signedIn());
-    console.log('user', user);
-    console.log('beforeLogin', $scope.beforeLogin);
     $scope.user.info = user;
     $scope.user.isLoggedIn = Auth.signedIn();
     if ($scope.beforeLogin && $scope.beforeLogin.path !== '/login') {
       var temp = $scope.beforeLogin.path;
+      var temp2 = $scope.beforeLogin.search;
       $scope.beforeLogin = null;
-      console.log('About to send you to ', temp);
-      
+      $location.search(temp2);
       $location.path(temp);
     } else {
       $scope.beforeLogin = null;
+      $location.search({});
       $location.path('/');
     }
   });
