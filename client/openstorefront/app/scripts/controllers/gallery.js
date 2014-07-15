@@ -62,7 +62,7 @@ app.controller('GalleryCtrl', ['$scope', 'business', 'localCache', '$location', 
     }
   ];*/
   $scope.openLightboxModal = function (index) {
-    console.log(Lightbox.templateUrl);
+    // console.log(Lightbox.templateUrl);
     Lightbox.openModal($scope.images, index);
   };
 /*});*/

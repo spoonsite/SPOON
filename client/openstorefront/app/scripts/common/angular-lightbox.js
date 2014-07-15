@@ -103,7 +103,6 @@ angular.module('bootstrapLightbox').provider('Lightbox', function () {
       index = newIndex;
       Lightbox.image = images[index];
       cfpLoadingBar.start();
-      console.log($uiModal);
       $uiModal.open({
         'templateUrl': Lightbox.templateUrl,
         'controller': ['$scope', function ($scope) {
