@@ -72,14 +72,16 @@
 
 .navbar-brand .logo,
 .navbar-brand .logo-small{
-  font-family: WideLatin;
+  font-family: sofachrome;
+  /*font-family: WideLatin;*/
 }
 .navbar-brand .logo-small {
   font-size: 15px;
   margin-top: -4px;
 }
 .navbar-brand .logo {
-  font-size: 18px;
+  /*font-size: 18px;*/
+  font-size: 16px;
   color: white;
 }
 /***********************************************************************************/
@@ -87,7 +89,8 @@
 
 
 .logo-title{
-  font-family: WideLatin;
+  font-family: sofachrome;
+  /*font-family: WideLatin;*/
   color: white;
   text-align: center;
   font-size: 28px;
