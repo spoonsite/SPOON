@@ -76,7 +76,7 @@ var app = angular
   //       }
   //   };
   // });
-
+  //
   tagsInputConfigProvider
   .setDefaults('tagsInput', {
     placeholder: 'Add a tag (single space for suggestions)'
@@ -97,14 +97,14 @@ var app = angular
   // set a custom template
   LightboxProvider.templateUrl = 'views/lightbox/lightbox.html';
   /**
-   * Calculate the max and min limits to the width and height of the displayed
-   *   image (all are optional). The max dimensions override the min
-   *   dimensions if they conflict.
-   * @param  {Object} dimensions Contains the properties windowWidth,
-   *   windowHeight, imageWidth, imageHeight.
-   * @return {Object} May optionally contain the properties minWidth,
-   *   minHeight, maxWidth, maxHeight.
-   */
+  * Calculate the max and min limits to the width and height of the displayed
+  *   image (all are optional). The max dimensions override the min
+  *   dimensions if they conflict.
+  * @param  {Object} dimensions Contains the properties windowWidth,
+  *   windowHeight, imageWidth, imageHeight.
+  * @return {Object} May optionally contain the properties minWidth,
+  *   minHeight, maxWidth, maxHeight.
+  */
   LightboxProvider.calculateImageDimensionLimits = function (dimensions) {
     return {
       'minWidth': 100,
@@ -115,14 +115,14 @@ var app = angular
   };
 
   /**
-   * Calculate the width and height of the modal. This method gets called
-   *   after the width and height of the image, as displayed inside the modal,
-   *   are calculated. See the default method for cases where the width or
-   *   height are 'auto'.
-   * @param  {Object} dimensions Contains the properties windowWidth,
-   *   windowHeight, imageDisplayWidth, imageDisplayHeight.
-   * @return {Object} Must contain the properties width and height.
-   */
+  * Calculate the width and height of the modal. This method gets called
+  *   after the width and height of the image, as displayed inside the modal,
+  *   are calculated. See the default method for cases where the width or
+  *   height are 'auto'.
+  * @param  {Object} dimensions Contains the properties windowWidth,
+  *   windowHeight, imageDisplayWidth, imageDisplayHeight.
+  * @return {Object} Must contain the properties width and height.
+  */
   LightboxProvider.calculateModalDimensions = function (dimensions) {
     return {
       'width': Math.max(500, dimensions.imageDisplayWidth + 42),
@@ -133,7 +133,7 @@ var app = angular
 
 // here we add the .run function for intial setup and other useful functions
 
-.run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend','$q', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q) {/* jshint unused: false*/
+.run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend','$q', 'auth', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth) {/* jshint unused: false*/
 
   $rootScope._scopename = 'root';
 
@@ -173,6 +173,8 @@ var app = angular
     // console.log('next', next);
     // console.log('current', current);
     // console.log('path', $location.path());
+
+
     if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single')) {
       $location.search({});
     }
@@ -202,6 +204,9 @@ var app = angular
         $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
       }
     }, 300);
+    if (!Auth.signedIn() && $location.path() !== '/login') {
+      $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
+    }
   });
 
   /***************************************************************

@@ -16,7 +16,6 @@ app.factory('auth', ['$rootScope', 'business', '$q', function($rootScope, Busine
     // Business.userservice.login(user).then(function(result){
       Business.userservice.getCurrentUserProfile().then(function(result){
         authState.user = result;
-        console.log('result', result);
         deferred.resolve(result);
         $rootScope.$broadcast('$login', authState.user);
       });

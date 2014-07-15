@@ -16,17 +16,8 @@
 'use strict';
 
 app.controller('LoginCtrl', ['$scope', '$location', 'auth', function ($scope, $location, Auth) {
-  if (Auth.signedIn()) {
-    $location.path('/');
-  }
-
-  $scope.$on('$login', function () {
-    $location.path('/');
-  });
-
   $scope.login = function () {
     Auth.login($scope.user).then(function () {
-      $location.path('/');
     }, function (error) {
       $scope.error = error.toString();
     });

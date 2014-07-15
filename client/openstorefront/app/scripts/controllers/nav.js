@@ -25,19 +25,36 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
 
   $scope._scopename = 'nav';
   $scope.user = {};
+  $scope.beforeLogin = null;
+
+
+  $scope.$on('$beforeLogin', function(event, path, search){
+    $scope.beforeLogin = {};
+    $scope.beforeLogin.path = path;
+    $scope.beforeLogin.search = search;
+    $location.path('/login');
+  });
+
   $scope.$on('$includeContentLoaded', function(event){
-    $timeout(function() {
-      console.log('Auth.signedIn()', Auth.signedIn());
-      
-      $scope.user.isLoggedIn = Auth.signedIn();
-    });
+    $scope.user.isLoggedIn = Auth.signedIn();
   });
 
   $scope.$on('$login', function(event, user){
     console.log('Auth.signedIn()', Auth.signedIn());
-    
+    console.log('user', user);
+    console.log('beforeLogin', $scope.beforeLogin);
     $scope.user.info = user;
     $scope.user.isLoggedIn = Auth.signedIn();
+    if ($scope.beforeLogin && $scope.beforeLogin.path !== '/login') {
+      var temp = $scope.beforeLogin.path;
+      $scope.beforeLogin = null;
+      console.log('About to send you to ', temp);
+      
+      $location.path(temp);
+    } else {
+      $scope.beforeLogin = null;
+      $location.path('/');
+    }
   });
   
   $scope.navLocation = 'views/nav/nav.html';
