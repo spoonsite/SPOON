@@ -51,6 +51,14 @@ var app = angular
     templateUrl: 'views/single.html',
     controller: 'SingleCtrl'
   })
+  .when('/login', {
+    templateUrl: 'views/login.html',
+    controller: 'LoginCtrl'
+  })
+  .when('/register', {
+    templateUrl: 'views/login.html',
+    controller: 'LoginCtrl'
+  })
   .otherwise({
     redirectTo: '/'
   });
