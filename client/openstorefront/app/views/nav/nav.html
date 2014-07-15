@@ -21,10 +21,10 @@ limitations under the License.
     <div class="navbar-header">
      
       <!-- Nav buttons when collapsed menu is up -->
-      <div>
+      <div ng-show="user.isLoggedIn">
         <button type="button" class="navbar-toggle navButton" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
           <span class="sr-only">User Panel</span>
-          <span>Jimmy tester <b class="caret"></b></span>
+          <span>{{user.info.firstname}}&nbsp;{{user.info.lastname}}&nbsp;<b class="caret"></b></span>
         </button>
         <button type="button" class="navbar-toggle navButton" id="searchNavButton" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="sr-only">Toggle Search</span>
@@ -50,10 +50,11 @@ limitations under the License.
     <!-- /Nav header -->
 
     <!-- .userNav-collapse -->
-    <div class="collapse navbar-collapse pull-right userNavDropdown" style="padding-right: 30px;">
+    <div  ng-show="user.isLoggedIn" class="collapse navbar-collapse pull-right userNavDropdown" style="padding-right: 30px;">
       <ul class="nav navbar-nav navbar-right">
         <li id="dropTheMenu" class="dropdown">
-          <a href="" class="dropdown-toggle" data-toggle="dropdown">Jimmy tester <b class="caret"></b></a>
+          <a ng-show="user.isLoggedIn" href="" class="dropdown-toggle" data-toggle="dropdown">{{user.info.firstname}}&nbsp;{{user.info.lastname}}&nbsp;<b class="caret"></b></a>
+          <a ng-show="!user.isLoggedIn" href="" ng-click="goToLogin()">Log in</a>
           <ul class="dropdown-menu">
             <li><a href="javascript: void(0)" ng-click="send('/admin')">Admin Tools</a></li>
             <li class="divider"></li>
