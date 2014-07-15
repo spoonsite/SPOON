@@ -40,85 +40,83 @@
     </div>
   </div>
 </div>
-
-    <div class="row">
-      <div class="col-md-12">
-        <table class="table table-bordered table-hover table-condensed">
-          <tbody>
-            <tr>
-              <br>
-              <td class="warning valign" colspan="2"><h4>External Dependencies</h4></td>
-            </tr>             
-            <tr data-ng-repeat="row in externalDepend">
-                <td class="text-left-bold">{{row.name}}</td>
-                <td class="text-left">{{row.desc}}</td>
-            </tr>
-          </tbody>
-        </table>  
-        <table class="table table-bordered table-hover">
-          <tbody>
-            <tr>
-              <td class="warning valign"  colspan="2"><h4>Location of Asset Artifacts</h4></td>
-            </tr>             
-            <tr data-ng-repeat="row in localAssetArtifacts">
-                <td class="text-left-bold">{{row.name}}</td>
-                <td class="text-left">{{row.desc}}</td>
-            </tr>
-          </tbody>
-        </table>                  
-      </div>
-      <div class="col-md-8">
-        <table class="table table-bordered table-hover">
-          <tbody>
-            <tr>
-              <td class="warning" colspan="3"><h4>Points of Contact</h4></td>
-            </tr>
-            <tr>
-              <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Position</td>
-              <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Name</td>
-              <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Email</td>
-            </tr>
-            <tr data-ng-repeat="row in pointsContact">
-              <td>{{row.position}}</td>
-              <td>{{row.name}}</td>
-              <td>{{row.email}}</td>
-            </tr>                   
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="row">
-      <!--   <div class="component-details"> -->
-      <div class="component2-div" style="margin-top: 10px; margin-bottom:25px">
-        <div class="col-md-4">
-         <div class="section-headers"><h4>Categories</h4></div>
-         <div data-ng-repeat="tag in details.details.categories" style="margin-left: 30px">
-          <ul>
-            <li> {{tag.desc}}</li>
-          </ul>                   
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="section-headers"><h4>Operational Status</h4></div>
-        <div style="margin-left: 30px">
-          <ul>
-            <li> {{details.details.operationStatus}}</li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="section-headers"><h4>Component State</h4></div>
-        <div style="margin-left: 30px">
-          <ul>
-            <li> {{getEvaluationState()}}</li>
-          </ul>
-        </div> 
-      </div>
-    </div>
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-bordered table-hover table-condensed">
+      <tbody>
+        <tr>
+          <br>
+          <td class="warning valign" colspan="2"><h4>External Dependencies</h4></td>
+        </tr>             
+        <tr data-ng-repeat="row in externalDepend">
+          <td class="text-left-bold">{{row.name}}</td>
+          <td class="text-left">{{row.desc}}</td>
+        </tr>
+      </tbody>
+    </table>  
+    <table class="table table-bordered table-hover">
+      <tbody>
+        <tr>
+          <td class="warning valign"  colspan="2"><h4>Location of Asset Artifacts</h4></td>
+        </tr>             
+        <tr data-ng-repeat="row in localAssetArtifacts">
+          <td class="text-left-bold">{{row.name}}</td>
+          <td class="text-left">{{row.desc}}</td>
+        </tr>
+      </tbody>
+    </table>                  
+  </div>
+  <div class="col-md-8">
+    <table class="table table-bordered table-hover">
+      <tbody>
+        <tr>
+          <td class="warning" colspan="3"><h4>Points of Contact</h4></td>
+        </tr>
+        <tr>
+          <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Position</td>
+          <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Name</td>
+          <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Email</td>
+        </tr>
+        <tr data-ng-repeat="row in pointsContact">
+          <td>{{row.position}}</td>
+          <td>{{row.name}}</td>
+          <td>{{row.email}}</td>
+        </tr>                   
+      </tbody>
+    </table>
   </div>
 </div>
-<!--   </div> -->
+
+
+<div class="row">
+  <div class="component2-div" style="margin-top: 10px; margin-bottom:25px">
+    <div class="col-md-4">
+     <div class="section-headers"><h4>Categories</h4></div>
+     <div data-ng-repeat="tag in details.details.categories" style="margin-left: 30px">
+      <ul>
+        <li> {{tag.desc}}</li>
+      </ul>                   
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="section-headers"><h4>Operational Status</h4></div>
+    <div style="margin-left: 30px">
+      <ul>
+        <li> {{details.details.operationStatus}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="section-headers"><h4>Component State</h4></div>
+    <div style="margin-left: 30px">
+      <ul>
+        <li> {{getEvaluationState()}}</li>
+      </ul>
+    </div> 
+  </div>
+</div>
+</div>
+ <!--   </div> -->
 <br>
 <br>
 <div class="row">

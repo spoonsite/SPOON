@@ -17,12 +17,44 @@
 
 /*global setUpDropdown*/
 
-app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$route', '$timeout', function ($scope, $location, $rootScope, Business, $route, $timeout) { /*jshint unused: false*/
+app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$route', '$timeout', 'auth', function ($scope, $location, $rootScope, Business, $route, $timeout, Auth) { /*jshint unused: false*/
 
   /*******************************************************************************
   * This Controller gives us a place to add functionality to the navbar
   *******************************************************************************/
+
   $scope._scopename = 'nav';
+  $scope.user = {};
+  $scope.beforeLogin = null;
+
+
+  $scope.$on('$beforeLogin', function(event, path, search){
+    $scope.beforeLogin = {};
+    $scope.beforeLogin.path = path;
+    $scope.beforeLogin.search = search;
+    $location.path('/login');
+  });
+
+  $scope.$on('$includeContentLoaded', function(event){
+    $scope.user.isLoggedIn = Auth.signedIn();
+  });
+
+  $scope.$on('$login', function(event, user){
+    $scope.user.info = user;
+    $scope.user.isLoggedIn = Auth.signedIn();
+    if ($scope.beforeLogin && $scope.beforeLogin.path !== '/login') {
+      var temp = $scope.beforeLogin.path;
+      var temp2 = $scope.beforeLogin.search;
+      $scope.beforeLogin = null;
+      $location.search(temp2);
+      $location.path(temp);
+    } else {
+      $scope.beforeLogin = null;
+      $location.search({});
+      $location.path('/');
+    }
+  });
+  
   $scope.navLocation = 'views/nav/nav.html';
 
   // Here we grab the rootScope searchKey in order to preserve the last search
@@ -69,8 +101,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * search key saved in the localCache
   ***************************************************************/
   $scope.goToSearch = function(){ /*jshint unused:false*/
-    console.log('$scope.searchKey', $scope.searchKey);
-    
+
     $rootScope.searchKey = $scope.searchKey;
     $location.search({
       'type': 'search',
@@ -86,6 +117,16 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   };
 
   /***************************************************************
+  * This function sends the routing to the results page with a specified
+  * search key saved in the localCache
+  ***************************************************************/
+  $scope.goToLogin = function(){ /*jshint unused:false*/
+
+    $location.search({});
+    $location.path('/login');
+  };
+
+  /***************************************************************
   * This function sends the person home
   ***************************************************************/
   $scope.sendHome = function(){ /*jshint unused:false*/
@@ -98,6 +139,15 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   ***************************************************************/
   $scope.send = function(route) {
     $location.path(route);
+  };
+
+  /***************************************************************
+  * Log out the user
+  ***************************************************************/
+  $scope.logout = function () {
+    Auth.logout();
+    $scope.user.isLoggedIn = false;
+    $route.reload();
   };
 
   /*******************************************************************************
