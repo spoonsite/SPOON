@@ -55,10 +55,6 @@ var app = angular
     templateUrl: 'views/login.html',
     controller: 'LoginCtrl'
   })
-  .when('/register', {
-    templateUrl: 'views/login.html',
-    controller: 'LoginCtrl'
-  })
   .otherwise({
     redirectTo: '/'
   });
@@ -179,7 +175,7 @@ var app = angular
     if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single')) {
       $location.search({});
     }
-    if (!$location.path() || $location.path() === '/') {
+    if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
       // console.log('Broadcasting');
       $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
     } else {
@@ -198,7 +194,7 @@ var app = angular
 
     $timeout(function() {
       $('[data-toggle="tooltip"').tooltip();
-      if (!$location.path() || $location.path() === '/') {
+      if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
         // console.log('Broadcasting');
         $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
       } else {
@@ -237,7 +233,7 @@ var app = angular
 
   $rootScope.setNav = function() {
     // once the content is loaded, make sure we have the right navigation!
-    if (!$location.path() || $location.path() === '/') {
+    if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
       $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
     } else {
       $rootScope.$broadcast('$changenav', 'views/nav/nav.html');

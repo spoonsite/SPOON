@@ -35,15 +35,23 @@
   text-align: center;
 }
 .auth-content input{
-  width: auto;
+  width: 360px;
   display: inline-block;
 }
 .auth-content{
   display:inline-block;
   /*text-align: left;*/
 }
+.auth-content h1{
+  color: #5A5A5A;
+}
 .auth-content .disclaimer{
-  padding:20px;
-  text-align: left;
   margin: 0 auto;
+  margin:20px;
+  text-align: left;
+  border: 1px solid darkgray;
+  border-radius: 10px;
+  padding: 10px;
+  background: #021233;
+  color: white;
 }

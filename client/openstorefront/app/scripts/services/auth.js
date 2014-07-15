@@ -9,7 +9,7 @@ app.factory('auth', ['$rootScope', 'business', '$q', function($rootScope, Busine
     //   // return auth.$createUser(user.email, user.password);
     // },
     signedIn: function () {
-      return authState.user;
+      return authState.user? true: false;
     },
     login: function (user) { /*jshint unused: false*/
       var deferred = $q.defer();
@@ -24,9 +24,9 @@ app.factory('auth', ['$rootScope', 'business', '$q', function($rootScope, Busine
     },
     logout: function () {
       var deferred = $q.defer();
-      // Business.userservice.logout().then(function(){
-        authState.user = null;
-        deferred.resolve(null);
+    // Business.userservice.logout().then(function(){
+      authState.user = null;
+      deferred.resolve(null);
       // });
       //
       return deferred.promise;

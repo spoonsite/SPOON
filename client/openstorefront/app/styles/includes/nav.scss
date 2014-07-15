@@ -59,4 +59,41 @@
   padding: 6px 10px;
 }
 
+
+
+.firstNav {
+  margin-left: 10px;
+}
+
+
+.navbar-brand {
+  padding: 0px;
+}
+
+.navbar-brand .logo,
+.navbar-brand .logo-small{
+  font-family: WideLatin;
+}
+.navbar-brand .logo-small {
+  font-size: 15px;
+  margin-top: -4px;
+}
+.navbar-brand .logo {
+  font-size: 18px;
+  color: white;
+}
 /***********************************************************************************/
+
+
+
+.logo-title{
+  font-family: WideLatin;
+  color: white;
+  text-align: center;
+  font-size: 28px;
+  width: 100%;
+  text-shadow: 2px 2px 5px #7E7E7E;
+  padding-top: 5px;
+  padding-left: 218px;
+  white-space: nowrap;
+}

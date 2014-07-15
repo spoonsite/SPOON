@@ -17,12 +17,29 @@
 
 /*global setUpDropdown*/
 
-app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$route', '$timeout', function ($scope, $location, $rootScope, Business, $route, $timeout) { /*jshint unused: false*/
+app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$route', '$timeout', 'auth', function ($scope, $location, $rootScope, Business, $route, $timeout, Auth) { /*jshint unused: false*/
 
   /*******************************************************************************
   * This Controller gives us a place to add functionality to the navbar
   *******************************************************************************/
+
   $scope._scopename = 'nav';
+  $scope.user = {};
+  $scope.$on('$includeContentLoaded', function(event){
+    $timeout(function() {
+      console.log('Auth.signedIn()', Auth.signedIn());
+      
+      $scope.user.isLoggedIn = Auth.signedIn();
+    });
+  });
+
+  $scope.$on('$login', function(event, user){
+    console.log('Auth.signedIn()', Auth.signedIn());
+    
+    $scope.user.info = user;
+    $scope.user.isLoggedIn = Auth.signedIn();
+  });
+  
   $scope.navLocation = 'views/nav/nav.html';
 
   // Here we grab the rootScope searchKey in order to preserve the last search
@@ -69,8 +86,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * search key saved in the localCache
   ***************************************************************/
   $scope.goToSearch = function(){ /*jshint unused:false*/
-    console.log('$scope.searchKey', $scope.searchKey);
-    
+
     $rootScope.searchKey = $scope.searchKey;
     $location.search({
       'type': 'search',
@@ -83,6 +99,16 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
         $location.path('/results');
       }
     });
+  };
+
+  /***************************************************************
+  * This function sends the routing to the results page with a specified
+  * search key saved in the localCache
+  ***************************************************************/
+  $scope.goToLogin = function(){ /*jshint unused:false*/
+
+    $location.search({});
+    $location.path('/login');
   };
 
   /***************************************************************
