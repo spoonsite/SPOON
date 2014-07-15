@@ -60,7 +60,7 @@ var app = angular
   });
   
   // /**
-  // * Global errore
+// * Global error handling
   // */
   // $httpProvider.interceptors.push(function($q) {
   //   return {
@@ -76,7 +76,7 @@ var app = angular
   //       }
   //   };
   // });
-  //
+
   tagsInputConfigProvider
   .setDefaults('tagsInput', {
     placeholder: 'Add a tag (single space for suggestions)'
@@ -287,4 +287,3 @@ var app = angular
   };
 
 }]);
-
