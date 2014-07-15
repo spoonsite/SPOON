@@ -89,9 +89,9 @@ var app = angular
     removeTagSymbol: true
   });
 
+  // Angular Lightbox setup
   // set a custom template
   LightboxProvider.templateUrl = 'views/lightbox/lightbox.html';
-
   /**
    * Calculate the max and min limits to the width and height of the displayed
    *   image (all are optional). The max dimensions override the min
@@ -126,6 +126,7 @@ var app = angular
     };
   };
 })
+
 // here we add the .run function for intial setup and other useful functions
 
 .run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend','$q', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q) {/* jshint unused: false*/
