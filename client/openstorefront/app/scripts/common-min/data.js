@@ -265,106 +265,148 @@ MOCKDATA.scoreTable = [
   {
     'name': 'Discoverable',
     'ranking': 2,
+    'questions':'Can the developer find the asset? Can a developer discover sufficient status information about the asset?',
+    'criteria':'5 - A full description of the asset is hosted on a publicly available web page (e.g., owfgoss.org) and/or in a publicly available repository front page (e.g., GitHub), and the asset is registered in a well-known registry such as programmableweb.com.<br> <br>3 - A full description of the asset is hosted on a community available web page (IntellipediaU or forge.mil) and the asset is registered in a community provided storefront (DI2E Framework storefront or JC2CUI Enterprise Storefront).<br><br>1 - The only description of the asset is in a Word or PDF document saved in a limited access document repository (e.g., SharePoint or file system) that is not crawled by any search engine.',
     'icon': 'whatever'
   },
   {
     'name': 'Accessible',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Documentation',
     'ranking': 3,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Deployable',
     'ranking': 4,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Usable',
     'ranking': 5,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Error Handling',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Integrable',
     'ranking': 4,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'I/O Validation',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Testing',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Monitoring',
     'ranking': 1,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Performance',
     'ranking': 3,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Scalability',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Security',
     'ranking': 3,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Maintainability / Upgradability',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Community and Outreach',
     'ranking': 1,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Change Management',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'CA',
     'ranking': 1,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Licensing',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Roadmap',
     'ranking': 1,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Willingness',
     'ranking': 2,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   },
   {
     'name': 'Architecture Alignment',
     'ranking': 3,
+    'questions':'',
+    'criteria':'',
     'icon': 'whatever'
   }
 //  

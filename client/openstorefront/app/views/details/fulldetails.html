@@ -62,21 +62,36 @@
       </div>
       <div class="modal-body">
         <div class="col-sm-12"> 
-          <p><b>Progress bar color scheme and date indicators</b>
+<!--           <p><b>Progress bar color scheme and date indicators</b>
             <br>The progress bar color scheme indicates current activity within any phase of the Evaluation Schedule. Also, there are
             ending date indicators ( <b>mm/dd</b> ) under each bar and at the right end of the bar, to indicate the completion date (either actual or estimated).
             <br>The horizontal length of each bar is proportional to the days required to complete a specific phase divided by total days of the entire evaluation schedule timeline.
+          </p> -->
+          <p><b>Progress bar color scheme and date indicators</b>
+            <br>The progress bar color scheme indicates current activity within any phase of the Evaluation Schedule. Also, there are
+            ending date indicators ( <b>mm/dd</b> ) below at the right edge of each bar, to indicate the completion date (either actual or estimated).
           </p>
-          <progress>
+
+ <!--          <progress>
             <bar class="barborder" value="25" type="success"><span>Completed</span></bar>
             <bar class="barborder" value="25" type="info"><span>In Progress</span></bar>
             <bar class="barborder" value="25" type="danger"><span>Halted</span></bar>
             <bar class="bar-transparent" value="25" type="transparent"><span>Not Started</span></bar>
-          </progress> 
+          </progress>  -->
         </div>  
-        <br><br>
+
+        <div class="col-md-12" style="padding:0;">
+          <div class="col-md-3" style="background-color:#E6E8EB;border:1px solid navy; height:50px; text-align:center; vertical-align:middle">Completed</div>
+
+          <div class="col-md-3" style="background-color:#ffffff;border-right:1px dashed #5cb85c;border-top:1px dashed #5cb85c;border-bottom:1px dashed #5cb85c; height:50px;text-align:center; color:#4E9C4E">In Progress</div>
+
+          <div class="col-md-3" style="background-color:#ff4800;border-right:1px solid navy;border-top:1px solid navy;border-bottom:1px solid navy; height:50px;text-align:center; color:white">Halted</div>
+
+          <div class="col-md-3" style="background-color:#ffffff ;border-right:1px solid gray;border-top:1px solid gray;border-bottom:1px solid gray; height:50px;text-align:center; color:#808080 ">Not Started</div>
+        </div>
+        <br><br><br>
         <p class="">
-          <br><b>Level 0 – Available for Reuse/Not Evaluated</b>
+          <br><br><b>Level 0 – Available for Reuse/Not Evaluated</b>
           <br>
           <ul>
             <li>Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
