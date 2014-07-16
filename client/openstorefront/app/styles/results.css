@@ -54,7 +54,7 @@ html, .resultsContainer {
   overflow:auto;
 
   /*This line is needed for when you use pagination.*/
-  /*padding-bottom: 40px;*/
+  padding-bottom: 40px;
 }
 
 .page2Styles{
@@ -572,6 +572,11 @@ width: 100%;
 .panel-title input[type="checkbox"]{
   position: relative;
   bottom: -4px;
+}
+
+.componentListDate {
+  font-size: 11px;
+  color: #858585;
 }
 
 tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .suggestion-item.selected em {

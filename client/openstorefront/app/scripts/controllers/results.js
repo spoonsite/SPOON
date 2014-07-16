@@ -185,15 +185,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         });
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
-      }, 1000);
-    }, 1000);
+      }, 500);
+    }, 500);
   };
 
   $scope.$watch('data', function() {
     if ($scope.data && $scope.data.data) {
       // max needs to represent the total number of results you want to load
       // on the initial search.
-      var max = 20;
+      var max = 2000;
       // also, we'll probably check the total number of possible results that
       // could come back from the server here instead of the length of the
       // data we have already.
