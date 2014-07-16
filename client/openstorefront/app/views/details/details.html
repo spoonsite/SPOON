@@ -4,7 +4,7 @@
     <div id="eval-level-div">
       <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal2"><i class="glyphicon glyphicon-info-sign"></i></a>
       <span style="font-size:12px; color:black; margin-left:5px">Evaluation start: January 1, 2014</span>
-      <div class="barborders" style="text-align: left; vertical-align:middle; padding-left:0px; ">
+<!--       <div class="barborders" style="text-align: left; vertical-align:middle; padding-left:0px; ">
         <progress>
           <bar ng-repeat="rows in componentEvalProgressBar" class="{{rows.class1}}" type="{{rows.type}}" value="rows.currvalue" style="text-align:center; vertical-align:middle; text-decoration:none; cursor:pointer" >
             <span class="component-state" >
@@ -19,10 +19,33 @@
             <span class="componentstatess">{{rows2.currdate}}</span>
           </bar>
         </progress>
-      </div>
+      </div> -->
     </div> 
   </div>
+  <!-- new progress bar -->
+
+  <!-- shades of navy by 10% #424E66 81899A C0C4CC E6E8EB   dddddd -->
+
+  <div class="col-md-12" style="padding:0;">
+    <div class="col-md-3" style="background-color:#E6E8EB;border:1px solid navy; height:50px; text-align:center; vertical-align:middle">Available for Reuse/Not Evaluated</div>
+
+    <div class="col-md-3" style="background-color:#E6E8EB;border-right:1px solid navy;border-top:1px solid navy;border-bottom:1px solid navy; height:50px;text-align:center">Initial Reuse Analysis</div>
+
+    <div class="col-md-3" style="background-color:#ffffff;border-right:1px dashed #5CB85C;border-top:1px dashed #5CB85C;border-bottom:1px dashed #5CB85C; height:50px;text-align:center; color:#5CB85C;"><b>Integration and Test</b></div>
+
+    <div class="col-md-3" style="background-color:#ffffff ;border-right:1px solid gray;border-top:1px solid gray;border-bottom:1px solid gray; height:50px;text-align:center; color:#808080 ">DI2E Framework Reference Implementation</div>
+  </div>
+
+  <div class="col-md-12" style="padding:0;">
+    <div class="col-md-3" style="text-align:right;padding:0;font-size:12px; color:black;">COMPLETED 2/15/2014</div>
+    <div class="col-md-3" style="text-align:right;padding:0;font-size:12px; color:black;">COMPLETED 3/15/2014</div>
+    <div class="col-md-3" style="text-align:right;padding:0;font-size:12px; color:black;"><span style="color:#5CB85C;font-weight:bold">IN PROGRESS (estimated complete 4/15/2014)</span></div>
+    <div class="col-md-3" style="text-align:right;padding:0;font-size:12px; color:#808080 ;">NOT STARTED (estimated complete 5/15/2014)</div>
+  </div>
+
+  
   <div style="position: relative; clear: both"></div>
+  <br>
 </div>
 <!-- angular lightbox gallery -->
 <div class="row">
