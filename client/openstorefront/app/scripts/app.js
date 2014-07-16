@@ -204,9 +204,9 @@ var app = angular
         $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
       }
     }, 300);
-    if (!Auth.signedIn() && $location.path() !== '/login') {
-      $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
-    }
+    // if (!Auth.signedIn() && $location.path() !== '/login') {
+    //   $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
+    // }
   });
 
   /***************************************************************
