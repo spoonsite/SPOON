@@ -5,7 +5,7 @@
 				<table class="table table-bordered table-hover" ng-repeat="row in componentSummary">
 					<tbody> 
 						<tr>
-							<td class="warning" colspan="3"><h4>Component Summary</h4></td>
+							<td class="section-headers valign" colspan="3"><h4>Component Summary</h4></td>
 						</tr>	 						
 						<tr>
 							<td class="text-left-bold">Component Name</td>
@@ -39,7 +39,7 @@
 				<table class="table table-bordered table-hover">
 					<tbody>
 						<tr>
-							<td class="warning" colspan="2"><h4>Component Vitals</h4></td>
+							<td class="section-headers valign" colspan="2"><h4>Component Vitals</h4></td>
 						</tr>
 						<tr data-ng-repeat="row in componentVitals">
 							<td class="text-left-bold">{{row.name}}</td>
@@ -54,20 +54,19 @@
 		<table class="table table-bordered table-hover">
 			<tbody>
 				<tr>
-					<td class="warning" colspan="3"><h4>Reusability Factors (5=best)</h4></td>
+					<td class="section-headers valign" colspan="3"><h4>Reusability Factors (5=best)</h4></td>
 				</tr>
 				<tr data-ng-repeat="row in componentSummary">
-					<td class="success" style="vertical-align:middle"  colspan="2"><h5>Evaluation Date</h5></td>
-					<td class="success"  colspan="1"><h5>{{row.evaluationdate}}</h5></td>
+					<td class="section-headers valign" style="vertical-align:middle"  colspan="2"><h5>Evaluation Date</h5></td>
+					<td class="section-headers valign"  colspan="1"><h5>{{row.evaluationdate}}</h5></td>
 				</tr>
 				<tr data-ng-repeat="row in scoreCard">
 					<td colspan="2" style="vertical-align:middle" >
 						<a  href="javascript:void(0)" class="helpcontent" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector=""  data-original-title="<b>{{row.name}}</b> ranking = {{row.ranking}}"  
 							data-content="<b>Questions</br></b><p class=''>{{row.questions}}</p><b>Ranking Criteria</br></b><p class=''>{{row.criteria}}</p>"> {{row.name}} </a>
 						</td>
-						<td style="vertical-align:middle"  >
+						<td style="vertical-align:middle" >
 							<i ng-repeat="t in getTimes(row.ranking) track by $index" class="fa fa-circle" style="color:#021233"></i>
-							
 						</td>
 					</tr>							
 				</tbody>
