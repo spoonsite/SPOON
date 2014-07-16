@@ -16,7 +16,8 @@
 'use strict';
 
 /* global isEmpty, setupPopovers, openClick:true, moveButtons, setupResults,
-fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass*/
+fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimations,
+filtClick*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
   // Set up the results controller's variables.
@@ -391,15 +392,18 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * function to handle the initial movement of the display buttons.
   *******************************************************************************/
   $scope.$on('$viewContentLoaded', function(){
+    resetAnimations($('.page1'), $('.page2'), $('.filters'));
     $timeout(function() {
       moveButtons($('#showPageRight'), $('.page1'));
       moveButtons($('#showPageLeft'), $('.page2'));
       if (fullClick === 0) {
         if ($(window).width() >= 768) {
-          openFiltersToggle();
+          if (filtClick === 0) {
+            openFiltersToggle();
+          }
         }
       }
-    }, 100);
+    }, 1000);
   });
 
   /***************************************************************
