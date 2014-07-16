@@ -103,3 +103,26 @@
 .logo-title span{
   letter-spacing: -2px;
 }
+
+
+/*Bootstrap override*/
+
+.navbar-default .navbar-nav > li > a {
+ color: #cccccc;
+ border-top: 2px solid #021233;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  background:#3d3d3d;
+  color:#eeeeee;                  
+  border-top: 2px solid #ff4800;
+  margin-top:0px;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: #555555;
+  background-color: #e7e7e7;
+}

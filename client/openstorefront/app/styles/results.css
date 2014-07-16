@@ -591,8 +591,8 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
   line-height: 1.428571429;
   vertical-align: top;
 /*  border-top: 1px solid #dddddd;*/
-  background-color: #cccccc;
-  border: 1px solid #c0c0c0;
+  background-color: #cccccc !important;
+  border: 1px solid #c0c0c0 !important;
 }
 .text-right
 {
