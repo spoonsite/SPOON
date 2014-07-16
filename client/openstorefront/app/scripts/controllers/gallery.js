@@ -38,6 +38,13 @@ app.controller('GalleryCtrl', ['$scope', 'business', 'localCache', '$location', 
       'width': 1805,
       'height': 968,
       'thumbUrl': 'images/pic3thumb.png'
+    },
+    {
+      'url': 'images/pic4full.png',
+      'width': 980,
+      'height': 756,
+      'thumbUrl': 'images/pic4thumb.png',
+      'caption': 'This is a street map media resource.'
     }
   ];
 /*  $scope.images = [
