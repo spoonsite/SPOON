@@ -54,7 +54,7 @@ html, .resultsContainer {
   overflow:auto;
 
   /*This line is needed for when you use pagination.*/
-  /*padding-bottom: 40px;*/
+  padding-bottom: 40px;
 }
 
 .page2Styles{
@@ -574,6 +574,11 @@ width: 100%;
   bottom: -4px;
 }
 
+.componentListDate {
+  font-size: 11px;
+  color: #858585;
+}
+
 tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .suggestion-item.selected em {
   color: #fff;
   background-color: #3d3d3d;
@@ -586,8 +591,8 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
   line-height: 1.428571429;
   vertical-align: top;
 /*  border-top: 1px solid #dddddd;*/
-  background-color: #cccccc;
-  border: 1px solid #c0c0c0;
+  background-color: #cccccc !important;
+  border: 1px solid #c0c0c0 !important;
 }
 .text-right
 {
