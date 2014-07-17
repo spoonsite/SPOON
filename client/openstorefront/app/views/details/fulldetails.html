@@ -13,21 +13,29 @@
     <!-- TITLE SECTOIN -->
     <div class="container component-title">
       <div class="col-sm-12">
-        <h1>{{details.details.name}}<span>{{details.details.owner}} ({{details.details.type[0].code}})</span>
-          <br>
-          <button class='btn btn-default' ng-show="!details.details.watched" ng-click="addToWatches(details.details.id)">Add To Watches <i class="fa fa-thumbs-o-up imitateLink"></i>
-          </button>
-          <button class='btn btn-default' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')">View Watches&nbsp;<i class="fa fa-eye imitateLink"></i>
-          </button>
-          <button class='btn btn-default' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.id)">Remove From Watches&nbsp;<i class="fa fa-thumbs-o-down imitateLink"></i>
-          </button>
-          <button class='btn btn-default' id="permenantLink" ng-click="goToFullPage(details.details.id)">Go To Full Page&nbsp;<i class="fa fa-copy"></i>
-          </button>
-        </h1>
+        <div style="display:inline-block; width: 100%">
+          <h1>{{details.details.name}}<span>{{details.details.owner}} ({{details.details.type[0].code}})</span>
+            <div class="pull-right">
+              <button class='btn btn-default detailsTitleButton' data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
+                <div data-toggle="collapse" data-parent="#accordion" href="#tagsCollapse" style="display: inline-block; height: 50px; width: 50px; border-radius:25px; position: relative; margin-left: -13px; top: -7px; padding: 13px;">
+                  <i class="fa fa-tags imitateLink"></i>
+                </div>
+              </button>
+              <button class='btn btn-default detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.id)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
+              </button>
+              <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
+              </button>
+              <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.id)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="fa fa-thumbs-o-down imitateLink"></i>
+              </button>
+              <button class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goToFullPage(details.details.id)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover"><i class="fa fa-copy"></i>
+              </button>
+            </div>
+          </h1>
+        </div>
         <!-- injected evaluations start -->
 
         <!-- injected evaluations start -->
-        <div style="padding: 0px 10px;">
+        <div style="padding: 0px 10px;" id="tagsCollapse" class="panel-collapse collapse">
           <tags-input class="bootstrap" min-length="1" ng-model="details.details.assetTags" replace-spaces-with-dashes="false" on-tag-added="saveTags(details.details.id, details.details.assetTags);" on-tag-removed="saveTags(details.details.id, details.details.assetTags);"><auto-complete min-length="1" source="checkTagsList($query, details.details.assetTags, tagsList)"></auto-complete></tags-input>
         </div>
       </div>

@@ -13,84 +13,112 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
+<div id="mainContent">
 
-<div class="search ">
-  <div class="center navSearch defaultSearch ">
-    <form ng-submit="goToSearch('search', searchKey)">
-      <div class="pull-right searchAllButton">
-        <button ng-click="goToSearch('all')" class="btn btn-primary pull-right">Show All Listings
+  <div class="search2 ">
+    <div class="text-center bannerText">
+      <h4>
+        <blockquote>
+          <!-- <strong>DI2E Storefront:</strong><br> -->
+          <small>A registry of applications, services, and components, as well as guidebooks and other DI2E guidance, to support the DI2E user community of developers, system integrators and operational end users.</small>
+          <!-- <br><span>&mdash;&nbsp;Anonymous</span> -->
+        </blockquote>
+      </h4>
+    </div>
+  </div>
+
+  <div class="search ">
+    <div class="text-center getstarted">
+      <h4 >
+        <label class="imitateLink" ng-click="focusOnSearch()" for="search-header">Get Started<br>
+          <small>Search For Reusable Components
+          </small>
+          <br>
+          <i class="fa fa-caret-down"></i>
+        </label>
+      </h4>
+    </div>
+    <div class="center navSearch defaultSearch ">
+      <div class="pull-right searchAllButton" style="margin-left: 10px;">
+        <button ng-click="goToSearch('search', 'override-All')" style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Show All Listings
         </button>
       </div>
-      <div class="pull-right searchBoxButton">
-        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
-      </div>
-      <div class="navSearchBar">
-        <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="nifty2col color_background_white" style="box-shadow: inset  0px 0px 9px 0px rgba(68,68,68,0.6); padding-bottom: 5px; padding-top: 5px;">
-	<div class="col-sm-6 first" style="padding-bottom: 30px;">
-    <div>
-      <h1>Highlights</h1> 
-      <hr>
+      <form ng-submit="goToSearch('search', searchKey)">
+        <div class="pull-right searchBoxButton">
+          <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
+        </div>
+        <div class="navSearchBar">
+          <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
+        </div>
+      </form>
     </div>
-    <div class="content">
-      <div class="row">
-        <div  style="text-align: left">
-          <ul style="list-style-type:square;">
-            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">		  
-              <a>
-                <span class="listing_short_title_text">IdAM Landing Page</span>			
-              </a>
-              <div style="font-size: 12px; color: grey;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...
-              </div>		
-            </li>
-            <li class="imitateLink" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">
-              <a>
-                <span class="listing_short_title_text">Google Chrome</span>			
-              </a>
-              <div style="font-size: 12px; color: grey;">Google released the majority of Chrome's source code as an open source project called Chromium, on which Chrome releases are still based...
-              </div>
-            </li>	  
+  </div>
 
+  <div class="nifty2col color_background_white">
+    <div class="col-sm-6 first" style="padding-bottom: 30px;">
+      <div>
+        <h1>Highlights</h1> 
+        <hr>
+      </div>
+      <div class="content">
+        <div class="row">
+          <div  style="text-align: left">
+            <ul style="list-style-type:square;">
+              <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">      
+                <a>
+                  <span class="listing_short_title_text">IdAM Landing Page</span>     
+                </a>
+                <div style="font-size: 12px; color: #555555;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...
+                </div>    
+              </li>
+              <li class="imitateLink" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">
+                <a>
+                  <span class="listing_short_title_text">Google Chrome</span>     
+                </a>
+                <div style="font-size: 12px; color: #555555;">Google released the majority of Chrome's source code as an open source project called Chromium, on which Chrome releases are still based...
+                </div>
+              </li>   
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 second">
+      <div><h1>Most Recently Added</h1> <hr></div>
+      <div class="content">
+        <div class="row">
+          <ul style="list-style-type:square;">
+            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage2.html', 'evaluationLevel', 'STATE3')">
+              <a>
+                <span class="listing_short_title_text">Evaluation Level 3 Landing Page</span>  
+              </a>
+              <div style="font-size: 12px; color: #555555;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>    
+            </li>     
+            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">
+              <a>
+                <span class="listing_short_title_text">IdAM Landing Page</span>  
+              </a>
+              <div style="font-size: 12px; color: #555555;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>    
+            </li>
+            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goTo('single', {id: 71})">
+              <a>
+                <span class="listing_short_title_text">Bandit OZONE Widget</span>  
+              </a>
+              <div style="font-size: 12px; color: #555555;">Vehicula aliquet libero Integer in magna</div>    
+            </li>
           </ul>
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-sm-6 second">
-    <div><h1>Knowledge Base</h1> <hr></div>
-    <div class="content">
-      <div class="row">
-        <ul style="list-style-type:square;">
-          <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage2.html', 'evaluationLevel', 'STATE3')">
-            <a>
-              <span class="listing_short_title_text"> Evaluation Level 3 Landing Page</span>	
-            </a>
-            <div style="font-size: 12px; color: grey;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>		
-          </li>			
-          <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">
-            <a>
-              <span class="listing_short_title_text"> IdAM Landing Page</span>	
-            </a>
-            <div style="font-size: 12px; color: grey;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>		
-          </li>
-        </ul>
-      </div>
+    <div class="liner">
     </div>
+    <div style="clear:both;"></div>
   </div>
-  <div class="liner">
-
-  </div>
-  <div style="clear:both;"></div>
 </div>
 
 
-
-
+<!-- 
 <div class="row defaultContent defaultTitle">
   <div>
     Search by Attribute:
@@ -110,17 +138,17 @@ limitations under the License.
           </span>
           <div style="font-size: 12px; color: grey;">{{item.desc}}</div>
         </div>
-        <!--         <div ng-if="item.landing !== null && item.landing !== undefined">
+                <div ng-if="item.landing !== null && item.landing !== undefined">
           <small><button class="btn btn-primary" ng-click="goToLanding(item.landing, type.key, item.code)">Go to Landing Page</button></small>
           <small><button class="btn btn-primary" ng-click="goToSearch(type.key, item.code)">Go to Results Page</button></small>
-        </div> -->
+        </div>
       </li>
     </ul>
   </div>
   <div class="defaultSpacer hidden-xs">&nbsp;</div>
 </div>
-
-<footer style="margin-top: 20px;padding-bottom: 20px;" class="home_footer">
+-->
+<footer style="padding-top: 20px; padding-bottom: 20px;" class="home_footer">
   <div class="footer_content">
     <div class="column">
       <div class="title">About Us</div>
@@ -157,6 +185,6 @@ limitations under the License.
   <div class="copyright">&#169; DI2E&nbsp;|&nbsp;<a href="https://devtools.di2e.net/consent.php">Consent to Monitoring</a>&nbsp;|&nbsp;All rights reserved</div>
 </footer>
 
-<!-- build:css({.tmp,app}) styles/landing.css -->
+<!-- build:css({.tmp,app}) styles/homepage.css -->
 <link rel="stylesheet" href="styles/homepage.css">
 <!-- endbuild -->

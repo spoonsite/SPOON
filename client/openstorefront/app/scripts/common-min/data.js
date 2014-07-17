@@ -824,6 +824,10 @@ MOCKDATA.assets = {
     {
       'code': 'DATAM',
       'desc': 'Data Management'
+    },
+    {
+      'code': 'IDAM',
+      'desc': 'idAM Compliant'
     }
     ],
     'conformanceState': [

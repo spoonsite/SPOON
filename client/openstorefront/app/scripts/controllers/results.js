@@ -168,26 +168,40 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.reAdjust = function(key) {
     $scope.searchGroup        = key;
     $scope.searchKey          = $rootScope.searchKey;
-    $scope.total              = Business.getData();
-    $scope.filteredTotal      = $scope.total;
+    console.log('$scope.sear', $scope.searchGroup);
     
-    /*Simulate wait for the filters*/
-    $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
-    $scope.$emit('$TRIGGERLOAD', 'mainLoader');
-    $timeout(function(){
-      $scope.filters = Business.getFilters();
-      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-      /*This is simulating the wait time for building the data so that we get a loader*/
+    if (!isEmpty($scope.searchGroup)) {
+      // grab all of the keys in the filters
+      $scope.searchKey        = $scope.searchGroup[0].key;
+      $scope.searchCode       = $scope.searchGroup[0].code;
+    } else {
+      $scope.searchKey        = 'search';
+      $scope.searchCode       = '';
+    }
+
+    Business.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
+      $scope.total = result || {};
+
+      $scope.filteredTotal  = $scope.total;
+
+      /*Simulate wait for the filters*/
+      $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
+      $scope.$emit('$TRIGGERLOAD', 'mainLoader');
       $timeout(function(){
-        $scope.data.data = $scope.total;
-        _.each($scope.data.data, function(item){
-          item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
-        });
-        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-        $scope.initializeData(key);
+        $scope.filters = Business.getFilters();
+        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+        /*This is simulating the wait time for building the data so that we get a loader*/
+        $timeout(function(){
+          $scope.data.data = $scope.total;
+          _.each($scope.data.data, function(item){
+            item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
+          });
+          $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+          $scope.initializeData(key);
+        }, 500);
       }, 500);
-    }, 500);
-  };
+    });
+  }
 
   $scope.$watch('data', function() {
     if ($scope.data && $scope.data.data) {

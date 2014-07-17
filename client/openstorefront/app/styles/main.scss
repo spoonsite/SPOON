@@ -26,6 +26,7 @@
 @import "includes/loader.scss";
 @import "includes/misc.scss";
 @import "fonts/fontello.scss";
+@import "fonts/icomoon.scss";
 
 
 
@@ -34,10 +35,12 @@ body {
   font-size: 14px;
   line-height: 1.428571429;
   color: #333333;
-  background-color: #f5f5f5;
-  background: url(../images/squared_metal.png)
+  background-color: #f5f5f5; 
+  background: image-url('squared_metal.png');
 }
-
+.top, .fullHeight, .page1, .page2Styles, .pagination  body {
+  min-width: 400px;
+}
 
 /*Table override for each stripped and hover*/
 .table-striped > tbody > tr:nth-child(even) > td,
@@ -55,6 +58,12 @@ body {
   background-color: #f5f5f5;
 }
 
+
+/*This hides the logo except on pages that say it is shown*/
+.logo-title {
+  display: none;
+  visibility: hidden;
+}
 
 /***************************************************************
 * Miscelaneous useful custom classes that are used throughout the site
@@ -204,20 +213,103 @@ small button {
   border-radius: 0px;
 }
 
+.content .row {
+  margin-left: 0px;
+  margin-right: 0px;
+}
 
+.hidden-xs{
+  display: inline-block !important;
+}
 
 /***************************************************************
 * Media queries to handle responsiveness for the site globally.
 ***************************************************************/
+@media (max-width: 470px) {
+  .hidden-xs {
+    display: none !important;
+  }
+}
+@media (max-width: 722px) {
+  .logo-title span.content{
+    display: none;
+  }
+  .logo-title{
+    padding-top: 10px;
+    font-size: 20px;
+  }
+}
 @media (max-width: 768px) {
   .fullWidthModal .modal-dialog {
     margin-left: 10px;
     margin-right: 10px;
     width: auto;
   }
+  .navbar-collapse.collapse{
+    display: none !important;
+  }
+  .navbar-collapse.collapsing,
+  .navbar-collapse.in {
+    display: inherit !important;
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    background: #555555;
+  }
+  .navbar-collapse.collapsing ul,
+  .navbar-collapse.in ul {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .navbar-collapse.collapsing .navbar-form,
+  .navbar-collapse.in .navbar-form {
+    border-top: 0px;
+    border-bottom: 0px;
+    box-shadow: 0px;
+    margin-top:0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .navbar-collapse.collapsing .divider,
+  .navbar-collapse.in .divider {
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+  }
+  
+  .nifty2col .col-sm-6.first {
+    margin-right: 0px !important;
+  }
+
+}
+@media (max-width: 862px) {
+  footer{
+    width: 100% !important;
+    margin: 0 auto;
+    padding: 0px;
+  }
+  .footer_content{
+    width: auto !important;
+  }
+  .logo-title{
+    padding-left: 20px;
+    text-align: left;
+  }
+}
+@media (max-width: 1030px) {
+  .logo-title span.dashes {
+    display: none;
+  }
 }
 /* Customize container */
 @media (min-width: 768px) {
+  #bs-example-navbar-collapse-2 {
+    display: none !important;
+  }
 }
 
 /* Responsive: Portrait tablets and up */

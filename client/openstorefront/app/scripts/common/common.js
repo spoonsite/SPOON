@@ -166,10 +166,10 @@ var triggerAlert = function(text, uid, id, delay) {
     //     }
     //   }
     // });
-    setTimeout(function() {
-      hideAlert(uid, 1000);
-    }, delay);
-  }
+setTimeout(function() {
+  hideAlert(uid, 1000);
+}, delay);
+}
 };
 
 
@@ -214,3 +214,13 @@ var triggerError = function(errorObj) {
     }
   });
 };
+
+
+/***************************************************************
+* Close the navbar-collapse
+***************************************************************/
+var initiateClick = function(id) {
+  if($('#' + id).css('display') !='none'){
+    $('#' + id).trigger( "click" );
+  }
+}
