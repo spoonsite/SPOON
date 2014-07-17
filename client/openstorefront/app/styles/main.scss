@@ -240,6 +240,9 @@ small button {
   }
 }
 @media (max-width: 768px) {
+  #detailsToolButtons {
+    float: left !important;
+  }
   .fullWidthModal .modal-dialog {
     margin-left: 10px;
     margin-right: 10px;
