@@ -94,7 +94,7 @@
   color: white;
   text-align: center;
   font-size: 28px;
-  text-shadow: 2px 2px 5px #7E7E7E;
+  /*text-shadow: 2px 2px 5px #7E7E7E;*/
   padding-top: 3px;
   white-space: nowrap;
   display: inline-block;
@@ -149,6 +149,6 @@
 
 @media (min-width: 768px) {
   .navbar-nav > li > a {
-    padding-top: 11px;
+    padding-top: 15px;
   }
 }

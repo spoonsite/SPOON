@@ -65,7 +65,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   *******************************************************************************/
   $scope.goToSearch = function(searchType, searchKey){ /*jshint unused:false*/
     $(window).scrollTop(0);
-    if (searchType === 'search') {
+    if (searchType === 'search' && searchKey !== 'override-All') {
       Business.search(searchType, $scope.searchKey);
       $location.search('type', searchType);
       $location.path('/results');
@@ -76,6 +76,9 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
       }
 
     } else {
+      if (searchKey === 'override-All') {
+        searchKey = 'All';
+      }
       Business.search(searchType, searchKey);
       $location.path('/results');
       $location.search('type', searchType);
@@ -98,6 +101,13 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     });
     return false;
   };
+
+  /***************************************************************
+  * This function us initiated by the 'GetStarted button'
+  ***************************************************************/
+  $scope.focusOnSearch = function() {
+    $('#mainSearchBar').focus();
+  }
 
   /*******************************************************************************
   * This function sets the rootScope's search key so that if you did it in the

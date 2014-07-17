@@ -26,6 +26,7 @@
 @import "includes/loader.scss";
 @import "includes/misc.scss";
 @import "fonts/fontello.scss";
+@import "fonts/icomoon.scss";
 
 
 
@@ -34,13 +35,10 @@ body {
   font-size: 14px;
   line-height: 1.428571429;
   color: #333333;
-  background-color: #f5f5f5;
+  background-color: #f5f5f5; 
   background: image-url('squared_metal.png');
 }
-.top, .fullHeight, body {
-  min-width: 470px;
-}
-.page1, .page2Styles, .pagination {
+.top, .fullHeight, .page1, .page2Styles, .pagination  body {
   min-width: 400px;
 }
 

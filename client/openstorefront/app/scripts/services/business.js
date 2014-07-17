@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-/*global isEmpty*/
+ /*global isEmpty*/
 
-app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupservice', function(localCache, $http, $q, userservice, lookupservice) { /*jshint unused: false*/
+ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupservice', function(localCache, $http, $q, userservice, lookupservice) { /*jshint unused: false*/
 
     // 60 seconds until expiration
     var expireTime = 60 * 1000;
@@ -28,6 +28,15 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
     business.lookupservice = lookupservice;
 
 
+    business.doSearch = function(type, key) {
+      var deferred = $q.defer();
+      if (type && key) {
+        $http.get('/openstorefront-web/api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) {
+          deferred.resolve(data)
+        });
+      }
+      return deferred.promise;
+    }
     //Shared Services  
     business.getFilters = function() {
       return MOCKDATA.filters;
