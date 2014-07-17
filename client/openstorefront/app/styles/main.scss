@@ -37,7 +37,9 @@ body {
   background-color: #f5f5f5;
   background: image-url('squared_metal.png');
 }
-
+.top, .fullHeight, .page1, .page2Styles, .pagination, body {
+  min-width: 470px;
+}
 
 /*Table override for each stripped and hover*/
 .table-striped > tbody > tr:nth-child(even) > td,
@@ -210,11 +212,32 @@ small button {
   border-radius: 0px;
 }
 
+.content .row {
+  margin-left: 0px;
+  margin-right: 0px;
+}
 
+.hidden-xs{
+  display: inline-block !important;
+}
 
 /***************************************************************
 * Media queries to handle responsiveness for the site globally.
 ***************************************************************/
+@media (max-width: 470px) {
+  .hidden-xs {
+    display: none !important;
+  }
+}
+@media (max-width: 722px) {
+  .logo-title span.content{
+    display: none;
+  }
+  .logo-title{
+    padding-top: 10px;
+    font-size: 20px;
+  }
+}
 @media (max-width: 768px) {
   .fullWidthModal .modal-dialog {
     margin-left: 10px;
@@ -256,7 +279,30 @@ small button {
     overflow: hidden;
     background-color: #e5e5e5;
   }
+  
+  .nifty2col .col-sm-6.first {
+    margin-right: 0px !important;
+  }
 
+}
+@media (max-width: 862px) {
+  footer{
+    width: 100% !important;
+    margin: 0 auto;
+    padding: 0px;
+  }
+  .footer_content{
+    width: auto !important;
+  }
+  .logo-title{
+    padding-left: 20px;
+    text-align: left;
+  }
+}
+@media (max-width: 1030px) {
+  .logo-title span.dashes {
+    display: none;
+  }
 }
 /* Customize container */
 @media (min-width: 768px) {
