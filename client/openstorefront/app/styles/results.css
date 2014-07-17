@@ -76,6 +76,7 @@ html, .resultsContainer {
   color: #021233;
   text-align: center;
   font-size: 25px;
+  padding-top: 10px;
   /*letter-spacing: 10px;*/
 }
 
@@ -198,7 +199,7 @@ html, .resultsContainer {
 
   #filtersButton{
     position: fixed; 
-    top: 52px; 
+    top: 54px; 
     z-index: 1010; 
     padding: 0px; 
     margin: 0px;

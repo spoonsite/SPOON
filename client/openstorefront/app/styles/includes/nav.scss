@@ -94,11 +94,13 @@
   color: white;
   text-align: center;
   font-size: 28px;
-  width: 100%;
   text-shadow: 2px 2px 5px #7E7E7E;
-  padding-top: 5px;
-  padding-left: 218px;
+  padding-top: 3px;
   white-space: nowrap;
+  display: inline-block;
+  width: 100%;
+  margin-right: -200px;
+  float: left;  
 }
 .logo-title span{
   letter-spacing: -2px;
@@ -107,12 +109,29 @@
 
 /*Bootstrap override*/
 
+
 .navbar-default .navbar-nav > li > a {
  color: #cccccc;
- border-top: 2px solid #021233;
+ border-top: 2px solid transparent;
+}
+
+.navbar-default .navbar-nav > .dropdown > a .caret,
+.navbar-default .navbar-nav > .dropdown > a:focus .caret,
+.navbar-default .navbar-nav > .dropdown > a:active .caret{
+  border-top-color: #cccccc;
+  border-bottom-color: #cccccc;
+}
+.navbar-default .navbar-nav > .dropdown.open > a .caret {
+  border-top-color: darken(#cccccc, 20%);
+  border-bottom-color: darken(#cccccc, 20%);
+}
+.navbar-default .navbar-nav > .dropdown > a:hover .caret{
+  border-top-color: #ff4800;
+  border-bottom-color: #ff4800;
 }
 
 .navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:active,
 .navbar-default .navbar-nav > li > a:focus {
   background:#3d3d3d;
   color:#eeeeee;                  
@@ -124,5 +143,12 @@
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
   color: #555555;
+  border-top: 2px solid #ff4800;
   background-color: #e7e7e7;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav > li > a {
+    padding-top: 11px;
+  }
 }

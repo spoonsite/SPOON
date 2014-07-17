@@ -61,8 +61,14 @@
 }
 
 
-////////////////////////////////////////////////
+.navbar-brand, .navSearchForm, #searchNavButton {
+  display: none !important;
+}
 
+.logo-title{
+  display: block;
+  visibility: visible;
+}
 
 .banner{
   /*font-family: WideLatin;*/
@@ -227,7 +233,9 @@ color: gray;
   height: 50px;
 }
 .defaultSearch form div.navSearchBar{
-  margin-right: 235px;
+  margin-right: 237px;
+  position: relative;
+  z-index: 1010;
 }
 
 .defaultSearch form div.searchAllButton{

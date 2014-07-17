@@ -359,8 +359,10 @@
 
 // Default navbar
 .navbar-default {
+  min-height: 49px;  
   background-color: $navbar-default-bg;
   border-color: $navbar-default-border;
+  border-bottom: 3px solid #ff4800;
 
   .navbar-brand {
     color: $navbar-default-brand-color;

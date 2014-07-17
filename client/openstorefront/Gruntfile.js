@@ -142,11 +142,11 @@ module.exports = function (grunt) {
       options: {
         sassDir: '<%= yeoman.app %>/styles',
         cssDir: '.tmp/styles',
-        generatedImagesDir: '.tmp/images/generated',
-        imagesDir: '<%= yeoman.app %>/images',
+        // generatedImagesDir: '.tmp/images/generated',
+        imagesDir: /*grunt.option('appPath')? grunt.option('appPath') + '/images' :*/  '<%= yeoman.app %>/images',
+        httpImagesPath: grunt.option('appPath')? grunt.option('appPath') + '/images': '/images',
         javascriptsDir: '<%= yeoman.app %>/scripts',
         importPath: '<%= yeoman.app %>/bower_components',
-        httpImagesPath: '/images',
         httpGeneratedImagesPath: '/images/generated',
         fontsDir: grunt.option('appPath')? grunt.option('appPath') + '/fonts' : '<%= yeoman.app %>/fonts',
         httpFontsPath: grunt.option('appPath')? grunt.option('appPath') + '/fonts' : '/fonts',
@@ -156,7 +156,6 @@ module.exports = function (grunt) {
       },
       dist: {
         options: {
-          generatedImagesDir: '<%= yeoman.dist %>/images/generated'
         }
       },
       server: {

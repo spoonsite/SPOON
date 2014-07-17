@@ -178,12 +178,6 @@ var app = angular
     if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single')) {
       $location.search({});
     }
-    if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
-      // console.log('Broadcasting');
-      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
-    } else {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
-    }
   });
 
 
@@ -197,12 +191,6 @@ var app = angular
 
     $timeout(function() {
       $('[data-toggle="tooltip"').tooltip();
-      if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
-        // console.log('Broadcasting');
-        $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
-      } else {
-        $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
-      }
     }, 300);
     // if (!Auth.signedIn() && $location.path() !== '/login') {
     //   $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
@@ -237,18 +225,10 @@ var app = angular
     $rootScope.$broadcast('$viewModal', id);
   };
 
-  $rootScope.setNav = function() {
-    // once the content is loaded, make sure we have the right navigation!
-    if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
-    } else {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
-    }
-  };
+  $rootScope.closeNavbarItem = function(id) {
+    initiateClick(id);
+  }
 
-  $rootScope.setNav();
-  
-  
   //Mock Back End  (use passthough to route to server)
   $httpBackend.whenGET(/views.*/).passThrough();
   
