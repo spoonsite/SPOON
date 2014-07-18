@@ -5,6 +5,27 @@
   font-weight: bold;
   line-height: 1.428571429;
   vertical-align: top;
+  border: 1px solid transparent;
+  background: inherit;
+}
+
+table th {
+  padding: 8px;
+  color:black;
+  font-weight: bold;
+  line-height: 1.428571429;
+  vertical-align: top;
+  border: inherit;
+  background: #dfdfdf;
+  border: 1px solid #c0c0c0 !important;
+}
+
+table tr:hover > th {
+  background: #ccc !important;
+  border: 1px solid #c0c0c0 !important;
+}
+
+.row-headers {
   /*  border-top: 1px solid #dddddd;*/
   background-color: #cccccc !important;
   border: 1px solid #c0c0c0 !important;
@@ -74,3 +95,38 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
   background-color: #3d3d3d;
 }
 
+.leftCol{
+  min-width: 100px;
+  display: table;
+}
+
+.hideTheExtra{
+  overflow: hidden;
+}
+
+.rightCol{
+  margin-left: 20px;
+  background: white;
+  width: 50%;
+  float:right;
+  min-width: 350px;
+}
+
+.col-md-12 .floater {
+  float:left;
+  margin-right: 20px;
+}
+.col-md-12 .floater .content {
+  margin-top: -10px;
+  margin-left: 20px;
+}
+
+@media (max-width: 615px) {
+  .leftCol{
+    min-width: 100%;
+  }
+  .rightCol{
+    width: 100%;
+  }
+
+}
