@@ -120,3 +120,81 @@
 .vertalign {
   vertical-align:middle;
 }
+
+/*New evaluation progress bars*/
+/*completed=0*/
+.evalprogbar0
+{
+  background-color:#E6E8EB;
+  color:#FFFFFF;
+  border:1px solid #808080;
+  height:50px;
+  text-align:center; 
+  vertical-align:middle;
+}
+/*in progress=1*/
+.evalprogbar1
+{
+  background-color:#D6EDD6;
+  border:1px dashed #5CB85C;
+  height:50px;
+  color:#5CB85C;
+  text-align:center; 
+  font-weight:bold;
+  vertical-align:middle;
+}
+/*halted=2*/
+.evalprogbar2
+{
+  background-color:#FFA480;
+  color:#000000;
+  border:1px solid #808080;
+  height:50px;
+  text-align:center; 
+  vertical-align:middle;
+}
+/*not started=3*/
+.evalprogbar3
+{
+  background-color:#FFFFFF;
+  border:1px solid #808080;
+  height:50px;
+  text-align:center; 
+  vertical-align:middle;
+  color:#808080;
+}
+/*completed=0*/
+.evalbarlegend0
+{
+  text-align:right;
+  padding:0;
+  font-size:12px; 
+  color:black;
+}
+/*in progress=1*/
+.evalbarlegend1
+{
+  color:#5CB85C;
+  font-weight:bold;
+  text-align:right;
+  padding:0;
+  font-size:12px;
+}
+/*halted=2*/
+.evalbarlegend2
+{
+  color:#ff4800;
+  font-weight:bold;
+  text-align:right;
+  padding:0;
+  font-size:12px;
+}
+/*not started=3*/
+.evalbarlegend3
+{
+  color:#808080;
+  font-weight:bold;
+  text-align:right;
+  padding:0;
+  font-size:12px;
+}

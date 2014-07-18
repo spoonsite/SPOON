@@ -22,28 +22,35 @@
       </div> -->
     </div> 
   </div>
-  <!-- new progress bar -->
+  <!-- new progress bar  needs refactoring to be dynamic -->
 
-  <!-- shades of navy by 10% #424E66 81899A C0C4CC E6E8EB   dddddd -->
+  <!-- shades of navy by 10% #424E66 81899A C0C4CC E6E8EB   dddddd  class="helpcontentff"-->
 
-  <div class="col-md-12" style="padding:0;">
-    <div class="col-md-3" style="background-color:#E6E8EB;border:1px solid navy; height:50px; text-align:center; vertical-align:middle">Available for Reuse/Not Evaluated</div>
+  <div class="col-md-12" style="padding:0;" >
 
-    <div class="col-md-3" style="background-color:#E6E8EB;border-right:1px solid navy;border-top:1px solid navy;border-bottom:1px solid navy; height:50px;text-align:center">Initial Reuse Analysis</div>
+    <div ng-repeat="rows in componentEvalProgressBar" class="col-md-3 evalprogbar{{rows.compstatus}}" >
+      <span class="helpcontent" >
+        <a href="javascript:void(0)" 
+            class="helpcontent"  popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector=""  
+            data-original-title="Evaluation Level {{rows.level}}<br/> {{rows.desc}}"  
+            data-content="<p class='dd' {{rows.fulldesc}}</p>">{{rows.desc}} </span> </a>
+      </span>
+    </div>
 
-    <div class="col-md-3" style="background-color:#ffffff;border-right:1px dashed #5CB85C;border-top:1px dashed #5CB85C;border-bottom:1px dashed #5CB85C; height:50px;text-align:center; color:#5CB85C;"><b>Integration and Test</b></div>
+    <div ng-repeat="rows in componentEvalProgressBar" >
+      <div class="col-md-3 evalbarlegend{{rows.compstatus}}">{{rows.compmessage}}</div>
+    </div>
 
-    <div class="col-md-3" style="background-color:#ffffff ;border-right:1px solid gray;border-top:1px solid gray;border-bottom:1px solid gray; height:50px;text-align:center; color:#808080 ">DI2E Framework Reference Implementation</div>
+
   </div>
-
+<!-- 
   <div class="col-md-12" style="padding:0;">
     <div class="col-md-3" style="text-align:right;padding:0;font-size:12px; color:black;">COMPLETED 2/15/2014</div>
     <div class="col-md-3" style="text-align:right;padding:0;font-size:12px; color:black;">COMPLETED 3/15/2014</div>
     <div class="col-md-3" style="text-align:right;padding:0;font-size:12px; color:black;"><span style="color:#5CB85C;font-weight:bold">IN PROGRESS (estimated complete 4/15/2014)</span></div>
     <div class="col-md-3" style="text-align:right;padding:0;font-size:12px; color:#808080 ;">NOT STARTED (estimated complete 5/15/2014)</div>
   </div>
-
-  
+ -->
   <div style="position: relative; clear: both"></div>
   <br>
 </div>
