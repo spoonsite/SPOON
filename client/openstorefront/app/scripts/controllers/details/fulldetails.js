@@ -49,7 +49,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         'include': 'views/details/reviews.html'
       },
       {
-        'title': 'Comments',
+        'title': 'Questions And Answers',
         'include': 'views/details/comments.html'
       }
     //
@@ -64,10 +64,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
 
   $scope.detailResultsTabs = [
     //
-    { title:'SUMMARY', content:'1', relpath:'views/details/summary.html' },
-    { title:'DETAILS', content:'2', relpath:'views/details/details.html' },
-    { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html' },
-    { title:'COMMENTS', content:'4', relpath:'views/details/comments.html' },
+    { title:'SUMMARY', content:'1', relpath:'views/details/summary.html', class:"" },
+    { title:'DETAILS', content:'2', relpath:'views/details/details.html', class:"" },
+    { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html', class:"" },
+    { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
   //
   ];
   $scope.tab = $scope.detailResultsTabs[0];

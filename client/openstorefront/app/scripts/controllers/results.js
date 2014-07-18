@@ -585,7 +585,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.ratingsFilter = null;
     $scope.tagsFilter = null;
     $scope.query = null;
+    console.log('filter', $scope.filters);
     $scope.filters = JSON.parse(JSON.stringify($scope.resetFilters));
+    console.log('filter', $scope.filters);
     $scope.applyFilters();
   };
 

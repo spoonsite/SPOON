@@ -65,20 +65,27 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   *******************************************************************************/
   $scope.goToSearch = function(searchType, searchKey){ /*jshint unused:false*/
     $(window).scrollTop(0);
-    if (searchType === 'search' && searchKey !== 'override-All') {
-      Business.search(searchType, $scope.searchKey);
+    var search = null;
+    if (searchType === 'search') {
+      if (!$scope.searchKey) {
+        if (searchKey) {
+          search = searchKey;
+        } else {
+          search = 'All';
+        }
+      } else {
+        search = $scope.searchKey;
+      }
+      Business.search(searchType, search);
       $location.search('type', searchType);
       $location.path('/results');
-      if ($scope.searchKey === '') {
+      if (search === '') {
         $location.search('code', 'All');
       } else {
-        $location.search('code', $scope.searchKey);
+        $location.search('code', search);
       }
 
     } else {
-      if (searchKey === 'override-All') {
-        searchKey = 'All';
-      }
       Business.search(searchType, searchKey);
       $location.path('/results');
       $location.search('type', searchType);
