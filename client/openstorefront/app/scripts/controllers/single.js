@@ -48,8 +48,6 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
         $scope.details.details = temp;
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-      console.log('DAta', $scope.details.details);
-      
     }, 1500);
   };
 
