@@ -16,56 +16,59 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author dshurtleff
- * @param <T>
  */
-public class RestListResponse<T>
-{	
-	private long totalResults;
-	
-	@ParamTypeDescription("(Returned record count)")
-	private long results;
-	
-	private List<T> data = new ArrayList<>();
-	
-	public RestListResponse()
+public class ComponentResource
+{
+	private String name; 
+	private String type;
+	private String description;
+	private String link;
+
+	public ComponentResource()
 	{
 	}
 
-	public long getTotalResults()
+	public String getName()
 	{
-		return totalResults;
+		return name;
 	}
 
-	public void setTotalResults(long totalResults)
+	public void setName(String name)
 	{
-		this.totalResults = totalResults;
+		this.name = name;
 	}
 
-	public long getResults()
+	public String getType()
 	{
-		return results;
+		return type;
 	}
 
-	public void setResults(long results)
+	public void setType(String type)
 	{
-		this.results = results;
+		this.type = type;
 	}
 
-	public List<T> getData()
+	public String getDescription()
 	{
-		return data;
+		return description;
 	}
 
-	public void setData(List<T> data)
+	public void setDescription(String description)
 	{
-		this.data = data;
+		this.description = description;
+	}
+
+	public String getLink()
+	{
+		return link;
+	}
+
+	public void setLink(String link)
+	{
+		this.link = link;
 	}
 
 }

@@ -14,58 +14,53 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.web.rest.model;
+package edu.usu.sdl.openstorefront.web.tool;
 
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  *
  * @author dshurtleff
- * @param <T>
  */
-public class RestListResponse<T>
-{	
-	private long totalResults;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class OldAssetTag
+{
+	private long id;
+	private OldAssetUser createdBy;
+	private OldAssetTagDetail oldAssetTagDetail;
+
+	public OldAssetTag()
+	{
+	}
+
+	public long getId()
+	{
+		return id;
+	}
+
+	public void setId(long id)
+	{
+		this.id = id;
+	}
+
+	public OldAssetUser getCreatedBy()
+	{
+		return createdBy;
+	}
+
+	public void setCreatedBy(OldAssetUser createdBy)
+	{
+		this.createdBy = createdBy;
+	}
+
+	public OldAssetTagDetail getOldAssetTagDetail()
+	{
+		return oldAssetTagDetail;
+	}
+
+	public void setOldAssetTagDetail(OldAssetTagDetail oldAssetTagDetail)
+	{
+		this.oldAssetTagDetail = oldAssetTagDetail;
+	}
 	
-	@ParamTypeDescription("(Returned record count)")
-	private long results;
-	
-	private List<T> data = new ArrayList<>();
-	
-	public RestListResponse()
-	{
-	}
-
-	public long getTotalResults()
-	{
-		return totalResults;
-	}
-
-	public void setTotalResults(long totalResults)
-	{
-		this.totalResults = totalResults;
-	}
-
-	public long getResults()
-	{
-		return results;
-	}
-
-	public void setResults(long results)
-	{
-		this.results = results;
-	}
-
-	public List<T> getData()
-	{
-		return data;
-	}
-
-	public void setData(List<T> data)
-	{
-		this.data = data;
-	}
-
 }

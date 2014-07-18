@@ -17,23 +17,20 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
 import edu.usu.sdl.openstorefront.model.jpa.Test;
-import edu.usu.sdl.openstorefront.web.tool.Asset;
-import edu.usu.sdl.openstorefront.web.tool.AssetCategory;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
 import edu.usu.sdl.openstorefront.web.tool.OldAsset;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -42,6 +39,8 @@ import org.apache.commons.lang3.StringUtils;
 public class TestAction
 	extends BaseAction
 {
+	private boolean generateData;
+	
 	
 	@DefaultHandler
 	public Resolution checkSetup()
@@ -69,49 +68,39 @@ public class TestAction
 	@HandlesEvent("ConvertData")
 	public Resolution convertData() throws IOException
 	{
-		List<OldAsset> assets = objectMapper.readValue(new File("C:\\development\\storefront\\source\\old_data\\assets.json"), new TypeReference<List<OldAsset>>() {});
+		List<OldAsset> assets = objectMapper.readValue(new File("C:\\development\\storefront\\source\\old_data\\new-asset-data-all.json"), new TypeReference<List<OldAsset>>() {});
 		
-		List<Asset> newAssets = new ArrayList<>();
+		List<ComponentDetail> newAssets = new ArrayList<>();		
 		assets.forEach(oldAsset -> {
 			
-			Asset asset = new Asset();
+			ComponentDetail componentDetail = new ComponentDetail();
+			//defaults
+			componentDetail.setActiveStatus(BaseEntity.ACTIVE_STATUS);
 			
-			asset.setId(oldAsset.getId());
-			asset.setName(oldAsset.getTitle());
-			asset.setDescription(oldAsset.getDescription());
-			asset.setOwner(oldAsset.getOrganization());
+			//map form old			
+			componentDetail.setComponentId(oldAsset.getId());
+			componentDetail.setGuid(oldAsset.getUuid());
 			
-			asset.setShortDescription(oldAsset.getDescription().substring(0, oldAsset.getDescription().indexOf(".")));
-			asset.getStats().setAverageRating(oldAsset.getAvgRate());
-			asset.getStats().setComments(oldAsset.getTotalComments());
-			asset.getStats().setNumberRatings(oldAsset.getTotalVotes());
 			
-			Map<String, String> typeMap = new HashMap<>();
-			typeMap.put("4", "WIDGET");
-			typeMap.put("9", "APPS");			
-			typeMap.put("10", "REFDOCS");
-			typeMap.put("18", "SOFTLIB");
-			
-			String type = "TOOLS";
-			String foundType = typeMap.get("" + oldAsset.getTypes().getId());
-			if (StringUtils.isNotBlank(foundType))
+			if (generateData)	
 			{
-				type = foundType;
-			}
-			
-			asset.setType(type);
-			asset.setConformanceState(oldAsset.getState().getTitle());
-			
-			oldAsset.getCategories().forEach(cat ->{
-				AssetCategory category = new AssetCategory();
-				category.setDesc(cat.getTitle());				
-				asset.getCategories().add(category);
-			});			
-			
-			newAssets.add(asset);
+				//filling some details at random
+			}				
+
+			newAssets.add(componentDetail);
 		});
 				
 		return streamResults(newAssets);
+	}
+
+	public boolean getGenerateData()
+	{
+		return generateData;
+	}
+
+	public void setGenerateData(boolean generateData)
+	{
+		this.generateData = generateData;
 	}
 	
 }

@@ -14,22 +14,43 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.web.tool;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  *
  * @author dshurtleff
  */
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface DataType
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class OldAssetScreenshot
 {
-	Class value();
+	private String largeImageUrl;
+	private String smallImageUrl;
+
+	public OldAssetScreenshot()
+	{
+	}
+
+	public String getLargeImageUrl()
+	{
+		return largeImageUrl;
+	}
+
+	public void setLargeImageUrl(String largeImageUrl)
+	{
+		this.largeImageUrl = largeImageUrl;
+	}
+
+	public String getSmallImageUrl()
+	{
+		return smallImageUrl;
+	}
+
+	public void setSmallImageUrl(String smallImageUrl)
+	{
+		this.smallImageUrl = smallImageUrl;
+	}
+	
+	
 }

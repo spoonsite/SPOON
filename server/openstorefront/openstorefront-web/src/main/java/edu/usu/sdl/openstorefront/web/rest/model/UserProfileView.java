@@ -17,7 +17,6 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 
@@ -28,40 +27,31 @@ import javax.validation.constraints.NotNull;
 public class UserProfileView
 {
 	@NotNull	
-	@ParamTypeDescription("TEXT")
 	private String username;
 	
 	@ConsumeField
-	@ParamTypeDescription("TEXT")
 	private String firstname;
 	
 	@ConsumeField
-	@ParamTypeDescription("TEXT")
 	private String lastname;
 	
 	@ConsumeField
-	@ParamTypeDescription("TEXT")
 	private String email;
 	
 	@NotNull
 	@ConsumeField
-	@ParamTypeDescription("TEXT")
 	private String userTypeCode;
 	
 	@NotNull
-	@ParamTypeDescription("Timestamp (milliseconds since UNIX Epoch)")
 	private Date createDts;
 	
 	@NotNull
-	@ParamTypeDescription("Timestamp (milliseconds since UNIX Epoch)")
 	private Date updateDts;
 	
 	@NotNull
-	@ParamTypeDescription("TEXT")
 	private String updateUser;
 	
 	@NotNull
-	@ParamTypeDescription("BOOLEAN")
 	private boolean admin;
 
 	public UserProfileView()

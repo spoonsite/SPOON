@@ -102,7 +102,7 @@ limitations under the License.
 {
 	"success": "",
 	"errors": [
-	...'fieldname' : 'error message', 
+	'fieldname' : 'error message', 
 	...
 	]
 }			

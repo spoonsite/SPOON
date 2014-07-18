@@ -14,22 +14,43 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.web.tool;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  *
  * @author dshurtleff
  */
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface DataType
-{
-	Class value();
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class OldAssetUser
+{	
+	private String username;
+	private String name;
+
+	public OldAssetUser()
+	{
+	}
+	
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+	
+	
 }

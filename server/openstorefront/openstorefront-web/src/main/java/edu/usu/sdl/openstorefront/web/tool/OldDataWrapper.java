@@ -14,58 +14,44 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.web.rest.model;
+package edu.usu.sdl.openstorefront.web.tool;
 
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  * @author dshurtleff
- * @param <T>
  */
-public class RestListResponse<T>
-{	
-	private long totalResults;
-	
-	@ParamTypeDescription("(Returned record count)")
-	private long results;
-	
-	private List<T> data = new ArrayList<>();
-	
-	public RestListResponse()
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class OldDataWrapper
+{
+	private long total;
+	private List<OldAsset> data = new ArrayList<>();
+
+	public OldDataWrapper()
 	{
 	}
 
-	public long getTotalResults()
+	public long getTotal()
 	{
-		return totalResults;
+		return total;
 	}
 
-	public void setTotalResults(long totalResults)
+	public void setTotal(long total)
 	{
-		this.totalResults = totalResults;
+		this.total = total;
 	}
 
-	public long getResults()
-	{
-		return results;
-	}
-
-	public void setResults(long results)
-	{
-		this.results = results;
-	}
-
-	public List<T> getData()
+	public List<OldAsset> getData()
 	{
 		return data;
 	}
 
-	public void setData(List<T> data)
+	public void setData(List<OldAsset> data)
 	{
 		this.data = data;
 	}
-
+		
 }

@@ -16,56 +16,67 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
+import edu.usu.sdl.openstorefront.doc.DataType;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  *
  * @author dshurtleff
- * @param <T>
  */
-public class RestListResponse<T>
-{	
-	private long totalResults;
+public class ComponentComment
+{
+	private String username;
+	private Date postDts;
+	private String comment;
 	
-	@ParamTypeDescription("(Returned record count)")
-	private long results;
+	@DataType(ComponentComment.class)
+	private List<ComponentComment> replies = new ArrayList<>();
+
+	public ComponentComment()
+	{
+	}
+
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+
+	public Date getPostDts()
+	{
+		return postDts;
+	}
+
+	public void setPostDts(Date postDts)
+	{
+		this.postDts = postDts;
+	}
+
+	public String getComment()
+	{
+		return comment;
+	}
+
+	public void setComment(String comment)
+	{
+		this.comment = comment;
+	}
+
+	public List<ComponentComment> getReplies()
+	{
+		return replies;
+	}
+
+	public void setReplies(List<ComponentComment> replies)
+	{
+		this.replies = replies;
+	}
 	
-	private List<T> data = new ArrayList<>();
 	
-	public RestListResponse()
-	{
-	}
-
-	public long getTotalResults()
-	{
-		return totalResults;
-	}
-
-	public void setTotalResults(long totalResults)
-	{
-		this.totalResults = totalResults;
-	}
-
-	public long getResults()
-	{
-		return results;
-	}
-
-	public void setResults(long results)
-	{
-		this.results = results;
-	}
-
-	public List<T> getData()
-	{
-		return data;
-	}
-
-	public void setData(List<T> data)
-	{
-		this.data = data;
-	}
-
 }
