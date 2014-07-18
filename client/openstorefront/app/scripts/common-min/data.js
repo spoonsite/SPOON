@@ -113,6 +113,8 @@ MOCKDATA.externalDepend = [
     'class1': 'barborder',
     'type': 'success',
     'level': '0',
+    'compmessage':'COMPLETED 2/15/2014',
+    'compstatus':'0',
     'currvalue': 28.20512821,
     'desc':'Available for Reuse/Not Evaluated',
     'fulldesc':'<ul><li>Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance.</li></ul>      <ul><li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li></ul>      <ul><li>Asset has completed the Component Prep and Analysis phase. </li></ul> '
@@ -121,6 +123,8 @@ MOCKDATA.externalDepend = [
     'class1': 'barborder',
     'type': 'info',
     'level': '1',
+    'compmessage':'HALTED 3/15/2014',
+    'compstatus':'2',
     'currvalue': 9.230769231,
     'desc':'Initial Reuse Analysis',
     'fulldesc':'<ul><li>Inspection portion of DI2E Framework Evaluation Checklist complete.</li></ul><ul><li>These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided.</li></ul><ul><li>This level does not represent the pass or fail, the Consumer must read the Evaluation Report.</li></ul>'
@@ -129,6 +133,8 @@ MOCKDATA.externalDepend = [
     'class1': 'barborder',
     'type': 'danger',
     'level': '2',
+    'compmessage':'IN PROGRESS (estimated complete 4/15/2014)',
+    'compstatus':'1',
     'currvalue': 24.1025641,
     'desc':'Integration and Test',
     'fulldesc':'<ul><li>Integration and Test portion of the DI2E Framework Evaluation Checklist complete.</li></ul><ul><li>These questions focus on the interoperability and ease of reuse, and will normally include an I&T plan.</li></ul><ul><li>This level does not indicate a pass or fail of the conformance test.</li></ul><ul><li>Consumer will read the Test Report linked in the storefront entry for program functionality.</li></ul>'
@@ -137,6 +143,8 @@ MOCKDATA.externalDepend = [
     'class1': 'bar-transparent',
     'type': 'success',
     'level': '3',
+    'compmessage':'NOT STARTED (estimated complete 5/15/2014)',
+    'compstatus':'3',
     'currvalue': 38.46153846,
     'desc':'DI2E Framework Reference Implementation',
     'fulldesc':'<ul><li>Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.</li></ul>'
