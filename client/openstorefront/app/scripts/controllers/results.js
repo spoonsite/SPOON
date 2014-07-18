@@ -20,21 +20,44 @@ fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimati
 filtClick*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
-  // Set up the results controller's variables.
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // Here we put our variables...
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   $scope._scopename         = 'results';
   setupResults();
-
   $scope.tagsList           = Business.getTagsList();
-  $scope.prosConsList       = Business.getProsConsList();
-
-
   $scope.tagsList.sort();
-
-  $scope.lastUsed = new Date();
-
-  // $scope.date1 = moment();
-
-  $scope.expertise = [
+  $scope.prosConsList       = Business.getProsConsList();
+  $scope.lastUsed           = new Date();
+  $scope.searchCode         = null;
+  $scope.searchTitle        = null;
+  $scope.searchDescription  = null;
+  $scope.details            = {};
+  $scope.details.details    = null;
+  $scope.isPage1            = true;
+  $scope.showSearch         = false;
+  $scope.showDetails        = false;
+  $scope.orderProp          = '';
+  $scope.query              = '';
+  $scope.noDataMessage      = 'There are no results for your search -- Or -- You have filtered out all of the results.';
+  $scope.typeahead          = null;
+  $scope.searchGroup        = null;
+  $scope.searchKey          = null;
+  $scope.filters            = null;
+  $scope.resetFilters       = null;
+  $scope.total              = null;
+  $scope.watches            = null;
+  $scope.ratingsFilter      = 0;
+  $scope.modal              = {};
+  $scope.modal.isLanding    = false;
+  $scope.single             = false;
+  $scope.expertise          = [
     //
     {'value':'1', 'label': 'Less than 1 month'},
     {'value':'2', 'label': 'Less than 3 months'},
@@ -44,20 +67,60 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     {'value':'6', 'label': 'More than 3 years'}
   //
   ];
-  
+  $scope.userRoles          = [
+    //
+    {'code':'ENDUSER', 'description': 'User'},
+    {'code':'DEV', 'description': 'Developer'},
+    {'code':'PM', 'description': 'Project Manager'}
+  //
+  ];
+  // These variables are used for the pagination
+  $scope.filteredTotal      = null;
+  $scope.data               = {};
+  $scope.rowsPerPage        = 200;
+  $scope.pageNumber         = 1;
+  $scope.maxPageNumber      = 1;
+
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // Here we put our functions...
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /***************************************************************
+  * Set up typeahead, and then watch for selection made
+  ***************************************************************/
+  if ($rootScope.typeahead) {
+    $scope.typeahead  = $rootScope.typeahead;
+  } else {
+    $scope.typeahead  = Business.typeahead(Business.getData, 'name');
+  }
+
+  /***************************************************************
+  * This grabs the user type codes and sets them to the scope.
+  ***************************************************************/
   Business.lookupservice.getUserTypeCodes().then(function(lookup){
     $scope.userTypeCodes  = lookup;
     //TODO: chain load the review form    
   });
 
-
-
-
-  //console.log("hi") ;
+  /***************************************************************
+  * This function selects the initial tab.
+  * params: tab -- The tab that is selected
+  ***************************************************************/
   $scope.setSelectedTab = function(tab) {
     $scope.selectedTab = tab;
   };
 
+  /***************************************************************
+  * Here we set the tab class
+  * params: tab -- The tab to check to see if it is selected
+  * returns: class -- The classes that the tab will have
+  ***************************************************************/
   $scope.tabClass = function(tab) {
     if ($scope.selectedTab === tab) {
       return 'active';
@@ -66,12 +129,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
   };
 
-
   /***************************************************************
   * This function is looked at for auto suggestions for the tag list
   * if a ' ' is the user's entry, it will auto suggest the next 20 tags that
   * are not currently in the list of tags. Otherwise, it will look at the
   * string and do a substring search.
+  * params: query -- The input that the user has typed so far
+  * params: list -- The list of tags already tagged on the item
+  * params: source -- The source of the tags options
+  * returns: deferred.promise -- The promise that we will return a resolved tags list
   ***************************************************************/
   $scope.checkTagsList = function(query, list, source) {
     var deferred = $q.defer();
@@ -89,70 +155,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     return deferred.promise;
   };
 
-  $scope.searchCode         = null;
-  $scope.searchTitle        = null;
-  $scope.searchDescription  = null;
-  $scope.details            = {};
-  $scope.details.details    = null;
-  $scope.isPage1            = true;
-  $scope.showSearch         = false;
-  $scope.showDetails        = false;
-  $scope.orderProp          = '';
-  $scope.query              = '';
-  $scope.noDataMessage      = 'You have filtered out all of the results.';
-  $scope.typeahead          = null;
-  $scope.searchGroup        = null;
-  $scope.searchKey          = null;
-  $scope.filters            = null;
-  $scope.resetFilters       = null;
-  $scope.total              = null;
-  $scope.watches            = null;
-  $scope.ratingsFilter      = 0;
-  $scope.modal              = {};
-  $scope.modal.isLanding    = false;
-  $scope.single             = false;
-
-  $scope.expertise = [
-    //
-    {'value':'1', 'label': 'Less than 1 month'},
-    {'value':'2', 'label': 'Less than 3 months'},
-    {'value':'3', 'label': 'Less than 6 months'},
-    {'value':'4', 'label': 'Less than 1 year'},
-    {'value':'5', 'label': 'Less than 3 years'},
-    {'value':'6', 'label': 'More than 3 years'}
-  //
-  ];
-  
-  $scope.userRoles = [
-    //
-    {'code':'ENDUSER', 'description': 'User'},
-    {'code':'DEV', 'description': 'Developer'},
-    {'code':'PM', 'description': 'Project Manager'}
-  //
-  ];
-
-
   /***************************************************************
-  * Set up typeahead, and then watch for selection made
+  * Description
+  * params: param name -- param description
+  * returns: Return name -- return description
   ***************************************************************/
-  if ($rootScope.typeahead) {
-    $scope.typeahead  = $rootScope.typeahead;
-  } else {
-    $scope.typeahead  = Business.typeahead(Business.getData, 'name');
-  }
-
-
-  // These variables are used for the pagination
-  $scope.filteredTotal  = null;
-  $scope.data           = {};
-  $scope.rowsPerPage    = 200;
-  $scope.pageNumber     = 1;
-  $scope.maxPageNumber  = 1;
-
-  // currently this is a hack that grabs a short description and adds it to the
-  // component information
-
-
   var getBody = function(route) {
     var deferred = $q.defer();
     $.get(route).then(function(responseData) {
@@ -164,11 +171,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   /***************************************************************
   * This function is called once we have the search request from the business layer
+  * The order and manner in which we do this call will most likely change once
+  * we get the httpbackend fleshed out.
   ***************************************************************/
   $scope.reAdjust = function(key) {
     $scope.searchGroup        = key;
     $scope.searchKey          = $rootScope.searchKey;
-    console.log('$scope.sear', $scope.searchGroup);
     
     if (!isEmpty($scope.searchGroup)) {
       // grab all of the keys in the filters
@@ -181,7 +189,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
     Business.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
       $scope.total = result || {};
-
       $scope.filteredTotal  = $scope.total;
 
       /*Simulate wait for the filters*/
@@ -198,40 +205,31 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           });
           $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
           $scope.initializeData(key);
+          adjustFilters();
         }, 500);
       }, 500);
     });
-  }
+  };
 
-  $scope.$watch('data', function() {
-    if ($scope.data && $scope.data.data) {
-      // max needs to represent the total number of results you want to load
-      // on the initial search.
-      var max = 2000;
-      // also, we'll probably check the total number of possible results that
-      // could come back from the server here instead of the length of the
-      // data we have already.
-      if ($scope.data.data.length > max) {
-        $scope.moreThan200 = true;
-      } else {
-        $scope.moreThan200 = false;
-      }
-    }
-  }, true);
 
+  /***************************************************************
+  * This is used to initialize the scope title, key, and code. Once we have a 
+  * database, this is most likely where we'll do the first pull for data.
+  *
+  * TODO:: Add query prameters capabilities for this page so that we don't have
+  * to rely on the local/session storrage to pass us the search key
+  *
+  * TODO:: When we do start using actual transfered searches from the main page
+  * we need to initialize checks on the filters that were sent to us from that
+  * page (or we need to disable the filter all together)
+  * 
+  * This function is called by the reAdjustment function in order
+  * to reinitialze all of the data if the list of items changes.
+  * which usually would hinge on the key of the search
+  * params: key -- The search object we use to initialize data with.
+  ***************************************************************/
   $scope.initializeData = function(key) {
 
-    /*******************************************************************************
-    * This is used to initialize the scope title, key, and code. Once we have a 
-    * database, this is most likely where we'll do the first pull for data.
-    *
-    * TODO:: Add query prameters capabilities for this page so that we don't have
-    * to rely on the local/session storrage to pass us the search key
-    *
-    * TODO:: When we do start using actual transfered searches from the main page
-    * we need to initialize checks on the filters that were sent to us from that
-    * page (or we need to disable the filter all together)
-    *******************************************************************************/
     if (!isEmpty($scope.searchGroup)) {
       // grab all of the keys in the filters
       $scope.searchKey          = $scope.searchGroup[0].key;
@@ -241,6 +239,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       var foundCollection = null;
       var type = '';
       
+
+
+      // TODO: CLEAN UP THIS IF/ELSE switch!!!!!!!
+
+
       if (_.contains(keys, $scope.searchKey)) {
         $scope.searchGroupItem    = _.where($scope.filters, {'key': $scope.searchKey})[0];
         $scope.searchType         = $scope.searchGroupItem.name;
@@ -271,7 +274,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           $scope.modal.modalBody          = 'This will eventually hold a description for this attribute type.';
           $scope.modal.isLanding = false;
         }
-        adjustFilters();
       } else if ($scope.searchGroup[0].key === 'search') {
 
         // Otherwise check to see if it is a search
@@ -310,6 +312,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   var callSearch = function() {
     Business.search(false, false, true).then(
     //This is the success function on returning a value from the business layer 
+
+    // TODO: CLEAN UP THIS FUNCTION!!!!
     function(key) {
 
       var type = 'all';
@@ -374,22 +378,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   /***************************************************************
-  * Event for callSearch caught here. This is triggered by the nav
-  * search bar when you are already on the results page.
-  ***************************************************************/
-  $scope.$on('$callSearch', function(event) {/*jshint unused: false*/
-    callSearch();
-  });
-
-
-  /***************************************************************
-  * Catch the enter/select event here for typeahead
-  ***************************************************************/
-  $scope.$on('$typeahead.select', function(event, value, index) {/*jshint unused: false*/
-    $scope.applyFilters();
-  });
-
-  /***************************************************************
   * This function removes the inherent filter (if you click on apps, types no longer applies etc)
   ***************************************************************/
   var adjustFilters = function() {
@@ -397,9 +385,169 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filters = _.reject($scope.filters, function(item) {
         return item.key === $scope.searchGroup[0].key;
       });
-      $scope.resetFilters = JSON.parse(JSON.stringify($scope.filters));
     }
+    $scope.resetFilters = JSON.parse(JSON.stringify($scope.filters));
   };
+
+  /***************************************************************
+  * This funciton calls the global buttonOpen function that handles page 
+  * flyout animations according to the state to open the details
+  ***************************************************************/
+  $scope.doButtonOpen = function() {
+    buttonOpen();
+  };
+
+  /***************************************************************
+  * This funciton calls the global buttonClose function that handles page 
+  * flyout animations according to the state to close the details
+  ***************************************************************/
+  $scope.doButtonClose =  function() {
+    buttonClose();
+  };
+
+  /***************************************************************
+  * This function handles toggleing filter checks per filter heading click.
+  ***************************************************************/
+  $scope.toggleChecks = function(collection, override){
+    var master = false;
+    if (override === undefined || override === null || override === '') {
+      override = false;
+    }
+
+    var found = _.where(collection, {'checked': true});
+    
+    if (override) {
+      master = false;
+    } else {
+      if (!isEmpty(found)) {
+        if (found.length !== collection.length) {
+          master = true;
+        } else {
+          master = false;
+        }
+      } else {
+        master = true;
+      }
+    }
+    _.each(collection, function(item){
+      item.checked = master;
+    });
+    $scope.applyFilters();
+  };
+
+  /***************************************************************
+  * This function updates the details when a component title is clicked on
+  ***************************************************************/
+  $scope.updateDetails = function(id){
+    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
+    if (!openClick) {
+      buttonOpen();
+    }
+    $timeout(function() {
+      var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
+      if (temp)
+      {
+        $scope.details.details = temp;
+      }
+      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+    }, 1500);
+    $scope.showDetails = true;
+  };
+
+  /***************************************************************
+  * This function adds a component to the watch list and toggles the buttons
+  ***************************************************************/
+  $scope.goToFullPage = function(id){
+    $location.search({
+      'id': id
+    });
+    $location.path('/single');
+  };
+
+  /***************************************************************
+  * This function resets the filters in the results page in order to clear
+  * the filters as quickly as possible
+  ***************************************************************/
+  $scope.clearFilters = function() {
+    $scope.orderProp = '';
+    $scope.ratingsFilter = null;
+    $scope.tagsFilter = null;
+    $scope.query = null;
+    if ($scope.resetFilters) {
+      $scope.filters = JSON.parse(JSON.stringify($scope.resetFilters));
+    }
+    $scope.applyFilters();
+  };
+
+  /***************************************************************
+  * This function applies the filters that have been given to us to filter the
+  * data with
+  ***************************************************************/
+  $scope.applyFilters = function() {
+    var results =
+    // We must use recursive filtering or we will get incorrect results
+    // the order DOES matter here.
+    $filter('orderBy')
+      //
+      ($filter('ratingFilter')
+        ($filter('tagFilter')
+          ($filter('componentFilter')
+            ($filter('filter')
+            //filter by the string
+            ($scope.total, $scope.query),
+          // filter the data by the filters
+          $scope.filters),
+        // filter the data by the tags
+        $scope.tagsFilter),
+      // filter the data by the ratings
+      $scope.ratingsFilter),
+    // Then order-by the orderProp
+    $scope.orderProp);
+
+    // make sure we reset the data and then copy over the results  
+    $scope.filteredTotal = [''];
+    $scope.filteredTotal = results;
+
+    // Do the math required to assure that we have a valid page number and 
+    // maxPageNumber
+    $scope.maxPageNumber = Math.ceil($scope.filteredTotal.length / $scope.rowsPerPage);
+    if (($scope.pageNumber - 1) * $scope.rowsPerPage >= $scope.filteredTotal.length) {
+      $scope.pageNumber = 1;
+    }
+
+    // Set the data that will be displayed to the first 'n' results of the filtered data
+    $scope.data.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
+    
+    // after a slight wait, reapply the popovers for the results ratings.
+    $timeout(function() {
+      setupPopovers();
+    }, 300);
+  };
+
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // Here we put our Event Watchers
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /***************************************************************
+  * Event for callSearch caught here. This is triggered by the nav
+  * search bar when you are already on the results page.
+  ***************************************************************/
+  $scope.$on('$callSearch', function(event) {/*jshint unused: false*/
+    callSearch();
+  });
+
+  /***************************************************************
+  * Catch the enter/select event here for typeahead
+  ***************************************************************/
+  $scope.$on('$typeahead.select', function(event, value, index) {/*jshint unused: false*/
+    $scope.applyFilters();
+  });
 
   /*******************************************************************************
   * This function watches for the view content loaded event and runs a timeout 
@@ -419,6 +567,16 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
     }, 1000);
   });
+
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // Here we put our Scope Watchers
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
 
   /***************************************************************
   * This function is used to watch the pagenumber variable. When it changes
@@ -501,136 +659,25 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   }, true);
 
   /***************************************************************
-  * This funciton calls the global buttonOpen function that handles page 
-  * flyout animations according to the state to open the details
+  * This function is a deep watch on the data variable to see if 
+  * data.data changes. When it does, we need to see if the result set
+  * for the search results is larger than the 'max' displayed
   ***************************************************************/
-  $scope.doButtonOpen = function() {
-    buttonOpen();
-  };
-
-  /***************************************************************
-  * This funciton calls the global buttonClose function that handles page 
-  * flyout animations according to the state to close the details
-  ***************************************************************/
-  $scope.doButtonClose =  function() {
-    buttonClose();
-  };
-
-
-  /***************************************************************
-  * This function handles toggleing filter checks per filter heading click.
-  ***************************************************************/
-  $scope.toggleChecks = function(collection, override){
-    var master = false;
-    if (override === undefined || override === null || override === '') {
-      override = false;
-    }
-
-    var found = _.where(collection, {'checked': true});
-    
-    if (override) {
-      master = false;
-    } else {
-      if (!isEmpty(found)) {
-        if (found.length !== collection.length) {
-          master = true;
-        } else {
-          master = false;
-        }
+  $scope.$watch('data', function() {
+    if ($scope.data && $scope.data.data) {
+      // max needs to represent the total number of results you want to load
+      // on the initial search.
+      var max = 2000;
+      // also, we'll probably check the total number of possible results that
+      // could come back from the server here instead of the length of the
+      // data we have already.
+      if ($scope.data.data.length > max) {
+        $scope.moreThan200 = true;
       } else {
-        master = true;
+        $scope.moreThan200 = false;
       }
     }
-    _.each(collection, function(item){
-      item.checked = master;
-    });
-    $scope.applyFilters();
-  };
-
-  /***************************************************************
-  * This function updates the details when a component title is clicked on
-  ***************************************************************/
-  $scope.updateDetails = function(id){
-    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    if (!openClick) {
-      buttonOpen();
-    }
-    $timeout(function() {
-      var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
-      if (temp)
-      {
-        $scope.details.details = temp;
-      }
-      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-    }, 1500);
-    $scope.showDetails = true;
-  };
-
-  /***************************************************************
-  * This function adds a component to the watch list and toggles the buttons
-  ***************************************************************/
-  $scope.goToFullPage = function(id){
-    $location.search({
-      'id': id
-    });
-    $location.path('/single');
-  };
-
-  /***************************************************************
-  * This function resets the filters in the results page in order to clear
-  * the filters as quickly as possible
-  ***************************************************************/
-  $scope.clearFilters = function() {
-    $scope.orderProp = '';
-    $scope.ratingsFilter = null;
-    $scope.tagsFilter = null;
-    $scope.query = null;
-    console.log('filter', $scope.filters);
-    $scope.filters = JSON.parse(JSON.stringify($scope.resetFilters));
-    console.log('filter', $scope.filters);
-    $scope.applyFilters();
-  };
-
-  /***************************************************************
-  * This function applies the filters that have been given to us to filter the
-  * data with
-  ***************************************************************/
-  $scope.applyFilters = function() {
-
-    var results =
-    // We must use recursive filtering or we will get incorrect results
-    // the order DOES matter here.
-    $filter('orderBy')
-    ($filter('ratingFilter')
-      ($filter('tagFilter')
-        ($filter('componentFilter')
-          ($filter('filter')($scope.total, $scope.query),
-    // filter the data by the query and return the result to the componentFilter input
-    $scope.filters),
-          $scope.tagsFilter),
-        $scope.ratingsFilter),
-    // then use the componentFilter returned data as the input to the order-by filter
-    $scope.orderProp);
-
-    // make sure we reset the data and then copy over the results  
-    $scope.filteredTotal = [''];
-    $scope.filteredTotal = results;
-
-    // Do the math required to assure that we have a valid page number and 
-    // maxPageNumber
-    $scope.maxPageNumber = Math.ceil($scope.filteredTotal.length / $scope.rowsPerPage);
-    if (($scope.pageNumber - 1) * $scope.rowsPerPage >= $scope.filteredTotal.length) {
-      $scope.pageNumber = 1;
-    }
-
-    // Set the data that will be displayed to the first 'n' results of the filtered data
-    $scope.data.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
-    
-    // after a slight wait, reapply the popovers for the results ratings.
-    $timeout(function() {
-      setupPopovers();
-    }, 300);
-  };
+  }, true);
 
   callSearch();
   

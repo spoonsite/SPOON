@@ -64,10 +64,11 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
 
   $scope.detailResultsTabs = [
     //
-    { title:'SUMMARY', content:'1', relpath:'views/details/summary.html', class:"" },
-    { title:'DETAILS', content:'2', relpath:'views/details/details.html', class:"" },
-    { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html', class:"" },
-    { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
+    { title:'SUMMARY', content:'1', relpath:'views/details/summary.html', class:'' },
+    { title:'DETAILS', content:'2', relpath:'views/details/details.html', class:'' },
+    { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html', class:'' },
+    { title:'FAQ Q&A', content:'4', relpath:'views/details/comments.html', class:'' },
+    // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
   //
   ];
   $scope.tab = $scope.detailResultsTabs[0];

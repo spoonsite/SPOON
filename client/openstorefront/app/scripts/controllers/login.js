@@ -23,14 +23,6 @@ app.controller('LoginCtrl', ['$scope', '$location', 'auth', function ($scope, $l
     });
   };
 
-  // $scope.register = function () {
-  //   Auth.register($scope.user).then(function (authUser) { jshint unused: false
-  //     $location.path('/');
-  //   }, function (error) {
-  //     $scope.error = error.toString();
-  //   });
-  // };
-
   $scope.logout = function () {
     Auth.logout();
   };

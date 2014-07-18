@@ -17,7 +17,7 @@
 
 
 /* exported setupPopovers, setupTypeahead, isEmpty, toggleclass, setUpDropdown,
-setupParallax, triggerAlert, triggerError, removeError*/
+setupParallax, triggerAlert, triggerError, removeError, initiateClick*/
 
 /*****************************
 * This function sets up the popovers for the results page, but could be 
@@ -89,37 +89,6 @@ function isEmpty(obj) {
   return true;
 }
 
-
-/***************************************************************
-* This function sets up the parallax backgrounds on the page. It could be improved
-* to dynamically set up the height and width of the images more accurately.
-*
-* The parallax relies on image size in order to work, so if you want different results
-* mess with the image size here.
-***************************************************************/
-var setupParallax = function() {
-  // Declare parallax on layers
-  setTimeout(function(){
-    var width = $('.banner').width();
-    var height = $('.banner').height();
-    
-    var i = 5;
-    var opacity = 0.2;
-    _.each($('.parallax-layer'), function(element) {
-      $(element).css('width', width + i + 'px');
-      $(element).css('height', height + i + 'px');
-      // $(element).css('height', height + 'px');
-      // $(element).css('opacity', opacity);
-      i = i + 25;
-      opacity = opacity + 0.02;
-    });
-    jQuery('.parallax-layer').parallax({
-      mouseport: jQuery('#port')
-    });
-  }, 10);
-};
-
-
 /***************************************************************
 * Hide an alert
 * params: uid -- the unique id of the alert box
@@ -166,10 +135,11 @@ var triggerAlert = function(text, uid, id, delay) {
     //     }
     //   }
     // });
-setTimeout(function() {
-  hideAlert(uid, 1000);
-}, delay);
-}
+    //
+    setTimeout(function() {
+      hideAlert(uid, 1000);
+    }, delay);
+  }
 };
 
 
@@ -220,7 +190,7 @@ var triggerError = function(errorObj) {
 * Close the navbar-collapse
 ***************************************************************/
 var initiateClick = function(id) {
-  if($('#' + id).css('display') !='none'){
-    $('#' + id).trigger( "click" );
+  if($('#' + id).css('display') !== 'none'){
+    $('#' + id).trigger( 'click' );
   }
-}
+};

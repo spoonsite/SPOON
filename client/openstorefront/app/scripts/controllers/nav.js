@@ -22,23 +22,47 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   /*******************************************************************************
   * This Controller gives us a place to add functionality to the navbar
   *******************************************************************************/
+  //////////////////////////////////////////////////////////////////////////////
+  // Variables
+  //////////////////////////////////////////////////////////////////////////////
+  $scope._scopename   = 'nav';
+  $scope.navLocation  = 'views/nav/nav.html';
+  $scope.searchKey    = $rootScope.searchKey;
+  $scope.user         = {};
+  $scope.beforeLogin  = null;
+  $scope.typeahead    = null;
 
-  $scope._scopename = 'nav';
-  $scope.user = {};
-  $scope.beforeLogin = null;
+  /***************************************************************
+  * Set up typeahead, and then watch for selection made
+  ***************************************************************/
+  if ($rootScope.typeahead) {
+    $scope.typeahead  = $rootScope.typeahead;
+  } else {
+    $scope.typeahead  = Business.typeahead(Business.getData, 'name');
+  }
 
-
+  //////////////////////////////////////////////////////////////////////////////
+  // Event Watches
+  //////////////////////////////////////////////////////////////////////////////
   $scope.$on('$beforeLogin', function(event, path, search){
     $scope.beforeLogin = {};
     $scope.beforeLogin.path = path;
     $scope.beforeLogin.search = search;
-    $location.path('/login');
+    // $location.path('/login');
   });
 
+  /***************************************************************
+  * This function watches for the content loaded event and then checks
+  * to see if they're logged in.
+  ***************************************************************/
   $scope.$on('$includeContentLoaded', function(event){
     $scope.user.isLoggedIn = Auth.signedIn();
   });
 
+  /***************************************************************
+  * This function watches for the login event in order to adjust
+  * the navigation and possibly redirect the page back to where they were.
+  ***************************************************************/
   $scope.$on('$login', function(event, user){
     $scope.user.info = user;
     $scope.user.isLoggedIn = Auth.signedIn();
@@ -54,24 +78,6 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       $location.path('/');
     }
   });
-  
-  $scope.navLocation = 'views/nav/nav.html';
-
-  // Here we grab the rootScope searchKey in order to preserve the last search
-  $scope.searchKey = $rootScope.searchKey;
-  
-  $scope.typeahead  = null;
-
-
-  /***************************************************************
-  * Set up typeahead, and then watch for selection made
-  ***************************************************************/
-  if ($rootScope.typeahead) {
-    $scope.typeahead  = $rootScope.typeahead;
-  } else {
-    $scope.typeahead  = Business.typeahead(Business.getData, 'name');
-  }
-
 
   /***************************************************************
   * Catch the enter/select event here
@@ -87,7 +93,6 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     }
   });
   
-  
   /***************************************************************
   * Catch the navigation location change event here
   ***************************************************************/
@@ -95,13 +100,16 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     $scope.navLocation = value;
   });
   
+  //////////////////////////////////////////////////////////////////////////////
+  // Functions
+  //////////////////////////////////////////////////////////////////////////////
 
   /***************************************************************
   * This function sends the routing to the results page with a specified
   * search key saved in the localCache
   ***************************************************************/
   $scope.goToSearch = function(){ /*jshint unused:false*/
-    $scope.closeNavbarItem('searchNavButton'); 
+    $scope.closeNavbarItem('searchNavButton');
     $rootScope.searchKey = $scope.searchKey;
     $location.search({
       'type': 'search',
@@ -149,6 +157,10 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     $scope.user.isLoggedIn = false;
     $route.reload();
   };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Scope Watches
+  //////////////////////////////////////////////////////////////////////////////
 
   /*******************************************************************************
   * This function sets the rootScope's search key so that if you did it in the

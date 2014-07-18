@@ -1,0 +1,103 @@
+/* 
+* Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the 'License');
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an 'AS IS' BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+@import "_variables.scss";
+@import "results/pages.scss";
+@import "results/page1.scss";
+@import "results/filters.scss";
+@import "details.scss";
+
+
+
+html, body,
+.fullHeight {
+  height: auto;
+}
+
+
+html, .resultsContainer {
+  overflow: hidden;
+}
+
+
+input[type=checkbox] + label{
+  color: inherit;
+}
+input[type=checkbox]:checked + label,  input[type=checkbox]:checked + span{
+  color: #ff4800;
+}
+
+.modal-title {
+  color: #ff4800;
+}
+
+.panel {
+  margin-bottom: 0px;
+}
+
+.lastFilter{
+  margin-bottom: 40px;
+}
+
+.btn.btn-link{
+  text-decoration: none;
+}
+
+.panel-title small{
+  color: #cc4b4b;
+  font-size: 10px;
+  font-weight: 100;
+}
+.panel-title input[type="checkbox"]{
+  position: relative;
+  bottom: -4px;
+}
+
+
+.text-right
+{
+  text-align: right !important;
+  vertical-align: middle;
+}
+.text-center
+{
+  text-align: center !important;
+  vertical-align: middle;
+}
+.text-left
+{
+  text-align: left !important;
+  vertical-align: middle;
+}
+.text-right-bold
+{
+  text-align: right !important;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.text-center-bold
+{
+  text-align: center !important;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.text-left-bold
+{
+  text-align: left !important;
+  vertical-align: middle;
+  font-weight: bold;
+}
+

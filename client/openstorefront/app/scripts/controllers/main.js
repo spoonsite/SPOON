@@ -18,11 +18,20 @@
 /*global setupMain*/
 
 app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
-  // Here we grab the rootScope searchKey in order to preserve the last search
-  $scope.searchKey  = $rootScope.searchKey;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Variables
+  //////////////////////////////////////////////////////////////////////////////
+  $scope._scopename = 'main';
+  $scope.pageTitle  = 'DI2E';
+  $scope.subTitle   = 'Storefront';
   $scope.typeahead  = null;
-
-
+  $scope.goToLand   = false;
+  $scope.searchKey  = $rootScope.searchKey;
+  $scope.filters    = Business.getFilters();
+  $scope.filters    = _.filter($scope.filters, function(item) {
+    return item.showOnFront;
+  });
 
   /***************************************************************
   * Set up typeahead, and then watch for selection made
@@ -32,6 +41,11 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   } else {
     $scope.typeahead  = Business.typeahead(Business.getData, 'name');
   }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Event Watchers
+  //////////////////////////////////////////////////////////////////////////////
 
   /***************************************************************
   * Catch the enter/select event here
@@ -46,17 +60,9 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     }
   });
   
-  // Set up the main controller's variables.
-  $scope._scopename = 'main';
-  $scope.pageTitle  = 'DI2E';
-  $scope.subTitle   = 'Storefront';
-
-  // grab the custom filters (aka groups).
-  $scope.filters    = Business.getFilters();
-  $scope.filters = _.filter($scope.filters, function(item) {
-    return item.showOnFront;
-  });
-  $scope.goToLand   = false;
+  //////////////////////////////////////////////////////////////////////////////
+  // Functions
+  //////////////////////////////////////////////////////////////////////////////
 
   /*******************************************************************************
   * This and the following functions send the user to the search filling the 
@@ -114,7 +120,12 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   ***************************************************************/
   $scope.focusOnSearch = function() {
     $('#mainSearchBar').focus();
-  }
+  };
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Scope Watchers
+  //////////////////////////////////////////////////////////////////////////////
 
   /*******************************************************************************
   * This function sets the rootScope's search key so that if you did it in the
@@ -129,22 +140,23 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     $rootScope.searchKey = $scope.searchKey;
   });
 
+
+
   // this calls the setup for the page-specific js
   setupMain();
 
-  // triggerAlert('Check out this alert!', '1', 'body');
-
-  var errorObject = {
-    'success': false,
-    'errors': [
-      //
-      {
-        'mainSearchBar' : 'Your input was invalid. Please try again.'
-      }
-    //
-    ]
-  };
-
+  // Extras for testing....
+  // var errorObject = {
+  //   'success': false,
+  //   'errors': [
+  //     //
+  //     {
+  //       'mainSearchBar' : 'Your input was invalid. Please try again.'
+  //     }
+  //   //
+  //   ]
+  // };
   // triggerError(errorObject);
+  // triggerAlert('Check out this alert!', '1', 'body');
 
 }]);

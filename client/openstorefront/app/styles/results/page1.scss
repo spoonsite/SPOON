@@ -1,0 +1,65 @@
+
+/***************************************************************
+* Page1 content results stuff
+***************************************************************/
+.results {
+  overflow: auto;
+}
+
+.results-content-title{
+  color: #021233;
+  padding: 2px 5px;
+  /*margin-left:110px;*/
+}
+.results-content-title-content{ 
+  font-size: 23px;
+}
+.results-content-title .popover{
+  position: absolute !important;
+  color: black;
+  font-size: 12px;
+  /*margin-left:110px;*/
+}
+.results-content-title:hover{
+  cursor: pointer;
+  color: #ff4800;
+}
+.results-content-description {
+  padding: 0px 5px;
+  text-align: left;
+}
+
+#resultsTable tr td{
+  padding: 8px 18px;
+}
+
+
+
+.pagination{
+  border-radius: 0px;
+  background-image: -webkit-linear-gradient(top, #fff 0%, #f8f8f8 100%);
+  background-image: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  background-repeat: repeat-x;
+  border-top: 1px lightgray solid;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  z-index: 1;
+  height: 40px;
+  margin: 0px;
+  width: inherit;
+  overflow: hidden;
+}
+.pagination > div{
+  position: relative;
+  padding-top: 7px;
+}
+
+
+
+.componentListDate {
+  font-size: 11px;
+  color: #858585;
+}
