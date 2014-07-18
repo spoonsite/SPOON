@@ -177,26 +177,83 @@ MOCKDATA.externalDepend = [
     'timedays': 38.46153846,
     'currdate': '7/15'
   }
-  //
-  ];
-  MOCKDATA.resultsComments = [
+//
+];
+MOCKDATA.resultsComments = [
   //
   {
-    'name': 'Jill Sample',
-    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
-    'date':'11:46 p.m. July 8, 2014'
+    'question': 'Does this component integrate with Google Maps JavaScript API v3?',
+    'by': 'Jimmy Tester',
+    'date': '11:46 p.m. May 14, 2014',
+    'answers': [
+      //
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'Jill Sample',
+        'date': '11:46 p.m. July 8, 2014'
+      },
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'John Sample',
+        'date': '7:46 a.m. July 9, 2014'
+      },
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'Jackie Sample',
+        'date': '8:07 a.m. July 10, 2014'
+      }
+    //
+    ]
   },
   {
-    'name': 'John Sample',
-    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
-    'date':'7:46 a.m. July 9, 2014'
+    'question': 'Has any one found a solution to ->this<- seg fault error???',
+    'by': 'Sammy Tester',
+    'date': '4:30 p.m. June 1, 2014',
+    'answers': [
+      //
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'Jill Sample',
+        'date': '11:46 p.m. July 8, 2014'
+      },
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'John Sample',
+        'date': '7:46 a.m. July 9, 2014'
+      },
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'Jackie Sample',
+        'date': '8:07 a.m. July 10, 2014'
+      }
+    //
+    ]
   },
   {
-    'name': 'Jackie Sample',
-    'comment':'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
-    'date':'8:07 a.m. July 10, 2014'
+    'question': 'Just as a heads up, I\'ve figured out how to do this with this component in case it benefits someone in the future',
+    'by': 'Johnny Tester',
+    'date': '10:00 p.m. July 3, 2014',
+    'answers': [
+      //
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'Jill Sample',
+        'date': '11:46 p.m. July 8, 2014'
+      },
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'John Sample',
+        'date': '7:46 a.m. July 9, 2014'
+      },
+      {
+        'answer': 'Lorem ipsum dolor sit amet, vis no officiis voluptatibus, nusquam appareat accusata cu has. Usu cu ceteros vivendo fabellas, nec cu oporteat salutatus constituam, at habeo vivendo efficiendi per. Ut cum suas dissentiunt. Omnis diceret nonumes ea eum.',
+        'by': 'Jackie Sample',
+        'date': '8:07 a.m. July 10, 2014'
+      }
+    //
+    ]
   }
-//  
+//
 ];
 MOCKDATA.componentSummary = [
   //

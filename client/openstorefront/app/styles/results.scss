@@ -13,18 +13,12 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-'use strict';
 
-app.controller('LoginCtrl', ['$scope', '$location', 'auth', function ($scope, $location, Auth) {
-  $scope.login = function () {
-    Auth.login($scope.user).then(function () {
-    }, function (error) {
-      $scope.error = error.toString();
-    });
-  };
+@import "_variables.scss";
+@import "results/pages.scss";
+@import "results/page1.scss";
+@import "results/filters.scss";
+@import "results/default.scss";
+@import "details.scss";
 
-  $scope.logout = function () {
-    Auth.logout();
-  };
 
-}]);

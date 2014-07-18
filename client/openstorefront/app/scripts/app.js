@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global resetAnimGlobals */
+/* global resetAnimGlobals, initiateClick */
 /* exported app */
 
 /***************************************************************
@@ -135,12 +135,18 @@ tagsInputConfigProvider
 
 .run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend','$q', 'auth', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth) {/* jshint unused: false*/
 
+  //////////////////////////////////////////////////////////////////////////////
+  // Variables
+  //////////////////////////////////////////////////////////////////////////////
   $rootScope._scopename = 'root';
-
-  //We must initialize global scope variables.
-  $rootScope.Current = null;
+  $rootScope.Current    = null;
 
 
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Event Handlers
+  //////////////////////////////////////////////////////////////////////////////
   /***************************************************************
   * This function watches for a route change start and does a few things
   * params: event -- keeps track of which event is happening
@@ -168,13 +174,6 @@ tagsInputConfigProvider
   * This funciton resets the search query when we don't want to be showing it
   ***************************************************************/
   $rootScope.$on('$locationChangeStart', function (event, next, current) {
-    // console.log('path', $location.path());
-    // console.log($location.path() === '/');
-    // console.log('next', next);
-    // console.log('current', current);
-    // console.log('path', $location.path());
-
-
     if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single')) {
       $location.search({});
     }
@@ -187,14 +186,12 @@ tagsInputConfigProvider
   $rootScope.$on('$viewContentLoaded', function() {
     $rootScope.typeahead = Business.typeahead();
     
-    // setupParallax();
-
     $timeout(function() {
       $('[data-toggle="tooltip"').tooltip();
     }, 300);
-    // if (!Auth.signedIn() && $location.path() !== '/login') {
-    //   $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
-    // }
+    if (!Auth.signedIn() && $location.path() !== '/login') {
+      $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
+    }
   });
 
   /***************************************************************
@@ -218,6 +215,12 @@ tagsInputConfigProvider
     }, 10);
   });
 
+
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Functions
+  //////////////////////////////////////////////////////////////////////////////
   $rootScope.openModal = function(id, current) {
     $rootScope.current = current;
     $rootScope.$broadcast('$' + id);
@@ -231,59 +234,20 @@ tagsInputConfigProvider
   $rootScope.goTo = function(path, search) {
     $location.search(search);
     $location.path(path);
-  }
+  };
 
+  /***************************************************************
+  * This function will imitate a click on the provided id
+  * In this case we're specifically targeting links in the navigation
+  * because the click isn't propegated as it should be.
+  ***************************************************************/
   $rootScope.closeNavbarItem = function(id) {
     initiateClick(id);
-  }
+  };
 
-  function getParams(url) {
-    var match,
-    pl     = /\+/g,  // Regex for replacing addition symbol with a space
-    search = /([^&=]+)=?([^&]*)/g,
-    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
-    query  = url.split('?')[1],
-    urlParams = {};
-    while (match = search.exec(query)) {
-      urlParams[decode(match[1])] = decode(match[2]);
-    }
-    return urlParams;
-  }
-
-  //Mock Back End  (use passthough to route to server)
-  $httpBackend.whenGET(/views.*/).passThrough();
-  
-  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
-  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
-  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
-    var query = getParams(url);
-    var result = null;
-    // console.log('query Parameters', query);
-    // console.log('Key', query.key);
-    if (query.type === 'search' && (query.key === 'all' || query.key === 'All'))
-    {
-      query.key = '';
-    }
-    if (query.key !== '' && query.type === 'search') {
-      result = _.filter(MOCKDATA.assets.assets, function(item) {
-        return _.contains(item.name, query.key) || _.contains(item.description, query.key) || _.contains(item.owner, query.key);
-      });
-    } else if (query.type && query.type === 'search'){
-      result = MOCKDATA.assets.assets;
-    } else if (query.type){
-      result = _.filter(MOCKDATA.assets.assets, function(item){
-        console.log('item[codes]', item[query.type]);
-        
-        return _.some(item[query.type], function(code) {
-          return code.code === query.key;
-        }); 
-      });
-    }
-    return [200, result, {}];
-  });
-  
-  ////////////////////////////////////////////////////////////////////////
-
+  /***************************************************************
+  * This function assists the modal setup when content is changed.
+  ***************************************************************/
   $rootScope.setupModal = function(modal, classNames) {
     var deferred = $q.defer();
     if (classNames !== '') {
@@ -312,5 +276,63 @@ tagsInputConfigProvider
     }
     return deferred.promise;
   };
+
+  /***************************************************************
+  * This is a local function used in the httpBackend functions
+  ***************************************************************/
+  var getParams = function(url) {
+    var match,
+    pl     = /\+/g,  // Regex for replacing addition symbol with a space
+    search = /([^&=]+)=?([^&]*)/g,
+    decode = function (s) { return decodeURIComponent(s.replace(pl, ' ')); },
+    query  = url.split('?')[1],
+    urlParams = {};
+
+    match = search.exec(query);
+    while (match) {
+      urlParams[decode(match[1])] = decode(match[2]);
+      match = search.exec(query);
+    }
+    return urlParams;
+  };
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // HttpBackend
+  //////////////////////////////////////////////////////////////////////////////
+  //Mock Back End  (use passthough to route to server)
+  $httpBackend.whenGET(/views.*/).passThrough();
+  
+  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
+  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
+  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
+    var query = getParams(url);
+    var result = null;
+    // console.log('query Parameters', query);
+    // console.log('Key', query.key);
+    if (query.type === 'search' && (query.key === 'all' || query.key === 'All'))
+    {
+      query.key = '';
+    }
+    if (query.key !== '' && query.type === 'search') {
+      result = _.filter(MOCKDATA.assets.assets, function(item) {
+        return _.contains(item.name, query.key) || _.contains(item.description, query.key) || _.contains(item.owner, query.key);
+      });
+    } else if (query.type && query.type === 'search'){
+      result = MOCKDATA.assets.assets;
+    } else if (query.type){
+      result = _.filter(MOCKDATA.assets.assets, function(item){
+        console.log('item[codes]', item[query.type]);
+        
+        return _.some(item[query.type], function(code) {
+          return code.code === query.key;
+        });
+      });
+    }
+    return [200, result, {}];
+  });
+  
+  ////////////////////////////////////////////////////////////////////////
+
 
 }]);

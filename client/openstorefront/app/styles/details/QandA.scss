@@ -1,0 +1,43 @@
+@import "_variables.scss";
+
+/***************************************************************
+* Question and Answer Section of the Details.
+***************************************************************/
+.questionandanswer a{
+  font-size: 10px !important; 
+  width: 95px !important; 
+  line-height: 10px !important;
+}
+
+.questionsHeader{
+  padding: 10px;
+  background-color: lightgray;
+}
+
+.qaLabel{
+  color: $navbarColor;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.questionsHeader  .flipme i{
+  -webkit-transform: rotate(-180deg);
+  -moz-transform: rotate(-180deg);
+  -o-transform: rotate(-180deg);
+  -ms-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+  -webkit-transition-duration: .4s;
+  -moz-transition-duration: .4s;
+  -o-transition-duration: .4s;
+  transition-duration: .4s;
+
+}
+
+.questionsHeader .flipme.collapsed i{
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  transform: rotate(0deg);
+
+}

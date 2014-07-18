@@ -16,9 +16,7 @@
 
 'use strict';
 
-/*app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {*/
 app.controller('GalleryCtrl', ['$scope', 'business', 'localCache', '$location', 'Lightbox', function ($scope, Business, localCache, $location, Lightbox) {
-/*app.controller('GalleryCtrl', function ($scope, Lightbox) {*/
   $scope.images = [
     {
       'url': 'images/pic1full.png', // required property
@@ -47,32 +45,8 @@ app.controller('GalleryCtrl', ['$scope', 'business', 'localCache', '$location', 
       'caption': 'This is a street map media resource.'
     }
   ];
-/*  $scope.images = [
-    {
-      'url': '1.jpg', // required property
-      'width': 123,   // required property
-      'height': 456,  // required property
-      'thumbUrl': 'thumb1.jpg',
-      'caption': 'Optional caption'
-    },
-    {
-      'url': '2.gif',
-      'width': 789,
-      'height': 1012,
-      'thumbUrl': 'thumb2.jpg'
-    },
-    {
-      'url': '3.png',
-      'width': 345,
-      'height': 678,
-      'thumbUrl': 'thumb3.png'
-    }
-  ];*/
   $scope.openLightboxModal = function (index) {
-    // console.log(Lightbox.templateUrl);
     Lightbox.openModal($scope.images, index);
   };
-/*});*/
-
 
 }]);

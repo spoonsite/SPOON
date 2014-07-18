@@ -20,18 +20,22 @@
 
 app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
 
-  // here we grab the default information
+  //////////////////////////////////////////////////////////////////////////////
+  // Variables
+  //////////////////////////////////////////////////////////////////////////////
   $scope.data              = Business.getData();
   $scope.data.data         = $scope.data;
   $scope.prosConsList      = Business.getProsConsList();
-
-  $scope.single            = true;
   $scope.details           = {};
-  $scope.details.details   = null;
-
   $scope.modal             = {};
+  $scope.single            = true;
+  $scope.details.details   = null;
   $scope.modal.isLanding   = false;
 
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Functions
+  //////////////////////////////////////////////////////////////////////////////
   /***************************************************************
   * This function is called once we have the search request from the business layer
   ***************************************************************/
@@ -46,6 +50,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
     }, 1500);
   };
+
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search
   ***************************************************************/
@@ -92,5 +97,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     });
     //
   };
+
+  
   callSearch();
 }]);

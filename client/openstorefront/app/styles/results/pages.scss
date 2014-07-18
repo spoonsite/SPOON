@@ -1,0 +1,134 @@
+
+/***************************************************************
+* Filters and Pages
+***************************************************************/
+.filterBack {
+  background: white;
+}
+
+.filters{
+  position: absolute;
+  top: 52px;
+  border: 1px lightgray solid;
+  border-radius: 4px;
+  width: 0px;
+  left: 0px;
+  display: none;
+  overflow:auto;
+  z-index: 1008;
+}
+
+.page1{
+  /*border: 1px orange solid;*/
+  width: 100%;
+  position: relative;
+  overflow:auto;
+}
+
+.page1Content{
+  /*border: 1px orange solid;*/
+  width: 100%;
+  position: relative;
+  overflow:auto;
+
+  /*This line is needed for when you use pagination.*/
+  padding-bottom: 40px;
+}
+
+.page2Styles{
+  margin-right: -1px;
+  border-left: 1px lightgray solid;
+  border-right: 1px lightgray solid;
+  border-bottom: 1px lightgray solid;
+  margin-left: 100%;
+  position: relative;
+  overflow:auto;
+}
+
+.moreThan200 {
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+.searchTitle {
+  color: #021233;
+  text-align: center;
+  font-size: 25px;
+  padding-top: 10px;
+  /*letter-spacing: 10px;*/
+}
+
+.searchDescription {
+  color: #3d3d3d;
+  text-align: center;
+  font-size: 14px;
+  /*letter-spacing: 10px;*/
+}
+
+.selected {
+  border: 1px solid orange;
+}
+
+#showPageRight {
+  height: 90px;
+  width: 15px;
+  border-radius: 90px 0 0 90px;
+  -moz-border-radius: 90px 0 0 90px;
+  -webkit-border-radius: 90px 0 0 90px;
+  position: absolute;
+  top: 50%;
+  margin-top: -26px;
+  left: auto;
+  right: 0px;
+  z-index: 1000;
+  padding: 0px;
+  white-space: normal;
+  outline: none;
+  font-size: 25px;
+}
+
+#showPageRight i{
+  position: relative;
+  bottom: -1px;
+}
+#showPageLeft {
+  height: 90px;
+  width: 15px;
+  border-radius: 0px 90px 90px 0px;
+  -moz-border-radius: 0px 90px 90px 0px;
+  -webkit-border-radius: 0px 90px 90px 0px;
+  position: absolute;
+  top: 50%;
+  margin-top: -19px;
+  left: 0px;
+  right: auto;
+  z-index: 1000;
+  padding: 0px;
+  white-space: normal;
+  outline: none;
+  font-size: 25px;
+}
+
+
+.page2Styles h1 {
+  color: #ff4800;
+  padding: 15px 10px;
+  font-weight: 300;
+  font-size: 2.4em;
+  line-height: 1;
+  /*letter-spacing: 2px;*/
+  margin: 0;
+  /*text-transform: uppercase;*/
+  /*word-spacing: -0.3em;*/
+}
+
+.page2Styles h1 span {
+  padding: 15px 10px;
+  font-family: 'Satisfy', serif;
+  font-weight: 400;
+  font-size: 40%;
+  text-transform: none;
+  word-spacing: 0;
+  letter-spacing: 0;
+  opacity: 0.4;
+}

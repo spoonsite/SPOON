@@ -14,8 +14,9 @@
 * limitations under the License.
 */
 
-@import "bootstrap/bootstrap.scss";
 @import "compass";
+@import "bootstrap/bootstrap.scss";
+@import "_variables.scss";
 @import "customLanding.scss";
 @import "more.scss";
 @import "includes/nav.scss";
@@ -38,7 +39,12 @@ body {
   background-color: #f5f5f5; 
   background: image-url('squared_metal.png');
 }
-.top, .fullHeight, .page1, .page2Styles, .pagination  body {
+
+/***************************************************************
+* Bootstrap overrides that we haven't integrated into the bootstrap variables or
+* mixins.
+***************************************************************/
+.top .navbar, .fullHeight, .page1, .page2Styles, .pagination  body {
   min-width: 400px;
 }
 
@@ -58,6 +64,61 @@ body {
   background-color: #f5f5f5;
 }
 
+.nav-tabs {
+  border-bottom: 2px solid #dddddd;
+  border-bottom: 2px solid #A3BDD9;
+  border-bottom: 2px solid #555555;
+}
+.nav-tabs > li > a {
+  margin-right: 2px;
+  line-height: 1.428571429;
+  color: #555555;
+  /*border: 2px solid transparent;*/
+  border: 2px solid #555555;
+  border-radius: 4px 4px 0 0;
+  border-bottom-color: transparent;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+  color: #555555;
+  color: white;
+  background-color: #428bca;
+  background-color: #555555;
+  font-size: 15px;
+  border: 2px solid #357ebd;
+  border: 2px solid #555555;
+  border-bottom-color: transparent;
+}
+
+.nav-tabs > li > a:hover {
+  border: 2px solid #ff4800;
+  border-bottom: 2px solid transparent;
+}
+.nav-tabs > li > a:active {
+  border: 2px solid #BB3500;
+  border-bottom: 2px solid transparent;
+}
+
+small button {
+  padding: 2px 4px !important;
+  font-size: 10px !important;
+}
+
+
+.navbar{
+  border-radius: 0px;
+}
+
+.content .row {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.hidden-xs{
+  display: inline-block !important;
+}
+
+
 
 /*This hides the logo except on pages that say it is shown*/
 .logo-title {
@@ -68,20 +129,11 @@ body {
 /***************************************************************
 * Miscelaneous useful custom classes that are used throughout the site
 ***************************************************************/
-
 .fullHeight {
   margin-top: -52px;
   padding-top: 52px;
   /*height: 100%*/
 }
-
-
-
-.carousel-indicators {
-  top: auto;
-  bottom: 15px;
-}
-
 
 /***********************************************************************************/
 /* This pair is very useful for full width text that has no-wraping ellipsis when too long*/
@@ -97,8 +149,6 @@ body {
 }
 /***********************************************************************************/
 
-
-
 .imitateLink{
   cursor: pointer;
   -webkit-touch-callout: none;
@@ -109,13 +159,11 @@ body {
   user-select: none;
 }
 
-
 .modal-header-override {
   margin-left: -15px;
   margin-right: -15px;
   margin-bottom: -16px;
 }
-
 
 .redText {
   color: red;
@@ -124,8 +172,6 @@ body {
 .fullWidthModal .modal-dialog {
   width: 80%;
 }
-
-
 
 .tooltip {
   position: absolute;
@@ -143,8 +189,6 @@ body {
   padding: 3px 5px;
 }
 
-
-
 .red.btn-default{
   font-weight: bold;
 }
@@ -157,24 +201,6 @@ body {
   color: #333;
   background-color: #c44848;
   border-color: #555555;
-}
-
-
-
-
-.chromeframe {
-  text-align: center;
-  background: #d63d3d;
-  padding: 20px;
-  border:1px solid darkgray;
-}
-
-.chromeframe a{
-  color: inherit;
-}
-
-.chromeframe a:hover{
-  color: #ffffff;
 }
 
 .boxsizingBorder {
@@ -203,24 +229,7 @@ body {
  display: inline-block !important;
 }
 
-small button {
-  padding: 2px 4px !important;
-  font-size: 10px !important;
-}
 
-
-.navbar{
-  border-radius: 0px;
-}
-
-.content .row {
-  margin-left: 0px;
-  margin-right: 0px;
-}
-
-.hidden-xs{
-  display: inline-block !important;
-}
 
 /***************************************************************
 * Media queries to handle responsiveness for the site globally.
