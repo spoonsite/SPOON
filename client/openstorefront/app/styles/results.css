@@ -76,6 +76,7 @@ html, .resultsContainer {
   color: #021233;
   text-align: center;
   font-size: 25px;
+  padding-top: 10px;
   /*letter-spacing: 10px;*/
 }
 
@@ -198,7 +199,7 @@ html, .resultsContainer {
 
   #filtersButton{
     position: fixed; 
-    top: 52px; 
+    top: 54px; 
     z-index: 1010; 
     padding: 0px; 
     margin: 0px;
@@ -227,7 +228,7 @@ width: 100%;
 .component-title{
   margin: 0px 0px 11px 0px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #555;
+  /*border-bottom: 1px solid #555;*/
   background: white;
   width: auto;
 }
@@ -590,119 +591,124 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
   font-weight: bold;
   line-height: 1.428571429;
   vertical-align: top;
-/*  border-top: 1px solid #dddddd;*/
+  /*  border-top: 1px solid #dddddd;*/
   background-color: #cccccc !important;
   border: 1px solid #c0c0c0 !important;
 }
 .text-right
 {
-    text-align: right !important;
-    vertical-align: middle;
+  text-align: right !important;
+  vertical-align: middle;
 }
 .text-center
 {
-    text-align: center !important;
-    vertical-align: middle;
+  text-align: center !important;
+  vertical-align: middle;
 }
 .text-left
 {
-    text-align: left !important;
-    vertical-align: middle;
+  text-align: left !important;
+  vertical-align: middle;
 }
 .text-right-bold
 {
-    text-align: right !important;
-    vertical-align: middle;
-    font-weight: bold;
+  text-align: right !important;
+  vertical-align: middle;
+  font-weight: bold;
 }
 .text-center-bold
 {
-    text-align: center !important;
-    vertical-align: middle;
-    font-weight: bold;
+  text-align: center !important;
+  vertical-align: middle;
+  font-weight: bold;
 }
 .text-left-bold
 {
-    text-align: left !important;
-    vertical-align: middle;
-    font-weight: bold;
+  text-align: left !important;
+  vertical-align: middle;
+  font-weight: bold;
 }
 /*New evaluation progress bars*/
 /*completed=0*/
 .evalprogbar0
 {
-    background-color:#E6E8EB;
-    color:#FFFFFF;
-    border:1px solid #808080;
-    height:50px;
-    text-align:center; 
-    vertical-align:middle;
-
+  background-color:#E6E8EB;
+  color:#FFFFFF;
+  border:1px solid #808080;
+  height:50px;
+  text-align:center; 
+  vertical-align:middle;
 }
 /*in progress=1*/
 .evalprogbar1
 {
-    background-color:#D6EDD6;
-    border:1px dashed #5CB85C;
-    height:50px;
-    color:#5CB85C;
-    text-align:center; 
-    font-weight:bold;
-    vertical-align:middle;
+  background-color:#D6EDD6;
+  border:1px dashed #5CB85C;
+  height:50px;
+  color:#5CB85C;
+  text-align:center; 
+  font-weight:bold;
+  vertical-align:middle;
 }
 /*halted=2*/
 .evalprogbar2
 {
-    background-color:#FFA480;
-    color:#000000;
-    border:1px solid #808080;
-    height:50px;
-    text-align:center; 
-    vertical-align:middle;
+  background-color:#FFA480;
+  color:#000000;
+  border:1px solid #808080;
+  height:50px;
+  text-align:center; 
+  vertical-align:middle;
 }
 /*not started=3*/
 .evalprogbar3
 {
-    background-color:#FFFFFF;
-    border:1px solid #808080;
-    height:50px;
-    text-align:center; 
-    vertical-align:middle;
-    color:#808080;
+  background-color:#FFFFFF;
+  border:1px solid #808080;
+  height:50px;
+  text-align:center; 
+  vertical-align:middle;
+  color:#808080;
 }
 /*completed=0*/
 .evalbarlegend0
 {
-    text-align:right;
-    padding:0;
-    font-size:12px; 
-    color:black;
+  text-align:right;
+  padding:0;
+  font-size:12px; 
+  color:black;
 }
 /*in progress=1*/
 .evalbarlegend1
 {
-    color:#5CB85C;
-    font-weight:bold;
-    text-align:right;
-    padding:0;
-    font-size:12px;
-
+  color:#5CB85C;
+  font-weight:bold;
+  text-align:right;
+  padding:0;
+  font-size:12px;
 }
 /*halted=2*/
 .evalbarlegend2
 {
-    color:#ff4800;
-    font-weight:bold;
-    text-align:right;
-    padding:0;
-    font-size:12px;
+  color:#ff4800;
+  font-weight:bold;
+  text-align:right;
+  padding:0;
+  font-size:12px;
 }
 /*not started=3*/
 .evalbarlegend3
 {
-    color:#808080;
-    font-weight:bold;
-    text-align:right;
-    padding:0;
-    font-size:12px;
+  color:#808080;
+  font-weight:bold;
+  text-align:right;
+  padding:0;
+  font-size:12px;
+}
+.detailsTitleButton {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  font-size: 25px;
+  line-height: 25px;
 }

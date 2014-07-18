@@ -101,7 +101,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * search key saved in the localCache
   ***************************************************************/
   $scope.goToSearch = function(){ /*jshint unused:false*/
-
+    $scope.closeNavbarItem('searchNavButton'); 
     $rootScope.searchKey = $scope.searchKey;
     $location.search({
       'type': 'search',

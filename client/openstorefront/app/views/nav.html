@@ -1,4 +1,92 @@
 <div class="top" ng-controller="NavCtrl">
-  <div ng-include="navLocation"></div>
-</div>
-<div class="defaultSpacer">&nbsp;</div>
+  <div class="color_primary_background navbar navbar-default navigation"> 
+    <div class="container-fluid">
+
+      <div class="logo-title">
+        <span class="dashes">&mdash;&mdash;&mdash;&nbsp;</span><span class="content">DI2E</span>&nbsp;Storefront<span class="dashes">&nbsp;&mdash;&mdash;&mdash;</span>
+      </div>
+
+      <!-- Nav header -->
+      <div class="navbar-header">
+
+        <!-- Nav buttons when collapsed menu is up -->
+        <div >
+          <button ng-show="user.isLoggedIn" type="button" class="navbar-toggle navButton" data-toggle="collapse" id="openUserMenu" data-target="#bs-example-navbar-collapse-2">
+            <span class="sr-only">User Panel</span>
+            <span>{{user.info.firstname}}&nbsp;{{user.info.lastname}}&nbsp;<b class="caret"></b></span>
+          </button>
+          <button ng-show="!user.isLoggedIn" type="button" class="navbar-toggle navButton" ng-click="goToLogin()">
+            <span>Log in</span>
+          </button>
+          <button type="button" class="navbar-toggle navButton" id="searchNavButton" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle Search</span>
+            <i class="fa fa-search"></i>
+          </button>        
+        </div>
+        <!-- / Nav buttons when collapsed menu is up -->
+        <div>
+          <!-- fa fa-home -->
+          <a class="navbar-brand" href="javascript: void(0)" ng-click="sendHome();">
+            <div style="height: 50px; width: 180px; text-align:center; display:inline-block;">
+              <div style="padding: 6px; width: 269px;">
+                <div style="padding-top: 10px;">
+                  <span class='logo'><span class="hidden-xs">DI2E</span>&nbsp;Storefront</span>
+                  </div>                  
+                </div>
+              </div>             
+            </a>
+          </div> 
+        </div>
+        <!-- /Nav header -->
+
+        <!-- .userNav-collapse -->
+        <div  ng-show="user.isLoggedIn" class="collapse navbar-collapse pull-right userNavDropdown" style="padding-right: 30px;">
+          <ul class="nav navbar-nav navbar-right">
+            <li id="dropTheMenu" class="dropdown">
+              <a ng-show="user.isLoggedIn" href="" class="dropdown-toggle" data-toggle="dropdown">{{user.info.firstname}}&nbsp;{{user.info.lastname}}&nbsp;<b class="caret"></b></a>
+              <a ng-show="!user.isLoggedIn" href="" ng-click="goToLogin()">Log in</a>
+              <ul class="dropdown-menu">
+                <li><a href="javascript: void(0)" ng-click="send('/admin')">Admin Tools</a></li>
+                <li class="divider"></li>
+                <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'User Profile')">User Profile</a></li>
+                <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Watches')">Watches</a></li>   
+                <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Component Feedback')">Component Feedback</a></li>
+                <li class="divider"></li>
+                <li ng-show="user.isLoggedIn"><a href="javascript: void(0)" ng-click="logout()">Logout</a></li>   
+              </ul></li>
+
+            </li>
+          </ul>
+        </div>
+        <!-- /.userNav-collapse -->
+
+        <div class="collapse navbar-collapse center navSearch" id="bs-example-navbar-collapse-1">
+          <form class="navbar-form navbar-left navSearchForm" role="search" ng-submit="goToSearch()">
+            <div class="pull-right searchBoxButton">
+              <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
+            </div>
+            <div class="navSearchBar">
+              <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key for key in typeahead" placeholder="Search" bs-typeahead>
+            </div>
+          </form>
+        </div>
+        <div class="collapse navbar-collapse center navSearch" id="bs-example-navbar-collapse-2">
+          <ul class="nav navbar-nav">
+            <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); send('/admin'); ">Admin Tools</a></li>
+            <li class="divider"></li>
+            <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'User Profile'); ">User Profile</a></li>
+            <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Watches'); ">Watches</a></li>   
+            <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Component Feedback'); ">Component Feedback</a></li>
+            <li class="divider"></li>
+            <li ng-show="user.isLoggedIn"><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); logout(); ">Logout</a></li>   
+          </ul>
+        </div>
+      </div>
+
+    </div> 
+
+
+
+
+  </div>
+  <div class="defaultSpacer">&nbsp;</div>

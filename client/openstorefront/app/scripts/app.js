@@ -77,21 +77,21 @@ var app = angular
   //   };
   // });
 
-  tagsInputConfigProvider
-  .setDefaults('tagsInput', {
-    placeholder: 'Add a tag (single space for suggestions)'
+tagsInputConfigProvider
+.setDefaults('tagsInput', {
+  placeholder: 'Add a tag (single space for suggestions)'
     // Use this to disable the addition of tags outside the tag cloud:
     // addOnEnter: false
   })
-  .setDefaults('autoComplete', {
-    maxResultsToShow: 15
+.setDefaults('autoComplete', {
+  maxResultsToShow: 15
     // debounceDelay: 1000
   })
-  .setActiveInterpolation('tagsInput', {
-    placeholder: true,
-    addOnEnter: true,
-    removeTagSymbol: true
-  });
+.setActiveInterpolation('tagsInput', {
+  placeholder: true,
+  addOnEnter: true,
+  removeTagSymbol: true
+});
 
   // Angular Lightbox setup
   // set a custom template
@@ -178,12 +178,6 @@ var app = angular
     if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single')) {
       $location.search({});
     }
-    if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
-      // console.log('Broadcasting');
-      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
-    } else {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
-    }
   });
 
 
@@ -197,12 +191,6 @@ var app = angular
 
     $timeout(function() {
       $('[data-toggle="tooltip"').tooltip();
-      if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
-        // console.log('Broadcasting');
-        $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
-      } else {
-        $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
-      }
     }, 300);
     // if (!Auth.signedIn() && $location.path() !== '/login') {
     //   $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
@@ -237,23 +225,62 @@ var app = angular
     $rootScope.$broadcast('$viewModal', id);
   };
 
-  $rootScope.setNav = function() {
-    // once the content is loaded, make sure we have the right navigation!
-    if (!$location.path() || $location.path() === '/' || $location.path() === '/login') {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav_main.html');
-    } else {
-      $rootScope.$broadcast('$changenav', 'views/nav/nav.html');
-    }
-  };
+  /***************************************************************
+  * This function sends the route to whatever path and search are passed in.
+  ***************************************************************/
+  $rootScope.goTo = function(path, search) {
+    $location.search(search);
+    $location.path(path);
+  }
 
-  $rootScope.setNav();
-  
-  
+  $rootScope.closeNavbarItem = function(id) {
+    initiateClick(id);
+  }
+
+  function getParams(url) {
+    var match,
+    pl     = /\+/g,  // Regex for replacing addition symbol with a space
+    search = /([^&=]+)=?([^&]*)/g,
+    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+    query  = url.split('?')[1],
+    urlParams = {};
+    while (match = search.exec(query)) {
+      urlParams[decode(match[1])] = decode(match[2]);
+    }
+    return urlParams;
+  }
+
   //Mock Back End  (use passthough to route to server)
   $httpBackend.whenGET(/views.*/).passThrough();
   
   $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
   $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
+  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
+    var query = getParams(url);
+    var result = null;
+    // console.log('query Parameters', query);
+    // console.log('Key', query.key);
+    if (query.type === 'search' && (query.key === 'all' || query.key === 'All'))
+    {
+      query.key = '';
+    }
+    if (query.key !== '' && query.type === 'search') {
+      result = _.filter(MOCKDATA.assets.assets, function(item) {
+        return _.contains(item.name, query.key) || _.contains(item.description, query.key) || _.contains(item.owner, query.key);
+      });
+    } else if (query.type && query.type === 'search'){
+      result = MOCKDATA.assets.assets;
+    } else if (query.type){
+      result = _.filter(MOCKDATA.assets.assets, function(item){
+        console.log('item[codes]', item[query.type]);
+        
+        return _.some(item[query.type], function(code) {
+          return code.code === query.key;
+        }); 
+      });
+    }
+    return [200, result, {}];
+  });
   
   ////////////////////////////////////////////////////////////////////////
 
