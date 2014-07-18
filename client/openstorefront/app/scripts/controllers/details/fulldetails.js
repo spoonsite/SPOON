@@ -78,7 +78,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * to allow the user to view their watches.
   ***************************************************************/
   $scope.getEvaluationState = function () {
-    if ($scope.details && $scope.details.details && $scope.details.evaluationLevel !== undefined) {
+    if ($scope.details && $scope.details.details && $scope.details.evaluationLevel !== undefined) {      
       var code = $scope.details.details.evaluationLevel[0].code;
       var stateFilter = _.where($scope.filters, {'key': 'evaluationLevel'})[0];
       var item = _.where(stateFilter.collection, {'code': code})[0];
@@ -144,8 +144,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   };
 
   
-  $scope.getTimes=function(n){
+  $scope.getTimes = function(n){
     return new Array(parseInt(n));
   };
+
+
 
 }]);
