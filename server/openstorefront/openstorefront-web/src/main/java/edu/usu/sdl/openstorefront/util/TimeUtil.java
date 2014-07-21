@@ -14,40 +14,27 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.web.rest.model;
+package edu.usu.sdl.openstorefront.util;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentEvaulationSection
+public class TimeUtil
 {
-	private String name;	
-	private Integer score;
-
-	public ComponentEvaulationSection()
+	public static Date fromString(String value)
 	{
+		Date newDate = null;
+		if (StringUtils.isNotBlank(value))
+		{
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+			newDate = sdf.parse(value, new ParsePosition(0));
+		}
+		return newDate;
 	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-	public Integer getScore()
-	{
-		return score;
-	}
-
-	public void setScore(Integer score)
-	{
-		this.score = score;
-	}
-
 }

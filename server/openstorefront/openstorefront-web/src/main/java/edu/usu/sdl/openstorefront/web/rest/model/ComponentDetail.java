@@ -42,13 +42,13 @@ public class ComponentDetail
 	@NotNull	
 	private String description;
 	
-	private ComponentResource parentComponent;
+	private ComponentRelationship parentComponent;
 	
-	@DataType(ComponentResource.class)
-	private List<ComponentResource> subComponents = new ArrayList<>();
+	@DataType(ComponentRelationship.class)
+	private List<ComponentRelationship> subComponents = new ArrayList<>();
 
-	@DataType(ComponentResource.class)
-	private List<ComponentResource> relatedComponents = new ArrayList<>();
+	@DataType(ComponentRelationship.class)
+	private List<ComponentRelationship> relatedComponents = new ArrayList<>();
 	
 	@NotNull	
 	private String organization;
@@ -107,6 +107,9 @@ public class ComponentDetail
 	
 	@DataType(ComponentReview.class)
 	private List<ComponentReview> reviews = new ArrayList<>();
+	
+	@DataType(ComponentExternalDependancy.class)
+	private List<ComponentExternalDependancy> dependencies = new ArrayList<>();
 
 	public ComponentDetail()
 	{
@@ -292,36 +295,6 @@ public class ComponentDetail
 		this.reviews = reviews;
 	}
 
-	public ComponentResource getParentComponent()
-	{
-		return parentComponent;
-	}
-
-	public void setParentComponent(ComponentResource parentComponent)
-	{
-		this.parentComponent = parentComponent;
-	}
-
-	public List<ComponentResource> getSubComponents()
-	{
-		return subComponents;
-	}
-
-	public void setSubComponents(List<ComponentResource> subComponents)
-	{
-		this.subComponents = subComponents;
-	}
-
-	public List<ComponentResource> getRelatedComponents()
-	{
-		return relatedComponents;
-	}
-
-	public void setRelatedComponents(List<ComponentResource> relatedComponents)
-	{
-		this.relatedComponents = relatedComponents;
-	}
-
 	public String getVersion()
 	{
 		return version;
@@ -390,6 +363,46 @@ public class ComponentDetail
 	public void setQuestions(List<ComponentQuestion> questions)
 	{
 		this.questions = questions;
+	}
+
+	public ComponentRelationship getParentComponent()
+	{
+		return parentComponent;
+	}
+
+	public void setParentComponent(ComponentRelationship parentComponent)
+	{
+		this.parentComponent = parentComponent;
+	}
+
+	public List<ComponentRelationship> getSubComponents()
+	{
+		return subComponents;
+	}
+
+	public void setSubComponents(List<ComponentRelationship> subComponents)
+	{
+		this.subComponents = subComponents;
+	}
+
+	public List<ComponentRelationship> getRelatedComponents()
+	{
+		return relatedComponents;
+	}
+
+	public void setRelatedComponents(List<ComponentRelationship> relatedComponents)
+	{
+		this.relatedComponents = relatedComponents;
+	}
+
+	public List<ComponentExternalDependancy> getDependencies()
+	{
+		return dependencies;
+	}
+
+	public void setDependencies(List<ComponentExternalDependancy> dependencies)
+	{
+		this.dependencies = dependencies;
 	}
 
 }

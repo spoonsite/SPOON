@@ -28,7 +28,7 @@ import java.util.List;
 public class ComponentReview
 {
 	private String username;
-	private String userTypeCode;
+	private String userType;
 	private String comment;
 	private int rating;
 	private String title;
@@ -56,16 +56,6 @@ public class ComponentReview
 	public void setUsername(String username)
 	{
 		this.username = username;
-	}
-
-	public String getUserTypeCode()
-	{
-		return userTypeCode;
-	}
-
-	public void setUserTypeCode(String userTypeCode)
-	{
-		this.userTypeCode = userTypeCode;
 	}
 
 	public String getComment()
@@ -167,6 +157,15 @@ public class ComponentReview
 	{
 		this.cons = cons;
 	}
-	
+
+	public String getUserType()
+	{
+		return userType;
+	}
+
+	public void setUserType(String userType)
+	{
+		this.userType = userType;
+	}
 	
 }
