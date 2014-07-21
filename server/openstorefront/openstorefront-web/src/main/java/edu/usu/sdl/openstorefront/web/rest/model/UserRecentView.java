@@ -16,7 +16,6 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -26,15 +25,12 @@ import javax.validation.constraints.NotNull;
 public class UserRecentView
 {
 	@NotNull
-	@ParamTypeDescription("NUMBER")
 	private long viewId;
 	
 	@NotNull
-	@ParamTypeDescription("TEXT")
 	private String componentName;
 	
 	@NotNull
-	@ParamTypeDescription("NUMBER")
 	private long componentId;
 
 	public UserRecentView()

@@ -29,7 +29,7 @@ limitations under the License.
 		
        <h1>${actionBean.resourceModel.resourceName}</h1>
 	      ${actionBean.resourceModel.resourceDescription}<br>
-	<c:if test="${!empty actionBean.resourceModel.requireAdmin}">
+	<c:if test="${actionBean.resourceModel.requireAdmin}">
 		<br>
 		<span class="resource-admin">Requires Admin Privilege</span>	  
 	</c:if>	  
@@ -195,6 +195,39 @@ ${item.consumeObject.typeObject}
 										</c:forEach>
 									</table>								
 								</c:if>
+								<c:if test="${!empty item.consumeObject.allComplexTypes}">
+									<h3>Complex Type(s) Details</h3>
+									<c:forEach var="complexType" items="${item.consumeObject.allComplexTypes}">
+										<h4>${complexType.name}</h4>
+										<pre>
+${complexType.object}									
+										</pre>								
+										<table>
+											<tr>
+												<th style='text-align: left;'>Field Name</th>
+												<th style='text-align: center;'>Required</th>
+												<th style='text-align: left;'>Type</th>
+												<th style='text-align: left;'>Notes</th>
+											</tr>
+											<c:forEach var="field" items="${complexType.fields}">
+											<tr>
+												<td>
+													${field.fieldName}
+												</td>
+												<td  align="center">
+													${field.required}
+												</td>
+												<td>
+													${field.type}
+												</td>
+												<td>
+													${field.validation}
+												</td>										
+											</tr>
+											</c:forEach>
+										</table>
+									</c:forEach>
+								</c:if>									
 							</div>
 						</div>
 							
@@ -276,12 +309,45 @@ ${item.responseObject.typeObject}
 										</c:forEach>
 									</table>								
 								</c:if>
+								<c:if test="${!empty item.responseObject.allComplexTypes}">
+									<h3>Complex Type(s) Details</h3>
+									<c:forEach var="complexType" items="${item.responseObject.allComplexTypes}">
+										<h4>${complexType.name}</h4>
+										<pre>
+${complexType.object}									
+										</pre>								
+										<table>
+											<tr>
+												<th style='text-align: left;'>Field Name</th>
+												<th style='text-align: center;'>Required</th>
+												<th style='text-align: left;'>Type</th>
+												<th style='text-align: left;'>Notes</th>
+											</tr>
+											<c:forEach var="field" items="${complexType.fields}">
+											<tr>
+												<td>
+													${field.fieldName}
+												</td>
+												<td  align="center">
+													${field.required}
+												</td>
+												<td>
+													${field.type}
+												</td>
+												<td>
+													${field.validation}
+												</td>										
+											</tr>
+											</c:forEach>
+										</table>
+									</c:forEach>
+								</c:if>									
 							</div>
 						</div>
 							
 					</td>					
 				</tr>	
-			</c:if>
+			</c:if>				
 			</c:forEach>
 		</table> 
 			

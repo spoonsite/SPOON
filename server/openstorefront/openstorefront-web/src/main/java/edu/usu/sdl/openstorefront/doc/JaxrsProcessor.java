@@ -25,9 +25,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -175,13 +179,15 @@ public class JaxrsProcessor
 					valueModel.setValueObjectName(method.getReturnType().getSimpleName());					
 					valueModel.setValueObject(objectMapper.writeValueAsString(method.getReturnType().newInstance()));
 					mapValueField(valueModel.getValueFields(), method.getReturnType().getDeclaredFields());
+					mapComplexTypes(valueModel.getAllComplexTypes(), method.getReturnType().getDeclaredFields(), false);
 					
 					DataType dataType = (DataType) method.getAnnotation(DataType.class);
 					if (dataType != null)
 					{
 						valueModel.setTypeObjectName(dataType.value().getSimpleName());
 						valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
-						mapValueField(valueModel.getTypeFields(), dataType.value().getDeclaredFields());							
+						mapValueField(valueModel.getTypeFields(), dataType.value().getDeclaredFields());	
+						mapComplexTypes(valueModel.getAllComplexTypes(), dataType.value().getDeclaredFields(), false);
 					}					
 
 					methodModel.setResponseObject(valueModel);					
@@ -241,6 +247,7 @@ public class JaxrsProcessor
 					Set<String> fieldList = mapValueField(valueModel.getValueFields(), parameter.getType().getDeclaredFields(), true);	
 					String cleanUpJson = ServiceUtil.stripeFieldJSON(valueModel.getValueObject(), fieldList);
 					valueModel.setValueObject(cleanUpJson);
+					mapComplexTypes(valueModel.getAllComplexTypes(), parameter.getType().getDeclaredFields(), true);
 					
 					DataType dataType = (DataType) parameter.getAnnotation(DataType.class);
 					if (dataType != null)
@@ -249,7 +256,8 @@ public class JaxrsProcessor
 						valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
 						fieldList = mapValueField(valueModel.getTypeFields(), dataType.value().getDeclaredFields(), true);							
 						cleanUpJson = ServiceUtil.stripeFieldJSON(valueModel.getValueObject(), fieldList);
-						valueModel.setValueObject(cleanUpJson);
+						valueModel.setValueObject(cleanUpJson);						
+						mapComplexTypes(valueModel.getAllComplexTypes(), dataType.value().getDeclaredFields(), true);
 					}					
 				}
 				catch (InstantiationException | IllegalAccessException | JsonProcessingException ex)
@@ -263,6 +271,79 @@ public class JaxrsProcessor
 				break;
 			}
 		}	
+	}
+	
+	private static void mapComplexTypes(List<APITypeModel> typeModels,  Field fields[], boolean onlyConsumeField)
+	{
+		//Should strip duplicate types
+		Set<String> typesInList = new HashSet<>();
+		typeModels.forEach(type -> {
+			typesInList.add(type.getName());
+		});
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		for (Field field : fields)
+		{
+			boolean capture = true;
+			if (onlyConsumeField)
+			{
+				ConsumeField consumeField = (ConsumeField) field.getAnnotation(ConsumeField.class);
+				if (consumeField == null)
+				{
+					capture = false;
+				}
+			}
+			
+			if (capture)
+			{			
+				
+				Class fieldClass = field.getType();
+				DataType dataType = (DataType) field.getAnnotation(DataType.class);
+				if (dataType != null)
+				{
+					fieldClass = dataType.value();
+				}				
+				
+				if (!fieldClass.isPrimitive()  && 
+					!fieldClass.isArray() &&
+					!typesInList.contains(fieldClass.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(String.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(Long.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(Integer.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(Boolean.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(Double.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(Float.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(BigDecimal.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(Date.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName()) &&
+					!fieldClass.getSimpleName().equalsIgnoreCase(BigInteger.class.getSimpleName())
+					)
+				{	
+
+					
+					APITypeModel typeModel = new APITypeModel();
+					typeModel.setName(fieldClass.getSimpleName());
+					mapValueField(typeModel.getFields(), fieldClass.getDeclaredFields(), onlyConsumeField);
+					try
+					{
+						typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
+					} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex)
+					{
+						log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName() , ex);
+						typeModel.setObject("{ Unable to view }");
+					}					
+					typeModels.add(typeModel);
+					typesInList.add(typeModel.getName());
+					
+					mapComplexTypes(typeModels, fieldClass.getDeclaredFields(), onlyConsumeField);
+				}
+					
+			}
+		}
 	}
 	
 	private static void mapValueField(List<APIValueFieldModel> fieldModels,  Field fields[])
@@ -292,20 +373,36 @@ public class JaxrsProcessor
 				APIValueFieldModel fieldModel = new APIValueFieldModel();
 				fieldModel.setFieldName(field.getName());
 				fieldNamesCaptured.add(field.getName());
+				fieldModel.setType(field.getType().getSimpleName());
+				
+				DataType dataType = (DataType) field.getAnnotation(DataType.class);
+				if (dataType != null)
+				{
+					fieldModel.setType(fieldModel.getType() + ":  " + dataType.value().getSimpleName());
+				}
 
 				NotNull requiredParam = (NotNull) field.getAnnotation(NotNull.class);
 				if (requiredParam != null)
 				{
 					fieldModel.setRequired(true);
 				}
-
+				
+				StringBuilder validation = new StringBuilder();
 				ParamTypeDescription description = (ParamTypeDescription) field.getAnnotation(ParamTypeDescription.class);
 				if (description != null)
-				{
-					fieldModel.setType(description.value());
+				{					
+					validation.append(description.value()).append("<br>");
 				}
-
-				StringBuilder validation = new StringBuilder();
+				
+				if ("Date".equals(field.getType().getSimpleName()))
+				{
+					validation.append("Timestamp (milliseconds since UNIX Epoch<br>");
+				}
+				
+				if ("boolean".equalsIgnoreCase(field.getType().getSimpleName()))
+				{
+					validation.append("T | F");
+				}
 
 				ValidationRequirement validationRequirement = (ValidationRequirement) field.getAnnotation(ValidationRequirement.class);
 				if (validationRequirement != null)

@@ -31,6 +31,7 @@ public class APIValueModel
 	private String typeObjectName;
 	private List<APIValueFieldModel> valueFields = new ArrayList<>();
 	private List<APIValueFieldModel> typeFields = new ArrayList<>();
+	private List<APITypeModel> allComplexTypes = new ArrayList<>();
 
 	public APIValueModel()
 	{
@@ -94,6 +95,16 @@ public class APIValueModel
 	public void setValueFields(List<APIValueFieldModel> valueFields)
 	{
 		this.valueFields = valueFields;
+	}
+
+	public List<APITypeModel> getAllComplexTypes()
+	{
+		return allComplexTypes;
+	}
+
+	public void setAllComplexTypes(List<APITypeModel> allComplexTypes)
+	{
+		this.allComplexTypes = allComplexTypes;
 	}
 
 }

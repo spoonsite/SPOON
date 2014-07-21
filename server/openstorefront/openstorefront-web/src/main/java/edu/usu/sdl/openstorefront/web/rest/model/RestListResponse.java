@@ -26,14 +26,12 @@ import java.util.List;
  * @param <T>
  */
 public class RestListResponse<T>
-{
-	@ParamTypeDescription("NUMBER")
+{	
 	private long totalResults;
 	
-	@ParamTypeDescription("NUMBER (Returned record count)")
+	@ParamTypeDescription("(Returned record count)")
 	private long results;
 	
-	@ParamTypeDescription("ARRAY")
 	private List<T> data = new ArrayList<>();
 	
 	public RestListResponse()

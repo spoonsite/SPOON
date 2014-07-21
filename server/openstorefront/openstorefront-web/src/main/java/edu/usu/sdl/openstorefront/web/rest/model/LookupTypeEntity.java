@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
 import java.util.Date;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -26,12 +27,19 @@ import java.util.Date;
 public class LookupTypeEntity
 	extends BaseEntity
 {
+	@NotNull
 	protected String code;
+	@NotNull
 	protected String description;
+	@NotNull
 	protected String activeStatus;
+	@NotNull
 	protected String createUser;	
+	@NotNull
 	protected Date createDts;	
-	protected String updateUser;
+	@NotNull
+	protected String updateUser;	
+	@NotNull
 	protected Date updateDts;	
 
 	public LookupTypeEntity()

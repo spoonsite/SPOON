@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -42,6 +43,17 @@ public class ServiceUtil
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		return objectMapper;
 	}
+	
+	public static String getResourceNameFromUrl(String url)
+	{
+		String resource = url;
+		if (StringUtils.isNotBlank(url))
+		{
+			resource = url.substring(url.lastIndexOf("/") + 1, url.length());
+		}
+		return resource;
+	}
+	
 	
 	public static String stripeFieldJSON(String json, Set<String> fieldsToKeep)
 	{
