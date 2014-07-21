@@ -59,8 +59,8 @@ limitations under the License.
               <tr  class="filtersTr" data-ng-repeat="type in filter.collection" >
                 <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
                   <div class="checkbox filterCheckbox">
-                    <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{type.type}}" ng-change="applyFilters()"/>
-                    <label for="{{type.type}}">{{type.type}}</label>
+                    <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{filter.name}}_{{type.type}}" ng-change="applyFilters()"/>
+                    <label for="{{filter.name}}_{{type.type}}">{{type.type}}</label>
                   </div>
                 </td>
               </tr>

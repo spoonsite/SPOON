@@ -9,7 +9,7 @@
   background: inherit;
 }
 
-table th {
+.page2 table th {
   padding: 8px;
   color:black;
   font-weight: bold;
@@ -20,7 +20,7 @@ table th {
   border: 1px solid #c0c0c0 !important;
 }
 
-table tr:hover > th {
+.page2 table tr:hover > th {
   background: #ccc !important;
   border: 1px solid #c0c0c0 !important;
 }

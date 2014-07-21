@@ -97,7 +97,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   if ($rootScope.typeahead) {
     $scope.typeahead  = $rootScope.typeahead;
   } else {
-    $scope.typeahead  = Business.typeahead(Business.getData, 'name');
+    Business.componentservice.getComponentDetails().then(function(result) {
+      Business.typeahead(result, 'name').then(function(value){
+        $scope.typeahead = value;
+      });
+    });
   }
 
   /***************************************************************
@@ -187,9 +191,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.searchCode       = '';
     }
 
-    Business.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
+    Business.componentservice.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
       $scope.total = result || {};
-      $scope.filteredTotal  = $scope.total;
+      $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
       $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
@@ -201,7 +205,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $timeout(function(){
           $scope.data.data = $scope.total;
           _.each($scope.data.data, function(item){
-            item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
+            if (item.description !== null && item.description !== undefined && item.description !== '') {
+              var desc = item.description.match(/^(.*?)[.?!]\s/);
+              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+            } else {
+              item.shortdescription = 'This is a temporary short description';
+            }
           });
           $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
           $scope.initializeData(key);
@@ -209,7 +218,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         }, 500);
       }, 500);
     });
-  };
+};
 
 
   /***************************************************************
@@ -310,7 +319,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function grabs the search key and resets the page in order to update the search
   ***************************************************************/
   var callSearch = function() {
-    Business.search(false, false, true).then(
+    Business.componentservice.search(false, false, true).then(
     //This is the success function on returning a value from the business layer 
 
     // TODO: CLEAN UP THIS FUNCTION!!!!
@@ -443,14 +452,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     if (!openClick) {
       buttonOpen();
     }
-    $timeout(function() {
-      var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
-      if (temp)
+    Business.componentservice.getComponentDetails(id).then(function(result){
+      if (result)
       {
-        $scope.details.details = temp;
+        $scope.details.details = result;
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-    }, 1500);
+    });
     $scope.showDetails = true;
   };
 
@@ -484,44 +492,46 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * data with
   ***************************************************************/
   $scope.applyFilters = function() {
-    var results =
-    // We must use recursive filtering or we will get incorrect results
-    // the order DOES matter here.
-    $filter('orderBy')
-      //
-      ($filter('ratingFilter')
-        ($filter('tagFilter')
-          ($filter('componentFilter')
-            ($filter('filter')
-            //filter by the string
-            ($scope.total, $scope.query),
-          // filter the data by the filters
-          $scope.filters),
-        // filter the data by the tags
-        $scope.tagsFilter),
-      // filter the data by the ratings
-      $scope.ratingsFilter),
-    // Then order-by the orderProp
-    $scope.orderProp);
+    if ($scope.filteredTotal) {
+      var results =
+      // We must use recursive filtering or we will get incorrect results
+      // the order DOES matter here.
+      $filter('orderBy')
+        //
+        // ($filter('ratingFilter')
+          // ($filter('tagFilter')
+            ($filter('componentFilter')
+              ($filter('filter')
+              //filter by the string
+              ($scope.total, $scope.query),
+            // filter the data by the filters
+            $scope.filters),
+          // filter the data by the tags
+          // $scope.tagsFilter),
+        // filter the data by the ratings
+        // $scope.ratingsFilter),
+      // Then order-by the orderProp
+      $scope.orderProp);
 
-    // make sure we reset the data and then copy over the results  
-    $scope.filteredTotal = [''];
-    $scope.filteredTotal = results;
+      // make sure we reset the data and then copy over the results  
+      $scope.filteredTotal = [''];
+      $scope.filteredTotal = results;
 
-    // Do the math required to assure that we have a valid page number and 
-    // maxPageNumber
-    $scope.maxPageNumber = Math.ceil($scope.filteredTotal.length / $scope.rowsPerPage);
-    if (($scope.pageNumber - 1) * $scope.rowsPerPage >= $scope.filteredTotal.length) {
-      $scope.pageNumber = 1;
+      // Do the math required to assure that we have a valid page number and 
+      // maxPageNumber
+      $scope.maxPageNumber = Math.ceil($scope.filteredTotal.length / $scope.rowsPerPage);
+      if (($scope.pageNumber - 1) * $scope.rowsPerPage >= $scope.filteredTotal.length) {
+        $scope.pageNumber = 1;
+      }
+
+      // Set the data that will be displayed to the first 'n' results of the filtered data
+      $scope.data.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
+
+      // after a slight wait, reapply the popovers for the results ratings.
+      $timeout(function() {
+        setupPopovers();
+      }, 300);
     }
-
-    // Set the data that will be displayed to the first 'n' results of the filtered data
-    $scope.data.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
-    
-    // after a slight wait, reapply the popovers for the results ratings.
-    $timeout(function() {
-      setupPopovers();
-    }, 300);
   };
 
 
@@ -615,7 +625,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       rowPP = 1;
     }
     $scope.pageNumber = 1;
-    $scope.maxPageNumber = Math.ceil($scope.filteredTotal.length / rowPP);
+    if ($scope.filteredTotal) {
+      $scope.maxPageNumber = Math.ceil($scope.filteredTotal.length / rowPP);
+    }
     $scope.applyFilters();
   });
 

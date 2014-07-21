@@ -39,10 +39,12 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   if ($rootScope.typeahead) {
     $scope.typeahead  = $rootScope.typeahead;
   } else {
-    $scope.typeahead  = Business.typeahead(Business.getData, 'name');
+    Business.componentservice.getComponentDetails().then(function(result) {
+      Business.typeahead(result, 'name').then(function(value){
+        $scope.typeahead = value;
+      });
+    });
   }
-
-
   //////////////////////////////////////////////////////////////////////////////
   // Event Watchers
   //////////////////////////////////////////////////////////////////////////////
@@ -69,10 +71,10 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   * data object with the search key 
   * params: type -- This is the code of the type that was clicked on
   *******************************************************************************/
-  $scope.goToSearch = function(searchType, searchKey){ /*jshint unused:false*/
+  $scope.goToSearch = function(searchType, searchKey, override){ /*jshint unused:false*/
     $(window).scrollTop(0);
     var search = null;
-    if (searchType === 'search') {
+    if (searchType === 'search' && !override) {
       if (!$scope.searchKey) {
         if (searchKey) {
           search = searchKey;
@@ -82,7 +84,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
       } else {
         search = $scope.searchKey;
       }
-      Business.search(searchType, search);
+      Business.componentservice.search(searchType, search);
       $location.search('type', searchType);
       $location.path('/results');
       if (search === '') {
@@ -92,7 +94,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
       }
 
     } else {
-      Business.search(searchType, searchKey);
+      Business.componentservice.search(searchType, searchKey);
       $location.path('/results');
       $location.search('type', searchType);
       $location.search('code', searchKey);

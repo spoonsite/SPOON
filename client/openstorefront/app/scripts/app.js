@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global resetAnimGlobals, initiateClick */
+/* global resetAnimGlobals, initiateClick, MOCKDATA2 */
 /* exported app */
 
 /***************************************************************
@@ -216,8 +216,6 @@ tagsInputConfigProvider
   });
 
 
-
-
   //////////////////////////////////////////////////////////////////////////////
   // Functions
   //////////////////////////////////////////////////////////////////////////////
@@ -315,21 +313,45 @@ tagsInputConfigProvider
       query.key = '';
     }
     if (query.key !== '' && query.type === 'search') {
-      result = _.filter(MOCKDATA.assets.assets, function(item) {
-        return _.contains(item.name, query.key) || _.contains(item.description, query.key) || _.contains(item.owner, query.key);
+      result = _.filter(MOCKDATA2.resultsList, function(item) {
+        return _.contains(item.name, query.key) || _.contains(item.description, query.key) /*|| _.contains(item.owner, query.key)*/;
       });
     } else if (query.type && query.type === 'search'){
-      result = MOCKDATA.assets.assets;
+      result = MOCKDATA2.resultsList;
     } else if (query.type){
-      result = _.filter(MOCKDATA.assets.assets, function(item){
-        console.log('item[codes]', item[query.type]);
-        
-        return _.some(item[query.type], function(code) {
-          return code.code === query.key;
+      result = _.filter(MOCKDATA2.resultsList, function(item){
+        return _.some(item.attributes, function(code) {
+          if (code.typeDescription === query.type) {
+            return code.codeDescription === query.key;
+          } else {
+            return false;
+          }
         });
       });
     }
     return [200, result, {}];
+  });
+
+  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
+    // grab the url (needed for what the backend will simulate)
+    // parse it into an array
+    var urlSplit = url.split('/');
+    var i = 0;
+    // go until we find our resource
+    while (urlSplit[i++] !== 'component'){}
+    // if there is an id, grab it for our use.
+    var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
+
+    var result = $q.defer();
+    $timeout(function() {
+      if (id && id !== '') {
+        var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
+        result.resolve(temp);
+      } else {
+        result.resolve(MOCKDATA2.componentList);
+      }
+    }, 1000);
+    return [200, result.promise, {}];
   });
   
   ////////////////////////////////////////////////////////////////////////
