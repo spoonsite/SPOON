@@ -102,7 +102,7 @@
   padding: 2px 5px 0px 5px;
 }
 .eval-content-title-content{ 
-  font-size: 18px;
+  font-size: 15px;
 }
 .eval-content-title .popover{
   position: absolute !important;
@@ -128,19 +128,21 @@
   background-color:#E6E8EB;
   color:#FFFFFF;
   border:1px solid #808080;
-  height:50px;
+  height:46px;
   text-align:center; 
   vertical-align:middle;
+  overflow: hidden;
 }
 /*in progress=1*/
 .evalprogbar1
 {
   background-color:#D6EDD6;
   border:1px dashed #5CB85C;
-  height:50px;
+  height:46px;
   color:#5CB85C;
   text-align:center; 
   font-weight:bold;
+  overflow: hidden;
   vertical-align:middle;
 }
 /*halted=2*/
@@ -149,19 +151,21 @@
   background-color:#FFA480;
   color:#000000;
   border:1px solid #808080;
-  height:50px;
+  height:46px;
   text-align:center; 
   vertical-align:middle;
+  overflow: hidden;
 }
 /*not started=3*/
 .evalprogbar3
 {
   background-color:#FFFFFF;
   border:1px solid #808080;
-  height:50px;
+  height:46px;
   text-align:center; 
   vertical-align:middle;
   color:#808080;
+  overflow: hidden;
 }
 /*completed=0*/
 .evalbarlegend0

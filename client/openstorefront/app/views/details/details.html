@@ -6,13 +6,11 @@
         <div id="eval-level-div">
           <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal2"><i class="glyphicon glyphicon-info-sign"></i></a>
           <span style="font-size:12px; color:black; margin-left:5px">Evaluation start: January 1, 2014</span>
-          <div class="leftCol col-md-12" style="padding:0;" >
-            <div ng-repeat="rows in componentEvalProgressBar" class="col-md-3 evalprogbar{{rows.compstatus}}" >
+          <div class="col-md-12" style="padding:0;" >
+            <div ng-repeat="rows in componentEvalProgressBar" class="col-md-3 evalprogbar{{rows.compstatus}}" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Evaluation Level {{rows.level}}<br/> {{rows.desc}}" data-content="<p class='dd' {{rows.fulldesc}}</p>">
               <span class="helpcontent" >
                 <a href="javascript:void(0)" 
-                class="helpcontent"  popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector=""  
-                data-original-title="Evaluation Level {{rows.level}}<br/> {{rows.desc}}"  
-                data-content="<p class='dd' {{rows.fulldesc}}</p>">{{rows.desc}}  </a>
+                class="helpcontent">{{rows.desc}}  </a>
               </span>
             </div>
             <div ng-repeat="rows in componentEvalProgressBar" >

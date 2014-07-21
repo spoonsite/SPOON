@@ -97,7 +97,13 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
 
 .leftCol{
   min-width: 100px;
-  display: table;
+}
+
+.leftCol table {
+  table-layout: fixed;
+}
+.leftCol table td{
+  word-wrap:break-word;
 }
 
 .hideTheExtra{
@@ -120,6 +126,43 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
   margin-top: -10px;
   margin-left: 20px;
 }
+
+
+
+.text-right
+{
+  text-align: right !important;
+  vertical-align: middle;
+}
+.text-center
+{
+  text-align: center !important;
+  vertical-align: middle;
+}
+.text-left
+{
+  text-align: left !important;
+  vertical-align: middle;
+}
+.text-right-bold
+{
+  text-align: right !important;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.text-center-bold
+{
+  text-align: center !important;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.text-left-bold
+{
+  text-align: left !important;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
 
 @media (max-width: 615px) {
   .leftCol{
