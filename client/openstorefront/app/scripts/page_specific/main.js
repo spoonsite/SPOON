@@ -26,7 +26,9 @@ var setupMain = function() {
     if ($('.defaultSearch') !== undefined) {
       setTimeout(function() {
         if ($('.defaultSearch').data('offset', $('.defaultSearch')) &&
-          $('.defaultSearch').data('offset', $('.defaultSearch').offset())) {
+          $('.defaultSearch').data('offset', $('.defaultSearch').offset()) &&
+          $('.defaultSearch').offset().top
+          ) {
             //
           $('.defaultSearch').data('offset', $('.defaultSearch').offset().top + parseInt($('.defaultSearch').css('padding-top'), 10) - 52);
           floatBelowTop($('.defaultSearch'), 768, $(window), $('.top').height());
@@ -52,7 +54,9 @@ var setupMain = function() {
     if ($('.defaultSearch')) {
       setTimeout(function() {
         if ($('.defaultSearch').data('offset', $('.defaultSearch')) &&
-         $('.defaultSearch').data('offset', $('.defaultSearch').offset())) {
+         $('.defaultSearch').data('offset', $('.defaultSearch').offset()) &&
+         $('.defaultSearch').offset().top
+         ) {
             //
           $('.defaultSearch').data('offset', $('.defaultSearch').offset().top + parseInt($('.defaultSearch').css('padding-top'), 10) - 52);
           floatBelowTop($('.defaultSearch'), 768, $(window), $('.top').height());

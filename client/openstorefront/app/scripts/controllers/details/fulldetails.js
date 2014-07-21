@@ -19,16 +19,16 @@
 
 app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', function ($rootScope, $scope, Business, $location) {
 
-  $scope.scoreCard                     = Business.getScoreCard();
-  $scope.externalDepend                = Business.getExternalDepend();
-  $scope.localAssetArtifacts           = Business.getLocalAssetArtifacts();
-  $scope.componentVitals               = Business.getComponentVitals();
-  $scope.pointsContact                 = Business.getPointsContact();
-  $scope.componentSummary              = Business.getComponentSummary();
-  $scope.componentEvalProgressBar      = Business.getComponentEvalProgressBar();
-  $scope.componentEvalProgressBarDates = Business.getComponentEvalProgressBarDates();
-  $scope.componentState                = Business.getComponentState();
-  $scope.resultsComments               = Business.getResultsComments();
+  $scope.scoreCard                     = Business.componentservice.getScoreCard();
+  $scope.externalDepend                = Business.componentservice.getExternalDepend();
+  $scope.localAssetArtifacts           = Business.componentservice.getLocalAssetArtifacts();
+  $scope.componentVitals               = Business.componentservice.getComponentVitals();
+  $scope.pointsContact                 = Business.componentservice.getPointsContact();
+  $scope.componentSummary              = Business.componentservice.getComponentSummary();
+  $scope.componentEvalProgressBar      = Business.componentservice.getComponentEvalProgressBar();
+  $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
+  $scope.componentState                = Business.componentservice.getComponentState();
+  $scope.resultsComments               = Business.componentservice.getResultsComments();
   $scope.watches                       = Business.getWatches();
 
 
@@ -78,7 +78,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * to allow the user to view their watches.
   ***************************************************************/
   $scope.getEvaluationState = function () {
-    if ($scope.details && $scope.details.details && $scope.details.evaluationLevel !== undefined) {      
+    if ($scope.details && $scope.details.details && $scope.details.evaluationLevel !== undefined) {
       var code = $scope.details.details.evaluationLevel[0].code;
       var stateFilter = _.where($scope.filters, {'key': 'evaluationLevel'})[0];
       var item = _.where(stateFilter.collection, {'code': code})[0];
@@ -117,7 +117,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function saves a component's tags
   ***************************************************************/
   $scope.saveTags = function(id, tags){
-    Business.saveTags(id, tags);
+    Business.componentservice.saveTags(id, tags);
     $scope.applyFilters();
   };
 

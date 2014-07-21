@@ -30,11 +30,15 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
     'images/maps-icon.png'
   //
   ];
+
+  $scope.total            = {};
+  Business.componentservice.getComponentDetails().then(function(result) {
+    $scope.total          = result;
+  });
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
   $scope.watches          = Business.getWatches();
-  $scope.total            = Business.getData();
   $scope.feedbackDetails  = [
     //
     {'id': '1', 'date': 'Jan 4, 2014 8:25 am', 'comments': 'This VANTAGE WESS OZONE Widget is really cool', 'author': 'Jim Calhoun'},

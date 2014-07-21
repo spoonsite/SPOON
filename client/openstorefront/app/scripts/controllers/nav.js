@@ -38,8 +38,13 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   if ($rootScope.typeahead) {
     $scope.typeahead  = $rootScope.typeahead;
   } else {
-    $scope.typeahead  = Business.typeahead(Business.getData, 'name');
+    Business.componentservice.getComponentDetails().then(function(result) {
+      Business.typeahead(result, 'name').then(function(value){
+        $scope.typeahead = value;
+      });
+    });
   }
+
 
   //////////////////////////////////////////////////////////////////////////////
   // Event Watches
@@ -115,7 +120,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       'type': 'search',
       'code': $scope.searchKey
     });
-    Business.search('search', $scope.searchKey, true).then(function (key) {
+    Business.componentservice.search('search', $scope.searchKey, true).then(function (key) {
       if($location.path() === '/results') {
         $rootScope.$broadcast('$callSearch');
       } else {
@@ -138,7 +143,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * This function sends the person home
   ***************************************************************/
   $scope.sendHome = function(){ /*jshint unused:false*/
-    Business.search('search', $scope.searchKey);
+    Business.componentservice.search('search', $scope.searchKey);
     $location.path('/');
   };
 

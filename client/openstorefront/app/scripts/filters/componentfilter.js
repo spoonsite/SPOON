@@ -104,9 +104,13 @@ app.filter('componentFilter', function()  {
           // otherwise we return true if it passes some portion of the filter
           return _.some(collection, function(checkedFilter) {
             if (checkedFilter.checked === true) {
-              var check = _.pluck(item[key], 'code');
-              // if the filter is checked, we need to check the item
-              return _.contains(check, checkedFilter.code);
+              return _.some(item.attributes, function(attribute){
+                if (attribute.typeDescription === filter.key) {
+                  return attribute.codeDescription === checkedFilter.code;
+                } else {
+                  return false;
+                }
+              })
             } else {
               // if it isn't checked we default to false
               return false;

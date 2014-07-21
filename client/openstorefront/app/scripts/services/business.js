@@ -17,26 +17,54 @@
 
 /*global isEmpty*/
 
-app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupservice', function(localCache, $http, $q, userservice, lookupservice) { /*jshint unused: false*/
+app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', function(localCache, $http, $q, userservice, lookupservice, componentservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
-  var expireTime = 60 * 1000;
+  var minute = 60 * 1000;
   var business = {};
+
+  /***************************************************************
+  * This function is used to check the localCache for the existance of a result
+  * object that hasn't yet expired
+  * params: name -- The unique identifier for the entry in the local cache (usually a string)
+  * params: expire -- The ammount of time in ms that it will take for the object to expire
+  * returns: result -- The value of the object if it has not yet expired, and null for
+  *                    result objects that are no longer valid
+  ***************************************************************/
+  var checkExpire = function(name, expire) {
+    var result = localCache.get(name, 'object');
+    var cacheTime = null;
+    if (result) {
+      cacheTime = localCache.get(name+'-time', 'date');
+      var timeDiff = new Date() - cacheTime;
+      if (timeDiff < expire) {
+        return result;
+      } else {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  /***************************************************************
+  * We use this function in conjunction with the checkExpire function.
+  * Use this function to save the value in the local cache (it will also save
+  * an expire time that it can use later to check validity of an entry)
+  * params: name -- The unique identifier for the entry in the local cache (usually a string)
+  * params: value -- The value of the data that you will be storing
+  ***************************************************************/
+  var save = function(name, value) {
+    localCache.save(name, value);
+    localCache.save(name+'-time', new Date());
+  }
 
   //Services
   business.userservice = userservice;
   business.lookupservice = lookupservice;
+  business.componentservice = componentservice;
 
 
-  business.doSearch = function(type, key) {
-    var deferred = $q.defer();
-    if (type && key) {
-      $http.get('/openstorefront-web/api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) {
-        deferred.resolve(data);
-      });
-    }
-    return deferred.promise;
-  };
+
   //Shared Services  
   business.getFilters = function() {
     return MOCKDATA.filters;
@@ -44,51 +72,6 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
 
   business.getWatches = function() {
     return MOCKDATA.watchTypes.watches;
-  };
-
-  business.getData = function() {
-    return MOCKDATA.assets.assets;
-  };
-
-  business.getDataByType = function(input) {
-    return _.filter(MOCKDATA.assets.assets, function(item) {
-      return item.type === input;
-    });
-  };
-
-  business.getScoreCard = function() {
-    return MOCKDATA.scoreTable;
-  };
-  business.getExternalDepend = function() {
-    return MOCKDATA.externalDepend;
-  };
-  business.getLocalAssetArtifacts = function() {
-    return MOCKDATA.localAssetArtifacts;
-  };
-
-  business.getComponentVitals = function() {
-    return MOCKDATA.componentVitals;
-  };
-
-  business.getPointsContact = function() {
-    return MOCKDATA.pointsContact;
-  };
-  business.getComponentSummary = function() {
-    return MOCKDATA.componentSummary;
-  };
-  business.getComponentEvalProgressBar = function() {
-    return MOCKDATA.componentEvalProgressBar;
-  };
-
-  business.getComponentState = function() {
-    return MOCKDATA.componentState;
-  };
-  business.getComponentEvalProgressBarDates = function() {
-    return MOCKDATA.componentEvalProgressBarDates;
-  };
-
-  business.getResultsComments = function() {
-    return MOCKDATA.resultsComments;
   };
 
   business.getTagsList = function() {
@@ -103,95 +86,23 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
     return MOCKDATA.watches;
   };
 
-  business.saveTags = function(id, tags) {
-    var a = _.findWhere(MOCKDATA.assets.assets, {'id': id});
-    business.updateTagCloud(tags);
-    if (a === undefined || isEmpty(a)) {
-      a.assetTags = tags;
-    }
-    return true;
-  };
-
   business.setWatches = function(watches) {
     MOCKDATA.watches = watches;
     return true;
   };
 
-  business.search = function(type, key, wait) {
-    var deferred = $q.defer();
-    var searchKey = null;
-    if (!(type && key)) {
-      var reCallRequired = true;
-      searchKey = localCache.get('searchKey', 'object');
-      if (searchKey) {
-        var cacheTime = localCache.get('searchKey-time', 'date');
-        var timeDiff = new Date() - cacheTime;
-        // we take a quarter of a minute before the search expires
-        if (timeDiff < expireTime * 1440)
-        {
-          deferred.resolve(searchKey);
-        } else {
-          deferred.reject('The searchKey has expired.');
-          searchKey = null;
-        }
-      } else {
-        deferred.reject('The search key has not been set. Search has been reset to Default.');
-        searchKey = null;
-      }
-    } else if (!type && key) {
-      localCache.save('searchKey', [{'key': 'search', 'code': key}]);
-      localCache.save('searchKey-time', new Date());
-      searchKey = key;
-      deferred.resolve(searchKey);
-    } else if (type && key) {
-      localCache.save('searchKey', [{'key': type, 'code': key}]);
-      localCache.save('searchKey-time', new Date());
-      searchKey = key;
-      deferred.resolve(searchKey);
-    } else {
-      deferred.reject('There was an unexpected or unknownn error.');
-      searchKey = null;
-    }
-    if (wait) {
-      return deferred.promise;
-    }
-    return searchKey;
-  };
-
   business.landingPage = function(key, value, wait) {
     var deferred = $q.defer();
-    var landingRoute = null;
-    if (!(key && value)) {
-      var reCallRequired = true;
-      landingRoute = localCache.get('landingRoute', 'object');
-      if (landingRoute) {
-        var cacheTime = localCache.get('landingRoute-time', 'date');
-        var timeDiff = new Date() - cacheTime;
-        // we take a quarter of a minute before the search expires
-        if (timeDiff < expireTime * 1440)
-        {
-          deferred.resolve(landingRoute);
-        } else {
-          deferred.reject('The landingRoute has expired.');
-          landingRoute = null;
-        }
-      } else {
-        deferred.reject('The Landing Route has not been set. Landing has been reset to Default.');
-        landingRoute = null;
-      }
-    } else if (!key && value) {
-      localCache.save('landingRoute', {'key': key, 'value': value});
-      localCache.save('landingRoute-time', new Date());
-      landingRoute = key;
-      deferred.resolve(landingRoute);
-    } else if (key && value) {
-      localCache.save('landingRoute', {'key': key, 'value': value});
-      localCache.save('landingRoute-time', new Date());
-      landingRoute = key;
+    var landingRoute = checkExpire('landingRoute', minute * 1440);
+    if (landingRoute) {
       deferred.resolve(landingRoute);
     } else {
-      deferred.reject('There was an unexpected or unknownn error.');
-      landingRoute = null;
+      if (!key && !value) {
+        deferred.reject('You must include a key and/or value');
+      } else
+      save('landingRoute', {'key': key, 'value': value});
+      landingRoute = key;
+      deferred.resolve(landingRoute);
     }
     if (wait) {
       return deferred.promise;
@@ -199,44 +110,33 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
     return landingRoute;
   };
 
-  business.typeahead = function(target, pluckItem) {
-    var collection = null;
-    var result = localCache.get('typeahead', 'object');
+  // This function builds the typeahead options.
+  business.typeahead = function(collection, pluckItem) {
+    var deferred = $q.defer();
+    // lets refresh the typeahead every 15 min until we actually get this
+    // working with a http request upon user interaction.
+    var result = checkExpire('typeahead', minute * 15);
     if (result) {
-      var cacheTime = localCache.get('typeahead-time', 'date');
-      var timeDiff = new Date() - cacheTime;
-      // expire time is set to a day here
-      if (timeDiff < expireTime * 1440) {
-        return result;
-      } else if (target) {
-        collection = target();
+      deferred.resolve(result);
+    } else{
+      if (!collection) {
+        deferred.reject('We broke it!');
+      } else {
+        console.log('We found the typeahead -- collection', collection);
         if (pluckItem !== undefined && pluckItem !== null) {
           collection = _.pluck(collection, pluckItem);
+          if (collection) {
+            save('typeahead', collection);
+            deferred.resolve(collection);
+          } else {
+            deferred.reject('We need a new target in order to refresh the data')
+          }
         }
-      } else {
-        collection = _.pluck(this.getData(), 'name');
       }
-    } else {
-      collection = _.pluck(this.getData(), 'name');
     }
-    if (collection) {
-      localCache.save('typeahead', collection);
-      localCache.save('typeahead-time', new Date());
-      return collection;
-    } else {
-      throw new Error('We need a new target in order to refresh the data');
-    }
+    return deferred.promise;
   };
 
-  business.updateTagCloud = function(tags) {
-    console.log('tags', tags);
-    _.each(tags, function(tag) {
-      if (!_.contains(MOCKDATA.tagsList, tag.text)) {
-        MOCKDATA.tagsList.push(tag.text);
-      }
-    });
-    MOCKDATA.tagsList.sort();
-  };
 
 
 

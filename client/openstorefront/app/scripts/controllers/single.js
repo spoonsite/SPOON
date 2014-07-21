@@ -23,8 +23,10 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   //////////////////////////////////////////////////////////////////////////////
   // Variables
   //////////////////////////////////////////////////////////////////////////////
-  $scope.data              = Business.getData();
-  $scope.data.data         = $scope.data;
+  $scope.data              = {};
+  Business.componentservice.getComponentDetails().then(function(result) {
+    $scope.data.data       = result;
+  });
   $scope.prosConsList      = Business.getProsConsList();
   $scope.details           = {};
   $scope.modal             = {};
@@ -41,21 +43,20 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   ***************************************************************/
   $scope.updateDetails = function(id){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    $timeout(function() {
-      var temp =  _.where($scope.data.data, {'id': parseInt(id)})[0];
-      if (temp)
+    Business.componentservice.getComponentDetails(id).then(function(result){
+      if (result)
       {
-        $scope.details.details = temp;
+        $scope.details.details = result;
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-    }, 1500);
+    })
   };
 
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search
   ***************************************************************/
   var callSearch = function() {
-    Business.search(false, false, true).then(
+    Business.componentservice.search(false, false, true).then(
     //This is the success function on returning a value from the business layer 
     function(id) {
       var query = null;
