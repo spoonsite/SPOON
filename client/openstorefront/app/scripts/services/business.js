@@ -15,8 +15,6 @@
 */
 'use strict';
 
-/*global isEmpty*/
-
 app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', function(localCache, $http, $q, userservice, lookupservice, componentservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
@@ -56,7 +54,7 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
   var save = function(name, value) {
     localCache.save(name, value);
     localCache.save(name+'-time', new Date());
-  }
+  };
 
   //Services
   business.userservice = userservice;
@@ -99,10 +97,11 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
     } else {
       if (!key && !value) {
         deferred.reject('You must include a key and/or value');
-      } else
-      save('landingRoute', {'key': key, 'value': value});
-      landingRoute = key;
-      deferred.resolve(landingRoute);
+      } else{
+        save('landingRoute', {'key': key, 'value': value});
+        landingRoute = key;
+        deferred.resolve(landingRoute);
+      }
     }
     if (wait) {
       return deferred.promise;
@@ -129,7 +128,7 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
             save('typeahead', collection);
             deferred.resolve(collection);
           } else {
-            deferred.reject('We need a new target in order to refresh the data')
+            deferred.reject('We need a new target in order to refresh the data');
           }
         }
       }

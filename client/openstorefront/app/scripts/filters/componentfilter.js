@@ -105,12 +105,12 @@ app.filter('componentFilter', function()  {
           return _.some(collection, function(checkedFilter) {
             if (checkedFilter.checked === true) {
               return _.some(item.attributes, function(attribute){
-                if (attribute.typeDescription === filter.key) {
+                if (attribute.typeDescription === key) {
                   return attribute.codeDescription === checkedFilter.code;
                 } else {
                   return false;
                 }
-              })
+              });
             } else {
               // if it isn't checked we default to false
               return false;

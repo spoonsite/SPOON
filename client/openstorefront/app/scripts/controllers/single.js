@@ -49,7 +49,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
         $scope.details.details = result;
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-    })
+    });
   };
 
   /***************************************************************

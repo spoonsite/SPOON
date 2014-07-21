@@ -18,6 +18,7 @@
 
 
 var MOCKDATA2 = {};
+/*jshint quotmark:double */
 MOCKDATA2.componentList = [ {
   "componentId" : 67,
   "guid" : "3a57b4c2-a90b-4098-8c56-916618afd8ee",
@@ -7651,6 +7652,9 @@ MOCKDATA2.componentList = [ {
   } ],
   "dependencies" : [ ]
 } ];
+
+
+/*jshint quotmark:single */
 
 MOCKDATA2.resultsList = [ {
   'componentId' : 67,

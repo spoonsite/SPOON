@@ -57,7 +57,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   var save = function(name, value) {
     localCache.save(name, value);
     localCache.save(name+'-time', new Date());
-  }
+  };
 
 
   componentservice.getComponentDetails = function(id) {
@@ -169,7 +169,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   };
   componentservice.saveTags = function(id, tags) {
     var a = _.findWhere(MOCKDATA.assets.assets, {'id': id});
-    Business.componentservice.updateTagCloud(tags);
+    componentservice.updateTagCloud(tags);
     if (a === undefined || isEmpty(a)) {
       a.assetTags = tags;
     }

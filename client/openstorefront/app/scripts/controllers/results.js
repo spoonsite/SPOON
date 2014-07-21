@@ -207,9 +207,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           _.each($scope.data.data, function(item){
             if (item.description !== null && item.description !== undefined && item.description !== '') {
               var desc = item.description.match(/^(.*?)[.?!]\s/);
-              item.shortdescription = (desc && desc[1])? desc[1] + '.': "This is a temporary short description";
+              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
             } else {
-              item.shortdescription = "This is a temporary short description";
+              item.shortdescription = 'This is a temporary short description';
             }
           });
           $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
@@ -458,7 +458,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.details.details = result;
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-    })
+    });
     $scope.showDetails = true;
   };
 
