@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.web.tool;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,20 +31,33 @@ public class OldAsset
 	implements Serializable
 {
 	private long id;
-	private int totalComments;
+	private Date editedDate;
+	private String description;
+	private String approvalStatus;
+	private List<String> techPocs = new ArrayList<>();
+	private Date createDate;
+	private String versionName;
+	private OldAssetUser createdBy;
+	private String uuid;
+	private List<OldAssetUser> owners = new ArrayList<>();
+	private List<OldAssetScreenshot> screenShots = new ArrayList<>();
+	private String imageLargeUrl;
+	private String imageSmallUrl;
 	private OldAssetState state;
-	private String author;
-	private BigDecimal avgRate;
+	private int totalComments;
 	private String organization;
 	private String title;
-	private Date releaseDate;
-	private String description;
-	private int totalVotes;
-	private String approvalStatus;
+	private String requirements;
+	private OldAssetActivity lastActivity;
+	private String releaseDate;
+	private OldAssetUser editedBy;
 	private OldAssetType types;
+	private String dependencies;
+	private List<OldAssetDocs> docUrls = new ArrayList<>();
+	private Date approvalDate;
 	private List<OldAssetMetaData> customFields = new ArrayList<>();
-	private List<OldAssetCategory> categories = new ArrayList<>();
-	private String uuid;
+	private List<OldAssetCategory> categories = new ArrayList<>();	
+	
 	
 	public OldAsset()
 	{
@@ -61,14 +73,124 @@ public class OldAsset
 		this.id = id;
 	}
 
-	public int getTotalComments()
+	public Date getEditedDate()
 	{
-		return totalComments;
+		return editedDate;
 	}
 
-	public void setTotalComments(int totalComments)
+	public void setEditedDate(Date editedDate)
 	{
-		this.totalComments = totalComments;
+		this.editedDate = editedDate;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public String getApprovalStatus()
+	{
+		return approvalStatus;
+	}
+
+	public void setApprovalStatus(String approvalStatus)
+	{
+		this.approvalStatus = approvalStatus;
+	}
+
+	public List<String> getTechPocs()
+	{
+		return techPocs;
+	}
+
+	public void setTechPocs(List<String> techPocs)
+	{
+		this.techPocs = techPocs;
+	}
+
+	public Date getCreateDate()
+	{
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate)
+	{
+		this.createDate = createDate;
+	}
+
+	public String getVersionName()
+	{
+		return versionName;
+	}
+
+	public void setVersionName(String versionName)
+	{
+		this.versionName = versionName;
+	}
+
+	public OldAssetUser getCreatedBy()
+	{
+		return createdBy;
+	}
+
+	public void setCreatedBy(OldAssetUser createdBy)
+	{
+		this.createdBy = createdBy;
+	}
+
+	public String getUuid()
+	{
+		return uuid;
+	}
+
+	public void setUuid(String uuid)
+	{
+		this.uuid = uuid;
+	}
+
+	public List<OldAssetUser> getOwners()
+	{
+		return owners;
+	}
+
+	public void setOwners(List<OldAssetUser> owners)
+	{
+		this.owners = owners;
+	}
+
+	public List<OldAssetScreenshot> getScreenShots()
+	{
+		return screenShots;
+	}
+
+	public void setScreenShots(List<OldAssetScreenshot> screenShots)
+	{
+		this.screenShots = screenShots;
+	}
+
+	public String getImageLargeUrl()
+	{
+		return imageLargeUrl;
+	}
+
+	public void setImageLargeUrl(String imageLargeUrl)
+	{
+		this.imageLargeUrl = imageLargeUrl;
+	}
+
+	public String getImageSmallUrl()
+	{
+		return imageSmallUrl;
+	}
+
+	public void setImageSmallUrl(String imageSmallUrl)
+	{
+		this.imageSmallUrl = imageSmallUrl;
 	}
 
 	public OldAssetState getState()
@@ -81,24 +203,14 @@ public class OldAsset
 		this.state = state;
 	}
 
-	public String getAuthor()
+	public int getTotalComments()
 	{
-		return author;
+		return totalComments;
 	}
 
-	public void setAuthor(String author)
+	public void setTotalComments(int totalComments)
 	{
-		this.author = author;
-	}
-
-	public BigDecimal getAvgRate()
-	{
-		return avgRate;
-	}
-
-	public void setAvgRate(BigDecimal avgRate)
-	{
-		this.avgRate = avgRate;
+		this.totalComments = totalComments;
 	}
 
 	public String getOrganization()
@@ -121,44 +233,44 @@ public class OldAsset
 		this.title = title;
 	}
 
-	public Date getReleaseDate()
+	public String getRequirements()
+	{
+		return requirements;
+	}
+
+	public void setRequirements(String requirements)
+	{
+		this.requirements = requirements;
+	}
+
+	public OldAssetActivity getLastActivity()
+	{
+		return lastActivity;
+	}
+
+	public void setLastActivity(OldAssetActivity lastActivity)
+	{
+		this.lastActivity = lastActivity;
+	}
+
+	public String getReleaseDate()
 	{
 		return releaseDate;
 	}
 
-	public void setReleaseDate(Date releaseDate)
+	public void setReleaseDate(String releaseDate)
 	{
 		this.releaseDate = releaseDate;
 	}
 
-	public String getDescription()
+	public OldAssetUser getEditedBy()
 	{
-		return description;
+		return editedBy;
 	}
 
-	public void setDescription(String description)
+	public void setEditedBy(OldAssetUser editedBy)
 	{
-		this.description = description;
-	}
-
-	public int getTotalVotes()
-	{
-		return totalVotes;
-	}
-
-	public void setTotalVotes(int totalVotes)
-	{
-		this.totalVotes = totalVotes;
-	}
-
-	public String getApprovalStatus()
-	{
-		return approvalStatus;
-	}
-
-	public void setApprovalStatus(String approvalStatus)
-	{
-		this.approvalStatus = approvalStatus;
+		this.editedBy = editedBy;
 	}
 
 	public OldAssetType getTypes()
@@ -169,6 +281,36 @@ public class OldAsset
 	public void setTypes(OldAssetType types)
 	{
 		this.types = types;
+	}
+
+	public String getDependencies()
+	{
+		return dependencies;
+	}
+
+	public void setDependencies(String dependencies)
+	{
+		this.dependencies = dependencies;
+	}
+
+	public List<OldAssetDocs> getDocUrls()
+	{
+		return docUrls;
+	}
+
+	public void setDocUrls(List<OldAssetDocs> docUrls)
+	{
+		this.docUrls = docUrls;
+	}
+
+	public Date getApprovalDate()
+	{
+		return approvalDate;
+	}
+
+	public void setApprovalDate(Date approvalDate)
+	{
+		this.approvalDate = approvalDate;
 	}
 
 	public List<OldAssetMetaData> getCustomFields()
@@ -190,19 +332,5 @@ public class OldAsset
 	{
 		this.categories = categories;
 	}
-
-	public String getUuid()
-	{
-		return uuid;
-	}
-
-	public void setUuid(String uuid)
-	{
-		this.uuid = uuid;
-	}
-	
-	
-	
-	
 	
 }

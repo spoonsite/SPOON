@@ -17,7 +17,6 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 
@@ -28,33 +27,26 @@ import javax.validation.constraints.NotNull;
 public class UserWatchView
 {
 	@NotNull
-	@ParamTypeDescription("NUMBER")
 	private long watchId;
 	
 	@NotNull
-	@ParamTypeDescription("NUMBER")		
 	private Date lastUpdateDts;
 	
 	@NotNull
-	@ParamTypeDescription("NUMBER")
 	private Date lastViewDts;
 	
-	@NotNull
-	@ParamTypeDescription("NUMBER")			
+	@NotNull	
 	private Date createDts;
 	
 	@NotNull
-	@ParamTypeDescription("TEXT")			
 	private String componentName;
 	
 	@NotNull
 	@ConsumeField
-	@ParamTypeDescription("NUMBER")
 	private long componentId;
 
 	@NotNull
 	@ConsumeField
-	@ParamTypeDescription("BOOLEAN (true | false)")			
 	private boolean notifyFlag;
 	
 	public UserWatchView()

@@ -51,7 +51,7 @@ limitations under the License.
 					<a href="#API.action?API&resourceClass=UserProfile" onclick="$('#apidocId').load('API.action?API&resourceClass=UserProfile');">User Profile</a>
 				</li>
 				<li>
-					<a href="component.html">Component</a>
+					<a href="#API.action?API&resourceClass=Component">Component</a>
 				</li>
 				<li>
 					<a href="attributeTypes.html">Attributes Types</a>
