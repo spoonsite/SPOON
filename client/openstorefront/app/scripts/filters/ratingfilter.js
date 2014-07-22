@@ -19,14 +19,19 @@
 app.filter('ratingFilter', function () {
   return function (input, rating) {
     // first we make sure that the rating is a possible rating...
-    if (!isNaN(rating) && (rating >= 0 && rating <= 5)) {
+    if (!isNaN(rating) && (rating > 0 && rating <= 5)) {
       // then we start out with nothing
       var out = null;
       // and add everything to the result that passes the filter
       out = _.filter(input, function(entry) {
         // it passes the filter if the average rating for that component
         // is equal to or greater than the given rating.
-        return entry.stats.averageRating >= rating;
+        if (entry.stats && entry.stats.averageRating) {
+          return entry.stats.averageRating >= rating;
+        } else {
+          return false;
+        }
+
       });
       return out;
     } else {
