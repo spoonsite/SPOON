@@ -42,7 +42,8 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   background-repeat: repeat-x;
-  border-top: 1px lightgray solid;
+  border-top: 1px darkgray solid;
+  border-right: 1px solid darkgray;
   text-align: center;
   position: fixed;
   bottom: 0;

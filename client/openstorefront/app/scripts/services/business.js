@@ -15,7 +15,7 @@
 */
 'use strict';
 
-app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', function(localCache, $http, $q, userservice, lookupservice, componentservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -68,8 +68,8 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
     return MOCKDATA.filters;
   };
 
-  business.getWatches = function() {
-    return MOCKDATA.watchTypes.watches;
+  business.updateCache = function(name, item) {
+    save(name, item);
   };
 
   business.getTagsList = function() {
@@ -86,6 +86,7 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
 
   business.setWatches = function(watches) {
     MOCKDATA.watches = watches;
+    $rootScope.$broadcast('$updatedWatches');
     return true;
   };
 

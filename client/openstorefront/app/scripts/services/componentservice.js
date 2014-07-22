@@ -168,10 +168,12 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return MOCKDATA.resultsComments;
   };
   componentservice.saveTags = function(id, tags) {
-    var a = _.findWhere(MOCKDATA2.componentList, {'id': id});
+    var a = _.find(MOCKDATA2.componentList, {'componentId': id});
     componentservice.updateTagCloud(tags);
-    if (a === undefined || isEmpty(a)) {
-      a.assetTags = tags;
+    if (a) {
+      console.log('tags', tags);
+      
+      a.tags = tags;
     }
     return true;
   };

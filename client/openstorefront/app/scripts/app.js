@@ -142,6 +142,9 @@ tagsInputConfigProvider
   $rootScope.Current    = null;
 
 
+  $rootScope.$on('$triggerEvent', function(event, newEvent, infoArray){
+    $rootScope.$broadcast(newEvent, infoArray);
+  });
 
 
   //////////////////////////////////////////////////////////////////////////////

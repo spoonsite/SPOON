@@ -27,7 +27,7 @@ var setupMain = function() {
       setTimeout(function() {
         if ($('.defaultSearch').data('offset', $('.defaultSearch')) &&
           $('.defaultSearch').data('offset', $('.defaultSearch').offset()) &&
-          $('.defaultSearch').offset() && 
+          $('.defaultSearch').offset() &&
           $('.defaultSearch').offset().top
           ) {
             //
@@ -56,7 +56,7 @@ var setupMain = function() {
       setTimeout(function() {
         if ($('.defaultSearch').data('offset', $('.defaultSearch')) &&
           $('.defaultSearch').data('offset', $('.defaultSearch').offset()) &&
-          $('.defaultSearch').offset() && 
+          $('.defaultSearch').offset() &&
           $('.defaultSearch').offset().top
           ) {
             //

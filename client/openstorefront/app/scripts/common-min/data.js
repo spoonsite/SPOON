@@ -479,6 +479,7 @@ MOCKDATA.scoreTable = [
 MOCKDATA.tagsList = [
   //
   'Application',
+  'Data Exchange',
   'Data Transformation',
   'Data Validation',
   'Development Tool',
@@ -487,12 +488,15 @@ MOCKDATA.tagsList = [
   'Image Search',
   'Image Mapping',
   'Java',
+  'Mapping',
   'Planning and Direction',
+  'Reference',
   'Reference Document',
   'Reference Documentation',
   'Software Libraries',
   'Software Library',
   'Visualization',
+  'UDOP',
   'Widget',
   'Widgets',
   '#architecture',
@@ -535,31 +539,31 @@ MOCKDATA.prosConsList = {
 
 MOCKDATA.watches = [
 {
-  'id': 72,
+  'componentId': 67,
   'watched': true
 },
 {
-  'id': 1,
+  'componentId': 1,
   'watched': true
 },
 {
-  'id': 45,
+  'componentId': 45,
   'watched': true
 },
 {
-  'id': 99,
+  'componentId': 99,
   'watched': false
 },
 {
-  'id': 66,
+  'componentId': 66,
   'watched': true
 },
 {
-  'id': 52,
+  'componentId': 52,
   'watched': true
 },
 {
-  'id': 4,
+  'componentId': 4,
   'watched': true
 }
 ];

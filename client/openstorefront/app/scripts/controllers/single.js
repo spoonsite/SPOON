@@ -34,6 +34,20 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   $scope.details.details   = null;
   $scope.modal.isLanding   = false;
   $scope.showDetails       = false;
+  $scope.watches           = Business.getWatches();
+
+
+
+  /***************************************************************
+  * Event to trigger an update of the details that are shown
+  ***************************************************************/
+  $scope.$on('$detailsUpdated', function(event, id) {/*jshint unused: false*/
+    if ($scope.details.details && $scope.details.details.componentId === id) {
+      $timeout(function() {
+        $scope.updateDetails($scope.details.details.componentId);
+      });
+    }
+  });
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -49,6 +63,12 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       if (result)
       {
         $scope.details.details = result;
+        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
+        console.log('found', found);
+
+        if (found) {
+          $scope.details.details.watched = true;
+        }
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.showDetails = true;

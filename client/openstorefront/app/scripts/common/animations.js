@@ -136,7 +136,7 @@ var setPageHeight = function(element, offset) {
 * params: offset -- an integer value detailing the offset from the top
 **********************/
 var setPageMargin = function (element, showing) {
-  var windowHeight = $(window).height() - 40;
+  var windowHeight = $(window).height() - 52;
 
   // console.log('window', $(window).height());
   // console.log('offset', windowHeight);

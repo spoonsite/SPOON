@@ -15,9 +15,9 @@
 */
 'use strict';
 
-/*global isEmpty*/
+/*global MOCKDATA2*/
 
-app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', function ($rootScope, $scope, Business, $location) {
+app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', function ($rootScope, $scope, Business, $location) { /*jshint unused:false*/
 
   $scope.scoreCard                     = Business.componentservice.getScoreCard();
   $scope.externalDepend                = Business.componentservice.getExternalDepend();
@@ -105,13 +105,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.addToWatches = function(id){
-    var a = _.findWhere($scope.watches, {'componentId': id});
-    if (a === undefined  || isEmpty(a)) {
-      $scope.watches.push({'id': id, 'watched': true});
+    var a = _.find($scope.watches, {'componentId': id});
+    
+    if (!a) {
+      $scope.watches.push({'componentId': id, 'watched': true});
     }
 
     Business.setWatches($scope.watches);
-    _.where($scope.data.data, {'componentId': id})[0].watched = true;
+    $scope.details.details.watched = true;
+    _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = true;
+    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
   /***************************************************************
   * This function saves a component's tags
@@ -125,22 +128,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function removes a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.removeFromWatches = function(id){
-    var a = _.findWhere($scope.watches, {'componentId': id});
+    var a = _.find($scope.watches, {'componentId': id});
 
-    if (a !== undefined  && !isEmpty(a)) {
+    if (a) {
       $scope.watches.splice(_.indexOf($scope.watches, a), 1);
     }
 
     Business.setWatches($scope.watches);
-    _.where($scope.data.data, {'componentId': id})[0].watched = false;
-  };
-
-  /***************************************************************
-  * This function does the route redirection to the user profile path in order
-  * to allow the user to view their watches.
-  ***************************************************************/
-  $scope.viewWatches = function () {
-    $location.path('/userprofile');
+    $scope.details.details.watched = false;
+    _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
+    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
 
   
