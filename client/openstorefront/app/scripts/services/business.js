@@ -70,7 +70,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   business.updateCache = function(name, item) {
     save(name, item);
-  }
+  };
 
   business.getTagsList = function() {
     return MOCKDATA.tagsList;

@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/*global isEmpty, jQuery*/
+/*global MOCKDATA2, jQuery*/
 
 app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function($scope, Business, $rootScope) {
 
@@ -59,7 +59,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
   };
 
 
-  $scope.$on('$updatedWatches', function(event){
+  $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
     $scope.watches = Business.getWatches();
     resetData();
   });

@@ -15,9 +15,9 @@
 */
 'use strict';
 
-/*global isEmpty*/
+/*global MOCKDATA2*/
 
-app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', function ($rootScope, $scope, Business, $location) {
+app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', function ($rootScope, $scope, Business, $location) { /*jshint unused:false*/
 
   $scope.scoreCard                     = Business.componentservice.getScoreCard();
   $scope.externalDepend                = Business.componentservice.getExternalDepend();

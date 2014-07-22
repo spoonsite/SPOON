@@ -567,7 +567,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     if ($scope.details.details && $scope.details.details.componentId === id) {
       $timeout(function() {
         $scope.updateDetails($scope.details.details.componentId);
-      })
+      });
     }
   });
 

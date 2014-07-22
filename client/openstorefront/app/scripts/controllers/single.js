@@ -45,7 +45,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     if ($scope.details.details && $scope.details.details.componentId === id) {
       $timeout(function() {
         $scope.updateDetails($scope.details.details.componentId);
-      })
+      });
     }
   });
 
