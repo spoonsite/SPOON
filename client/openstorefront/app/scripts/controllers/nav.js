@@ -115,12 +115,16 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   ***************************************************************/
   $scope.goToSearch = function(){ /*jshint unused:false*/
     $scope.closeNavbarItem('searchNavButton');
-    $rootScope.searchKey = $scope.searchKey;
+    var key = 'All';
+    if ($scope.searchKey) {
+      key = $scope.searchKey;
+      $rootScope.searchKey = $scope.searchKey;
+    }
     $location.search({
       'type': 'search',
-      'code': $scope.searchKey
+      'code': key
     });
-    Business.componentservice.search('search', $scope.searchKey, true).then(function (key) {
+    Business.componentservice.search('search', key, true).then(function (key) {
       if($location.path() === '/results') {
         $rootScope.$broadcast('$callSearch');
       } else {

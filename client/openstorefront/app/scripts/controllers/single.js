@@ -102,6 +102,6 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     //
   };
 
-  
   callSearch();
+
 }]);

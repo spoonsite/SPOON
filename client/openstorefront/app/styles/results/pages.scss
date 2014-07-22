@@ -25,6 +25,10 @@
   overflow:auto;
 }
 
+.page1:after, .page1:before{
+  overflow-y:scroll;
+}
+
 .page1Content{
   /*border: 1px orange solid;*/
   width: 100%;

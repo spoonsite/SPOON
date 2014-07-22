@@ -45,7 +45,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.showDetails        = false;
   $scope.orderProp          = '';
   $scope.query              = '';
-  $scope.noDataMessage      = 'There are no results for your search -- Or -- You have filtered out all of the results.';
+  $scope.noDataMessage      = '<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p>';
   $scope.typeahead          = null;
   $scope.searchGroup        = null;
   $scope.searchKey          = null;

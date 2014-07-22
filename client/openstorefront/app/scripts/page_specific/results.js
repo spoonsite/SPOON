@@ -62,7 +62,7 @@ var resizeAnimations = function () {
   setPageHeight(details, 52);
 
   $('#filtersButton').data('offset', '0');
-  floatBelowTop($('#filtersButton'), 3000, $('.page1'), 52);
+  floatBelowTop($('#filtersButton'), 3000, $('.page1'), 54);
   moveButtons($('#showPageRight'), $('.page1'));
   moveButtons($('#showPageLeft'), $('.page2'));
 
@@ -116,7 +116,7 @@ var setupResults = function(){
   * scroll action on the different pages.
   *********************/
   $('.page1').scroll(function() {
-    floatBelowTop($('#filtersButton'), 3000, $('.page1'), 52);
+    floatBelowTop($('#filtersButton'), 3000, $('.page1'), 54);
     moveButtons($('#showPageRight'), this);
   });
 
