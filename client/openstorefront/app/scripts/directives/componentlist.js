@@ -70,10 +70,12 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
       * to adjust the layout
       ***************************************************************/
       scope.$watch('data', function() {
-        if(scope.data.length > 3) {
-          scope.hasMoreThan3 = true;
+        if (scope.data) {
+          if(scope.data.length > 3) {
+            scope.hasMoreThan3 = true;
+          }
+          scope.addMore();
         }
-        scope.addMore();
       });
 
 
@@ -85,7 +87,12 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
         Business.componentservice.getComponentDetails().then(function(result){
           scope.data = result;
           _.each(scope.data, function(item){
-            item.shortdescription = item.description.match(/^(.*?)[.?!]\s/)[1] + '.';
+            if (item.description !== null && item.description !== undefined && item.description !== '') {
+              var desc = item.description.match(/^(.*?)[.?!]\s/);
+              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+            } else {
+              item.shortdescription = 'This is a temporary short description';
+            }
           });
         });
       }

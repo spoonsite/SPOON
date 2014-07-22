@@ -448,18 +448,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function updates the details when a component title is clicked on
   ***************************************************************/
   $scope.updateDetails = function(id){
+    $('.page2').scrollTop(0);
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     if (!openClick) {
       buttonOpen();
     }
+    $scope.showDetails = false;
     Business.componentservice.getComponentDetails(id).then(function(result){
       if (result)
       {
         $scope.details.details = result;
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+      $scope.showDetails = true;
     });
-    $scope.showDetails = true;
   };
 
   /***************************************************************
@@ -498,8 +500,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // the order DOES matter here.
       $filter('orderBy')
         //
-        // ($filter('ratingFilter')
-          // ($filter('tagFilter')
+        ($filter('ratingFilter')
+          ($filter('tagFilter')
             ($filter('componentFilter')
               ($filter('filter')
               //filter by the string
@@ -507,9 +509,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             // filter the data by the filters
             $scope.filters),
           // filter the data by the tags
-          // $scope.tagsFilter),
+          $scope.tagsFilter),
         // filter the data by the ratings
-        // $scope.ratingsFilter),
+        $scope.ratingsFilter),
       // Then order-by the orderProp
       $scope.orderProp);
 

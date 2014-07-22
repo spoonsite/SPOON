@@ -40,7 +40,7 @@ angular.module('openstorefrontApp')
       // If the content that the loader is masking is very tall, we need 
       // this line to make sure that the loading spinner doesn't disapear
       // belowe the cuttoff of the page.
-      element.find('.loader-holder').css('max-height', $(window).height());
+      // element.find('.loader-holder').css('max-height', $(window).height());
     }
   };
 });

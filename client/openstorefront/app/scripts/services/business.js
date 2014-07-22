@@ -121,7 +121,6 @@ app.factory('business', ['localCache', '$http', '$q', 'userservice', 'lookupserv
       if (!collection) {
         deferred.reject('We broke it!');
       } else {
-        console.log('We found the typeahead -- collection', collection);
         if (pluckItem !== undefined && pluckItem !== null) {
           collection = _.pluck(collection, pluckItem);
           if (collection) {

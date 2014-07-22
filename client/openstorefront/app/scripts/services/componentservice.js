@@ -16,7 +16,7 @@
 
 'use strict';
 
-/*global isEmpty*/
+/*global isEmpty, MOCKDATA2*/
 
 app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q, localCache) {
   
@@ -168,7 +168,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return MOCKDATA.resultsComments;
   };
   componentservice.saveTags = function(id, tags) {
-    var a = _.findWhere(MOCKDATA.assets.assets, {'id': id});
+    var a = _.findWhere(MOCKDATA2.componentList, {'id': id});
     componentservice.updateTagCloud(tags);
     if (a === undefined || isEmpty(a)) {
       a.assetTags = tags;

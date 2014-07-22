@@ -33,6 +33,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   $scope.single            = true;
   $scope.details.details   = null;
   $scope.modal.isLanding   = false;
+  $scope.showDetails       = false;
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -43,12 +44,14 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   ***************************************************************/
   $scope.updateDetails = function(id){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
+    $scope.showDetails = false;
     Business.componentservice.getComponentDetails(id).then(function(result){
       if (result)
       {
         $scope.details.details = result;
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+      $scope.showDetails = true;
     });
   };
 

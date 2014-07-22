@@ -230,6 +230,14 @@ small button {
 }
 
 
+.popover {
+  min-width: 400px;
+}
+
+.popover .popover-content{
+  width: 400px;
+}
+
 
 /***************************************************************
 * Media queries to handle responsiveness for the site globally.

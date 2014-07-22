@@ -1,5 +1,10 @@
 <div class="page2Styles">
-  <div ng-include="'views/details/fulldetails.html'">
+  <loader trigger="fullDetailsLoader"></loader>
+  <div ng-show="showDetails">
+    <div ng-include="'views/details/fulldetails.html'">
+    </div>
+  </div>
+  <div ng-show="!showDetails">
   </div>
 </div>
 
