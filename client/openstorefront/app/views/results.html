@@ -53,8 +53,9 @@ limitations under the License.
         <div ng-class="$last? 'lastFilter': ''" class="panel panel-default" class="filterTableDiv" ng-repeat="filter in filters">
           <table class="table">
             <tr ng-class="filters.length > 2? 'panel-heading': ''">
-              <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" title="{{filter.name}}">
-                <span class="btn btn-link " data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}" style="width: 135px; padding-left: 0px; float:left;">
+              <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" data-container="body" title="{{filter.name}}">
+                <span class="btn btn-link collapsed" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;">
+                <!-- <span class="btn btn-link" ng-class="$first? '':'collapsed'" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;"> -->
                   <span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i>
                   </span>
                   <span class="overflow-pair-left" style="text-align: left;">{{filter.name}}</span>
@@ -63,7 +64,8 @@ limitations under the License.
                 <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
               </th>
             </tr>
-            <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}">
+            <tbody ng-class="filters.length > 2? 'panel-collapse collapse':''" id="collapse{{$index}}">
+            <!-- <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}"> -->
               <tr  class="filtersTr" data-ng-repeat="type in filter.collection" >
                 <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
                   <div class="checkbox filterCheckbox">
@@ -89,7 +91,7 @@ limitations under the License.
     <loader trigger="mainLoader"></loader>
     
     <!-- Placeholder for the pagination controls -->
-    <div class="pagination row row-centered">
+    <div ng-show="moreThan200" class="pagination row row-centered">
       <div style="text-align: center;">
         <span class="glyphicon glyphicon-fast-backward imitateLink" ng-click="pageNumber=1">&nbsp;</span>
         <span class="glyphicon glyphicon-chevron-left imitateLink" ng-click="pageNumber=pageNumber-1">&nbsp;</span>

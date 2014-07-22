@@ -58,7 +58,7 @@ var resizeAnimations = function () {
   setRightOpenWidth(details);
   setLeftOpenWidth(results);
   setPageHeight(filters, 52);
-  setPageHeight(results, 40);
+  setPageHeight(results, 52);
   setPageHeight(details, 52);
 
   $('#filtersButton').data('offset', '0');

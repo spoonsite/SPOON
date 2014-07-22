@@ -24,7 +24,7 @@ limitations under the License.
         </div>
         <div class="panel-body">
           <div class="col-sm-4" ng-repeat="item in data" style="padding-left:60px;padding-top:50px">
-            <div id="div{{item.id}}" >
+            <div id="div{{item.componentId}}" >
               <div style="height: 100%">
                 <img ng-src="{{item.src}}" width="96" height="96">
                 <div style="margin-left: 10px;">
@@ -36,7 +36,7 @@ limitations under the License.
                 </div>
                 <div style="font-size: 12px; color: grey;">Updated: {{item.updateDate}}
                 </div>
-                <div style="font-size: 12px; color: red; "><label style="cursor:pointer" ng-click="removeFromWatches(item.id)">remove</label>
+                <div style="font-size: 12px; color: red;" ng-click="removeFromWatches(item.componentId)"><p style="cursor:pointer">remove</p>
                 </div>
               </div>
             </div>

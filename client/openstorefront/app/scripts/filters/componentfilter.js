@@ -85,10 +85,10 @@ app.filter('componentFilter', function()  {
     var none = _.every(collection, function(item) {
       return (item.checked === false);
     });
-    var all = _.every(collection, function(item) {
-      return (item.checked === true);
-    });
-    return (none || all);
+    // var all = _.every(collection, function(item) {
+    //   return (item.checked === true);
+    // });
+    return none;//(none || all);
   };
 
   return function (input, filters) {

@@ -43,3 +43,33 @@
   background: #eeeeee;
   margin-bottom: -1px;
 }
+
+.filterTable table th:hover {
+  background: #cccccc;
+  margin-bottom: -1px;
+}
+
+.filterTable  .table th .collapsed .fa-caret-down{
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  transform: rotate(0deg);
+  -webkit-transition-duration: .4s;
+  -moz-transition-duration: .4s;
+  -o-transition-duration: .4s;
+  transition-duration: .4s;
+
+}
+
+.filterTable .table th .fa-caret-down{
+  -webkit-transform: rotate(-180deg);
+  -moz-transform: rotate(-180deg);
+  -o-transform: rotate(-180deg);
+  -ms-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+  -webkit-transition-duration: .4s;
+  -moz-transition-duration: .4s;
+  -o-transition-duration: .4s;
+  transition-duration: .4s;
+}

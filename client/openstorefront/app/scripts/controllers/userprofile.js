@@ -34,6 +34,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
   $scope.total            = {};
   Business.componentservice.getComponentDetails().then(function(result) {
     $scope.total          = result;
+    resetData();
   });
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
@@ -56,6 +57,12 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
     //
     ]
   };
+
+
+  $scope.$on('$updatedWatches', function(event){
+    $scope.watches = Business.getWatches();
+    resetData();
+  });
 
   /***************************************************************
   * This function grabs the userCodes
@@ -92,7 +99,8 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
   var resetData = function() {
     $scope.data = [];
     _.each($scope.watches, function(watch) {
-      _.each(_.where($scope.total, {'id': watch.id}), function(component) {
+      var component = _.find($scope.total, {'componentId': watch.componentId});
+      if (component) {
         if (immageHack > 2) {
           immageHack = 0;
         }
@@ -100,10 +108,9 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
         immageHack = immageHack + 1;
         component.watched = watch.watched;
         $scope.data.push(component);
-      });
+      }
     });
   };
-  resetData();
 
   /***************************************************************
   * Load the User profile 
@@ -167,17 +174,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
   * when we get a database to work with.
   * params: id -- the id of the component we want to take off our watch list.
   ***************************************************************/
-  $scope.removeFromWatches = function(id) {
-    var a = _.findWhere($scope.watches, {'id': id});
+  $scope.removeFromWatches = function(id){
+    var a = _.find($scope.watches, {'componentId': id});
 
-    if (a !== undefined && !isEmpty(a)) {
+    if (a) {
       $scope.watches.splice(_.indexOf($scope.watches, a), 1);
     }
 
-    $scope.showWatchButton = true;
     Business.setWatches($scope.watches);
-    resetData();
+    $scope.$emit('$triggerEvent', '$detailsUpdated', id);
+    _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
+    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
-
 }]);
 

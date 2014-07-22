@@ -34,6 +34,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.tagsList           = Business.getTagsList();
   $scope.tagsList.sort();
   $scope.prosConsList       = Business.getProsConsList();
+  $scope.watches            = Business.getWatches();
   $scope.lastUsed           = new Date();
   $scope.searchCode         = null;
   $scope.searchTitle        = null;
@@ -52,7 +53,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.filters            = null;
   $scope.resetFilters       = null;
   $scope.total              = null;
-  $scope.watches            = null;
   $scope.ratingsFilter      = 0;
   $scope.modal              = {};
   $scope.modal.isLanding    = false;
@@ -458,6 +458,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       if (result)
       {
         $scope.details.details = result;
+        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
+        console.log('found', found);
+
+        if (found) {
+          $scope.details.details.watched = true;
+        }
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.showDetails = true;
@@ -553,6 +559,18 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.$on('$callSearch', function(event) {/*jshint unused: false*/
     callSearch();
   });
+
+  /***************************************************************
+  * Event to trigger an update of the details that are shown
+  ***************************************************************/
+  $scope.$on('$detailsUpdated', function(event, id) {/*jshint unused: false*/
+    if ($scope.details.details && $scope.details.details.componentId === id) {
+      $timeout(function() {
+        $scope.updateDetails($scope.details.details.componentId);
+      })
+    }
+  });
+
 
   /***************************************************************
   * Catch the enter/select event here for typeahead
