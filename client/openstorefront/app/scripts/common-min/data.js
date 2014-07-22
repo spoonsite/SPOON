@@ -746,7 +746,7 @@ MOCKDATA.filters.push({
 });
 
 MOCKDATA.filters.push({
-  'name': 'COMMERCIAL EXPORT APPROVED VIA EAR',
+  'name': 'Commercial Export Approved Via Ear',
   'key': 'CEAVE',
   'src': 'images/icon/pastel/application-double.png',
   'icon': 'fa fa-files-o',

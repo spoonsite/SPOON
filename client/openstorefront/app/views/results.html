@@ -53,7 +53,15 @@ limitations under the License.
         <div ng-class="$last? 'lastFilter': ''" class="panel panel-default" class="filterTableDiv" ng-repeat="filter in filters">
           <table class="table">
             <tr ng-class="filters.length > 2? 'panel-heading': ''">
-              <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" ><span class="btn btn-link " data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}" style="max-width: 152px; padding-left: 0px;"><span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i></span><span class="overflow-pair-left" style="text-align: left;">{{filter.name}}</span></span><input type="checkbox" ng-model="filter.checked" ng-change="toggleChecks(filter.collection)" /><small ng-show="filter.hasChecked">&nbsp;(applied)</small></th>
+              <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" title="{{filter.name}}">
+                <span class="btn btn-link " data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}" style="width: 135px; padding-left: 0px; float:left;">
+                  <span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i>
+                  </span>
+                  <span class="overflow-pair-left" style="text-align: left;">{{filter.name}}</span>
+                </span>
+                <input type="checkbox" ng-model="filter.checked" ng-change="toggleChecks(filter.collection)" />
+                <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
+              </th>
             </tr>
             <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}">
               <tr  class="filtersTr" data-ng-repeat="type in filter.collection" >
@@ -110,10 +118,14 @@ limitations under the License.
         <i class="fa fa-caret-left"></i> 
       </button>
     </div>
-    <div ng-if="data.data.length == 0">
-      {{noDataMessage}}
+    <div ng-if="data.data.length == 0" style="position: absolute; top: 50%; left: 50%;">
+      <div style="position: relative; width: 100%; min-height: 100%;">
+        <div style="position: absolute; top: 50%; left: 50%; width: 400px; height: 200px; margin-top: -100px; margin-left: -200px; text-align: center;">
+          <div ng-bind-html="noDataMessage" style="border-radius: 20px; padding: 20px; background: white; border: 1px solid darkgray; display: inline-block; width: auto;"></div>
+        </div>
+      </div>
     </div>
-    <div class="page1Content" ng-if="data.data.length > 0">
+    <div class="page1Content">
       <div class='container-fluid results'>
         <div>
           <div class="searchTitle">
@@ -125,7 +137,9 @@ limitations under the License.
             <span ng-click="setupModal(modal, ''); openModal('descModal'); " class="imitateLink" > {{searchDescription}} <i class="glyphicon glyphicon-info-sign"></i></span>
           </div>
         </div>
-        <component-list click-callback="updateDetails" class-list="" data="data.data" cols="3" ></component-list>
+        <div ng-if="data.data.length > 0">
+          <component-list click-callback="updateDetails" class-list="" data="data.data" cols="3" ></component-list>
+        </div>
         <div ng-show="moreThan200" class="moreThan200">
           <button class="btn btn-default">Load More Results...</button>
         </div>
