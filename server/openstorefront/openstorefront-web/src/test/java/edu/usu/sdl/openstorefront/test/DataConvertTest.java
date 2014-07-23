@@ -36,6 +36,9 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentRelationship;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResource;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReview;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentTag;
+import edu.usu.sdl.openstorefront.web.rest.model.SearchResult;
+import edu.usu.sdl.openstorefront.web.rest.model.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.web.tool.OldAsset;
 import edu.usu.sdl.openstorefront.web.tool.OldDataWrapper;
 import java.io.File;
@@ -75,7 +78,8 @@ public class DataConvertTest
 		
 		System.out.println(objectMapper.writeValueAsString(newAssetMin));		
 		objectMapper.writeValue(new File("c:/development/storefront/data/components-min.json"), newAssetMin);
-		objectMapper.writeValue(new File("c:/development/storefront/data/components-full.json"), newAssetComplete);
+		objectMapper.writeValue(new File("c:/development/storefront/data/components-full.json"), newAssetComplete);		
+		objectMapper.writeValue(new File("c:/development/storefront/data/searchResults.json"), mapSearchResults(newAssetComplete));		
 	}
 	
 	private List<ComponentDetail> processData(List<OldAsset> assets, boolean generateData)
@@ -86,6 +90,7 @@ public class DataConvertTest
 		metaTypeToSkip.add("Government Point of Contact Email Address");
 		metaTypeToSkip.add("Government Point of Contact Name");
 		metaTypeToSkip.add("Government Point of Contact Phone");
+		metaTypeToSkip.add("Government Point of Contact Organization");
 		metaTypeToSkip.add("Code Location URL");
 		metaTypeToSkip.add("Product Homepage");
 		metaTypeToSkip.add("DI2E Framework Evaluation Report URL");
@@ -201,11 +206,22 @@ public class DataConvertTest
 		evalSections.add("Willingness");		
 		evalSections.add("Architecture Alignment");			
 		
-	
-		
+			
 		List<String> evalLevelStatus = new ArrayList<>();		
 		evalLevelStatus.add("P");		
 		evalLevelStatus.add("H");
+		
+		
+		List<String> tags = new ArrayList<>();		
+		tags.add("Mapping");
+		tags.add("Visualization");
+		tags.add("Reference");
+		tags.add("Data Exchange");
+		tags.add("Communication");
+		tags.add("UDOP");
+		tags.add("Charting");
+		tags.add("Testing");
+		tags.add("Access");
 		
 	
 		SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
@@ -253,6 +269,7 @@ public class DataConvertTest
 				contact.setName(peopleNames.get(0));
 				contact.setEmail("sample_email@test.com");
 				contact.setPhone("555-555-5555");
+				contact.setOrganization("sample organization");
 				componentDetail.getContacts().add(contact);
 			});
 			
@@ -266,6 +283,7 @@ public class DataConvertTest
 					contact.setName(peopleNames.get(0));
 					contact.setEmail("sample_email@test.com");
 					contact.setPhone("555-555-5555");
+					contact.setOrganization("sample organization");
 					componentDetail.getContacts().add(contact);							
 				}
 			});
@@ -382,7 +400,20 @@ public class DataConvertTest
 					}
 				}
 				
-				
+				//tags				
+				if (random.nextInt(10) < 5)
+				{
+					List<String> tempTags = new ArrayList<>(tags);				
+					Collections.shuffle(tempTags);
+					int maxAttr = random.nextInt(3);
+					for (int i=0; i<maxAttr; i++)
+					{
+						ComponentTag componentTag = new ComponentTag();
+						componentTag.setText(tempTags.remove(0));
+						componentDetail.getTags().add(componentTag);
+					}			
+				}
+								
 				//questions and responses
 				if (random.nextInt(10) < 5)
 				{
@@ -669,6 +700,63 @@ public class DataConvertTest
 		media.setLink(baseImagePath + resource);								
 		media.setContentType("image/" +  resource.substring(resource.lastIndexOf(".") + 1, resource.length()));							
 		return media;
+	}
+	
+	private List<SearchResult> mapSearchResults(List<ComponentDetail> details)
+	{
+		List<SearchResult> searchResults = new ArrayList<>();
+		Random random = new Random(System.currentTimeMillis());
+		details.forEach(detail -> {
+			
+			SearchResult searchResult = new SearchResult();
+			searchResult.setComponentId(detail.getComponentId());
+			searchResult.setName(detail.getName());
+			searchResult.setDescription(detail.getDescription());
+			searchResult.setAverageRating(random.nextInt(6));
+			searchResult.setViews(random.nextInt(200));
+			searchResult.setLastActivityDate(detail.getLastActivityDate());
+			searchResult.setListingType("Component");
+			searchResult.setOrganization(detail.getOrganization());
+			searchResult.setTotalNumberOfReviews(random.nextInt(100));
+			searchResult.setUpdateDts(detail.getUpdateDts());
+					
+			detail.getAttributes().forEach(attrib ->{
+				SearchResultAttribute attribute = new SearchResultAttribute();
+				
+				//TODO map attribute
+				
+				attribute.setType(attrib.getTypeDescription());
+				attribute.setCode(attrib.getCodeDescription());
+				searchResult.getAttributes().add(attribute);
+				
+			});
+			searchResult.getTags().addAll(detail.getTags());
+						
+			searchResults.add(searchResult);
+		});
+		
+		//Add article
+		SearchResult searchResult = new SearchResult();
+		searchResult.setName("IdAM");
+		searchResult.setDescription("IdAM Article.....");
+		searchResult.setArticleAttributeCode("IDAM");
+		searchResult.setArticleAttributeType("CATEGORY");
+		searchResult.setLastActivityDate(new Date(System.currentTimeMillis()));
+		searchResult.setListingType("Article");
+		searchResult.setOrganization("PMO");
+		searchResult.setUpdateDts(new Date(System.currentTimeMillis()));		
+		searchResults.add(searchResult);
+		
+		
+		
+		return searchResults;
+	}
+	
+	@Test
+	public void testAttribute()
+	{
+		//List<AttributeTypeView> types = new ArrayList<AttributeTypeView>();
+		
 	}
 	
 }

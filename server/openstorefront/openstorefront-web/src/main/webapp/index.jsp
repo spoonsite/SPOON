@@ -26,20 +26,20 @@ limitations under the License.
 	</head>
 	<body>
 		<header class="header">
-			<span class="api-title">Open Storefront API</span>
+			<span class="api-title">Open Storefront API v1.0</span>
 		</header>
 		
 		<div class="api-guide">
 			<h4>API</h4>
 			<ul>
 				<li>
-					<a href="#API.action?Page&page=intro" onclick="$('#apidocId').load('API.action?Page&page=intro');">Introduction</a>
+					<a href="#API.action?Page&page=intro" >Introduction</a>
 				</li>
 				<li>
-					<a href="#API.action?Page&page=security" onclick="$('#apidocId').load('API.action?Page&page=security');">Security</a>
+					<a href="#API.action?Page&page=security" >Security</a>
 				</li>
 				<li>
-					<a href="#API.action?Page&page=errorhandling" onclick="$('#apidocId').load('API.action?Page&page=errorhandling');">Error Handling</a>
+					<a href="#API.action?Page&page=errorhandling" >Error Handling</a>
 				</li>
 			</ul>
 			
@@ -48,13 +48,13 @@ limitations under the License.
 			</h4>
 			<ul>
 				<li>
-					<a href="#API.action?API&resourceClass=UserProfile" onclick="$('#apidocId').load('API.action?API&resourceClass=UserProfile');">User Profile</a>
+					<a href="#API.action?API&resourceClass=UserProfile">User Profile</a>
 				</li>
 				<li>
 					<a href="#API.action?API&resourceClass=Component">Component</a>
 				</li>
 				<li>
-					<a href="attributeTypes.html">Attributes Types</a>
+					<a href="#API.action?API&resourceClass=Attribute">Attributes</a>
 				</li>	
 				<li>
 					<a href="#API.action?API&resourceClass=LookupType">Lookup Type </a>
@@ -82,9 +82,13 @@ limitations under the License.
 			<h4 title="Services are actions related that act across resources or apply behaviour to the system.">
 				Services
 			</h4>
-			
+			<ul>
+				<li>
+					<a href="#API.action?API&resourceClass=Search&classPath=service">Search</a>					
+				</li>
+			</ul>				
 		</div>
-		<div id="apidocId" class="api-doc">			
+		<div id="apidocId" class="api-doc">
 		</div>
 		
 		<script type="text/javascript">
@@ -109,11 +113,11 @@ limitations under the License.
 			
 		</script>
 		
-		
+		<!--
 		<footer class="footer">
 			<center>Open Storefront API Version 1.0</center>
 		</footer>
-		
+		-->
 	</body>
 </html>
 

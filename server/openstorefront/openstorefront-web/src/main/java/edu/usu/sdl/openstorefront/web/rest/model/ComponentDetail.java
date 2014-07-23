@@ -90,8 +90,8 @@ public class ComponentDetail
 	@DataType(ComponentAttribute.class)	
 	private List<ComponentAttribute> attributes = new ArrayList<>();
 	
-	@ParamTypeDescription("Array of Strings")
-	private List<String> tags = new ArrayList<>();	
+	@DataType(ComponentTag.class)
+	private List<ComponentTag> tags = new ArrayList<>();	
 	
 	@DataType(ComponentMetadata.class)
 	private List<ComponentMetadata> metadata = new ArrayList<>();
@@ -233,16 +233,6 @@ public class ComponentDetail
 	public void setAttributes(List<ComponentAttribute> attributes)
 	{
 		this.attributes = attributes;
-	}
-
-	public List<String> getTags()
-	{
-		return tags;
-	}
-
-	public void setTags(List<String> tags)
-	{
-		this.tags = tags;
 	}
 
 	public List<ComponentMetadata> getMetadata()
@@ -403,6 +393,16 @@ public class ComponentDetail
 	public void setDependencies(List<ComponentExternalDependancy> dependencies)
 	{
 		this.dependencies = dependencies;
+	}
+
+	public List<ComponentTag> getTags()
+	{
+		return tags;
+	}
+
+	public void setTags(List<ComponentTag> tags)
+	{
+		this.tags = tags;
 	}
 
 }

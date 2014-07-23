@@ -20,55 +20,55 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentExternalDependancy
+public class AttributeCodeView
 {
-	private String dependancy;
-	private String version;
-	private String dependancyReferenceLink;
-	private String comment;
+	private String code;
+	private String label;
+	private String description;
+	private boolean fullTextAvailable;
 
-	public ComponentExternalDependancy()
+	public AttributeCodeView()
 	{
 	}
 
-	public String getDependancy()
+	public String getCode()
 	{
-		return dependancy;
+		return code;
 	}
 
-	public void setDependancy(String dependancy)
+	public void setCode(String code)
 	{
-		this.dependancy = dependancy;
+		this.code = code;
 	}
 
-	public String getComment()
+	public String getDescription()
 	{
-		return comment;
+		return description;
 	}
 
-	public void setComment(String comment)
+	public void setDescription(String description)
 	{
-		this.comment = comment;
+		this.description = description;
 	}
 
-	public String getVersion()
+	public boolean isFullTextAvailable()
 	{
-		return version;
+		return fullTextAvailable;
 	}
 
-	public void setVersion(String version)
+	public void setFullTextAvailable(boolean fullTextAvailable)
 	{
-		this.version = version;
+		this.fullTextAvailable = fullTextAvailable;
 	}
 
-	public String getDependancyReferenceLink()
+	public String getLabel()
 	{
-		return dependancyReferenceLink;
+		return label;
 	}
 
-	public void setDependancyReferenceLink(String dependancyReferenceLink)
+	public void setLabel(String label)
 	{
-		this.dependancyReferenceLink = dependancyReferenceLink;
+		this.label = label;
 	}
-	
+		
 }
