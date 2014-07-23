@@ -137,7 +137,7 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
       * This function sets up the tooltips that are available on this page.
       ***************************************************************/
       scope.init = function() {
-        $('[data-toggle="tooltip"').tooltip();
+        $('[data-toggle=\'tooltip\']').tooltip();
       };
       
       scope.init();
