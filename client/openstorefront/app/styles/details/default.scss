@@ -38,13 +38,13 @@
 #data-collapse-tags {
   color: white;
   background-color: #333333;
-  border-color: #cccccc;
+  border-color: #333333;
 }
 
 #data-collapse-tags.collapsed {
-  color: #333333;
+  color: #111111;
   background-color: transparent;
-  border-color: transparent;
+  border-color: #cccccc;
 }
 
 .detailsTitleButton {
@@ -163,6 +163,11 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
   font-weight: bold;
 }
 
+
+.nav-tabs>li>a{
+  min-width: 100px;
+  text-align: center;
+}
 
 @media (max-width: 615px) {
   .leftCol{

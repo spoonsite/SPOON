@@ -15,7 +15,7 @@
             <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" >
               <i ng-repeat="t in getTimes(col.ranking) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block"></i>
             </div>
-            <div class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;"  popover data-trigger="click" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.ranking}}" data-container="body" data-content="<b>Questions</br></b><p class=''>{{col.questions}}</p><b>Ranking Criteria</br></b><p class=''>{{col.criteria}}</p>" >
+            <div class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;"  popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.ranking}}" data-container="body" data-content="<b>Questions</br></b><p class=''>{{col.questions}}</p><b>Ranking Criteria</br></b><p class=''>{{col.criteria}}</p>" >
               <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
             </div>
           </td>

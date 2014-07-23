@@ -67,7 +67,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     { title:'SUMMARY', content:'1', relpath:'views/details/summary.html', class:'' },
     { title:'DETAILS', content:'2', relpath:'views/details/details.html', class:'' },
     { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html', class:'' },
-    { title:'FAQ Q&A', content:'4', relpath:'views/details/comments.html', class:'' },
+    { title:'Q&A', content:'4', relpath:'views/details/comments.html', class:'' },
     // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
   //
   ];
@@ -116,12 +116,21 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = true;
     Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
+  
   /***************************************************************
   * This function saves a component's tags
   ***************************************************************/
   $scope.saveTags = function(id, tags){
     Business.componentservice.saveTags(id, tags);
     $scope.applyFilters();
+  };
+
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.toggleTags = function(id){
+    $('#data-collapse-tags').toggleClass('collapsed');
+    $(id).collapse('toggle');
   };
 
   /***************************************************************

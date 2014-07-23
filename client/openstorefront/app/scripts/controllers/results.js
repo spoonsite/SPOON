@@ -19,7 +19,7 @@
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimations,
 filtClick*/
 
-app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route',  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route) { /*jshint unused: false*/
+app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$sce', function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $sce) { /*jshint unused: false*/
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.showDetails        = false;
   $scope.orderProp          = '';
   $scope.query              = '';
-  $scope.noDataMessage      = '<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p>';
+  $scope.noDataMessage      = $sce.trustAsHtml('<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p><button class="btn btn-default" ng-click="clearFilters()">Reset Filters</button>');
   $scope.typeahead          = null;
   $scope.searchGroup        = null;
   $scope.searchKey          = null;
@@ -459,8 +459,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       {
         $scope.details.details = result;
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
-        console.log('found', found);
-
         if (found) {
           $scope.details.details.watched = true;
         }
@@ -474,10 +472,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.goToFullPage = function(id){
-    $location.search({
-      'id': id
-    });
-    $location.path('/single');
+    var url = $location.absUrl().replace($location.url(), '');
+    console.log('url', url);
+    url = url + '/single?id=' + id;
+    window.open(url, 'Component ' + id, 'window settings');
+    // $location.search({
+    //   'id': id
+    // });
+    // $location.path('/single');
   };
 
   /***************************************************************
@@ -485,6 +487,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * the filters as quickly as possible
   ***************************************************************/
   $scope.clearFilters = function() {
+    console.log('we hit this...');
+    
     $scope.orderProp = '';
     $scope.ratingsFilter = null;
     $scope.tagsFilter = null;

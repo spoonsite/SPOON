@@ -194,3 +194,30 @@ var initiateClick = function(id) {
     $('#' + id).trigger( 'click' );
   }
 };
+
+var originalLeave = $.fn.popover.Constructor.prototype.leave;
+$.fn.popover.Constructor.prototype.leave = function(obj){
+  var self = obj instanceof this.constructor ?
+  obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type);
+  var popovers, name, container, timeout;
+
+  originalLeave.call(this, obj);
+
+  if(obj.currentTarget) {
+    popovers = $('.popover');
+    name = $(obj.currentTarget).attr('data-original-title');
+    container = _.find(popovers, function(item){
+      return $(item).find('.popover-title').html() === name;
+    });
+    
+    timeout = self.timeout;
+    $(container).on('mouseenter', function(){
+      //We entered the actual popover – call off the dogs
+      clearTimeout(timeout);
+      //Let's monitor popover content instead
+      $(container).on('mouseleave', function(){
+        $.fn.popover.Constructor.prototype.leave.call(self, self);
+      });
+    });
+  }
+};

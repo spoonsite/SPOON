@@ -18,6 +18,6 @@
 
 angular.module('openstorefrontApp').directive('popover', function() {
 	return function(scope, elem) {
-		elem.popover();
+		elem.popover({delay: {show: 0, hide: 10}});
 	};
 });

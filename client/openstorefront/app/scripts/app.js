@@ -190,7 +190,7 @@ tagsInputConfigProvider
     $rootScope.typeahead = Business.typeahead();
     
     $timeout(function() {
-      $('[data-toggle="tooltip"').tooltip();
+      $('[data-toggle=\'tooltip\']').tooltip();
     }, 300);
     if (!Auth.signedIn() && $location.path() !== '/login') {
       $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
