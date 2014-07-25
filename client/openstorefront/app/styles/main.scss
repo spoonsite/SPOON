@@ -41,6 +41,16 @@ body {
   background: image-url('squared_metal.png');
 }
 
+
+.detailsTitleButton {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  font-size: 25px;
+  line-height: 25px;
+}
+
+
 /***************************************************************
 * Bootstrap overrides that we haven't integrated into the bootstrap variables or
 * mixins.
