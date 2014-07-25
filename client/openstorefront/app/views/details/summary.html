@@ -1,21 +1,21 @@
 
 <div class="leftCol hideTheExtra">
-  <div class="rightCol">
+  <div ng-if="details.details.evaluation.startDate !== null" class="rightCol">
     <table class="table table-bordered table-hover" style="table-layout: fixed;">
       <tbody>
         <tr>
           <th class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>
         </tr>
-        <tr data-ng-repeat="row in componentSummary">
+        <tr ng-if="details.details.evaluation.endDate !== null">
           <th class="valign" style="vertical-align:middle"><h5>Evaluation Date</h5></th>
-          <th class="valign"><h5>{{row.evaluationdate}}</h5></th>
+          <th class="valign"><h5>{{getDate(details.details.evaluation.endDate)}}</h5></th>
         </tr>
-        <tr data-ng-repeat="row in scoreCard | partition:2">
+        <tr data-ng-repeat="row in details.details.evaluation.evaluationSections | partition:2">
           <td data-ng-repeat="col in row" class="valign" style="padding: 0px;">
             <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" >
-              <i ng-repeat="t in getTimes(col.ranking) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block"></i>
+              <i ng-repeat="t in getTimes(col.score) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block"></i>
             </div>
-            <div class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;"  popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.ranking}}" data-container="body" data-content="<b>Questions</br></b><p class=''>{{col.questions}}</p><b>Ranking Criteria</br></b><p class=''>{{col.criteria}}</p>" >
+            <div class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;"  popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>" >
               <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
             </div>
           </td>
@@ -30,49 +30,33 @@
     </p>
     <br>
   </div>
-  <div class="leftCol hideTheExtra">
+  <div ng-if="details.details.componentMedia[0]" class="leftCol hideTheExtra">
     <div class="section-headers"><h4>Screenshots / Media</h4></div>
     <br>
     <div class="containers">
-      <ul ng-controller="GalleryCtrl" style="list-style-type: none;">
-        <li ng-repeat="image in images | limitTo:3" style="display:inline; padding:5px 10px 10px 0;" style="display:inline">
-          <a ng-click="openLightboxModal($index)" style="text-decoration:none; cursor:pointer">
-            <img ng-src="{{image.thumbUrl}}" class="img-thumbnail" alt="description" title="description goes here">
+      <ul style="list-style-type: none;">
+        <li ng-repeat="image in getImages(details.details.componentMedia) | limitTo:3" style="display:inline; padding:5px 10px 10px 0;" style="display:inline">
+          <a ng-click="openLightboxModal($index, details.details.componentMedia)" style="text-decoration:none; cursor:pointer; width: 100px; height: 100px; overflow: hidden;">
+            <img ng-src="{{image.link}}" class="img-thumbnail" alt="description" title="description goes here" style="width: 100px; height: auto;">
           </a>
         </li>
         <li ng-if="images.length > 3" style="display:inline">
-          <button class="btn btn-default" ng-click="openLightboxModal(3)">View More</button>
+          <button class="btn btn-default" ng-click="openLightboxModal(3, details.details.componentMedia)">View More</button>
         </li>
       </ul>
     </div>
   </div>
-  <div class="leftCol hideTheExtra">
-    <table class="table table-bordered table-hover" ng-repeat="row in componentSummary">
-     <tbody> 
-      <tr>
-       <th class="valign" colspan="16"><h4>Component Summary</h4></th>
-     </tr>	 						
-     <tr>
-       <td colspan="5" class="text-left-bold">Component Name</td>
-       <td colspan="11" class="text-left">{{details.details.name}}</td>
-     </tr>
-     <tr >
-       <td colspan="5" class="text-left-bold">Version</td>
-       <td colspan="11" class="text-left" >{{row.versions}}</td>
-     </tr>
-     <tr class="valign">
-       <td colspan="5" class="text-left-bold" >Component Type</td>
-       <td colspan="11" class="text-left" >{{row.componenttype}}</td>
-     </tr>
-     <tr class="valign">
-       <td colspan="5" class="text-left-bold" >Agency</td>
-       <td colspan="11" class="text-left" >{{row.agency}}</td>
-     </tr>
-     <tr class="valign">
-       <td colspan="5" class="text-left-bold" >DI2E Marketplace</td>
-       <td colspan="11" class="text-left">{{row.di2emarketplace}}</td>
-     </tr>																					
-   </tbody>
- </table>
-</div>
+  <div ng-if="checkForImportants(details.details.attributes)" class="leftCol hideTheExtra">
+    <table class="table table-bordered table-hover" >
+      <tbody> 
+        <tr>
+          <th class="valign" colspan="16"><h4>Important Component Vitals</h4></th>
+        </tr>	 						
+        <tr ng-repeat="row in details.details.attributes">
+          <td ng-if="row.important === true" colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
+          <td ng-if="row.important === true" colspan="11" class="text-left">{{row.codeDescription}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
