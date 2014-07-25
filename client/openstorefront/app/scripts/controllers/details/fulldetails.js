@@ -94,6 +94,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.getEvaluationState();
   $scope.selectedTab = $scope.tabs[0];
 
+  /***************************************************************
+  * This function is triggered by the '$descModal' event.
+  ***************************************************************/
   $scope.$on('$descModal', function(event) { /*jshint unused: false*/
     // re-initialize the modal content here if we must
     if ($scope.modal.nav !== undefined && $scope.modal.nav !== null) {
@@ -106,10 +109,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
 
+  /***************************************************************
+  * This function is used by our image modal.
+  ***************************************************************/
   $scope.openLightboxModal = function (index, imageArray) {
     Lightbox.openModal(imageArray, index);
   };
 
+  /***************************************************************
+  * This function watches the details object for changes
+  ***************************************************************/
   $scope.$watch('details', function () {
     if ($scope.details){
       if ($scope.details.details) {
@@ -124,6 +133,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   }, true);
 
+  /***************************************************************
+  * This function take the reviews array from the component details and sets up
+  * all the information that is required for the summary. It is triggered by a change
+  * in the details.details.reviews object. So it should be fairly resposive if a user
+  * adds a review to the details. (which currently isn't implemented)
+  ***************************************************************/
   $scope.setupReviewSummary = function(){
     var total = [];
     var pros = {};
@@ -131,6 +146,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     var prosList = [];
     var consList = [];
     var recommend = 0;
+
+    //count the stuff
     _.each($scope.details.details.reviews, function(review){
       total[review.rating] = total[review.rating]? total[review.rating] + 1: 1;
       if (review.recommend) {
@@ -148,6 +165,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       }
     });
 
+    //Grab all of the different pros and cons
     if (prosList.length){
       prosList.map( function (a) {
         if (a in pros) {
@@ -171,6 +189,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       cons = null;
     }
 
+    // create our result object
     var result = {
       'total': 0,
       'count': 0
@@ -182,6 +201,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     result.score = result.total / result.count;
     result.recommend = recommend;
     result.recommendPercent = recommend / result.count * 100;
+
+    //set up our review summary
     $scope.reviewSummary = {
       'ratings': total,
       'total': result,
@@ -197,9 +218,20 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     var a = _.find($scope.watches, {'componentId': id});
     
     if (!a) {
-      $scope.watches.push({'componentId': id, 'watched': true});
+      $scope.watches.push(
+      {
+          'watchId' : $scope.watches[$scope.watches.length - 1].watchId + 1,
+          'lastUpdateDts' : null,
+          'lastViewDts' : null,
+          'createDts' : new Date().getTime(),
+          'componentName' : null,
+          'componentId' : id,
+          'notifyFlag' : false
+      });
     }
 
+    console.log('$scope.watches', $scope.watches);
+    
     Business.setWatches($scope.watches);
     $scope.details.details.watched = true;
     _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = true;
@@ -305,6 +337,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     if (a) {
       $scope.watches.splice(_.indexOf($scope.watches, a), 1);
     }
+
+    console.log('$scope.watches', $scope.watches);
+
 
     Business.setWatches($scope.watches);
     $scope.details.details.watched = false;

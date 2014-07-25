@@ -23,25 +23,27 @@ limitations under the License.
           <h3 class="panel-title watch-content-title">WATCHES</h3>
         </div>
         <div class="panel-body">
-          <div class="col-sm-4" ng-repeat="item in data" style="padding-left:60px;padding-top:50px">
+          <div ng-class="isNewer(item.lastUpdateDts, item.lastViewDts)? 'newer':''" class="col-sm-4 watchesList" ng-repeat="item in watches">
             <div id="div{{item.componentId}}" >
-              <div style="height: 100%">
-                <img ng-src="{{item.src}}" width="96" height="96">
-                <div style="margin-left: 10px;">
-                  <span class="item_bold">
-                    <a href="#/results"> 
-                      <span class="none">{{item.name}}</span><span style="font-size: 12px; color: red;vertical-align:super">{{item.new}}</span>
-                    </a>
-                  </span>
-                </div>
-                <div style="font-size: 12px; color: grey;">Updated: {{item.updateDate}}
-                </div>
-                <div style="font-size: 12px; color: red;" ng-click="removeFromWatches(item.componentId)"><p style="cursor:pointer">remove</p>
-                </div>
+              <span class="item_bold overflow-pair-left">
+                <a href="#/results"> 
+                  <span class="none">{{item.componentName}}</span>
+                </a>
+              </span>
+              <div style="font-size: 12px; color: grey;"><span class="updateDate">Updated: {{getDate(item.lastUpdateDts)}}</span>&nbsp;&mdash;&nbsp;<span class="viewDate">Last Viewed: {{getDate(item.lastViewDts)}}</span>
+              </div>
+              <div style="">
+                <button class='btn btn-default detailsTitleButton pull-left' ng-click="goToFullPage(item.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="View Component" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
+                </button>
+                <button class='btn btn-default detailsTitleButton pull-left' ng-show="item.notifyFlag !== true" ng-click="setNotify(item.componentId, true)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component To Notifications" data-trigger="hover"><i class="fa fa-envelope-o"></i>
+                </button>
+                <button class='btn btn-default detailsTitleButton pull-left' ng-show="item.notifyFlag === true" ng-click="setNotify(item.componentId, false)" data-toggle="tooltip" data-placement="bottom" data-title="Remove Component From Notifications" data-trigger="hover"><i class="fa fa-envelope-o"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
+                </button>
+                <button class='btn btn-default detailsTitleButton pull-right' ng-click="removeFromWatches(item.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
+                </button>
               </div>
             </div>
           </div>
-          <!-- 		</div> -->
         </div>
       </div>
     </div>

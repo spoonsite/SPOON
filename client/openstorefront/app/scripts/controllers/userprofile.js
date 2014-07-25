@@ -15,9 +15,9 @@
 */
 'use strict';
 
-/*global MOCKDATA2, jQuery*/
+/*global MOCKDATA2, jQuery, confirm*/
 
-app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function($scope, Business, $rootScope) {
+app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', function($scope, Business, $rootScope, $location, $timeout) {
 
   //////////////////////////////////////////////////////////////////////////////
   // Variables
@@ -56,6 +56,57 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
       { 'title': 'Component Feedback', 'include': 'views/feedbacktab.html' }
     //
     ]
+  };
+
+  $scope.$on('$includeContentLoaded', function(){
+    $timeout(function() {
+      $('[data-toggle=\'tooltip\']').tooltip();
+    }, 300);
+  });
+
+  /***************************************************************
+  * This function converts a timestamp to a displayable date
+  ***************************************************************/
+  $scope.getDate = function(date){
+    if (date)
+    {
+      var d = new Date(date);
+      var currDate = d.getDate();
+      var currMonth = d.getMonth();
+      var currYear = d.getFullYear();
+      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+    }
+    return null;
+  };
+
+
+
+  /***************************************************************
+  * This function adds a component to the watch list and toggles the buttons
+  ***************************************************************/
+  $scope.goToFullPage = function(id){
+    var url = $location.absUrl().replace($location.url(), '');
+    console.log('url', url);
+    url = url + '/single?id=' + id;
+    window.open(url, 'Component ' + id, 'window settings');
+    // $location.search({
+    //   'id': id
+    // });
+    // $location.path('/single');
+  };
+
+  /***************************************************************
+  * This function converts a timestamp to a displayable date
+  ***************************************************************/
+  $scope.isNewer = function(updateDate, viewDate){
+    return parseInt(updateDate) > parseInt(viewDate);
+  };
+
+  /***************************************************************
+  * This function converts a timestamp to a displayable date
+  ***************************************************************/
+  $scope.setNotify = function(id, value){
+    _.find($scope.watches, {'componentId': id}).notifyFlag = value;
   };
 
 
@@ -110,6 +161,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
         $scope.data.push(component);
       }
     });
+
   };
 
   /***************************************************************
@@ -175,16 +227,20 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', function(
   * params: id -- the id of the component we want to take off our watch list.
   ***************************************************************/
   $scope.removeFromWatches = function(id){
-    var a = _.find($scope.watches, {'componentId': id});
+    var answer = confirm ('You are about to remove a component from your watch list. Are you sure you want to do this?');
+    if (answer) {
 
-    if (a) {
-      $scope.watches.splice(_.indexOf($scope.watches, a), 1);
+      var a = _.find($scope.watches, {'componentId': id});
+
+      if (a) {
+        $scope.watches.splice(_.indexOf($scope.watches, a), 1);
+      }
+
+      Business.setWatches($scope.watches);
+      $scope.$emit('$triggerEvent', '$detailsUpdated', id);
+      _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
+      Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
     }
-
-    Business.setWatches($scope.watches);
-    $scope.$emit('$triggerEvent', '$detailsUpdated', id);
-    _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
-    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
 }]);
 
