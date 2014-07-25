@@ -29,8 +29,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
   $scope.componentState                = Business.componentservice.getComponentState();
   $scope.resultsComments               = Business.componentservice.getResultsComments();
-  console.log('$scope.resultsComments', $scope.resultsComments);
-  
   $scope.watches                       = Business.getWatches();
 
   Business.lookupservice.getEvalLevels().then(function(result){

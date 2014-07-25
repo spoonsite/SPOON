@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('selectall', function () {
+app.directive('selectall', [ function () {
   return {
     replace: true,
     restrict: 'E',
@@ -10,24 +10,23 @@ app.directive('selectall', function () {
       allclear: '=allClear'
     },
     template: '<input type="checkbox" ng-model="master" ng-change="masterChange()">',
-    controller: function ($scope, $element) {
-
-      $scope.masterChange = function () {
-        if ($scope.master) {
-          angular.forEach($scope.checkboxes, function (cb, index) {
+    link: function postLink(scope, element, attrs) {
+      scope.masterChange = function () {
+        if (scope.master) {
+          angular.forEach(scope.checkboxes, function (cb, index) {
             cb.checked = true;
           });
         } else {
-          angular.forEach($scope.checkboxes, function (cb, index) {
+          angular.forEach(scope.checkboxes, function (cb, index) {
             cb.checked = false;
           });
         }
       };
 
-      $scope.$watch('checkboxes', function () {
+      scope.$watch('checkboxes', function () {
         var allSet = true,
         allClear = true;
-        angular.forEach($scope.checkboxes, function (cb, index) {
+        angular.forEach(scope.checkboxes, function (cb, index) {
           if (cb.checked) {
             allClear = false;
           } else {
@@ -35,24 +34,24 @@ app.directive('selectall', function () {
           }
         });
 
-        if ($scope.allselected !== undefined) {
-          $scope.allselected = allSet;
+        if (scope.allselected !== undefined) {
+          scope.allselected = allSet;
         }
-        if ($scope.allclear !== undefined) {
-          $scope.allclear = allClear;
+        if (scope.allclear !== undefined) {
+          scope.allclear = allClear;
         }
 
-        $element.prop('indeterminate', false);
+        element.prop('indeterminate', false);
         if (allSet) {
-          $scope.master = true;
+          scope.master = true;
         } else if (allClear) {
-          $scope.master = false;
+          scope.master = false;
         } else {
-          $scope.master = false;
-          $element.prop('indeterminate', true);
+          scope.master = false;
+          element.prop('indeterminate', true);
         }
 
       }, true);
     }
   };
-});
+}]);
