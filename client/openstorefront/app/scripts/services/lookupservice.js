@@ -41,10 +41,16 @@ app.factory('lookupservice', ['$http', '$q', function($http, $q) {
     var loadLookupTable = function(entityName, successFunc) {
       $http.get('/openstorefront-web/api/v1/resource/lookup/' + entityName).success(successFunc);
     };
+    var getEvalLevels = function() {
+      var deferred = $q.defer();
+      deferred.resolve(_.find(MOCKDATA.filters, {'key':'LEVEL'}));
+      return deferred.promise;
+    };
 
     //Public API
     return {
-      getUserTypeCodes: getUserTypeCodes
+      getUserTypeCodes: getUserTypeCodes,
+      getEvalLevels: getEvalLevels
     };
 
   }]);
