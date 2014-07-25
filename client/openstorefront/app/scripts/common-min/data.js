@@ -539,32 +539,45 @@ MOCKDATA.prosConsList = {
 
 MOCKDATA.watches = [
 {
-  'componentId': 67,
-  'watched': true
-},
-{
-  'componentId': 1,
-  'watched': true
-},
-{
-  'componentId': 45,
-  'watched': true
-},
-{
-  'componentId': 99,
-  'watched': false
-},
-{
-  'componentId': 66,
-  'watched': true
-},
-{
-  'componentId': 52,
-  'watched': true
-},
-{
-  'componentId': 4,
-  'watched': true
+  "watchId" : 0,
+  "lastUpdateDts" : 1358769330000,
+  "lastViewDts" : 1358769330000,
+  "createDts" : 1358769330000,
+  "componentName" : "Central Authentication Service (CAS)",
+  "componentId" : 67,
+  "notifyFlag" : false
+},{
+  "watchId" : 1,
+  "lastUpdateDts" : 1406323711169,
+  "lastViewDts" : 1358769330000,
+  "createDts" : 1358769330000,
+  "componentName" : "Common Map Widget API",
+  "componentId" : 11,
+  "notifyFlag" : false
+},{
+  "watchId" : 2,
+  "lastUpdateDts" : 1388769330000,
+  "lastViewDts" : 1406323711169,
+  "createDts" : 1358769330000,
+  "componentName" : "OpenSextant",
+  "componentId" : 45,
+  "notifyFlag" : false
+},{
+  "watchId" : 3,
+  "lastUpdateDts" : 1388769330000,
+  "lastViewDts" : 1358769330000,
+  "createDts" : 1358769330000,
+  "componentName" : "Vega 3D Map Widget",
+  "componentId" : 55,
+  "notifyFlag" : false
+},{
+  "watchId" : 4,
+  "lastUpdateDts" : 1388769330000,
+  "lastViewDts" : 1358769330000,
+  "createDts" : 1358769330000,
+  "componentName" : "DCGS-E Sensor Web Enablement (SWE) Technical Profile",
+  "componentId" : 23,
+  "notifyFlag" : false
 }
 ];
 
