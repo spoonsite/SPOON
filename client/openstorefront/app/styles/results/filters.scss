@@ -73,3 +73,20 @@
   -o-transition-duration: .4s;
   transition-duration: .4s;
 }
+
+span.spread {
+  width: 130px;
+  padding-left: 0px;
+  float:left;
+  -webkit-transition:width .4s;
+  -moz-transition:width .4s;
+  -o-transition:width .4s;
+  transition:width .4s;
+}
+span.spread.empty{
+  width: 180px;
+  -webkit-transition:width .4s;
+  -moz-transition:width .4s;
+  -o-transition:width .4s;
+  transition:width .4s;
+}
