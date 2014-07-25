@@ -1,53 +1,59 @@
-<div class="row">
+<div ng-if="details.details.evaluation.evaluationSchedule[0] !== undefined" class="row">
   <div class="col-md-12">
-    <div class="section-headers"><h4>DI2E Evaluation Schedule</h4></div>
+    <div class="section-headers addBorders"><h4>DI2E Evaluation Schedule</h4></div>
     <div class="container component2-div">
       <div class="col-sm-12 eval-content-title eval-content-title-content ng-scope ng-binding">
         <div id="eval-level-div">
           <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal2"><i class="glyphicon glyphicon-info-sign"></i></a>
           <span style="font-size:12px; color:black; margin-left:5px">Evaluation start: January 1, 2014</span>
           <div class="col-md-12" style="padding:0;" >
-            <div ng-repeat="rows in componentEvalProgressBar" class="col-md-3 evalprogbar{{rows.compstatus}}" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Evaluation Level {{rows.level}}<br/> {{rows.desc}}" data-container="body" data-content="<p class='dd' {{rows.fulldesc}}</p>">
-              <span class="helpcontent" >
-                <a href="javascript:void(0)" 
-                class="helpcontent">{{rows.desc}}  </a>
-              </span>
-            </div>
-            <div ng-repeat="rows in componentEvalProgressBar" >
-              <div class="col-md-3 evalbarlegend{{rows.compstatus}}">{{rows.compmessage}}</div>
-            </div>
+            <div ng-repeat="rows in details.details.evaluation.evaluationSchedule" ng-class="rows.levelStatus === 'C'? 'complete': rows.levelStatus === 'H'? 'haulted': rows.levelStatus === 'P'? 'inprogress': 'notstarted'" class="col-md-3" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Evaluation Level {{$index}}<br/> {{getEval(rows.evaluationLevelCode).desc}}" data-container="body" data-content="<p class='dd'>{{getEval(rows.evaluationLevelCode).longDesc}}</p>">
+            <span class="helpcontent" >
+              <a href="javascript:void(0)" 
+              class="helpcontent">{{getEval(rows.evaluationLevelCode).desc}}  </a>
+            </span>
+          </div>
+          <div ng-repeat="rows in details.details.evaluation.evaluationSchedule" >
+            <div class="col-md-3" ng-class="rows.levelStatus === 'C'? 'completeLabel': rows.levelStatus === 'H'? 'haultedLabel': rows.levelStatus === 'P'? 'inprogressLabel': 'notstartedLabel'" >{{grabEvaluationMessage(rows.levelStatus, getDate(rows.actualCompletionDate), getDate(rows.estimatedCompletionDate))}}</div>
           </div>
         </div>
-        <div style="position: relative; clear: both"></div>
-        <br>
       </div>
+      <div style="position: relative; clear: both"></div>
+      <br>
     </div>
   </div>
+</div>
 </div>
 <!-- angular lightbox gallery -->
 
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-bordered table-hover table-condensed">
+    <table ng-if="details.details.dependencies[0] !== undefined" class="table table-bordered table-hover">
       <tbody>
         <tr>
-          <br>
           <th class="valign" colspan="2"><h4>External Dependencies</h4></th>
         </tr>             
-        <tr data-ng-repeat="row in externalDepend">
-          <td class="text-left-bold">{{row.name}}</td>
-          <td class="text-left">{{row.desc}}</td>
+        <tr data-ng-repeat="row in details.details.dependencies">
+          <td class="text-left-bold">{{row.dependancy}}</td>
+          <td class="text-left">{{row.comment}}</td>
         </tr>
       </tbody>
     </table>  
-    <table class="table table-bordered table-hover">
+    <table ng-if="details.details.resources[0] !== undefined" class="table table-bordered table-hover" style="table-layout:fixed">
       <tbody>
         <tr>
-          <th class="valign"  colspan="2"><h4>Location of Asset Artifacts</h4></th>
+          <th class="valign"  colspan="18"><h4>Location of Asset Artifacts</h4></th>
         </tr>             
-        <tr data-ng-repeat="row in localAssetArtifacts">
-          <td class="text-left-bold">{{row.name}}</td>
-          <td class="text-left">{{row.desc}}</td>
+        <tr>
+          <th class="valign"  colspan="5">Name</th>
+          <th class="valign"  colspan="5">Description</th>
+          <th class="valign"  colspan="8">Link</th>
+        </tr>             
+        <tr data-ng-repeat="row in details.details.resources">
+          <td colspan="5" class="text-left-bold" style="overflow:hidden;">{{row.name}}</td>
+          <td ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td>
+          <td ng-if="!row.description" colspan="5" class="text-left">&mdash;</td>
+          <td colspan="8" class="text-left">{{row.link}}</td>
         </tr>
       </tbody>
     </table>                  
@@ -55,57 +61,32 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-bordered table-hover">
+    <table ng-if="details.details.contacts[0] !== undefined" class="table table-bordered table-hover" style="table-layout:fixed">
       <tbody>
         <tr>
-          <th colspan="3"><h4>Points of Contact</h4></th>
-        </tr>
+          <th class="valign"  colspan="18"><h4>Points of Contact</h4></th>
+        </tr>             
         <tr>
-          <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Position</td>
-          <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Name</td>
-          <td style="background-color:#dddddd;vertical-align:middle;font-weight:bold">Email</td>
+          <th class="valign"  colspan="4">Position</th>
+          <th class="valign"  colspan="4">Name</th>
+          <th class="valign"  colspan="4">Phone</th>
+          <th class="valign"  colspan="6">Email</th>
+        </tr>             
+        <tr data-ng-repeat="row in details.details.contacts">
+          <td colspan="4" class="text-left">{{row.positionDescription}}<span ng-if="row.organization">&nbsp;&mdash;&nbsp;{{row.organization}}</span></td>
+          <td colspan="4" class="text-left">{{row.name}}</td>
+          <td ng-if="row.phone" colspan="4" class="text-left">{{row.phone}}</td>
+          <td ng-if="!row.phone" colspan="4" class="text-left">&mdash;</td>
+          <td ng-if="row.email" colspan="6" class="text-left">{{row.email}}</td>
+          <td ng-if="!row.email" colspan="6" class="text-left">&mdash;</td>
         </tr>
-        <tr data-ng-repeat="row in pointsContact">
-          <td class="text-left-bold">{{row.position}}</td>
-          <td>{{row.name}}</td>
-          <td>{{row.email}}</td>
-        </tr>                   
       </tbody>
-    </table>
+    </table>  
   </div>
 </div>
-<div class="row">
+<!-- <div class="row">
   <div class="col-md-12">
-    <div class="floater">
-      <div class="section-headers"><h4>Categories</h4></div>
-      <div class="content" data-ng-repeat="tag in details.details.categories" style="margin-left:30px">
-        <ul>
-          <li> {{tag.desc}}</li>
-        </ul>                   
-      </div>
-    </div>
-    <div class="floater">
-      <div class="section-headers"><h4>Operational Status</h4></div>
-      <div class="content" style="margin-left:30px">
-        <ul>
-          <li> {{details.details.operationStatus}}</li>
-        </ul>
-      </div>
-    </div>
-    <div class="floater">
-      <div class="section-headers"><h4>Component State</h4></div>
-      <div class="content" style="margin-left:30px">
-        <ul>
-          <li> {{getEvaluationState()}}</li>
-        </ul>
-      </div> 
-    </div>
-    <div style="clear:both;"></div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="section-headers"><h4>Relationships</h4></div>  
+    <div class="section-headers addBorders"><h4>Relationships</h4></div>  
     <div>
       <div style="display: inline-block; margin: 0px 20px;">
         <h4>
@@ -126,26 +107,23 @@
     </div>
   </div>
 </div>
-<br>
+<br> -->
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-bordered table-hover">
-      <tbody>
+    <table class="table table-bordered table-hover" >
+      <tbody> 
         <tr>
-          <th class="valign" colspan="2"><h4>Component Vitals</h4></th>
+          <th class="valign" colspan="16"><h4>Component Vitals</h4></th>
+        </tr>             
+        <tr ng-repeat="row in details.details.attributes">
+          <td colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
+          <td colspan="11" class="text-left">{{row.codeDescription}}</td>
         </tr>
-        <tr data-ng-repeat="row in componentVitals">
-          <td class="text-left-bold">{{row.name}}</td>
-          <td class="text-left" >{{row.desc}}</td>
+        <tr ng-repeat="row in details.details.metadata">
+          <td colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
+          <td colspan="11" class="text-left">{{row.codeDescription}}</td>
         </tr>
       </tbody>
     </table>
-  </div>
-</div>
-<div class="row">
-  <div class="container component2-div">
-    <div class="section-headers"><h4>Metadata</h4></div>  
-    <div class="col-sm-12">
-    </div>
   </div>
 </div>

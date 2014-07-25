@@ -14,54 +14,55 @@
       <div class="col-sm-12">
         <div style="display:inline-block; width: 100%">
           <h1><div style="font-weight: 100; margin: 0px; padding: 0px; display: inline-block; float: left; margin-top: 10px;">{{details.details.name}}
-            <span>
-              {{details.details.owner}}({{details.details.type[0].code}})&nbsp;&mdash;&nbsp;<!-- Here we'd do something like {{details.details.version}}... -->Version: 1.7.1
-            </span></div>
-            <div class="pull-right" id="detailsToolButtons">
-              <button class='btn btn-default detailsTitleButton collapsed' id="data-collapse-tags" ng-click="toggleTags('#tagsCollapse')"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
-                <i class="fa fa-tags imitateLink"></i>
-              </button>
-              <button class='btn btn-default detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
-              </button>
-              <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
-              </button>
-              <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
-              </button>
-              <button ng-show="!single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goToFullPage(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
-                <i class="fa fa-copy imitateLink"></i>
-              </button>
-              <button ng-show="single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goTo('/', {})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
-                <i class="ic ic-home2 imitateLink"></i>
-              </button>
-            </div>
-          </h1>
-        </div>
-        <!-- injected evaluations start -->
+            <span ng-if="details.details.organization !== null">
+              {{details.details.organization}}
+            </span>
+            <span ng-if="details.details.version !== null" style="padding: 0px;">
+              &mdash;
+            </span>
+            <span ng-if="details.details.version !== null">Version: {{details.details.version}}</span>
+          </div>
+          <div class="pull-right" id="detailsToolButtons">
+            <button class='btn btn-default detailsTitleButton collapsed' id="data-collapse-tags" ng-click="toggleTags('#tagsCollapse')"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
+              <i class="fa fa-tags imitateLink"></i>
+            </button>
+            <button class='btn btn-default detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
+            </button>
+            <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
+            </button>
+            <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
+            </button>
+            <button ng-show="!single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goToFullPage(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
+              <i class="fa fa-copy imitateLink"></i>
+            </button>
+            <button ng-show="single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goTo('/', {})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
+              <i class="ic ic-home2 imitateLink"></i>
+            </button>
+          </div>
+        </h1>
+      </div>
+      <!-- injected evaluations start -->
 
-        <!-- injected evaluations start -->
-        <div style="padding: 0px 10px;" id="tagsCollapse" class="panel-collapse collapse">
-          <tags-input class="bootstrap" min-length="1" ng-model="details.details.tags" replace-spaces-with-dashes="false" on-tag-added="saveTags(details.details.componentId, details.details.tags);" on-tag-removed="saveTags(details.details.componentId, details.details.tags);"><auto-complete min-length="1" source="checkTagsList($query, details.details.assetTags, tagsList)"></auto-complete></tags-input>
-        </div>
+      <!-- injected evaluations start -->
+      <div style="padding: 0px 10px;" id="tagsCollapse" class="panel-collapse collapse">
+        <tags-input class="bootstrap" min-length="1" ng-model="details.details.tags" replace-spaces-with-dashes="false" on-tag-added="saveTags(details.details.componentId, details.details.tags);" on-tag-removed="saveTags(details.details.componentId, details.details.tags);"><auto-complete min-length="1" source="checkTagsList($query, details.details.assetTags, tagsList)"></auto-complete></tags-input>
       </div>
     </div>
-    <!-- END TITLE SECTION -->
-
-
-    <!-- ******************************************************************* -->
-    <!-- Tabbing for Results Page -->
-    <div class="col-md-12" style="background:white; margin-top: -11px;" id="detailsTabs">
-      <tabset type="">  <!-- pills -->
-        <tab ng-repeat="tab in detailResultsTabs" heading="{{tab.title}}" class="{{tab.class}}">
-          <div ng-include="tab.relpath"></div>
-          <br>
-        </tab>
-      </tabset>
-    </div>
-
-    <!-- ******************************************************************* -->
-
-    <!-- This is the end of what you can take out. The rest must stay -->
   </div>
+  <!-- END TITLE SECTION -->
+
+
+  <!-- Tabbing for Results Page -->
+  <div class="col-md-12" style="background:white; margin-top: -11px;" id="detailsTabs">
+    <tabset type="">  <!-- pills -->
+      <tab ng-repeat="tab in detailResultsTabs" heading="{{tab.title}}" class="{{tab.class}}">
+        <div ng-include="tab.relpath"></div>
+        <br>
+      </tab>
+    </tabset>
+  </div>
+
+
 </div>
 
 <!-- Modal legend for evaluation levels progress bar colors -->
@@ -74,24 +75,11 @@
       </div>
       <div class="modal-body">
         <div class="col-sm-12"> 
-<!--           <p><b>Progress bar color scheme and date indicators</b>
-            <br>The progress bar color scheme indicates current activity within any phase of the Evaluation Schedule. Also, there are
-            ending date indicators ( <b>mm/dd</b> ) under each bar and at the right end of the bar, to indicate the completion date (either actual or estimated).
-            <br>The horizontal length of each bar is proportional to the days required to complete a specific phase divided by total days of the entire evaluation schedule timeline.
-          </p> -->
           <p><b>Progress bar color scheme and date indicators</b>
             <br>The progress bar color scheme indicates current activity within any phase of the Evaluation Schedule. Also, there are
             ending date indicators ( <b>mm/dd</b> ) below at the right edge of each bar, to indicate the completion date (either actual or estimated).
           </p>
-
- <!--          <progress>
-            <bar class="barborder" value="25" type="success"><span>Completed</span></bar>
-            <bar class="barborder" value="25" type="info"><span>In Progress</span></bar>
-            <bar class="barborder" value="25" type="danger"><span>Halted</span></bar>
-            <bar class="bar-transparent" value="25" type="transparent"><span>Not Started</span></bar>
-          </progress>  -->
         </div>  
-
         <div class="col-md-12" style="padding:0;">
           <div class="col-md-3" style="background-color:#E6E8EB;border:1px solid navy; height:50px; text-align:center; vertical-align:middle">Completed</div>
 

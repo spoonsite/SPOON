@@ -345,7 +345,7 @@ module.exports = function (grunt) {
           '.htaccess',
           '*.html',
           'views/**/*.html',
-          'images/**/*.png',
+          'images/**/*.{png,jpg,jpeg,gif,webp,svg}',
           'bower_components/fontawesome/css/font-awesome.css',
           'bower_components/fontawesome/fonts/*',
           'bower_components/bootstrap/dist/fonts/*',

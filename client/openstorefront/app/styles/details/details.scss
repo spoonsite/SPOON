@@ -1,52 +1,3 @@
-/* override bootstrap progress bar*/
-.bs-example{
-  margin: 120px;
-}
-.bar-transparent{
-  background-color:transparent ;  
-  /*border-right:solid black 1px !important;*/
-  /*border-top:solid black 1px !important;*/
-  color:black !important;
-}
-.bar-transparentdate{
-  background-color:transparent ;  
-  border-right:solid white 1px ;
-  /*border-top:solid white  1px !important;*/
-  color:black !important;
-}
-
-.progress {
-  width: 100%;
-  background-color: transparent ;
-  border:solid black  1px ;
-  border-radius: 0px;
-  height: 20px;
-}
-
-.barborder2 .progress {
-  border: 1px solid transparent;
-  box-shadow: inset 0 1px 2px transparent;
-  height: 20px;
-  margin-top: -21px;
-  margin-bottom: 0px;
-}
-
-.progress div{
-  box-shadow: inset 0 1px 0 transparent;
-}
-.barborders .progress div{
-  border-right: 1px solid black;
-  vertical-align: center;
-}
-
-.barborder2 .progress div{
-  border-right: 1px solid transparent;
-}
-
-.barborders .progress div:last-child{
-  border-right: 0px;
-}
-
 .component-state {
   color: black;
   font-size: 14px;
@@ -123,7 +74,7 @@
 
 /*New evaluation progress bars*/
 /*completed=0*/
-.evalprogbar0
+.complete
 {
   background-color:#E6E8EB;
   color:#FFFFFF;
@@ -134,7 +85,7 @@
   overflow: hidden;
 }
 /*in progress=1*/
-.evalprogbar1
+.inprogress
 {
   background-color:#D6EDD6;
   border:1px dashed #5CB85C;
@@ -146,7 +97,7 @@
   vertical-align:middle;
 }
 /*halted=2*/
-.evalprogbar2
+.haulted
 {
   background-color:#FFA480;
   color:#000000;
@@ -157,7 +108,7 @@
   overflow: hidden;
 }
 /*not started=3*/
-.evalprogbar3
+.notstarted
 {
   background-color:#FFFFFF;
   border:1px solid #808080;
@@ -168,7 +119,7 @@
   overflow: hidden;
 }
 /*completed=0*/
-.evalbarlegend0
+.completeLabel
 {
   text-align:right;
   padding:0;
@@ -176,7 +127,7 @@
   color:black;
 }
 /*in progress=1*/
-.evalbarlegend1
+.inprogressLabel
 {
   color:#5CB85C;
   font-weight:bold;
@@ -185,7 +136,7 @@
   font-size:12px;
 }
 /*halted=2*/
-.evalbarlegend2
+.haultedLabel
 {
   color:#ff4800;
   font-weight:bold;
@@ -194,11 +145,15 @@
   font-size:12px;
 }
 /*not started=3*/
-.evalbarlegend3
+.notstartedLabel
 {
   color:#808080;
   font-weight:bold;
   text-align:right;
   padding:0;
   font-size:12px;
+}
+
+.shadeME{
+  background: #cccccc;
 }

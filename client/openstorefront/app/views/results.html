@@ -54,18 +54,20 @@ limitations under the License.
           <table class="table">
             <tr ng-class="filters.length > 2? 'panel-heading': ''">
               <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" data-container="body" title="{{filter.name}}">
-                <span class="btn btn-link collapsed" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;">
-                <!-- <span class="btn btn-link" ng-class="$first? '':'collapsed'" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;"> -->
-                  <span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i>
+                <span style="overflow: hidden; width: 100%; height: 35px; display: inline-block; margin-bottom: -7px; ">
+                  <span ng-class="filter.hasChecked? '': 'empty'" class="btn btn-link spread collapsed" data-toggle="collapse" href="#collapse{{$index}}" >
+                    <!-- <span class="btn btn-link" ng-class="$first? '':'collapsed'" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;"> -->
+                    <span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i>
+                    </span>
+                    <span class="overflow-pair-left" style="text-align: left;">{{filter.name}}</span>
                   </span>
-                  <span class="overflow-pair-left" style="text-align: left;">{{filter.name}}</span>
+                  <selectall checkboxes="filter.collection" all-selected="filter.allChecked" all-clear="filter.noChecked"></selectall>
+                  <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
                 </span>
-                <input type="checkbox" ng-model="filter.checked" ng-change="toggleChecks(filter.collection)" />
-                <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
               </th>
             </tr>
             <tbody ng-class="filters.length > 2? 'panel-collapse collapse':''" id="collapse{{$index}}">
-            <!-- <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}"> -->
+              <!-- <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}"> -->
               <tr  class="filtersTr" data-ng-repeat="type in filter.collection" >
                 <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
                   <div class="checkbox filterCheckbox">

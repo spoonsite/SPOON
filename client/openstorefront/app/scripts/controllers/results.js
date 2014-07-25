@@ -418,29 +418,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function handles toggleing filter checks per filter heading click.
   ***************************************************************/
   $scope.toggleChecks = function(collection, override){
-    var master = false;
-    if (override === undefined || override === null || override === '') {
-      override = false;
-    }
-
-    var found = _.where(collection, {'checked': true});
-    
-    if (override) {
-      master = false;
-    } else {
-      if (!isEmpty(found)) {
-        if (found.length !== collection.length) {
-          master = true;
-        } else {
-          master = false;
-        }
-      } else {
-        master = true;
-      }
-    }
-    _.each(collection, function(item){
-      item.checked = master;
-    });
     $scope.applyFilters();
   };
 

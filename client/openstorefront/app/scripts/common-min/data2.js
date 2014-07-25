@@ -42,30 +42,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -108,19 +108,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ { text: "Data Exchange"} ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/CAS.jpg",
+    "link" : "images/old_site/CAS.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -165,8 +165,8 @@ MOCKDATA2.componentList = [ {
     "lastUsed" : 1362298530000,
     "updateDate" : 1398845730000,
     "organization" : "Private Company",
-    "recommend" : true,
-    "pros" : [ ],
+    "recommend" : false,
+    "pros" : [ "Reliable", "Well tested" ],
     "cons" : [ ]
   } ],
   "dependencies" : [ ]
@@ -193,30 +193,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 1",
+    "currentLevelCode" : "LEVEL1",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1392138930000,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1392138930000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ {
+    "evaluationSections" : [ {
       "name" : "Discoverable",
       "score" : 3
     }, {
@@ -372,19 +372,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/clavin_logo.png",
+    "link" : "images/old_site/clavin_logo.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -436,30 +436,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 1",
+    "currentLevelCode" : "LEVEL1",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1392138930000,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1392138930000,
       "levelStatus" : "H"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Does this support the 2.0 specs? (SAMPLE)",
@@ -533,13 +533,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -594,7 +594,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -638,13 +638,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -689,30 +689,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -759,19 +759,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/satellite-icon.png",
+    "link" : "images/old_site/satellite-icon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -826,30 +826,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -892,19 +892,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ { text: "Visualization"}, { text: "Mapping" } ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/satellite-icon.png",
+    "link" : "images/old_site/satellite-icon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -956,30 +956,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Does this support the 2.0 specs? (SAMPLE)",
@@ -1060,19 +1060,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/satellite-icon.png",
+    "link" : "images/old_site/satellite-icon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1124,30 +1124,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Are there alternate licenses? (SAMPLE)",
@@ -1224,19 +1224,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/CoTIcon.png",
+    "link" : "images/old_site/CoTIcon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1286,30 +1286,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -1355,13 +1355,13 @@ MOCKDATA2.componentList = [ {
   } ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1406,7 +1406,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -1446,13 +1446,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1497,7 +1497,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -1537,13 +1537,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1585,30 +1585,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -1651,19 +1651,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/DIBProjectLogo.png",
+    "link" : "images/old_site/DIBProjectLogo.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1713,7 +1713,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -1753,13 +1753,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1804,7 +1804,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -1844,13 +1844,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1895,7 +1895,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -1935,13 +1935,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -1986,7 +1986,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2026,13 +2026,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -2077,7 +2077,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2117,13 +2117,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -2171,7 +2171,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2206,13 +2206,13 @@ MOCKDATA2.componentList = [ {
   } ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -2289,7 +2289,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2324,13 +2324,13 @@ MOCKDATA2.componentList = [ {
   } ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -2404,30 +2404,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2469,19 +2469,19 @@ MOCKDATA2.componentList = [ {
     "value" : "No"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/IdAMLogoMed-Size.png",
+    "link" : "images/old_site/IdAMLogoMed-Size.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -2562,30 +2562,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2636,19 +2636,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/IdAMLogoMed-Size.png",
+    "link" : "images/old_site/IdAMLogoMed-Size.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -2706,7 +2706,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2745,19 +2745,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/DI2E Framework RA.png",
+    "link" : "images/old_site/DI2E Framework RA.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -2810,7 +2810,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2850,13 +2850,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -2901,30 +2901,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -2991,19 +2991,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/ddf-logo.jpg",
+    "link" : "images/old_site/ddf-logo.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -3061,7 +3061,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -3101,13 +3101,13 @@ MOCKDATA2.componentList = [ {
   "metadata" : [ ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -3152,30 +3152,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -3218,19 +3218,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/eDibIcon.png",
+    "link" : "images/old_site/eDibIcon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -3277,30 +3277,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 1",
+    "currentLevelCode" : "LEVEL1",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1392138930000,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1392138930000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ {
+    "evaluationSections" : [ {
       "name" : "Discoverable",
       "score" : 0
     }, {
@@ -3444,19 +3444,19 @@ MOCKDATA2.componentList = [ {
     "value" : "No"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/core-map-api.png",
+    "link" : "images/old_site/core-map-api.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -3508,30 +3508,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Which os platforms does this support? (SAMPLE)",
@@ -3613,19 +3613,19 @@ MOCKDATA2.componentList = [ {
     "value" : "UDOP, Information Sharing, Research"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/GAPS.jpg",
+    "link" : "images/old_site/GAPS.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -3675,30 +3675,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -3741,19 +3741,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/GAPS.jpg",
+    "link" : "images/old_site/GAPS.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -3806,30 +3806,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -3872,19 +3872,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/GAPS.jpg",
+    "link" : "images/old_site/GAPS.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -3934,30 +3934,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -4004,19 +4004,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ { text: "Visualization"} ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/gvs.png",
+    "link" : "images/old_site/gvs.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -4071,30 +4071,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -4137,19 +4137,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ {text: "UDOP"} ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/gvs.png",
+    "link" : "images/old_site/gvs.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -4204,30 +4204,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -4270,19 +4270,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/gvs.png",
+    "link" : "images/old_site/gvs.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -4334,30 +4334,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -4400,19 +4400,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/gvs.png",
+    "link" : "images/old_site/gvs.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -4464,30 +4464,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -4530,19 +4530,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/gvs.png",
+    "link" : "images/old_site/gvs.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -4594,30 +4594,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Which os platforms does this support? (SAMPLE)",
@@ -4678,19 +4678,19 @@ MOCKDATA2.componentList = [ {
     "value" : "No"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/gvs.png",
+    "link" : "images/old_site/gvs.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -4742,30 +4742,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Which os platforms does this support? (SAMPLE)",
@@ -4826,19 +4826,19 @@ MOCKDATA2.componentList = [ {
     "value" : "UDOP, Information Sharing, Research"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/gvs.png",
+    "link" : "images/old_site/gvs.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -4890,30 +4890,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Which os platforms does this support? (SAMPLE)",
@@ -4971,19 +4971,19 @@ MOCKDATA2.componentList = [ {
     "value" : "Yes"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/gvs.png",
+    "link" : "images/old_site/gvs.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -5035,30 +5035,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Does this support the 2.0 specs? (SAMPLE)",
@@ -5124,19 +5124,19 @@ MOCKDATA2.componentList = [ {
     "value" : "Yes"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/eXMeritus.jpg",
+    "link" : "images/old_site/eXMeritus.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -5191,7 +5191,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Which version supports y-docs 1.5+? (SAMPLE)",
@@ -5246,13 +5246,13 @@ MOCKDATA2.componentList = [ {
   } ],
   "componentMedia" : [ ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -5289,30 +5289,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -5355,19 +5355,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/grid.jpg",
+    "link" : "images/old_site/grid.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -5419,30 +5419,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -5481,19 +5481,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/Database-Icon.jpg",
+    "link" : "images/old_site/Database-Icon.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -5545,30 +5545,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -5611,19 +5611,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/Search.jpg",
+    "link" : "images/old_site/Search.jpg",
     "contentType" : "image/jpg",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -5678,30 +5678,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -5755,19 +5755,19 @@ MOCKDATA2.componentList = [ {
     "value" : "Unfiltered"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/iSpatialLogosquare.png",
+    "link" : "images/old_site/iSpatialLogosquare.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -5843,30 +5843,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -5912,19 +5912,19 @@ MOCKDATA2.componentList = [ {
     "value" : "Unfiltered"
   } ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/maps-icon.png",
+    "link" : "images/old_site/maps-icon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -5992,30 +5992,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 1",
+    "currentLevelCode" : "LEVEL1",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "P"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -6058,19 +6058,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/JView_Logo_133_81[1].png",
+    "link" : "images/old_site/JView_Logo_133_81[1].png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -6122,30 +6122,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -6184,19 +6184,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/maps-icon.png",
+    "link" : "images/old_site/maps-icon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -6248,30 +6248,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -6306,19 +6306,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/security.png",
+    "link" : "images/old_site/security.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -6370,30 +6370,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Which version supports y-docs 1.5+? (SAMPLE)",
@@ -6474,19 +6474,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ {text: "Reference"} ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/OpenSextanticon.png",
+    "link" : "images/old_site/OpenSextanticon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -6564,30 +6564,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Does this support the 2.0 specs? (SAMPLE)",
@@ -6664,19 +6664,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ {text: "UDOP"} ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/OpenStack.png",
+    "link" : "images/old_site/OpenStack.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -6757,7 +6757,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Are samples included? (SAMPLE)",
@@ -6825,19 +6825,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ {text: "Mapping"} ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/OpenStack.png",
+    "link" : "images/old_site/OpenStack.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -6908,7 +6908,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Are there alternate licenses? (SAMPLE)",
@@ -6989,19 +6989,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/ologo.png",
+    "link" : "images/old_site/ologo.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Jack TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -7056,7 +7056,7 @@ MOCKDATA2.componentList = [ {
     "currentLevelCode" : "NA",
     "reviewedVersion" : null,
     "evaluationSchedule" : [ ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Are there alternate licenses? (SAMPLE)",
@@ -7137,19 +7137,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/ologo.png",
+    "link" : "images/old_site/ologo.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Cathy TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -7186,30 +7186,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Which version supports y-docs 1.5+? (SAMPLE)",
@@ -7290,19 +7290,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/OMPIcon.png",
+    "link" : "images/old_site/OMPIcon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -7339,30 +7339,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ {
     "question" : "Are samples included? (SAMPLE)",
@@ -7455,19 +7455,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/Ozone-Banner_30x110.png",
+    "link" : "images/old_site/Ozone-Banner_30x110.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -7519,30 +7519,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -7589,19 +7589,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/wess_logo.png",
+    "link" : "images/old_site/wess_logo.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Dawson TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -7653,30 +7653,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -7731,19 +7731,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/wess_logo.png",
+    "link" : "images/old_site/wess_logo.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
@@ -7795,30 +7795,30 @@ MOCKDATA2.componentList = [ {
   "evaluation" : {
     "startDate" : 1388769330000,
     "endDate" : 1393694130000,
-    "currentLevelCode" : "LEVEL 0",
+    "currentLevelCode" : "LEVEL0",
     "reviewedVersion" : "1.0",
     "evaluationSchedule" : [ {
-      "evaluationLevelCode" : "LEVEL 0",
-      "estimatedCompeletionDate" : null,
-      "actualCompeletionDate" : 1389460530000,
+      "evaluationLevelCode" : "LEVEL0",
+      "estimatedCompletionDate" : null,
+      "actualCompletionDate" : 1389460530000,
       "levelStatus" : "C"
     }, {
-      "evaluationLevelCode" : "LEVEL 1",
-      "estimatedCompeletionDate" : 1392138930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL1",
+      "estimatedCompletionDate" : 1392138930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 2",
-      "estimatedCompeletionDate" : 1393002930000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL2",
+      "estimatedCompletionDate" : 1393002930000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     }, {
-      "evaluationLevelCode" : "LEVEL 3",
-      "estimatedCompeletionDate" : 1393694130000,
-      "actualCompeletionDate" : null,
+      "evaluationLevelCode" : "LEVEL3",
+      "estimatedCompletionDate" : 1393694130000,
+      "actualCompletionDate" : null,
       "levelStatus" : "N"
     } ],
-    "evaulationSections" : [ ]
+    "evaluationSections" : [ ]
   },
   "questions" : [ ],
   "attributes" : [ {
@@ -7869,19 +7869,19 @@ MOCKDATA2.componentList = [ {
   "tags" : [ ],
   "metadata" : [ ],
   "componentMedia" : [ {
-    "link" : "images/oldsite/maps-icon.png",
+    "link" : "images/old_site/maps-icon.png",
     "contentType" : "image/png",
     "caption" : null,
     "description" : null
   } ],
   "contacts" : [ {
-    "postionDescription" : "Technical POC",
+    "positionDescription" : "Technical POC",
     "name" : "Abby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",
     "organization" : "sample organization"
   }, {
-    "postionDescription" : "Government POC",
+    "positionDescription" : "Government POC",
     "name" : "Colby TEST",
     "email" : "sample_email@test.com",
     "phone" : "555-555-5555",

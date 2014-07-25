@@ -17,7 +17,7 @@
 
 /*global MOCKDATA2*/
 
-app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', function ($rootScope, $scope, Business, $location) { /*jshint unused:false*/
+app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', function ($rootScope, $scope, Business, $location, Lightbox, $timeout) { /*jshint unused:false*/
 
   $scope.scoreCard                     = Business.componentservice.getScoreCard();
   $scope.externalDepend                = Business.componentservice.getExternalDepend();
@@ -30,6 +30,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentState                = Business.componentservice.getComponentState();
   $scope.resultsComments               = Business.componentservice.getResultsComments();
   $scope.watches                       = Business.getWatches();
+
+  Business.lookupservice.getEvalLevels().then(function(result){
+    $scope.evalLevels = result;
+  });
 
 
   $scope.tabs = {
@@ -67,10 +71,11 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     { title:'SUMMARY', content:'1', relpath:'views/details/summary.html', class:'' },
     { title:'DETAILS', content:'2', relpath:'views/details/details.html', class:'' },
     { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html', class:'' },
-    { title:'Q&A', content:'4', relpath:'views/details/comments.html', class:'' },
+    { title:'Q&A', content:'4', relpath:'views/details/comments.html', class:'' }
     // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
   //
   ];
+
   $scope.tab = $scope.detailResultsTabs[0];
 
   /***************************************************************
@@ -101,6 +106,90 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
 
+  $scope.openLightboxModal = function (index, imageArray) {
+    Lightbox.openModal(imageArray, index);
+  };
+
+  $scope.$watch('details', function () {
+    if ($scope.details){
+      if ($scope.details.details) {
+        if ($scope.details.details.reviews) {
+          if ($scope.details.details.reviews[0] !== undefined) {
+            $scope.setupReviewSummary();
+          } else {
+            $scope.reviewSummary = null;
+          }
+        }
+      }
+    }
+  }, true);
+
+  $scope.setupReviewSummary = function(){
+    var total = [];
+    var pros = {};
+    var cons = {};
+    var prosList = [];
+    var consList = [];
+    var recommend = 0;
+    _.each($scope.details.details.reviews, function(review){
+      total[review.rating] = total[review.rating]? total[review.rating] + 1: 1;
+      if (review.recommend) {
+        recommend = recommend + 1;
+      }
+      if (review.pros[0] !== undefined) {
+        _.each(review.pros, function(pro){
+          prosList.push(pro);
+        });
+      }
+      if (review.cons[0] !== undefined) {
+        _.each(review.cons, function(con){
+          consList.push(con);
+        });
+      }
+    });
+
+    if (prosList.length){
+      prosList.map( function (a) {
+        if (a in pros) {
+          pros[a] ++;
+        } else {
+          pros[a] = 1;
+        }
+      });
+    } else {
+      pros = null;
+    }
+    if (consList.length){
+      consList.map( function (a) {
+        if (a in cons) {
+          cons[a] ++;
+        } else {
+          cons[a] = 1;
+        }
+      });
+    } else {
+      cons = null;
+    }
+
+    var result = {
+      'total': 0,
+      'count': 0
+    };
+    for (var key in total) {
+      result.total = result.total + (parseInt(key) * total[key]);
+      result.count = result.count + 1;
+    }
+    result.score = result.total / result.count;
+    result.recommend = recommend;
+    result.recommendPercent = recommend / result.count * 100;
+    $scope.reviewSummary = {
+      'ratings': total,
+      'total': result,
+      'pros': pros,
+      'cons': cons
+    };
+  };
+
   /***************************************************************
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
@@ -123,6 +212,80 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.saveTags = function(id, tags){
     Business.componentservice.saveTags(id, tags);
     $scope.applyFilters();
+  };
+
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.grabEvaluationMessage = function(statusCode, actual, estimated){
+    var result = '';
+    switch(statusCode){
+      case 'C':
+      result = 'COMPLETED ' + actual;
+      break;
+      case 'H':
+      result = 'HAULTED ' + actual;
+      break;
+      case 'P':
+      result = 'IN PROGRESS (estimated complete ' + estimated + ')';
+      break;
+      default:
+      result = 'NOT STARTED (estimated complete ' + estimated + ')';
+      break;
+    }
+    return result;
+  };
+
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.getEval = function(levelCode){
+    var level = _.find($scope.evalLevels.collection, {'code': levelCode});
+    return level;
+  };
+
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.checkForImportants = function(array){
+    return _.some(array, function(item){
+      return item.important;
+    });
+  };
+  
+  /***************************************************************
+  * This function creates the image array required by the gallery
+  ***************************************************************/
+  $scope.getImages = function(imageArray){
+    _.each(imageArray, function(image){
+      var img = new Image();
+      img.onload = function() {
+        image.width = this.width;
+        image.height = this.height;
+      };
+      img.src = image.link;
+    });
+    return imageArray;
+  };
+
+
+  var mNames = new Array('January', 'February', 'March',
+    'April', 'May', 'June', 'July', 'August', 'September',
+    'October', 'November', 'December');
+
+  /***************************************************************
+  * This function converts a timestamp to a displayable date
+  ***************************************************************/
+  $scope.getDate = function(date){
+    if (date)
+    {
+      var d = new Date(date);
+      var currDate = d.getDate();
+      var currMonth = d.getMonth();
+      var currYear = d.getFullYear();
+      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+    }
+    return null;
   };
 
   /***************************************************************
