@@ -220,13 +220,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     if (!a) {
       $scope.watches.push(
       {
-          "watchId" : $scope.watches[$scope.watches.length - 1].watchId + 1,
-          "lastUpdateDts" : null,
-          "lastViewDts" : null,
-          "createDts" : new Date().getTime(),
-          "componentName" : null,
-          "componentId" : id,
-          "notifyFlag" : false
+          'watchId' : $scope.watches[$scope.watches.length - 1].watchId + 1,
+          'lastUpdateDts' : null,
+          'lastViewDts' : null,
+          'createDts' : new Date().getTime(),
+          'componentName' : null,
+          'componentId' : id,
+          'notifyFlag' : false
       });
     }
 

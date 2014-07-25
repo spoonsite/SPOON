@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/*global MOCKDATA2, jQuery*/
+/*global MOCKDATA2, jQuery, confirm*/
 
 app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', function($scope, Business, $rootScope, $location, $timeout) {
 
@@ -62,7 +62,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $timeout(function() {
       $('[data-toggle=\'tooltip\']').tooltip();
     }, 300);
-  })
+  });
 
   /***************************************************************
   * This function converts a timestamp to a displayable date
@@ -227,7 +227,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * params: id -- the id of the component we want to take off our watch list.
   ***************************************************************/
   $scope.removeFromWatches = function(id){
-    var answer = confirm ("You are about to remove a component from your watch list. Are you sure you want to do this?");
+    var answer = confirm ('You are about to remove a component from your watch list. Are you sure you want to do this?');
     if (answer) {
 
       var a = _.find($scope.watches, {'componentId': id});
