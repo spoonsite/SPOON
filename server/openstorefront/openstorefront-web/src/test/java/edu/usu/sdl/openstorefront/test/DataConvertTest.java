@@ -20,8 +20,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
+import edu.usu.sdl.openstorefront.service.io.AttributeImport;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContact;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
@@ -37,6 +39,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentRelationship;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResource;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReview;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTag;
+import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchResult;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.web.tool.OldAsset;
@@ -236,8 +239,8 @@ public class DataConvertTest
 			//map form old			
 			componentDetail.setComponentId(oldAsset.getId());
 			componentDetail.setGuid(oldAsset.getUuid());
-			componentDetail.setUpdateDts(oldAsset.getEditedDate());
-			componentDetail.setDescription(oldAsset.getDescription());
+			componentDetail.setUpdateDts(oldAsset.getEditedDate());			
+			componentDetail.setDescription(ServiceUtil.createHrefUrls(oldAsset.getDescription()));
 			componentDetail.setApprovedDate(oldAsset.getApprovalDate());
 			componentDetail.setCreateDts(oldAsset.getCreateDate());
 			componentDetail.setVersion(oldAsset.getVersionName());
@@ -301,7 +304,7 @@ public class DataConvertTest
 			//resources
 			oldAsset.getDocUrls().forEach(doc -> {
 				ComponentResource componentResource = new ComponentResource();
-				componentResource.setName(doc.getName());
+				componentResource.setName("Documentation");
 				componentResource.setLink(doc.getUrl());
 				componentResource.setType("Document");
 				componentDetail.getResources().add(componentResource);
@@ -496,12 +499,12 @@ public class DataConvertTest
 				}
 				
 				//reviews
-				if (random.nextInt(10) < 4)
+				if (random.nextInt(10) < 7)
 				{
 					List<String> keys = new ArrayList<>();
 					keys.addAll(reviewMap.keySet());
 					Collections.shuffle(keys);
-					int maxreviews = random.nextInt(3);
+					int maxreviews = random.nextInt(4);
 					for (int i=0; i<maxreviews; i++)
 					{					
 						String  title = keys.remove(0);
@@ -577,10 +580,6 @@ public class DataConvertTest
 
 				if (!"NA".equals(evaluation.getCurrentLevelCode()))
 				{
-					//Fill in the general eval info
-					evaluation.setReviewedVersion("1.0");
-					evaluation.setStartDate(TimeUtil.fromString("2014-1-03T10:15:30.00Z"));
-					evaluation.setEndDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));										
 					
 					if ("LEVEL 0".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
 					{						
@@ -621,6 +620,11 @@ public class DataConvertTest
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 0");						
 						componentEvaluationSchedule.setActualCompeletionDate(TimeUtil.fromString("2014-1-11T10:15:30.00Z"));
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
+						
+						//Fill in the general eval info
+						evaluation.setReviewedVersion("1.0");	
+						evaluation.setStartDate(TimeUtil.fromString("2014-1-03T10:15:30.00Z"));						
+						evaluation.setEndDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));
 																	
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						int check = random.nextInt(10);
@@ -753,10 +757,17 @@ public class DataConvertTest
 	}
 	
 	@Test
-	public void testAttribute()
+	public void testAttribute() throws JsonProcessingException, IOException
 	{
-		//List<AttributeTypeView> types = new ArrayList<AttributeTypeView>();
+		RestListResponse<AttributeTypeView> response = new RestListResponse<>();
 		
+		AttributeImport attributeImport = new AttributeImport();		
+		response.setData(attributeImport.loadAttributes());
+		response.setResults(response.getData().size());
+		response.setTotalResults(response.getData().size());
+		
+		ObjectMapper objectMapper = ServiceUtil.defaultObjectMapper();			
+		objectMapper.writeValue(new File("c:/development/storefront/data/attributes.json"), response);
 	}
 	
 }
