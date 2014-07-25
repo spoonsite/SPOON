@@ -165,8 +165,8 @@ MOCKDATA2.componentList = [ {
     "lastUsed" : 1362298530000,
     "updateDate" : 1398845730000,
     "organization" : "Private Company",
-    "recommend" : true,
-    "pros" : [ ],
+    "recommend" : false,
+    "pros" : [ "Reliable", "Well tested" ],
     "cons" : [ ]
   } ],
   "dependencies" : [ ]

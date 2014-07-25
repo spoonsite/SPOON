@@ -4,7 +4,8 @@
     <table class="table table-bordered table-hover" style="table-layout: fixed;">
       <tbody>
         <tr>
-          <th class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>
+          <th ng-if="details.details.evaluation.evaluationSections[0] !== undefined" class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>
+          <th ng-if="details.details.evaluation.evaluationSections[0] === undefined" class="valign" colspan="2"><h4>Component Evaluation Information</h4></th>
         </tr>
         <tr ng-if="details.details.evaluation.endDate !== null">
           <th class="valign" style="vertical-align:middle"><h5>Evaluation Date</h5></th>

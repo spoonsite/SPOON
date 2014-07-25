@@ -17,7 +17,7 @@
 
 /*global MOCKDATA2*/
 
-app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', function ($rootScope, $scope, Business, $location, Lightbox) { /*jshint unused:false*/
+app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', function ($rootScope, $scope, Business, $location, Lightbox, $timeout) { /*jshint unused:false*/
 
   $scope.scoreCard                     = Business.componentservice.getScoreCard();
   $scope.externalDepend                = Business.componentservice.getExternalDepend();
@@ -71,10 +71,11 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     { title:'SUMMARY', content:'1', relpath:'views/details/summary.html', class:'' },
     { title:'DETAILS', content:'2', relpath:'views/details/details.html', class:'' },
     { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html', class:'' },
-    { title:'Q&A', content:'4', relpath:'views/details/comments.html', class:'' },
+    { title:'Q&A', content:'4', relpath:'views/details/comments.html', class:'' }
     // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
   //
   ];
+
   $scope.tab = $scope.detailResultsTabs[0];
 
   /***************************************************************
@@ -109,6 +110,86 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     Lightbox.openModal(imageArray, index);
   };
 
+  $scope.$watch('details', function () {
+    if ($scope.details){
+      if ($scope.details.details) {
+        if ($scope.details.details.reviews) {
+          if ($scope.details.details.reviews[0] !== undefined) {
+            $scope.setupReviewSummary();
+          } else {
+            $scope.reviewSummary = null;
+          }
+        }
+      }
+    }
+  }, true);
+
+  $scope.setupReviewSummary = function(){
+    var total = [];
+    var pros = {};
+    var cons = {};
+    var prosList = [];
+    var consList = [];
+    var recommend = 0;
+    _.each($scope.details.details.reviews, function(review){
+      total[review.rating] = total[review.rating]? total[review.rating] + 1: 1;
+      if (review.recommend) {
+        recommend = recommend + 1;
+      }
+      if (review.pros[0] !== undefined) {
+        _.each(review.pros, function(pro){
+          prosList.push(pro);
+        });
+      }
+      if (review.cons[0] !== undefined) {
+        _.each(review.cons, function(con){
+          consList.push(con);
+        });
+      }
+    });
+
+    if (prosList.length){
+      prosList.map( function (a) {
+        if (a in pros) {
+          pros[a] ++;
+        } else {
+          pros[a] = 1;
+        }
+      });
+    } else {
+      pros = null;
+    }
+    if (consList.length){
+      consList.map( function (a) {
+        if (a in cons) {
+          cons[a] ++;
+        } else {
+          cons[a] = 1;
+        }
+      });
+    } else {
+      cons = null;
+    }
+
+    var result = {
+      'total': 0,
+      'count': 0
+    };
+    for (var key in total) {
+      result.total = result.total + (parseInt(key) * total[key]);
+      result.count = result.count + 1;
+    }
+    result.score = result.total / result.count;
+    result.recommend = recommend;
+    result.recommendPercent = recommend / result.count * 100;
+    $scope.reviewSummary = {
+      'ratings': total,
+      'total': result,
+      'pros': pros,
+      'cons': cons
+    };
+  };
+
   /***************************************************************
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
@@ -137,7 +218,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function saves a component's tags
   ***************************************************************/
   $scope.grabEvaluationMessage = function(statusCode, actual, estimated){
-    var result = "";
+    var result = '';
     switch(statusCode){
       case 'C':
       result = 'COMPLETED ' + actual;
@@ -181,16 +262,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       img.onload = function() {
         image.width = this.width;
         image.height = this.height;
-      }
+      };
       img.src = image.link;
     });
-    return imageArray
+    return imageArray;
   };
 
 
-  var m_names = new Array("January", "February", "March", 
-    "April", "May", "June", "July", "August", "September", 
-    "October", "November", "December");
+  var mNames = new Array('January', 'February', 'March',
+    'April', 'May', 'June', 'July', 'August', 'September',
+    'October', 'November', 'December');
 
   /***************************************************************
   * This function converts a timestamp to a displayable date
@@ -199,10 +280,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     if (date)
     {
       var d = new Date(date);
-      var curr_date = d.getDate();
-      var curr_month = d.getMonth();
-      var curr_year = d.getFullYear();
-      return ((curr_month + 1) + "/" + curr_date + "/" + curr_year);
+      var currDate = d.getDate();
+      var currMonth = d.getMonth();
+      var currYear = d.getFullYear();
+      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
     }
     return null;
   };
