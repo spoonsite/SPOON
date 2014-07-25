@@ -216,17 +216,18 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ***************************************************************/
   $scope.addToWatches = function(id){
     var a = _.find($scope.watches, {'componentId': id});
+    var component = _.find(MOCKDATA2.componentList, {'componentId': id});
     
     if (!a) {
       $scope.watches.push(
       {
           'watchId' : $scope.watches[$scope.watches.length - 1].watchId + 1,
-          'lastUpdateDts' : null,
-          'lastViewDts' : null,
+          'lastUpdateDts' : new Date().getTime(),
+          'lastViewDts' : new Date().getTime(),
           'createDts' : new Date().getTime(),
-          'componentName' : null,
+          'componentName' : component.name,
           'componentId' : id,
-          'notifyFlag' : false
+          'notifyFlag' : true
       });
     }
 
