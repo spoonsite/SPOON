@@ -61,7 +61,7 @@ limitations under the License.
                     </span>
                     <span class="overflow-pair-left" style="text-align: left;">{{filter.name}}</span>
                   </span>
-                  <input type="checkbox" ng-model="filter.checked" ng-change="toggleChecks(filter.collection)" />
+                  <selectall checkboxes="filter.collection" all-selected="filter.allChecked" all-clear="filter.noChecked"></selectall>
                   <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
                 </span>
               </th>
