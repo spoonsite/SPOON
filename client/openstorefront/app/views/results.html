@@ -61,7 +61,7 @@ limitations under the License.
                     </span>
                     <span class="overflow-pair-left" style="text-align: left;">{{filter.name}}</span>
                   </span>
-                  <selectall checkboxes="filter.collection" all-selected="filter.allChecked" all-clear="filter.noChecked"></selectall>
+                  <selectall checkboxes="filter.collection" all-selected="filter.allChecked" all-clear="filter.noChecked" toggle-callback="applyFilters"></selectall>
                   <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
                 </span>
               </th>

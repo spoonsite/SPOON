@@ -65,6 +65,32 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
         $scope.details.details = result;
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
         console.log('found', found);
+        
+
+        // Code here will be linted with JSHint.
+        /* jshint ignore:start */
+        // Code here will be linted with ignored by JSHint.
+
+        if ($scope.details.details.attributes[0] !== undefined) {
+
+          _.each($scope.details.details.attributes, function(attribute) {
+            if (attribute.typeDescription === 'SvcV-4') {
+              var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
+                return item.TagValue_UID === attribute.codeDescription;
+              });
+              if (svcv4) {
+                attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
+                attribute.svcv4 = svcv4;
+              } else {
+                attribute.svcv4 = null;
+              }
+            }
+          });
+        }
+
+
+        /* jshint ignore:end */
+
 
         if (found) {
           $scope.details.details.watched = true;
@@ -73,7 +99,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.showDetails = true;
     });
-  };
+};
 
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search

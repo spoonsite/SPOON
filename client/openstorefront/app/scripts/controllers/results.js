@@ -431,6 +431,31 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       if (result)
       {
         $scope.details.details = result;
+
+        // Code here will be linted with JSHint.
+        /* jshint ignore:start */
+        // Code here will be linted with ignored by JSHint.
+
+        if ($scope.details.details.attributes[0] !== undefined) {
+
+          _.each($scope.details.details.attributes, function(attribute) {
+            if (attribute.typeDescription === 'SvcV-4') {
+              var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
+                return item.TagValue_UID === attribute.codeDescription;
+              });
+              if (svcv4) {
+                attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
+                attribute.svcv4 = svcv4;
+              } else {
+                attribute.svcv4 = null;
+              }
+            }
+          });
+        }
+
+
+        /* jshint ignore:end */
+
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.showDetails = true;

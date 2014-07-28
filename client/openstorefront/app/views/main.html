@@ -27,30 +27,43 @@ limitations under the License.
     </div>
   </div>
 
-  <div class="search ">
+  <div class="search " style="position:relative;">
     <div class="text-center getstarted">
       <h4 >
         <label class="imitateLink" ng-click="focusOnSearch()" for="search-header">Get Started<br>
           <small>Search for DI2E Components
           </small>
-          <br>
-          <i class="fa fa-caret-down"></i>
+          <!-- <br> -->
+          <!-- <i class="fa fa-caret-down"></i> -->
         </label>
       </h4>
+        <!--       
+        <div class="svcv4ModeButton imitate" ng-show="!svcv4Mode"><button ng-click="svcv4Mode = !svcv4Mode" class="btn btn-default">SVC-v4 Mode</button></div>
+        <div class="svcv4ModeButton imitate" ng-show="svcv4Mode"><button ng-click="svcv4Mode = !svcv4Mode" class="btn btn-default">Search Mode</button></div> 
+      -->
     </div>
-    <div class="center navSearch defaultSearch ">
-      <div class="pull-right searchAllButton" style="margin-left: 10px;">
-        <button ng-click="goToSearch('search', 'All', true)" style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Show All Listings
-        </button>
+    <div>
+      <div class="center navSearch defaultSearch">
+        <div  ng-show="!svcv4Mode">
+          <div class="pull-right searchAllButton" style="margin-left: 10px;">
+            <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;  margin-left:10px;" class="btn btn-primary pull-right">SVC-v4</button>
+            <button ng-click="goToSearch('search', 'All', true)" style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Show All Listings
+            </button>
+          </div>
+          <form ng-submit="goToSearch('search', searchKey)">
+            <div class="pull-right searchBoxButton">
+              <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
+            </div>
+            <div class="navSearchBar">
+              <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
+            </div>
+          </form>
+        </div>
+        <div ng-show="svcv4Mode">
+          <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Search</button>
+          <img src="images/svcv4.png" alt="SVC-v4 Diagram" style="width: 100%; height: auto;">
+        </div>
       </div>
-      <form ng-submit="goToSearch('search', searchKey)">
-        <div class="pull-right searchBoxButton">
-          <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
-        </div>
-        <div class="navSearchBar">
-          <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
-        </div>
-      </form>
     </div>
   </div>
 
