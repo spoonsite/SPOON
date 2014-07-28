@@ -235,8 +235,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       });
     }
 
-    console.log('$scope.watches', $scope.watches);
-    
     Business.setWatches($scope.watches);
     $scope.details.details.watched = true;
     _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = true;
@@ -342,9 +340,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     if (a) {
       $scope.watches.splice(_.indexOf($scope.watches, a), 1);
     }
-
-    console.log('$scope.watches', $scope.watches);
-
 
     Business.setWatches($scope.watches);
     $scope.details.details.watched = false;

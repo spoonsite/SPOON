@@ -35,3 +35,7 @@ span.twitter-typeahead {
 .tt-hint {
   color: #999;
 }
+
+.typeahead.dropdown-menu {
+  z-index: 1050;
+}

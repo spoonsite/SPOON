@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global isEmpty, setupPopovers, openClick:true, moveButtons, setupResults,
+/* global isEmpty, setupPopovers, openClick:true, setupResults,
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimations,
 filtClick*/
 
@@ -94,15 +94,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   /***************************************************************
   * Set up typeahead, and then watch for selection made
   ***************************************************************/
-  if ($rootScope.typeahead) {
-    $scope.typeahead  = $rootScope.typeahead;
-  } else {
-    Business.componentservice.getComponentDetails().then(function(result) {
-      Business.typeahead(result, 'name').then(function(value){
-        $scope.typeahead = value;
-      });
+  Business.componentservice.getComponentDetails().then(function(result) {
+    Business.typeahead(result, 'name').then(function(value){
+      $scope.typeahead = value;
     });
-  }
+  });
 
   /***************************************************************
   * This grabs the user type codes and sets them to the scope.
@@ -446,7 +442,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.goToFullPage = function(id){
     var url = $location.absUrl().replace($location.url(), '');
-    console.log('url', url);
     url = url + '/single?id=' + id;
     window.open(url, 'Component ' + id, 'window settings');
     // $location.search({
@@ -460,8 +455,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * the filters as quickly as possible
   ***************************************************************/
   $scope.clearFilters = function() {
-    console.log('we hit this...');
-    
     $scope.orderProp = '';
     $scope.ratingsFilter = null;
     $scope.tagsFilter = null;
