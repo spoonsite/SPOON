@@ -32,7 +32,7 @@
   float: none;
 }
 .navSearch{
-  margin-left:260px;
+  margin-left:280px;
   margin-right:220px;
   width: auto;
 }
@@ -68,6 +68,13 @@
 
 .navbar-brand {
   padding: 0px;
+}
+
+.navbar-brand i{
+  color:white;
+}
+.navbar-brand div:hover i, .navbar-brand div:hover span {
+  color: lightgray;
 }
 
 .navbar-brand .logo,

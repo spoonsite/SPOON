@@ -435,10 +435,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       if (result)
       {
         $scope.details.details = result;
-        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
-        if (found) {
-          $scope.details.details.watched = true;
-        }
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.showDetails = true;

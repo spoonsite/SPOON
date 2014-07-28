@@ -82,10 +82,40 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     return deferred.promise;
   };
 
+
+  /**
+  *
+  */
+  var getReviews = function(userName) {
+    var deferred = $q.defer();
+    var reviews = [];
+    _.each(MOCKDATA2.componentList, function(component) {
+      if (component.reviews[0] !== undefined) {
+        var review = {
+          'componentId': component.componentId, 
+          'name': component.name, 
+          'reviews': [], 
+        }
+        _.each(component.reviews, function(item){
+          if (item.username === userName) {
+            review.reviews.push(item);
+          }
+        });
+        if (review.reviews[0] !== undefined) {
+          reviews.push(review);
+        }
+      }
+    });
+
+    deferred.resolve(reviews);
+    return deferred.promise;
+  };
+
   //Public API
   return {
     getCurrentUserProfile: getCurrentUserProfile,
-    saveCurrentUserProfile: saveCurrentUserProfile
+    saveCurrentUserProfile: saveCurrentUserProfile,
+    getReviews: getReviews
   };
 
 }]);
