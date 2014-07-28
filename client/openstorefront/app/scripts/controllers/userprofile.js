@@ -23,13 +23,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   // Variables
   //////////////////////////////////////////////////////////////////////////////
   var immageHack          = 0;
-  var images              = [
-    //
-    'images/wess_logo.png',
-    'images/core-map-api.png',
-    'images/maps-icon.png'
-  //
-  ];
 
   $scope.total            = {};
   Business.componentservice.getComponentDetails().then(function(result) {
