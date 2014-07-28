@@ -14,6 +14,8 @@
 * limitations under the License.
 */
 
+/*global MOCKDATA2*/
+
 'use strict';
 app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $http, $q) {
 
@@ -92,10 +94,10 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     _.each(MOCKDATA2.componentList, function(component) {
       if (component.reviews[0] !== undefined) {
         var review = {
-          'componentId': component.componentId, 
-          'name': component.name, 
-          'reviews': [], 
-        }
+          'componentId': component.componentId,
+          'name': component.name,
+          'reviews': [],
+        };
         _.each(component.reviews, function(item){
           if (item.username === userName) {
             review.reviews.push(item);

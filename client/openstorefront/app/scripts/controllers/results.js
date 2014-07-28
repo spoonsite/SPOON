@@ -563,8 +563,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.$on('$viewContentLoaded', function(){
     resetAnimations($('.page1'), $('.page2'), $('.filters'));
     $timeout(function() {
-      moveButtons($('#showPageRight'), $('.page1'));
-      moveButtons($('#showPageLeft'), $('.page2'));
+      // moveButtons($('#showPageRight'), $('.page1'));
+      // moveButtons($('#showPageLeft'), $('.page2'));
       if (fullClick === 0) {
         if ($(window).width() >= 768) {
           if (filtClick === 0) {

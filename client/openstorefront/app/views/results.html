@@ -117,11 +117,6 @@ limitations under the License.
         Filters <i class="fa fa-caret-left"></i> 
       </button>
     </div>
-    <div class="showPage" ng-show="showDetails">
-      <button id="showPageRight" class="showPageRight btn btn-primary" ng-click="doButtonOpen()">
-        <i class="fa fa-caret-left"></i> 
-      </button>
-    </div>
     <div ng-if="data.data.length == 0" style="position: absolute; top: 50%; left: 50%;">
       <div style="position: relative; width: 100%; min-height: 100%;">
         <div style="position: absolute; top: 50%; left: 50%; width: 400px; height: 200px; margin-top: -100px; margin-left: -200px; text-align: center;">
@@ -130,6 +125,13 @@ limitations under the License.
       </div>
     </div>
     <div class="page1Content">
+      <div class="buttonHolder1">
+        <div class="showPage buttonPos" ng-show="showDetails">
+          <button id="showPageRight" class="showPageRight btn btn-primary" ng-click="doButtonOpen()">
+            <i class="fa fa-caret-left"></i> 
+          </button>
+        </div>
+      </div>
       <div class='container-fluid results'>
         <div>
           <div class="searchTitle">
