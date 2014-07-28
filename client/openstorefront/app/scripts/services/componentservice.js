@@ -171,8 +171,6 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var a = _.find(MOCKDATA2.componentList, {'componentId': id});
     componentservice.updateTagCloud(tags);
     if (a) {
-      console.log('tags', tags);
-      
       a.tags = tags;
     }
     return true;

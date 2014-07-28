@@ -13,9 +13,14 @@
 }
 
 .bootstrap .tags.focused {
-  //This is defined by the bootstrap _variables.scss file.
-  // not working yet... figure this out?
-  @include form-control-focus();
+  border-color: #ff811a;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 129, 26, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 129, 26, 0.6);
+}
+
+tags-input.bootstrap .tags input {
+  width: 270px;
 }
 
 .bootstrap .tags .tag-item {
