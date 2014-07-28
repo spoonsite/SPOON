@@ -33,7 +33,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     if (result) {
       $scope.username = 'Dawson TEST';
       $scope.reviews = result;
-      console.log('result', result);
+      // console.log('result', result);
     }
   });
   $scope._scopename       = 'userprofile';

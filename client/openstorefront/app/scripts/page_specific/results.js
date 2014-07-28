@@ -63,8 +63,8 @@ var resizeAnimations = function () {
 
   $('#filtersButton').data('offset', '0');
   floatBelowTop($('#filtersButton'), 3000, $('.page1'), 54);
-  moveButtons($('#showPageRight'), $('.page1'));
-  moveButtons($('#showPageLeft'), $('.page2'));
+  // moveButtons($('#showPageRight'), $('.page1'));
+  // moveButtons($('#showPageLeft'), $('.page2'));
 
 };
 
@@ -117,11 +117,11 @@ var setupResults = function(){
   *********************/
   $('.page1').scroll(function() {
     floatBelowTop($('#filtersButton'), 3000, $('.page1'), 54);
-    moveButtons($('#showPageRight'), this);
+    // moveButtons($('#showPageRight'), this);
   });
 
   $('.page2').scroll(function() {
-    moveButtons($('#showPageLeft'), this);
+    // moveButtons($('#showPageLeft'), this);
   });
 
 

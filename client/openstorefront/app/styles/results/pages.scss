@@ -34,11 +34,63 @@
 .page1Content{
   /*border: 1px orange solid;*/
   width: 100%;
-  position: relative;
+  position: absolute;
   overflow:auto;
 
   /*This line is needed for when you use pagination.*/
   padding-bottom: 40px;
+}
+
+.buttonHolder1{
+  width: 15px;
+  position: absolute;
+  right:0px;
+}
+.buttonHolder2{
+  width:15px;
+  position: absolute;
+  left:0px;
+}
+
+.buttonPos{
+  position: fixed;
+  top: 50%;
+  margin-top: -26px;
+  z-index: 1000;
+}
+
+#showPageRight {
+  height: 90px;
+  width: 15px;
+  border-radius: 90px 0 0 90px;
+  -moz-border-radius: 90px 0 0 90px;
+  -webkit-border-radius: 90px 0 0 90px;
+  padding: 0px;
+  white-space: normal;
+  outline: none;
+  font-size: 25px;
+}
+
+#showPageRight i{
+  position: relative;
+  bottom: -1px;
+}
+#showPageLeft {
+  height: 90px;
+  width: 15px;
+  border-radius: 0px 90px 90px 0px;
+  -moz-border-radius: 0px 90px 90px 0px;
+  -webkit-border-radius: 0px 90px 90px 0px;
+  position: absolute;
+  top: 50%;
+  margin-top: 0px;
+  left: 0px;
+  right: auto;
+  z-index: 1000;
+  padding: 0px;
+  white-space: normal;
+  outline: none;
+  font-size: 25px;
 }
 
 .page2Styles{
@@ -75,45 +127,6 @@
   border: 1px solid orange;
 }
 
-#showPageRight {
-  height: 90px;
-  width: 15px;
-  border-radius: 90px 0 0 90px;
-  -moz-border-radius: 90px 0 0 90px;
-  -webkit-border-radius: 90px 0 0 90px;
-  position: absolute;
-  top: 50%;
-  margin-top: -26px;
-  left: auto;
-  right: 0px;
-  z-index: 1000;
-  padding: 0px;
-  white-space: normal;
-  outline: none;
-  font-size: 25px;
-}
-
-#showPageRight i{
-  position: relative;
-  bottom: -1px;
-}
-#showPageLeft {
-  height: 90px;
-  width: 15px;
-  border-radius: 0px 90px 90px 0px;
-  -moz-border-radius: 0px 90px 90px 0px;
-  -webkit-border-radius: 0px 90px 90px 0px;
-  position: absolute;
-  top: 50%;
-  margin-top: -25px;
-  left: 0px;
-  right: auto;
-  z-index: 1000;
-  padding: 0px;
-  white-space: normal;
-  outline: none;
-  font-size: 25px;
-}
 
 
 .page2Styles h1 {
