@@ -122,6 +122,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.$watch('details', function () {
     if ($scope.details){
       if ($scope.details.details) {
+        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
+        if (found) {
+          $scope.details.details.watched = true;
+        }
         if ($scope.details.details.reviews) {
           if ($scope.details.details.reviews[0] !== undefined) {
             $scope.setupReviewSummary();

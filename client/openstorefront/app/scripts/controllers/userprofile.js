@@ -36,17 +36,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $scope.total          = result;
     resetData();
   });
+  Business.userservice.getReviews('Dawson TEST').then(function(result){
+    if (result) {
+      $scope.username = 'Dawson TEST';
+      $scope.reviews = result;
+      console.log('result', result);
+    }
+  });
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
   $scope.watches          = Business.getWatches();
-  $scope.feedbackDetails  = [
-    //
-    {'id': '1', 'date': 'Jan 4, 2014 8:25 am', 'comments': 'This VANTAGE WESS OZONE Widget is really cool', 'author': 'Jim Calhoun'},
-    {'id': '2', 'date': '01/05/2014 9:25 am', 'comments': 'This VANTAGE WESS OZONE Widget is really cool', 'author': 'Jill Calhoun'},
-    {'id': '3', 'date': '01/06/2014 10:25 am', 'comments': 'This VANTAGE WESS OZONE Widget is really cool', 'author': 'Jay Calhoun'}
-  //
-  ];
   $scope.nav              = {
     'current': null,
     'bars': [
@@ -155,8 +155,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         if (immageHack > 2) {
           immageHack = 0;
         }
-        component.src = images[immageHack];
-        immageHack = immageHack + 1;
         component.watched = watch.watched;
         $scope.data.push(component);
       }
