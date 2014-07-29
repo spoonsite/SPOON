@@ -16,7 +16,7 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
+import edu.usu.sdl.openstorefront.doc.DataType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,11 +38,11 @@ public class ComponentReview
 	private String organization;
 	private boolean recommend;
 	
-	@ParamTypeDescription("Array of Strings")
-	private List<String> pros = new ArrayList<>();
+	@DataType(ComponentTag.class)
+	private List<ComponentTag> pros = new ArrayList<>();
 	
-	@ParamTypeDescription("Array of Strings")
-	private List<String> cons = new ArrayList<>();
+	@DataType(ComponentTag.class)
+	private List<ComponentTag> cons = new ArrayList<>();
 
 	public ComponentReview()
 	{
@@ -138,26 +138,6 @@ public class ComponentReview
 		this.recommend = recommend;
 	}
 
-	public List<String> getPros()
-	{
-		return pros;
-	}
-
-	public void setPros(List<String> pros)
-	{
-		this.pros = pros;
-	}
-
-	public List<String> getCons()
-	{
-		return cons;
-	}
-
-	public void setCons(List<String> cons)
-	{
-		this.cons = cons;
-	}
-
 	public String getUserType()
 	{
 		return userType;
@@ -166,6 +146,26 @@ public class ComponentReview
 	public void setUserType(String userType)
 	{
 		this.userType = userType;
+	}
+
+	public List<ComponentTag> getPros()
+	{
+		return pros;
+	}
+
+	public void setPros(List<ComponentTag> pros)
+	{
+		this.pros = pros;
+	}
+
+	public List<ComponentTag> getCons()
+	{
+		return cons;
+	}
+
+	public void setCons(List<ComponentTag> cons)
+	{
+		this.cons = cons;
 	}
 	
 }

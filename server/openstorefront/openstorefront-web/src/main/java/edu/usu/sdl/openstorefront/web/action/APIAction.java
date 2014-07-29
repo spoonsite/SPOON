@@ -24,6 +24,7 @@ import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.validation.Validate;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -42,12 +43,16 @@ public class APIAction
 			
 	private APIResourceModel resourceModel;
 	
+	private String classPath = "resource";	
+	private String classPathDescription = "Resource";
+	
 	@HandlesEvent("API")
 	public Resolution apiDetails()
 	{		
 		try
 		{			
-			Class resource = Class.forName("edu.usu.sdl.openstorefront.web.rest.resource." + resourceClass);
+			classPathDescription = StringUtils.capitalize(classPath);
+			Class resource = Class.forName("edu.usu.sdl.openstorefront.web.rest." + classPath + "." + resourceClass);
 			 resourceModel = JaxrsProcessor.processRestClass(resource);			
 		} catch (ClassNotFoundException ex)
 		{			
@@ -96,6 +101,26 @@ public class APIAction
 	public void setPage(String page)
 	{
 		this.page = page;
+	}
+
+	public String getClassPath()
+	{
+		return classPath;
+	}
+
+	public void setClassPath(String classPath)
+	{
+		this.classPath = classPath;
+	}
+
+	public String getClassPathDescription()
+	{
+		return classPathDescription;
+	}
+
+	public void setClassPathDescription(String classPathDescription)
+	{
+		this.classPathDescription = classPathDescription;
 	}
 	
 }

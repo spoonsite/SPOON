@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -54,6 +56,34 @@ public class ServiceUtil
 		return resource;
 	}
 	
+	public static List<String> extractUrls(String text)
+	{
+		List<String> urls = new ArrayList<>();
+		
+		String tokens[] = text.split(" ");
+		for (String token : tokens)
+		{
+			if (token.trim().toLowerCase().startsWith("http://") ||
+			    token.trim().toLowerCase().startsWith("https://"))
+			{
+				urls.add(token.trim());
+			}
+		}
+		
+		return urls;
+	}
+	
+	public static String createHrefUrls(String text)
+	{
+		String replacedText = text;
+		List<String> urls = extractUrls(text);		
+		for (String url : urls)
+		{
+			String link = "<a href='" + url + "' title='" + url + "' target='_blank'> " + getResourceNameFromUrl(url) + "</a>";
+			 replacedText = replacedText.replace(url, link);
+		}		
+		return replacedText;
+	}
 	
 	public static String stripeFieldJSON(String json, Set<String> fieldsToKeep)
 	{
