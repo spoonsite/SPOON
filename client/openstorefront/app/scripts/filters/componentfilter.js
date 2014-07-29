@@ -83,7 +83,7 @@
 app.filter('componentFilter', function()  {
   var allChecked = function(collection) {
     var none = _.every(collection, function(item) {
-      return (item.checked === false);
+      return !!!item.checked;
     });
     // var all = _.every(collection, function(item) {
     //   return (item.checked === true);
@@ -93,20 +93,22 @@ app.filter('componentFilter', function()  {
 
   return function (input, filters) {
     var out = null;
+
     // if value passes with true it remains
     out = _.filter(input, function(item) {
       //we return true if it passes all of these filters
       return _.every(filters, function(filter) {
-        var collection = filter.collection;
-        var key = filter.key;
+        var collection = filter.codes;
+        var key = filter.type;
+
         // if the filter isn't being used, or all are checked, we know its true
         if (!allChecked(collection)) {
           // otherwise we return true if it passes some portion of the filter
           return _.some(collection, function(checkedFilter) {
             if (checkedFilter.checked === true) {
               return _.some(item.attributes, function(attribute){
-                if (attribute.typeDescription === key) {
-                  return attribute.codeDescription === checkedFilter.code;
+                if (attribute.type === key) {
+                  return attribute.code === checkedFilter.code;
                 } else {
                   return false;
                 }

@@ -7,10 +7,10 @@
           <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal2"><i class="glyphicon glyphicon-info-sign"></i></a>
           <span style="font-size:12px; color:black; margin-left:5px">Evaluation start: January 1, 2014</span>
           <div class="col-md-12" style="padding:0;" >
-            <div ng-repeat="rows in details.details.evaluation.evaluationSchedule" ng-class="rows.levelStatus === 'C'? 'complete': rows.levelStatus === 'H'? 'haulted': rows.levelStatus === 'P'? 'inprogress': 'notstarted'" class="col-md-3" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Evaluation Level {{$index}}<br/> {{getEval(rows.evaluationLevelCode).desc}}" data-container="body" data-content="<p class='dd'>{{getEval(rows.evaluationLevelCode).longDesc}}</p>">
+            <div ng-repeat="rows in details.details.evaluation.evaluationSchedule" ng-class="rows.levelStatus === 'C'? 'complete': rows.levelStatus === 'H'? 'haulted': rows.levelStatus === 'P'? 'inprogress': 'notstarted'" class="col-md-3" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Evaluation Level {{$index}}<br/> {{getEval(rows.evaluationLevelCode).label}}" data-container="body" data-content="<p class='dd'>{{getEval(rows.evaluationLevelCode).description}}</p>">
             <span class="helpcontent" >
               <a href="javascript:void(0)" 
-              class="helpcontent">{{getEval(rows.evaluationLevelCode).desc}}  </a>
+              class="helpcontent">{{getEval(rows.evaluationLevelCode).label}}  </a>
             </span>
           </div>
           <div ng-repeat="rows in details.details.evaluation.evaluationSchedule" >
@@ -84,30 +84,30 @@
     </table>  
   </div>
 </div>
-<!-- <div class="row">
+<div class="row" ng-if="details.details.parentComponent || details.details.subComponents.length || details.details.relatedComponents.length">
   <div class="col-md-12">
     <div class="section-headers addBorders"><h4>Relationships</h4></div>  
     <div>
-      <div style="display: inline-block; margin: 0px 20px;">
+      <div ng-if="details.details.parentComponent" style="display: inline-block; margin: 0px 20px;">
         <h4>
           Parent Component:
         </h4>
-        <div data-ng-repeat="thing in details.details.componentOf">
-          <a  href="">{{thing.name}}</a>
+        <div>
+          <a href="#/single?id={{details.details.parentComponent.componentId}}" target="_blank">{{details.details.parentComponent.name}}</a>
         </div>
       </div>
-      <div style="display: inline-block; margin: 0px 20px;">
+      <div ng-if="details.details.subComponents.length" style="display: inline-block; margin: 0px 20px;">
         <h4>
           Child Component(s):
         </h4>
-        <div data-ng-repeat="subComponent in details.details.subComponents">
-          <a  href="">{{subComponent.name}}</a>
+        <div data-ng-repeat="thing in details.details.subComponents">
+          <a href="#/single?id={{thing.componentId}}" target="_blank">{{thing.name}}</a>
         </div>
       </div>
     </div>
   </div>
 </div>
-<br> -->
+<br ng-if="details.details.parentComponent || details.details.subComponents.length || details.details.relatedComponents.length">
 <div class="row">
   <div class="col-md-12">
     <table class="table table-bordered table-hover" >

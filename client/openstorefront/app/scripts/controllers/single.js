@@ -74,9 +74,10 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
         if ($scope.details.details.attributes[0] !== undefined) {
 
           _.each($scope.details.details.attributes, function(attribute) {
-            if (attribute.typeDescription === 'SvcV-4') {
+            if (attribute.type === 'DI2E-SVCV4-A') {
+              
               var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
-                return item.TagValue_UID === attribute.codeDescription;
+                return item.TagValue_Number === attribute.code;
               });
               if (svcv4) {
                 attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
@@ -87,7 +88,6 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
             }
           });
         }
-
 
         /* jshint ignore:end */
 

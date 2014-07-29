@@ -85,8 +85,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.getEvaluationState = function () {
     if ($scope.details && $scope.details.details && $scope.details.evaluationLevel !== undefined) {
       var code = $scope.details.details.evaluationLevel[0].code;
-      var stateFilter = _.where($scope.filters, {'key': 'evaluationLevel'})[0];
-      var item = _.where(stateFilter.collection, {'code': code})[0];
+      var stateFilter = _.where($scope.filters, {'type': 'DI2ELEVEL'})[0];
+      var item = _.where(stateFilter.codes, {'code': code})[0];
       return item.type;
     }
     return '';
@@ -275,7 +275,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function saves a component's tags
   ***************************************************************/
   $scope.getEval = function(levelCode){
-    var level = _.find($scope.evalLevels.collection, {'code': levelCode});
+    var level = _.find($scope.evalLevels.codes, {'code': levelCode});
     return level;
   };
 

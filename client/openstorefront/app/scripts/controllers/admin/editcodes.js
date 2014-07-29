@@ -27,8 +27,8 @@ app.controller('AdminEditcodesCtrl', ['$scope','business',  function ($scope, Bu
   * of the filter.
   ***************************************************************/
   $scope.grabCollection = function(key) {
-    var filter = _.where($scope.filters, {'key': key})[0];
-    $scope.collectionContent = filter.collection;
+    var filter = _.where($scope.filters, {'type': key})[0];
+    $scope.collectionContent = filter.codes;
   };
   
 
@@ -42,7 +42,7 @@ app.controller('AdminEditcodesCtrl', ['$scope','business',  function ($scope, Bu
     // });
       //
     // attributes.children.push({'label':label, 'location': location, 'toolTitle': label, 'key': filter.key, 'parentKey': 'attributes', 'data': filter /*, 'children': children*/});
-    $scope.collection.push({'name': filter.name, 'key': filter.key});
+    $scope.collection.push({'name': filter.description, 'key': filter.type});
   });
 
   if ($scope.$parent.collectionSelection) {
