@@ -50,10 +50,10 @@
           <th class="valign"  colspan="8">Link</th>
         </tr>             
         <tr data-ng-repeat="row in details.details.resources">
-          <td colspan="5" class="text-left-bold" style="overflow:hidden;">{{row.name}}</td>
+          <td colspan="5" class="text-left-bold hasLinks" style="overflow:hidden;">{{row.name}}</td>
           <td ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td>
           <td ng-if="!row.description" colspan="5" class="text-left">&mdash;</td>
-          <td colspan="8" class="text-left">{{row.link}}</td>
+          <td colspan="8" class="text-left hasLinks">{{row.link}}</td>
         </tr>
       </tbody>
     </table>                  
