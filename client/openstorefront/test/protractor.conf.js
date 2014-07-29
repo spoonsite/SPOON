@@ -4,7 +4,7 @@ exports.config = {
     'spec/protractor/*_spec.js'
   ],
   onPrepare: function() {
-    browser.driver.manage().window().maximize();
+   // browser.driver.manage().window().maximize();
   },
   capabilities : {
     browserName : 'chrome',
@@ -14,9 +14,9 @@ exports.config = {
   },
   jasmineNodeOpts: {
     onComplete: null,
-    isVerbose: false,
+    isVerbose: true,
     showColors: true,
     includeStackTrace: true,
-    defaultTimeoutInterval: 10000
+    defaultTimeoutInterval: 30000
   }
 }
