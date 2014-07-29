@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
 import edu.usu.sdl.openstorefront.service.io.AttributeImport;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContact;
@@ -106,7 +107,7 @@ public class DataConvertTest
 		//questions
 		Map<String, List<String>> questionMap = new HashMap<>();
 		questionMap.put("Which version supports y-docs 1.5+? (SAMPLE)", Arrays.asList("Version 3.1 added support.(SAMPLE)",  "They depreciated support in version 4.0 since it was a rarely used feature.(SAMPLE)"));
-		questionMap.put("Which os platforms does this support? (SAMPLE)", Arrays.asList("CentOS 6.5 and MorphOS(SAMPLE)",  "'I think they also have Windows  and ReactOS support. (SAMPLE)"));
+		questionMap.put("Which os platforms does this support? (SAMPLE)", Arrays.asList("CentOS 6.5 and MorphOS(SAMPLE)",  "'I think they also have Windows and ReactOS support. (SAMPLE)"));
 		questionMap.put("Does this support the 2.0 specs? (SAMPLE)", Arrays.asList("No,  they planned to add support next Version(SAMPLE)",  "Update: they backport support to version 1.6(SAMPLE)"));
 		questionMap.put("Are samples included? (SAMPLE)", Arrays.asList("They are included in a separate download.(SAMPLE)"));
 		questionMap.put("Are there alternate licenses? (SAMPLE)", Arrays.asList("You can ask their support team for a custom commerical license that should cover you needs.(SAMPLE)",  "We've try to get an alternate license and we've been waiting for over 6 months for thier legal department.(SAMPLE)"));
@@ -130,20 +131,20 @@ public class DataConvertTest
 		metadataMap.put("Common Uses (SAMPLE)","UDOP, Information Sharing, Research");
 		metadataMap.put("Available to public (SAMPLE)","YES");
 		
-		Map<String, String> attriubuteMap = new HashMap<>();
-		attriubuteMap.put("License Restrictions (SAMPLE)", "Per CPU");		
-		attriubuteMap.put("Funded (SAMPLE)", "Yes");
-		attriubuteMap.put("Network(s) Fielded (SAMPLE)", "NIPR, SIPR");
-		attriubuteMap.put("Accreditation Status (SAMPLE)", "ATO");
-		attriubuteMap.put("License Type (SAMPLE)", "FOSS");
-		attriubuteMap.put("Protection/ Impact Level (SAMPLE)", "DoD MAC Level");
-		attriubuteMap.put("Lifecycle Stage (SAMPLE)", "Development");
+//		Map<String, String> attriubuteMap = new HashMap<>();
+//		attriubuteMap.put("License Restrictions (SAMPLE)", "Per CPU");		
+//		attriubuteMap.put("Funded (SAMPLE)", "Yes");
+//		attriubuteMap.put("Network(s) Fielded (SAMPLE)", "NIPR, SIPR");
+//		attriubuteMap.put("Accreditation Status (SAMPLE)", "ATO");
+//		attriubuteMap.put("License Type (SAMPLE)", "FOSS");
+//		attriubuteMap.put("Protection/ Impact Level (SAMPLE)", "DoD MAC Level");
+//		attriubuteMap.put("Lifecycle Stage (SAMPLE)", "Development");
 		
 		Map<String, String> reviewMap = new HashMap<>();
 		reviewMap.put("Good Product (SAMPLE)", "It's a good product.  The features are nice and performed well.  It quite configurable without a lot of setup and it worked out of the box.");
 		reviewMap.put("Just what I was looking for (SAMPLE)", "This was perfect it solved our issues and provided tools for things we didn't even anticipate.");
 		reviewMap.put("Great but missing features (SAMPLE)", "This is a great product however, it's missing what I think are critical features.  Hopefully, they are working on it for future updates.");
-		reviewMap.put("Confused (SAMPLE)", "This wasn't qutie what I thought it was.");
+		reviewMap.put("Confused (SAMPLE)", "This wasn't quite what I thought it was.");
 		reviewMap.put("Hassle (SAMPLE)", "I had issues trying to obtain the component and once I got it is very to difficult to install.");
 		
 		
@@ -226,6 +227,9 @@ public class DataConvertTest
 		tags.add("Testing");
 		tags.add("Access");
 		
+		AttributeImport attributeImport = new AttributeImport();	
+		Map<String, AttributeTypeView> attributeMap = attributeImport.loadAttributeMap();
+				
 	
 		SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
 		
@@ -239,8 +243,12 @@ public class DataConvertTest
 			//map form old			
 			componentDetail.setComponentId(oldAsset.getId());
 			componentDetail.setGuid(oldAsset.getUuid());
-			componentDetail.setUpdateDts(oldAsset.getEditedDate());			
-			componentDetail.setDescription(ServiceUtil.createHrefUrls(oldAsset.getDescription()));
+			componentDetail.setUpdateDts(oldAsset.getEditedDate());
+			
+			String description = oldAsset.getDescription().replace("\n", " <br>");
+			 description = ServiceUtil.createHrefUrls(description);						 
+			componentDetail.setDescription(description);
+			
 			componentDetail.setApprovedDate(oldAsset.getApprovalDate());
 			componentDetail.setCreateDts(oldAsset.getCreateDate());
 			componentDetail.setVersion(oldAsset.getVersionName());
@@ -311,47 +319,63 @@ public class DataConvertTest
 			});
 			
 			oldAsset.getCustomFields().forEach(field ->{
-				if ("Code Location URL".equals(field.getName())){
-					ComponentResource componentResource = new ComponentResource();
-					componentResource.setName(field.getName());
-					componentResource.setLink(field.getValue());
-					componentResource.setType("Code");
-					componentDetail.getResources().add(componentResource);					
-				} else 	if ("Product Homepage".equals(field.getName())){
-					ComponentResource componentResource = new ComponentResource();
-					componentResource.setName(field.getName());
-					componentResource.setLink(field.getValue());
-					componentResource.setType("Homepage");
-					componentDetail.getResources().add(componentResource);						
-				} else 	if ("DI2E Framework Evaluation Report URL".equals(field.getName())){
-					ComponentResource componentResource = new ComponentResource();
-					componentResource.setName(field.getName());
-					componentResource.setLink(field.getValue());
-					componentResource.setType("DI2E Framework Evaluation Report URL");
-					componentDetail.getResources().add(componentResource);						
+				if (StringUtils.isNotBlank(field.getValue()))
+				{
+					if ("Code Location URL".equals(field.getName()))
+					{
+						ComponentResource componentResource = new ComponentResource();
+						componentResource.setName(field.getName());
+						componentResource.setLink(field.getValue());
+						componentResource.setType("Code");
+						componentDetail.getResources().add(componentResource);
+					} else if ("Product Homepage".equals(field.getName()))
+					{
+						ComponentResource componentResource = new ComponentResource();
+						componentResource.setName(field.getName());
+						componentResource.setLink(field.getValue());
+						componentResource.setType("Homepage");
+						componentDetail.getResources().add(componentResource);
+					} else if ("DI2E Framework Evaluation Report URL".equals(field.getName()))
+					{
+						ComponentResource componentResource = new ComponentResource();
+						componentResource.setName(field.getName());
+						componentResource.setLink(field.getValue());
+						componentResource.setType("DI2E Framework Evaluation Report URL");
+						componentDetail.getResources().add(componentResource);
+					}
 				}
 			});
 			
 			//metadata/attributes
-			ComponentAttribute attribute = new ComponentAttribute();
+			ComponentAttribute attribute = mapAttribute("TYPE", oldAsset.getTypes().getTitle(), attributeMap);
 			attribute.setImportant(true);
-			attribute.setTypeDescription("Type");
-			attribute.setCodeDescription(oldAsset.getTypes().getTitle());
 			componentDetail.getAttributes().add(attribute);
 			
-			attribute = new ComponentAttribute();
-			attribute.setImportant(true);
-			attribute.setTypeDescription("Evaluation Level");
-			attribute.setCodeDescription(oldAsset.getState().getTitle());
+			
+			String oldStateLabel = oldAsset.getState().getTitle();
+			String stateLabel = null;			
+			if ("NA - No Eval Planned".equals(oldStateLabel))
+			{
+				stateLabel = "Level 0 – Available for Reuse/Not Evaluated";
+			}
+			else if ("Level 0 - Not assessed".equals(oldStateLabel))
+			{
+				stateLabel = "Level 0 – Available for Reuse/Not Evaluated";
+			}
+			else if ("Level 1 - Checklist Complete".equals(oldStateLabel))
+			{
+				stateLabel = "Level 1 – Initial Reuse Analysis";
+			}						
+			
+			attribute = mapAttribute("DI2ELEVEL", stateLabel, attributeMap);
+			attribute.setImportant(true);	
 			componentDetail.getAttributes().add(attribute);
 			
 			String level[] = oldAsset.getState().getTitle().split("-");
 			componentDetail.getEvaluation().setCurrentLevelCode(level[0].trim().toUpperCase());			
 			
 			oldAsset.getCategories().forEach(category -> {
-				ComponentAttribute catAttribute = new ComponentAttribute();				
-				catAttribute.setTypeDescription("Category");
-				catAttribute.setCodeDescription(category.getTitle());
+				ComponentAttribute catAttribute = mapAttribute("CATEGORY", category.getTitle(), attributeMap);			
 				componentDetail.getAttributes().add(catAttribute);
 			});
 						
@@ -360,10 +384,130 @@ public class DataConvertTest
 				if (StringUtils.isNotBlank(field.getValue()) &&
 					!metaTypeToSkip.contains(field.getName()))
 				{
-					ComponentAttribute metaAttribute = new ComponentAttribute();					
-					metaAttribute.setTypeDescription(field.getName());
-					metaAttribute.setCodeDescription(field.getValue());
-					componentDetail.getAttributes().add(metaAttribute);		
+					String originTypeDesc = field.getName();
+					String originCodeLabel = field.getValue();
+					
+					String newType = null;
+					String newCodeLabel = null;
+					
+					//Skip N/A
+					if ("N/A".equals(originCodeLabel.trim()) == false)
+					{
+						if ("Classification".equals(originTypeDesc))
+						{
+							newType = "CLASSIFICATION";							
+							if ("U".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "Unclassified";
+							}
+							else
+							{
+								newCodeLabel = "Unclassified/FOUO";
+							}
+						}
+						else if ("Commercial Export Approved via EAR".equals(originTypeDesc))
+						{
+							newType = "CEEAR";	
+							if ("Yes".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "Yes";
+							}
+							else
+							{
+								newCodeLabel = "No";
+							}
+						}
+						else if ("ITAR Export Approved".equals(originTypeDesc))
+						{
+							newType = "ITAR";
+							if ("Yes".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "Yes";
+							}
+							else
+							{
+								newCodeLabel = "No";
+							}
+						}						
+						else if ("Software License Method".equals(originTypeDesc))
+						{
+							newType = "LICTYPE";
+							if ("Open Source".startsWith(originCodeLabel))
+							{
+								newCodeLabel = "Open Source";
+							}
+							else if ("Enterprise".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "Enterprise";
+							}
+							else if ("Government Unlimited Rights".startsWith(originCodeLabel))
+							{
+								newCodeLabel = "Government Unlimited Rights";
+							}														
+						}	
+						else if ("Software License Type".equals(originTypeDesc))
+						{
+							newType = "LICCLASS";
+							if ("Open Source".startsWith(originCodeLabel))
+							{
+								newCodeLabel = "FOSS";
+							}
+							else if ("FOSS".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "FOSS";
+							}
+							else if ("GOSS".startsWith(originCodeLabel))
+							{
+								newCodeLabel = "GOSS";
+							}							
+							else if ("COTS".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "COTS";
+							}
+							else if ("GOTS".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "GOTS";
+							}
+							else if ("OpenSource".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "FOSS";
+							}													
+						}
+						else if ("Life Cycle Stage".equals(originTypeDesc))
+						{
+							newType = "LIFECYCSTG";
+							if ("Development".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "Development";
+							}
+							else if ("Pilot".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "Deployment Pilot";
+							}
+							else if ("Operations".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "Operations";
+							}														
+						}	
+						else if ("OWF Compatible Widget (Y/N)".equals(originTypeDesc))
+						{
+							newType = "OWFCOMP";
+							if ("Yes".equalsIgnoreCase(originCodeLabel))
+							{
+								newCodeLabel = "Yes";
+							}
+							else
+							{
+								newCodeLabel = "No";
+							}
+						}						
+					}
+					if (newType != null && newCodeLabel != null) 
+					{
+						ComponentAttribute metaAttribute = mapAttribute(newType, newCodeLabel, attributeMap);
+						componentDetail.getAttributes().add(metaAttribute);								
+					}
+					
 				}			
 			});
 			
@@ -462,23 +606,23 @@ public class DataConvertTest
 				}
 				
 				//attributes (see the confluence)
-				if (random.nextInt(10) < 8)
-				{
-					List<String> keys = new ArrayList<>();
-					keys.addAll(attriubuteMap.keySet());
-					Collections.shuffle(keys);
-					int maxAttr = random.nextInt(4);
-					for (int i=0; i<maxAttr; i++)
-					{					
-						String  typeDescription = keys.remove(0);
-						String  codeDescription =  attriubuteMap.get(typeDescription);
-						
-						ComponentAttribute metaAttribute = new ComponentAttribute();					
-						metaAttribute.setTypeDescription(typeDescription);
-						metaAttribute.setCodeDescription(codeDescription);
-						componentDetail.getAttributes().add(metaAttribute);						
-					}
-				}				
+//				if (random.nextInt(10) < 8)
+//				{
+//					List<String> keys = new ArrayList<>();
+//					keys.addAll(attriubuteMap.keySet());
+//					Collections.shuffle(keys);
+//					int maxAttr = random.nextInt(4);
+//					for (int i=0; i<maxAttr; i++)
+//					{					
+//						String  typeDescription = keys.remove(0);
+//						String  codeDescription =  attriubuteMap.get(typeDescription);
+//						
+//						ComponentAttribute metaAttribute = new ComponentAttribute();					
+//						metaAttribute.setTypeDescription(typeDescription);
+//						metaAttribute.setCodeDescription(codeDescription);
+//						componentDetail.getAttributes().add(metaAttribute);						
+//					}
+//				}				
 				
 				//more metadata  
 				if (random.nextInt(10) < 2)
@@ -519,7 +663,9 @@ public class DataConvertTest
 						int max = random.nextInt(3);
 						for (int j=0; j<max; j++)
 						{
-							componentReview.getPros().add(tempPros.remove(0));
+							ComponentTag tag = new ComponentTag();
+							tag.setText(tempPros.remove(0));
+							componentReview.getPros().add(tag);
 						}
 						
 						List<String> tempCons = new ArrayList<>(cons);
@@ -527,7 +673,9 @@ public class DataConvertTest
 						max = random.nextInt(3);
 						for (int j=0; j<max; j++)
 						{
-							componentReview.getCons().add(tempCons.remove(0));
+							ComponentTag tag = new ComponentTag();
+							tag.setText(tempCons.remove(0));
+							componentReview.getCons().add(tag);
 						}	
 						Collections.shuffle(peopleNames);
 						componentReview.setUsername(peopleNames.get(0));
@@ -628,12 +776,12 @@ public class DataConvertTest
 																	
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						int check = random.nextInt(10);
-						if (check < 2)
+						if (check < 1)
 						{
 							componentEvaluationSchedule.setLevelStatus("H");
 							componentEvaluationSchedule.setActualCompeletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
 						}
-						else if (check < 5)
+						else if (check < 3)
 						{
 							componentEvaluationSchedule.setLevelStatus("P");
 							componentEvaluationSchedule.setEstimatedCompeletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
@@ -696,6 +844,24 @@ public class DataConvertTest
 		return newAssets;
 	}
 	
+	private ComponentAttribute mapAttribute(String attributeType,  String codeLabel, Map<String, AttributeTypeView> attributeMap)
+	{
+		ComponentAttribute attribute = new ComponentAttribute();
+		AttributeTypeView attributeTypeView = attributeMap.get(attributeType);
+		attribute.setType(attributeTypeView.getType());
+		attribute.setTypeDescription(attributeTypeView.getDescription());
+		for (AttributeCodeView attributeCodeView : attributeTypeView.getCodes())
+		{
+			if (attributeCodeView.getLabel().equalsIgnoreCase(codeLabel.trim()))
+			{
+				attribute.setCode(attributeCodeView.getCode());
+				attribute.setCodeDescription(attributeCodeView.getLabel());
+				break;
+			}
+		}
+		return attribute;
+	}
+	
 	private ComponentMedia createMediaFromUrl(String url)
 	{
 		ComponentMedia media = new ComponentMedia();
@@ -726,11 +892,8 @@ public class DataConvertTest
 					
 			detail.getAttributes().forEach(attrib ->{
 				SearchResultAttribute attribute = new SearchResultAttribute();
-				
-				//TODO map attribute
-				
-				attribute.setType(attrib.getTypeDescription());
-				attribute.setCode(attrib.getCodeDescription());
+				attribute.setType(attrib.getType());			
+				attribute.setCode(attrib.getCode());
 				searchResult.getAttributes().add(attribute);
 				
 			});
@@ -741,9 +904,9 @@ public class DataConvertTest
 		
 		//Add article
 		SearchResult searchResult = new SearchResult();
-		searchResult.setName("IdAM");
-		searchResult.setDescription("IdAM Article.....");
-		searchResult.setArticleAttributeCode("IDAM");
+		searchResult.setName("Security Management");
+		searchResult.setDescription("Security Management Article.....");
+		searchResult.setArticleAttributeCode("SECM");
 		searchResult.setArticleAttributeType("CATEGORY");
 		searchResult.setLastActivityDate(new Date(System.currentTimeMillis()));
 		searchResult.setListingType("Article");
