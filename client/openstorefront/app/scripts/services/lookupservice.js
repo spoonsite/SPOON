@@ -43,7 +43,7 @@ app.factory('lookupservice', ['$http', '$q', function($http, $q) {
     };
     var getEvalLevels = function() {
       var deferred = $q.defer();
-      deferred.resolve(_.find(MOCKDATA.filters, {'key':'LEVEL'}));
+      deferred.resolve(_.find(MOCKDATA.filters, {'type':'DI2ELEVEL'}));
       return deferred.promise;
     };
 

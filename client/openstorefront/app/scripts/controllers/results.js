@@ -29,8 +29,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
-  $scope._scopename         = 'results';
+  $scope.$emit('$TRIGGERLOAD', 'mainLoader');
+  $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
   setupResults();
+  $scope._scopename         = 'results';
   $scope.tagsList           = Business.getTagsList();
   $scope.tagsList.sort();
   $scope.prosConsList       = Business.getProsConsList();
@@ -169,6 +171,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
 
+
   /***************************************************************
   * This function is called once we have the search request from the business layer
   * The order and manner in which we do this call will most likely change once
@@ -192,10 +195,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
-      $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
-      $scope.$emit('$TRIGGERLOAD', 'mainLoader');
       $timeout(function(){
         $scope.filters = Business.getFilters();
+        $scope.filters = _.sortBy($scope.filters, function(item){
+          return item.description;
+        });
         $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
         /*This is simulating the wait time for building the data so that we get a loader*/
         $timeout(function(){
@@ -213,8 +217,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           adjustFilters();
         }, 500);
       }, 500);
-    });
-};
+    }); //
+  }; //
 
 
   /***************************************************************
@@ -239,7 +243,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // grab all of the keys in the filters
       $scope.searchKey          = $scope.searchGroup[0].key;
       $scope.searchCode         = $scope.searchGroup[0].code;
-      var keys = _.pluck($scope.filters, 'key');
+      var keys = _.pluck($scope.filters, 'type');
       var foundFilter = null;
       var foundCollection = null;
       var type = '';
@@ -250,16 +254,16 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
       if (_.contains(keys, $scope.searchKey)) {
-        $scope.searchGroupItem    = _.where($scope.filters, {'key': $scope.searchKey})[0];
-        $scope.searchType         = $scope.searchGroupItem.name;
+        $scope.searchGroupItem    = _.where($scope.filters, {'type': $scope.searchKey})[0];
+        $scope.searchType         = $scope.searchGroupItem.description;
         $scope.showSearch         = true;
         
-        foundFilter = _.where($scope.filters, {'key': $scope.searchGroup[0].key})[0];
-        foundCollection = _.where(foundFilter.collection, {'code': $scope.searchGroup[0].code})[0];
+        foundFilter = _.where($scope.filters, {'type': $scope.searchGroup[0].key})[0];
+        foundCollection = _.where(foundFilter.codes, {'code': $scope.searchGroup[0].code})[0];
 
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all') {
-          $scope.searchColItem      = _.where($scope.searchGroupItem.collection, {'code': $scope.searchCode})[0];
+          $scope.searchColItem      = _.where($scope.searchGroupItem.codes, {'code': $scope.searchCode})[0];
           $scope.searchTitle        = $scope.searchType + ', ' + $scope.searchColItem.type;
           $scope.modal.modalTitle   = $scope.searchType + ', ' + $scope.searchColItem.type;
           $scope.searchDescription  = $scope.searchColItem.desc;
@@ -269,7 +273,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
               $scope.modal.isLanding = true;
             });
           } else {
-            $scope.modal.modalBody = $scope.searchColItem.longDesc;
+            $scope.modal.modalBody = $scope.searchColItem.description;
             $scope.modal.isLanding = false;
           }
         } else {
@@ -431,11 +435,37 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       if (result)
       {
         $scope.details.details = result;
+
+        // Code here will be linted with JSHint.
+        /* jshint ignore:start */
+        // Code here will be linted with ignored by JSHint.
+
+        if ($scope.details.details.attributes[0] !== undefined) {
+
+          _.each($scope.details.details.attributes, function(attribute) {
+            if (attribute.type === 'DI2E-SVCV4-A') {
+
+              var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
+                return item.TagValue_Number === attribute.code;
+              });
+              if (svcv4) {
+                attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
+                attribute.svcv4 = svcv4;
+              } else {
+                attribute.svcv4 = null;
+              }
+            }
+          });
+        }
+
+
+        /* jshint ignore:end */
+
       }
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.showDetails = true;
     });
-  };
+};
 
   /***************************************************************
   * This function adds a component to the watch list and toggles the buttons
@@ -651,7 +681,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.$watch('filters',function(val, old){ /* jshint unused:false */
     _.each($scope.filters, function(filter){
-      filter.hasChecked = _.some(filter.collection, function(item){
+      filter.hasChecked = _.some(filter.codes, function(item){
         return item.checked;
       });
       if (!filter.hasChecked) {
