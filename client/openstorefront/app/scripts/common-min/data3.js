@@ -4054,12 +4054,10 @@ MOCKDATA2.svcv4 = [
 
 
 MOCKDATA2.parsedSvcv4 = {
-  "id": "top",
-  "name": "SvcV-4 Map",
   "children": [
     {
       "id": "0",
-      "name": "DI2E",
+      "name": "0 - DI2E",
       "data": {
         "TagValue_UID": "0001",
         "TagValue_Number": "0",
@@ -4079,7 +4077,7 @@ MOCKDATA2.parsedSvcv4 = {
     },
     {
       "id": "1",
-      "name": "Infrastructure Services",
+      "name": "1 - Infrastructure Services",
       "data": {
         "TagValue_UID": "0161",
         "TagValue_Number": "1",
@@ -4099,7 +4097,7 @@ MOCKDATA2.parsedSvcv4 = {
       "children": [
         {
           "id": "11",
-          "name": "Enterprise Management",
+          "name": "1.1 - Enterprise Management",
           "data": {
             "TagValue_UID": "0162",
             "TagValue_Number": "1.1",
@@ -4119,7 +4117,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "111",
-              "name": "Metrics Management",
+              "name": "1.1.1 - Metrics Management",
               "data": {
                 "TagValue_UID": "0163",
                 "TagValue_Number": "1.1.1",
@@ -4139,7 +4137,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1111",
-                  "name": "Metrics Measurements Collection",
+                  "name": "1.1.1.1 - Metrics Measurements Collection",
                   "data": {
                     "TagValue_UID": "0164",
                     "TagValue_Number": "1.1.1.1",
@@ -4159,7 +4157,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1112",
-                  "name": "Metrics Reporting",
+                  "name": "1.1.1.2 - Metrics Reporting",
                   "data": {
                     "TagValue_UID": "0168",
                     "TagValue_Number": "1.1.1.2",
@@ -4181,7 +4179,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "112",
-              "name": "Translation and Synchronization",
+              "name": "1.1.2 - Translation and Synchronization",
               "data": {
                 "TagValue_UID": "0173",
                 "TagValue_Number": "1.1.2",
@@ -4201,7 +4199,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1121",
-                  "name": "Domain Name System (DNS)",
+                  "name": "1.1.2.1 - Domain Name System (DNS)",
                   "data": {
                     "TagValue_UID": "0225",
                     "TagValue_Number": "1.1.2.1",
@@ -4221,7 +4219,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1122",
-                  "name": "Time Synchronization",
+                  "name": "1.1.2.2 - Time Synchronization",
                   "data": {
                     "TagValue_UID": "0174",
                     "TagValue_Number": "1.1.2.2",
@@ -4243,7 +4241,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "113",
-              "name": "Enterprise Monitoring",
+              "name": "1.1.3 - Enterprise Monitoring",
               "data": {
                 "TagValue_UID": "0169",
                 "TagValue_Number": "1.1.3",
@@ -4263,7 +4261,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1131",
-                  "name": "Fault Detection",
+                  "name": "1.1.3.1 - Fault Detection",
                   "data": {
                     "TagValue_UID": "0300",
                     "TagValue_Number": "1.1.3.1",
@@ -4283,7 +4281,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1132",
-                  "name": "Fault Isolation",
+                  "name": "1.1.3.2 - Fault Isolation",
                   "data": {
                     "TagValue_UID": "0301",
                     "TagValue_Number": "1.1.3.2",
@@ -4303,7 +4301,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1133",
-                  "name": "Site Monitoring",
+                  "name": "1.1.3.3 - Site Monitoring",
                   "data": {
                     "TagValue_UID": "0171",
                     "TagValue_Number": "1.1.3.3",
@@ -4325,7 +4323,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "114",
-              "name": "Event Notification",
+              "name": "1.1.4 - Event Notification",
               "data": {
                 "TagValue_UID": "0190",
                 "TagValue_Number": "1.1.4",
@@ -4345,7 +4343,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1141",
-                  "name": "Notification Producer",
+                  "name": "1.1.4.1 - Notification Producer",
                   "data": {
                     "TagValue_UID": "0191",
                     "TagValue_Number": "1.1.4.1",
@@ -4365,7 +4363,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1142",
-                  "name": "Notification Broker",
+                  "name": "1.1.4.2 - Notification Broker",
                   "data": {
                     "TagValue_UID": "0192",
                     "TagValue_Number": "1.1.4.2",
@@ -4385,7 +4383,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1143",
-                  "name": "Notification Consumer",
+                  "name": "1.1.4.3 - Notification Consumer",
                   "data": {
                     "TagValue_UID": "0193",
                     "TagValue_Number": "1.1.4.3",
@@ -4407,7 +4405,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "115",
-              "name": "Enterprise Resource Management",
+              "name": "1.1.5 - Enterprise Resource Management",
               "data": {
                 "TagValue_UID": "0302",
                 "TagValue_Number": "1.1.5",
@@ -4427,7 +4425,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1151",
-                  "name": "Global Unique Identifier (GUID)",
+                  "name": "1.1.5.1 - Global Unique Identifier (GUID)",
                   "data": {
                     "TagValue_UID": "0172",
                     "TagValue_Number": "1.1.5.1",
@@ -4451,7 +4449,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "12",
-          "name": "Security Management",
+          "name": "1.2 - Security Management",
           "data": {
             "TagValue_UID": "0175",
             "TagValue_Number": "1.2",
@@ -4471,7 +4469,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "121",
-              "name": "Identity and Access Management",
+              "name": "1.2.1 - Identity and Access Management",
               "data": {
                 "TagValue_UID": "0176",
                 "TagValue_Number": "1.2.1",
@@ -4491,7 +4489,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1211",
-                  "name": "Local Identity Management",
+                  "name": "1.2.1.1 - Local Identity Management",
                   "data": {
                     "TagValue_UID": "0371",
                     "TagValue_Number": "1.2.1.1",
@@ -4511,7 +4509,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "12110",
-                  "name": "Attribute Access",
+                  "name": "1.2.1.10 - Attribute Access",
                   "data": {
                     "TagValue_UID": "0177",
                     "TagValue_Number": "1.2.1.10",
@@ -4531,7 +4529,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "12111",
-                  "name": "Certificate Validation",
+                  "name": "1.2.1.11 - Certificate Validation",
                   "data": {
                     "TagValue_UID": "0178",
                     "TagValue_Number": "1.2.1.11",
@@ -4551,7 +4549,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1212",
-                  "name": "Credential Management",
+                  "name": "1.2.1.2 - Credential Management",
                   "data": {
                     "TagValue_UID": "402",
                     "TagValue_Number": "1.2.1.2",
@@ -4571,7 +4569,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1213",
-                  "name": "Resource Policy Management",
+                  "name": "1.2.1.3 - Resource Policy Management",
                   "data": {
                     "TagValue_UID": "0372",
                     "TagValue_Number": "1.2.1.3",
@@ -4591,7 +4589,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1214",
-                  "name": "Authentication Service",
+                  "name": "1.2.1.4 - Authentication Service",
                   "data": {
                     "TagValue_UID": "0373",
                     "TagValue_Number": "1.2.1.4",
@@ -4611,7 +4609,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1215",
-                  "name": "Policy Decision Point",
+                  "name": "1.2.1.5 - Policy Decision Point",
                   "data": {
                     "TagValue_UID": "0181",
                     "TagValue_Number": "1.2.1.5",
@@ -4631,7 +4629,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1216",
-                  "name": "Policy Enforcement Point",
+                  "name": "1.2.1.6 - Policy Enforcement Point",
                   "data": {
                     "TagValue_UID": "0182",
                     "TagValue_Number": "1.2.1.6",
@@ -4651,7 +4649,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1217",
-                  "name": "Policy Access Point",
+                  "name": "1.2.1.7 - Policy Access Point",
                   "data": {
                     "TagValue_UID": "0183",
                     "TagValue_Number": "1.2.1.7",
@@ -4671,7 +4669,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1218",
-                  "name": "Security Token Service",
+                  "name": "1.2.1.8 - Security Token Service",
                   "data": {
                     "TagValue_UID": "0179",
                     "TagValue_Number": "1.2.1.8",
@@ -4691,7 +4689,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1219",
-                  "name": "Federation Service Management",
+                  "name": "1.2.1.9 - Federation Service Management",
                   "data": {
                     "TagValue_UID": "0374",
                     "TagValue_Number": "1.2.1.9",
@@ -4713,7 +4711,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "122",
-              "name": "Cryptography Management",
+              "name": "1.2.2 - Cryptography Management",
               "data": {
                 "TagValue_UID": "0306",
                 "TagValue_Number": "1.2.2",
@@ -4733,7 +4731,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1221",
-                  "name": "Encryption/ Decryption",
+                  "name": "1.2.2.1 - Encryption/ Decryption",
                   "data": {
                     "TagValue_UID": "0307",
                     "TagValue_Number": "1.2.2.1",
@@ -4755,7 +4753,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "123",
-              "name": "Security Metadata Management",
+              "name": "1.2.3 - Security Metadata Management",
               "data": {
                 "TagValue_UID": "0309",
                 "TagValue_Number": "1.2.3",
@@ -4775,7 +4773,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1231",
-                  "name": "Data Security Marking",
+                  "name": "1.2.3.1 - Data Security Marking",
                   "data": {
                     "TagValue_UID": "0310",
                     "TagValue_Number": "1.2.3.1",
@@ -4795,7 +4793,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1232",
-                  "name": "Security Label Format Validation",
+                  "name": "1.2.3.2 - Security Label Format Validation",
                   "data": {
                     "TagValue_UID": "0136",
                     "TagValue_Number": "1.2.3.2",
@@ -4817,7 +4815,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "124",
-              "name": "System and Communication Protection",
+              "name": "1.2.4 - System and Communication Protection",
               "data": {
                 "TagValue_UID": "0312",
                 "TagValue_Number": "1.2.4",
@@ -4837,7 +4835,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1241",
-                  "name": "Vulnerability Reporting",
+                  "name": "1.2.4.1 - Vulnerability Reporting",
                   "data": {
                     "TagValue_UID": "0313",
                     "TagValue_Number": "1.2.4.1",
@@ -4857,7 +4855,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1242",
-                  "name": "Intrusion Detection",
+                  "name": "1.2.4.2 - Intrusion Detection",
                   "data": {
                     "TagValue_UID": "0314",
                     "TagValue_Number": "1.2.4.2",
@@ -4877,7 +4875,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1243",
-                  "name": "Intrusion Prevention",
+                  "name": "1.2.4.3 - Intrusion Prevention",
                   "data": {
                     "TagValue_UID": "0315",
                     "TagValue_Number": "1.2.4.3",
@@ -4897,7 +4895,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1244",
-                  "name": "Virus Protection",
+                  "name": "1.2.4.4 - Virus Protection",
                   "data": {
                     "TagValue_UID": "0316",
                     "TagValue_Number": "1.2.4.4",
@@ -4917,7 +4915,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1245",
-                  "name": "Incident Response",
+                  "name": "1.2.4.5 - Incident Response",
                   "data": {
                     "TagValue_UID": "0317",
                     "TagValue_Number": "1.2.4.5",
@@ -4939,7 +4937,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "125",
-              "name": "Audit Management",
+              "name": "1.2.5 - Audit Management",
               "data": {
                 "TagValue_UID": "0184",
                 "TagValue_Number": "1.2.5",
@@ -4959,7 +4957,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1251",
-                  "name": "Audit Log Management",
+                  "name": "1.2.5.1 - Audit Log Management",
                   "data": {
                     "TagValue_UID": "0185",
                     "TagValue_Number": "1.2.5.1",
@@ -4979,7 +4977,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1252",
-                  "name": "Audit Log Reporting",
+                  "name": "1.2.5.2 - Audit Log Reporting",
                   "data": {
                     "TagValue_UID": "0186",
                     "TagValue_Number": "1.2.5.2",
@@ -5001,7 +4999,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "126",
-              "name": "Cross Domain",
+              "name": "1.2.6 - Cross Domain",
               "data": {
                 "TagValue_UID": "0187",
                 "TagValue_Number": "1.2.6",
@@ -5023,7 +5021,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "13",
-          "name": "Service Management",
+          "name": "1.3 - Service Management",
           "data": {
             "TagValue_UID": "0188",
             "TagValue_Number": "1.3",
@@ -5043,7 +5041,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "131",
-              "name": "Repository and Registry",
+              "name": "1.3.1 - Repository and Registry",
               "data": {
                 "TagValue_UID": "0221",
                 "TagValue_Number": "1.3.1",
@@ -5063,7 +5061,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1311",
-                  "name": "Service Inquiry",
+                  "name": "1.3.1.1 - Service Inquiry",
                   "data": {
                     "TagValue_UID": "0222",
                     "TagValue_Number": "1.3.1.1",
@@ -5083,7 +5081,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1312",
-                  "name": "Service Subscription",
+                  "name": "1.3.1.2 - Service Subscription",
                   "data": {
                     "TagValue_UID": "0223",
                     "TagValue_Number": "1.3.1.2",
@@ -5103,7 +5101,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1313",
-                  "name": "Service Publishing",
+                  "name": "1.3.1.3 - Service Publishing",
                   "data": {
                     "TagValue_UID": "0224",
                     "TagValue_Number": "1.3.1.3",
@@ -5125,7 +5123,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "132",
-              "name": "Service Configuration Management",
+              "name": "1.3.2 - Service Configuration Management",
               "data": {
                 "TagValue_UID": "0323",
                 "TagValue_Number": "1.3.2",
@@ -5145,7 +5143,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1321",
-                  "name": "Service Configuration Identification",
+                  "name": "1.3.2.1 - Service Configuration Identification",
                   "data": {
                     "TagValue_UID": "0324",
                     "TagValue_Number": "1.3.2.1",
@@ -5165,7 +5163,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1322",
-                  "name": "Service Configuration Control",
+                  "name": "1.3.2.2 - Service Configuration Control",
                   "data": {
                     "TagValue_UID": "0325",
                     "TagValue_Number": "1.3.2.2",
@@ -5185,7 +5183,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1323",
-                  "name": "Service Configuration Verification and Audit",
+                  "name": "1.3.2.3 - Service Configuration Verification and Audit",
                   "data": {
                     "TagValue_UID": "0326",
                     "TagValue_Number": "1.3.2.3",
@@ -5209,7 +5207,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "14",
-          "name": "Orchestration Management",
+          "name": "1.4 - Orchestration Management",
           "data": {
             "TagValue_UID": "0196",
             "TagValue_Number": "1.4",
@@ -5229,7 +5227,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "141",
-              "name": "Orchestration Planning",
+              "name": "1.4.1 - Orchestration Planning",
               "data": {
                 "TagValue_UID": "0197",
                 "TagValue_Number": "1.4.1",
@@ -5249,7 +5247,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1411",
-                  "name": "Matchmaking",
+                  "name": "1.4.1.1 - Matchmaking",
                   "data": {
                     "TagValue_UID": "0198",
                     "TagValue_Number": "1.4.1.1",
@@ -5269,7 +5267,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1412",
-                  "name": "Optimization",
+                  "name": "1.4.1.2 - Optimization",
                   "data": {
                     "TagValue_UID": "0199",
                     "TagValue_Number": "1.4.1.2",
@@ -5291,7 +5289,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "142",
-              "name": "Orchestration Execution",
+              "name": "1.4.2 - Orchestration Execution",
               "data": {
                 "TagValue_UID": "0200",
                 "TagValue_Number": "1.4.2",
@@ -5311,7 +5309,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1421",
-                  "name": "Execution Engine",
+                  "name": "1.4.2.1 - Execution Engine",
                   "data": {
                     "TagValue_UID": "0201",
                     "TagValue_Number": "1.4.2.1",
@@ -5331,7 +5329,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1422",
-                  "name": "Protocol Mediation",
+                  "name": "1.4.2.2 - Protocol Mediation",
                   "data": {
                     "TagValue_UID": "0202",
                     "TagValue_Number": "1.4.2.2",
@@ -5353,7 +5351,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "143",
-              "name": "Application and Website Hosting",
+              "name": "1.4.3 - Application and Website Hosting",
               "data": {
                 "TagValue_UID": "380",
                 "TagValue_Number": "1.4.3",
@@ -5373,7 +5371,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "1431",
-                  "name": "Web Content Delivery",
+                  "name": "1.4.3.1 - Web Content Delivery",
                   "data": {
                     "TagValue_UID": "381",
                     "TagValue_Number": "1.4.3.1",
@@ -5393,7 +5391,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1432",
-                  "name": "Security Access Proxy",
+                  "name": "1.4.3.2 - Security Access Proxy",
                   "data": {
                     "TagValue_UID": "382",
                     "TagValue_Number": "1.4.3.2",
@@ -5413,7 +5411,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1433",
-                  "name": "Transaction Processing",
+                  "name": "1.4.3.3 - Transaction Processing",
                   "data": {
                     "TagValue_UID": "383",
                     "TagValue_Number": "1.4.3.3",
@@ -5433,7 +5431,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "1434",
-                  "name": "Application Management",
+                  "name": "1.4.3.4 - Application Management",
                   "data": {
                     "TagValue_UID": "384",
                     "TagValue_Number": "1.4.3.4",
@@ -5459,7 +5457,7 @@ MOCKDATA2.parsedSvcv4 = {
     },
     {
       "id": "2",
-      "name": "Common Services",
+      "name": "2 - Common Services",
       "data": {
         "TagValue_UID": "0002",
         "TagValue_Number": "2",
@@ -5479,7 +5477,7 @@ MOCKDATA2.parsedSvcv4 = {
       "children": [
         {
           "id": "21",
-          "name": "Collaboration",
+          "name": "2.1 - Collaboration",
           "data": {
             "TagValue_UID": "0010",
             "TagValue_Number": "2.1",
@@ -5499,7 +5497,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "211",
-              "name": "Information Boards",
+              "name": "2.1.1 - Information Boards",
               "data": {
                 "TagValue_UID": "0011",
                 "TagValue_Number": "2.1.1",
@@ -5519,7 +5517,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2111",
-                  "name": "Bulletin Board",
+                  "name": "2.1.1.1 - Bulletin Board",
                   "data": {
                     "TagValue_UID": "0012",
                     "TagValue_Number": "2.1.1.1",
@@ -5539,7 +5537,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2112",
-                  "name": "Wiki",
+                  "name": "2.1.1.2 - Wiki",
                   "data": {
                     "TagValue_UID": "0013",
                     "TagValue_Number": "2.1.1.2",
@@ -5561,7 +5559,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "212",
-              "name": "Environment Sharing",
+              "name": "2.1.2 - Environment Sharing",
               "data": {
                 "TagValue_UID": "0014",
                 "TagValue_Number": "2.1.2",
@@ -5581,7 +5579,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2121",
-                  "name": "Desktop Sharing",
+                  "name": "2.1.2.1 - Desktop Sharing",
                   "data": {
                     "TagValue_UID": "0015",
                     "TagValue_Number": "2.1.2.1",
@@ -5601,7 +5599,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2122",
-                  "name": "Whiteboard",
+                  "name": "2.1.2.2 - Whiteboard",
                   "data": {
                     "TagValue_UID": "0016",
                     "TagValue_Number": "2.1.2.2",
@@ -5621,7 +5619,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2123",
-                  "name": "Web Conferencing/VTC",
+                  "name": "2.1.2.3 - Web Conferencing/VTC",
                   "data": {
                     "TagValue_UID": "0017",
                     "TagValue_Number": "2.1.2.3",
@@ -5643,7 +5641,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "213",
-              "name": "Collaborative Messaging",
+              "name": "2.1.3 - Collaborative Messaging",
               "data": {
                 "TagValue_UID": "0018",
                 "TagValue_Number": "2.1.3",
@@ -5663,7 +5661,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2131",
-                  "name": "Instant Messaging",
+                  "name": "2.1.3.1 - Instant Messaging",
                   "data": {
                     "TagValue_UID": "0019",
                     "TagValue_Number": "2.1.3.1",
@@ -5683,7 +5681,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2132",
-                  "name": "Audio Messaging",
+                  "name": "2.1.3.2 - Audio Messaging",
                   "data": {
                     "TagValue_UID": "0020",
                     "TagValue_Number": "2.1.3.2",
@@ -5703,7 +5701,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2133",
-                  "name": "E-Mail",
+                  "name": "2.1.3.3 - E-Mail",
                   "data": {
                     "TagValue_UID": "0021",
                     "TagValue_Number": "2.1.3.3",
@@ -5725,7 +5723,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "214",
-              "name": "Social Networking",
+              "name": "2.1.4 - Social Networking",
               "data": {
                 "TagValue_UID": "0022",
                 "TagValue_Number": "2.1.4",
@@ -5745,7 +5743,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2141",
-                  "name": "Shared Calendaring",
+                  "name": "2.1.4.1 - Shared Calendaring",
                   "data": {
                     "TagValue_UID": "0023",
                     "TagValue_Number": "2.1.4.1",
@@ -5765,7 +5763,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2142",
-                  "name": "Community of Interest Find",
+                  "name": "2.1.4.2 - Community of Interest Find",
                   "data": {
                     "TagValue_UID": "0328",
                     "TagValue_Number": "2.1.4.2",
@@ -5789,7 +5787,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "22",
-          "name": "Visualization",
+          "name": "2.2 - Visualization",
           "data": {
             "TagValue_UID": "0003",
             "TagValue_Number": "2.2",
@@ -5809,7 +5807,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "221",
-              "name": "Web Visualization",
+              "name": "2.2.1 - Web Visualization",
               "data": {
                 "TagValue_UID": "0004",
                 "TagValue_Number": "2.2.1",
@@ -5829,7 +5827,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2211",
-                  "name": "Web Browser",
+                  "name": "2.2.1.1 - Web Browser",
                   "data": {
                     "TagValue_UID": "0005",
                     "TagValue_Number": "2.2.1.1",
@@ -5849,7 +5847,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2212",
-                  "name": "Widget Framework",
+                  "name": "2.2.1.2 - Widget Framework",
                   "data": {
                     "TagValue_UID": "0006",
                     "TagValue_Number": "2.2.1.2",
@@ -5871,7 +5869,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "222",
-              "name": "Geographic Visualization",
+              "name": "2.2.2 - Geographic Visualization",
               "data": {
                 "TagValue_UID": "0007",
                 "TagValue_Number": "2.2.2",
@@ -5891,7 +5889,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2221",
-                  "name": "Geographic Information Display",
+                  "name": "2.2.2.1 - Geographic Information Display",
                   "data": {
                     "TagValue_UID": "0008",
                     "TagValue_Number": "2.2.2.1",
@@ -5911,7 +5909,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2222",
-                  "name": "Web Coverage",
+                  "name": "2.2.2.2 - Web Coverage",
                   "data": {
                     "TagValue_UID": "0111",
                     "TagValue_Number": "2.2.2.2",
@@ -5931,7 +5929,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2223",
-                  "name": "Web Feature",
+                  "name": "2.2.2.3 - Web Feature",
                   "data": {
                     "TagValue_UID": "0112",
                     "TagValue_Number": "2.2.2.3",
@@ -5951,7 +5949,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2224",
-                  "name": "Web Map",
+                  "name": "2.2.2.4 - Web Map",
                   "data": {
                     "TagValue_UID": "0113",
                     "TagValue_Number": "2.2.2.4",
@@ -5971,7 +5969,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2225",
-                  "name": "Weather Visualization",
+                  "name": "2.2.2.5 - Weather Visualization",
                   "data": {
                     "TagValue_UID": "0377",
                     "TagValue_Number": "2.2.2.5",
@@ -5993,7 +5991,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "223",
-              "name": "Analytics Visualization",
+              "name": "2.2.3 - Analytics Visualization",
               "data": {
                 "TagValue_UID": "0329",
                 "TagValue_Number": "2.2.3",
@@ -6013,7 +6011,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2231",
-                  "name": "Analytic Rendering",
+                  "name": "2.2.3.1 - Analytic Rendering",
                   "data": {
                     "TagValue_UID": "0330",
                     "TagValue_Number": "2.2.3.1",
@@ -6033,7 +6031,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2232",
-                  "name": "Common Operational Picture (COP)",
+                  "name": "2.2.3.2 - Common Operational Picture (COP)",
                   "data": {
                     "TagValue_UID": "0009",
                     "TagValue_Number": "2.2.3.2",
@@ -6057,7 +6055,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "23",
-          "name": "Data Discovery",
+          "name": "2.3 - Data Discovery",
           "data": {
             "TagValue_UID": "0097",
             "TagValue_Number": "2.3",
@@ -6077,7 +6075,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "231",
-              "name": "Content Discovery and Retrieval",
+              "name": "2.3.1 - Content Discovery and Retrieval",
               "data": {
                 "TagValue_UID": "0098",
                 "TagValue_Number": "2.3.1",
@@ -6097,7 +6095,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2311",
-                  "name": "Content Search",
+                  "name": "2.3.1.1 - Content Search",
                   "data": {
                     "TagValue_UID": "0099",
                     "TagValue_Number": "2.3.1.1",
@@ -6117,7 +6115,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2312",
-                  "name": "Brokered Search",
+                  "name": "2.3.1.2 - Brokered Search",
                   "data": {
                     "TagValue_UID": "0376",
                     "TagValue_Number": "2.3.1.2",
@@ -6137,7 +6135,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2313",
-                  "name": "Retrieve Content",
+                  "name": "2.3.1.3 - Retrieve Content",
                   "data": {
                     "TagValue_UID": "0108",
                     "TagValue_Number": "2.3.1.3",
@@ -6157,7 +6155,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2314",
-                  "name": "Deliver Content",
+                  "name": "2.3.1.4 - Deliver Content",
                   "data": {
                     "TagValue_UID": "0109",
                     "TagValue_Number": "2.3.1.4",
@@ -6177,7 +6175,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2315",
-                  "name": "Describe Content",
+                  "name": "2.3.1.5 - Describe Content",
                   "data": {
                     "TagValue_UID": "0379",
                     "TagValue_Number": "2.3.1.5",
@@ -6197,7 +6195,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2316",
-                  "name": "Query Management",
+                  "name": "2.3.1.6 - Query Management",
                   "data": {
                     "TagValue_UID": "0102",
                     "TagValue_Number": "2.3.1.6",
@@ -6217,7 +6215,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2317",
-                  "name": "Query Results Management",
+                  "name": "2.3.1.7 - Query Results Management",
                   "data": {
                     "TagValue_UID": "0103",
                     "TagValue_Number": "2.3.1.7",
@@ -6241,7 +6239,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "24",
-          "name": "Data Mediation",
+          "name": "2.4 - Data Mediation",
           "data": {
             "TagValue_UID": "0114",
             "TagValue_Number": "2.4",
@@ -6261,7 +6259,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "241",
-              "name": "Data Preparation",
+              "name": "2.4.1 - Data Preparation",
               "data": {
                 "TagValue_UID": "0115",
                 "TagValue_Number": "2.4.1",
@@ -6281,7 +6279,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2411",
-                  "name": "Schema Validation",
+                  "name": "2.4.1.1 - Schema Validation",
                   "data": {
                     "TagValue_UID": "0116",
                     "TagValue_Number": "2.4.1.1",
@@ -6301,7 +6299,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2412",
-                  "name": "Data Validation",
+                  "name": "2.4.1.2 - Data Validation",
                   "data": {
                     "TagValue_UID": "0117",
                     "TagValue_Number": "2.4.1.2",
@@ -6321,7 +6319,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2413",
-                  "name": "Data Transformation",
+                  "name": "2.4.1.3 - Data Transformation",
                   "data": {
                     "TagValue_UID": "0120",
                     "TagValue_Number": "2.4.1.3",
@@ -6341,7 +6339,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2414",
-                  "name": "Schema Transformation",
+                  "name": "2.4.1.4 - Schema Transformation",
                   "data": {
                     "TagValue_UID": "0121",
                     "TagValue_Number": "2.4.1.4",
@@ -6361,7 +6359,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2415",
-                  "name": "Image Transformation",
+                  "name": "2.4.1.5 - Image Transformation",
                   "data": {
                     "TagValue_UID": "0119",
                     "TagValue_Number": "2.4.1.5",
@@ -6381,7 +6379,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2416",
-                  "name": "Data De-Duplication",
+                  "name": "2.4.1.6 - Data De-Duplication",
                   "data": {
                     "TagValue_UID": "0135",
                     "TagValue_Number": "2.4.1.6",
@@ -6405,7 +6403,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "25",
-          "name": "Data Analytics",
+          "name": "2.5 - Data Analytics",
           "data": {
             "TagValue_UID": "0152",
             "TagValue_Number": "2.5",
@@ -6425,7 +6423,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "251",
-              "name": "Data Enrichment",
+              "name": "2.5.1 - Data Enrichment",
               "data": {
                 "TagValue_UID": "0153",
                 "TagValue_Number": "2.5.1",
@@ -6445,7 +6443,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2511",
-                  "name": "Entity Extraction",
+                  "name": "2.5.1.1 - Entity Extraction",
                   "data": {
                     "TagValue_UID": "0154",
                     "TagValue_Number": "2.5.1.1",
@@ -6465,7 +6463,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2512",
-                  "name": "Entity Association",
+                  "name": "2.5.1.2 - Entity Association",
                   "data": {
                     "TagValue_UID": "0155",
                     "TagValue_Number": "2.5.1.2",
@@ -6485,7 +6483,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2513",
-                  "name": "Categorize Content",
+                  "name": "2.5.1.3 - Categorize Content",
                   "data": {
                     "TagValue_UID": "0156",
                     "TagValue_Number": "2.5.1.3",
@@ -6505,7 +6503,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2514",
-                  "name": "Data Commenting",
+                  "name": "2.5.1.4 - Data Commenting",
                   "data": {
                     "TagValue_UID": "0243",
                     "TagValue_Number": "2.5.1.4",
@@ -6527,7 +6525,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "252",
-              "name": "Media Monitoring",
+              "name": "2.5.2 - Media Monitoring",
               "data": {
                 "TagValue_UID": "0157",
                 "TagValue_Number": "2.5.2",
@@ -6547,7 +6545,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2521",
-                  "name": "Chat Monitor",
+                  "name": "2.5.2.1 - Chat Monitor",
                   "data": {
                     "TagValue_UID": "0158",
                     "TagValue_Number": "2.5.2.1",
@@ -6567,7 +6565,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2522",
-                  "name": "Video Monitor",
+                  "name": "2.5.2.2 - Video Monitor",
                   "data": {
                     "TagValue_UID": "0159",
                     "TagValue_Number": "2.5.2.2",
@@ -6587,7 +6585,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2523",
-                  "name": "Audio Monitor",
+                  "name": "2.5.2.3 - Audio Monitor",
                   "data": {
                     "TagValue_UID": "0160",
                     "TagValue_Number": "2.5.2.3",
@@ -6611,7 +6609,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "26",
-          "name": "Data Handling",
+          "name": "2.6 - Data Handling",
           "data": {
             "TagValue_UID": "0122",
             "TagValue_Number": "2.6",
@@ -6631,7 +6629,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "261",
-              "name": "Content Management",
+              "name": "2.6.1 - Content Management",
               "data": {
                 "TagValue_UID": "0123",
                 "TagValue_Number": "2.6.1",
@@ -6651,7 +6649,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2611",
-                  "name": "Content Repository",
+                  "name": "2.6.1.1 - Content Repository",
                   "data": {
                     "TagValue_UID": "0124",
                     "TagValue_Number": "2.6.1.1",
@@ -6671,7 +6669,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2612",
-                  "name": "Content Navigation",
+                  "name": "2.6.1.2 - Content Navigation",
                   "data": {
                     "TagValue_UID": "0125",
                     "TagValue_Number": "2.6.1.2",
@@ -6691,7 +6689,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2613",
-                  "name": "Object Processing",
+                  "name": "2.6.1.3 - Object Processing",
                   "data": {
                     "TagValue_UID": "0126",
                     "TagValue_Number": "2.6.1.3",
@@ -6711,7 +6709,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2614",
-                  "name": "Object Folders",
+                  "name": "2.6.1.4 - Object Folders",
                   "data": {
                     "TagValue_UID": "0127",
                     "TagValue_Number": "2.6.1.4",
@@ -6731,7 +6729,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2615",
-                  "name": "Managed Content Discovery",
+                  "name": "2.6.1.5 - Managed Content Discovery",
                   "data": {
                     "TagValue_UID": "0128",
                     "TagValue_Number": "2.6.1.5",
@@ -6751,7 +6749,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2616",
-                  "name": "Content Versioning",
+                  "name": "2.6.1.6 - Content Versioning",
                   "data": {
                     "TagValue_UID": "0129",
                     "TagValue_Number": "2.6.1.6",
@@ -6771,7 +6769,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2617",
-                  "name": "Object Relationship",
+                  "name": "2.6.1.7 - Object Relationship",
                   "data": {
                     "TagValue_UID": "0130",
                     "TagValue_Number": "2.6.1.7",
@@ -6791,7 +6789,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2618",
-                  "name": "Content Policy",
+                  "name": "2.6.1.8 - Content Policy",
                   "data": {
                     "TagValue_UID": "0131",
                     "TagValue_Number": "2.6.1.8",
@@ -6813,7 +6811,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "262",
-              "name": "Database Management",
+              "name": "2.6.2 - Database Management",
               "data": {
                 "TagValue_UID": "385",
                 "TagValue_Number": "2.6.2",
@@ -6833,7 +6831,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2621",
-                  "name": "Database Describe",
+                  "name": "2.6.2.1 - Database Describe",
                   "data": {
                     "TagValue_UID": "386",
                     "TagValue_Number": "2.6.2.1",
@@ -6853,7 +6851,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2622",
-                  "name": "Data Object Processing",
+                  "name": "2.6.2.2 - Data Object Processing",
                   "data": {
                     "TagValue_UID": "387",
                     "TagValue_Number": "2.6.2.2",
@@ -6873,7 +6871,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2623",
-                  "name": "Database Definition",
+                  "name": "2.6.2.3 - Database Definition",
                   "data": {
                     "TagValue_UID": "388",
                     "TagValue_Number": "2.6.2.3",
@@ -6893,7 +6891,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2624",
-                  "name": "Database Administration",
+                  "name": "2.6.2.4 - Database Administration",
                   "data": {
                     "TagValue_UID": "389",
                     "TagValue_Number": "2.6.2.4",
@@ -6913,7 +6911,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2625",
-                  "name": "Data Object Tagging",
+                  "name": "2.6.2.5 - Data Object Tagging",
                   "data": {
                     "TagValue_UID": "390",
                     "TagValue_Number": "2.6.2.5",
@@ -6935,7 +6933,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "263",
-              "name": "Workspace Management",
+              "name": "2.6.3 - Workspace Management",
               "data": {
                 "TagValue_UID": "391",
                 "TagValue_Number": "2.6.3",
@@ -6955,7 +6953,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2631",
-                  "name": "Manage Workspace",
+                  "name": "2.6.3.1 - Manage Workspace",
                   "data": {
                     "TagValue_UID": "393",
                     "TagValue_Number": "2.6.3.1",
@@ -6975,7 +6973,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2632",
-                  "name": "Share Workspace",
+                  "name": "2.6.3.2 - Share Workspace",
                   "data": {
                     "TagValue_UID": "394",
                     "TagValue_Number": "2.6.3.2",
@@ -6997,7 +6995,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "264",
-              "name": "Data Quality",
+              "name": "2.6.4 - Data Quality",
               "data": {
                 "TagValue_UID": "0137",
                 "TagValue_Number": "2.6.4",
@@ -7017,7 +7015,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2641",
-                  "name": "Data Quality Definition",
+                  "name": "2.6.4.1 - Data Quality Definition",
                   "data": {
                     "TagValue_UID": "0138",
                     "TagValue_Number": "2.6.4.1",
@@ -7037,7 +7035,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2642",
-                  "name": "Data Quality Extraction",
+                  "name": "2.6.4.2 - Data Quality Extraction",
                   "data": {
                     "TagValue_UID": "0139",
                     "TagValue_Number": "2.6.4.2",
@@ -7057,7 +7055,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2643",
-                  "name": "Data Quality Measurement",
+                  "name": "2.6.4.3 - Data Quality Measurement",
                   "data": {
                     "TagValue_UID": "0140",
                     "TagValue_Number": "2.6.4.3",
@@ -7079,7 +7077,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "265",
-              "name": "Records Management",
+              "name": "2.6.5 - Records Management",
               "data": {
                 "TagValue_UID": "0141",
                 "TagValue_Number": "2.6.5",
@@ -7099,7 +7097,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "2651",
-                  "name": "Record Annotations",
+                  "name": "2.6.5.1 - Record Annotations",
                   "data": {
                     "TagValue_UID": "0142",
                     "TagValue_Number": "2.6.5.1",
@@ -7119,7 +7117,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "26510",
-                  "name": "Change Agent",
+                  "name": "2.6.5.10 - Change Agent",
                   "data": {
                     "TagValue_UID": "0151",
                     "TagValue_Number": "2.6.5.10",
@@ -7139,7 +7137,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2652",
-                  "name": "Record Authorities",
+                  "name": "2.6.5.2 - Record Authorities",
                   "data": {
                     "TagValue_UID": "0143",
                     "TagValue_Number": "2.6.5.2",
@@ -7159,7 +7157,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2653",
-                  "name": "Record Categories",
+                  "name": "2.6.5.3 - Record Categories",
                   "data": {
                     "TagValue_UID": "0144",
                     "TagValue_Number": "2.6.5.3",
@@ -7179,7 +7177,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2654",
-                  "name": "Record Dispositions",
+                  "name": "2.6.5.4 - Record Dispositions",
                   "data": {
                     "TagValue_UID": "0145",
                     "TagValue_Number": "2.6.5.4",
@@ -7199,7 +7197,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2655",
-                  "name": "Record Documents",
+                  "name": "2.6.5.5 - Record Documents",
                   "data": {
                     "TagValue_UID": "0146",
                     "TagValue_Number": "2.6.5.5",
@@ -7219,7 +7217,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2656",
-                  "name": "Managed Records",
+                  "name": "2.6.5.6 - Managed Records",
                   "data": {
                     "TagValue_UID": "0147",
                     "TagValue_Number": "2.6.5.6",
@@ -7239,7 +7237,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2657",
-                  "name": "Record Query",
+                  "name": "2.6.5.7 - Record Query",
                   "data": {
                     "TagValue_UID": "0148",
                     "TagValue_Number": "2.6.5.7",
@@ -7259,7 +7257,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2658",
-                  "name": "Record Authentications",
+                  "name": "2.6.5.8 - Record Authentications",
                   "data": {
                     "TagValue_UID": "0149",
                     "TagValue_Number": "2.6.5.8",
@@ -7279,7 +7277,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "2659",
-                  "name": "Record Attribute Profiles",
+                  "name": "2.6.5.9 - Record Attribute Profiles",
                   "data": {
                     "TagValue_UID": "0150",
                     "TagValue_Number": "2.6.5.9",
@@ -7305,7 +7303,7 @@ MOCKDATA2.parsedSvcv4 = {
     },
     {
       "id": "3",
-      "name": "Mission Services",
+      "name": "3 - Mission Services",
       "data": {
         "TagValue_UID": "0031",
         "TagValue_Number": "3",
@@ -7325,7 +7323,7 @@ MOCKDATA2.parsedSvcv4 = {
       "children": [
         {
           "id": "31",
-          "name": "Planning and Direction",
+          "name": "3.1 - Planning and Direction",
           "data": {
             "TagValue_UID": "0032",
             "TagValue_Number": "3.1",
@@ -7345,7 +7343,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "311",
-              "name": "Define and Prioritize Requirements",
+              "name": "3.1.1 - Define and Prioritize Requirements",
               "data": {
                 "TagValue_UID": "0331",
                 "TagValue_Number": "3.1.1",
@@ -7365,7 +7363,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3111",
-                  "name": "PIR Management",
+                  "name": "3.1.1.1 - PIR Management",
                   "data": {
                     "TagValue_UID": "0332",
                     "TagValue_Number": "3.1.1.1",
@@ -7385,7 +7383,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3112",
-                  "name": "RFI Management",
+                  "name": "3.1.1.2 - RFI Management",
                   "data": {
                     "TagValue_UID": "0333",
                     "TagValue_Number": "3.1.1.2",
@@ -7407,7 +7405,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "312",
-              "name": "Workflow Management",
+              "name": "3.1.2 - Workflow Management",
               "data": {
                 "TagValue_UID": "395",
                 "TagValue_Number": "3.1.2",
@@ -7427,7 +7425,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3121",
-                  "name": "Define Workflows",
+                  "name": "3.1.2.1 - Define Workflows",
                   "data": {
                     "TagValue_UID": "396",
                     "TagValue_Number": "3.1.2.1",
@@ -7447,7 +7445,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3122",
-                  "name": "Identify Resources",
+                  "name": "3.1.2.2 - Identify Resources",
                   "data": {
                     "TagValue_UID": "397",
                     "TagValue_Number": "3.1.2.2",
@@ -7467,7 +7465,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3123",
-                  "name": "Execute Workflows",
+                  "name": "3.1.2.3 - Execute Workflows",
                   "data": {
                     "TagValue_UID": "398",
                     "TagValue_Number": "3.1.2.3",
@@ -7487,7 +7485,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3124",
-                  "name": "Task Summary",
+                  "name": "3.1.2.4 - Task Summary",
                   "data": {
                     "TagValue_UID": "399",
                     "TagValue_Number": "3.1.2.4",
@@ -7507,7 +7505,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3125",
-                  "name": "Task Manager",
+                  "name": "3.1.2.5 - Task Manager",
                   "data": {
                     "TagValue_UID": "400",
                     "TagValue_Number": "3.1.2.5",
@@ -7527,7 +7525,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3126",
-                  "name": "Enterprise Workflow Reporting",
+                  "name": "3.1.2.6 - Enterprise Workflow Reporting",
                   "data": {
                     "TagValue_UID": "401",
                     "TagValue_Number": "3.1.2.6",
@@ -7549,7 +7547,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "313",
-              "name": "Planning",
+              "name": "3.1.3 - Planning",
               "data": {
                 "TagValue_UID": "0040",
                 "TagValue_Number": "3.1.3",
@@ -7569,7 +7567,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3131",
-                  "name": "Collection Requirements Planning",
+                  "name": "3.1.3.1 - Collection Requirements Planning",
                   "data": {
                     "TagValue_UID": "0041",
                     "TagValue_Number": "3.1.3.1",
@@ -7589,7 +7587,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3132",
-                  "name": "Sensor Cataloging",
+                  "name": "3.1.3.2 - Sensor Cataloging",
                   "data": {
                     "TagValue_UID": "0035",
                     "TagValue_Number": "3.1.3.2",
@@ -7609,7 +7607,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3133",
-                  "name": "Intelligence Source Selection",
+                  "name": "3.1.3.3 - Intelligence Source Selection",
                   "data": {
                     "TagValue_UID": "0334",
                     "TagValue_Number": "3.1.3.3",
@@ -7629,7 +7627,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3134",
-                  "name": "Exploitation Planning",
+                  "name": "3.1.3.4 - Exploitation Planning",
                   "data": {
                     "TagValue_UID": "0043",
                     "TagValue_Number": "3.1.3.4",
@@ -7649,7 +7647,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3135",
-                  "name": "Target Planning",
+                  "name": "3.1.3.5 - Target Planning",
                   "data": {
                     "TagValue_UID": "0335",
                     "TagValue_Number": "3.1.3.5",
@@ -7671,7 +7669,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "314",
-              "name": "Asset Reporting",
+              "name": "3.1.4 - Asset Reporting",
               "data": {
                 "TagValue_UID": "0337",
                 "TagValue_Number": "3.1.4",
@@ -7691,7 +7689,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3141",
-                  "name": "Asset Status Summary",
+                  "name": "3.1.4.1 - Asset Status Summary",
                   "data": {
                     "TagValue_UID": "0044",
                     "TagValue_Number": "3.1.4.1",
@@ -7711,7 +7709,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3142",
-                  "name": "Asset Discovery",
+                  "name": "3.1.4.2 - Asset Discovery",
                   "data": {
                     "TagValue_UID": "0105",
                     "TagValue_Number": "3.1.4.2",
@@ -7733,7 +7731,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "315",
-              "name": "Tasking Request",
+              "name": "3.1.5 - Tasking Request",
               "data": {
                 "TagValue_UID": "0338",
                 "TagValue_Number": "3.1.5",
@@ -7753,7 +7751,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3151",
-                  "name": "Tasking Message Preparation",
+                  "name": "3.1.5.1 - Tasking Message Preparation",
                   "data": {
                     "TagValue_UID": "0042",
                     "TagValue_Number": "3.1.5.1",
@@ -7773,7 +7771,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3152",
-                  "name": "Task Asset Request",
+                  "name": "3.1.5.2 - Task Asset Request",
                   "data": {
                     "TagValue_UID": "0339",
                     "TagValue_Number": "3.1.5.2",
@@ -7795,7 +7793,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "316",
-              "name": "Sensor Web Enablement",
+              "name": "3.1.6 - Sensor Web Enablement",
               "data": {
                 "TagValue_UID": "0363",
                 "TagValue_Number": "3.1.6",
@@ -7815,7 +7813,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3161",
-                  "name": "Sensor Observation",
+                  "name": "3.1.6.1 - Sensor Observation",
                   "data": {
                     "TagValue_UID": "0039",
                     "TagValue_Number": "3.1.6.1",
@@ -7835,7 +7833,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3162",
-                  "name": "Sensor Planning",
+                  "name": "3.1.6.2 - Sensor Planning",
                   "data": {
                     "TagValue_UID": "0364",
                     "TagValue_Number": "3.1.6.2",
@@ -7859,7 +7857,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "32",
-          "name": "Collection",
+          "name": "3.2 - Collection",
           "data": {
             "TagValue_UID": "0045",
             "TagValue_Number": "3.2",
@@ -7879,7 +7877,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "321",
-              "name": "Asset Management",
+              "name": "3.2.1 - Asset Management",
               "data": {
                 "TagValue_UID": "0033",
                 "TagValue_Number": "3.2.1",
@@ -7899,7 +7897,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3211",
-                  "name": "Sensor Provisioning",
+                  "name": "3.2.1.1 - Sensor Provisioning",
                   "data": {
                     "TagValue_UID": "0340",
                     "TagValue_Number": "3.2.1.1",
@@ -7919,7 +7917,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3212",
-                  "name": "Sensor Cross Queuing",
+                  "name": "3.2.1.2 - Sensor Cross Queuing",
                   "data": {
                     "TagValue_UID": "0342",
                     "TagValue_Number": "3.2.1.2",
@@ -7939,7 +7937,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3213",
-                  "name": "Sensor Command Conversion",
+                  "name": "3.2.1.3 - Sensor Command Conversion",
                   "data": {
                     "TagValue_UID": "0037",
                     "TagValue_Number": "3.2.1.3",
@@ -7959,7 +7957,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3214",
-                  "name": "Sensor Alerting",
+                  "name": "3.2.1.4 - Sensor Alerting",
                   "data": {
                     "TagValue_UID": "0038",
                     "TagValue_Number": "3.2.1.4",
@@ -7983,7 +7981,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "33",
-          "name": "Processing and Exploitation",
+          "name": "3.3 - Processing and Exploitation",
           "data": {
             "TagValue_UID": "0046",
             "TagValue_Number": "3.3",
@@ -8003,7 +8001,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "331",
-              "name": "GEOINT Processing",
+              "name": "3.3.1 - GEOINT Processing",
               "data": {
                 "TagValue_UID": "0047",
                 "TagValue_Number": "3.3.1",
@@ -8023,7 +8021,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3311",
-                  "name": "Image Rectification",
+                  "name": "3.3.1.1 - Image Rectification",
                   "data": {
                     "TagValue_UID": "0048",
                     "TagValue_Number": "3.3.1.1",
@@ -8043,7 +8041,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3312",
-                  "name": "FMV Geoprocessing",
+                  "name": "3.3.1.2 - FMV Geoprocessing",
                   "data": {
                     "TagValue_UID": "0049",
                     "TagValue_Number": "3.3.1.2",
@@ -8063,7 +8061,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3313",
-                  "name": "AOI Processing",
+                  "name": "3.3.1.3 - AOI Processing",
                   "data": {
                     "TagValue_UID": "0208",
                     "TagValue_Number": "3.3.1.3",
@@ -8083,7 +8081,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3314",
-                  "name": "State Service",
+                  "name": "3.3.1.4 - State Service",
                   "data": {
                     "TagValue_UID": "0050",
                     "TagValue_Number": "3.3.1.4",
@@ -8103,7 +8101,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3315",
-                  "name": "Image Chipping",
+                  "name": "3.3.1.5 - Image Chipping",
                   "data": {
                     "TagValue_UID": "0362",
                     "TagValue_Number": "3.3.1.5",
@@ -8125,7 +8123,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "332",
-              "name": "SIGINT Processing",
+              "name": "3.3.2 - SIGINT Processing",
               "data": {
                 "TagValue_UID": "0051",
                 "TagValue_Number": "3.3.2",
@@ -8145,7 +8143,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3321",
-                  "name": "Signal Pattern Recognition",
+                  "name": "3.3.2.1 - Signal Pattern Recognition",
                   "data": {
                     "TagValue_UID": "0054",
                     "TagValue_Number": "3.3.2.1",
@@ -8167,7 +8165,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "333",
-              "name": "CI/HUMINT Processing",
+              "name": "3.3.3 - CI/HUMINT Processing",
               "data": {
                 "TagValue_UID": "0055",
                 "TagValue_Number": "3.3.3",
@@ -8187,7 +8185,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3331",
-                  "name": "Source Management",
+                  "name": "3.3.3.1 - Source Management",
                   "data": {
                     "TagValue_UID": "0344",
                     "TagValue_Number": "3.3.3.1",
@@ -8209,7 +8207,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "334",
-              "name": "Data Exploitation",
+              "name": "3.3.4 - Data Exploitation",
               "data": {
                 "TagValue_UID": "0345",
                 "TagValue_Number": "3.3.4",
@@ -8229,7 +8227,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3341",
-                  "name": "Language Translation",
+                  "name": "3.3.4.1 - Language Translation",
                   "data": {
                     "TagValue_UID": "0056",
                     "TagValue_Number": "3.3.4.1",
@@ -8251,7 +8249,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "335",
-              "name": "MASINT Processing",
+              "name": "3.3.5 - MASINT Processing",
               "data": {
                 "TagValue_UID": "0057",
                 "TagValue_Number": "3.3.5",
@@ -8271,7 +8269,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "336",
-              "name": "Support to Targeting",
+              "name": "3.3.6 - Support to Targeting",
               "data": {
                 "TagValue_UID": "0081",
                 "TagValue_Number": "3.3.6",
@@ -8291,7 +8289,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3361",
-                  "name": "Target Management",
+                  "name": "3.3.6.1 - Target Management",
                   "data": {
                     "TagValue_UID": "0082",
                     "TagValue_Number": "3.3.6.1",
@@ -8311,7 +8309,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3362",
-                  "name": "Target Data Matrix",
+                  "name": "3.3.6.2 - Target Data Matrix",
                   "data": {
                     "TagValue_UID": "0083",
                     "TagValue_Number": "3.3.6.2",
@@ -8331,7 +8329,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3363",
-                  "name": "Target Validation",
+                  "name": "3.3.6.3 - Target Validation",
                   "data": {
                     "TagValue_UID": "0084",
                     "TagValue_Number": "3.3.6.3",
@@ -8351,7 +8349,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3364",
-                  "name": "Target Folder",
+                  "name": "3.3.6.4 - Target Folder",
                   "data": {
                     "TagValue_UID": "0085",
                     "TagValue_Number": "3.3.6.4",
@@ -8371,7 +8369,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3365",
-                  "name": "Target List",
+                  "name": "3.3.6.5 - Target List",
                   "data": {
                     "TagValue_UID": "0086",
                     "TagValue_Number": "3.3.6.5",
@@ -8391,7 +8389,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3366",
-                  "name": "Target Mensuration",
+                  "name": "3.3.6.6 - Target Mensuration",
                   "data": {
                     "TagValue_UID": "0346",
                     "TagValue_Number": "3.3.6.6",
@@ -8411,7 +8409,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3367",
-                  "name": "BDA/CDA",
+                  "name": "3.3.6.7 - BDA/CDA",
                   "data": {
                     "TagValue_UID": "0347",
                     "TagValue_Number": "3.3.6.7",
@@ -8435,7 +8433,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "34",
-          "name": "Analysis, Prediction and Production",
+          "name": "3.4 - Analysis, Prediction and Production",
           "data": {
             "TagValue_UID": "0058",
             "TagValue_Number": "3.4",
@@ -8455,7 +8453,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "341",
-              "name": "GEOINT Analysis",
+              "name": "3.4.1 - GEOINT Analysis",
               "data": {
                 "TagValue_UID": "0059",
                 "TagValue_Number": "3.4.1",
@@ -8475,7 +8473,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3411",
-                  "name": "Change Detection",
+                  "name": "3.4.1.1 - Change Detection",
                   "data": {
                     "TagValue_UID": "0060",
                     "TagValue_Number": "3.4.1.1",
@@ -8495,7 +8493,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "34110",
-                  "name": "Sensor Model Instantiation",
+                  "name": "3.4.1.10 - Sensor Model Instantiation",
                   "data": {
                     "TagValue_UID": "0062",
                     "TagValue_Number": "3.4.1.10",
@@ -8515,7 +8513,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "34111",
-                  "name": "GEO-Calculations",
+                  "name": "3.4.1.11 - GEO-Calculations",
                   "data": {
                     "TagValue_UID": "0366",
                     "TagValue_Number": "3.4.1.11",
@@ -8535,7 +8533,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3412",
-                  "name": "Triangulation",
+                  "name": "3.4.1.2 - Triangulation",
                   "data": {
                     "TagValue_UID": "0063",
                     "TagValue_Number": "3.4.1.2",
@@ -8555,7 +8553,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3413",
-                  "name": "Resection",
+                  "name": "3.4.1.3 - Resection",
                   "data": {
                     "TagValue_UID": "0064",
                     "TagValue_Number": "3.4.1.3",
@@ -8575,7 +8573,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3414",
-                  "name": "Geomensuration",
+                  "name": "3.4.1.4 - Geomensuration",
                   "data": {
                     "TagValue_UID": "0065",
                     "TagValue_Number": "3.4.1.4",
@@ -8595,7 +8593,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3415",
-                  "name": "DPPDB Mensuration",
+                  "name": "3.4.1.5 - DPPDB Mensuration",
                   "data": {
                     "TagValue_UID": "0066",
                     "TagValue_Number": "3.4.1.5",
@@ -8615,7 +8613,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3416",
-                  "name": "Image Registration",
+                  "name": "3.4.1.6 - Image Registration",
                   "data": {
                     "TagValue_UID": "0067",
                     "TagValue_Number": "3.4.1.6",
@@ -8635,7 +8633,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3417",
-                  "name": "MTI Tracking",
+                  "name": "3.4.1.7 - MTI Tracking",
                   "data": {
                     "TagValue_UID": "0068",
                     "TagValue_Number": "3.4.1.7",
@@ -8655,7 +8653,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3418",
-                  "name": "Topographical Survey",
+                  "name": "3.4.1.8 - Topographical Survey",
                   "data": {
                     "TagValue_UID": "0069",
                     "TagValue_Number": "3.4.1.8",
@@ -8675,7 +8673,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3419",
-                  "name": "Automatic Target Recognition",
+                  "name": "3.4.1.9 - Automatic Target Recognition",
                   "data": {
                     "TagValue_UID": "0070",
                     "TagValue_Number": "3.4.1.9",
@@ -8697,7 +8695,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "342",
-              "name": "SIGINT Analysis",
+              "name": "3.4.2 - SIGINT Analysis",
               "data": {
                 "TagValue_UID": "0071",
                 "TagValue_Number": "3.4.2",
@@ -8717,7 +8715,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3421",
-                  "name": "SIGINT Analysis and Reporting",
+                  "name": "3.4.2.1 - SIGINT Analysis and Reporting",
                   "data": {
                     "TagValue_UID": "0072",
                     "TagValue_Number": "3.4.2.1",
@@ -8737,7 +8735,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3422",
-                  "name": "Emitter Correlation",
+                  "name": "3.4.2.2 - Emitter Correlation",
                   "data": {
                     "TagValue_UID": "0073",
                     "TagValue_Number": "3.4.2.2",
@@ -8757,7 +8755,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3423",
-                  "name": "Emitter Geolocation",
+                  "name": "3.4.2.3 - Emitter Geolocation",
                   "data": {
                     "TagValue_UID": "0074",
                     "TagValue_Number": "3.4.2.3",
@@ -8777,7 +8775,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3424",
-                  "name": "COMINT Externals Analysis",
+                  "name": "3.4.2.4 - COMINT Externals Analysis",
                   "data": {
                     "TagValue_UID": "0075",
                     "TagValue_Number": "3.4.2.4",
@@ -8799,7 +8797,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "343",
-              "name": "HUMINT Analysis",
+              "name": "3.4.3 - HUMINT Analysis",
               "data": {
                 "TagValue_UID": "0076",
                 "TagValue_Number": "3.4.3",
@@ -8819,7 +8817,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3431",
-                  "name": "Entity Activity Patterns",
+                  "name": "3.4.3.1 - Entity Activity Patterns",
                   "data": {
                     "TagValue_UID": "0078",
                     "TagValue_Number": "3.4.3.1",
@@ -8839,7 +8837,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3432",
-                  "name": "Identity Disambiguation",
+                  "name": "3.4.3.2 - Identity Disambiguation",
                   "data": {
                     "TagValue_UID": "0079",
                     "TagValue_Number": "3.4.3.2",
@@ -8861,7 +8859,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "344",
-              "name": "MASINT/AGI Analysis",
+              "name": "3.4.4 - MASINT/AGI Analysis",
               "data": {
                 "TagValue_UID": "0080",
                 "TagValue_Number": "3.4.4",
@@ -8881,7 +8879,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "345",
-              "name": "Production",
+              "name": "3.4.5 - Production",
               "data": {
                 "TagValue_UID": "0348",
                 "TagValue_Number": "3.4.5",
@@ -8901,7 +8899,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3451",
-                  "name": "Reporting Services",
+                  "name": "3.4.5.1 - Reporting Services",
                   "data": {
                     "TagValue_UID": "0368",
                     "TagValue_Number": "3.4.5.1",
@@ -8921,7 +8919,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3452",
-                  "name": "Production Workflow",
+                  "name": "3.4.5.2 - Production Workflow",
                   "data": {
                     "TagValue_UID": "0369",
                     "TagValue_Number": "3.4.5.2",
@@ -8941,7 +8939,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3453",
-                  "name": "Digital Production",
+                  "name": "3.4.5.3 - Digital Production",
                   "data": {
                     "TagValue_UID": "0370",
                     "TagValue_Number": "3.4.5.3",
@@ -8963,7 +8961,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "346",
-              "name": "Analytic Decision Support",
+              "name": "3.4.6 - Analytic Decision Support",
               "data": {
                 "TagValue_UID": "0024",
                 "TagValue_Number": "3.4.6",
@@ -8983,7 +8981,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3461",
-                  "name": "Timelines Analysis",
+                  "name": "3.4.6.1 - Timelines Analysis",
                   "data": {
                     "TagValue_UID": "0349",
                     "TagValue_Number": "3.4.6.1",
@@ -9003,7 +9001,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3462",
-                  "name": "Structured Analytic Techniques",
+                  "name": "3.4.6.2 - Structured Analytic Techniques",
                   "data": {
                     "TagValue_UID": "0350",
                     "TagValue_Number": "3.4.6.2",
@@ -9023,7 +9021,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3463",
-                  "name": "Argument Mapping",
+                  "name": "3.4.6.3 - Argument Mapping",
                   "data": {
                     "TagValue_UID": "0351",
                     "TagValue_Number": "3.4.6.3",
@@ -9043,7 +9041,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3464",
-                  "name": "Alternative Future Analysis",
+                  "name": "3.4.6.4 - Alternative Future Analysis",
                   "data": {
                     "TagValue_UID": "0352",
                     "TagValue_Number": "3.4.6.4",
@@ -9063,7 +9061,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3465",
-                  "name": "Link Analysis",
+                  "name": "3.4.6.5 - Link Analysis",
                   "data": {
                     "TagValue_UID": "0365",
                     "TagValue_Number": "3.4.6.5",
@@ -9085,7 +9083,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "347",
-              "name": "Modeling and Simulation",
+              "name": "3.4.7 - Modeling and Simulation",
               "data": {
                 "TagValue_UID": "0027",
                 "TagValue_Number": "3.4.7",
@@ -9105,7 +9103,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3471",
-                  "name": "War Gaming",
+                  "name": "3.4.7.1 - War Gaming",
                   "data": {
                     "TagValue_UID": "0028",
                     "TagValue_Number": "3.4.7.1",
@@ -9125,7 +9123,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3472",
-                  "name": "Scenario Generation",
+                  "name": "3.4.7.2 - Scenario Generation",
                   "data": {
                     "TagValue_UID": "0353",
                     "TagValue_Number": "3.4.7.2",
@@ -9145,7 +9143,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3473",
-                  "name": "Model Building",
+                  "name": "3.4.7.3 - Model Building",
                   "data": {
                     "TagValue_UID": "0354",
                     "TagValue_Number": "3.4.7.3",
@@ -9165,7 +9163,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3474",
-                  "name": "Sensor Modeling",
+                  "name": "3.4.7.4 - Sensor Modeling",
                   "data": {
                     "TagValue_UID": "0029",
                     "TagValue_Number": "3.4.7.4",
@@ -9185,7 +9183,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3475",
-                  "name": "Target Solution Modeling",
+                  "name": "3.4.7.5 - Target Solution Modeling",
                   "data": {
                     "TagValue_UID": "0355",
                     "TagValue_Number": "3.4.7.5",
@@ -9205,7 +9203,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3476",
-                  "name": "Orchestration Modeling",
+                  "name": "3.4.7.6 - Orchestration Modeling",
                   "data": {
                     "TagValue_UID": "0030",
                     "TagValue_Number": "3.4.7.6",
@@ -9227,7 +9225,7 @@ MOCKDATA2.parsedSvcv4 = {
             },
             {
               "id": "348",
-              "name": "Analysis Support to C2",
+              "name": "3.4.8 - Analysis Support to C2",
               "data": {
                 "TagValue_UID": "0204",
                 "TagValue_Number": "3.4.8",
@@ -9247,7 +9245,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3481",
-                  "name": "Order of Battle Analysis",
+                  "name": "3.4.8.1 - Order of Battle Analysis",
                   "data": {
                     "TagValue_UID": "0356",
                     "TagValue_Number": "3.4.8.1",
@@ -9267,7 +9265,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3482",
-                  "name": "Intelligence Preparation of the Battlefield",
+                  "name": "3.4.8.2 - Intelligence Preparation of the Battlefield",
                   "data": {
                     "TagValue_UID": "0357",
                     "TagValue_Number": "3.4.8.2",
@@ -9287,7 +9285,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3483",
-                  "name": "Mission Planning and Force Execution support",
+                  "name": "3.4.8.3 - Mission Planning and Force Execution support",
                   "data": {
                     "TagValue_UID": "0358",
                     "TagValue_Number": "3.4.8.3",
@@ -9307,7 +9305,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3484",
-                  "name": "Weather Effect  Planning",
+                  "name": "3.4.8.4 - Weather Effect  Planning",
                   "data": {
                     "TagValue_UID": "0336",
                     "TagValue_Number": "3.4.8.4",
@@ -9331,7 +9329,7 @@ MOCKDATA2.parsedSvcv4 = {
         },
         {
           "id": "35",
-          "name": "BA Data Dissemination and Relay",
+          "name": "3.5 - BA Data Dissemination and Relay",
           "data": {
             "TagValue_UID": "0087",
             "TagValue_Number": "3.5",
@@ -9351,7 +9349,7 @@ MOCKDATA2.parsedSvcv4 = {
           "children": [
             {
               "id": "351",
-              "name": "Dissemination Management",
+              "name": "3.5.1 - Dissemination Management",
               "data": {
                 "TagValue_UID": "0088",
                 "TagValue_Number": "3.5.1",
@@ -9371,7 +9369,7 @@ MOCKDATA2.parsedSvcv4 = {
               "children": [
                 {
                   "id": "3511",
-                  "name": "Dissemination Authorization",
+                  "name": "3.5.1.1 - Dissemination Authorization",
                   "data": {
                     "TagValue_UID": "0359",
                     "TagValue_Number": "3.5.1.1",
@@ -9391,7 +9389,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3512",
-                  "name": "Package Product",
+                  "name": "3.5.1.2 - Package Product",
                   "data": {
                     "TagValue_UID": "0089",
                     "TagValue_Number": "3.5.1.2",
@@ -9411,7 +9409,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3513",
-                  "name": "Tear Line Reporting",
+                  "name": "3.5.1.3 - Tear Line Reporting",
                   "data": {
                     "TagValue_UID": "0360",
                     "TagValue_Number": "3.5.1.3",
@@ -9431,7 +9429,7 @@ MOCKDATA2.parsedSvcv4 = {
                 },
                 {
                   "id": "3514",
-                  "name": "Foreign Disclosure Management",
+                  "name": "3.5.1.4 - Foreign Disclosure Management",
                   "data": {
                     "TagValue_UID": "0361",
                     "TagValue_Number": "3.5.1.4",
@@ -9455,9 +9453,10 @@ MOCKDATA2.parsedSvcv4 = {
         }
       ]
     }
-  ]
+  ],
+  "name": "SvcV-4",
+  "id": 0
 };
-
 
 
 
@@ -9487,7 +9486,7 @@ MOCKDATA2.parsedSvcv4 = {
 //     } else {
 //       temp.id = path.join('');
 //     }
-//     temp.name = item['TagValue_Service Name'];
+//     temp.name = item['TagValue_Number'] +" - "+ item['TagValue_Service Name'];
 //     temp.data = item;
 //     temp.size = 100;
 //     temp.children = [];
@@ -9556,6 +9555,6 @@ MOCKDATA2.parsedSvcv4 = {
 //  }
 // })(console)
 
-makeTree();
+// makeTree();
 
 /* jshint ignore:end */
