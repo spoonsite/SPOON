@@ -62,18 +62,18 @@ var floatBelowTop = function(element, width, parent, top) {
   }
 };
 
-/**********************
-* This function keeps the description flyout buttons in the middle of the screen
-* params: element -- a JQuery object
-* params: parent -- a JQuery object that contains the element we want to move
-**********************/
-var moveButtons = function (element, parent) {
-  var top = $(parent).scrollTop();
-  var height = ($(parent).height() / 2);
-  var offset = top + height - 45;
+// *********************
+// * This function keeps the description flyout buttons in the middle of the screen
+// * params: element -- a JQuery object
+// * params: parent -- a JQuery object that contains the element we want to move
+// *********************
+// var moveButtons = function (element, parent) {
+//   var top = $(parent).scrollTop();
+//   var height = ($(parent).height() / 2);
+//   var offset = top + height - 45;
   
-  element.css({'top': offset + 'px'});
-};
+//   element.css({'top': offset + 'px'});
+// };
 
 /**********************
 * This function sets the width of the element to the 'details page' width
@@ -376,8 +376,8 @@ var closeFilter = function (filters, results, details, paginationDiv, windowWidt
 * This function Will toggle the open window functions
 **********************/
 var openWindowToggle = function () {
-  moveButtons($('#showPageRight'), $('.page1'));
-  moveButtons($('#showPageLeft'), $('.page2'));
+  // moveButtons($('#showPageRight'), $('.page1'));
+  // moveButtons($('#showPageLeft'), $('.page2'));
   var windowWidth = $(window).width();
   var results = $('.page1');
   var details = $('.page2');
@@ -402,8 +402,8 @@ var openWindowToggle = function () {
 * This function Will toggle the openfull and closepartial functions
 **********************/
 var fullDetailsToggle = function () {
-  moveButtons($('#showPageRight'), $('.page1'));
-  moveButtons($('#showPageLeft'), $('.page2'));
+  // moveButtons($('#showPageRight'), $('.page1'));
+  // moveButtons($('#showPageLeft'), $('.page2'));
   var windowWidth = $(window).width();
   var windowHeight = $(window).height();
   var filters = $('.filters');
@@ -431,8 +431,8 @@ var fullDetailsToggle = function () {
 * of the page
 **********************/
 var closeDetailsFull = function () {
-  moveButtons($('#showPageRight'), $('.page1'));
-  moveButtons($('#showPageLeft'), $('.page2'));
+  // moveButtons($('#showPageRight'), $('.page1'));
+  // moveButtons($('#showPageLeft'), $('.page2'));
   var windowWidth = $(window).width();
   var results = $('.page1');
   var details = $('.page2');

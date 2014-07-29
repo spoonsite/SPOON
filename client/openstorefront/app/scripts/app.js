@@ -279,6 +279,22 @@ tagsInputConfigProvider
   };
 
   /***************************************************************
+  * This function converts a timestamp to a displayable date
+  ***************************************************************/
+  $rootScope.getDate = function(date){
+    if (date)
+    {
+      var d = new Date(date);
+      var currDate = d.getDate();
+      var currMonth = d.getMonth();
+      var currYear = d.getFullYear();
+      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+    }
+    return null;
+  };
+
+
+  /***************************************************************
   * This is a local function used in the httpBackend functions
   ***************************************************************/
   var getParams = function(url) {
