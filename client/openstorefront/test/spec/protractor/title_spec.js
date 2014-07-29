@@ -1,8 +1,10 @@
 'use strict';
 
-describe('storefront homepage', function() {
-  it('should have a title', function() {
+var pageTitle = 'DI2E Storefront';
+
+describe('Storefront homepage', function() {
+  it('has a title: ' + pageTitle, function() {
     browser.get('http://di2e.github.io/openstorefront');
-    expect(browser.getTitle()).toEqual('DI2E Storefront');
+    expect(browser.getTitle()).toEqual(pageTitle);
   });
 });
