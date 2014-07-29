@@ -34,7 +34,7 @@ limitations under the License.
 		<span class="resource-admin">Requires Admin Privilege</span>	  
 	</c:if>	  
 	
-	<h3>Resource Path: ${actionBean.resourceModel.resourcePath}</h3>
+	<h3>${actionBean.classPathDescription} Path: ${actionBean.resourceModel.resourcePath}</h3>
 	<c:if test="${!empty actionBean.resourceModel.methods}">
 		<h2>Paths</h2>
 		<ul>

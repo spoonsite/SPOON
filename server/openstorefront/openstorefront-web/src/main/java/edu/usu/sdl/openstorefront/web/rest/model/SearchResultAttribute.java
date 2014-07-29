@@ -20,46 +20,13 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentAttribute
+public class SearchResultAttribute
 {
-	private String type;
-	private String typeDescription;	
+	private String type;	
 	private String code;
-	private String codeDescription;
-	private boolean important;	
 
-	public ComponentAttribute()
+	public SearchResultAttribute()
 	{
-	}
-
-	public String getCodeDescription()
-	{
-		return codeDescription;
-	}
-
-	public void setCodeDescription(String codeDescription)
-	{
-		this.codeDescription = codeDescription;
-	}
-
-	public String getTypeDescription()
-	{
-		return typeDescription;
-	}
-
-	public void setTypeDescription(String typeDescription)
-	{
-		this.typeDescription = typeDescription;
-	}
-
-	public boolean getImportant()
-	{
-		return important;
-	}
-
-	public void setImportant(boolean important)
-	{
-		this.important = important;
 	}
 
 	public String getType()

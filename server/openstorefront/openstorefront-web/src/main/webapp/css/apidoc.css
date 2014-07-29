@@ -25,14 +25,26 @@ body{
 	background-color: white;	
 }
 
+a {
+	color: black
+}
+
+a:visited {
+	color: black
+}
+
+a:hover {
+	color: #ff4800;
+}
+
 .header{
 	top: 0px;
 	left: 0px;
 	position: fixed;
-	color: black;
+	color: white;
 	width: 100%;
 	z-index: 99;
-	background-color: lightgrey;
+	background-color: #414e68;
 	-webkit-box-shadow: 0px 0px 9px 0px; rgba(68, 68, 68, 0.6);
 	-moz-box-shadow: 0px 0px 9px 0px rgba(68, 68, 68, 0.6);
 	 box-shadow: 0px 0px 9px 0px rgba(68,68,68,0.6);	
@@ -58,7 +70,7 @@ body{
 	padding-left: 10px;
 	padding-bottom: 5px;
 	padding-top: 5px;
-	text-shadow: 2px 2px 2px grey;	
+	/* text-shadow: 2px 2px 2px grey; */	
 }
 
 .api-guide{
@@ -92,7 +104,7 @@ h1{
 	width: 100%;
 	margin: 0px;	
 	text-align: center;
-	text-shadow: 2px 2px 2px grey;
+	/* text-shadow: 2px 2px 2px grey; */
 }
 
 table{
@@ -109,8 +121,8 @@ table td,th {
 
 th {
 	color: white;
-	text-shadow: 2px 2px 2px black;
-	background-color: steelblue;
+	/* text-shadow: 2px 2px 2px black; */
+	background-color: #414e68;
 	border: 1px lightgray solid;
 }
 td {

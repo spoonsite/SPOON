@@ -37,6 +37,9 @@ public class UserProfileView
 	
 	@ConsumeField
 	private String email;
+
+	@ConsumeField
+	private String organization;
 	
 	@NotNull
 	@ConsumeField
@@ -146,6 +149,16 @@ public class UserProfileView
 	public void setAdmin(boolean admin)
 	{
 		this.admin = admin;
+	}
+
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
 	}
 	
 }

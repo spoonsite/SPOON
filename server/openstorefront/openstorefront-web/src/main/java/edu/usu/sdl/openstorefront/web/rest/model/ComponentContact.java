@@ -26,6 +26,7 @@ public class ComponentContact
 	private String name;
 	private String email;
 	private String phone;
+	private String organization;
 
 	public ComponentContact()
 	{
@@ -69,6 +70,16 @@ public class ComponentContact
 	public void setEmail(String email)
 	{
 		this.email = email;
+	}
+
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
 	}
 
 }
