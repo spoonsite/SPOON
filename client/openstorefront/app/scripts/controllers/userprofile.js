@@ -46,10 +46,31 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
       //
       { 'title': 'User Profile', 'include': 'views/userprofiletab.html' },
       { 'title': 'Watches', 'include': 'views/watchestab.html' },
-      { 'title': 'Component Feedback', 'include': 'views/feedbacktab.html' }
+      { 'title': 'Component Reviews', 'include': 'views/feedbacktab.html' }
     //
     ]
   };
+
+  $scope.expertise          = [
+    //
+    {'value':'1', 'label': 'Less than 1 month'},
+    {'value':'2', 'label': 'Less than 3 months'},
+    {'value':'3', 'label': 'Less than 6 months'},
+    {'value':'4', 'label': 'Less than 1 year'},
+    {'value':'5', 'label': 'Less than 3 years'},
+    {'value':'6', 'label': 'More than 3 years'}
+  //
+  ];
+  $scope.userRoles          = [
+    //
+    {'code':'ENDUSER', 'description': 'User'},
+    {'code':'DEV', 'description': 'Developer'},
+    {'code':'PM', 'description': 'Project Manager'}
+  //
+  ];
+
+  $scope.prosConsList       = Business.getProsConsList();
+  
 
   $scope.$on('$includeContentLoaded', function(){
     $timeout(function() {
