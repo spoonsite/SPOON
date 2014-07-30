@@ -36,7 +36,7 @@ public class ComponentEvaluation
 	private List<ComponentEvaluationSchedule> evaluationSchedule = new ArrayList<>();
 	
 	@DataType(ComponentEvaluationSection.class)
-	private List<ComponentEvaluationSection> evaulationSections = new ArrayList<>();
+	private List<ComponentEvaluationSection> evaluationSections = new ArrayList<>();
 
 	public ComponentEvaluation()
 	{
@@ -82,16 +82,6 @@ public class ComponentEvaluation
 		this.evaluationSchedule = evaluationSchedule;
 	}
 
-	public List<ComponentEvaluationSection> getEvaulationSections()
-	{
-		return evaulationSections;
-	}
-
-	public void setEvaulationSections(List<ComponentEvaluationSection> evaulationSections)
-	{
-		this.evaulationSections = evaulationSections;
-	}	
-
 	public String getReviewedVersion()
 	{
 		return reviewedVersion;
@@ -100,6 +90,16 @@ public class ComponentEvaluation
 	public void setReviewedVersion(String reviewedVersion)
 	{
 		this.reviewedVersion = reviewedVersion;
+	}
+
+	public List<ComponentEvaluationSection> getEvaluationSections()
+	{
+		return evaluationSections;
+	}
+
+	public void setEvaluationSections(List<ComponentEvaluationSection> evaluationSections)
+	{
+		this.evaluationSections = evaluationSections;
 	}
 	
 }
