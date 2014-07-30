@@ -32,7 +32,7 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     $scope.landingRoute = data;
     $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
     $scope.loaded = true;
-  })
+  });
 
   /***************************************************************
   * This function is used to send the user to the results page with the correct

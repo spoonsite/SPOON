@@ -431,7 +431,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.isArticle = true;
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);
-      $scope.showDetails = true; 
+      $scope.showDetails = true;
       if (!openClick) {
         buttonOpen();
       }
@@ -475,8 +475,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
         }
         $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-        $scope.showDetails = true; 
-      }); 
+        $scope.showDetails = true;
+      });
     } //
   }; //
 
