@@ -28,6 +28,12 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     });
   }, 1000);
 
+  $scope.$on('$TRIGGERLANDING', function(event, data) {
+    $scope.landingRoute = data;
+    $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+    $scope.loaded = true;
+  })
+
   /***************************************************************
   * This function is used to send the user to the results page with the correct
   * results.
