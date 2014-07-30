@@ -25,8 +25,8 @@ import java.util.Date;
 public class ComponentEvaluationSchedule
 {
 	private String evaluationLevelCode;
-	private Date estimatedCompeletionDate;
-	private Date actualCompeletionDate;
+	private Date estimatedCompletionDate;
+	private Date actualCompletionDate;
 	private String levelStatus;
 
 	public ComponentEvaluationSchedule()
@@ -43,26 +43,6 @@ public class ComponentEvaluationSchedule
 		this.evaluationLevelCode = evaluationLevelCode;
 	}
 
-	public Date getEstimatedCompeletionDate()
-	{
-		return estimatedCompeletionDate;
-	}
-
-	public void setEstimatedCompeletionDate(Date estimatedCompeletionDate)
-	{
-		this.estimatedCompeletionDate = estimatedCompeletionDate;
-	}
-
-	public Date getActualCompeletionDate()
-	{
-		return actualCompeletionDate;
-	}
-
-	public void setActualCompeletionDate(Date actualCompeletionDate)
-	{
-		this.actualCompeletionDate = actualCompeletionDate;
-	}
-
 	public String getLevelStatus()
 	{
 		return levelStatus;
@@ -71,6 +51,26 @@ public class ComponentEvaluationSchedule
 	public void setLevelStatus(String levelStatus)
 	{
 		this.levelStatus = levelStatus;
+	}
+
+	public Date getEstimatedCompletionDate()
+	{
+		return estimatedCompletionDate;
+	}
+
+	public void setEstimatedCompletionDate(Date estimatedCompletionDate)
+	{
+		this.estimatedCompletionDate = estimatedCompletionDate;
+	}
+
+	public Date getActualCompletionDate()
+	{
+		return actualCompletionDate;
+	}
+
+	public void setActualCompletionDate(Date actualCompletionDate)
+	{
+		this.actualCompletionDate = actualCompletionDate;
 	}
 
 }

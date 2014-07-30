@@ -68,6 +68,8 @@ import org.junit.Test;
  */
 public class DataConvertTest
 {
+	private static final int MAX_SEARCH_DESCRIPTION = 300;
+	
 	@Test
 	public void testConvert() throws JsonProcessingException, IOException
 	{
@@ -368,11 +370,10 @@ public class DataConvertTest
 			}						
 			
 			attribute = mapAttribute("DI2ELEVEL", stateLabel, attributeMap);
+			componentDetail.getEvaluation().setCurrentLevelCode(attribute.getCode());	
 			attribute.setImportant(true);	
 			componentDetail.getAttributes().add(attribute);
-			
-			String level[] = oldAsset.getState().getTitle().split("-");
-			componentDetail.getEvaluation().setCurrentLevelCode(level[0].trim().toUpperCase());			
+							
 			
 			oldAsset.getCategories().forEach(category -> {
 				ComponentAttribute catAttribute = mapAttribute("CATEGORY", category.getTitle(), attributeMap);			
@@ -735,28 +736,28 @@ public class DataConvertTest
 						ComponentEvaluationSchedule componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("C");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 0");						
-						componentEvaluationSchedule.setActualCompeletionDate(TimeUtil.fromString("2014-1-11T10:15:30.00Z"));
+						componentEvaluationSchedule.setActualCompletionDate(TimeUtil.fromString("2014-1-11T10:15:30.00Z"));
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 1");						
-						componentEvaluationSchedule.setEstimatedCompeletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
+						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 2");						
-						componentEvaluationSchedule.setEstimatedCompeletionDate(TimeUtil.fromString("2014-2-21T10:15:30.00Z"));						
+						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-2-21T10:15:30.00Z"));						
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 3");						
-						componentEvaluationSchedule.setEstimatedCompeletionDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));						
+						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));						
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 					}
@@ -766,7 +767,7 @@ public class DataConvertTest
 						ComponentEvaluationSchedule componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("C");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 0");						
-						componentEvaluationSchedule.setActualCompeletionDate(TimeUtil.fromString("2014-1-11T10:15:30.00Z"));
+						componentEvaluationSchedule.setActualCompletionDate(TimeUtil.fromString("2014-1-11T10:15:30.00Z"));
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 						//Fill in the general eval info
@@ -779,17 +780,17 @@ public class DataConvertTest
 						if (check < 1)
 						{
 							componentEvaluationSchedule.setLevelStatus("H");
-							componentEvaluationSchedule.setActualCompeletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
+							componentEvaluationSchedule.setActualCompletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
 						}
 						else if (check < 3)
 						{
 							componentEvaluationSchedule.setLevelStatus("P");
-							componentEvaluationSchedule.setEstimatedCompeletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
+							componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
 						}						
 						else
 						{
 							componentEvaluationSchedule.setLevelStatus("C");
-							componentEvaluationSchedule.setActualCompeletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
+							componentEvaluationSchedule.setActualCompletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
 							
 							for (String sectionName : evalSections)
 							{
@@ -800,7 +801,7 @@ public class DataConvertTest
 								{
 									section.setScore(0);
 								}
-								evaluation.getEvaulationSections().add(section);
+								evaluation.getEvaluationSections().add(section);
 							}
 							
 						}
@@ -812,14 +813,14 @@ public class DataConvertTest
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 2");						
-						componentEvaluationSchedule.setEstimatedCompeletionDate(TimeUtil.fromString("2014-2-21T10:15:30.00Z"));						
+						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-2-21T10:15:30.00Z"));						
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 3");						
-						componentEvaluationSchedule.setEstimatedCompeletionDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));						
+						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));						
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 					}
 				}
@@ -881,7 +882,14 @@ public class DataConvertTest
 			SearchResult searchResult = new SearchResult();
 			searchResult.setComponentId(detail.getComponentId());
 			searchResult.setName(detail.getName());
-			searchResult.setDescription(detail.getDescription());
+			
+			//Strip the <br> may other 			
+			String description = detail.getDescription().replace("<br>", "");			
+			if (description.length() > MAX_SEARCH_DESCRIPTION)
+			{
+				description= description.substring(0, MAX_SEARCH_DESCRIPTION - 3) + "...";
+			}			
+			searchResult.setDescription(description);
 			searchResult.setAverageRating(random.nextInt(6));
 			searchResult.setViews(random.nextInt(200));
 			searchResult.setLastActivityDate(detail.getLastActivityDate());
