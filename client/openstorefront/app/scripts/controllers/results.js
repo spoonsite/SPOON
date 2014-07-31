@@ -173,6 +173,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
 
+  $scope.resetAllFilters = function() {
+    var filters = Business.getFilters();
+    _.each(filters, function(filter) {
+      _.each(filter.codes, function(code) {
+        code.checked = false;
+      });
+    });
+  };
+
   /***************************************************************
   * This function is called once we have the search request from the business layer
   * The order and manner in which we do this call will most likely change once
@@ -196,27 +205,26 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
+      $scope.resetAllFilters();
+      $scope.filters = Business.getFilters();
+      $scope.filters = _.sortBy($scope.filters, function(item){
+        return item.description;
+      });
+      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
-        $scope.filters = Business.getFilters();
-        $scope.filters = _.sortBy($scope.filters, function(item){
-          return item.description;
+        $scope.data.data = $scope.total;
+        _.each($scope.data.data, function(item){
+          if (item.description !== null && item.description !== undefined && item.description !== '') {
+            var desc = item.description.match(/^(.*?)[.?!]\s/);
+            item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+          } else {
+            item.shortdescription = 'This is a temporary short description';
+          }
         });
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-        /*This is simulating the wait time for building the data so that we get a loader*/
-        $timeout(function(){
-          $scope.data.data = $scope.total;
-          _.each($scope.data.data, function(item){
-            if (item.description !== null && item.description !== undefined && item.description !== '') {
-              var desc = item.description.match(/^(.*?)[.?!]\s/);
-              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
-            } else {
-              item.shortdescription = 'This is a temporary short description';
-            }
-          });
-          $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-          $scope.initializeData(key);
-          adjustFilters();
-        }, 500);
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.initializeData(key);
+        adjustFilters();
       }, 500);
     }); //
   }; //
@@ -245,6 +253,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.searchKey          = $scope.searchGroup[0].key;
       $scope.searchCode         = $scope.searchGroup[0].code;
       var keys = _.pluck($scope.filters, 'type');
+      
       var foundFilter = null;
       var foundCollection = null;
       var type = '';
@@ -255,26 +264,23 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
       if (_.contains(keys, $scope.searchKey)) {
-        $scope.searchGroupItem    = _.where($scope.filters, {'type': $scope.searchKey})[0];
-        $scope.searchType         = $scope.searchGroupItem.description;
         $scope.showSearch         = true;
         
         foundFilter = _.where($scope.filters, {'type': $scope.searchGroup[0].key})[0];
         foundCollection = _.where(foundFilter.codes, {'code': $scope.searchGroup[0].code})[0];
-
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all') {
-          $scope.searchColItem      = _.where($scope.searchGroupItem.codes, {'code': $scope.searchCode})[0];
-          $scope.searchTitle        = $scope.searchType + ', ' + $scope.searchColItem.type;
-          $scope.modal.modalTitle   = $scope.searchType + ', ' + $scope.searchColItem.type;
-          $scope.searchDescription  = $scope.searchColItem.desc;
+          $scope.searchColItem      = foundCollection;
+          $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
+          $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
+          $scope.searchDescription  = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
           if (foundCollection.landing !== undefined && foundCollection.landing !== null) {
             getBody(foundCollection.landing).then(function(result) {
               $scope.modal.modalBody = result;
               $scope.modal.isLanding = true;
             });
           } else {
-            $scope.modal.modalBody = $scope.searchColItem.description;
+            $scope.modal.modalBody = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
             $scope.modal.isLanding = false;
           }
         } else {

@@ -256,16 +256,33 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     var result = '';
     switch(statusCode){
       case 'C':
-      result = 'COMPLETED ' + actual;
+        if (actual && actual !== 'null') {
+          result = 'COMPLETED ' + actual;
+        } else {
+          result = 'COMPLETED';
+        }
       break;
       case 'H':
       result = 'HALTED ' + estimated;
+        if (actual && actual !== 'null') {
+          result = 'HALTED ' + actual;
+        } else {
+          result = 'HALTED';
+        }
       break;
       case 'P':
-      result = 'IN PROGRESS (estimated complete ' + estimated + ')';
+        if (estimated && estimated !== 'null') {
+          result = 'IN PROGRESS (estimated complete ' + estimated + ')';
+        } else {
+          result = 'IN PROGRESS';
+        }
       break;
       default:
-      result = 'NOT STARTED (estimated complete ' + estimated + ')';
+        if (estimated && estimated !== 'null') {
+          result = 'NOT STARTED (estimated complete ' + estimated + ')';
+        } else {
+          result = 'NOT STARTED';
+        }
       break;
     }
     return result;

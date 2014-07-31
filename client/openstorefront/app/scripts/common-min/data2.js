@@ -11122,8 +11122,11 @@ MOCKDATA2.resultsList = [ {
     "views" : 0,
     "totalNumberOfReviews" : 0,
     "attributes" : [ {
-      "articleAttributeType" : "CATEGORY",
-      "articleAttributeCode" : "SECM",
+      "type" : "CATEGORY",
+      "code" : "SECM",
+    }, {
+      "type" : "DI2E-SVCV4-A",
+      "code" : "1.2.1",
     } ],
     "tags" : [ ],
     "route" : "views/temp/landingpage.html"

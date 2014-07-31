@@ -217,9 +217,9 @@ tagsInputConfigProvider
       $rootScope.$broadcast('$UNLOAD', value);
     }, 10);
   });
-  $rootScope.$on('$TRIGGEREVENT', function(event, trigger, data){
+  $rootScope.$on('$TRIGGEREVENT', function(event, trigger, data, data2){
     $timeout(function() {
-      $rootScope.$broadcast(trigger, data);
+      $rootScope.$broadcast(trigger, data, data2);
     }, 10);
   });
 
@@ -298,7 +298,6 @@ tagsInputConfigProvider
     return null;
   };
 
-
   /***************************************************************
   * This is a local function used in the httpBackend functions
   ***************************************************************/
@@ -345,8 +344,8 @@ tagsInputConfigProvider
     } else if (query.type){
       result = _.filter(MOCKDATA2.resultsList, function(item){
         return _.some(item.attributes, function(code) {
-          if (code.typeDescription === query.type) {
-            return code.codeDescription === query.key;
+          if (code.type === query.type) {
+            return code.code === query.key;
           } else {
             return false;
           }
