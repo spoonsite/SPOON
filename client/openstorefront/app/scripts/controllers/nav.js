@@ -49,6 +49,11 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     $scope.beforeLogin = {};
     $scope.beforeLogin.path = path;
     $scope.beforeLogin.search = search;
+    Auth.login($scope.user).then(function () {
+    }, function (error) {
+      $scope.error = error.toString();
+    });
+
     // $location.path('/login');
   });
 
@@ -79,6 +84,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       $location.path('/');
     }
   });
+
 
   /***************************************************************
   * Catch the enter/select event here
@@ -189,5 +195,12 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       setUpDropdown('dropTheMenu');
     }, 500);
   });
+
+
+  /***************************************************************
+  * Automatically login the user for the demo... DELETE THIS LATER
+  ***************************************************************/
+
+  $scope.$emit('$TRIGGEREVENT','$beforeLogin', $location.path(), $location.search());
 
 }]);

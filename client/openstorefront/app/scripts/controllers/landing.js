@@ -39,13 +39,23 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
         $scope.loaded = true;
       }
     // });
-  }, 1000);
+  }, 1000); //
 
   $scope.$on('$TRIGGERLANDING', function(event, data) {
     $scope.landingRoute = data;
     $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
     $scope.loaded = true;
   });
+
+
+  $scope.resetAllFilters = function() {
+    var filters = Business.getFilters();
+    _.each(filters, function(filter) {
+      _.each(filter.codes, function(code) {
+        code.checked = false;
+      });
+    });
+  };
 
   /***************************************************************
   * This function is used to send the user to the results page with the correct
@@ -77,6 +87,14 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     $timeout(function() {
       setupPopovers();
     }, 300);
+    _.each(data, function(item){
+      if (item.description !== null && item.description !== undefined && item.description !== '') {
+        var desc = item.description.match(/^(.*?)[.?!]\s/);
+        item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+      } else {
+        item.shortdescription = 'This is a temporary short description';
+      }
+    });
     return data;
   };
 }]);
