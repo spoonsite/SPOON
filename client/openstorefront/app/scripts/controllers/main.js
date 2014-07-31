@@ -106,11 +106,12 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   *******************************************************************************/
   $scope.goToLanding = function(route, searchType, searchKey){ /*jshint unused:false*/
     $(window).scrollTop(0);
+    localCache.save('landingRoute', route);
     localCache.save('landingType', searchType);
     localCache.save('landingCode', searchKey);
-    Business.landingPage('landing', route, true).then(function() {
+    // Business.landingPage('landing', route, true).then(function() {
       $location.path('/landing');
-    });
+    // });
     return false;
   };
 

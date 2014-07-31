@@ -59,6 +59,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.modal              = {};
   $scope.modal.isLanding    = false;
   $scope.single             = false;
+  $scope.isArticle          = false;
   $scope.expertise          = [
     //
     {'value':'1', 'label': 'Less than 1 month'},
@@ -424,48 +425,60 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   /***************************************************************
   * This function updates the details when a component title is clicked on
   ***************************************************************/
-  $scope.updateDetails = function(id){
-    $('.page2').scrollTop(0);
+  $scope.updateDetails = function(id, article){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    if (!openClick) {
-      buttonOpen();
-    }
-    $scope.showDetails = false;
-    Business.componentservice.getComponentDetails(id).then(function(result){
-      if (result)
-      {
-        $scope.details.details = result;
-
-        // Code here will be linted with JSHint.
-        /* jshint ignore:start */
-        // Code here will be linted with ignored by JSHint.
-
-        if ($scope.details.details.attributes[0] !== undefined) {
-
-          _.each($scope.details.details.attributes, function(attribute) {
-            if (attribute.type === 'DI2E-SVCV4-A') {
-
-              var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
-                return item.TagValue_Number === attribute.code;
-              });
-              if (svcv4) {
-                attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
-                attribute.svcv4 = svcv4;
-              } else {
-                attribute.svcv4 = null;
-              }
-            }
-          });
-        }
-
-
-        /* jshint ignore:end */
-
-      }
+    if (article && article.type === 'Article') {
+      $scope.isArticle = true;
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);
       $scope.showDetails = true;
-    });
-};
+      if (!openClick) {
+        buttonOpen();
+      }
+    } else {
+      $scope.isArticle = false;
+
+      $('.page2').scrollTop(0);
+      if (!openClick) {
+        buttonOpen();
+      }
+      $scope.showDetails = false;
+      Business.componentservice.getComponentDetails(id).then( function (result){
+        if (result)
+        {
+          $scope.details.details = result;
+
+          // Code here will be linted with JSHint.
+          /* jshint ignore:start */
+          // Code here will be linted with ignored by JSHint.
+
+          if ($scope.details.details.attributes[0] !== undefined) {
+
+            _.each($scope.details.details.attributes, function(attribute) {
+              if (attribute.type === 'DI2E-SVCV4-A') {
+
+                var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
+                  return item.TagValue_Number === attribute.code;
+                });
+                if (svcv4) {
+                  attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
+                  attribute.svcv4 = svcv4;
+                } else {
+                  attribute.svcv4 = null;
+                }
+              }
+            });
+          }
+
+
+          /* jshint ignore:end */
+
+        }
+        $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+        $scope.showDetails = true;
+      });
+    } //
+  }; //
 
   /***************************************************************
   * This function adds a component to the watch list and toggles the buttons
@@ -566,7 +579,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.$on('$detailsUpdated', function(event, id) {/*jshint unused: false*/
     if ($scope.details.details && $scope.details.details.componentId === id) {
       $timeout(function() {
-        $scope.updateDetails($scope.details.details.componentId);
+        $scope.updateDetails($scope.details.details.componentId, $scope.details.details.listingType);
       });
     }
   });
