@@ -80,6 +80,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     }
   });
 
+
   /***************************************************************
   * Catch the enter/select event here
   ***************************************************************/
@@ -189,5 +190,15 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       setUpDropdown('dropTheMenu');
     }, 500);
   });
+
+
+  /***************************************************************
+  * Automatically login the user for the demo... DELETE THIS LATER
+  ***************************************************************/
+  Auth.login($scope.user).then(function () {
+  }, function (error) {
+    $scope.error = error.toString();
+  });
+
 
 }]);
