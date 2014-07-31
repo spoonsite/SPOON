@@ -2754,6 +2754,12 @@ MOCKDATA2.componentList = [ {
       } ]
     } ],
     "attributes" : [ {
+      "type" : "DI2E-SVCV4-A",
+      "typeDescription": "SvcV-4 Function",
+      "code" : "1.2.1",
+      "codeDescription": "1.2.1 Identity and Access Management",
+      "important": false
+    }, {
       "type" : "TYPE",
       "typeDescription" : "Type",
       "code" : "SPEC",
@@ -7451,6 +7457,12 @@ MOCKDATA2.componentList = [ {
     },
     "questions" : [ ],
     "attributes" : [ {
+      "type" : "DI2E-SVCV4-A",
+      "code" : "1.2.1",
+      "typeDescription" : "SvcV-4 Function",
+      "codeDescription" : "1.2.1 Identity and Access Management",
+      "important" : false
+    }, {
       "type" : "TYPE",
       "typeDescription" : "Type",
       "code" : "APP",
@@ -9622,6 +9634,9 @@ MOCKDATA2.resultsList = [ {
     "views" : 93,
     "totalNumberOfReviews" : 11,
     "attributes" : [ {
+      "type" : "DI2E-SVCV4-A",
+      "code" : "1.2.1",
+    }, {
       "type" : "TYPE",
       "code" : "SPEC"
     }, {
@@ -10722,6 +10737,9 @@ MOCKDATA2.resultsList = [ {
     "views" : 175,
     "totalNumberOfReviews" : 7,
     "attributes" : [ {
+      "type" : "DI2E-SVCV4-A",
+      "code" : "1.2.1",
+    }, {
       "type" : "TYPE",
       "code" : "APP"
     }, {

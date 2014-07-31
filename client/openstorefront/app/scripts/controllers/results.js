@@ -195,6 +195,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
       /*Simulate wait for the filters*/
       $scope.filters = Business.getFilters();
+      $scope.filters = angular.copy($scope.filters);
       $scope.filters = _.sortBy($scope.filters, function(item){
         return item.description;
       });
