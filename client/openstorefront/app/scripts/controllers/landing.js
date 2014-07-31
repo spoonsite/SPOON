@@ -87,6 +87,14 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     $timeout(function() {
       setupPopovers();
     }, 300);
+    _.each(data, function(item){
+      if (item.description !== null && item.description !== undefined && item.description !== '') {
+        var desc = item.description.match(/^(.*?)[.?!]\s/);
+        item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+      } else {
+        item.shortdescription = 'This is a temporary short description';
+      }
+    });
     return data;
   };
 }]);

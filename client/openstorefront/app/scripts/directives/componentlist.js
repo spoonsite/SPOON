@@ -27,7 +27,7 @@
 
 
 
-app.directive('componentList', ['business', '$timeout', function (Business, $timeout) {/*jshint unused:false*/
+app.directive('componentList', ['localCache', 'business', '$timeout', '$location', function (localCache, Business, $timeout, $location) {/*jshint unused:false*/
   var uniqueId = 1;
   return {
     template: '<div class="hideMore"> <div class="hideMoreArticle"> <input ng-show="hasMoreThan3 && showMore" type="checkbox" role="button" class="read_more"> <label ng-show="hasMoreThan3 && showMore" data-toggle="tooltip" data-placement="top" title="Click here to show more!" ng-click="setShown()" class="read_more bottomCircleBase"> <span> <i class="fa fa-arrow-down"> </i> </span> <span> <i class="fa fa-arrow-up"> </i> </span> </label> <br /> <div ng-class="listOfClasses"> <div ng-show="isTitle" class="componentListTitle">{{title}}</div> <table class="table table-striped" id="resultsTable"> <tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;"> <td style="white-space: inherit;"> <div class="container-fluid"> <div class="row" style="margin-left: 0px; margin-right: 0px"> <div class="results-content"> <div class="results-content-title"> <div ng-click="clickCallback(item.componentId, {type: item.listingType, route: item.route})" id="{{item.componentId}}"> <div class="results-content-title-content" >{{item.name}}<span ng-if="item.listingType === \'Article\'">(Article)</span></div> </div> </div> <div class="results-content-description">{{item.shortdescription}}<br> <span class="componentListDate" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span> </div> </div> </div> </div> </td> </tr> </table> </div> </div> </div>',
@@ -59,6 +59,21 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
       scope.isTitle = false;
       scope.listOfClasses = attrs.classList;
 
+      if (scope.clickCallback === undefined) {
+        scope.clickCallback =  function(id, article) {
+          var url = $location.absUrl().replace($location.url(), '');
+          if (article && article.type === 'Article') {
+            localCache.save('landingRoute', route);
+            url = url + '/landing';
+            window.open(url, 'Landing Page', 'window settings');
+          } else {
+            url = url + '/single?id=' + id;
+            window.open(url, 'Component ' + id, 'window settings');
+          } 
+        }
+      }
+
+
       scope.$watch('data', function() {
         if (scope.data.length) {
           element.find('.hideMore').attr('id', item);
@@ -66,7 +81,7 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
           item = 'read_more' + uniqueId++;
           element.find('input.read_more').attr('id', item);
           element.find('label.read_more').attr('for', item);
-          
+
           $timeout(function(){
             if (scope.filters && scope.setFilters) {
               scope.$parent.resetAllFilters();
