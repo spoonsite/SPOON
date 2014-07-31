@@ -80,10 +80,10 @@ limitations under the License.
           </table>
         </div>
       </div>
-    </div>
 
-    <div class="lastFilter">
-      <button class="btn red btn-default col-sm-12" ng-click="clearFilters()">Reset Filters</button>
+      <div class="lastFilter">
+        <button class="btn red btn-default col-sm-12" ng-click="clearFilters()">Reset Filters</button>
+      </div>
     </div>
   </div>
   <!-- END Filters Div -->
@@ -91,7 +91,7 @@ limitations under the License.
   <!-- Page 1 -->
   <div class='page1'>
     <loader trigger="mainLoader"></loader>
-    
+
     <!-- Placeholder for the pagination controls -->
     <div ng-show="moreThan200" class="pagination row row-centered">
       <div style="text-align: center;">
@@ -110,7 +110,7 @@ limitations under the License.
         </span> 
       </div>
     </div>
-    
+
     <!-- End Placeholder for the pagination controls -->
     <div ng-show="showSearch" class="showPage" id="filtersButton" onclick="openFiltersToggle()">
       <button  class=" btn btn-primary filtersButton">

@@ -11113,8 +11113,8 @@ MOCKDATA2.resultsList = [ {
   }, {
     "listingType" : "Article",
     "componentId" : null,
-    "name" : "Security Management",
-    "description" : "Security Management Article.....",
+    "name" : "IDAM Landing Page",
+    "description" : "Detailed information on the SvcV-4 Section 1.2.1 Identity and Access Management.....",
     "organization" : "PMO",
     "lastActivityDate" : 1406659762226,
     "updateDts" : 1406659762226,

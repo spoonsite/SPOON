@@ -26,6 +26,7 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
   $scope.data = {};
   $scope.data3 = {};
   $scope.filters = Business.getFilters();
+  $scope.filters = angular.copy($scope.filters);
   $scope.landingRoute = null;
 
 
@@ -46,16 +47,6 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
     $scope.loaded = true;
   });
-
-
-  $scope.resetAllFilters = function() {
-    var filters = Business.getFilters();
-    _.each(filters, function(filter) {
-      _.each(filter.codes, function(code) {
-        code.checked = false;
-      });
-    });
-  };
 
   /***************************************************************
   * This function is used to send the user to the results page with the correct

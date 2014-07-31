@@ -33,10 +33,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.$emit('$TRIGGERLOAD', 'mainLoader');
   $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
   $scope._scopename         = 'results';
-  $scope.tagsList           = Business.getTagsList();
-  $scope.tagsList.sort();
-  $scope.prosConsList       = Business.getProsConsList();
-  $scope.watches            = Business.getWatches();
   $scope.lastUsed           = new Date();
   $scope.searchCode         = null;
   $scope.searchTitle        = null;
@@ -60,6 +56,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.modal.isLanding    = false;
   $scope.single             = false;
   $scope.isArticle          = false;
+  $scope.tagsList           = Business.getTagsList();
+  $scope.tagsList.sort();
+  $scope.prosConsList       = Business.getProsConsList();
+  $scope.watches            = Business.getWatches();
   $scope.expertise          = [
     //
     {'value':'1', 'label': 'Less than 1 month'},
@@ -171,17 +171,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     return deferred.promise;
   };
 
-
-
-  $scope.resetAllFilters = function() {
-    var filters = Business.getFilters();
-    _.each(filters, function(filter) {
-      _.each(filter.codes, function(code) {
-        code.checked = false;
-      });
-    });
-  };
-
   /***************************************************************
   * This function is called once we have the search request from the business layer
   * The order and manner in which we do this call will most likely change once
@@ -205,7 +194,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
-      $scope.resetAllFilters();
       $scope.filters = Business.getFilters();
       $scope.filters = _.sortBy($scope.filters, function(item){
         return item.description;
