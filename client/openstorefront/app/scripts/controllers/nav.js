@@ -49,6 +49,11 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     $scope.beforeLogin = {};
     $scope.beforeLogin.path = path;
     $scope.beforeLogin.search = search;
+    Auth.login($scope.user).then(function () {
+    }, function (error) {
+      $scope.error = error.toString();
+    });
+
     // $location.path('/login');
   });
 
@@ -195,10 +200,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   /***************************************************************
   * Automatically login the user for the demo... DELETE THIS LATER
   ***************************************************************/
-  Auth.login($scope.user).then(function () {
-  }, function (error) {
-    $scope.error = error.toString();
-  });
 
+  $scope.$emit('$TRIGGEREVENT','$beforeLogin', $location.path(), $location.search());
 
 }]);

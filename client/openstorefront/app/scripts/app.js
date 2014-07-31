@@ -217,9 +217,9 @@ tagsInputConfigProvider
       $rootScope.$broadcast('$UNLOAD', value);
     }, 10);
   });
-  $rootScope.$on('$TRIGGEREVENT', function(event, trigger, data){
+  $rootScope.$on('$TRIGGEREVENT', function(event, trigger, data, data2){
     $timeout(function() {
-      $rootScope.$broadcast(trigger, data);
+      $rootScope.$broadcast(trigger, data, data2);
     }, 10);
   });
 
