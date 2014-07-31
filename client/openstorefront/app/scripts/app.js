@@ -380,7 +380,7 @@ $httpBackend.whenGET(/api\/v1\/resources\/landingpage.html/).respond(function(me
   var request = new XMLHttpRequest();
   request.open('GET', 'views/temp/landingpage.html', false);
   request.send(null);
-  return [request.status, request.response, {}]
+  return [request.status, request.response, {}];
 });
   ////////////////////////////////////////////////////////////////////////
 

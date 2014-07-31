@@ -18,7 +18,7 @@
 
 /*global setupPopovers*/
 
-app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout', '$filter', '$route', function ($scope, Business, localCache, $location, $timeout, $filter, $route)  {
+app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout', '$filter', '$route', function ($scope, Business, localCache, $location, $timeout, $filter, $route)  {/*jshint unused:false*/
   // set up the landing page route so that we include the right landing page.
   Business.componentservice.doSearch('search', 'All').then(function(result) {
     $scope.total = result || {};
@@ -35,9 +35,6 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     // Business.landingPage(false, false, true).then(function (result) {
       var result = localCache.get('landingRoute');
       if ($location.search() && $location.search().route) {
-        console.log('result', result);
-        console.log('landing', $location.search().route);
-        
         $scope.landingRoute = $location.search().route;
         $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
         $scope.loaded = true;

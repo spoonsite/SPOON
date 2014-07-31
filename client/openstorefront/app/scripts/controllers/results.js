@@ -425,8 +425,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.updateDetails = function(id, article){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     if (article && article.type === 'Article') {
-      console.log('article', article);
-      
       $scope.isArticle = true;
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);
