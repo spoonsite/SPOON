@@ -118,8 +118,8 @@ MOCKDATA2.componentList = [ {
   "attributes" : [  {
     "type" : "DI2E-SVCV4-A",
     "typeDescription" : "SvcV-4 Function",
-    "code" : "3.1",
-    "codeDescription" : "3.1 Planning and Direction",
+    "code" : "1.2.1",
+    "codeDescription" : "1.2.1 Identity and Access Management",
     "important" : false
   }, {
     "type" : "DI2E-SVCV4-A",
@@ -8985,6 +8985,9 @@ MOCKDATA2.resultsList = [ {
   "views" : 20,
   "totalNumberOfReviews" : 48,
   "attributes" : [ {
+    "type" : "DI2E-SVCV4-A",
+    "code" : "1.2.1",
+  }, {
     "type" : "TYPE",
     "code" : "APP"
   }, {

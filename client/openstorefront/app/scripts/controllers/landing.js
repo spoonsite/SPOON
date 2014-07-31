@@ -16,16 +16,29 @@
 
 'use strict';
 
-app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout',  function ($scope, Business, localCache, $location, $timeout)  {
+/*global setupPopovers*/
+
+app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout', '$filter', function ($scope, Business, localCache, $location, $timeout, $filter)  {
   // set up the landing page route so that we include the right landing page.
+  Business.componentservice.doSearch('search', 'All').then(function(result) {
+    $scope.total = result || {};
+  });
+  $scope.data = {};
+  $scope.data3 = {};
+  $scope.filters = Business.getFilters();
   $scope.landingRoute = null;
+
+
   $scope.$emit('$TRIGGERLOAD', 'landingLoader');
   $timeout(function() {
-    Business.landingPage(false, false, true).then(function (result) {
-      $scope.landingRoute = result.value;
-      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
-      $scope.loaded = true;
-    });
+    // Business.landingPage(false, false, true).then(function (result) {
+      var result = localCache.get('landingRoute');
+      if (result) {
+        $scope.landingRoute = result;
+        $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+        $scope.loaded = true;
+      }
+    // });
   }, 1000);
 
   $scope.$on('$TRIGGERLANDING', function(event, data) {
@@ -55,4 +68,15 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     $location.path('/results');
   };
 
+  /***************************************************************
+  * This function applies the filters that have been given to us to filter the
+  * data with
+  ***************************************************************/
+  $scope.applyFilters = function(data) {
+    data = $filter('componentFilter')($scope.total, $scope.filters);
+    $timeout(function() {
+      setupPopovers();
+    }, 300);
+    return data;
+  };
 }]);
