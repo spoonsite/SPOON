@@ -18,7 +18,6 @@
 /*global setupMain*/
 
 app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
-
   //////////////////////////////////////////////////////////////////////////////
   // Variables
   //////////////////////////////////////////////////////////////////////////////
@@ -110,6 +109,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     localCache.save('landingType', searchType);
     localCache.save('landingCode', searchKey);
     // Business.landingPage('landing', route, true).then(function() {
+      $location.search('route', route);
       $location.path('/landing');
     // });
     return false;

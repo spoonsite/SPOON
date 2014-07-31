@@ -206,7 +206,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         _.each($scope.data.data, function(item){
           if (item.description !== null && item.description !== undefined && item.description !== '') {
             var desc = item.description.match(/^(.*?)[.?!]\s/);
-            item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+            item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
           } else {
             item.shortdescription = 'This is a temporary short description';
           }
@@ -425,6 +425,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.updateDetails = function(id, article){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     if (article && article.type === 'Article') {
+      console.log('article', article);
+      
       $scope.isArticle = true;
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);

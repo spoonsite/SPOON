@@ -11147,7 +11147,7 @@ MOCKDATA2.resultsList = [ {
       "code" : "1.2.1",
     } ],
     "tags" : [ ],
-    "route" : "views/temp/landingpage.html"
+    "route" : "api/v1/resources/landingpage.html"
   } ];
 
 
