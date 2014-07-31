@@ -344,8 +344,8 @@ tagsInputConfigProvider
     } else if (query.type){
       result = _.filter(MOCKDATA2.resultsList, function(item){
         return _.some(item.attributes, function(code) {
-          if (code.typeDescription === query.type) {
-            return code.codeDescription === query.key;
+          if (code.type === query.type) {
+            return code.code === query.key;
           } else {
             return false;
           }
