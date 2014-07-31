@@ -259,7 +259,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       result = 'COMPLETED ' + actual;
       break;
       case 'H':
-      result = 'HAULTED ' + actual;
+      result = 'HALTED ' + estimated;
       break;
       case 'P':
       result = 'IN PROGRESS (estimated complete ' + estimated + ')';
