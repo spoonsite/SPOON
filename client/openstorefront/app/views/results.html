@@ -19,7 +19,7 @@ limitations under the License.
   <div id="filters" class="filters filterBack">
     <loader trigger="filtersLoad"></loader>
 
-    <div class="filterTableDiv firstFilter">
+    <div ng-show="showSearch" class="filterTableDiv firstFilter">
       <label for="searchFilter">Sort By: </label>
       <select ng-model="orderProp" class="form-control">
         <option class="hidden-lg" selected disabled value="" hidden>Sort By</option>
@@ -46,7 +46,7 @@ limitations under the License.
 
     <!-- Added these divs for the ability to dynamically make the filters an accordian -->
 
-    <div class='filterTableDiv filterTable'>
+    <div ng-show="showSearch" class='filterTableDiv filterTable'>
 
       <label for="accordian">Filter By Attribute: </label>
       <div class="pane-group" id="accordion">
@@ -112,7 +112,7 @@ limitations under the License.
     </div>
     
     <!-- End Placeholder for the pagination controls -->
-    <div class="showPage" id="filtersButton" onclick="openFiltersToggle()">
+    <div ng-show="showSearch" class="showPage" id="filtersButton" onclick="openFiltersToggle()">
       <button  class=" btn btn-primary filtersButton">
         Filters <i class="fa fa-caret-left"></i> 
       </button>
@@ -124,7 +124,7 @@ limitations under the License.
         </div>
       </div>
     </div>
-    <div class="page1Content">
+    <div ng-show="showSearch" class="page1Content">
       <div class="buttonHolder1">
         <div class="showPage buttonPos" ng-show="showDetails">
           <button id="showPageRight" class="showPageRight btn btn-primary" ng-click="doButtonOpen()">

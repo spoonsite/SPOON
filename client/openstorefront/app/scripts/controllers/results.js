@@ -29,9 +29,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
+  // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
   $scope.$emit('$TRIGGERLOAD', 'mainLoader');
   $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
-  setupResults();
   $scope._scopename         = 'results';
   $scope.tagsList           = Business.getTagsList();
   $scope.tagsList.sort();
@@ -222,6 +222,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             item.shortdescription = 'This is a temporary short description';
           }
         });
+        setupResults();
+        // $scope.$emit('$TRIGGERUNLOAD', 'resultsLoad');
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
         adjustFilters();
