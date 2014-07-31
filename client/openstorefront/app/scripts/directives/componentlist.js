@@ -69,8 +69,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           } else {
             url = url + '/single?id=' + id;
             window.open(url, 'Component ' + id, 'window settings');
-          } 
-        }
+          }
+        };
       }
 
 
