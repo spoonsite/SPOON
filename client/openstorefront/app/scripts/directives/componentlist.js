@@ -29,7 +29,6 @@
 
 app.directive('componentList', ['business', '$timeout', function (Business, $timeout) {/*jshint unused:false*/
   var uniqueId = 1;
-  var doOnce = false;
   return {
     template: '<div class="hideMore"> <div class="hideMoreArticle"> <input ng-show="hasMoreThan3 && showMore" type="checkbox" role="button" class="read_more"> <label ng-show="hasMoreThan3 && showMore" data-toggle="tooltip" data-placement="top" title="Click here to show more!" ng-click="setShown()" class="read_more bottomCircleBase"> <span> <i class="fa fa-arrow-down"> </i> </span> <span> <i class="fa fa-arrow-up"> </i> </span> </label> <br /> <div ng-class="listOfClasses"> <div ng-show="isTitle" class="componentListTitle">{{title}}</div> <table class="table table-striped" id="resultsTable"> <tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;"> <td style="white-space: inherit;"> <div class="container-fluid"> <div class="row" style="margin-left: 0px; margin-right: 0px"> <div class="results-content"> <div class="results-content-title"> <div ng-click="clickCallback(item.componentId, {type: item.listingType, route: item.route})" id="{{item.componentId}}"> <div class="results-content-title-content" >{{item.name}}<span ng-if="item.listingType === \'Article\'">(Article)</span></div> </div> </div> <div class="results-content-description">{{item.shortdescription}}<br> <span class="componentListDate" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span> </div> </div> </div> </div> </td> </tr> </table> </div> </div> </div>',
     // template: '<div class="hideMore"><div class="hideMoreArticle"><input ng-show="hasMoreThan3 && showMore" type="checkbox" role="button" class="read_more"><label ng-show="hasMoreThan3 && showMore" data-toggle="tooltip" data-placement="top" title="Click here to show more!" ng-click="setShown()" class="read_more bottomCircleBase"><span><i class="fa fa-arrow-down"></i></span><span><i class="fa fa-arrow-up"></i></span></label><br /><div ng-class="listOfClasses"><div ng-show="isTitle" class="componentListTitle">{{title}}</div><table class="table table-striped" id="resultsTable"><tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;"><td style="white-space: inherit;"><div class="container-fluid"><div class="row" style="margin-left: 0px; margin-right: 0px"><div class="results-content"><div class="results-content-title"><div ng-click="clickCallback(item.componentId)" id="{{item.componentId}}"><div class="results-content-title-content" >{{item.name}}</div></div></div><div class="results-content-description">{{item.shortdescription}}<br><span class="componentListDate" ng-show="item.updateDts" data-container="body" data-toggle="popover" data-content="Average rating: {{item.stats.averageRating}} of {{item.stats.numberRatings}}<br>Comments: {{item.stats.comments}}<br>Views: {{item.stats.views}}">Last Updated: {{getDate(item.updateDts)}}</span></div></div></div></div></td></tr></table></div></div></div>',
@@ -44,6 +43,15 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
     },
     link: function postLink(scope, element, attrs) {
 
+      /***************************************************************
+      * Here we are setting up the id's of different sections so that our current
+      * 'more' button implementation will work correctly.
+      *
+      * The problem is that directives shar scope unless implicitly told that they
+      * don't, and then when they don't share scope, they just reset every time they're
+      * made anyway, so they end up looking like copies... (which is a problem for id's)
+      ***************************************************************/
+      var item = 'componentList' + uniqueId++;
       //now we set up the scope variables
       scope.hasMoreThan3 = false;
       scope._scopename = 'componentList';
@@ -51,52 +59,45 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
       scope.isTitle = false;
       scope.listOfClasses = attrs.classList;
 
-      if (!scope.setFilters || !scope.setFilters.length) {
-        doOnce = true;
-      }
+      scope.$watch('data', function() {
+        if (scope.data.length) {
+          element.find('.hideMore').attr('id', item);
 
-      
-      $timeout(function(){
-        if (scope.filters && !doOnce) {
-          if (scope.setFilters.length && scope.$parent.filters.length) {
-            _.each(scope.setFilters, function(set) {
-              var filter = _.find(scope.$parent.filters, {'type': set.type});
-              if (filter && filter.codes.length) {
-                var code = _.find(filter.codes, {'code': set.code});
-                if (code) {
-                  code.checked = true;
-                }
+          item = 'read_more' + uniqueId++;
+          element.find('input.read_more').attr('id', item);
+          element.find('label.read_more').attr('for', item);
+          
+          $timeout(function(){
+            if (scope.filters && scope.setFilters) {
+              scope.$parent.resetAllFilters();
+              if (scope.setFilters.length && scope.$parent.filters.length) {
+                _.each(scope.setFilters, function(set) {
+                  var filter = _.find(scope.$parent.filters, {'type': set.type});
+                  if (filter && filter.codes.length) {
+                    var code = _.find(filter.codes, {'code': set.code});
+                    if (code) {
+                      code.checked = true;
+                    }
+                  }
+                });
               }
-            });
-          }
-          scope.data = scope.$parent.applyFilters(scope.data);
-          doOnce = true;
-          if (scope.data && scope.data.data && scope.data.data.length) {
-            console.log('scope.data', scope.data.data);
-          }
-          if (scope.data) {
-            if(scope.data.length > 3) {
-              scope.hasMoreThan3 = true;
+              scope.data = scope.$parent.applyFilters(scope.data);
+              if (scope.data && scope.data.data && scope.data.data.length) {
+                console.log('scope.data', scope.data.data);
+              }
+              if (scope.data) {
+                if(scope.data.length > 3) {
+                  scope.hasMoreThan3 = true;
+                } else {
+                  scope.hasMoreThan3 = false;
+                }
+                scope.addMore();
+              }
+              scope.init();
             }
-            scope.addMore();
-          }
-
-        /***************************************************************
-        * Here we are setting up the id's of different sections so that our current
-        * 'more' button implementation will work correctly.
-        *
-        * The problem is that directives shar scope unless implicitly told that they
-        * don't, and then when they don't share scope, they just reset every time they're
-        * made anyway, so they end up looking like copies... (which is a problem for id's)
-        ***************************************************************/
-        var item = 'componentList' + uniqueId++;
-        element.find('.hideMore').attr('id', item);
-
-        item = 'read_more' + uniqueId++;
-        element.find('input.read_more').attr('id', item);
-        element.find('label.read_more').attr('for', item);
-      }
-    });
+          }, 10);
+        } //
+      });
 
 
 
@@ -161,13 +162,19 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
       * capabilities
       ***************************************************************/
       scope.addMore = function() {
-        if (scope.hideMore !== undefined && scope.hideMore !== null){
+        if (scope.hideMore !== undefined && scope.hideMore !== null && scope.hasMoreThan3){
           element.find('.hideMore').addClass('moreContent');
           element.find('.hideMoreArticle').addClass('moreContentArticle');
           element.find('.moreSection').each(function() {
             $(this).addClass('moreContentSection');
           });
           scope.showMore = true;
+        } else {
+          element.find('.hideMore').removeClass('moreContent');
+          element.find('.hideMoreArticle').removeClass('moreContentArticle');
+          element.find('.moreSection').each(function() {
+            $(this).removeClass('moreContentSection');
+          });
         }
       };
 
@@ -178,7 +185,6 @@ app.directive('componentList', ['business', '$timeout', function (Business, $tim
         $('[data-toggle=\'tooltip\']').tooltip();
       };
       
-      scope.init();
 
     }
   };

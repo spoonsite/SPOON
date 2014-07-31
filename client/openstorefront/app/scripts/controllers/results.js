@@ -173,6 +173,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
 
+  $scope.resetAllFilters = function() {
+    var filters = Business.getFilters();
+    _.each(filters, function(filter) {
+      _.each(filter.codes, function(code) {
+        code.checked = false;
+      });
+    });
+  };
+
   /***************************************************************
   * This function is called once we have the search request from the business layer
   * The order and manner in which we do this call will most likely change once
@@ -196,27 +205,26 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
+      $scope.resetAllFilters();
+      $scope.filters = Business.getFilters();
+      $scope.filters = _.sortBy($scope.filters, function(item){
+        return item.description;
+      });
+      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
-        $scope.filters = Business.getFilters();
-        $scope.filters = _.sortBy($scope.filters, function(item){
-          return item.description;
+        $scope.data.data = $scope.total;
+        _.each($scope.data.data, function(item){
+          if (item.description !== null && item.description !== undefined && item.description !== '') {
+            var desc = item.description.match(/^(.*?)[.?!]\s/);
+            item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+          } else {
+            item.shortdescription = 'This is a temporary short description';
+          }
         });
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-        /*This is simulating the wait time for building the data so that we get a loader*/
-        $timeout(function(){
-          $scope.data.data = $scope.total;
-          _.each($scope.data.data, function(item){
-            if (item.description !== null && item.description !== undefined && item.description !== '') {
-              var desc = item.description.match(/^(.*?)[.?!]\s/);
-              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
-            } else {
-              item.shortdescription = 'This is a temporary short description';
-            }
-          });
-          $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-          $scope.initializeData(key);
-          adjustFilters();
-        }, 500);
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.initializeData(key);
+        adjustFilters();
       }, 500);
     }); //
   }; //

@@ -298,7 +298,6 @@ tagsInputConfigProvider
     return null;
   };
 
-
   /***************************************************************
   * This is a local function used in the httpBackend functions
   ***************************************************************/
