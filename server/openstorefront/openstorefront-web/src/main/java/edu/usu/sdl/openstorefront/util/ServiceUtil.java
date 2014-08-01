@@ -73,13 +73,40 @@ public class ServiceUtil
 		return urls;
 	}
 	
+	public static String stripeExtendedChars(String data)
+	{
+		StringBuilder sb = new StringBuilder();
+		for (char c : data.toCharArray())
+		{
+			if (c <= 127)
+			{
+				sb.append(c);				
+			}
+			else
+			{
+				sb.append(' ');				
+			}
+		}
+		return sb.toString();
+	}
+	
 	public static String createHrefUrls(String text)
+	{
+		return createHrefUrls(text, true);
+	}	
+	
+	public static String createHrefUrls(String text, boolean showFullURL)
 	{
 		String replacedText = text;
 		List<String> urls = extractUrls(text);		
 		for (String url : urls)
 		{
-			String link = "<a href='" + url + "' title='" + url + "' target='_blank'> " + getResourceNameFromUrl(url) + "</a>";
+			String resoureName = url;
+			if (showFullURL == false)
+			{
+				resoureName = getResourceNameFromUrl(url) ;
+			}
+			String link = "<a href='" + url + "' title='" + url + "' target='_blank'> " + resoureName + "</a>";
 			 replacedText = replacedText.replace(url, link);
 		}		
 		return replacedText;

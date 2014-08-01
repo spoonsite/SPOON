@@ -50,5 +50,12 @@ public class Attribute
 		return sendListResponse(attributeTypeViews);		
 	}	
 		
+	@GET
+	@APIDescription("Gets all active attributes and codes for the attributes in view based model.")	
+	@Path("/{type}/attributeCode/{code}/article")	
+	public String getAttributeArticle()
+	{
+		return "";
+	}	
 	
 }
