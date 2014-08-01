@@ -5,108 +5,38 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="/layout/mainLayout.jsp">
-    <stripes:layout-component name="contents">
+<html>
+	<head>
 		
-		login
-			
-		<script type="text/javascript">
-			
-			Ext.onReady(function(){
-			
-				var submitForm = function(){
-					Ext.getCmp('loginForm').submit({
-						url: 'Login.action?Login',
-						success: function(form, action){
-							window.location.href = 'Landing.action';
-						}
-					});
-				};
-			
-				var loginWin = Ext.create('Ext.window.Window', {
-					title: 'Login',
-					float: false,
-					width: 400,
-					closable: false,
-					draggable: false,
-					resizable: false,
-					y: 200,
-					dockedItems: [
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
-							ui: 'Footer',
-							border: false,
-							items: [
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Login',
-									minWidth: 100,
-									handler: function(){
-										submitForm();
-									}
-								},
-								{
-									xtype: 'tbfill'
-								}
-							]
-						}
-					],
-					items: [
-						{
-							xtype: 'form',
-							id: 'loginForm',
-							padding: 20,
-							border: false,
-							layout: 'anchor',
-							defaults: {
-								labelAlign: 'top',
-								msgTarget: 'under'
-							},
-							items: [
-								{
-									xtype: 'textfield',
-									anchor: '100%',
-									fieldLabel: 'Username',
-									allowBlank: false,
-									labelSeparator: '<span style="color: red; font-weight: bold;">*</span>',								
-									name: 'username'
-								},
-								{
-									xtype: 'textfield',
-									anchor: '100%',
-									fieldLabel: 'Password',
-									allowBlank: false,
-									labelSeparator: '<span style="color: red; font-weight: bold;">*</span>',
-									inputType: 'password',
-									name: 'password',
-									enableKeyEvents: true,
-									listeners: {
-										keypress: function(textfield, e, eOpts){
-											if (e.ENTER === e.getKey())
-											{
-												submitForm();
-											}
-										}
-									}
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Remember me',
-									name: 'remember'
-								}
-							]
-						}
-					]
-				});
-				loginWin.show();
-				
-			});
-			
-		</script>	
-		
-    </stripes:layout-component>
-</stripes:layout-render>
+	</head>
+	<body>
+	<div class="auth-forms">
+	  <div class="auth-content">
+		<div class="row">
+		  <h2>Log In</h2>
+		  <form action="Login.action?Login" method="POST">
+			<span>By logging in you are consenting to these conditions</span>
+			<div class="disclaimer">
+			  <h1>WARNING:</h1>
+			  <p>
+				You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: 1) The USG routinely intercepts and monitors communication on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations, 2) At any time, the ISG may inspect and seize data stored on this IS, 3) Communications using, or data stored on this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG -authorized purpose. 4) This IS includes security measures (e.g. authentication and access controls) to protect USG interests â€“ not for your personal benefit or privacy. 5) Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communication, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential.
+			  </p>
+			</div>		
+			<div style="width: 300px; margin: 0px auto;">
+			<input type="text" name="username" placeholder="Username" class="form-control" autofocus>
+			<br>
+			<input type="password" name="password" placeholder="Password" class="form-control">
+			<br>
+			<br>
+			<input type="submit" value="Log in" style="width: auto;" class="btn btn-primary" />
+			</div>
+		  </form>
+		</div>
+	  </div>
+	</div>	
+	</body>
+</html>
+
+
+
+
