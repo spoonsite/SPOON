@@ -33,13 +33,13 @@ limitations under the License.
 			<h4>API</h4>
 			<ul>
 				<li>
-					<a href="#API.action?Page&page=intro" >Introduction</a>
+					<a href="#../API.action?Page&page=intro" >Introduction</a>
 				</li>
 				<li>
-					<a href="#API.action?Page&page=security" >Security</a>
+					<a href="#../API.action?Page&page=security" >Security</a>
 				</li>
 				<li>
-					<a href="#API.action?Page&page=errorhandling" >Error Handling</a>
+					<a href="#../API.action?Page&page=errorhandling" >Error Handling</a>
 				</li>
 			</ul>
 			
@@ -48,16 +48,16 @@ limitations under the License.
 			</h4>
 			<ul>
 				<li>
-					<a href="#API.action?API&resourceClass=UserProfile">User Profile</a>
+					<a href="#../API.action?API&resourceClass=UserProfile">User Profile</a>
 				</li>
 				<li>
-					<a href="#API.action?API&resourceClass=Component">Component</a>
+					<a href="#../API.action?API&resourceClass=Component">Component</a>
 				</li>
 				<li>
-					<a href="#API.action?API&resourceClass=Attribute">Attributes</a>
+					<a href="#../API.action?API&resourceClass=Attribute">Attributes</a>
 				</li>	
 				<li>
-					<a href="#API.action?API&resourceClass=LookupType">Lookup Type </a>
+					<a href="#../API.action?API&resourceClass=LookupType">Lookup Type </a>
 				</li>				
 			</ul>
 			<h5>Application Resources</h5>	
@@ -84,7 +84,7 @@ limitations under the License.
 			</h4>
 			<ul>
 				<li>
-					<a href="#API.action?API&resourceClass=Search&classPath=service">Search</a>					
+					<a href="#../API.action?API&resourceClass=Search&classPath=service">Search</a>					
 				</li>
 			</ul>				
 		</div>
@@ -98,7 +98,7 @@ limitations under the License.
 				if (doctoLoad[1] !== undefined && doctoLoad[1] !== null){
 					$('#apidocId').load(doctoLoad[1]);
 				} else {
-					$('#apidocId').load('API.action?Page&page=intro');
+					$('#apidocId').load('../API.action?Page&page=intro');
 				}
 				
 				window.onhashchange = function(){
@@ -106,7 +106,7 @@ limitations under the License.
 					if (doctoLoad[1] !== undefined && doctoLoad[1] !== null){
 						$('#apidocId').load(doctoLoad[1]);
 					} else {
-						$('#apidocId').load('API.action?Page&page=intro');
+						$('#apidocId').load('../API.action?Page&page=intro');
 					}					
 				};
 			});
