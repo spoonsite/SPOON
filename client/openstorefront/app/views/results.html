@@ -144,7 +144,8 @@ limitations under the License.
           </div>
         </div>
         <div ng-if="data.data.length > 0">
-          <component-list click-callback="updateDetails" class-list="" data="data.data" cols="3" ></component-list>
+          <component-list click-callback="updateDetails" class-list=""
+          filters="filters" data="data.data" cols="3" ></component-list>
         </div>
         <div ng-show="moreThan200" class="moreThan200">
           <button class="btn btn-default">Load More Results...</button>
@@ -156,13 +157,30 @@ limitations under the License.
   <!-- <p class=''>how's it going? </p> -->
   <!-- Page 2 -->
   <!--         <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal2">DI2E Evaluation Level</a> --> 
-  <div class='page2 page2Styles'>
-    <loader trigger="fullDetailsLoader"></loader>
-    <div ng-show="showDetails">
-      <div ng-include="'views/details/fulldetails.html'">
+  <div class='page2 page2Styles' ng-class="isArticle? 'articleReset':''">
+    <div class="buttonHolder2">
+      <div class="showPage buttonPos" ng-show="!single">
+        <button id="showPageLeft" class="showPageLeft btn btn-primary" ng-click="doButtonClose()">
+          <i class="fa fa-caret-right"></i> 
+        </button>
       </div>
     </div>
-    <div ng-show="!showDetails">
+    <div ng-if="isArticle === false">
+      <loader trigger="fullDetailsLoader"></loader>
+      <div ng-show="showDetails">
+        <div ng-include="'views/details/fulldetails.html'">
+        </div>
+      </div>
+      <div ng-show="!showDetails">
+      </div>
+    </div>
+    <div ng-if="isArticle === true">
+      <div ng-controller="LandingCtrl">
+        <div id="landingBox">
+          <loader trigger="landingLoader"></loader>
+          <div ng-include="landingRoute"></div>
+        </div>
+      </div>
     </div>
   </div>
   <!-- End Page 2 -->

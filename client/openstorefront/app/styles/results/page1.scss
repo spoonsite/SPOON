@@ -6,29 +6,6 @@
   overflow: auto;
 }
 
-.results-content-title{
-  color: #021233;
-  padding: 2px 5px;
-  /*margin-left:110px;*/
-}
-.results-content-title-content{ 
-  font-size: 23px;
-}
-.results-content-title .popover{
-  position: absolute !important;
-  color: black;
-  font-size: 12px;
-  /*margin-left:110px;*/
-}
-.results-content-title:hover{
-  cursor: pointer;
-  color: #ff4800;
-}
-.results-content-description {
-  padding: 0px 5px;
-  text-align: left;
-}
-
 #resultsTable tr td{
   padding: 8px 18px;
 }

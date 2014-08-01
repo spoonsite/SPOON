@@ -1,13 +1,5 @@
 <div ng-controller="DetailsFulldetailsCtrl">
 
-  <div class="buttonHolder2">
-    <div class="showPage buttonPos" ng-show="!single">
-      <button id="showPageLeft" class="showPageLeft btn btn-primary" ng-click="doButtonClose()">
-        <i class="fa fa-caret-right"></i> 
-      </button>
-    </div>
-  </div>
-
   <!-- This is the Title div with the tags, and needs to stay here -->
   <div class="component-details">
     <!-- TITLE SECTOIN -->
@@ -15,13 +7,14 @@
       <div class="col-sm-12">
         <div style="display:inline-block; width: 100%">
           <h1><div style="font-weight: 100; margin: 0px; padding: 0px; display: inline-block; float: left; margin-top: 10px;">{{details.details.name}}
-            <span ng-if="details.details.organization !== null">
-              {{details.details.organization}}
+            <span ng-if="details.details.organization !== null" style="margin-top: -20px; padding-left:0px; display:block;">
+              <br>
+              Organization: {{details.details.organization}}
             </span>
-            <span ng-if="details.details.version !== null" style="padding: 0px;">
-              &mdash;
+            <span ng-if="details.details.version !== null" style="margin-top: -40px; padding-left:0px; display:block;">
+              <br>
+              Version: {{details.details.version}}
             </span>
-            <span ng-if="details.details.version !== null">Version: {{details.details.version}}</span>
           </div>
           <div class="pull-right" id="detailsToolButtons">
             <button class='btn btn-default detailsTitleButton collapsed' id="data-collapse-tags" ng-click="toggleTags('#tagsCollapse')"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">

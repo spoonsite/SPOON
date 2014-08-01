@@ -217,6 +217,11 @@ tagsInputConfigProvider
       $rootScope.$broadcast('$UNLOAD', value);
     }, 10);
   });
+  $rootScope.$on('$TRIGGEREVENT', function(event, trigger, data, data2){
+    $timeout(function() {
+      $rootScope.$broadcast(trigger, data, data2);
+    }, 10);
+  });
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -293,7 +298,6 @@ tagsInputConfigProvider
     return null;
   };
 
-
   /***************************************************************
   * This is a local function used in the httpBackend functions
   ***************************************************************/
@@ -340,8 +344,8 @@ tagsInputConfigProvider
     } else if (query.type){
       result = _.filter(MOCKDATA2.resultsList, function(item){
         return _.some(item.attributes, function(code) {
-          if (code.typeDescription === query.type) {
-            return code.codeDescription === query.key;
+          if (code.type === query.type) {
+            return code.code === query.key;
           } else {
             return false;
           }
@@ -351,7 +355,7 @@ tagsInputConfigProvider
     return [200, result, {}];
   });
 
-  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
+$httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
     // grab the url (needed for what the backend will simulate)
     // parse it into an array
     var urlSplit = url.split('/');
@@ -359,20 +363,20 @@ tagsInputConfigProvider
     // go until we find our resource
     while (urlSplit[i++] !== 'component'){}
     // if there is an id, grab it for our use.
-    var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
+  var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
 
-    var result = $q.defer();
-    $timeout(function() {
-      if (id && id !== '') {
-        var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
-        result.resolve(temp);
-      } else {
-        result.resolve(MOCKDATA2.componentList);
-      }
-    }, 1000);
-    return [200, result.promise, {}];
-  });
-  
+  var result = $q.defer();
+  $timeout(function() {
+    if (id && id !== '') {
+      var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
+      result.resolve(temp);
+    } else {
+      result.resolve(MOCKDATA2.componentList);
+    }
+  }, 1000);
+  return [200, result.promise, {}];
+});
+
   ////////////////////////////////////////////////////////////////////////
 
 

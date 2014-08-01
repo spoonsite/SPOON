@@ -16,17 +16,46 @@
 
 'use strict';
 
-app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout',  function ($scope, Business, localCache, $location, $timeout)  {
+/*global setupPopovers*/
+
+app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout', '$filter', function ($scope, Business, localCache, $location, $timeout, $filter)  {
   // set up the landing page route so that we include the right landing page.
+  Business.componentservice.doSearch('search', 'All').then(function(result) {
+    $scope.total = result || {};
+  });
+  $scope.data = {};
+  $scope.data3 = {};
+  $scope.filters = Business.getFilters();
   $scope.landingRoute = null;
+
+
   $scope.$emit('$TRIGGERLOAD', 'landingLoader');
   $timeout(function() {
-    Business.landingPage(false, false, true).then(function (result) {
-      $scope.landingRoute = result.value;
-      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
-      $scope.loaded = true;
+    // Business.landingPage(false, false, true).then(function (result) {
+      var result = localCache.get('landingRoute');
+      if (result) {
+        $scope.landingRoute = result;
+        $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+        $scope.loaded = true;
+      }
+    // });
+  }, 1000); //
+
+  $scope.$on('$TRIGGERLANDING', function(event, data) {
+    $scope.landingRoute = data;
+    $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+    $scope.loaded = true;
+  });
+
+
+  $scope.resetAllFilters = function() {
+    var filters = Business.getFilters();
+    _.each(filters, function(filter) {
+      _.each(filter.codes, function(code) {
+        code.checked = false;
+      });
     });
-  }, 1000);
+  };
 
   /***************************************************************
   * This function is used to send the user to the results page with the correct
@@ -49,4 +78,23 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     $location.path('/results');
   };
 
+  /***************************************************************
+  * This function applies the filters that have been given to us to filter the
+  * data with
+  ***************************************************************/
+  $scope.applyFilters = function(data) {
+    data = $filter('componentFilter')($scope.total, $scope.filters);
+    $timeout(function() {
+      setupPopovers();
+    }, 300);
+    _.each(data, function(item){
+      if (item.description !== null && item.description !== undefined && item.description !== '') {
+        var desc = item.description.match(/^(.*?)[.?!]\s/);
+        item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+      } else {
+        item.shortdescription = 'This is a temporary short description';
+      }
+    });
+    return data;
+  };
 }]);

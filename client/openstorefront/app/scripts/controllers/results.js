@@ -59,6 +59,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.modal              = {};
   $scope.modal.isLanding    = false;
   $scope.single             = false;
+  $scope.isArticle          = false;
   $scope.expertise          = [
     //
     {'value':'1', 'label': 'Less than 1 month'},
@@ -172,6 +173,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
 
+  $scope.resetAllFilters = function() {
+    var filters = Business.getFilters();
+    _.each(filters, function(filter) {
+      _.each(filter.codes, function(code) {
+        code.checked = false;
+      });
+    });
+  };
+
   /***************************************************************
   * This function is called once we have the search request from the business layer
   * The order and manner in which we do this call will most likely change once
@@ -195,27 +205,26 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
+      $scope.resetAllFilters();
+      $scope.filters = Business.getFilters();
+      $scope.filters = _.sortBy($scope.filters, function(item){
+        return item.description;
+      });
+      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
-        $scope.filters = Business.getFilters();
-        $scope.filters = _.sortBy($scope.filters, function(item){
-          return item.description;
+        $scope.data.data = $scope.total;
+        _.each($scope.data.data, function(item){
+          if (item.description !== null && item.description !== undefined && item.description !== '') {
+            var desc = item.description.match(/^(.*?)[.?!]\s/);
+            item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+          } else {
+            item.shortdescription = 'This is a temporary short description';
+          }
         });
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-        /*This is simulating the wait time for building the data so that we get a loader*/
-        $timeout(function(){
-          $scope.data.data = $scope.total;
-          _.each($scope.data.data, function(item){
-            if (item.description !== null && item.description !== undefined && item.description !== '') {
-              var desc = item.description.match(/^(.*?)[.?!]\s/);
-              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
-            } else {
-              item.shortdescription = 'This is a temporary short description';
-            }
-          });
-          $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-          $scope.initializeData(key);
-          adjustFilters();
-        }, 500);
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.initializeData(key);
+        adjustFilters();
       }, 500);
     }); //
   }; //
@@ -244,6 +253,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.searchKey          = $scope.searchGroup[0].key;
       $scope.searchCode         = $scope.searchGroup[0].code;
       var keys = _.pluck($scope.filters, 'type');
+      
       var foundFilter = null;
       var foundCollection = null;
       var type = '';
@@ -254,26 +264,23 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
       if (_.contains(keys, $scope.searchKey)) {
-        $scope.searchGroupItem    = _.where($scope.filters, {'type': $scope.searchKey})[0];
-        $scope.searchType         = $scope.searchGroupItem.description;
         $scope.showSearch         = true;
         
         foundFilter = _.where($scope.filters, {'type': $scope.searchGroup[0].key})[0];
         foundCollection = _.where(foundFilter.codes, {'code': $scope.searchGroup[0].code})[0];
-
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all') {
-          $scope.searchColItem      = _.where($scope.searchGroupItem.codes, {'code': $scope.searchCode})[0];
-          $scope.searchTitle        = $scope.searchType + ', ' + $scope.searchColItem.type;
-          $scope.modal.modalTitle   = $scope.searchType + ', ' + $scope.searchColItem.type;
-          $scope.searchDescription  = $scope.searchColItem.desc;
+          $scope.searchColItem      = foundCollection;
+          $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
+          $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
+          $scope.searchDescription  = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
           if (foundCollection.landing !== undefined && foundCollection.landing !== null) {
             getBody(foundCollection.landing).then(function(result) {
               $scope.modal.modalBody = result;
               $scope.modal.isLanding = true;
             });
           } else {
-            $scope.modal.modalBody = $scope.searchColItem.description;
+            $scope.modal.modalBody = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
             $scope.modal.isLanding = false;
           }
         } else {
@@ -424,48 +431,60 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   /***************************************************************
   * This function updates the details when a component title is clicked on
   ***************************************************************/
-  $scope.updateDetails = function(id){
-    $('.page2').scrollTop(0);
+  $scope.updateDetails = function(id, article){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    if (!openClick) {
-      buttonOpen();
-    }
-    $scope.showDetails = false;
-    Business.componentservice.getComponentDetails(id).then(function(result){
-      if (result)
-      {
-        $scope.details.details = result;
-
-        // Code here will be linted with JSHint.
-        /* jshint ignore:start */
-        // Code here will be linted with ignored by JSHint.
-
-        if ($scope.details.details.attributes[0] !== undefined) {
-
-          _.each($scope.details.details.attributes, function(attribute) {
-            if (attribute.type === 'DI2E-SVCV4-A') {
-
-              var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
-                return item.TagValue_Number === attribute.code;
-              });
-              if (svcv4) {
-                attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
-                attribute.svcv4 = svcv4;
-              } else {
-                attribute.svcv4 = null;
-              }
-            }
-          });
-        }
-
-
-        /* jshint ignore:end */
-
-      }
+    if (article && article.type === 'Article') {
+      $scope.isArticle = true;
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);
       $scope.showDetails = true;
-    });
-};
+      if (!openClick) {
+        buttonOpen();
+      }
+    } else {
+      $scope.isArticle = false;
+
+      $('.page2').scrollTop(0);
+      if (!openClick) {
+        buttonOpen();
+      }
+      $scope.showDetails = false;
+      Business.componentservice.getComponentDetails(id).then( function (result){
+        if (result)
+        {
+          $scope.details.details = result;
+
+          // Code here will be linted with JSHint.
+          /* jshint ignore:start */
+          // Code here will be linted with ignored by JSHint.
+
+          if ($scope.details.details.attributes[0] !== undefined) {
+
+            _.each($scope.details.details.attributes, function(attribute) {
+              if (attribute.type === 'DI2E-SVCV4-A') {
+
+                var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
+                  return item.TagValue_Number === attribute.code;
+                });
+                if (svcv4) {
+                  attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
+                  attribute.svcv4 = svcv4;
+                } else {
+                  attribute.svcv4 = null;
+                }
+              }
+            });
+          }
+
+
+          /* jshint ignore:end */
+
+        }
+        $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+        $scope.showDetails = true;
+      });
+    } //
+  }; //
 
   /***************************************************************
   * This function adds a component to the watch list and toggles the buttons
@@ -566,7 +585,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.$on('$detailsUpdated', function(event, id) {/*jshint unused: false*/
     if ($scope.details.details && $scope.details.details.componentId === id) {
       $timeout(function() {
-        $scope.updateDetails($scope.details.details.componentId);
+        $scope.updateDetails($scope.details.details.componentId, $scope.details.details.listingType);
       });
     }
   });
