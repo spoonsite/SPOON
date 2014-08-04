@@ -53,7 +53,8 @@
           <td colspan="5" class="text-left-bold hasLinks" style="overflow:hidden;">{{row.name}}</td>
           <td ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td>
           <td ng-if="!row.description" colspan="5" class="text-left">&mdash;</td>
-          <td colspan="8" class="text-left hasLinks">{{row.link}}</td>
+          <!-- <td colspan="8" class="text-left hasLinks" ng-bind-html="{{row.link}}">{{row.link}}</td> -->
+          <td colspan="8" class="text-left hasLinks"><span ng-bind-html="row.link"</span></td>
         </tr>
       </tbody>
     </table>                  
