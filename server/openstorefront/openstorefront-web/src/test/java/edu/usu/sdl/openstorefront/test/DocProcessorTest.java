@@ -17,7 +17,7 @@
 package edu.usu.sdl.openstorefront.test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.model.UserProfileView;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class DocProcessorTest
 		Set<String> fields = new HashSet<>();
 		fields.add("username");
 		
-		String json = ServiceUtil.stripeFieldJSON(ServiceUtil.defaultObjectMapper().writeValueAsString(new UserProfileView()), fields);
+		String json = StringProcessor.stripeFieldJSON(StringProcessor.defaultObjectMapper().writeValueAsString(new UserProfileView()), fields);
 		System.out.println(json);
 	}
 	

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
 import edu.usu.sdl.openstorefront.service.io.AttributeImport;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
@@ -74,8 +74,8 @@ public class DataConvertTest
 	public void testConvert() throws JsonProcessingException, IOException
 	{
 		
-		ObjectMapper objectMapper = ServiceUtil.defaultObjectMapper();		
-		OldDataWrapper oldDataWrapper = objectMapper.readValue(new File("C:\\development\\storefront\\source\\old\\old_data\\new-asset-data-all2.json"), new TypeReference<OldDataWrapper>() {});
+		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();		
+		OldDataWrapper oldDataWrapper = objectMapper.readValue(new File("C:\\development\\storefront\\source\\old\\old_data\\new-data-all.json"), new TypeReference<OldDataWrapper>() {});
 		
 		List<OldAsset> assets = oldDataWrapper.getData();
 		 
@@ -232,6 +232,17 @@ public class DataConvertTest
 		AttributeImport attributeImport = new AttributeImport();	
 		Map<String, AttributeTypeView> attributeMap = attributeImport.loadAttributeMap();
 				
+		ComponentAttribute idamAttribute = new ComponentAttribute();
+		idamAttribute.setType("DI2E-SVCV4-A");
+		idamAttribute.setTypeDescription("DI2E SvcV-4 Alignment");		
+		idamAttribute.setCode("1.2.1");
+		idamAttribute.setCodeDescription("Identity and Access Management");
+		idamAttribute.setImportant(true);
+				
+		Set<String> idamComponents = new HashSet<>();
+		idamComponents.add("Central Authentication Service (CAS)");
+		idamComponents.add("OpenAM");
+		idamComponents.add("DCGS-E Web Service Access Control Technical Profile");
 	
 		SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
 		
@@ -248,8 +259,8 @@ public class DataConvertTest
 			componentDetail.setUpdateDts(oldAsset.getEditedDate());
 			
 			String description = oldAsset.getDescription().replace("\n", " <br>");
-			description = ServiceUtil.stripeExtendedChars(description);
-			description = ServiceUtil.createHrefUrls(description);						 
+			description = StringProcessor.stripeExtendedChars(description);
+			description = StringProcessor.createHrefUrls(description);						 
 			componentDetail.setDescription(description);
 			
 			componentDetail.setApprovedDate(oldAsset.getApprovalDate());
@@ -269,6 +280,13 @@ public class DataConvertTest
 			componentDetail.setUpdateUser(oldAsset.getEditedBy().getUsername());
 			componentDetail.setOrganization(oldAsset.getOrganization());
 			componentDetail.setName(oldAsset.getTitle());
+			
+			if (idamComponents.contains(componentDetail.getName()))
+			{
+				componentDetail.getAttributes().add(idamAttribute);
+			}
+				
+			
 			if (StringUtils.isNotBlank(oldAsset.getReleaseDate()))
 			{
 				componentDetail.setReleaseDate(sdfDate.parse(oldAsset.getReleaseDate(), new ParsePosition(0)));			
@@ -316,10 +334,19 @@ public class DataConvertTest
 			oldAsset.getDocUrls().forEach(doc -> {
 				ComponentResource componentResource = new ComponentResource();
 				componentResource.setName("Documentation");
-				componentResource.setLink(ServiceUtil.createHrefUrls(doc.getUrl(), true));
+				componentResource.setLink(StringProcessor.createHrefUrls(doc.getUrl(), true));
 				componentResource.setType("Document");
 				componentDetail.getResources().add(componentResource);
 			});
+			
+			if (StringUtils.isNotBlank(oldAsset.getInstallUrl()))
+			{
+				ComponentResource componentResource = new ComponentResource();
+				componentResource.setName("Install Url");
+				componentResource.setLink(StringProcessor.createHrefUrls(oldAsset.getInstallUrl(), true));
+				componentResource.setType("Document");
+				componentDetail.getResources().add(componentResource);				
+			}
 			
 			oldAsset.getCustomFields().forEach(field ->{
 				if (StringUtils.isNotBlank(field.getValue()))
@@ -339,7 +366,7 @@ public class DataConvertTest
 					{
 						ComponentResource componentResource = new ComponentResource();
 						componentResource.setName(field.getName());
-						componentResource.setLink(ServiceUtil.createHrefUrls(field.getValue(), true));
+						componentResource.setLink(StringProcessor.createHrefUrls(field.getValue(), true));
 						componentResource.setType(type);
 						componentDetail.getResources().add(componentResource);						
 					}
@@ -730,43 +757,43 @@ public class DataConvertTest
 				if (!"NA".equals(evaluation.getCurrentLevelCode()))
 				{
 					
-					if ("LEVEL 0".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
+					if ("LEVEL0".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
 					{						
 						//set status to C - complete						
 						ComponentEvaluationSchedule componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("C");
-						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 0");						
+						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL0");						
 						componentEvaluationSchedule.setActualCompletionDate(TimeUtil.fromString("2014-1-11T10:15:30.00Z"));
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
-						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 1");						
+						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL1");						
 						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-2-11T10:15:30.00Z"));
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
-						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 2");						
+						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL2");						
 						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-2-21T10:15:30.00Z"));						
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
-						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 3");						
+						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL3");						
 						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));						
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 					}
-					else if ("LEVEL 1".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
+					else if ("LEVEL1".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
 					{
 						//set status to C - complete						
 						ComponentEvaluationSchedule componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("C");
-						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 0");						
+						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL0");						
 						componentEvaluationSchedule.setActualCompletionDate(TimeUtil.fromString("2014-1-11T10:15:30.00Z"));
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
@@ -806,29 +833,29 @@ public class DataConvertTest
 							
 						}
 						
-						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 1");												
+						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL1");												
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
-						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 2");						
+						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL2");						
 						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-2-21T10:15:30.00Z"));						
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 						
 						//set status to C - complete						
 						componentEvaluationSchedule = new ComponentEvaluationSchedule();
 						componentEvaluationSchedule.setLevelStatus("N");
-						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL 3");						
+						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL3");						
 						componentEvaluationSchedule.setEstimatedCompletionDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));						
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 					}
 				}
 				
-//				else if ("LEVEL 2".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
+//				else if ("LEVEL2".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
 //				{
 //
-//				} else if ("LEVEL 3".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
+//				} else if ("LEVEL3".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
 //				{
 //							//set lower levels to complete
 //
@@ -868,7 +895,7 @@ public class DataConvertTest
 	{
 		ComponentMedia media = new ComponentMedia();
 		String baseImagePath = "images/oldsite/";
-		String resource = ServiceUtil.getResourceNameFromUrl(url);
+		String resource = StringProcessor.getResourceNameFromUrl(url);
 		media.setLink(baseImagePath + resource);								
 		media.setContentType("image/" +  resource.substring(resource.lastIndexOf(".") + 1, resource.length()));							
 		return media;
@@ -887,10 +914,7 @@ public class DataConvertTest
 			
 			//Strip the <br> may other 			
 			String description = detail.getDescription().replace("<br>", "");			
-			if (description.length() > MAX_SEARCH_DESCRIPTION)
-			{
-				description= description.substring(0, MAX_SEARCH_DESCRIPTION - 3) + "...";
-			}			
+			description = StringProcessor.eclipseString(description, MAX_SEARCH_DESCRIPTION);		
 			searchResult.setDescription(description);
 			searchResult.setAverageRating(random.nextInt(6));
 			searchResult.setViews(random.nextInt(200));
@@ -949,7 +973,7 @@ public class DataConvertTest
 		response.setResults(response.getData().size());
 		response.setTotalResults(response.getData().size());
 		
-		ObjectMapper objectMapper = ServiceUtil.defaultObjectMapper();			
+		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();			
 		objectMapper.writeValue(new File("c:/development/storefront/data/attributes.json"), response);
 	}
 	

@@ -36,9 +36,11 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
-public class ServiceUtil
+public class StringProcessor
 {
 	private static final ObjectMapper objectMapper = new ObjectMapper();
+	
+	private static final int MAX_RESOURCE_NAME = 35;
 	
 	public static ObjectMapper defaultObjectMapper()
 	{
@@ -92,7 +94,7 @@ public class ServiceUtil
 	
 	public static String createHrefUrls(String text)
 	{
-		return createHrefUrls(text, true);
+		return createHrefUrls(text, false);
 	}	
 	
 	public static String createHrefUrls(String text, boolean showFullURL)
@@ -104,7 +106,7 @@ public class ServiceUtil
 			String resoureName = url;
 			if (showFullURL == false)
 			{
-				resoureName = getResourceNameFromUrl(url) ;
+				resoureName = StringUtils.abbreviate(getResourceNameFromUrl(url), MAX_RESOURCE_NAME);
 			}
 			String link = "<a href='" + url + "' title='" + url + "' target='_blank'> " + resoureName + "</a>";
 			 replacedText = replacedText.replace(url, link);
@@ -166,12 +168,56 @@ public class ServiceUtil
 			}
 			catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
 			{
-				Logger.getLogger(ServiceUtil.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(StringProcessor.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		else
 		{
 			sb.append(o);
+		}
+		
+		return sb.toString();
+	}
+	
+	/**
+	 *  This breaks on word is and so it's a bit loose when it comes to the max length.  As the break wins out.
+	 *  It also looks for broken links and tries to preserve them.
+	 * 
+	 * @param data
+	 * @param max_length
+	 * @return 
+	 */
+	public static String eclipseString(String data, int max_length)
+	{
+		if (data == null)
+		{
+			return data;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		if (StringUtils.isNotBlank(data))
+		{
+			String tokens[] = data.split(" ");
+			boolean forceProcess = false;
+			for (String token : tokens)
+			{
+				if ("<a".equalsIgnoreCase(token))
+				{
+					forceProcess = true;
+				}
+				if (forceProcess &&
+				   "</a>".contains(token))
+				{
+					forceProcess = false;
+				}
+				
+				if (forceProcess || 
+				    sb.length() <= max_length)
+				{
+					sb.append(token).append(" ");					
+				}
+			}
+			sb.append("...");
 		}
 		
 		return sb.toString();
