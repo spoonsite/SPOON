@@ -17,7 +17,7 @@
 
 /* global isEmpty, setupPopovers, openClick:true, setupResults,
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimations,
-filtClick*/
+filtClick, setPageHeight*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$sce', function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $sce) { /*jshint unused: false*/
 
@@ -191,6 +191,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.searchCode       = '';
     }
 
+    setupResults();
     Business.componentservice.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
       $scope.total = result || {};
       $scope.filteredTotal = $scope.total;
@@ -201,7 +202,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filters = _.sortBy($scope.filters, function(item){
         return item.description;
       });
-      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
       /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
         $scope.data.data = $scope.total;
@@ -215,9 +215,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         });
         // $scope.$emit('$TRIGGERUNLOAD', 'resultsLoad');
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
         $scope.initializeData(key);
         adjustFilters();
-        setupResults();
       }, 500);
     }); //
   }; //
