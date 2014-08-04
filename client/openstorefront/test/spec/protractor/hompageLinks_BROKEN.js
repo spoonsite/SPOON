@@ -1,15 +1,20 @@
 describe('Click on the listing links on the Storefront home page', function() {
+
     it('the pages load and the links are not broken.', function() {
 
         // TODO:  Figure out how to dynamically get the # of links
         //console.log(element.all(by.css('.listing_short_title_text')).count());
 
-        // loop
-        for (var i=0; i <5; i++) {
+        // Quit working on dynamic idAM landing page (see Jonathan?) 31 Jul commenting out for now
+
+        for (var i=4; i >= 0; i--) {
             browser.get('http://di2e.github.io/openstorefront');
             element.all(by.css('.listing_short_title_text')).get(i).click();
+
             expect(browser.getTitle()).toEqual('DI2E Storefront');
         }
+
+
     });
  });
 

@@ -6,6 +6,17 @@ exports.config = {
   onPrepare: function() {
    // browser.driver.manage().window().maximize();
   },
+  
+  
+    // Start these browsers, currently available:
+    // - Chrome
+    // - ChromeCanary
+    // - Firefox
+    // - Opera
+    // - Safari (only Mac)
+    // - PhantomJS
+    // - IE (only Windows)
+    
   capabilities : {
     browserName : 'chrome',
     'chromeOptions': {
@@ -17,6 +28,7 @@ exports.config = {
     isVerbose: true,
     showColors: true,
     includeStackTrace: true,
-    defaultTimeoutInterval: 30000
+    defaultTimeoutInterval: 30000,
+    allScriptsTimeout: 15000
   }
-}
+};
