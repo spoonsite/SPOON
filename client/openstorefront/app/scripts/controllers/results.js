@@ -30,7 +30,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
-  setPageHeight($('#resultsPage'), 52);
+  setPageHeight($('.page1'), 52);
   $scope.$emit('$TRIGGERLOAD', 'mainLoader');
   $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
   $scope._scopename         = 'results';
