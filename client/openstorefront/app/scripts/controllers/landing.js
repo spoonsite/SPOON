@@ -18,7 +18,7 @@
 
 /*global setupPopovers*/
 
-app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout', '$filter', function ($scope, Business, localCache, $location, $timeout, $filter)  {
+app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout', '$filter', '$route', function ($scope, Business, localCache, $location, $timeout, $filter, $route)  {/*jshint unused:false*/
   // set up the landing page route so that we include the right landing page.
   Business.componentservice.doSearch('search', 'All').then(function(result) {
     $scope.total = result || {};
@@ -26,6 +26,7 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
   $scope.data = {};
   $scope.data3 = {};
   $scope.filters = Business.getFilters();
+  $scope.filters = angular.copy($scope.filters);
   $scope.landingRoute = null;
 
 
@@ -33,7 +34,11 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
   $timeout(function() {
     // Business.landingPage(false, false, true).then(function (result) {
       var result = localCache.get('landingRoute');
-      if (result) {
+      if ($location.search() && $location.search().route) {
+        $scope.landingRoute = $location.search().route;
+        $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+        $scope.loaded = true;
+      } else if (result) {
         $scope.landingRoute = result;
         $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
         $scope.loaded = true;
@@ -42,20 +47,16 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
   }, 1000); //
 
   $scope.$on('$TRIGGERLANDING', function(event, data) {
-    $scope.landingRoute = data;
-    $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
-    $scope.loaded = true;
+    if ($location.search() && $location.search().route) {
+      $scope.landingRoute = $location.search().route;
+      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+      $scope.loaded = true;
+    } else {
+      $scope.landingRoute = data;
+      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+      $scope.loaded = true;
+    }
   });
-
-
-  $scope.resetAllFilters = function() {
-    var filters = Business.getFilters();
-    _.each(filters, function(filter) {
-      _.each(filter.codes, function(code) {
-        code.checked = false;
-      });
-    });
-  };
 
   /***************************************************************
   * This function is used to send the user to the results page with the correct
@@ -90,7 +91,7 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     _.each(data, function(item){
       if (item.description !== null && item.description !== undefined && item.description !== '') {
         var desc = item.description.match(/^(.*?)[.?!]\s/);
-        item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+        item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
       } else {
         item.shortdescription = 'This is a temporary short description';
       }

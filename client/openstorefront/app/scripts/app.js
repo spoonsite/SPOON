@@ -177,7 +177,7 @@ tagsInputConfigProvider
   * This funciton resets the search query when we don't want to be showing it
   ***************************************************************/
   $rootScope.$on('$locationChangeStart', function (event, next, current) {
-    if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single')) {
+    if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing')) {
       $location.search({});
     }
   });
@@ -376,7 +376,12 @@ $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?
   }, 1000);
   return [200, result.promise, {}];
 });
-
+$httpBackend.whenGET(/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
+  var request = new XMLHttpRequest();
+  request.open('GET', 'views/temp/landingpage.html', false);
+  request.send(null);
+  return [request.status, request.response, {}];
+});
   ////////////////////////////////////////////////////////////////////////
 
 

@@ -19,7 +19,7 @@ limitations under the License.
   <div id="filters" class="filters filterBack">
     <loader trigger="filtersLoad"></loader>
 
-    <div class="filterTableDiv firstFilter">
+    <div ng-show="showSearch" class="filterTableDiv firstFilter">
       <label for="searchFilter">Sort By: </label>
       <select ng-model="orderProp" class="form-control">
         <option class="hidden-lg" selected disabled value="" hidden>Sort By</option>
@@ -32,28 +32,26 @@ limitations under the License.
       </select>
       <br>
       <label for="searchFilter">Filter By Text: </label>
-      <input type="text" id="searchFilter" class="form-control" placeholder="Search" ng-model="query" ng-options="key for key in typeahead" bs-typeahead/>
+      <input type="text" id="searchFilter" class="form-control" placeholder="Filter Search" ng-model="query" ng-options="key for key in typeahead" bs-typeahead/>
       <br>
       <label for="tagsFilter">Filter By Tag: </label>
       <tags-input class="bootstrap" min-length="1" ng-model="tagsFilter" replace-spaces-with-dashes="false" add-from-autocomplete-only="true" on-tag-added="applyFilters();" on-tag-removed="applyFilters();"><auto-complete min-length="1" source="checkTagsList($query, tagsFilter, tagsList)"></auto-complete></tags-input>
-      <br>
-      <label for="ratingsFilter">Filter By Rating: </label>
+      <!-- <br> -->
+      <!-- <label for="ratingsFilter">Filter By Rating: </label>
       <br>
       <raty class="average-raty" id="filterRating" style="min-width:110px; height: 100%;" score="{{ratingsFilter}}" ng-model="ratingsFilter" number="5" path="images/raty/">
-      </raty>
+      </raty> -->
     </div>
-
 
     <!-- Added these divs for the ability to dynamically make the filters an accordian -->
 
-    <div class='filterTableDiv filterTable'>
-
+    <div ng-show="showSearch" class='filterTableDiv filterTable' style="margin-top: 20px;">
       <label for="accordian">Filter By Attribute: </label>
       <div class="pane-group" id="accordion">
-        <div ng-class="$last? 'lastFilter': ''" class="panel panel-default" class="filterTableDiv" ng-repeat="filter in filters">
+        <div ng-class="$last? 'lastFilter': ''" ng-if="filter.visibleFlg" class="panel panel-default" class="filterTableDiv" ng-repeat="filter in filters">
           <table class="table">
-            <tr ng-class="filters.length > 2? 'panel-heading': ''">
-              <th ng-class="filters.length > 2? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" data-container="body" title="{{filter.description}}">
+            <tr ng-class="filters.length > 0? 'panel-heading': ''">
+              <th ng-class="filters.length > 0? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" data-container="body" title="{{filter.description}}">
                 <span style="overflow: hidden; width: 100%; height: 35px; display: inline-block; margin-bottom: -7px; ">
                   <span ng-class="filter.hasChecked? '': 'empty'" class="btn btn-link spread collapsed" data-toggle="collapse" href="#collapse{{$index}}" >
                     <!-- <span class="btn btn-link" ng-class="$first? '':'collapsed'" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;"> -->
@@ -79,11 +77,44 @@ limitations under the License.
             </tbody>
           </table>
         </div>
+        <br>
+        <button data-toggle="collapse" href="#moreFilters" class="btn btn-default" style="width: 100%;">More Filters</button>
+        <div id="moreFilters" class="panel-collapse collapse">
+          <div ng-class="$last? 'lastFilter': ''"   ng-if="!filter.visibleFlg" class="panel panel-default" class="filterTableDiv"  ng-repeat="filter in filters">
+            <table class="table">
+              <tr ng-class="filters.length > 0? 'panel-heading': ''">
+                <th ng-class="filters.length > 0? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" data-container="body" title="{{filter.description}}">
+                  <span style="overflow: hidden; width: 100%; height: 35px; display: inline-block; margin-bottom: -7px; ">
+                    <span ng-class="filter.hasChecked? '': 'empty'" class="btn btn-link spread collapsed" data-toggle="collapse" href="#collapse{{$index}}" >
+                      <!-- <span class="btn btn-link" ng-class="$first? '':'collapsed'" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;"> -->
+                      <span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i>
+                      </span>
+                      <span class="overflow-pair-left" style="text-align: left;">{{filter.description}}</span>
+                    </span>
+                    <selectall checkboxes="filter.codes" all-selected="filter.allChecked" all-clear="filter.noChecked" toggle-callback="applyFilters"></selectall>
+                    <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
+                  </span>
+                </th>
+              </tr>
+              <tbody ng-class="filters.length > 2? 'panel-collapse collapse':''" id="collapse{{$index}}">
+                <!-- <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}"> -->
+                <tr  class="filtersTr" data-ng-repeat="type in filter.codes" >
+                  <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
+                    <div class="checkbox filterCheckbox">
+                      <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{filter.description}}_{{type.code}}" ng-change="applyFilters()"/>
+                      <label for="{{filter.description}}_{{type.code}}">{{type.label}}</label>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="lastFilter">
-      <button class="btn red btn-default col-sm-12" ng-click="clearFilters()">Reset Filters</button>
+      <br>
+      <div class="lastFilter">
+        <button class="btn red btn-default col-sm-12" ng-click="clearFilters()">Reset Filters</button>
+      </div>
     </div>
   </div>
   <!-- END Filters Div -->
@@ -91,7 +122,7 @@ limitations under the License.
   <!-- Page 1 -->
   <div class='page1'>
     <loader trigger="mainLoader"></loader>
-    
+
     <!-- Placeholder for the pagination controls -->
     <div ng-show="moreThan200" class="pagination row row-centered">
       <div style="text-align: center;">
@@ -110,9 +141,9 @@ limitations under the License.
         </span> 
       </div>
     </div>
-    
+
     <!-- End Placeholder for the pagination controls -->
-    <div class="showPage" id="filtersButton" onclick="openFiltersToggle()">
+    <div ng-show="showSearch" class="showPage" id="filtersButton" onclick="openFiltersToggle()">
       <button  class=" btn btn-primary filtersButton">
         Filters <i class="fa fa-caret-left"></i> 
       </button>
@@ -124,7 +155,7 @@ limitations under the License.
         </div>
       </div>
     </div>
-    <div class="page1Content">
+    <div ng-show="showSearch" class="page1Content">
       <div class="buttonHolder1">
         <div class="showPage buttonPos" ng-show="showDetails">
           <button id="showPageRight" class="showPageRight btn btn-primary" ng-click="doButtonOpen()">
