@@ -78,7 +78,7 @@ limitations under the License.
           </table>
         </div>
         <br>
-        <button data-toggle="collapse" href="#moreFilters" class="btn btn-default" style="width: 100%;">More Filters</button>
+        <button data-toggle="collapse" href="#moreFilters" ng-click="moreFilters = !!!moreFilters" class="btn btn-default" style="width: 100%;"><span ng-show="!!!moreFilters">More Filters</span><span ng-show="!!moreFilters">Less Filters</span></button>
         <div id="moreFilters" class="panel-collapse collapse">
           <div ng-class="$last? 'lastFilter': ''"   ng-if="!filter.visibleFlg" class="panel panel-default" class="filterTableDiv"  ng-repeat="filter in filters">
             <table class="table">
