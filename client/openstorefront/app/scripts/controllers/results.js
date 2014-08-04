@@ -30,6 +30,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
+  setPageHeight($('#resultsPage'), 52);
   $scope.$emit('$TRIGGERLOAD', 'mainLoader');
   $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
   $scope._scopename         = 'results';
@@ -42,6 +43,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.isPage1            = true;
   $scope.showSearch         = false;
   $scope.showDetails        = false;
+  $scope.showMessage        = false;
   $scope.orderProp          = '';
   $scope.query              = '';
   $scope.noDataMessage      = $sce.trustAsHtml('<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p><button class="btn btn-default" ng-click="clearFilters()">Reset Filters</button>');
@@ -211,11 +213,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             item.shortdescription = 'This is a temporary short description';
           }
         });
-        setupResults();
         // $scope.$emit('$TRIGGERUNLOAD', 'resultsLoad');
         $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
         $scope.initializeData(key);
         adjustFilters();
+        setupResults();
       }, 500);
     }); //
   }; //
@@ -288,8 +290,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.showSearch         = true;
         $scope.searchTitle        = $scope.searchGroup[0].code;
         $scope.modal.modalTitle   = $scope.searchGroup[0].code;
-        $scope.searchDescription  = 'Search resutls based on the search key: ' + $scope.searchGroup[0].code;
-        $scope.modal.modalBody    = 'The restuls on this page are restricted by an implied filter on words similar to the search key \'' + $scope.searchGroup[0].code + '\'';
+        $scope.searchDescription  = 'Search results based on the search key: ' + $scope.searchGroup[0].code;
+        $scope.modal.modalBody    = 'The results on this page are restricted by an implied filter on words similar to the search key \'' + $scope.searchGroup[0].code + '\'';
       } else {
         // In this case, our tempData object exists, but has no useable data
         $scope.searchKey          = 'DOALLSEARCH';
@@ -426,6 +428,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     if (article && article.type === 'Article') {
       $scope.isArticle = true;
+      localCache.save('landingRoute', article.route);
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);
       $scope.showDetails = true;
@@ -544,7 +547,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
       // Set the data that will be displayed to the first 'n' results of the filtered data
       $scope.data.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
-
+      if ($scope.data.data.length) {
+        $scope.showMessage = false;
+      } else {
+        $scope.showMessage = true;
+      }
       // after a slight wait, reapply the popovers for the results ratings.
       $timeout(function() {
         setupPopovers();

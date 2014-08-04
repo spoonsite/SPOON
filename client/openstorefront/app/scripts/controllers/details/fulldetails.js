@@ -173,9 +173,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     if (prosList.length){
       prosList.map( function (a) {
         if (a in pros) {
-          pros[a] ++;
+          pros[a.text] ++;
         } else {
-          pros[a] = 1;
+          pros[a.text] = 1;
         }
       });
     } else {
@@ -184,9 +184,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     if (consList.length){
       consList.map( function (a) {
         if (a in cons) {
-          cons[a] ++;
+          cons[a.text] ++;
         } else {
-          cons[a] = 1;
+          cons[a.text] = 1;
         }
       });
     } else {
