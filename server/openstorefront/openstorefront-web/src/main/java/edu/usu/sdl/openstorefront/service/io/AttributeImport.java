@@ -219,10 +219,13 @@ public class AttributeImport
 							String codeKey = code[0].toUpperCase().trim();
 							if (codeSet.contains(codeKey) == false)
 							{
-								attributeCodeView.setCode(codeKey);
-								attributeCodeView.setLabel(data[0].trim());					
-								attributeTypeView.getCodes().add(attributeCodeView);							
-								codeSet.add(codeKey);
+								if (StringUtils.isNotBlank(codeKey))
+								{
+									attributeCodeView.setCode(codeKey);
+									attributeCodeView.setLabel(data[0].trim());
+									attributeTypeView.getCodes().add(attributeCodeView);
+									codeSet.add(codeKey);
+								}
 							}
 						}
 					}

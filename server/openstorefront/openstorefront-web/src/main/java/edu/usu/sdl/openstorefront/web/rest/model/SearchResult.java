@@ -17,7 +17,6 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,10 +58,13 @@ public class SearchResult
 	@NotNull
 	private long totalNumberOfReviews;
 	
+	@NotNull
+	private String resourceLocation;
+	
 	@DataType(SearchResultAttribute.class)
 	private List<SearchResultAttribute> attributes = new ArrayList<>();
 		
-	@ParamTypeDescription("Array of Strings")
+	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();	
 
 	public SearchResult()
@@ -207,6 +209,16 @@ public class SearchResult
 	public void setTags(List<ComponentTag> tags)
 	{
 		this.tags = tags;
+	}
+
+	public String getResourceLocation()
+	{
+		return resourceLocation;
+	}
+
+	public void setResourceLocation(String resourceLocation)
+	{
+		this.resourceLocation = resourceLocation;
 	}
 	
 }

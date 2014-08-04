@@ -263,10 +263,11 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         }
       break;
       case 'H':
+      result = 'HALTED ' + estimated;
         if (actual && actual !== 'null') {
-          result = 'HAULTED ' + actual;
+          result = 'HALTED ' + actual;
         } else {
-          result = 'HAULTED';
+          result = 'HALTED';
         }
       break;
       case 'P':

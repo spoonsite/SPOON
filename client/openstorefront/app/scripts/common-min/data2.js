@@ -293,7 +293,7 @@ MOCKDATA2.componentList = [ {
       "evaluationLevelCode" : "LEVEL2",
       "estimatedCompletionDate" : 1393002930000,
       "actualCompletionDate" : null,
-      "levelStatus" : "N"
+      "levelStatus" : "P"
     }, {
       "evaluationLevelCode" : "LEVEL3",
       "estimatedCompletionDate" : 1393694130000,
@@ -857,7 +857,7 @@ MOCKDATA2.componentList = [ {
       "evaluationLevelCode" : "LEVEL1",
       "estimatedCompletionDate" : 1392138930000,
       "actualCompletionDate" : null,
-      "levelStatus" : "N"
+      "levelStatus" : "H"
     }, {
       "evaluationLevelCode" : "LEVEL2",
       "estimatedCompletionDate" : 1393002930000,

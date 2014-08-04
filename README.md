@@ -262,7 +262,16 @@ Mav -Dmaven.test.skip=true or -DskipTests=true install
 
 Deploying
 ---------
-Copy the war artifacts to the standalone deploy directory in wildfly. Some IDE can handle this for you.
+Copy the war artifacts to the standalone deploy directory in wildfly. Some IDEs can handle this for you.
+
+
+Building a Production Release 
+=============================
+This puts the client and server pieces together for a simple deployment.
+
+To do this:  
+ 1. run "grunt buildprod" from the client
+ 2. then run "mvn install" to package the application for deployment to the application server.
 
 
 Running
