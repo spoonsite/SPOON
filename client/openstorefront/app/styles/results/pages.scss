@@ -21,11 +21,9 @@
 .page1{
   /*border: 1px orange solid;*/
   width: 100%;
-  position: relative;
   border-right: 1px solid darkgray;
   overflow-x: hidden;
   overflow-y: scroll;
-  min-height: 500px;
 }
 
 .page1:after, .page1:before{
