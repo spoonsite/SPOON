@@ -50,6 +50,10 @@ body {
   line-height: 25px;
 }
 
+.componentListItem a{
+  color: #ff4800;
+}
+
 .hasLinks {
   white-space: pre-wrap; /* css-3 */    
   white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
@@ -236,9 +240,7 @@ small button {
 }
 
 .red.btn-default:hover,
-.red.btn-default:focus,
 .red.btn-default:active,
-.red.btn-default.active,
 .open > .dropdown-toggle.btn-default {
   color: #333;
   background-color: #c44848;

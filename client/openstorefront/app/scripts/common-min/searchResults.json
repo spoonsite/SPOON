@@ -4,15 +4,18 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Central Authentication Service (CAS)",
-  "description" : "The Central Authentication Service (CAS) is a single sign-on protocol for the web. Its purpose is to permit a user to access multiple applications while providing their credentials (such as userid and password) only once. It also allows web applications to authenticate users without gaining acces...",
+  "description" : "The Central Authentication Service (CAS) is a single sign-on protocol for the web. Its purpose is to permit a user to access multiple applications while providing their credentials (such as userid and password) only once. It also allows web applications to authenticate users without gaining access to ...",
   "organization" : "NRO",
   "lastActivityDate" : null,
   "updateDts" : 1405698045000,
   "averageRating" : 1,
-  "views" : 114,
-  "totalNumberOfReviews" : 96,
+  "views" : 126,
+  "totalNumberOfReviews" : 71,
   "resourceLocation" : "api/v1/resource/components/67/detail",
   "attributes" : [ {
+    "type" : "DI2E-SVCV4-A",
+    "code" : "1.2.1"
+  }, {
     "type" : "TYPE",
     "code" : "APP"
   }, {
@@ -28,22 +31,20 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ {
-    "text" : "Data Exchange"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 9,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "CLAVIN",
-  "description" : "CLAVIN (Cartographic Location And Vicinity Indexer) is an open source software package for document geotagging and geoparsing that employs context-based geographic entity resolution. It extracts location names from unstructured text and resolves them against a gazetteer to produce data-rich geogr...",
+  "description" : "CLAVIN (Cartographic Location And Vicinity Indexer) is an open source software package for document geotagging and geoparsing that employs context-based geographic entity resolution. It extracts location names from unstructured text and resolves them against a gazetteer to produce data-rich geographic ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1400005248000,
-  "averageRating" : 1,
-  "views" : 8,
-  "totalNumberOfReviews" : 32,
+  "averageRating" : 3,
+  "views" : 167,
+  "totalNumberOfReviews" : 34,
   "resourceLocation" : "api/v1/resource/components/9/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -58,20 +59,24 @@
     "type" : "LICCLASS",
     "code" : "FOSS"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Mapping"
+  }, {
+    "text" : "Reference"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 10,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Common Map API Javascript Library",
-  "description" : "Core Map API is a library of JavaScript (JS) functions that hide the underlying Common Map Widget API so that developers only have to include the JS library and call the appropriate JS functions that way they are kept away from managing or interacting directly with the channels.   Purpose/Goal of...",
+  "description" : "Core Map API is a library of JavaScript (JS) functions that hide the underlying Common Map Widget API so that developers only have to include the JS library and call the appropriate JS functions that way they are kept away from managing or interacting directly with the channels.   Purpose/Goal of the <a href='https://confluence.di2e.net/download/attachments/14518881/cpce-map-api-jsDocs.zip?api=v2' title='https://confluence.di2e.net/download/attachments/14518881/cpce-map-api-jsDocs.zip?api=v2' target='_blank'> cpce-map-api-jsDocs.zip?api=v2</a> ...",
   "organization" : "DCGS-A",
   "lastActivityDate" : null,
   "updateDts" : 1399485055000,
-  "averageRating" : 3,
-  "views" : 162,
-  "totalNumberOfReviews" : 26,
+  "averageRating" : 1,
+  "views" : 70,
+  "totalNumberOfReviews" : 57,
   "resourceLocation" : "api/v1/resource/components/10/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -99,13 +104,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Common Map Widget API",
-  "description" : "Background Many programs and projects create widgets that search for or manipulate data then present the results on a map. The desire is to be able to combine data search/manipulation widgets from any provider with map widgets from other providers. In order to accomplish this, a standard way for ...",
+  "description" : "Background Many programs and projects create widgets that search for or manipulate data then present the results on a map. The desire is to be able to combine data search/manipulation widgets from any provider with map widgets from other providers. In order to accomplish this, a standard way for the <a href='https://software.forge.mil/sf/frs/do/viewRelease/projects.jc2cui/frs.common_map_widget.common_map_widget_api' title='https://software.forge.mil/sf/frs/do/viewRelease/projects.jc2cui/frs.common_map_widget.common_map_widget_api' target='_blank'> frs.common_map_widget.common_map...</a> ...",
   "organization" : "DI2E Framework",
   "lastActivityDate" : null,
   "updateDts" : 1404172800000,
-  "averageRating" : 3,
-  "views" : 42,
-  "totalNumberOfReviews" : 30,
+  "averageRating" : 0,
+  "views" : 122,
+  "totalNumberOfReviews" : 0,
   "resourceLocation" : "api/v1/resource/components/11/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -123,20 +128,22 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Charting"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 12,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Content Discovery and Retrieval Engine - Brokered Search Component",
-  "description" : "Content Discovery and Retrieval functionality is based on the architecture, standards, and specifications being developed and maintained by the joint IC/DoD Content Discovery and Retrieval (CDR) Integrated Product Team (IPT). The components contained in this release are the 1.1 version of the ref...",
+  "description" : "Content Discovery and Retrieval functionality is based on the architecture, standards, and specifications being developed and maintained by the joint IC/DoD Content Discovery and Retrieval (CDR) Integrated Product Team (IPT). The components contained in this release are the 1.1 version of the reference ...",
   "organization" : "DI2E-F",
   "lastActivityDate" : null,
   "updateDts" : 1399485057000,
-  "averageRating" : 2,
-  "views" : 130,
-  "totalNumberOfReviews" : 27,
+  "averageRating" : 0,
+  "views" : 30,
+  "totalNumberOfReviews" : 70,
   "resourceLocation" : "api/v1/resource/components/12/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -157,20 +164,24 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Charting"
+  }, {
+    "text" : "Data Exchange"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 13,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Content Discovery and Retrieval Engine - Describe Component",
-  "description" : "Content Discovery and Retrieval functionality is based on the architecture, standards, and specifications being developed and maintained by the joint IC/DoD Content Discovery and Retrieval (CDR) Integrated Product Team (IPT). The components contained in this release are the 1.1 version of the ref...",
+  "description" : "Content Discovery and Retrieval functionality is based on the architecture, standards, and specifications being developed and maintained by the joint IC/DoD Content Discovery and Retrieval (CDR) Integrated Product Team (IPT). The components contained in this release are the 1.1 version of the reference ...",
   "organization" : "DI2E Framework",
   "lastActivityDate" : null,
   "updateDts" : 1399485058000,
-  "averageRating" : 4,
-  "views" : 31,
-  "totalNumberOfReviews" : 58,
+  "averageRating" : 1,
+  "views" : 147,
+  "totalNumberOfReviews" : 37,
   "resourceLocation" : "api/v1/resource/components/13/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -192,9 +203,9 @@
     "code" : "OPR"
   } ],
   "tags" : [ {
-    "text" : "Reference"
+    "text" : "Data Exchange"
   }, {
-    "text" : "Communication"
+    "text" : "UDOP"
   } ]
 }, {
   "listingType" : "Component",
@@ -202,13 +213,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Content Discovery and Retrieval Engine - Retrieve Component",
-  "description" : "The Retrieve Components are implementations of the capabilities and interfaces defined in IC/DoD CDR Retrieve Service Specification for SOAP Implementations DRAFT Version 1.0-20100331, March 31, 2010. Each Retrieve Component is a separately deployable component that provides access to a defined c...",
+  "description" : "The Retrieve Components are implementations of the capabilities and interfaces defined in IC/DoD CDR Retrieve Service Specification for SOAP Implementations DRAFT Version 1.0-20100331, March 31, 2010. Each Retrieve Component is a separately deployable component that provides access to a defined content <a href='https://www.intelink.gov/inteldocs/browse.php?fFolderId=431781' title='https://www.intelink.gov/inteldocs/browse.php?fFolderId=431781' target='_blank'> browse.php?fFolderId=431781</a> for more general information about CDR. ...",
   "organization" : "DI2E-F",
   "lastActivityDate" : null,
   "updateDts" : 1399485059000,
-  "averageRating" : 2,
-  "views" : 52,
-  "totalNumberOfReviews" : 88,
+  "averageRating" : 1,
+  "views" : 126,
+  "totalNumberOfReviews" : 27,
   "resourceLocation" : "api/v1/resource/components/14/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -229,24 +240,20 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ {
-    "text" : "UDOP"
-  }, {
-    "text" : "Reference"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 15,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Cursor on Target Toolkit",
-  "description" : "(U) Cursor on Target is a set of components focused on driving interoperability in message exchanges. Components include: *An XML message schema  &nbsp;&nbsp;Basic (mandatory): what, when, where &nbsp;&nbsp; Extensible (optional): add subschema to add details  \u0001*A standard &nbsp;&nbsp; Establishe...",
+  "description" : "(U) Cursor on Target is a set of components focused on driving interoperability in message exchanges. Components include: *An XML message schema  &nbsp;&nbsp;Basic (mandatory): what, when, where &nbsp;&nbsp; Extensible (optional): add subschema to add details  \u0001*A standard &nbsp;&nbsp; Established as ...",
   "organization" : "Air Force",
   "lastActivityDate" : null,
   "updateDts" : 1399485060000,
-  "averageRating" : 5,
-  "views" : 104,
-  "totalNumberOfReviews" : 14,
+  "averageRating" : 3,
+  "views" : 22,
+  "totalNumberOfReviews" : 90,
   "resourceLocation" : "api/v1/resource/components/15/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -271,13 +278,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DCGS Discovery Metadata Guide",
-  "description" : "This document provides information on DCGS metadata artifacts and guidance for populating DDMS and the DIB Metacard, using DDMS Schema Extensions, and creating new DDMS extension schemas. These guidelines should be used by developers and System Integrators building resource adapters and schemas t...",
+  "description" : "This document provides information on DCGS metadata artifacts and guidance for populating DDMS and the DIB Metacard, using DDMS Schema Extensions, and creating new DDMS extension schemas. These guidelines should be used by developers and System Integrators building resource adapters and schemas to work ...",
   "organization" : "AFLCMC/HBBG",
   "lastActivityDate" : null,
   "updateDts" : 1399485060000,
-  "averageRating" : 4,
-  "views" : 169,
-  "totalNumberOfReviews" : 54,
+  "averageRating" : 3,
+  "views" : 43,
+  "totalNumberOfReviews" : 22,
   "resourceLocation" : "api/v1/resource/components/16/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -302,13 +309,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DCGS Enterprise Messaging Technical Profile",
-  "description" : "DCGS Enterprise Services rely on asynchronous communications for sending messages so they can notify users when certain data is published or a particular event has occurred. Users may subscriber to a data source so they can be notified when a piece of intelligence has been published on a topic of...",
+  "description" : "DCGS Enterprise Services rely on asynchronous communications for sending messages so they can notify users when certain data is published or a particular event has occurred. Users may subscriber to a data source so they can be notified when a piece of intelligence has been published on a topic of interest. ...",
   "organization" : "DCGS EFT",
   "lastActivityDate" : null,
   "updateDts" : 1399485061000,
-  "averageRating" : 1,
-  "views" : 29,
-  "totalNumberOfReviews" : 44,
+  "averageRating" : 0,
+  "views" : 52,
+  "totalNumberOfReviews" : 76,
   "resourceLocation" : "api/v1/resource/components/17/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -333,13 +340,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DCGS Enterprise OWF IdAM Technical Profile",
-  "description" : "The Ozone Widget Framework is a web-application engine built around the concept of discrete, reusable web application interface components called widgets. Widgets may be composed into full applications by Ozone users or administrators.   The architecture of the Ozone framework allows widgets to b...",
+  "description" : "The Ozone Widget Framework is a web-application engine built around the concept of discrete, reusable web application interface components called widgets. Widgets may be composed into full applications by Ozone users or administrators.   The architecture of the Ozone framework allows widgets to be implemented ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1399487595000,
-  "averageRating" : 1,
-  "views" : 95,
-  "totalNumberOfReviews" : 89,
+  "averageRating" : 0,
+  "views" : 139,
+  "totalNumberOfReviews" : 79,
   "resourceLocation" : "api/v1/resource/components/18/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -364,13 +371,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DCGS Integration Backbone (DIB)",
-  "description" : "The Distributed Common Ground/Surface System (DCGS) Integration Backbone (DIB) is the enabler for DCGS enterprise interoperability. The DIB is a technical infrastructure, the foundation for sharing data across the ISR enterprise. More specifically the DIB is: 1) Standards-based set of software, s...",
+  "description" : "The Distributed Common Ground/Surface System (DCGS) Integration Backbone (DIB) is the enabler for DCGS enterprise interoperability. The DIB is a technical infrastructure, the foundation for sharing data across the ISR enterprise. More specifically the DIB is: 1) Standards-based set of software, services, ...",
   "organization" : "DMO",
   "lastActivityDate" : null,
   "updateDts" : 1399485063000,
-  "averageRating" : 1,
-  "views" : 63,
-  "totalNumberOfReviews" : 68,
+  "averageRating" : 2,
+  "views" : 98,
+  "totalNumberOfReviews" : 8,
   "resourceLocation" : "api/v1/resource/components/19/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -398,14 +405,49 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DCGS-E Audit Log Management and Reporting Technical Profile",
-  "description" : "This CDP provides the technical design description for the Audit and Accountability capability of the Distributed Common Ground/Surface System (DCGS) Enterprise Service Dial Tone (SDT) layer. It includes the capability architecture design details, conformance requirements, and implementation guid...",
+  "description" : "This CDP provides the technical design description for the Audit and Accountability capability of the Distributed Common Ground/Surface System (DCGS) Enterprise Service Dial Tone (SDT) layer. It includes the capability architecture design details, conformance requirements, and implementation guidance. ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1399485064000,
   "averageRating" : 1,
-  "views" : 137,
-  "totalNumberOfReviews" : 3,
+  "views" : 148,
+  "totalNumberOfReviews" : 32,
   "resourceLocation" : "api/v1/resource/components/20/detail",
+  "attributes" : [ {
+    "type" : "TYPE",
+    "code" : "SPEC"
+  }, {
+    "type" : "DI2ELEVEL",
+    "code" : "LEVEL0"
+  }, {
+    "type" : "DI2E-SVCV4-A",
+    "code" : null
+  }, {
+    "type" : "CEEAR",
+    "code" : "N"
+  }, {
+    "type" : "ITAR",
+    "code" : "N"
+  } ],
+  "tags" : [ {
+    "text" : "UDOP"
+  }, {
+    "text" : "Charting"
+  } ]
+}, {
+  "listingType" : "Component",
+  "componentId" : 21,
+  "articleAttributeType" : null,
+  "articleAttributeCode" : null,
+  "name" : "DCGS-E Domain Name System (DNS) Technical Profile",
+  "description" : "(U) This CDP provides guidance for DNS for use by the DCGS Enterprise Community at large. DCGS Service Providers will use this guidance to make their services visibility and accessibility in the DCGS Enterprise SOA (DES). Several Intelligence Community/Department of Defense (IC/DoD) documents were incorporated ...",
+  "organization" : "DCGS EFT",
+  "lastActivityDate" : null,
+  "updateDts" : 1399485064000,
+  "averageRating" : 1,
+  "views" : 182,
+  "totalNumberOfReviews" : 35,
+  "resourceLocation" : "api/v1/resource/components/21/detail",
   "attributes" : [ {
     "type" : "TYPE",
     "code" : "SPEC"
@@ -425,18 +467,49 @@
   "tags" : [ ]
 }, {
   "listingType" : "Component",
-  "componentId" : 21,
+  "componentId" : 22,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
-  "name" : "DCGS-E Domain Name System (DNS) Technical Profile",
-  "description" : "(U) This CDP provides guidance for DNS for use by the DCGS Enterprise Community at large. DCGS Service Providers will use this guidance to make their services visibility and accessibility in the DCGS Enterprise SOA (DES). Several Intelligence Community/Department of Defense (IC/DoD) documents wer...",
+  "name" : "DCGS-E Metrics Management Technical Profile",
+  "description" : "**Previously titled Service Level Agreement/Quality of Service CDP**  (U) This CDP provides guidance for Metrics Management for use by the DCGS Enterprise Community at large. DCGS Service Providers will use this guidance to make their services visibility and accessibility in the DCGS Enterprise SOA. ...",
   "organization" : "DCGS EFT",
   "lastActivityDate" : null,
-  "updateDts" : 1399485064000,
+  "updateDts" : 1399485065000,
   "averageRating" : 5,
-  "views" : 100,
-  "totalNumberOfReviews" : 22,
-  "resourceLocation" : "api/v1/resource/components/21/detail",
+  "views" : 51,
+  "totalNumberOfReviews" : 42,
+  "resourceLocation" : "api/v1/resource/components/22/detail",
+  "attributes" : [ {
+    "type" : "TYPE",
+    "code" : "SPEC"
+  }, {
+    "type" : "DI2ELEVEL",
+    "code" : "LEVEL0"
+  }, {
+    "type" : "DI2E-SVCV4-A",
+    "code" : null
+  }, {
+    "type" : "CEEAR",
+    "code" : "N"
+  }, {
+    "type" : "ITAR",
+    "code" : "N"
+  } ],
+  "tags" : [ ]
+}, {
+  "listingType" : "Component",
+  "componentId" : 23,
+  "articleAttributeType" : null,
+  "articleAttributeCode" : null,
+  "name" : "DCGS-E Sensor Web Enablement (SWE) Technical Profile",
+  "description" : "(U//FOUO)  This CDP provides the technical design description for the SensorWeb capability of the Distributed Common Ground/Surface System (DCGS) Enterprise Intelligence, Surveillance and Reconnaissance (ISR) Common layer.    (U//FOUO)  SensorWeb is a development effort led by the Defense Intelligence ...",
+  "organization" : "unknown",
+  "lastActivityDate" : null,
+  "updateDts" : 1399485066000,
+  "averageRating" : 2,
+  "views" : 179,
+  "totalNumberOfReviews" : 39,
+  "resourceLocation" : "api/v1/resource/components/23/detail",
   "attributes" : [ {
     "type" : "TYPE",
     "code" : "SPEC"
@@ -458,87 +531,17 @@
   } ]
 }, {
   "listingType" : "Component",
-  "componentId" : 22,
-  "articleAttributeType" : null,
-  "articleAttributeCode" : null,
-  "name" : "DCGS-E Metrics Management Technical Profile",
-  "description" : "**Previously titled Service Level Agreement/Quality of Service CDP**  (U) This CDP provides guidance for Metrics Management for use by the DCGS Enterprise Community at large. DCGS Service Providers will use this guidance to make their services visibility and accessibility in the DCGS Enterprise S...",
-  "organization" : "DCGS EFT",
-  "lastActivityDate" : null,
-  "updateDts" : 1399485065000,
-  "averageRating" : 1,
-  "views" : 135,
-  "totalNumberOfReviews" : 36,
-  "resourceLocation" : "api/v1/resource/components/22/detail",
-  "attributes" : [ {
-    "type" : "TYPE",
-    "code" : "SPEC"
-  }, {
-    "type" : "DI2ELEVEL",
-    "code" : "LEVEL0"
-  }, {
-    "type" : "DI2E-SVCV4-A",
-    "code" : null
-  }, {
-    "type" : "CEEAR",
-    "code" : "N"
-  }, {
-    "type" : "ITAR",
-    "code" : "N"
-  } ],
-  "tags" : [ {
-    "text" : "Mapping"
-  }, {
-    "text" : "Visualization"
-  } ]
-}, {
-  "listingType" : "Component",
-  "componentId" : 23,
-  "articleAttributeType" : null,
-  "articleAttributeCode" : null,
-  "name" : "DCGS-E Sensor Web Enablement (SWE) Technical Profile",
-  "description" : "(U//FOUO)  This CDP provides the technical design description for the SensorWeb capability of the Distributed Common Ground/Surface System (DCGS) Enterprise Intelligence, Surveillance and Reconnaissance (ISR) Common layer.    (U//FOUO)  SensorWeb is a development effort led by the Defense Intelli...",
-  "organization" : "unknown",
-  "lastActivityDate" : null,
-  "updateDts" : 1399485066000,
-  "averageRating" : 2,
-  "views" : 125,
-  "totalNumberOfReviews" : 11,
-  "resourceLocation" : "api/v1/resource/components/23/detail",
-  "attributes" : [ {
-    "type" : "TYPE",
-    "code" : "SPEC"
-  }, {
-    "type" : "DI2ELEVEL",
-    "code" : "LEVEL0"
-  }, {
-    "type" : "DI2E-SVCV4-A",
-    "code" : null
-  }, {
-    "type" : "CEEAR",
-    "code" : "N"
-  }, {
-    "type" : "ITAR",
-    "code" : "N"
-  } ],
-  "tags" : [ {
-    "text" : "Visualization"
-  }, {
-    "text" : "Communication"
-  } ]
-}, {
-  "listingType" : "Component",
   "componentId" : 24,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DCGS-E Service Registration and Discovery (SRD) Technical Profile",
-  "description" : "(U//FOUO) Service discovery provides DCGS Enterprise consumers the ability to locate and invoke services to support a given task or requirement in a trusted and secure operational environment. By leveraging service discovery, existing DCGS Enterprise services will be published to a root service r...",
+  "description" : "(U//FOUO) Service discovery provides DCGS Enterprise consumers the ability to locate and invoke services to support a given task or requirement in a trusted and secure operational environment. By leveraging service discovery, existing DCGS Enterprise services will be published to a root service registry, ...",
   "organization" : "DCGS EFT",
   "lastActivityDate" : null,
   "updateDts" : 1399485067000,
-  "averageRating" : 0,
-  "views" : 92,
-  "totalNumberOfReviews" : 78,
+  "averageRating" : 3,
+  "views" : 171,
+  "totalNumberOfReviews" : 67,
   "resourceLocation" : "api/v1/resource/components/24/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -563,13 +566,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DCGS-E Time Synchronization (NTP) Technical Profile",
-  "description" : "(U) This provides guidance for Network Time Protocol (NTP) for use by the DCGS Enterprise Community at large. DCGS Service Providers will use this guidance to make their services secure and interoperable in the DCGS Enterprise SOA  (U//FOUO) Time synchronization is a critical service in any distr...",
+  "description" : "(U) This provides guidance for Network Time Protocol (NTP) for use by the DCGS Enterprise Community at large. DCGS Service Providers will use this guidance to make their services secure and interoperable in the DCGS Enterprise SOA  (U//FOUO) Time synchronization is a critical service in any distributed ...",
   "organization" : "DCGS EFT",
   "lastActivityDate" : null,
   "updateDts" : 1399485068000,
-  "averageRating" : 4,
-  "views" : 96,
-  "totalNumberOfReviews" : 22,
+  "averageRating" : 1,
+  "views" : 86,
+  "totalNumberOfReviews" : 41,
   "resourceLocation" : "api/v1/resource/components/25/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -587,22 +590,29 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Access"
+  }, {
+    "text" : "Visualization"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 26,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DCGS-E Web Service Access Control Technical Profile",
-  "description" : "Access Control incorporates an open framework and industry best practices/standards that leverage Web Services Security (WSS) [17] standards, also referred to as WS-Security, to create a common framework using Attribute Based Access Control (ABAC). The DCGS Enterprise advocates an ABAC model as t...",
+  "description" : "Access Control incorporates an open framework and industry best practices/standards that leverage Web Services Security (WSS) [17] standards, also referred to as WS-Security, to create a common framework using Attribute Based Access Control (ABAC). The DCGS Enterprise advocates an ABAC model as the desired ...",
   "organization" : null,
   "lastActivityDate" : null,
   "updateDts" : 1399485068000,
-  "averageRating" : 0,
-  "views" : 130,
-  "totalNumberOfReviews" : 63,
+  "averageRating" : 5,
+  "views" : 180,
+  "totalNumberOfReviews" : 91,
   "resourceLocation" : "api/v1/resource/components/26/detail",
   "attributes" : [ {
+    "type" : "DI2E-SVCV4-A",
+    "code" : "1.2.1"
+  }, {
     "type" : "TYPE",
     "code" : "SPEC"
   }, {
@@ -618,20 +628,24 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Mapping"
+  }, {
+    "text" : "Communication"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 27,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DI2E Framework DIAS Simulator",
-  "description" : "This package provides a basic simulator of the DoDIIS Identity and Authorization Service (DIAS) in a deployable web application using Apache CFX architecture.  The DI2E Framework development team have used this when testing DIAS specific attribute access internally with Identity and Access Manage...",
+  "description" : "This package provides a basic simulator of the DoDIIS Identity and Authorization Service (DIAS) in a deployable web application using Apache CFX architecture.  The DI2E Framework development team have used this when testing DIAS specific attribute access internally with Identity and Access Management ...",
   "organization" : "DI2E Framework",
   "lastActivityDate" : null,
   "updateDts" : 1403200707000,
   "averageRating" : 1,
-  "views" : 191,
-  "totalNumberOfReviews" : 0,
+  "views" : 60,
+  "totalNumberOfReviews" : 43,
   "resourceLocation" : "api/v1/resource/components/27/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -662,13 +676,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DI2E Framework OpenAM",
-  "description" : "The DI2E Framework IdAM solution provides a core OpenAM Web Single Sign-On implementation wrapped in a Master IdAM Administration Console for ease of configuration and deployment.  Additionally, there are several enhancements to the core authentication functionality as well as external and local ...",
+  "description" : "The DI2E Framework IdAM solution provides a core OpenAM Web Single Sign-On implementation wrapped in a Master IdAM Administration Console for ease of configuration and deployment.  Additionally, there are several enhancements to the core authentication functionality as well as external and local attribute ...",
   "organization" : "DI2E Framework",
   "lastActivityDate" : null,
   "updateDts" : 1405308845000,
-  "averageRating" : 4,
-  "views" : 185,
-  "totalNumberOfReviews" : 56,
+  "averageRating" : 3,
+  "views" : 29,
+  "totalNumberOfReviews" : 64,
   "resourceLocation" : "api/v1/resource/components/28/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -693,13 +707,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DI2E Framework Reference Architecture",
-  "description" : "The DI2E Framework reference Architecture provides a structural foundation for the DI2E requirements assessment.  The DI2E Framework is specified using a level of abstraction that is not dependent on a specific technical solution, but can leverage the benefits of the latest technology advancement...",
+  "description" : "The DI2E Framework reference Architecture provides a structural foundation for the DI2E requirements assessment.  The DI2E Framework is specified using a level of abstraction that is not dependent on a specific technical solution, but can leverage the benefits of the latest technology advancements and ...",
   "organization" : "NRO // DI2E Framework PMO",
   "lastActivityDate" : null,
   "updateDts" : 1403200710000,
-  "averageRating" : 5,
-  "views" : 137,
-  "totalNumberOfReviews" : 11,
+  "averageRating" : 1,
+  "views" : 154,
+  "totalNumberOfReviews" : 15,
   "resourceLocation" : "api/v1/resource/components/30/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -717,20 +731,22 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Reference"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 31,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "DI2E RESTful CDR Search Technical Profile",
-  "description" : "This profile provides the technical design description for the RESTful Search web service of Defense Intelligence Information Enterprise (DI2E). The profile includes capability architecture design details, implementation requirements and additional implementation guidance.  DI2E Enterprise servic...",
+  "description" : "This profile provides the technical design description for the RESTful Search web service of Defense Intelligence Information Enterprise (DI2E). The profile includes capability architecture design details, implementation requirements and additional implementation guidance.  DI2E Enterprise service providers ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1399485073000,
-  "averageRating" : 1,
-  "views" : 199,
-  "totalNumberOfReviews" : 17,
+  "averageRating" : 3,
+  "views" : 70,
+  "totalNumberOfReviews" : 6,
   "resourceLocation" : "api/v1/resource/components/31/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -748,20 +764,24 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Visualization"
+  }, {
+    "text" : "Access"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 32,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Distributed Data Framework (DDF)",
-  "description" : "DDF is a free and open source common data layer that abstracts services and business logic from the underlying data structures to enable rapid integration of new data sources.",
+  "description" : "DDF is a free and open source common data layer that abstracts services and business logic from the underlying data structures to enable rapid integration of new data sources. ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1405694884000,
-  "averageRating" : 4,
-  "views" : 125,
-  "totalNumberOfReviews" : 47,
+  "averageRating" : 0,
+  "views" : 186,
+  "totalNumberOfReviews" : 6,
   "resourceLocation" : "api/v1/resource/components/32/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -794,20 +814,22 @@
     "type" : "LICCLASS",
     "code" : "FOSS"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "UDOP"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 57,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Domain Name System (DNS) Guidebook for Linux/BIND",
-  "description" : "This Guidebook focuses on those involved with the Domain Name System (DNS) in DI2E systems?those building systems based on DI2E-offered components, running in a DI2E Framework. It provides guidance for two different roles - those who configure DNS, and those who rely on DNS in the development of ...",
+  "description" : "This Guidebook focuses on those involved with the Domain Name System (DNS) in DI2E systems. Those building systems based on DI2E-offered components, running in a DI2E Framework. It provides guidance for two different roles - those who configure DNS, and those who rely on DNS in the development of distributed ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1403200713000,
-  "averageRating" : 4,
-  "views" : 39,
-  "totalNumberOfReviews" : 33,
+  "averageRating" : 1,
+  "views" : 110,
+  "totalNumberOfReviews" : 38,
   "resourceLocation" : "api/v1/resource/components/57/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -832,13 +854,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "eDIB",
-  "description" : "(U) eDIB contains the eDIB 4.0 services (management VM and worker VM). eDIB 4.0 is a scalable, virtualized webservice architecture based on the DMO's DIB 4.0. eDIB provides GUIs for an administrator to manage/configure eDIB. An end-user interface is not provided. Different data stores are support...",
+  "description" : "(U) eDIB contains the eDIB 4.0 services (management VM and worker VM). eDIB 4.0 is a scalable, virtualized webservice architecture based on the DMO's DIB 4.0. eDIB provides GUIs for an administrator to manage/configure eDIB. An end-user interface is not provided. Different data stores are supported including ...",
   "organization" : "DI2E Framework",
   "lastActivityDate" : null,
   "updateDts" : 1405102845000,
-  "averageRating" : 5,
-  "views" : 121,
-  "totalNumberOfReviews" : 73,
+  "averageRating" : 0,
+  "views" : 22,
+  "totalNumberOfReviews" : 34,
   "resourceLocation" : "api/v1/resource/components/33/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -860,7 +882,7 @@
     "code" : "N"
   } ],
   "tags" : [ {
-    "text" : "Charting"
+    "text" : "Reference"
   } ]
 }, {
   "listingType" : "Component",
@@ -868,13 +890,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Extensible Mapping Platform (EMP)",
-  "description" : "The Extensible Mapping Platform (EMP) is a US Government Open Source project providing a framework for building robust OWF map widgets and map centric web applications. The EMP project is currently managed by US Army Tactical Mission Command (TMC) in partnership with DI2E, and developed by CECOM ...",
+  "description" : "The Extensible Mapping Platform (EMP) is a US Government Open Source project providing a framework for building robust OWF map widgets and map centric web applications. The EMP project is currently managed by US Army Tactical Mission Command (TMC) in partnership with DI2E, and developed by CECOM Software <a href='http://cmapi.org/' title='http://cmapi.org/' target='_blank'> <a href='https://project.forge.mil/sf/frs/do/viewRelease/projects.dcgsaozone/frs.cpce_mapping_components.sprint_18_cpce_infrastructure_er' title='https://project.forge.mil/sf/frs/do/viewRelease/projects.dcgsaozone/frs.cpce_mapping_components.sprint_18_cpce_infrastructure_er' target='_blank'> frs.cpce_mapping_components.spri...</a> ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1403200714000,
-  "averageRating" : 2,
-  "views" : 56,
-  "totalNumberOfReviews" : 71,
+  "averageRating" : 4,
+  "views" : 176,
+  "totalNumberOfReviews" : 6,
   "resourceLocation" : "api/v1/resource/components/34/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -901,24 +923,20 @@
     "type" : "LICCLASS",
     "code" : "GOSS"
   } ],
-  "tags" : [ {
-    "text" : "Visualization"
-  }, {
-    "text" : "Data Exchange"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 73,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GAPS - Data Catalog Service",
-  "description" : "The GAPS Data Catalog Service provides a set of RESTful services to manage data sources accessible to GAPS applications.  The catalog service offers RESTful interfaces for querying sources as XML or JSON structures. The service is a combination of two web services; the root service, and the metri...",
+  "description" : "The GAPS Data Catalog Service provides a set of RESTful services to manage data sources accessible to GAPS applications.  The catalog service offers RESTful interfaces for querying sources as XML or JSON structures. The service is a combination of two web services; the root service, and the metric service. <a href='https://gapsprod1.stratcom.smil.mil/datacatalogservice/datacatalogservice.ashx' title='https://gapsprod1.stratcom.smil.mil/datacatalogservice/datacatalogservice.ashx' target='_blank'> datacatalogservice.ashx</a> <a href='http://jwicsgaps.usstratcom.ic.gov/datacatalogservice/datacatalogservice.ashx' title='http://jwicsgaps.usstratcom.ic.gov/datacatalogservice/datacatalogservice.ashx' target='_blank'> datacatalogservice.ashx</a> <a href='https://gapsprod1.stratcom.smil.mil/datacatalogservice/datasourcemetrics.ashx' title='https://gapsprod1.stratcom.smil.mil/datacatalogservice/datasourcemetrics.ashx' target='_blank'> datasourcemetrics.ashx</a> <a href='http://jwicsgaps.usstratcom.ic.gov/datacatalogservice/datasourcemetrics.ashx' title='http://jwicsgaps.usstratcom.ic.gov/datacatalogservice/datasourcemetrics.ashx' target='_blank'> datasourcemetrics.ashx</a> ...",
   "organization" : "STRATCOM J8",
   "lastActivityDate" : null,
   "updateDts" : 1405691893000,
   "averageRating" : 2,
-  "views" : 73,
-  "totalNumberOfReviews" : 66,
+  "views" : 107,
+  "totalNumberOfReviews" : 23,
   "resourceLocation" : "api/v1/resource/components/73/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -936,24 +954,20 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ {
-    "text" : "Access"
-  }, {
-    "text" : "UDOP"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 74,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GAPS - Gazetteer Service",
-  "description" : "The GAPS Gazetteer Service offers a set of geographical dictionary services that allows users to search for city and military bases, retrieving accurate latitude and longitude values for those locations.  The user may search based on name or location, with the gazetteer returning all entries that...",
+  "description" : "The GAPS Gazetteer Service offers a set of geographical dictionary services that allows users to search for city and military bases, retrieving accurate latitude and longitude values for those locations.  The user may search based on name or location, with the gazetteer returning all entries that match <a href='https://gapsprod1.stratcom.smil.mil/gazetteers/NgaGnsGazetteerService.asmx' title='https://gapsprod1.stratcom.smil.mil/gazetteers/NgaGnsGazetteerService.asmx' target='_blank'> NgaGnsGazetteerService.asmx</a> (NGA Gazetteer) <a href='https://gapsprod1.stratcom.smil.mil/gazetteers/UsgsGnisGazetteerService.asmx' title='https://gapsprod1.stratcom.smil.mil/gazetteers/UsgsGnisGazetteerService.asmx' target='_blank'> UsgsGnisGazetteerService.asmx</a> (USGS Gazetteer) <a href='<a href='http://jwicsgaps.usstratcom.ic.gov/gazetteers/NgaGnsGazetteerService.asmx' title='http://jwicsgaps.usstratcom.ic.gov/gazetteers/NgaGnsGazetteerService.asmx' target='_blank'> NgaGnsGazetteerService.asmx</a>' title='<a href='http://jwicsgaps.usstratcom.ic.gov/gazetteers/NgaGnsGazetteerService.asmx' title='http://jwicsgaps.usstratcom.ic.gov/gazetteers/NgaGnsGazetteerService.asmx' target='_blank'> NgaGnsGazetteerService.asmx</a>' target='_blank'> NgaGnsGazetteerService.asmx</a> <a href='<a href='http://jwicsgaps.usstratcom.ic.gov/gazetteers/NgaGnsGazetteerService.asmx' title='http://jwicsgaps.usstratcom.ic.gov/gazetteers/NgaGnsGazetteerService.asmx' target='_blank'> NgaGnsGazetteerService.asmx</a>' title='<a href='http://jwicsgaps.usstratcom.ic.gov/gazetteers/NgaGnsGazetteerService.asmx' title='http://jwicsgaps.usstratcom.ic.gov/gazetteers/NgaGnsGazetteerService.asmx' target='_blank'> NgaGnsGazetteerService.asmx</a>' target='_blank'> NgaGnsGazetteerService.asmx</a> (USGS Gazetteer) ...",
   "organization" : "STRATCOM J8",
   "lastActivityDate" : null,
   "updateDts" : 1405691776000,
-  "averageRating" : 1,
-  "views" : 152,
-  "totalNumberOfReviews" : 20,
+  "averageRating" : 2,
+  "views" : 130,
+  "totalNumberOfReviews" : 37,
   "resourceLocation" : "api/v1/resource/components/74/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -971,20 +985,22 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Reference"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 72,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GAPS - Scenario Service",
-  "description" : "The GAPS Scenario Service is a SOAP based interface into the GAPS UDOP creation, execution and publishing mechanism.  The Scenario Service allows an external entity to perform Machine to Machine (M2M) calls in order to create and execute UDOPs.  This interface can be used to integrate with other ...",
+  "description" : "The GAPS Scenario Service is a SOAP based interface into the GAPS UDOP creation, execution and publishing mechanism.  The Scenario Service allows an external entity to perform Machine to Machine (M2M) calls in order to create and execute UDOPs.  This interface can be used to integrate with other systems <a href='https://gapsprod1.stratcom.smil.mil/ScenarioService/ScenarioService.asmx' title='https://gapsprod1.stratcom.smil.mil/ScenarioService/ScenarioService.asmx' target='_blank'> ScenarioService.asmx</a> <a href='https://gapsprod1.stratcom.smil.mil/VsaPortal/RespositoryService.asmx' title='https://gapsprod1.stratcom.smil.mil/VsaPortal/RespositoryService.asmx' target='_blank'> RespositoryService.asmx</a> JWICS: <a href='http://jwicsgaps.usstratcom.ic.gov:8000/ScenarioService/ScenarioService.asmx' title='http://jwicsgaps.usstratcom.ic.gov:8000/ScenarioService/ScenarioService.asmx' target='_blank'> ScenarioService.asmx</a> <a href='http://jwicsgaps.usstratcom.ic.gov:8000/VsaPortal/RepositoryService.asmx' title='http://jwicsgaps.usstratcom.ic.gov:8000/VsaPortal/RepositoryService.asmx' target='_blank'> RepositoryService.asmx</a> ...",
   "organization" : "STRATCOM J8",
   "lastActivityDate" : null,
   "updateDts" : 1405691317000,
-  "averageRating" : 3,
-  "views" : 94,
-  "totalNumberOfReviews" : 16,
+  "averageRating" : 1,
+  "views" : 85,
+  "totalNumberOfReviews" : 89,
   "resourceLocation" : "api/v1/resource/components/72/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1002,20 +1018,22 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Charting"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 35,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GVS",
-  "description" : "The National Geospatial-Intelligence Agency's (NGA) GEOINT Visualization Services is a suite of web-based capabilities that delivers geospatial visualization services to the Department of Defense (DoD) and Intelligence Community (IC) via classified and unclassified computer networks to provide vi...",
+  "description" : "The National Geospatial-Intelligence Agency's (NGA) GEOINT Visualization Services is a suite of web-based capabilities that delivers geospatial visualization services to the Department of Defense (DoD) and Intelligence Community (IC) via classified and unclassified computer networks to provide visualization <a href='https://www.intelink.gov/wiki/GVS' title='https://www.intelink.gov/wiki/GVS' target='_blank'> GVS</a> <a href='https://www.intelink.gov/blogs/geoweb/' title='https://www.intelink.gov/blogs/geoweb/' target='_blank'> <a href='https://community.forge.mil/content/geoint-visualization-services-gvs-program' title='https://community.forge.mil/content/geoint-visualization-services-gvs-program' target='_blank'> geoint-visualization-services-gv...</a> <a href='https://community.forge.mil/content/geoint-visualization-services-gvs-palanterrax3' title='https://community.forge.mil/content/geoint-visualization-services-gvs-palanterrax3' target='_blank'> geoint-visualization-services-gv...</a> ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1405612927000,
   "averageRating" : 1,
-  "views" : 180,
-  "totalNumberOfReviews" : 36,
+  "views" : 87,
+  "totalNumberOfReviews" : 81,
   "resourceLocation" : "api/v1/resource/components/35/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1036,22 +1054,20 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ {
-    "text" : "Mapping"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 58,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GVS - Base Maps - ESRi",
-  "description" : "World Imagery Basemap is a global service that presents imagery from NGA holdings for Cache Scales from 1:147M - 1:282. This imagery includes various sources and resolutions spanning 15m to 75mm.  The imagery sources are Buckeye, US/CAN/MX Border Imagery, Commercial Imagery, USGS High Resolution ...",
+  "description" : "World Imagery Basemap is a global service that presents imagery from NGA holdings for Cache Scales from 1:147M - 1:282. This imagery includes various sources and resolutions spanning 15m to 75mm.  The imagery sources are Buckeye, US/CAN/MX Border Imagery, Commercial Imagery, USGS High Resolution Orthos, ...",
   "organization" : "NGA",
   "lastActivityDate" : null,
   "updateDts" : 1403200715000,
-  "averageRating" : 5,
-  "views" : 96,
-  "totalNumberOfReviews" : 64,
+  "averageRating" : 2,
+  "views" : 120,
+  "totalNumberOfReviews" : 73,
   "resourceLocation" : "api/v1/resource/components/58/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1069,22 +1085,20 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ {
-    "text" : "Mapping"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 59,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GVS - Base Maps - Google Globe - Summary Information",
-  "description" : "GVS Google Earth Globe Services are constructed from DTED, CIB, Natural View, and Commercial Imagery. Vector data includes NGA standards such as VMAP, GeoNames, and GNIS. GVS recently added NavTeq Streets and Homeland Security Infrastructure data to the Google Globe over the United States. The Gl...",
+  "description" : "GVS Google Earth Globe Services are constructed from DTED, CIB, Natural View, and Commercial Imagery. Vector data includes NGA standards such as VMAP, GeoNames, and GNIS. GVS recently added NavTeq Streets and Homeland Security Infrastructure data to the Google Globe over the United States. The Globes <a href='https://earth.gvs.nga.mil/wms/fusion_maps_wms.cgi' title='https://earth.gvs.nga.mil/wms/fusion_maps_wms.cgi' target='_blank'> fusion_maps_wms.cgi</a> *WMS - AF/PK - <a href='https://earth.gvs.nga.mil/wms/afpk_map/fusion_maps_wms.cgi' title='https://earth.gvs.nga.mil/wms/afpk_map/fusion_maps_wms.cgi' target='_blank'> fusion_maps_wms.cgi</a> <a href='https://earth.gvs.nga.mil/wms/nvue_map/fusion_maps_wms.cgi' title='https://earth.gvs.nga.mil/wms/nvue_map/fusion_maps_wms.cgi' target='_blank'> fusion_maps_wms.cgi</a> *WMTS - <a href='https://earth.gvs.nga.mil/cgi-bin/ogc/service.py' title='https://earth.gvs.nga.mil/cgi-bin/ogc/service.py' target='_blank'> service.py</a> ...",
   "organization" : "NGA",
   "lastActivityDate" : null,
   "updateDts" : 1403200717000,
   "averageRating" : 0,
-  "views" : 165,
-  "totalNumberOfReviews" : 74,
+  "views" : 39,
+  "totalNumberOfReviews" : 30,
   "resourceLocation" : "api/v1/resource/components/59/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1105,22 +1119,20 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ {
-    "text" : "Testing"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 60,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GVS - Features - CIDNE SIGACTS",
-  "description" : "The GVS CIDNE SIGACTS Data Layer provides a visualization-ready (KML 2.2 compliant formatted) result set for a query of SIGACTS, as obtained from the Combined Information Data Network Exchange (CIDNE) within a defined AOI (\"bounding box\", \"point/radius\", \"path buffer\").  To access the CIDNE SIGAC...",
+  "description" : "The GVS CIDNE SIGACTS Data Layer provides a visualization-ready (KML 2.2 compliant formatted) result set for a query of SIGACTS, as obtained from the Combined Information Data Network Exchange (CIDNE) within a defined AOI (\"bounding box\", \"point/radius\", \"path buffer\").  To access the CIDNE SIGACTS Dynamic <a href='http://home.gvs.nga.smil.mil/CIDNE/SigactsServlet' title='http://home.gvs.nga.smil.mil/CIDNE/SigactsServlet' target='_blank'> SigactsServlet</a> JWICs: <a href='http://home.gvs.nga.ic.gov/CIDNE/SigactsServlet' title='http://home.gvs.nga.ic.gov/CIDNE/SigactsServlet' target='_blank'> SigactsServlet</a> ...",
   "organization" : "NGA",
   "lastActivityDate" : null,
   "updateDts" : 1403200718000,
-  "averageRating" : 5,
-  "views" : 89,
-  "totalNumberOfReviews" : 81,
+  "averageRating" : 4,
+  "views" : 48,
+  "totalNumberOfReviews" : 35,
   "resourceLocation" : "api/v1/resource/components/60/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1148,13 +1160,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GVS - Features - GE Shared Products",
-  "description" : "GVS Shared Product Query provides you with the ability to display geospatial information layers in a Google Earth client depicting data previously created and stored in the GVS Shared Product Buffer by other users.  Home page: <a href='https://home.gvs.nga.mil/UPS/RSS' title='https://home.gvs.nga...",
+  "description" : "GVS Shared Product Query provides you with the ability to display geospatial information layers in a Google Earth client depicting data previously created and stored in the GVS Shared Product Buffer by other users.  Home page: <a href='https://home.gvs.nga.mil/UPS/RSS' title='https://home.gvs.nga.mil/UPS/RSS' target='_blank'> RSS</a> for the manual query <a href='https://home.gvs.nga.mil/home/capabilities/queries/shared_products' title='https://home.gvs.nga.mil/home/capabilities/queries/shared_products' target='_blank'> shared_products</a> for the query tool Wiki: A general GVS Wiki can be found here <a href='https://intellipedia.intelink.gov/wiki/GVS' title='https://intellipedia.intelink.gov/wiki/GVS' target='_blank'> GVS</a> no specialized shared product wiki pages exist ...",
   "organization" : "NGA",
   "lastActivityDate" : null,
   "updateDts" : 1403200719000,
-  "averageRating" : 5,
-  "views" : 83,
-  "totalNumberOfReviews" : 87,
+  "averageRating" : 1,
+  "views" : 0,
+  "totalNumberOfReviews" : 3,
   "resourceLocation" : "api/v1/resource/components/61/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1182,13 +1194,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GVS - Features - Intelink",
-  "description" : "GVS - Features - Intelink: Provides the capability to perform a temporal keyword search for news items, Intellipedia data, and intelligence reporting and finished products found on Intelink. A list of geo-referenced locations in response to a query based on a filter.  GVS INTELINK GEO SEARCH WFS ...",
+  "description" : "GVS - Features - Intelink: Provides the capability to perform a temporal keyword search for news items, Intellipedia data, and intelligence reporting and finished products found on Intelink. A list of geo-referenced locations in response to a query based on a filter.  GVS INTELINK GEO SEARCH WFS INTERFACE <a href='http://home.gvs.nga.ic.gov/metacarta/wfs' title='http://home.gvs.nga.ic.gov/metacarta/wfs' target='_blank'> wfs</a> SIPRNet: <a href='http://home.gvs.nga.smil.mil/metacarta/wfs' title='http://home.gvs.nga.smil.mil/metacarta/wfs' target='_blank'> wfs</a> ...",
   "organization" : "NGA",
   "lastActivityDate" : null,
   "updateDts" : 1403200721000,
   "averageRating" : 5,
-  "views" : 193,
-  "totalNumberOfReviews" : 75,
+  "views" : 132,
+  "totalNumberOfReviews" : 80,
   "resourceLocation" : "api/v1/resource/components/62/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1209,24 +1221,20 @@
     "type" : "LIFECYCSTG",
     "code" : "OPR"
   } ],
-  "tags" : [ {
-    "text" : "UDOP"
-  }, {
-    "text" : "Visualization"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 63,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GVS - Features - MIDB",
-  "description" : "GVS - Features - MIDB allows the user to query MIDB (Equipment) data within a defined AOI.  User takes HTTP-Get parameters (Listed below the summary table and in the documentation) and builds a query.  In the exposed Service Interfaces document MIDB services are covered in section 6.1 which is ap...",
+  "description" : "GVS - Features - MIDB allows the user to query MIDB (Equipment) data within a defined AOI.  User takes HTTP-Get parameters (Listed below the summary table and in the documentation) and builds a query.  In the exposed Service Interfaces document MIDB services are covered in section 6.1 which is approximately <a href='http://home.gvs.nga.ic.gov/MIDB/wfs' title='http://home.gvs.nga.ic.gov/MIDB/wfs' target='_blank'> wfs</a> <a href='http://home.gvs.nga.smil.mil/MIDB/wfs' title='http://home.gvs.nga.smil.mil/MIDB/wfs' target='_blank'> wfs</a> <a href='<a href='https://home.gvs.nga.smil.mil/home/documentation' title='https://home.gvs.nga.smil.mil/home/documentation' target='_blank'> documentation</a>' title='<a href='https://home.gvs.nga.smil.mil/home/documentation' title='https://home.gvs.nga.smil.mil/home/documentation' target='_blank'> documentation</a>' target='_blank'> documentation</a> <a href='<a href='https://home.gvs.nga.smil.mil/home/documentation' title='https://home.gvs.nga.smil.mil/home/documentation' target='_blank'> documentation</a>' title='<a href='https://home.gvs.nga.smil.mil/home/documentation' title='https://home.gvs.nga.smil.mil/home/documentation' target='_blank'> documentation</a>' target='_blank'> documentation</a> <a href='https://home.gvs.nga.ic.gov/home/documentation' title='https://home.gvs.nga.ic.gov/home/documentation' target='_blank'> documentation</a> <a href='https://home.gvs.nga.mil/GVSData/UE_Docs/GVS_Exposed_Service_Interfaces.pdf' title='https://home.gvs.nga.mil/GVSData/UE_Docs/GVS_Exposed_Service_Interfaces.pdf' target='_blank'> GVS_Exposed_Service_Interfaces.pdf</a> <a href='https://home.gvs.nga.smil.mil/GVSData/UE_Docs/GVS_Exposed_Service_Interfaces.pdf' title='https://home.gvs.nga.smil.mil/GVSData/UE_Docs/GVS_Exposed_Service_Interfaces.pdf' target='_blank'> GVS_Exposed_Service_Interfaces.pdf</a> <a href='https://home.gvs.ic.gov/GVSData/UE_Docs/GVS_Exposed_Service_Interfaces.pdf' title='https://home.gvs.ic.gov/GVSData/UE_Docs/GVS_Exposed_Service_Interfaces.pdf' target='_blank'> GVS_Exposed_Service_Interfaces.pdf</a> <a href='https://home.gvs.nga.mil/GVSData/UE_Docs/GVS_Consolidated_QRG_Book_Reduced_Size.pdf' title='https://home.gvs.nga.mil/GVSData/UE_Docs/GVS_Consolidated_QRG_Book_Reduced_Size.pdf' target='_blank'> GVS_Consolidated_QRG_Book_Reduce...</a> <a href='https://home.gvs.nga.smil.mil/GVSData/UE_Docs/GVS_Consolidated_QRG_Book_Reduced_Size.pdf' title='https://home.gvs.nga.smil.mil/GVSData/UE_Docs/GVS_Consolidated_QRG_Book_Reduced_Size.pdf' target='_blank'> GVS_Consolidated_QRG_Book_Reduce...</a> <a href='https://home.gvs.nga.ic.gov/GVSData/UE_Docs/GVS_Consolidated_QRG_Book_Reduced_Size.pdf' title='https://home.gvs.nga.ic.gov/GVSData/UE_Docs/GVS_Consolidated_QRG_Book_Reduced_Size.pdf' target='_blank'> GVS_Consolidated_QRG_Book_Reduce...</a> ...",
   "organization" : "NGA",
   "lastActivityDate" : null,
   "updateDts" : 1403200722000,
-  "averageRating" : 5,
-  "views" : 129,
-  "totalNumberOfReviews" : 75,
+  "averageRating" : 2,
+  "views" : 95,
+  "totalNumberOfReviews" : 41,
   "resourceLocation" : "api/v1/resource/components/63/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1248,9 +1256,9 @@
     "code" : "OPR"
   } ],
   "tags" : [ {
-    "text" : "Testing"
+    "text" : "Access"
   }, {
-    "text" : "Charting"
+    "text" : "Data Exchange"
   } ]
 }, {
   "listingType" : "Component",
@@ -1258,13 +1266,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "GVS - Features - NES",
-  "description" : "GVS - Features - NES provides a visualization-ready (KML 2.2 compliant formatted) result set for a query of the targets obtained from the NGA National Exploitation System (NES), within a defined AOI (\"bounding box\", \"point/radius\", \"path buffer\").. Note, NES is only available on JWICS.  Interface...",
+  "description" : "GVS - Features - NES provides a visualization-ready (KML 2.2 compliant formatted) result set for a query of the targets obtained from the NGA National Exploitation System (NES), within a defined AOI (\"bounding box\", \"point/radius\", \"path buffer\").. Note, NES is only available on JWICS.  Interface Details: <a href='http://home.gvs.nga.ic.gov/NESQuery/CoverageQuery' title='http://home.gvs.nga.ic.gov/NESQuery/CoverageQuery' target='_blank'> CoverageQuery</a> ...",
   "organization" : "NGA",
   "lastActivityDate" : null,
   "updateDts" : 1403200723000,
-  "averageRating" : 3,
-  "views" : 148,
-  "totalNumberOfReviews" : 85,
+  "averageRating" : 4,
+  "views" : 176,
+  "totalNumberOfReviews" : 10,
   "resourceLocation" : "api/v1/resource/components/64/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1286,9 +1294,9 @@
     "code" : "OPR"
   } ],
   "tags" : [ {
-    "text" : "Reference"
+    "text" : "Access"
   }, {
-    "text" : "UDOP"
+    "text" : "Charting"
   } ]
 }, {
   "listingType" : "Component",
@@ -1296,13 +1304,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "HardwareWall",
-  "description" : "The Boeing eXMeritus HardwareWall* is a highly configurable, commercial-off-the-shelf cross domain solution that enables rapid, automated, and secure data transfer between security domains:  eXMeritus has designed HardwareWall* as a secure data transfer system and an off-the-shelf Controlled Inte...",
+  "description" : "The Boeing eXMeritus HardwareWall* is a highly configurable, commercial-off-the-shelf cross domain solution that enables rapid, automated, and secure data transfer between security domains:  eXMeritus has designed HardwareWall* as a secure data transfer system and an off-the-shelf Controlled Interface <a href='http://www.exmeritus.com/hardware_wall.html' title='http://www.exmeritus.com/hardware_wall.html' target='_blank'> hardware_wall.html</a> <a href='http://www.boeing.com/advertising/c4isr/isr/exmeritus_harware_wall.html' title='http://www.boeing.com/advertising/c4isr/isr/exmeritus_harware_wall.html' target='_blank'> exmeritus_harware_wall.html</a> ...",
   "organization" : "Boeing",
   "lastActivityDate" : null,
   "updateDts" : 1403200725000,
-  "averageRating" : 2,
-  "views" : 94,
-  "totalNumberOfReviews" : 19,
+  "averageRating" : 0,
+  "views" : 183,
+  "totalNumberOfReviews" : 72,
   "resourceLocation" : "api/v1/resource/components/65/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1323,24 +1331,20 @@
     "type" : "LICCLASS",
     "code" : "COTS"
   } ],
-  "tags" : [ {
-    "text" : "Access"
-  }, {
-    "text" : "Testing"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 36,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "IC AppsMall Cookbook: Applications Development",
-  "description" : "The Applications Development Cookbook is designed as an overview of principles and best practices for Web Application Development, with a focus on new web and related technologies & concepts that take full advantage of modern browser capabilities. The ideas introduced in this document are not int...",
+  "description" : "The Applications Development Cookbook is designed as an overview of principles and best practices for Web Application Development, with a focus on new web and related technologies & concepts that take full advantage of modern browser capabilities. The ideas introduced in this document are not intended ...",
   "organization" : "IC SOG",
   "lastActivityDate" : null,
   "updateDts" : 1399485077000,
-  "averageRating" : 2,
-  "views" : 35,
-  "totalNumberOfReviews" : 79,
+  "averageRating" : 5,
+  "views" : 64,
+  "totalNumberOfReviews" : 66,
   "resourceLocation" : "api/v1/resource/components/36/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1358,24 +1362,20 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ {
-    "text" : "Visualization"
-  }, {
-    "text" : "Mapping"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 37,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "ISF Enterprise Data Viewer Widget",
-  "description" : "A widget designed to display search results in a tabular format.  It can page, sort, filter, and group results and organize items into working folders called \"Workspaces\" as well as perform full-record retrieval for supported result types.  It depends on the Persistence Service to store and retri...",
+  "description" : "A widget designed to display search results in a tabular format.  It can page, sort, filter, and group results and organize items into working folders called \"Workspaces\" as well as perform full-record retrieval for supported result types.  It depends on the Persistence Service to store and retrieve ...",
   "organization" : "NRO/GED",
   "lastActivityDate" : null,
   "updateDts" : 1399485078000,
-  "averageRating" : 1,
-  "views" : 172,
-  "totalNumberOfReviews" : 21,
+  "averageRating" : 3,
+  "views" : 57,
+  "totalNumberOfReviews" : 20,
   "resourceLocation" : "api/v1/resource/components/37/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1402,22 +1402,20 @@
     "type" : "LICCLASS",
     "code" : "GOTS"
   } ],
-  "tags" : [ {
-    "text" : "Mapping"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 38,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "ISF Persistence Service",
-  "description" : "A RESTful service that persists JSON documents.  It is designed to have a swappable backend and currently supports MongoDB and in-memory implementations.",
+  "description" : "A RESTful service that persists JSON documents.  It is designed to have a swappable backend and currently supports MongoDB and in-memory implementations. ...",
   "organization" : "NRO/GED",
   "lastActivityDate" : null,
   "updateDts" : 1399485079000,
-  "averageRating" : 4,
-  "views" : 187,
-  "totalNumberOfReviews" : 50,
+  "averageRating" : 5,
+  "views" : 188,
+  "totalNumberOfReviews" : 80,
   "resourceLocation" : "api/v1/resource/components/38/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1441,22 +1439,20 @@
     "type" : "LICCLASS",
     "code" : "GOTS"
   } ],
-  "tags" : [ {
-    "text" : "Visualization"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 39,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "ISF Search Criteria Widget",
-  "description" : "A widget dedicated to providing search criteria to a compatible CDR backend.  It depends on the Persistence Service as a place to put retrieved metadata results.  It also optionally depends on the Map widget to interactively define geospatial queries (a text-based option is also available) and to...",
+  "description" : "A widget dedicated to providing search criteria to a compatible CDR backend.  It depends on the Persistence Service as a place to put retrieved metadata results.  It also optionally depends on the Map widget to interactively define geospatial queries (a text-based option is also available) and to render ...",
   "organization" : "NRO/GED",
   "lastActivityDate" : null,
   "updateDts" : 1399485080000,
-  "averageRating" : 2,
-  "views" : 19,
-  "totalNumberOfReviews" : 36,
+  "averageRating" : 3,
+  "views" : 144,
+  "totalNumberOfReviews" : 15,
   "resourceLocation" : "api/v1/resource/components/39/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1483,22 +1479,20 @@
     "type" : "LICCLASS",
     "code" : "GOTS"
   } ],
-  "tags" : [ {
-    "text" : "UDOP"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 40,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "iSpatial",
-  "description" : "iSpatial is a commercially available geospatial framework designed as a set of ready-to-customize, baseline tools that can be rapidly adapted to meet use cases calling for geo-visualization.  iSpatial consists of four major areas of core functionality:  Authorizing, Searching, Managing and Collab...",
+  "description" : "iSpatial is a commercially available geospatial framework designed as a set of ready-to-customize, baseline tools that can be rapidly adapted to meet use cases calling for geo-visualization.  iSpatial consists of four major areas of core functionality:  Authorizing, Searching, Managing and Collaborating. <a href='http://www.t-sciences.com/wp-content/uploads/2013/04/iSpatial_v3_Technical_White_Paper.pdf' title='http://www.t-sciences.com/wp-content/uploads/2013/04/iSpatial_v3_Technical_White_Paper.pdf' target='_blank'> iSpatial_v3_Technical_White_Pape...</a> iSpatial <a href='http://www.t-sciences.com/wp-content/uploads/2014/01/iSpatial_Fed.pptx' title='http://www.t-sciences.com/wp-content/uploads/2014/01/iSpatial_Fed.pptx' target='_blank'> iSpatial_Fed.pptx</a> ...",
   "organization" : "Thermopylae Sciences and Technology",
   "lastActivityDate" : null,
   "updateDts" : 1403200726000,
-  "averageRating" : 4,
-  "views" : 93,
-  "totalNumberOfReviews" : 84,
+  "averageRating" : 2,
+  "views" : 45,
+  "totalNumberOfReviews" : 99,
   "resourceLocation" : "api/v1/resource/components/40/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1522,22 +1516,20 @@
     "type" : "LICCLASS",
     "code" : "COTS"
   } ],
-  "tags" : [ {
-    "text" : "UDOP"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 41,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "JC2CUI Common 2D Map API Widget",
-  "description" : "This is a map widget developed by JC2CUI that conforms to the Common Map API - see below for more information on the API.  Using this API allows developers to focus on the problem domain rather than implementing a map widget themselves. It also allows the actual map implementation used to be chos...",
+  "description" : "This is a map widget developed by JC2CUI that conforms to the Common Map API - see below for more information on the API.  Using this API allows developers to focus on the problem domain rather than implementing a map widget themselves. It also allows the actual map implementation used to be chosen dynamically ...",
   "organization" : "JC2CUI",
   "lastActivityDate" : null,
   "updateDts" : 1399485082000,
-  "averageRating" : 0,
-  "views" : 189,
-  "totalNumberOfReviews" : 16,
+  "averageRating" : 1,
+  "views" : 96,
+  "totalNumberOfReviews" : 40,
   "resourceLocation" : "api/v1/resource/components/41/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1561,22 +1553,20 @@
     "type" : "OWFCOMP",
     "code" : "Y"
   } ],
-  "tags" : [ {
-    "text" : "Reference"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 42,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "JView",
-  "description" : "JView is a Java-based API (application programmer's interface) that was developed to reduce the time, cost, & effort associated with the creation of computer visualization applications.    JView provides the programmer with the ability to quickly develop 2-dimensional and 3-dimensional visualizat...",
+  "description" : "JView is a Java-based API (application programmer's interface) that was developed to reduce the time, cost, & effort associated with the creation of computer visualization applications.    JView provides the programmer with the ability to quickly develop 2-dimensional and 3-dimensional visualization <a href='https://extranet.rl.af.mil/jview/.' title='https://extranet.rl.af.mil/jview/.' target='_blank'> .</a> Formal configuration management and distribution of JView is performed through the Information Management Services program. ...",
   "organization" : "AFRL",
   "lastActivityDate" : null,
   "updateDts" : 1405370213000,
-  "averageRating" : 4,
-  "views" : 192,
-  "totalNumberOfReviews" : 55,
+  "averageRating" : 1,
+  "views" : 174,
+  "totalNumberOfReviews" : 4,
   "resourceLocation" : "api/v1/resource/components/42/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1607,13 +1597,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Military Symbology Renderer",
-  "description" : "The Mil Symbology Renderer is both a developer's toolkit as well as a ready to use deployable web application. The goal of this project is to provide a single distributable solution that can support as many use cases as possible for military symbology rendering. The current features available are...",
+  "description" : "The Mil Symbology Renderer is both a developer's toolkit as well as a ready to use deployable web application. The goal of this project is to provide a single distributable solution that can support as many use cases as possible for military symbology rendering. The current features available are: * ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1399485084000,
   "averageRating" : 2,
-  "views" : 107,
-  "totalNumberOfReviews" : 88,
+  "views" : 178,
+  "totalNumberOfReviews" : 60,
   "resourceLocation" : "api/v1/resource/components/43/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1644,15 +1634,18 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "OpenAM",
-  "description" : "OpenAM is an all-in-one access management platform with the adaptive intelligence to protect against risk-based threats across any environment.",
+  "description" : "OpenAM is an all-in-one access management platform with the adaptive intelligence to protect against risk-based threats across any environment. ...",
   "organization" : "DI2E-F",
   "lastActivityDate" : null,
   "updateDts" : 1403200729000,
-  "averageRating" : 2,
-  "views" : 190,
-  "totalNumberOfReviews" : 43,
+  "averageRating" : 5,
+  "views" : 29,
+  "totalNumberOfReviews" : 2,
   "resourceLocation" : "api/v1/resource/components/44/detail",
   "attributes" : [ {
+    "type" : "DI2E-SVCV4-A",
+    "code" : "1.2.1"
+  }, {
     "type" : "TYPE",
     "code" : "APP"
   }, {
@@ -1669,13 +1662,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "OpenSextant",
-  "description" : "(U) OpenSextant is an open source software package for geotagging unstructured text. OpenSextant is implemented in Java and based on the open source text analytic software GATE ( <a href='http://gate.ac.uk/' title='http://gate.ac.uk/' target='_blank'> http://gate.ac.uk/</a> ). (U) OpenSextant can...",
+  "description" : "(U) OpenSextant is an open source software package for geotagging unstructured text. OpenSextant is implemented in Java and based on the open source text analytic software GATE ( <a href='http://gate.ac.uk/' title='http://gate.ac.uk/' target='_blank'> </a> ). (U) OpenSextant can geotag documents in any ...",
   "organization" : "NGA",
   "lastActivityDate" : null,
   "updateDts" : 1399485085000,
   "averageRating" : 3,
-  "views" : 187,
-  "totalNumberOfReviews" : 28,
+  "views" : 172,
+  "totalNumberOfReviews" : 29,
   "resourceLocation" : "api/v1/resource/components/45/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1706,13 +1699,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "OpenStack",
-  "description" : "OpenStack is open source software for building public and private clouds ( <a href='http://www.openstack.org' title='http://www.openstack.org' target='_blank'> http://www.openstack.org</a> ). The release here has been developed by USC/ISI and has two distinctions from the mainstream open source r...",
+  "description" : "OpenStack is open source software for building public and private clouds ( <a href='http://www.openstack.org' title='http://www.openstack.org' target='_blank'> www.openstack.org</a> ). The release here has been developed by USC/ISI and has two distinctions from the mainstream open source release.  First, ...",
   "organization" : "USC/ISI",
   "lastActivityDate" : null,
   "updateDts" : 1399485086000,
   "averageRating" : 4,
-  "views" : 2,
-  "totalNumberOfReviews" : 80,
+  "views" : 64,
+  "totalNumberOfReviews" : 17,
   "resourceLocation" : "api/v1/resource/components/46/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1733,24 +1726,20 @@
     "type" : "LIFECYCSTG",
     "code" : "PILOT"
   } ],
-  "tags" : [ {
-    "text" : "UDOP"
-  }, {
-    "text" : "Communication"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 47,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "OpenStack Lessons Learned Document",
-  "description" : "Lessons learned in the Openstack Folsom deployment by USC/ISI in the DI2E Framework environment.  This document is meant to be very specific to one deployment experience with the intention that it will be useful to others deploying in a similar environment.  Note this document is stored on the DI...",
+  "description" : "Lessons learned in the Openstack Folsom deployment by USC/ISI in the DI2E Framework environment.  This document is meant to be very specific to one deployment experience with the intention that it will be useful to others deploying in a similar environment.  Note this document is stored on the DI2E Framework <a href='https://devtools.di2e.net/' title='https://devtools.di2e.net/' target='_blank'> ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1399485087000,
-  "averageRating" : 4,
-  "views" : 32,
-  "totalNumberOfReviews" : 9,
+  "averageRating" : 0,
+  "views" : 178,
+  "totalNumberOfReviews" : 65,
   "resourceLocation" : "api/v1/resource/components/47/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1768,24 +1757,20 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ {
-    "text" : "UDOP"
-  }, {
-    "text" : "Charting"
-  } ]
+  "tags" : [ ]
 }, {
   "listingType" : "Component",
   "componentId" : 48,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "OWASP Enterprise Security API",
-  "description" : "ESAPI (The OWASP Enterprise Security API) is a free, open source, web application security control library that makes it easier for programmers to write lower-risk applications. The ESAPI libraries are designed to make it easier for programmers to retrofit security into existing applications. The...",
+  "description" : "ESAPI (The OWASP Enterprise Security API) is a free, open source, web application security control library that makes it easier for programmers to write lower-risk applications. The ESAPI libraries are designed to make it easier for programmers to retrofit security into existing applications. The ESAPI <a href='https://www.owasp.org.' title='https://www.owasp.org.' target='_blank'> www.owasp.org.</a> ...",
   "organization" : "OWASP",
   "lastActivityDate" : null,
   "updateDts" : 1399485088000,
-  "averageRating" : 4,
-  "views" : 75,
-  "totalNumberOfReviews" : 72,
+  "averageRating" : 5,
+  "views" : 158,
+  "totalNumberOfReviews" : 92,
   "resourceLocation" : "api/v1/resource/components/48/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1804,9 +1789,9 @@
     "code" : "N"
   } ],
   "tags" : [ {
-    "text" : "Visualization"
+    "text" : "Access"
   }, {
-    "text" : "Data Exchange"
+    "text" : "Testing"
   } ]
 }, {
   "listingType" : "Component",
@@ -1814,13 +1799,13 @@
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "OWASP Web Application Security Guide",
-  "description" : "The Development Guide is aimed at architects, developers, consultants and auditors and is a comprehensive manual for designing, developing and deploying secure Web Applications and Web Services. The original OWASP Development Guide has become a staple diet for many web security professionals. Sin...",
+  "description" : "The Development Guide is aimed at architects, developers, consultants and auditors and is a comprehensive manual for designing, developing and deploying secure Web Applications and Web Services. The original OWASP Development Guide has become a staple diet for many web security professionals. Since 2002, <a href='https://www.owasp.org.' title='https://www.owasp.org.' target='_blank'> www.owasp.org.</a> ...",
   "organization" : "OWASP",
   "lastActivityDate" : null,
   "updateDts" : 1399485088000,
-  "averageRating" : 4,
-  "views" : 66,
-  "totalNumberOfReviews" : 6,
+  "averageRating" : 1,
+  "views" : 46,
+  "totalNumberOfReviews" : 89,
   "resourceLocation" : "api/v1/resource/components/49/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1832,20 +1817,24 @@
     "type" : "DI2E-SVCV4-A",
     "code" : null
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Charting"
+  }, {
+    "text" : "Visualization"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 50,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Ozone Marketplace",
-  "description" : "The Ozone marketplace is a storefront to store widgets, services, and web applications. It can be linked to the Ozone Widget Framework.",
+  "description" : "The Ozone marketplace is a storefront to store widgets, services, and web applications. It can be linked to the Ozone Widget Framework. ...",
   "organization" : "OWF Goss",
   "lastActivityDate" : null,
   "updateDts" : 1399485089000,
-  "averageRating" : 4,
-  "views" : 103,
-  "totalNumberOfReviews" : 3,
+  "averageRating" : 1,
+  "views" : 53,
+  "totalNumberOfReviews" : 60,
   "resourceLocation" : "api/v1/resource/components/50/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1863,20 +1852,24 @@
     "type" : "ITAR",
     "code" : "N"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "UDOP"
+  }, {
+    "text" : "Communication"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 51,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Ozone Widget Framework",
-  "description" : "OWF is a web application that allows users to easily access all their online tools from one location. Not only can users access websites and applications with widgets, they can group them and configure some applications to interact with each other via widget intents.      Some Links: http://www.o...",
+  "description" : "OWF is a web application that allows users to easily access all their online tools from one location. Not only can users access websites and applications with widgets, they can group them and configure some applications to interact with each other via widget intents.      Some Links: http://www.ozoneplatform.org/ ...",
   "organization" : "OWF GOSS",
   "lastActivityDate" : null,
   "updateDts" : 1402947991000,
   "averageRating" : 1,
-  "views" : 142,
-  "totalNumberOfReviews" : 72,
+  "views" : 173,
+  "totalNumberOfReviews" : 37,
   "resourceLocation" : "api/v1/resource/components/51/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1900,20 +1893,22 @@
     "type" : "LICTYPE",
     "code" : "GOVUNL"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Communication"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 53,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "VANTAGE Software Suite",
-  "description" : "VANTAGE is a tactical imagery exploitation software suite. This field proven application screens digital imagery from various tactical reconnaissance sensors and includes simultaneous support for multiple sensor types. VANTAGE provides for real and near real time screening of digital image data f...",
+  "description" : "VANTAGE is a tactical imagery exploitation software suite. This field proven application screens digital imagery from various tactical reconnaissance sensors and includes simultaneous support for multiple sensor types. VANTAGE provides for real and near real time screening of digital image data from ...",
   "organization" : "NRL",
   "lastActivityDate" : null,
   "updateDts" : 1405452097000,
-  "averageRating" : 1,
-  "views" : 47,
-  "totalNumberOfReviews" : 6,
+  "averageRating" : 2,
+  "views" : 77,
+  "totalNumberOfReviews" : 95,
   "resourceLocation" : "api/v1/resource/components/53/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1934,20 +1929,22 @@
     "type" : "LIFECYCSTG",
     "code" : "DEV"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Mapping"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 54,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "VANTAGE WESS OZONE Widget",
-  "description" : "The Vantage Web Enabled Sensor Service (WESS) is an optional service that provides access to Vantage databases from other applications. WESS The Web Enabled Sensor Service (WESS) is a server that runs on the Vantage server and exposes the Vantage database of imagery and metadata to the outside vi...",
+  "description" : "The Vantage Web Enabled Sensor Service (WESS) is an optional service that provides access to Vantage databases from other applications. WESS The Web Enabled Sensor Service (WESS) is a server that runs on the Vantage server and exposes the Vantage database of imagery and metadata to the outside via SOAP. <a href='http://www.spacedynamics.org/products/vantage' title='http://www.spacedynamics.org/products/vantage' target='_blank'> vantage</a> ...",
   "organization" : "NRL",
   "lastActivityDate" : null,
   "updateDts" : 1405452122000,
-  "averageRating" : 0,
-  "views" : 6,
-  "totalNumberOfReviews" : 22,
+  "averageRating" : 4,
+  "views" : 152,
+  "totalNumberOfReviews" : 78,
   "resourceLocation" : "api/v1/resource/components/54/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -1974,20 +1971,22 @@
     "type" : "OWFCOMP",
     "code" : "Y"
   } ],
-  "tags" : [ ]
+  "tags" : [ {
+    "text" : "Mapping"
+  } ]
 }, {
   "listingType" : "Component",
   "componentId" : 55,
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Vega 3D Map Widget",
-  "description" : "Vega is a 3D map widget with support for high-resolution imagery in various formats including WMS, WFS, and ArcGIS.  Vega also supports 3-dimensional terrain, and time-based data and has tools for drawing shapes and points and importing/exporting data.",
+  "description" : "Vega is a 3D map widget with support for high-resolution imagery in various formats including WMS, WFS, and ArcGIS.  Vega also supports 3-dimensional terrain, and time-based data and has tools for drawing shapes and points and importing/exporting data. ...",
   "organization" : "unknown",
   "lastActivityDate" : null,
   "updateDts" : 1403200733000,
   "averageRating" : 4,
-  "views" : 85,
-  "totalNumberOfReviews" : 14,
+  "views" : 198,
+  "totalNumberOfReviews" : 75,
   "resourceLocation" : "api/v1/resource/components/55/detail",
   "attributes" : [ {
     "type" : "TYPE",
@@ -2020,8 +2019,8 @@
   "name" : "IdAM",
   "description" : "Identity and Access Management Article.....",
   "organization" : "PMO",
-  "lastActivityDate" : 1406920320275,
-  "updateDts" : 1406920320275,
+  "lastActivityDate" : 1407175956075,
+  "updateDts" : 1407175956075,
   "averageRating" : 0,
   "views" : 0,
   "totalNumberOfReviews" : 0,
