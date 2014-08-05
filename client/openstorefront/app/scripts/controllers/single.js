@@ -64,8 +64,6 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       {
         $scope.details.details = result;
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
-        console.log('found', found);
-        
 
         // Code here will be linted with JSHint.
         /* jshint ignore:start */
