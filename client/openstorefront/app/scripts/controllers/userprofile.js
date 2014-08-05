@@ -40,6 +40,12 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
   $scope.watches          = Business.getWatches();
+  console.log('$scope.watches', $scope.watches);
+
+  $scope.watches = _.sortBy($scope.watches, function(item) {
+    return item.componentName;
+  });
+  
   $scope.nav              = {
     'current': null,
     'bars': [
@@ -102,7 +108,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     var url = $location.absUrl().replace($location.url(), '');
     console.log('url', url);
     url = url + '/single?id=' + id;
-    window.open(url, 'Component ' + id, 'window settings');
+    window.open(url, 'Component ' + id, 'scrollbars');
     // $location.search({
     //   'id': id
     // });
@@ -151,6 +157,10 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     // we re-initialize anything else here
   });
 
+
+  $scope.toggleCollapse = function(id){
+    $('#' + id).collapse('toggle');
+  }
 
 
   //////////////////////////////////////////////////////////////////////////////
