@@ -51,11 +51,11 @@
     </div>
     <div class="col-sm-6">
       <p style="font-size: 12px;">
-        <strong>{{review.username}}</strong><br />
-        <strong>Role: </strong> {{review.userType}} <br />
-        <strong>Time used: </strong> {{review.usedTimeCode}} <br />
-        <strong>Last used: </strong> {{getDate(review.lastUsed)}} <br />
-        <strong>Organization: </strong> {{review.organization}} <br />
+        <strong ng-if="review.username">{{review.username}}</strong><br />
+        <strong ng-if="review.userType">Role: </strong> {{review.userType}} <br />
+        <strong ng-if="review.usedTimeCode">Time used: </strong> {{review.usedTimeCode}} <br />
+        <strong ng-if="review.lastUsed">Last used: </strong> {{getDate(review.lastUsed)}} <br />
+        <strong ng-if="review.organization">Organization: </strong> {{review.organization}} <br />
       </p>
     </div>
     <div ng-if="review.pros[0] !== undefined || review.cons[0] !== undefined" class="col-sm-6">
