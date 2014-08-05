@@ -40,7 +40,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
   $scope.watches          = Business.getWatches();
-  console.log('$scope.watches', $scope.watches);
 
   $scope.watches = _.sortBy($scope.watches, function(item) {
     return item.componentName;

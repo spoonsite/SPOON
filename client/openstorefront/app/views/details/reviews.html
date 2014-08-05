@@ -55,6 +55,7 @@
         <strong>Role: </strong> {{review.userType}} <br />
         <strong>Time used: </strong> {{review.usedTimeCode}} <br />
         <strong>Last used: </strong> {{getDate(review.lastUsed)}} <br />
+        <strong>Organization: </strong> {{review.organization}} <br />
       </p>
     </div>
     <div ng-if="review.pros[0] !== undefined || review.cons[0] !== undefined" class="col-sm-6">
