@@ -57,6 +57,7 @@ public class OldAsset
 	private Date approvalDate;
 	private List<OldAssetMetaData> customFields = new ArrayList<>();
 	private List<OldAssetCategory> categories = new ArrayList<>();	
+	private String installUrl;
 	
 	
 	public OldAsset()
@@ -331,6 +332,16 @@ public class OldAsset
 	public void setScreenshots(List<OldAssetScreenshot> screenshots)
 	{
 		this.screenshots = screenshots;
+	}
+
+	public String getInstallUrl()
+	{
+		return installUrl;
+	}
+
+	public void setInstallUrl(String installUrl)
+	{
+		this.installUrl = installUrl;
 	}
 	
 }

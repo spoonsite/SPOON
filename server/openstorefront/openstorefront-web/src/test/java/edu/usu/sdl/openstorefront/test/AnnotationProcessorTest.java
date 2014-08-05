@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.test;
 
 import edu.usu.sdl.openstorefront.doc.APIResourceModel;
 import edu.usu.sdl.openstorefront.doc.JaxrsProcessor;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.resource.LookupResouce;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -63,7 +63,7 @@ public class AnnotationProcessorTest
 	 public void hello() {
 		
 		 APIResourceModel resourceModel = JaxrsProcessor.processRestClass(LookupResouce.class);
-		 System.out.println(ServiceUtil.printObject(resourceModel));
+		 System.out.println(StringProcessor.printObject(resourceModel));
 		 
 	 }
 }

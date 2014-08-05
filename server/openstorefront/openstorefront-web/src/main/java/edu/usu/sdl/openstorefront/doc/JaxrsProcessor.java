@@ -19,7 +19,7 @@ package edu.usu.sdl.openstorefront.doc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.RestConfiguration;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -245,7 +245,7 @@ public class JaxrsProcessor
 					valueModel.setValueObject(objectMapper.writeValueAsString(parameter.getType().newInstance()));
 					valueModel.setValueObjectName(parameter.getType().getSimpleName());	
 					Set<String> fieldList = mapValueField(valueModel.getValueFields(), parameter.getType().getDeclaredFields(), true);	
-					String cleanUpJson = ServiceUtil.stripeFieldJSON(valueModel.getValueObject(), fieldList);
+					String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getValueObject(), fieldList);
 					valueModel.setValueObject(cleanUpJson);
 					mapComplexTypes(valueModel.getAllComplexTypes(), parameter.getType().getDeclaredFields(), true);
 					
@@ -255,7 +255,7 @@ public class JaxrsProcessor
 						valueModel.setTypeObjectName(dataType.value().getSimpleName());
 						valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
 						fieldList = mapValueField(valueModel.getTypeFields(), dataType.value().getDeclaredFields(), true);							
-						cleanUpJson = ServiceUtil.stripeFieldJSON(valueModel.getValueObject(), fieldList);
+						cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getValueObject(), fieldList);
 						valueModel.setValueObject(cleanUpJson);						
 						mapComplexTypes(valueModel.getAllComplexTypes(), dataType.value().getDeclaredFields(), true);
 					}					

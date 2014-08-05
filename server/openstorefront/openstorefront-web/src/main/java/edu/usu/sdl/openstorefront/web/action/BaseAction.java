@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.web.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.service.api.OpenStorefrontService;
 import edu.usu.sdl.openstorefront.util.ServiceProxy;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.viewmodel.JsonFormLoad;
 import edu.usu.sdl.openstorefront.web.viewmodel.JsonResponse;
 import java.lang.reflect.InvocationTargetException;
@@ -47,7 +47,7 @@ public abstract class BaseAction
 {
 	private static final Logger log = Logger.getLogger(BaseAction.class.getName());
 	
-	protected ObjectMapper objectMapper =  ServiceUtil.defaultObjectMapper();
+	protected ObjectMapper objectMapper =  StringProcessor.defaultObjectMapper();
 	
 	protected ActionBeanContext context;
 	protected String projectId;
