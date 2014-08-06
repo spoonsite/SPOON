@@ -65,30 +65,31 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   //Shared Services  
   business.getFilters = function() {
-    return MOCKDATA.filters;
+    var deferred = $q.defer();
+    deferred.resolve(MOCKDATA.filters);
+    return deferred.promise;
   };
 
   business.updateCache = function(name, item) {
+    var deferred = $q.defer();
     save(name, item);
+    deferred.resolve(true);
+    return deferred.promise;
   };
 
   business.getTagsList = function() {
-    return MOCKDATA.tagsList;
+    var deferred = $q.defer();
+    deferred.resolve(MOCKDATA.tagsList);
+    return deferred.promise;
   };
 
   business.getProsConsList = function() {
-    return MOCKDATA.prosConsList;
+    var deferred = $q.defer();
+    deferred.resolve(MOCKDATA.prosConsList);
+    return deferred.promise;
   };
 
-  business.getWatches = function() {
-    return MOCKDATA.watches;
-  };
 
-  business.setWatches = function(watches) {
-    MOCKDATA.watches = watches;
-    $rootScope.$broadcast('$updatedWatches');
-    return true;
-  };
 
   business.landingPage = function(key, value, wait) {
     var deferred = $q.defer();

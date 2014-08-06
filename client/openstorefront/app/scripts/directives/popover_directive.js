@@ -16,7 +16,7 @@
 
 'use strict';
 
-angular.module('openstorefrontApp').directive('popover', function() {
+app.directive('popover', function() {
 	return function(scope, elem) {
 		elem.popover({delay: {show: 0, hide: 10}});
 	};
