@@ -31,7 +31,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.resultsComments               = Business.componentservice.getResultsComments();
   Business.userservice.getWatches().then(function(result) {
     if (result) {
-      $scope.watches = result 
+      $scope.watches = result;
     } else {
       $scope.watches = null;
     }

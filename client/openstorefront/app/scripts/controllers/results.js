@@ -63,21 +63,21 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.tagsList       = result;
       $scope.tagsList.sort();
     } else {
-      $scope.tagsList       = null; 
+      $scope.tagsList       = null;
     }
   });
   Business.getProsConsList().then(function(result) {
     if (result) {
       $scope.prosConsList   = result;
     } else {
-      $scope.prosConsList   = null; 
+      $scope.prosConsList   = null;
     }
   });
   Business.userservice.getWatches().then(function(result) {
     if (result) {
       $scope.watches        = result;
     } else {
-      $scope.watches        = null; 
+      $scope.watches        = null;
     }
   });
 

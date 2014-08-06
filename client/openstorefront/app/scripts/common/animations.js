@@ -195,9 +195,6 @@ var unStretchFilterbutton = function() {
     'width': '15px',
     'position': 'static',
     'margin-left': '0px',
-    'border-radius': '0px 90px 90px 0px',
-    '-moz-border-radius': '0px 90px 90px 0px',
-    '-webkit-border-radius': '0px 90px 90px 0px',
     'font-size': '25px',
     'height': '90px'
   }, 200, function() {

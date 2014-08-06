@@ -16,7 +16,7 @@
 'use strict';
 
 /* global setPageHeight, setPageMargin, setRightOpenWidth, 
-fullClick:true, filtClick:true, openClick:true, floatBelowTop,
+fullClick:true, filtClick:true, openClick:true,
 setLeftOpenWidth, resetAnimations, resetAnimGlobals, unStretchFilterbutton,
 closeFilter */
 

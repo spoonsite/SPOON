@@ -41,7 +41,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.defaultTitle     = 'Browse Categories';
   Business.userservice.getWatches().then(function(result) {
     if (result) {
-      $scope.watches = result
+      $scope.watches = result;
       $scope.watches = _.sortBy($scope.watches, function(item) {
         return item.componentName;
       });
@@ -81,7 +81,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
 
   Business.getProsConsList().then(function(result) {
     if (result) {
-      $scope.prosConsList = result; 
+      $scope.prosConsList = result;
     } else {
       $scope.prosConsList = null;
     }

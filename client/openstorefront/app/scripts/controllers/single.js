@@ -29,7 +29,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   });
   Business.getProsConsList().then(function(result){
     if (result) {
-      $scope.prosConsList = result 
+      $scope.prosConsList = result;
     } else {
       $scope.prosConsList = null;
     }
@@ -42,7 +42,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   $scope.showDetails       = false;
   Business.userservice.getWatches().then(function(result){
     if (result) {
-      $scope.watches = result; 
+      $scope.watches = result;
     } else {
       $scope.watches = null;
     }
