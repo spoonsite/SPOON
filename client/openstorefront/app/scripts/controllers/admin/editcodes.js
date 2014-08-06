@@ -18,7 +18,13 @@
 
 app.controller('AdminEditcodesCtrl', ['$scope','business',  function ($scope, Business) {
   // Here we are grabbing the different collection key's and name's to put in the 'editcodes' tool.
-  $scope.filters = Business.getFilters();
+  Business.getFilters().then(function(result) {
+    if (result) {
+      $scope.filters = result
+    } else {
+      $scope.filters = null;
+    }
+  });
   $scope.collectionContent = null;
   
 

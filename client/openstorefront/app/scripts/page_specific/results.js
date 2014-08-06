@@ -62,7 +62,7 @@ var resizeAnimations = function () {
   setPageHeight(details, 52);
 
   $('#filtersButton').data('offset', '0');
-  floatBelowTop($('#filtersButton'), 3000, $('.page1'), 54);
+  // floatBelowTop($('#filtersButton'), 3000, $('.page1'), 54);
   // moveButtons($('#showPageRight'), $('.page1'));
   // moveButtons($('#showPageLeft'), $('.page2'));
 
@@ -74,16 +74,16 @@ var setupResults = function(){
   * This handles the animation for the filter button.
   * on-hover it shifts into view, and then shifts out.
   **********************/
-  $('#filtersButton').on('mouseenter', function() {
-    if (!filtClick) {
-      $('.filtersButton').stop(true,true).animate({'margin-left':'0px'}, 200, function(){});
-    }
-  });
-  $('#filtersButton').on('mouseleave', function() {
-    if (!filtClick) {
-      $('.filtersButton').stop(true,true).animate({'margin-left':'-55px'}, 200, function(){});
-    }
-  });
+  // $('#filtersButton').on('mouseenter', function() {
+  //   if (!filtClick) {
+  //     $('.filtersButton').stop(true,true).animate({'margin-left':'0px'}, 200, function(){});
+  //   }
+  // });
+  // $('#filtersButton').on('mouseleave', function() {
+  //   if (!filtClick) {
+  //     $('.filtersButton').stop(true,true).animate({'margin-left':'-55px'}, 200, function(){});
+  //   }
+  // });
 
   /*********************
   * This handles the empty # of rows per page
@@ -116,7 +116,7 @@ var setupResults = function(){
   * scroll action on the different pages.
   *********************/
   $('.page1').scroll(function() {
-    floatBelowTop($('#filtersButton'), 3000, $('.page1'), 54);
+    // floatBelowTop($('#filtersButton'), 3000, $('.page1'), 54);
     // moveButtons($('#showPageRight'), this);
   });
 

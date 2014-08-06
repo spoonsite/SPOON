@@ -58,10 +58,29 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.modal.isLanding    = false;
   $scope.single             = false;
   $scope.isArticle          = false;
-  $scope.tagsList           = Business.getTagsList();
-  $scope.tagsList.sort();
-  $scope.prosConsList       = Business.getProsConsList();
-  $scope.watches            = Business.getWatches();
+  Business.getTagsList().then(function(result) {
+    if (result) {
+      $scope.tagsList       = result;
+      $scope.tagsList.sort();
+    } else {
+      $scope.tagsList       = null; 
+    }
+  });
+  Business.getProsConsList().then(function(result) {
+    if (result) {
+      $scope.prosConsList   = result;
+    } else {
+      $scope.prosConsList   = null; 
+    }
+  });
+  Business.userservice.getWatches().then(function(result) {
+    if (result) {
+      $scope.watches        = result;
+    } else {
+      $scope.watches        = null; 
+    }
+  });
+
   $scope.expertise          = [
     //
     {'value':'1', 'label': 'Less than 1 month'},
@@ -197,7 +216,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
-      $scope.filters = Business.getFilters();
+      Business.getFilters().then(function(result) {
+        if (result) {
+          $scope.filters = result;
+        } else {
+          $scope.filters = null;
+        }
+      });
       $scope.filters = angular.copy($scope.filters);
       $scope.filters = _.sortBy($scope.filters, function(item){
         return item.description;

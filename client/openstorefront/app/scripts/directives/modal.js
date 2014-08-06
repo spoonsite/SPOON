@@ -15,8 +15,7 @@
 */
 'use strict';
 
-angular.module('openstorefrontApp')
-.directive('modal', function () {
+app.directive('modal', function () {
   return {
     restrict: 'AE',
     scope: {},

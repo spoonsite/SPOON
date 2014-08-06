@@ -27,14 +27,26 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   Business.componentservice.getComponentDetails().then(function(result) {
     $scope.data.data       = result;
   });
-  $scope.prosConsList      = Business.getProsConsList();
+  Business.getProsConsList().then(function(result){
+    if (result) {
+      $scope.prosConsList = result 
+    } else {
+      $scope.prosConsList = null;
+    }
+  });
   $scope.details           = {};
   $scope.modal             = {};
   $scope.single            = true;
   $scope.details.details   = null;
   $scope.modal.isLanding   = false;
   $scope.showDetails       = false;
-  $scope.watches           = Business.getWatches();
+  Business.userservice.getWatches().then(function(result){
+    if (result) {
+      $scope.watches = result; 
+    } else {
+      $scope.watches = null;
+    }
+  });
 
 
 
@@ -73,7 +85,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
 
           _.each($scope.details.details.attributes, function(attribute) {
             if (attribute.type === 'DI2E-SVCV4-A') {
-              
+
               var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
                 return item.TagValue_Number === attribute.code;
               });
