@@ -26,7 +26,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   /***************************************************************
   * Set up admin variables.
   ***************************************************************/
-  $scope.filters = Business.getFilters();
   $scope.collection = null;
   $scope.collectionSelection = null;
   $scope.incLoc = '';
@@ -34,6 +33,13 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   $scope.editedTopic = 'Types';
   $scope.toolTitle = 'idAM Landing Page';
   $scope.saveContent = '';
+  Business.getFilters().then(function(result) {
+    if (result) {
+      $scope.filters = result;
+    } else {
+      $scope.filters = null;
+    }
+  });
 
 
 

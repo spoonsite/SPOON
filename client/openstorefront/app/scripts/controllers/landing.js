@@ -25,9 +25,15 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
   });
   $scope.data = {};
   $scope.data3 = {};
-  $scope.filters = Business.getFilters();
   $scope.filters = angular.copy($scope.filters);
   $scope.landingRoute = null;
+  Business.getFilters().then(function(result) {
+    if (result) {
+      $scope.filters = result;
+    } else {
+      $scope.filters = null;
+    }
+  });
 
 
   $scope.$emit('$TRIGGERLOAD', 'landingLoader');

@@ -71,7 +71,7 @@ var floatBelowTop = function(element, width, parent, top) {
 //   var top = $(parent).scrollTop();
 //   var height = ($(parent).height() / 2);
 //   var offset = top + height - 45;
-  
+
 //   element.css({'top': offset + 'px'});
 // };
 
@@ -158,11 +158,28 @@ var setPageMargin = function (element, showing) {
 * the filter div.
 **********************/
 var stretchFilterbutton = function() {
-  var button = $('.filtersButton');
+  var button = $('#filtersButton');
   button.stop(true, true).animate({
-    'width':'248px',
-    'margin-left': '-250px'
-  }, 200, function() {/*complete animation*/});
+    'top': '54px',
+    'position': 'fixed',
+    'padding': '0px',
+    'margin': '0px'
+  }, 200, function() {
+    $('.hideFiltersButton').css({'display': 'inline-block'});
+    $('.showFiltersButton').css({'display': 'none'});
+    $('.filtersButton').stop(true, true).animate({
+      'width': '248px',
+      'position': 'relative',
+      'z-index': '1009',
+      'margin-left': '-250px',
+      'border-radius': '4px',
+      '-moz-border-radius': '4px',
+      '-webkit-border-radius': '4px',
+      'font-size': '18px',
+      'height': '40px'
+    }, 200, function() {/*complete animation*/});
+  });
+  
 };
 
 /**********************
@@ -170,12 +187,28 @@ var stretchFilterbutton = function() {
 * position
 **********************/
 var unStretchFilterbutton = function() {
-  var button = $('.filtersButton');
-  button.stop(true, true).animate({
-    'width':'74px',
-    'margin-left': '-55px'
-  }, 200, function() {/*complete animation*/});
-
+  var button = $('#filtersButton');
+  $('.hideFiltersButton').css({'display': 'none'});
+  $('.showFiltersButton').css({'display': 'inline-block'});
+  $('.filtersButton').stop(true, true).animate({
+    'width': '15px',
+    'position': 'static',
+    'margin-left': '0px',
+    'font-size': '25px',
+    'height': '90px'
+  }, 200, function() {
+    $('.filtersButton').css({
+      'border-radius': '0px 90px 90px 0px',
+      '-moz-border-radius': '0px 90px 90px 0px',
+      '-webkit-border-radius': '0px 90px 90px 0px'
+    });
+    button.stop(true, true).animate({
+      'top': '50%',
+      'position': 'fixed',
+      'margin-top': '-26px'
+    }, 200, function() { /*animation complete*/ });
+  });
+  
 };
 
 

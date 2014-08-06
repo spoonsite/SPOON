@@ -17,7 +17,13 @@
 'use strict';
 
 app.controller('AdminEditattributesCtrl',['$scope','business',  function ($scope, Business) {
-  $scope.filters = Business.getFilters();
+  Business.getFilters().then(function(result){
+    if (result) {
+      $scope.filters = result;
+    } else {
+      $scope.filters = null;
+    }
+  });
 
   $scope.gridOptions = {
     data: 'filters',

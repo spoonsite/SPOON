@@ -122,7 +122,7 @@ limitations under the License.
   <!-- Page 1 -->
   <div class='page1'>
     <div style='position:relative; height: 100%;'>
-    <loader trigger="mainLoader"></loader>
+      <loader trigger="mainLoader"></loader>
       <!-- Placeholder for the pagination controls -->
       <div ng-show="moreThan200" class="pagination row row-centered">
         <div style="text-align: center;">
@@ -143,11 +143,6 @@ limitations under the License.
       </div>
 
       <!-- End Placeholder for the pagination controls -->
-      <div ng-show="showSearch" class="showPage" id="filtersButton" onclick="openFiltersToggle()">
-        <button  class=" btn btn-primary filtersButton">
-          Filters <i class="fa fa-caret-left"></i> 
-        </button>
-      </div>
       <div ng-if="showMessage" style="position: absolute; top: 50%; left: 50%;">
         <div style="position: relative; width: 100%; min-height: 100%;">
           <div style="position: absolute; top: 50%; left: 50%; width: 400px; height: 200px; margin-top: -100px; margin-left: -200px; text-align: center;">
@@ -162,6 +157,11 @@ limitations under the License.
               <i class="fa fa-caret-left"></i> 
             </button>
           </div>
+        </div>
+        <div ng-show="showSearch" class="showPage" id="filtersButton" onclick="openFiltersToggle()">
+          <button  class=" btn btn-primary filtersButton">
+            <span class="hideFiltersButton">Filters&nbsp;<i class="fa fa-caret-left"></i></span><span class="showFiltersButton"><i class="fa fa-caret-right"></i></span>
+          </button>
         </div>
         <div class='container-fluid results'>
           <div>

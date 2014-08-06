@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/*global setupMain*/
+/*global setupMain, MOCKDATA2*/
 
 app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
   //////////////////////////////////////////////////////////////////////////////
@@ -31,9 +31,15 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.diagramToggleAllText = "Expand All";
   $scope.svcv4data = MOCKDATA2.parsedSvcv4;
   $scope.searchKey  = $rootScope.searchKey;
-  $scope.filters    = Business.getFilters();
-  $scope.filters    = _.filter($scope.filters, function(item) {
-    return item.showOnFront;
+  Business.getFilters().then(function(result){
+    if (result) {
+      $scope.filters = result;
+      $scope.filters    = _.filter($scope.filters, function(item) {
+        return item.showOnFront;
+      });
+    } else {
+      $scope.filters = null;
+    }
   });
 
   /***************************************************************
@@ -127,8 +133,8 @@ $scope.diagramToggleAll = function(diagramData){
       $location.search('route', route);
       $location.path('/landing');
     // });
-    return false;
-  };
+return false;
+};
 
   /***************************************************************
   * This function us initiated by the 'GetStarted button'
