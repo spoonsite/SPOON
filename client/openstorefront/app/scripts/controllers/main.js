@@ -27,6 +27,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.typeahead  = null;
   $scope.goToLand   = false;
   $scope.svcv4Mode  = false;
+  $scope.svcv4data = MOCKDATA2.parsedSvcv4;
   $scope.searchKey  = $rootScope.searchKey;
   $scope.filters    = Business.getFilters();
   $scope.filters    = _.filter($scope.filters, function(item) {
