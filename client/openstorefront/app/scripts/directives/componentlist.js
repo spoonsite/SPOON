@@ -65,7 +65,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           if (article && article.type === 'Article') {
             localCache.save('landingRoute', article.route);
             url = url + '/landing';
-            window.open(url, 'Landing Page' + id, 'window settings');
+            window.open(url, 'Landing Page' + id, 'scrollbars');
           } else {
             url = url + '/single?id=' + id;
             window.open(url, 'Component ' + id, 'window settings');

@@ -35,13 +35,18 @@
   padding: 0px 20px;
 }
 .component2-div{
-  margin: 0px 0px 0px 0px;
+  margin: 0px 0px 20px 0px;
   padding: 10px 25px;
-/*  border-bottom: 1px lightgray solid;
-  border-right: 1px lightgray solid;
-  border-top:0px;*/
+  /*border-top:0px;*/
+
   background-color: white;
   width: auto;
+}
+
+.component2-border{
+  border-bottom: 1px lightgray solid;
+  border-right: 1px lightgray solid;
+  border-left: 1px lightgray solid;
 }
 .component2-div.full,
 .component2-div-title.full{

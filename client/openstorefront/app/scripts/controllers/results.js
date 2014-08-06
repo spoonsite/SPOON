@@ -262,7 +262,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         foundFilter = _.where($scope.filters, {'type': $scope.searchGroup[0].key})[0];
         foundCollection = _.where(foundFilter.codes, {'code': $scope.searchGroup[0].code})[0];
         // if the search group is based on one of those filters do this
-        if ($scope.searchCode !== 'all') {
+        if ($scope.searchCode !== 'all' && foundFilter && foundCollection) {
+          $scope.filters = _.reject($scope.filters, function(filter) {
+            return filter.type === foundFilter.type;
+          });
           $scope.searchColItem      = foundCollection;
           $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
           $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
@@ -486,7 +489,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.goToFullPage = function(id){
     var url = $location.absUrl().replace($location.url(), '');
     url = url + '/single?id=' + id;
-    window.open(url, 'Component ' + id, 'window settings');
+    window.open(url, 'Component ' + id, 'scrollbars');
     // $location.search({
     //   'id': id
     // });

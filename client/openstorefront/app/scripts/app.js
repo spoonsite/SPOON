@@ -171,6 +171,10 @@ tagsInputConfigProvider
         $(this).select();
       });
     }, 500);
+    $rootScope.$broadcast('$LOAD', 'bodyLoad');
+  });
+
+  $rootScope.$on('$routeChangeSuccess', function (event, next, current){
   });
 
   /***************************************************************
@@ -195,6 +199,9 @@ tagsInputConfigProvider
     if (!Auth.signedIn() && $location.path() !== '/login') {
       $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
     }
+    $timeout(function() {
+      $rootScope.$broadcast('$UNLOAD', 'bodyLoad');
+    });
   });
 
   /***************************************************************
@@ -355,7 +362,7 @@ tagsInputConfigProvider
     return [200, result, {}];
   });
 
-$httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
+  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
     // grab the url (needed for what the backend will simulate)
     // parse it into an array
     var urlSplit = url.split('/');
@@ -376,12 +383,12 @@ $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?
   }, 1000);
   return [200, result.promise, {}];
 });
-$httpBackend.whenGET(/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
-  var request = new XMLHttpRequest();
-  request.open('GET', 'views/temp/landingpage.html', false);
-  request.send(null);
-  return [request.status, request.response, {}];
-});
+  $httpBackend.whenGET(/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
+    var request = new XMLHttpRequest();
+    request.open('GET', 'views/temp/landingpage.html', false);
+    request.send(null);
+    return [request.status, request.response, {}];
+  });
   ////////////////////////////////////////////////////////////////////////
 
 
