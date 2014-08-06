@@ -918,7 +918,7 @@ MOCKDATA.filters = [ {
     "visibleFlg" : false,
     "requiredFlg" : false,
     "archtechtureFlg" : false,
-    "importantFlg" : false,
+    "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "NA",
@@ -3734,7 +3734,7 @@ MOCKDATA.filters = [ {
     "visibleFlg" : false,
     "requiredFlg" : false,
     "archtechtureFlg" : false,
-    "importantFlg" : false,
+    "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "NOTEVAL",
@@ -5426,7 +5426,7 @@ MOCKDATA.filters = [ {
     "visibleFlg" : false,
     "requiredFlg" : false,
     "archtechtureFlg" : false,
-    "importantFlg" : false,
+    "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "APP",
@@ -5538,7 +5538,7 @@ MOCKDATA.filters = [ {
     "visibleFlg" : false,
     "requiredFlg" : false,
     "archtechtureFlg" : false,
-    "importantFlg" : false,
+    "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "3.5.1.1",
