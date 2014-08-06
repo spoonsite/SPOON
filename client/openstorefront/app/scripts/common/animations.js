@@ -162,7 +162,6 @@ var stretchFilterbutton = function() {
   button.stop(true, true).animate({
     'top': '54px',
     'position': 'fixed',
-    'z-index': '1010',
     'padding': '0px',
     'margin': '0px'
   }, 200, function() {
@@ -206,7 +205,6 @@ var unStretchFilterbutton = function() {
     button.stop(true, true).animate({
       'top': '50%',
       'position': 'fixed',
-      'z-index': '1000',
       'margin-top': '-26px'
     }, 200, function() { /*animation complete*/ });
   });
