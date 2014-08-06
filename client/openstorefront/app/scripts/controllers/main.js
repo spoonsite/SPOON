@@ -27,6 +27,8 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.typeahead  = null;
   $scope.goToLand   = false;
   $scope.svcv4Mode  = false;
+  $scope.diagramToggleAllState = true;
+  $scope.diagramToggleAllText = "Expand All";
   $scope.svcv4data = MOCKDATA2.parsedSvcv4;
   $scope.searchKey  = $rootScope.searchKey;
   $scope.filters    = Business.getFilters();
@@ -98,6 +100,18 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     }
     return;
   };
+
+$scope.diagramToggleAll = function(diagramData){
+   _.each(diagramData.children, function(level1){ 
+     level1.show = $scope.diagramToggleAllState;      
+     _.each(level1.children, function(level1child){ 
+       level1child.show= $scope.diagramToggleAllState; 
+     }); 
+   }); 
+   $scope.diagramToggleAllState = !$scope.diagramToggleAllState;
+   $scope.diagramToggleAllState ?  $scope.diagramToggleAllText = "Expand All" :  $scope.diagramToggleAllText = "Collapse All";
+
+};
 
   /*******************************************************************************
   * This and the following functions send the user to the search filling the 
