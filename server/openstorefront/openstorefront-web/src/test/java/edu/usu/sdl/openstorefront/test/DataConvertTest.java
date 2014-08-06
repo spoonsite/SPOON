@@ -82,7 +82,7 @@ public class DataConvertTest
 		List<ComponentDetail> newAssetMin = processData(assets, false);
 		List<ComponentDetail> newAssetComplete =  processData(assets, true);
 		
-		System.out.println(objectMapper.writeValueAsString(newAssetMin));		
+		//System.out.println(objectMapper.writeValueAsString(newAssetMin));		
 		objectMapper.writeValue(new File("c:/development/storefront/data/components-min.json"), newAssetMin);
 		objectMapper.writeValue(new File("c:/development/storefront/data/components-full.json"), newAssetComplete);		
 		objectMapper.writeValue(new File("c:/development/storefront/data/searchResults.json"), mapSearchResults(newAssetComplete));		
@@ -408,11 +408,14 @@ public class DataConvertTest
 				catAttribute.setTypeDescription(attributeTypeView.getDescription());
 				for (AttributeCodeView attributeCodeView : attributeTypeView.getCodes())
 				{
-					if (attributeCodeView.getLabel().split(" ")[1].equalsIgnoreCase(category.getTitle().trim()))
+					String label = attributeCodeView.getLabel().substring(attributeCodeView.getLabel().indexOf(" ") + 1, attributeCodeView.getLabel().length());
+					
+					if (label.equalsIgnoreCase(category.getTitle().trim()))
 					{
 						catAttribute.setCode(attributeCodeView.getCode());
 						catAttribute.setCodeDescription(attributeCodeView.getLabel());
-						catAttribute.setImportant(attributeTypeView.isImportantFlg());				
+						catAttribute.setCodeLongDescription(attributeCodeView.getDescription());
+						catAttribute.setImportant(attributeTypeView.getImportantFlg());				
 						break;
 					}
 				}		
@@ -884,7 +887,8 @@ public class DataConvertTest
 			{
 				attribute.setCode(attributeCodeView.getCode());
 				attribute.setCodeDescription(attributeCodeView.getLabel());
-				attribute.setImportant(attributeTypeView.isImportantFlg());				
+				attribute.setCodeLongDescription(attributeCodeView.getDescription());				
+				attribute.setImportant(attributeTypeView.getImportantFlg());				
 				break;
 			}
 		}
@@ -994,6 +998,26 @@ public class DataConvertTest
 //		{
 //			throw new OpenStorefrontRuntimeException(ex);
 //		}	
+//	}
+	
+//	@Test
+//	public void readSv4Export()
+//	{
+//		try
+//		{
+//			CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream("\\var\\openstorefront\\import\\svcv-4_export.csv")));
+//			List<String[]> lines = reader.readAll();
+//			
+//			lines.forEach(line ->{
+//				
+//				System.out.println(Arrays.toString(line));
+//			});
+//			
+//		} catch (IOException ex)
+//		{
+//			Logger.getLogger(DataConvertTest.class.getName()).log(Level.SEVERE, null, ex);
+//		}
+//		
 //	}
 	
 }

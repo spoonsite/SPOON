@@ -86,7 +86,7 @@ public class AttributeTypeView
 		this.codes = codes;
 	}
 
-	public boolean isVisibleFlg()
+	public boolean getVisibleFlg()
 	{
 		return visibleFlg;
 	}
@@ -96,7 +96,7 @@ public class AttributeTypeView
 		this.visibleFlg = visibleFlg;
 	}
 
-	public boolean isRequiredFlg()
+	public boolean getRequiredFlg()
 	{
 		return requiredFlg;
 	}
@@ -106,7 +106,7 @@ public class AttributeTypeView
 		this.requiredFlg = requiredFlg;
 	}
 
-	public boolean isArchtechtureFlg()
+	public boolean getArchtechtureFlg()
 	{
 		return archtechtureFlg;
 	}
@@ -116,7 +116,7 @@ public class AttributeTypeView
 		this.archtechtureFlg = archtechtureFlg;
 	}
 
-	public boolean isImportantFlg()
+	public boolean getImportantFlg()
 	{
 		return importantFlg;
 	}
