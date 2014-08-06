@@ -17,10 +17,13 @@
 package edu.usu.sdl.openstorefront.service.io;
 
 import au.com.bytecode.opencsv.CSVParser;
+import au.com.bytecode.opencsv.CSVReader;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -137,11 +140,12 @@ public class AttributeImport
 
 		CSVParser parser = new CSVParser();		
 		Path path = Paths.get(FileSystemManager.getImportDir() + "/di2esv4.csv");	
+		int lineNumber = 0;
 		try
 		{
-			List<String> lines = Files.readAllLines(path);
+			List<String> lines = Files.readAllLines(path, Charset.defaultCharset());
 			//read type
-			try
+			try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream("\\var\\openstorefront\\import\\svcv-4_export.csv")));)
 			{
 				String data[] = parser.parseLine(lines.get(1));
 								
@@ -153,16 +157,26 @@ public class AttributeImport
 				attributeTypeView.setRequiredFlg(Boolean.parseBoolean(data[5].trim()));
 				attributeTypeView.setAllowMutlipleFlg(Boolean.parseBoolean(data[6].trim()));
 				
-				for (int i=2; i<lines.size(); i++)				
+								
+				List<String[]> allLines = reader.readAll();
+				for (int i=1; i<allLines.size(); i++)				
 				{
-					if (StringUtils.isNotBlank(lines.get(i)))
+					lineNumber = i;
+					String lineData[] = allLines.get(i);
+					
+					if (lineData.length > 0)
 					{
-						data = parser.parseLine(lines.get(i));					
+									
 						AttributeCodeView attributeCodeView = new AttributeCodeView();
-						if (StringUtils.isNotBlank(data[0].trim()))
+						if (StringUtils.isNotBlank(lineData[1].trim()))
 						{
-							attributeCodeView.setCode(data[0].toUpperCase().trim());
-							attributeCodeView.setLabel(data[0].toUpperCase().trim() + " " + data[1].trim());
+							attributeCodeView.setCode(lineData[1].toUpperCase().trim());
+							attributeCodeView.setLabel(lineData[1].toUpperCase().trim() + " " + lineData[2].trim());
+							
+							StringBuilder desc = new StringBuilder();
+							desc.append("<b>Definition:</b>").append(lineData[3].replace("\n", "<br>")).append("<br>");							
+							desc.append("<b>Description:</b>").append(lineData[4].replace("\n", "<br>"));
+							attributeCodeView.setDescription(desc.toString());							
 							attributeTypeView.getCodes().add(attributeCodeView);
 						}
 					}
@@ -170,8 +184,8 @@ public class AttributeImport
 				
 
 			} catch (IOException ex)
-			{
-				log.log(Level.SEVERE, null, ex);
+			{				
+				log.log(Level.SEVERE, "Failed on line: " + lineNumber, ex);
 			}		
 			
 		} catch (IOException ex)
