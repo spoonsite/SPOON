@@ -19,6 +19,7 @@ package edu.usu.sdl.openstorefront.service.io;
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import java.io.FileInputStream;
@@ -85,11 +86,11 @@ public class AttributeImport
 								attributeTypeView = new AttributeTypeView();
 								attributeTypeView.setType(data[0].trim());
 								attributeTypeView.setDescription(data[1].trim());
-								attributeTypeView.setArchtechtureFlg(Boolean.parseBoolean(data[2].trim()));
-								attributeTypeView.setVisibleFlg(Boolean.parseBoolean(data[3].trim()));
-								attributeTypeView.setImportantFlg(Boolean.parseBoolean(data[4].trim()));
-								attributeTypeView.setRequiredFlg(Boolean.parseBoolean(data[5].trim()));
-								attributeTypeView.setAllowMutlipleFlg(Boolean.parseBoolean(data[6].trim()));
+								attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+								attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
+								attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
+								attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
+								attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
 								
 
 								attributeMap.put(type, attributeTypeView);
@@ -151,11 +152,11 @@ public class AttributeImport
 								
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
-				attributeTypeView.setArchtechtureFlg(Boolean.parseBoolean(data[2].trim()));
-				attributeTypeView.setVisibleFlg(Boolean.parseBoolean(data[3].trim()));
-				attributeTypeView.setImportantFlg(Boolean.parseBoolean(data[4].trim()));
-				attributeTypeView.setRequiredFlg(Boolean.parseBoolean(data[5].trim()));
-				attributeTypeView.setAllowMutlipleFlg(Boolean.parseBoolean(data[6].trim()));
+				attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
+				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
+				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
+				attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
 				
 								
 				List<String[]> allLines = reader.readAll();
@@ -214,11 +215,11 @@ public class AttributeImport
 								
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
-				attributeTypeView.setArchtechtureFlg(Boolean.parseBoolean(data[2].trim()));
-				attributeTypeView.setVisibleFlg(Boolean.parseBoolean(data[3].trim()));
-				attributeTypeView.setImportantFlg(Boolean.parseBoolean(data[4].trim()));
-				attributeTypeView.setRequiredFlg(Boolean.parseBoolean(data[5].trim()));
-				attributeTypeView.setAllowMutlipleFlg(Boolean.parseBoolean(data[6].trim()));
+				attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
+				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
+				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
+				attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
 				
 				for (int i=2; i<lines.size(); i++)				
 				{
@@ -278,11 +279,11 @@ public class AttributeImport
 								
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
-				attributeTypeView.setArchtechtureFlg(Boolean.parseBoolean(data[2].trim()));
-				attributeTypeView.setVisibleFlg(Boolean.parseBoolean(data[3].trim()));
-				attributeTypeView.setImportantFlg(Boolean.parseBoolean(data[4].trim()));
-				attributeTypeView.setRequiredFlg(Boolean.parseBoolean(data[5].trim()));
-				attributeTypeView.setAllowMutlipleFlg(Boolean.parseBoolean(data[6].trim()));
+				attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
+				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
+				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
+				attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
 				
 				for (int i=2; i<lines.size(); i++)				
 				{
@@ -337,11 +338,11 @@ public class AttributeImport
 								
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
-				attributeTypeView.setArchtechtureFlg(Boolean.parseBoolean(data[2].trim()));
-				attributeTypeView.setVisibleFlg(Boolean.parseBoolean(data[3].trim()));
-				attributeTypeView.setImportantFlg(Boolean.parseBoolean(data[4].trim()));
-				attributeTypeView.setRequiredFlg(Boolean.parseBoolean(data[5].trim()));
-				attributeTypeView.setAllowMutlipleFlg(Boolean.parseBoolean(data[6].trim()));
+				attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
+				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
+				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
+				attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
 				
 				for (int i=2; i<lines.size(); i++)				
 				{

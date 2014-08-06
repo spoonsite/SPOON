@@ -415,7 +415,7 @@ public class DataConvertTest
 						catAttribute.setCode(attributeCodeView.getCode());
 						catAttribute.setCodeDescription(attributeCodeView.getLabel());
 						catAttribute.setCodeLongDescription(attributeCodeView.getDescription());
-						catAttribute.setImportant(attributeTypeView.isImportantFlg());				
+						catAttribute.setImportant(attributeTypeView.getImportantFlg());				
 						break;
 					}
 				}		
@@ -888,7 +888,7 @@ public class DataConvertTest
 				attribute.setCode(attributeCodeView.getCode());
 				attribute.setCodeDescription(attributeCodeView.getLabel());
 				attribute.setCodeLongDescription(attributeCodeView.getDescription());				
-				attribute.setImportant(attributeTypeView.isImportantFlg());				
+				attribute.setImportant(attributeTypeView.getImportantFlg());				
 				break;
 			}
 		}
