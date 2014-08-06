@@ -172,7 +172,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     //Grab all of the different pros and cons
     if (prosList.length){
       prosList.map( function (a) {
-        if (a in pros) {
+        if (a.text in pros) {
           pros[a.text] ++;
         } else {
           pros[a.text] = 1;
@@ -183,7 +183,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
     if (consList.length){
       consList.map( function (a) {
-        if (a in cons) {
+        if (a.text in cons) {
           cons[a.text] ++;
         } else {
           cons[a.text] = 1;

@@ -3936,25 +3936,27 @@ MOCKDATA2.componentList = [ {
   "reviews" : [ {
     "username" : "Abby TEST",
     "userType" : "End User",
-    "comment" : "It's a good product.  The features are nice and performed well.  It quite configurable without a lot of setup and it worked out of the box.",
-    "rating" : 1,
+    "comment" : "It's a good product.  The features are nice and performed well.  Its quite configurable without a lot of setup and it worked out of the box.",
+    "rating" : 4,
     "title" : "Good Product (SAMPLE)",
     "usedTimeCode" : "> 3 years",
     "lastUsed" : 1328379330000,
     "updateDate" : 1391537730000,
     "organization" : "DCGS Navy",
     "recommend" : true,
-    "pros" : [ ],
-    "cons" : [ {
-      "text" : "Difficult Installation"
+    "pros" : [ {
+      "text": "Reliable"
     }, {
-      "text" : "Security Concerns"
-    } ]
+      "text": "Compact"
+    }, {
+      "text": "Well Tested"
+    } ],
+    "cons" : [ ]
   }, {
     "username" : "Colby TEST",
     "userType" : "Developer",
     "comment" : "This is a great product however, it's missing what I think are critical features.  Hopefully, they are working on it for future updates.",
-    "rating" : 3,
+    "rating" : 2.5,
     "title" : "Great but missing features (SAMPLE)",
     "usedTimeCode" : "< 3 years",
     "lastUsed" : 1328379330000,
@@ -3964,7 +3966,11 @@ MOCKDATA2.componentList = [ {
     "pros" : [  {
       "text" : "Well Tested"
     } ],
-    "cons" : [ ]
+    "cons" : [ {
+      "text" : "Difficult Installation"
+    }, {
+      "text" : "Security Concerns"
+    } ]
   } ],
   "dependencies" : [ ]
 }, {

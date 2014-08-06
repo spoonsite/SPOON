@@ -159,7 +159,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
 
   $scope.toggleCollapse = function(id){
     $('#' + id).collapse('toggle');
-  }
+  };
 
 
   //////////////////////////////////////////////////////////////////////////////
