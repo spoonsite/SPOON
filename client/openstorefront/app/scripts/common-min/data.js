@@ -915,10 +915,10 @@ MOCKDATA.filters = [ {
   }, {
     "type" : "DI2ELEVEL",
     "description" : "DI2E Evaluation Level",
-    "visibleFlg" : false,
+    "visibleFlg" : true,
     "requiredFlg" : false,
     "archtechtureFlg" : false,
-    "importantFlg" : true,
+    "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "NA",
@@ -3731,10 +3731,10 @@ MOCKDATA.filters = [ {
   }, {
     "type" : "DI2ESTATE",
     "description" : "DI2E State",
-    "visibleFlg" : false,
+    "visibleFlg" : true,
     "requiredFlg" : false,
     "archtechtureFlg" : false,
-    "importantFlg" : true,
+    "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "NOTEVAL",
@@ -5423,10 +5423,10 @@ MOCKDATA.filters = [ {
   }, {
     "type" : "TYPE",
     "description" : "Component Type",
-    "visibleFlg" : false,
+    "visibleFlg" : true,
     "requiredFlg" : false,
     "archtechtureFlg" : false,
-    "importantFlg" : true,
+    "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "APP",
@@ -5535,10 +5535,10 @@ MOCKDATA.filters = [ {
   }, {
     "type" : "DI2E-SVCV4-A",
     "description" : "DI2E SvcV-4 Alignment",
-    "visibleFlg" : false,
+    "visibleFlg" : true,
     "requiredFlg" : false,
     "archtechtureFlg" : false,
-    "importantFlg" : true,
+    "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "3.5.1.1",
