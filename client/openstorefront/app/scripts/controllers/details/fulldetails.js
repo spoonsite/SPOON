@@ -198,10 +198,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       'total': 0,
       'count': 0
     };
+    
     for (var key in total) {
       result.total = result.total + (parseInt(key) * total[key]);
-      result.count = result.count + 1;
+      result.count = result.count + total[key];
     }
+
     result.score = result.total / result.count;
     result.recommend = recommend;
     result.recommendPercent = recommend / result.count * 100;

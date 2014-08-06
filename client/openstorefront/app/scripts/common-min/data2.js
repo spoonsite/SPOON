@@ -103,7 +103,8 @@ MOCKDATA2.componentList = [ {
     "typeDescription" : "DI2E SvcV-4 Alignment",
     "code" : "1.2.1",
     "codeDescription" : "Identity and Access Management",
-    "important" : true
+    "important" : true,
+    "codeLongDescription": "<strong>Description:</strong> IdAM includes services that provide criteria used in access decisions and the rules and requirements assessing each request against those criteria.  Resources may include applications, services, networks, and computing devices.<br/> <strong>Definition:</strong> Identity and Access Management (IdAM) defines the set of services that manage permissions required to access each resource.",
   }, {
     "type" : "TYPE",
     "typeDescription" : "Component Type",
