@@ -34,6 +34,10 @@
 
   };
   
+    $scope.hidePopup = function(){
+      $(".popover").css("display", "none");
+    }; 
+  
   }]);
 
   app.directive('svcv4Diagram', function() {
