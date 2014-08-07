@@ -14,62 +14,97 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <div>	
-
+	<loader trigger="userLoad"></loader>
 	<div class="row default-content">
 		<!-- <div class="col-sm-12">&nbsp;</div> -->
 		<div class="col-sm-12">
 			<div class="panel panel-primary">
 				<div class="panel-heading text-center watch-content-title">USER PROFILE</div>
 				<div class="panel-body">
-					<div class="row text-center">
+					<div class="row text-left" style="padding-left:65px;">
 						<img src="images/1.jpg" width="96" height="96"></img>
 					</div>
-					<br><br>
+					<!-- ng-init="mySwitch=false"  -->
+					<br>
 					<div>
-						<div class="col-sm-12" style="padding-left:5px;padding-top:0px">								
-							<form class="form-horizontal" role="form">
+						<div class="col-sm-12" style="padding-left:5px;padding-top:0px">
+							<div class="col-sm-6" style="padding-left:5px;padding-top:0px">	
+							<form class="form-horizontal" role="form" ng-submit="saveUserProfile()">
 								<div class="form-group">
-								<label class="col-sm-4 control-label">Username:</label>
+								<label class="col-sm-3 control-label">Username:</label>
 									<div class="col-sm-8">
 										<label class="control-label">{{userProfileForm.username}}</label>
 									</div>
 								</div>								
 								<div class="form-group">
-									<label class="col-sm-4 control-label">First Name:</label>
+									<label class="col-sm-3 control-label">First Name:</label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" ngMaxlength="60" ng-model="userProfileForm.firstname">
-									</div>
+										<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="60" id="firstname" ng-model="userProfileForm.firstname" />
+<!-- 										<input  type="text" 
+									            placeholder="First Name"
+									            ng-class="{error: userProfileForm.firstname.$dirty && userProfileForm.firstname.$invalid}"
+									            class="form-control" 
+									            name="firstname" 
+									            ng-model="userProfileForm.firstname" 
+									            ng-minlength=3 
+									            ng-maxlength=60 required  />
+									</div> -->
+<!-- 								    <div class="error" 
+									  		ng-show="userProfileForm.firstname.$dirty && userProfileForm.firstname.$invalid && !userProfileForm.name.$focused">
+									    <small class="error" ng-show="userProfileForm.firstname.$error.required">Please input a username</small>
+									    <small class="error" ng-show="userProfileForm.firstname.$error.minlength">Your username is required to be at least 3 characters</small>
+									    <small class="error" ng-show="userProfileForm.firstname.$error.maxlength">Your username cannot be longer than 20 characters</small>
+								  </div> -->									
 								</div>
+							</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">Last Name:</label>
+									<label class="col-sm-3 control-label">Last Name:</label>
 									<div class="col-sm-8">
-										<input type="text" class="form-control" ngMaxlength="80" ng-model="userProfileForm.lastname">
+										<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="80" id="lastname" ng-model="userProfileForm.lastname">
 									</div>
 								</div>								
 								<div class="form-group">
-									<label class="col-sm-4 control-label">Email:</label>
+									<label class="col-sm-3 control-label">Email:</label>
 									<div class="col-sm-8">
-										<input type="email" class="form-control" ngMaxlength="200" ng-model="userProfileForm.email">
+										<input type="email" ng-disabled="!mySwitch" class="form-control" ngMaxlength="200" id="email" ng-model="userProfileForm.email">
 									</div>
 								</div>	
 								<div class="form-group">
-									<label class="col-sm-4 control-label">Role:</label>
+									<label class="col-sm-3 control-label">Role:</label>
 									<div class="col-sm-8">
-										<button type="button" class="btn btn-default"  ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
+										<button type="button" ng-disabled="!mySwitch" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
 										  Select <span class="caret"></span>
 										</button>										
 									</div>
-								</div>													
+								</div>	
 								<div class="form-group">
-									<label class="col-sm-4 control-label">Member Since:</label>
+									<label class="col-sm-3 control-label">Organization:</label>
+									<div class="col-sm-8">
+										<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="80" id="organization" ng-model="userProfileForm.organization">									
+									</div>
+								</div>																					
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Member Since:</label>
 									<div class="col-sm-8">
 										<label class="control-label">{{userProfileForm.createDts | date:'longDate'}}</label>
 									</div>
 								</div>
+								<input type="checkbox" id="myCheckValue" ng-init="false" ng-model="mySwitch" ng-checked="mySwitch" 
+										/><label for="myCheckValue">Update User Information</label>
+								<!-- <input type="checkbox" ng-init="true" ng-model="mySwitch2" ng-checked="toggle" style="display:block"/>
+ -->
+								<!-- <button type="button" class="btn btn-primary" ng-click="saveUserProfile();">Update</button>	 -->
+								<button type="submit" ng-show="mySwitch" class="btn btn-primary" >Save</button>
+						<!-- 	<button type="button" class="btn btn-primary" ng-click="saveUserProfile();">Cancel</button> -->
 							</form>
-							<div class="text-center">
-								<button type="button" class="btn btn-primary" ng-click="saveUserProfile();">Update</button>									
-							</div>							
+							<br>
+							<div class="text-left"  style="padding-left:40px;">
+								
+
+							</div>	
+
+
+							</div>						
 						</div>
 					</div>
 				</div>

@@ -27,6 +27,7 @@ MOCKDATA.userProfile = {
   'firstname' : 'Sample',
   'lastname' : 'User',
   'email' : 'sample.user@test.net',
+  'organization' : 'Sample Organization',
   'userTypeCode' :  'USER',
   'createDts' : 1405096596000,
   'updateDts' : 1405096596000,

@@ -78,6 +78,49 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     }, 300);
   });
 
+
+  /***************************************************************
+  * This function toggles a checkbox
+  ***************************************************************/
+ $scope.changeSwitch = function(tval){
+  
+ // var myValue = $scope.mySwitch;
+  //alert(tval);
+  $scope.toggle = true;
+
+  //($scope.mySwitch) ? $scope.mySwitch2 = "YES" : $scope.mySwitch2 = "NO";
+  // $scope.mySwitch = true;
+  // $scope.mySwitch2 = false;
+  //($scope.mySwitch) ? $scope.mySwitch2 = 'false' : $scope.mySwitch2 = 'true';
+ 
+  //$scope.mySwitch = true;
+  //$scope.mySwitch2 = true;
+
+  // ($scope.mySwitch) ? alert("true") : alert("not true") ;
+
+
+  //console.log(myCheckBox);
+
+    if (tval == true)
+    {
+       $scope.toggle = true;
+      // $scope.mySwitch = true;
+      // $scope.mySwitch2 = false;
+     // alert("I am checked");
+   //   $scope.mySwitch2.checked = 'false';
+   //   $scope.mycheckbox = false;
+    }
+    else {
+      $scope.toggle = false;
+     // $scope.mySwitch = false;
+     //  $scope.mySwitch2 = true;
+     // alert("I am NOT checked");
+    //  $scope.mySwitch2.checked = 'true';
+    //  $scope.mycheckbox = true;
+    }
+  };
+
+
   /***************************************************************
   * This function converts a timestamp to a displayable date
   ***************************************************************/
@@ -198,19 +241,37 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * Save the user profile
   ***************************************************************/
   $scope.saveUserProfile = function() {
+    $scope.mySwitch = false;
+    $scope.$emit("$TRIGGERLOAD", 'userLoad');
     //validate form
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
-    //mask form and disable save button
-    var success = function(data, status, headers, config) { /*jshint unused:false*/
-      loadUserProfile();
-      //Show message toaster
-    };
+    // //mask form and disable save button
+    // var success = function(data, status, headers, config) { /*jshint unused:false*/
+    //   loadUserProfile();
+    //   //Show message toasterg
+    // };
 
-    var failure = function(data, status, headers, config) { /*jshint unused:false*/
-      //mark fields that are bad (add error class) and show our error messages div
-    };
-    Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
+    // var failure = function(data, status, headers, config) { /*jshint unused:false*/
+    //   //mark fields that are bad (add error class) and show our error messages div
+    // };
+    // Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
+    Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
+      function(data, status, headers, config){ //SUCCESS:: data = return value
+        $timeout(function(){
+          $scope.$emit("$TRIGGERUNLOAD", 'userLoad');
+        }, 1000);
+        loadUserProfile();
+        console.log(data);
+      },
+      function(value){ //FAILURE:: value = reason why it failed
+        $timeout(function(){
+          triggerError(value);
+              $scope.$emit("$TRIGGERUNLOAD", 'userLoad');
+        }, 1000);
+        console.log(value);
+      }
+    );
   };
 
 
