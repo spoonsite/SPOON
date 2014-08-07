@@ -29,7 +29,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
   $scope.componentState                = Business.componentservice.getComponentState();
   $scope.resultsComments               = Business.componentservice.getResultsComments();
-  $scope.watches                       = Business.getWatches();
+  Business.userservice.getWatches().then(function(result) {
+    if (result) {
+      $scope.watches = result;
+    } else {
+      $scope.watches = null;
+    }
+  });
 
   Business.lookupservice.getEvalLevels().then(function(result){
     $scope.evalLevels = result;
@@ -172,7 +178,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     //Grab all of the different pros and cons
     if (prosList.length){
       prosList.map( function (a) {
-        if (a in pros) {
+        if (a.text in pros) {
           pros[a.text] ++;
         } else {
           pros[a.text] = 1;
@@ -183,7 +189,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
     if (consList.length){
       consList.map( function (a) {
-        if (a in cons) {
+        if (a.text in cons) {
           cons[a.text] ++;
         } else {
           cons[a.text] = 1;
@@ -198,10 +204,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       'total': 0,
       'count': 0
     };
+    
     for (var key in total) {
       result.total = result.total + (parseInt(key) * total[key]);
-      result.count = result.count + 1;
+      result.count = result.count + total[key];
     }
+
     result.score = result.total / result.count;
     result.recommend = recommend;
     result.recommendPercent = recommend / result.count * 100;
@@ -235,7 +243,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       });
     }
 
-    Business.setWatches($scope.watches);
+    Business.userservice.setWatches($scope.watches);
     $scope.details.details.watched = true;
     _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = true;
     Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
@@ -256,33 +264,33 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     var result = '';
     switch(statusCode){
       case 'C':
-        if (actual && actual !== 'null') {
-          result = 'COMPLETED ' + actual;
-        } else {
-          result = 'COMPLETED';
-        }
+      if (actual && actual !== 'null') {
+        result = 'COMPLETED ' + actual;
+      } else {
+        result = 'COMPLETED';
+      }
       break;
       case 'H':
       result = 'HALTED ' + estimated;
-        if (actual && actual !== 'null') {
-          result = 'HALTED ' + actual;
-        } else {
-          result = 'HALTED';
-        }
+      if (actual && actual !== 'null') {
+        result = 'HALTED ' + actual;
+      } else {
+        result = 'HALTED';
+      }
       break;
       case 'P':
-        if (estimated && estimated !== 'null') {
-          result = 'IN PROGRESS (estimated complete ' + estimated + ')';
-        } else {
-          result = 'IN PROGRESS';
-        }
+      if (estimated && estimated !== 'null') {
+        result = 'IN PROGRESS (estimated complete ' + estimated + ')';
+      } else {
+        result = 'IN PROGRESS';
+      }
       break;
       default:
-        if (estimated && estimated !== 'null') {
-          result = 'NOT STARTED (estimated complete ' + estimated + ')';
-        } else {
-          result = 'NOT STARTED';
-        }
+      if (estimated && estimated !== 'null') {
+        result = 'NOT STARTED (estimated complete ' + estimated + ')';
+      } else {
+        result = 'NOT STARTED';
+      }
       break;
     }
     return result;
@@ -358,7 +366,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       $scope.watches.splice(_.indexOf($scope.watches, a), 1);
     }
 
-    Business.setWatches($scope.watches);
+    Business.userservice.setWatches($scope.watches);
     $scope.details.details.watched = false;
     _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
     Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);

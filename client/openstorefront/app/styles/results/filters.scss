@@ -14,18 +14,24 @@
   margin: 50px 10px 10px 10px;
 }
 
-#filtersButton{
-  position: fixed; 
-  top: 54px; 
-  z-index: 1010; 
-  padding: 0px; 
-  margin: 0px;
+.filtersButton{
+  height: 90px;
+  width: 15px;
+  border-radius: 0px 90px 90px 0px;
+  -moz-border-radius: 0px 90px 90px 0px;
+  -webkit-border-radius: 0px 90px 90px 0px;
+  margin-top: 0px;
+  padding: 0px;
+  white-space: normal;
+  outline: none;
+  font-size: 25px;
 }
 
-.filtersButton{
-  position: relative;
-  z-index: 1009;
-  margin-left: -55px;
+#filtersButton{
+  position: fixed;
+  top: 50%;
+  margin-top: -26px;
+  z-index: 1010;
 }
 
 .filtersButton i{
@@ -47,6 +53,15 @@
 .filterTable table th:hover {
   background: #cccccc;
   margin-bottom: -1px;
+}
+
+.hideFiltersButton {
+  display:none;
+}
+
+.showFiltersButton{
+  position: relative;
+  left: -4px;
 }
 
 .filterTable  .table th .collapsed .fa-caret-down{

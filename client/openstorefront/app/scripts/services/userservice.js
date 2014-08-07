@@ -17,7 +17,7 @@
 /*global MOCKDATA2*/
 
 'use strict';
-app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $http, $q) {
+app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function($rootScope, localCache, $http, $q) {
 
   //Constants
   var CURRENT_USER = 'CURRENTUSER';
@@ -102,6 +102,21 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   };
 
 
+  var getWatches = function() {
+    var deferred = $q.defer();
+    deferred.resolve(MOCKDATA.watches);
+    return deferred.promise;
+  };
+
+  var setWatches = function(watches) {
+    var deferred = $q.defer();
+    MOCKDATA.watches = watches;
+    $rootScope.$broadcast('$updatedWatches');
+    deferred.resolve(true);
+    return deferred.promise;
+  };
+
+
   /**
   *
   */
@@ -134,7 +149,9 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   return {
     getCurrentUserProfile: getCurrentUserProfile,
     saveCurrentUserProfile: saveCurrentUserProfile,
-    getReviews: getReviews
+    getReviews: getReviews,
+    getWatches: getWatches,
+    setWatches: setWatches
   };
 
 }]);

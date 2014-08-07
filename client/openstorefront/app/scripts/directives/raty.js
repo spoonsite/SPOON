@@ -91,17 +91,17 @@ app.directive('raty', function () {
 
 
           //This is our current setup.
-          score: attrs.score,
-          number: attrs.number,
-          path: imagePath,
-          readOnly: readOnly,
-          cancel  : !readOnly,
+          score       : attrs.score,
+          number      : attrs.number,
+          path        : imagePath,
+          readOnly    : readOnly,
+          cancel      : !readOnly,
           // cancelOff : 'cancel-custom-off.png',
           // cancelOn  : 'cancel-custom-on.png',
-          noRatedMsg : 'This component hasn not been rated yet',
-          half     : true,
+          noRatedMsg  : 'This component hasn not been rated yet',
+          half        : false,
           // starHalf : 'star-half.png',
-          starType : 'i',
+          starType    : 'i',
           hints: ['Bad', 'Below Average', 'Average', 'Above Average', 'Great'],
           click: function(score, event) {
             scope[attrs.ngModel] = score;

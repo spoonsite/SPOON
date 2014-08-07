@@ -39,7 +39,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
-  $scope.watches          = Business.getWatches();
+  Business.userservice.getWatches().then(function(result) {
+    if (result) {
+      $scope.watches = result;
+      $scope.watches = _.sortBy($scope.watches, function(item) {
+        return item.componentName;
+      });
+    } else {
+      $scope.watches = null;
+    }
+  });
+  
   $scope.nav              = {
     'current': null,
     'bars': [
@@ -69,8 +79,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   //
   ];
 
-  $scope.prosConsList       = Business.getProsConsList();
-  
+  Business.getProsConsList().then(function(result) {
+    if (result) {
+      $scope.prosConsList = result;
+    } else {
+      $scope.prosConsList = null;
+    }
+  });
 
   $scope.$on('$includeContentLoaded', function(){
     $timeout(function() {
@@ -142,10 +157,9 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.goToFullPage = function(id){
-    var url = $location.absUrl().replace($location.url(), '');
-    console.log('url', url);
+    var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
-    window.open(url, 'Component ' + id, 'window settings');
+    window.open(url, 'Component ' + id, 'scrollbars');
     // $location.search({
     //   'id': id
     // });
@@ -168,7 +182,11 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
 
 
   $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
-    $scope.watches = Business.getWatches();
+    Business.userservice.getWatches().then(function(result){
+      if (result) {
+        $scope.watches = result;
+      }
+    });
     resetData();
   });
 
@@ -194,6 +212,10 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     // we re-initialize anything else here
   });
 
+
+  $scope.toggleCollapse = function(id){
+    $('#' + id).collapse('toggle');
+  };
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -309,7 +331,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         $scope.watches.splice(_.indexOf($scope.watches, a), 1);
       }
 
-      Business.setWatches($scope.watches);
+      Business.userservice.setWatches($scope.watches);
       $scope.$emit('$triggerEvent', '$detailsUpdated', id);
       _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
       Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);

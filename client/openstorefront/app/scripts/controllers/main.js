@@ -26,11 +26,16 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.subTitle   = 'Storefront';
   $scope.typeahead  = null;
   $scope.goToLand   = false;
-  $scope.svcv4Mode  = false;
   $scope.searchKey  = $rootScope.searchKey;
-  $scope.filters    = Business.getFilters();
-  $scope.filters    = _.filter($scope.filters, function(item) {
-    return item.showOnFront;
+  Business.getFilters().then(function(result){
+    if (result) {
+      $scope.filters = result;
+      $scope.filters    = _.filter($scope.filters, function(item) {
+        return item.showOnFront;
+      });
+    } else {
+      $scope.filters = null;
+    }
   });
 
   /***************************************************************
@@ -112,8 +117,8 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
       $location.search('route', route);
       $location.path('/landing');
     // });
-    return false;
-  };
+return false;
+};
 
   /***************************************************************
   * This function us initiated by the 'GetStarted button'

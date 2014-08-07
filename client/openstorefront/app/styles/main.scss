@@ -27,6 +27,7 @@
 @import "includes/loader.scss";
 @import "includes/misc.scss";
 @import "includes/watches.scss";
+@import "includes/feedback.scss";
 @import "fonts/fontello.scss";
 @import "fonts/icomoon.scss";
 
@@ -283,6 +284,83 @@ small button {
 }
 
 .svcv4ModeButton {
+}
+
+.diagram-top-level{
+  border-radius: 5px 5px 5px 5px;
+  border: 2px solid #555555;
+  background-color: rgb(238, 238, 238);    
+  padding-bottom: 15px;    
+}
+
+.diagram-section-header{
+
+}
+
+.diagram-top-level-text{
+  text-align: center;
+  font-size: 18px;
+  margin-top: -22px;
+  margin-bottom: 20px;
+}
+
+.diagram-top-level-text span:hover{
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.diagram-toggle-btn{
+	width: 50px;
+}
+
+.diagram-toggle-flip{
+  -webkit-transform: rotate(-180deg);
+  -moz-transform: rotate(-180deg);
+  -o-transform: rotate(-180deg);
+  -ms-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+}
+
+.diagram-second-level{
+	border: 2px solid black;
+	border-radius: 5px 5px 5px 5px;
+	display: inline-block;
+	float: none;
+	margin: 5px;
+	margin-left: 17px;
+	width: 47.333333%;
+	background-color: lightslategray;
+	color: white;	
+}
+
+.diagram-second-level-min{
+	min-height: 295px;
+}
+
+.diagram-second-level-text{
+	text-shadow: 2px 2px 2px black;
+	font-size: 16px;
+}
+
+.diagram-second-level h5:hover{
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.diagram-third-level{
+	border: 1px solid #dddddd;
+	border-radius: 5px 5px 5px 5px;	
+	min-height: 75px;
+	margin: 5px;
+	padding-top: 10px;
+	width: 31.333333%;
+	background-color: white;
+	color: black;	
+}
+
+.diagram-third-level h6:hover{
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 

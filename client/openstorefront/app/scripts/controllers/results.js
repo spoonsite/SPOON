@@ -58,10 +58,29 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.modal.isLanding    = false;
   $scope.single             = false;
   $scope.isArticle          = false;
-  $scope.tagsList           = Business.getTagsList();
-  $scope.tagsList.sort();
-  $scope.prosConsList       = Business.getProsConsList();
-  $scope.watches            = Business.getWatches();
+  Business.getTagsList().then(function(result) {
+    if (result) {
+      $scope.tagsList       = result;
+      $scope.tagsList.sort();
+    } else {
+      $scope.tagsList       = null;
+    }
+  });
+  Business.getProsConsList().then(function(result) {
+    if (result) {
+      $scope.prosConsList   = result;
+    } else {
+      $scope.prosConsList   = null;
+    }
+  });
+  Business.userservice.getWatches().then(function(result) {
+    if (result) {
+      $scope.watches        = result;
+    } else {
+      $scope.watches        = null;
+    }
+  });
+
   $scope.expertise          = [
     //
     {'value':'1', 'label': 'Less than 1 month'},
@@ -197,7 +216,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
-      $scope.filters = Business.getFilters();
+      Business.getFilters().then(function(result) {
+        if (result) {
+          $scope.filters = result;
+        } else {
+          $scope.filters = null;
+        }
+      });
       $scope.filters = angular.copy($scope.filters);
       $scope.filters = _.sortBy($scope.filters, function(item){
         return item.description;
@@ -262,7 +287,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         foundFilter = _.where($scope.filters, {'type': $scope.searchGroup[0].key})[0];
         foundCollection = _.where(foundFilter.codes, {'code': $scope.searchGroup[0].code})[0];
         // if the search group is based on one of those filters do this
-        if ($scope.searchCode !== 'all') {
+        if ($scope.searchCode !== 'all' && foundFilter && foundCollection) {
+          $scope.filters = _.reject($scope.filters, function(filter) {
+            return filter.type === foundFilter.type;
+          });
           $scope.searchColItem      = foundCollection;
           $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
           $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
@@ -484,9 +512,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.goToFullPage = function(id){
-    var url = $location.absUrl().replace($location.url(), '');
+    var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
-    window.open(url, 'Component ' + id, 'window settings');
+    window.open(url, 'Component ' + id, 'scrollbars');
     // $location.search({
     //   'id': id
     // });

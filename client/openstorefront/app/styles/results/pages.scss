@@ -24,6 +24,7 @@
   border-right: 1px solid darkgray;
   overflow-x: hidden;
   overflow-y: scroll;
+  position: relative;
 }
 
 .page1:after, .page1:before{
@@ -143,7 +144,7 @@
   text-transform: none;
   word-spacing: 0;
   letter-spacing: 0;
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 
