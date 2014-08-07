@@ -331,9 +331,9 @@ tagsInputConfigProvider
   //Mock Back End  (use passthough to route to server)
   $httpBackend.whenGET(/views.*/).passThrough();
   
-  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
-  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
-  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
+  $httpBackend.whenGET('/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
+  $httpBackend.whenGET('/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
+  $httpBackend.whenGET(/\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
     var query = getParams(url);
     var result = null;
     // console.log('query Parameters', query);
@@ -362,32 +362,44 @@ tagsInputConfigProvider
     return [200, result, {}];
   });
 
-  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
+  $httpBackend.whenGET(/\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
     // grab the url (needed for what the backend will simulate)
     // parse it into an array
     var urlSplit = url.split('/');
     var i = 0;
     // go until we find our resource
     while (urlSplit[i++] !== 'component'){}
-    // if there is an id, grab it for our use.
-  var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
+      // if there is an id, grab it for our use.
+    var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
 
-  var result = $q.defer();
-  $timeout(function() {
-    if (id && id !== '') {
-      var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
-      result.resolve(temp);
-    } else {
-      result.resolve(MOCKDATA2.componentList);
-    }
-  }, 1000);
-  return [200, result.promise, {}];
-});
-  $httpBackend.whenGET(/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
+    var result = $q.defer();
+    $timeout(function() {
+      if (id && id !== '') {
+        var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
+        result.resolve(temp);
+      } else {
+        result.resolve(MOCKDATA2.componentList);
+      }
+    }, 1000);
+    return [200, result.promise, {}];
+  });
+  $httpBackend.whenGET(/\/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
     var request = new XMLHttpRequest();
     request.open('GET', 'views/temp/landingpage.html', false);
     request.send(null);
     return [request.status, request.response, {}];
+  });
+  
+  $httpBackend.whenGET(/\/api\/v1\/resource\/attributes\//).respond(function(method, url, data) {
+    return [200, MOCKDATA.filters, {}];
+  });
+
+  $httpBackend.whenGET(/\/api\/v1\/resource\/tags\//).respond(function(method, url, data) {
+    return [200, MOCKDATA.tagsList, {}];
+  });
+
+  $httpBackend.whenGET(/\/api\/v1\/resource\/pros\//).respond(function(method, url, data) {
+    return [200, MOCKDATA.prosConsList, {}];
   });
   ////////////////////////////////////////////////////////////////////////
 

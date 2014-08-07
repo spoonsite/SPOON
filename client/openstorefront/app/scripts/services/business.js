@@ -61,30 +61,86 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.lookupservice = lookupservice;
   business.componentservice = componentservice;
 
-
-
-  //Shared Services  
-  business.getFilters = function() {
-    var deferred = $q.defer();
-    deferred.resolve(MOCKDATA.filters);
-    return deferred.promise;
+  var updateCache = function(name, value) {
+    save(name, value);
   };
 
-  business.updateCache = function(name, item) {
+  business.updateCache = function(name, value) {
     var deferred = $q.defer();
-    save(name, item);
+    updateCache(name, value);
     deferred.resolve(true);
     return deferred.promise;
   };
 
+  business.getFilters = function() {
+    var deferred = $q.defer();
+    var filters = checkExpire('filters', minute * 0.5);
+    if (filters) {
+      deferred.resolve(filters);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': '/api/v1/resource/attributes/'
+      }).success(function(data, status, headers, config) {
+        if (data && data !== 'false') {
+          save('filters', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the filters');
+        }
+      }).error(function(data, status, headers, config) {
+      });
+    }
+    return deferred.promise;
+  };
+
+
   business.getTagsList = function() {
     var deferred = $q.defer();
-    deferred.resolve(MOCKDATA.tagsList);
+
+
+    var tagsList = checkExpire('tagsList', minute * 0.5);
+    if (tagsList) {
+      deferred.resolve(tagsList);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': '/api/v1/resource/tags/'
+      }).success(function(data, status, headers, config) {
+        if (data && data !== 'false') {
+          save('tagsList', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the tags list');
+        }
+      }).error(function(data, status, headers, config) {
+      });
+    }
+
     return deferred.promise;
   };
 
   business.getProsConsList = function() {
     var deferred = $q.defer();
+
+    var prosConsList = checkExpire('prosConsList', minute * 0.5);
+    if (prosConsList) {
+      deferred.resolve(prosConsList);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': '/api/v1/resource/pros/'
+      }).success(function(data, status, headers, config) {
+        if (data && data !== 'false') {
+          save('prosConsList', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the pros and cons list');
+        }
+      }).error(function(data, status, headers, config) {
+      });
+    }
+
     deferred.resolve(MOCKDATA.prosConsList);
     return deferred.promise;
   };

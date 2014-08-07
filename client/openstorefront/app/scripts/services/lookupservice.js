@@ -39,7 +39,7 @@ app.factory('lookupservice', ['$http', '$q', function($http, $q) {
     * @param  success function
     */
     var loadLookupTable = function(entityName, successFunc) {
-      $http.get('/openstorefront-web/api/v1/resource/lookup/' + entityName).success(successFunc);
+      $http.get('/api/v1/resource/lookup/' + entityName).success(successFunc);
     };
     var getEvalLevels = function() {
       var deferred = $q.defer();

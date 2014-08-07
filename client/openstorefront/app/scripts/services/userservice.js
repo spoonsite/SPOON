@@ -65,7 +65,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   * @returns {undefined}
   */
   var loadProfile = function(username, successFunc) {
-    $http.get('/openstorefront-web/api/v1/resource/userprofiles/' + username).success(successFunc);
+    $http.get('/api/v1/resource/userprofiles/' + username).success(successFunc);
   };
 
   var saveCurrentUserProfile = function(userProfile, success, failure) { /*jshint unused:false*/
