@@ -401,6 +401,15 @@ tagsInputConfigProvider
   $httpBackend.whenGET(/\/api\/v1\/resource\/pros\//).respond(function(method, url, data) {
     return [200, MOCKDATA.prosConsList, {}];
   });
+
+  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/watches\//).respond(function(method, url, data) {
+    return [200, MOCKDATA.watches, {}];
+  });
+
+  $httpBackend.whenPOST(/\/api\/v1\/resource\/lookup\/watches\//).respond(function(method, url, data) {
+    MOCKDATA.watches = data;
+    return [200, angular.fromJson(data), {}];
+  });
   ////////////////////////////////////////////////////////////////////////
 
 

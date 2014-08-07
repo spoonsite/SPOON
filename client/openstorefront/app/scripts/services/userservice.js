@@ -23,6 +23,48 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   var CURRENT_USER = 'CURRENTUSER';
   var MAX_USER_CACHE_TIME = (60 * 1000) * 1440; //1 day
 
+  var minute = 60 * 1000;
+
+  /***************************************************************
+  * This function is used to check the localCache for the existance of a result
+  * object that hasn't yet expired
+  * params: name -- The unique identifier for the entry in the local cache (usually a string)
+  * params: expire -- The ammount of time in ms that it will take for the object to expire
+  * returns: result -- The value of the object if it has not yet expired, and null for
+  *                    result objects that are no longer valid
+  ***************************************************************/
+  var checkExpire = function(name, expire) {
+    var result = localCache.get(name, 'object');
+    var cacheTime = null;
+    if (result) {
+      cacheTime = localCache.get(name+'-time', 'date');
+      var timeDiff = new Date() - cacheTime;
+      if (timeDiff < expire) {
+        return result;
+      } else {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  /***************************************************************
+  * We use this function in conjunction with the checkExpire function.
+  * Use this function to save the value in the local cache (it will also save
+  * an expire time that it can use later to check validity of an entry)
+  * params: name -- The unique identifier for the entry in the local cache (usually a string)
+  * params: value -- The value of the data that you will be storing
+  ***************************************************************/
+  var save = function(name, value) {
+    localCache.save(name, value);
+    localCache.save(name+'-time', new Date());
+  };
+
+  var updateCache = function(name, value) {
+    save(name, value);
+  };
+
+
   /**
   *  Loads the current user
   */
@@ -79,23 +121,48 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   */
   var saveProfile = function(username, userProfile, success, failure) { /*jshint unused:false*/
     var deferred = $q.defer();
-
-
     return deferred.promise;
   };
 
 
   var getWatches = function() {
     var deferred = $q.defer();
-    deferred.resolve(MOCKDATA.watches);
+    var watches = checkExpire('watches', minute * 0.5);
+    if (watches) {
+      deferred.resolve(watches);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': '/api/v1/resource/lookup/watches/'
+      }).success(function(data, status, headers, config) {
+        if (data && data !== 'false') {
+          save('watches', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the watches');
+        }
+      }).error(function(data, status, headers, config) {
+      });
+    }
     return deferred.promise;
   };
 
   var setWatches = function(watches) {
     var deferred = $q.defer();
-    MOCKDATA.watches = watches;
-    $rootScope.$broadcast('$updatedWatches');
-    deferred.resolve(true);
+    $http({
+      'method': 'POST',
+      'url': '/api/v1/resource/lookup/watches/',
+      'data': watches
+    }).success(function(data, status, headers, config) {
+      if (data && data !== 'false') {
+        updateCache('watches', data);
+        $rootScope.$broadcast('$updatedWatches');
+        deferred.resolve(true);
+      } else {
+        // deferred.reject('There was an error grabbing the watches');
+      }
+    }).error(function(data, status, headers, config) {
+    });
     return deferred.promise;
   };
 

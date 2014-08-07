@@ -56,14 +56,14 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     localCache.save(name+'-time', new Date());
   };
 
+  var updateCache = function(name, value) {
+    save(name, value);
+  };
+
   //Services
   business.userservice = userservice;
   business.lookupservice = lookupservice;
   business.componentservice = componentservice;
-
-  var updateCache = function(name, value) {
-    save(name, value);
-  };
 
   business.updateCache = function(name, value) {
     var deferred = $q.defer();
