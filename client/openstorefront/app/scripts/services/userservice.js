@@ -21,9 +21,10 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
 
   //Constants
   var CURRENT_USER = 'CURRENTUSER';
-  var MAX_USER_CACHE_TIME = (60 * 1000) * 1440; //1 day
-
   var minute = 60 * 1000;
+  var day = minute * 1440; //1 day
+  var MAX_USER_CACHE_TIME = day;
+
 
   /***************************************************************
   * This function is used to check the localCache for the existance of a result
@@ -70,34 +71,19 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   */
   var getCurrentUserProfile = function(forceReload) {
     var deferred = $q.defer();
-    var currentUserProfile = localCache.get('currentUserProfile', 'object');
-    var loadProfileFlag = false;
 
-    if (forceReload) {
-      loadProfileFlag = true;
+    var currentUser = checkExpire('currentUserProfile');
+    if (currentUser) {
+      deferred.resolve(currentUser);
     } else {
-      if (currentUserProfile) {
-        //check for expired
-        var cacheTime = localCache.get('currentUserProfile-time', 'date');
-        var timeDiff = new Date() - cacheTime;
-        if (timeDiff < MAX_USER_CACHE_TIME) {
-          deferred.resolve(currentUserProfile);
-        }
-        else {
-          loadProfileFlag = true;
-        }
-      } else {
-        loadProfileFlag = true;
-      }
-    }
-
-    if (loadProfileFlag) {
       loadProfile(CURRENT_USER, function(data, status, headers, config) { /*jshint unused:false*/
-        localCache.save('currentUserProfile', data);
-        localCache.save('currentUserProfile-time', new Date());
-        deferred.resolve(currentUserProfile);
+        if (data) {
+          save('currentUserProfile', data);
+          deferred.resolve(data);
+        }
       });
     }
+
     return deferred.promise;
   };
 
@@ -127,6 +113,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
 
   var getWatches = function() {
     var deferred = $q.defer();
+
     var watches = checkExpire('watches', minute * 0.5);
     if (watches) {
       deferred.resolve(watches);
@@ -144,11 +131,13 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
       }).error(function(data, status, headers, config) {
       });
     }
+
     return deferred.promise;
   };
 
   var setWatches = function(watches) {
     var deferred = $q.defer();
+
     $http({
       'method': 'POST',
       'url': '/api/v1/resource/lookup/watches/',
@@ -163,6 +152,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
       }
     }).error(function(data, status, headers, config) {
     });
+
     return deferred.promise;
   };
 
