@@ -80,8 +80,8 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       $location.path(temp);
     } else {
       $scope.beforeLogin = null;
-      $location.search({});
-      $location.path('/');
+      // $location.search({});
+      // $location.path('/');
     }
   });
 
