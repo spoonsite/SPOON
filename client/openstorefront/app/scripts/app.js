@@ -402,7 +402,7 @@ tagsInputConfigProvider
     return [200, MOCKDATA.prosConsList, {}];
   });
 
-  $httpBackend.whenGET(/\/api\/v1\/resource\/evalLevels\//).respond(function(method, url, data) {
+  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/evalLevels\//).respond(function(method, url, data) {
     var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
     return [200, result, {}];
   });
