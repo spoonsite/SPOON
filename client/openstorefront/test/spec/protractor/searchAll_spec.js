@@ -1,9 +1,9 @@
-describe('Search the entire store (null search term)', function() {
+describe('Search the entire store', function() {
     
     // *** varies, depending on what is in the sample database ***
     var totalResults = 59;
     
-    it('returns all expected ' + totalResults + ' current results', function() {
+    it('returns ' + totalResults + ' expected current search results', function() {
         // Open the main site
         browser.get('http://di2e.github.io/openstorefront');
 

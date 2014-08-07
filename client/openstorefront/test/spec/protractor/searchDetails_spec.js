@@ -1,5 +1,5 @@
 describe('Search for "VANTAGE"', function() {
-  it('returns two results', function() {
+  it('returns 2 results', function() {
     // Open the main site
     browser.get('http://di2e.github.io/openstorefront');
     
@@ -28,8 +28,10 @@ describe('Click on the results page.  From the search results page', function() 
     element.all(by.css('.nav-tabs li')).get(0).click();
     // ALTERNATE:  element(by.cssContainingText('.nav-tabs','REVIEWS')).click();
     expect(element.all(by.binding('results-content-description'))).toString();
-  });    
-  
+
+  });
+
+
   it('all tags have a reference (are not null between the tags)', function() {
     element.all(by.xpath('/a')).then(function(links) {
         for (var i = 0; i < links.length; i++) {
@@ -37,5 +39,7 @@ describe('Click on the results page.  From the search results page', function() 
             }
         });
     });
+
+
 
 });
