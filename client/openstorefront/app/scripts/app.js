@@ -402,6 +402,11 @@ tagsInputConfigProvider
     return [200, MOCKDATA.prosConsList, {}];
   });
 
+  $httpBackend.whenGET(/\/api\/v1\/resource\/evalLevels\//).respond(function(method, url, data) {
+    var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
+    return [200, result, {}];
+  });
+
   $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/watches\//).respond(function(method, url, data) {
     return [200, MOCKDATA.watches, {}];
   });
