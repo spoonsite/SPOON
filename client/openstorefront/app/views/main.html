@@ -61,43 +61,7 @@ limitations under the License.
         </div>
         <div ng-show="svcv4Mode">
           <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Search</button>
-	  <div id="archtechDiagramId" style="width:100%;">
-		  <h2>{{svcv4data.name}} - Architecture</h2>
-		  <div ng-repeat-start="child in svcv4data.children">
-			  <p ng-if="$first">
-				<b>Definition:</b> {{child.data['TagNotes_Service Definition']}}<br> 
-				<b>Description:</b> {{child.data['TagNotes_Service Description']}}<br> 
-				<button ng-click="diagramToggleAll(svcv4data); "   class="btn btn-primary pull-right">{{diagramToggleAllText}}</button>
-			</p>
-			<div ng-if="!$first" class="diagram-top-level">
-				<div class="diagram-section-header">
-					<button  ng-click="child.show = !child.show;" class="diagram-toggle-btn " ng-class="{'diagram-toggle-flip': child.show}"><i class="fa fa-arrow-up"></i></button>									
-					<div class="diagram-top-level-text">
-						<span  ng-click="goToSearch('DI2E-SVCV4-A', child.name.split(' ')[0], true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{child.name}}" data-container="body" data-content="<b>Definition:</b> {{child.data['TagNotes_Service Definition']}}<br><b>Description:</b> {{child.data['TagNotes_Service Description']}}<br>" >{{child.name}}</span>
-					</div>					
-				</div>				
-				<div ng-show="child.show;" ng-class="{'diagram-second-level-min': level2.show }" ng-repeat="level2 in child.children" class="col-md-4 diagram-second-level">
-					<div class="diagram-section-header">
-						<button  ng-click="level2.show = !level2.show;" class="diagram-toggle-btn " style="margin-left: -14px;" ng-class="{'diagram-toggle-flip': level2.show}"><i class="fa fa-arrow-up"></i></button>									
-						<div class="diagram-top-level-text">
-							<span class="diagram-second-level-text" ng-click="goToSearch('DI2E-SVCV4-A', level2.name.split(' ')[0], true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{level2.name}}" data-container="body" data-content="<b>Definition:</b> {{level2.data['TagNotes_Service Definition']}}<br><b>Description:</b> {{level2.data['TagNotes_Service Description']}}<br>" >{{level2.name}}</span>
-						</div>					
-					</div>											
-					<div ng-show="level2.show;"  ng-repeat="level3 in level2.children" class="col-md-4 diagram-third-level">
-						<h6 ng-click="goToSearch('DI2E-SVCV4-A', level3.name.split(' ')[0], true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{level3.name}}" data-container="body" data-content="<b>Definition:</b> {{level3.data['TagNotes_Service Definition']}}<br><b>Description:</b> {{level3.data['TagNotes_Service Description']}}<br>" >{{level3.name}}</h6>
-					</div>
-				</div>
-			</div>
-		  </div>
-		  <br ng-repeat-end> 
-	   </div>   
-	<!--	  
-	<svg width="100%" height="600">
-	     <text x="0" y="{{$index }}"  style="fill:red;" ng-repeat="child in svcv4data.children">
-		   {{ child.name }}
-	    </text>
-	  </svg>			  
- -->
+          <svcv4-diagram ng-controller="Svc4ArchDiagramController"></svcv4-diagram>  
         </div>
       </div>
     </div>
