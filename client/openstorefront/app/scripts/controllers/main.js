@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/*global setupMain, MOCKDATA2*/
+/*global setupMain*/
 
 app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
   //////////////////////////////////////////////////////////////////////////////
