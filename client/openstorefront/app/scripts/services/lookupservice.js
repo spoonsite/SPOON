@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 'use strict';
-app.factory('lookupservice', ['$http', '$q', function($http, $q) {
+app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, localCache) {
 
   var minute = 60 * 1000;
 
@@ -56,6 +56,7 @@ app.factory('lookupservice', ['$http', '$q', function($http, $q) {
   var updateCache = function(name, value) {
     save(name, value);
   };
+  updateCache('','');
 
 
 
@@ -95,14 +96,14 @@ app.factory('lookupservice', ['$http', '$q', function($http, $q) {
       $http({
         'method': 'GET',
         'url': '/api/v1/resource/lookup/evalLevels/'
-      }).success(function(data, status, headers, config) {
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('evalLevels', data);
           deferred.resolve(data);
         } else {
           deferred.reject('There was an error grabbing the evalLevels');
         }
-      }).error(function(data, status, headers, config) {
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
       });
     }
 

@@ -23,7 +23,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   var CURRENT_USER = 'CURRENTUSER';
   var minute = 60 * 1000;
   var day = minute * 1440; //1 day
-  var MAX_USER_CACHE_TIME = day;
+  var MAX_USER_CACHE_TIME = day; /*jshint unused:false*/
 
 
   /***************************************************************
@@ -64,6 +64,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   var updateCache = function(name, value) {
     save(name, value);
   };
+  updateCache('','');
 
 
   /**
@@ -121,14 +122,14 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
       $http({
         'method': 'GET',
         'url': '/api/v1/resource/lookup/watches/'
-      }).success(function(data, status, headers, config) {
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('watches', data);
           deferred.resolve(data);
         } else {
           deferred.reject('There was an error grabbing the watches');
         }
-      }).error(function(data, status, headers, config) {
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
       });
     }
 
@@ -142,7 +143,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
       'method': 'POST',
       'url': '/api/v1/resource/lookup/watches/',
       'data': watches
-    }).success(function(data, status, headers, config) {
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
       if (data && data !== 'false') {
         updateCache('watches', data);
         $rootScope.$broadcast('$updatedWatches');
@@ -150,7 +151,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
       } else {
         // deferred.reject('There was an error grabbing the watches');
       }
-    }).error(function(data, status, headers, config) {
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
     });
 
     return deferred.promise;

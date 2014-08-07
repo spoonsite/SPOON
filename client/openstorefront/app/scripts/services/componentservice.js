@@ -60,6 +60,12 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   };
 
 
+  var updateCache = function(name, value) {
+    save(name, value);
+  };
+
+  updateCache('','');
+
   componentservice.getComponentDetails = function(id) {
     var result = $q.defer();
     var url = '/api/v1/resource/component/';

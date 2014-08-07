@@ -81,14 +81,14 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       $http({
         'method': 'GET',
         'url': '/api/v1/resource/attributes/'
-      }).success(function(data, status, headers, config) {
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('filters', data);
           deferred.resolve(data);
         } else {
           deferred.reject('There was an error grabbing the filters');
         }
-      }).error(function(data, status, headers, config) {
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
       });
     }
     return deferred.promise;
@@ -106,14 +106,14 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       $http({
         'method': 'GET',
         'url': '/api/v1/resource/tags/'
-      }).success(function(data, status, headers, config) {
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('tagsList', data);
           deferred.resolve(data);
         } else {
           deferred.reject('There was an error grabbing the tags list');
         }
-      }).error(function(data, status, headers, config) {
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
       });
     }
 
@@ -130,14 +130,14 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       $http({
         'method': 'GET',
         'url': '/api/v1/resource/pros/'
-      }).success(function(data, status, headers, config) {
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('prosConsList', data);
           deferred.resolve(data);
         } else {
           deferred.reject('There was an error grabbing the pros and cons list');
         }
-      }).error(function(data, status, headers, config) {
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
       });
     }
 
