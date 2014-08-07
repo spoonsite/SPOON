@@ -219,13 +219,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       Business.getFilters().then(function(result) {
         if (result) {
           $scope.filters = result;
+          $scope.filters = angular.copy($scope.filters);
+          console.log('$scope.filters', $scope.filters);
+
+          $scope.filters = _.sortBy($scope.filters, function(item){
+            return item.description;
+          });
         } else {
           $scope.filters = null;
         }
-      });
-      $scope.filters = angular.copy($scope.filters);
-      $scope.filters = _.sortBy($scope.filters, function(item){
-        return item.description;
       });
       /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
