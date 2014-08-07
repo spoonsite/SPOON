@@ -23,11 +23,11 @@
   }, {
     "type" : "JARALIGNMENT",
     "description" : "JARM ESL Alignment",
-    "visibleFlg" : false,
+    "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
-    "importantFlg" : false,
-    "allowMutlipleFlg" : false,
+    "archtechtureFlg" : true,
+    "importantFlg" : true,
+    "allowMutlipleFlg" : true,
     "codes" : [ {
       "code" : "1",
       "label" : "1 Customer Services",
@@ -240,7 +240,7 @@
     "requiredFlg" : false,
     "archtechtureFlg" : false,
     "importantFlg" : false,
-    "allowMutlipleFlg" : false,
+    "allowMutlipleFlg" : true,
     "codes" : [ {
       "code" : "WWW",
       "label" : "Public Internet",
@@ -333,10 +333,10 @@
   }, {
     "type" : "DI2ELEVEL",
     "description" : "DI2E Evaluation Level",
-    "visibleFlg" : false,
-    "requiredFlg" : false,
+    "visibleFlg" : true,
+    "requiredFlg" : true,
     "archtechtureFlg" : false,
-    "importantFlg" : false,
+    "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "NA",
@@ -371,7 +371,7 @@
     "requiredFlg" : false,
     "archtechtureFlg" : false,
     "importantFlg" : false,
-    "allowMutlipleFlg" : false,
+    "allowMutlipleFlg" : true,
     "codes" : [ {
       "code" : "XML",
       "label" : "XML",
@@ -401,11 +401,11 @@
   }, {
     "type" : "JCAALIGNMENT",
     "description" : "JCA Alignment",
-    "visibleFlg" : false,
+    "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
-    "importantFlg" : false,
-    "allowMutlipleFlg" : false,
+    "archtechtureFlg" : true,
+    "importantFlg" : true,
+    "allowMutlipleFlg" : true,
     "codes" : [ {
       "code" : "1",
       "label" : "1 Force Support",
@@ -3119,7 +3119,7 @@
     "requiredFlg" : false,
     "archtechtureFlg" : false,
     "importantFlg" : false,
-    "allowMutlipleFlg" : false,
+    "allowMutlipleFlg" : true,
     "codes" : [ {
       "code" : "SOAP",
       "label" : "SOAP",
@@ -3149,10 +3149,10 @@
   }, {
     "type" : "DI2ESTATE",
     "description" : "DI2E State",
-    "visibleFlg" : false,
-    "requiredFlg" : false,
+    "visibleFlg" : true,
+    "requiredFlg" : true,
     "archtechtureFlg" : false,
-    "importantFlg" : false,
+    "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "NOTEVAL",
@@ -3251,11 +3251,11 @@
   }, {
     "type" : "JCFALIGNMENT",
     "description" : "JCFSL Alignment",
-    "visibleFlg" : false,
+    "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
-    "importantFlg" : false,
-    "allowMutlipleFlg" : false,
+    "archtechtureFlg" : true,
+    "importantFlg" : true,
+    "allowMutlipleFlg" : true,
     "codes" : [ {
       "code" : "1.2.8",
       "label" : "1.2.8 Search",
@@ -4816,7 +4816,7 @@
     "requiredFlg" : false,
     "archtechtureFlg" : false,
     "importantFlg" : false,
-    "allowMutlipleFlg" : false,
+    "allowMutlipleFlg" : true,
     "codes" : [ {
       "code" : "WWW",
       "label" : "Public Internet",
@@ -4841,10 +4841,10 @@
   }, {
     "type" : "TYPE",
     "description" : "Component Type",
-    "visibleFlg" : false,
-    "requiredFlg" : false,
+    "visibleFlg" : true,
+    "requiredFlg" : true,
     "archtechtureFlg" : false,
-    "importantFlg" : false,
+    "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
       "code" : "APP",
@@ -4953,11 +4953,11 @@
   }, {
     "type" : "DI2E-SVCV4-A",
     "description" : "DI2E SvcV-4 Alignment",
-    "visibleFlg" : false,
+    "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
-    "importantFlg" : false,
-    "allowMutlipleFlg" : false,
+    "archtechtureFlg" : true,
+    "importantFlg" : true,
+    "allowMutlipleFlg" : true,
     "codes" : [ {
       "code" : "3.5.1.1",
       "label" : "3.5.1.1 Dissemination Authorization",
