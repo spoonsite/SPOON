@@ -16,9 +16,62 @@
 
 'use strict';
 
+/*global triggerAlert*/
+
 app.controller('CompareCtrl', ['$scope', 'business', '$location', function ($scope, Business, $location) {
   $scope.list = $location.search().id;
-  Business.componentservice.getComponentDetails(14).then(function(result) {
-    console.log('result', result);
+  $scope.data = null;
+  Business.componentservice.batchGetComponentDetails($scope.list).then(function(result){
+    if (result && result.length > 0) {
+      $scope.data = angular.copy(result);
+    }
   });
+
+  $scope.pair = [];
+  $scope.showChoices = false;
+  $scope.id = null;
+  $scope.article = null;
+
+  var requestChange = function(id, article) {
+    console.log('we changed one!');
+    if ($scope.pair && $scope.pair.length === 2 && id !== $scope.pair[1].componentId && id !== $scope.pair[0].componentId) {
+      $scope.id = id;
+      $scope.article = article;
+      $scope.showChoices = true;
+    } else {
+      triggerAlert('This component is already present in the \'Side By Side\'', 'alreadyPresent');
+    }
+  };
+
+  $scope.resetSide = function(isRight) {
+    $scope.showChoices = false;
+    if (isRight) {
+      $scope.pair[1] = null;
+    } else {
+      $scope.pair[0] = null;
+    }
+    $scope.setCompare($scope.id, $scope.article);
+    $scope.id = null;
+    $scope.article = null;
+  };
+
+
+  $scope.setCompare = function(id, article){
+    if (!article.type) {
+      if (!$scope.pair[0] && !$scope.pair[1]) {
+        $scope.pair[0] = _.find($scope.data, {'componentId': id});
+        console.log('$scope.pair[0]', $scope.pair[0]);
+      } else if(!$scope.pair[1] && $scope.pair[0] && id !== $scope.pair[0].componentId) {
+        $scope.pair[1] = _.find($scope.data, {'componentId': id});
+        console.log('$scope.pair[1]', $scope.pair[1]);
+      } else if(!$scope.pair[0] && $scope.pair[1] && id !== $scope.pair[1].componentId) {
+        $scope.pair[0] = _.find($scope.data, {'componentId': id});
+        console.log('$scope.pair[0]', $scope.pair[0]);
+      } else {
+        requestChange(id, article);
+      }
+    }
+  };
+
+
 }]);

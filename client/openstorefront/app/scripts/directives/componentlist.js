@@ -22,11 +22,6 @@
 /***************************************************************
 * TODO:: Make this directive work in the modal on the results page.
 ***************************************************************/
-
-
-
-
-
 app.directive('componentList', ['localCache', 'business', '$timeout', '$location', function (localCache, Business, $timeout, $location) {/*jshint unused:false*/
   var uniqueId = 1;
   var list = [];
@@ -44,7 +39,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
     restrict: 'AE',
     scope: {
       data: '=',
-      list: '=',
       filters: '=',
       setFilters: '=',
       clickCallback: '=',
@@ -52,18 +46,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
     },
     link: function postLink(scope, element, attrs) {
 
-      scope.$watch('list', function() {
-        if (scope.list && attrs.mode === 'compare') {
-          scope.data = [];
-          _.each(scope.list, function(item) {
-            Business.componentservice.getComponentDetails(item).then(function(result) {
-              if (result) {
-                scope.data.push(result);
-              }
-            });
-          });
-        }
-      });
       /***************************************************************
       * Here we are setting up the id's of different sections so that our current
       * 'more' button implementation will work correctly.
@@ -111,7 +93,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         } else {
           list.push(id);
         }
-        console.log('list', list);
       };
 
       scope.$watch('data', function() {

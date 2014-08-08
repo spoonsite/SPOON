@@ -522,6 +522,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   /***************************************************************
+  * This function adds a component to the watch list and toggles the buttons
+  ***************************************************************/
+  $scope.goToCompare = function(){
+    var list = [];
+    _.each($scope.data.data, function(item) {
+      list.push(item.componentId);
+    });
+    $location.search({
+      'id': list
+    });
+    $location.path('/compare');
+  };
+
+  /***************************************************************
   * This function resets the filters in the results page in order to clear
   * the filters as quickly as possible
   ***************************************************************/

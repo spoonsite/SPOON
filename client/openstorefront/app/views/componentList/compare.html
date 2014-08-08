@@ -14,30 +14,32 @@
     <br />
     <div ng-class="listOfClasses">
       <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
-      <table class="table table-striped" id="resultsTable">
-        <tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;">
-          <td style="white-space: inherit;">
-            <div class="container-fluid">
-              <div class="row" style="margin-left: 0px; margin-right: 0px">
-                <div class="results-content">
-                  <div class="results-content-title">
-                    <div ng-click="clickCallback(item.componentId, {type: item.listingType, route: item.resourceLocation})" id="{{item.componentId}}">
-                      <div class="results-content-title-content" >{{item.name}}
-                        <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
+      <ul rn-carousel rn-carousel-control rn-carousel-swipe="false" rn-carousel-indicator="true" style="height: 300px">
+        <li ng-repeat="row in data | partition:3" class="moreSection" style="margin-bottom: 20px;">
+          <div ng-repeat="item in row" ng-class="$first? 'componentAddLeft': ''" style="width: 30%; display:inline-block; vertical-align: top; height: 300px; overflow:hidden;" ng-click="clickCallback(item.componentId, {type: item.listingType, route: item.resourceLocation})">
+            <div style="white-space: inherit;">
+              <div class="container-fluid">
+                <div class="row" style="margin-left: 0px; margin-right: 0px">
+                  <div class="results-content" style="float:left">
+                    <div class="results-content-title">
+                      <div id="{{item.componentId}}">
+                        <div class="results-content-title-content" >{{item.name}}
+                          <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="results-content-description">
-                    <div ng-bind-html="item.description"></div>
-                    <br>
-                    <span class="componentListDate pull left" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span>
+                    <div class="results-content-description">
+                      <div ng-bind-html="item.description"></div>
+                      <br>
+                      <span class="componentListDate pull left" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </td>
-        </tr>
-      </table>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
