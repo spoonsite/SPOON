@@ -11,7 +11,7 @@ describe('Search for "Common Map Widget API"', function() {
 
     // Should only be two results
     expect(element.all(by.repeater('item in data')).count()).toEqual(2);
-
-
   });
+
+
 });

@@ -4,7 +4,8 @@ exports.config = {
     'spec/protractor/*_spec.js'
   ],
   onPrepare: function() {
-   // browser.driver.manage().window().maximize();
+   //browser.driver.manage().window().maximize();
+   browser.driver.manage().window().setSize(1180,1180);
   },
   
   
