@@ -1,0 +1,187 @@
+<component-list click-callback="setCompare" class-list=""
+filters="filters" data="data" cols="3" mode="compare" list="list" ></component-list>
+
+<div ng-show="showChoices" class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_getResponse" style="width: 300px; margin-left: -150px; position: absolute; z-index: 1010;">
+  <button type="button" class="close" id="close_alert_getResponse" ng-click="showChoices = false; id = null; article = null;">×</button>
+  <span id="alert_holder_getResponse_span">Which side would you like to replace?</span>
+  <br>
+  <br>
+  <div style="text-align: center">
+    <button class="btn btn-default" style="display:inline-block" ng-click="resetSide(false)"><i class="fa fa-arrow-left"></i>&nbsp;Left</button>
+    <button class="btn btn-default" style="display:inline-block" ng-click="resetSide(true)">Right&nbsp;<i class="fa fa-arrow-right"></i></button>
+  </div>
+</div>
+
+<div class="container-fluid" style="overflow: hidden">
+  <div ng-repeat="item in pair" class="col-md-6">
+    <div ng-controller="DetailsFulldetailsCtrl">
+
+      <!-- This is the Title div with the tags, and needs to stay here -->
+      <div class="component-details">
+        <!-- TITLE SECTOIN -->
+        <div class="component-title">
+          <div class="col-sm-12">
+            <div style="display:inline-block; width: 100%">
+              <h1><div style="font-weight: 100; margin: 0px; padding: 0px; display: inline-block; float: left; margin-top: 10px;">{{item.name}}
+                <span ng-if="item.organization !== null" style="font-weight: bold; margin-top: -20px; padding-left:0px; display:block;">
+                  <br>
+                  Organization: {{item.organization}}
+                </span>
+                <span ng-if="item.version !== null" style="font-weight: bold; margin-top: -40px; padding-left:0px; display:block;">
+                  <br>
+                  Version: {{item.version}}
+                </span>
+              </div>
+              <div class="pull-left" id="detailsToolButtons">
+                <button class='btn btn-default detailsTitleButton collapsed' id="data-collapse-tags" ng-click="toggleTags('#tagsCollapse')"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
+                  <i class="fa fa-tags imitateLink"></i>
+                </button>
+                <button class='btn btn-default detailsTitleButton' ng-show="!item.watched" ng-click="addToWatches(item.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
+                </button>
+                <button class='btn btn-default detailsTitleButton' ng-show="item.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
+                </button>
+                <button class='btn btn-default detailsTitleButton' ng-show="item.watched" ng-click="removeFromWatches(item.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
+                </button>
+                <button ng-show="!single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goToFullPage(item.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
+                  <i class="fa fa-copy imitateLink"></i>
+                </button>
+                <button ng-show="single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goTo('/', {})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
+                  <i class="ic ic-home2 imitateLink"></i>
+                </button>
+              </div>
+            </h1>
+          </div>
+          <!-- injected evaluations start -->
+
+          <!-- injected evaluations start -->
+          <div style="padding: 0px 10px;" id="tagsCollapse" class="panel-collapse collapse">
+            <tags-input class="bootstrap" min-length="1" ng-model="item.tags" replace-spaces-with-dashes="false" on-tag-added="saveTags(item.componentId, item.tags);" on-tag-removed="saveTags(item.componentId, item.tags);"><auto-complete min-length="1" source="checkTagsList($query, item.assetTags, tagsList)"></auto-complete></tags-input>
+          </div>
+        </div>
+      </div>
+      <!-- END TITLE SECTION -->
+
+
+      <!-- Tabbing for Results Page -->
+      <div class="col-md-12" style="background:white; margin-top: -11px;" id="detailsTabs">
+        <tabset type="">  <!-- pills -->
+          <tab ng-repeat="tab in detailResultsTabs" heading="{{tab.title}}" class="{{tab.class}}">
+            <div ng-include="tab.relpath"></div>
+            <br>
+          </tab>
+        </tabset>
+      </div>
+
+
+    </div>
+
+    <!-- Modal legend for evaluation levels progress bar colors -->
+    <div class="modal fade" id="basicModal2" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></button>
+            <h4 class="modal-title" id="di2eEvaluationScheduleDetails">DI2E Evaluation Schedule Details</h4>
+          </div>
+          <div class="modal-body">
+            <div class="col-sm-12"> 
+              <p><b>Progress bar color scheme and date indicators</b>
+                <br>The progress bar color scheme indicates current activity within any phase of the Evaluation Schedule. Also, there are
+                ending date indicators ( <b>mm/dd</b> ) below at the right edge of each bar, to indicate the completion date (either actual or estimated).
+              </p>
+            </div>  
+            <div class="col-md-12" style="padding:0;">
+              <div class="col-md-3" style="background-color:#E6E8EB;border:1px solid navy; height:50px; text-align:center; vertical-align:middle">Completed</div>
+
+              <div class="col-md-3" style="background-color:#ffffff;border-right:1px dashed #5cb85c;border-top:1px dashed #5cb85c;border-bottom:1px dashed #5cb85c; height:50px;text-align:center; color:#4E9C4E">In Progress</div>
+
+              <div class="col-md-3" style="background-color:#ff4800;border-right:1px solid navy;border-top:1px solid navy;border-bottom:1px solid navy; height:50px;text-align:center; color:white">Halted</div>
+
+              <div class="col-md-3" style="background-color:#ffffff ;border-right:1px solid gray;border-top:1px solid gray;border-bottom:1px solid gray; height:50px;text-align:center; color:#808080 ">Not Started</div>
+            </div>
+            <br><br><br>
+            <p class="">
+              <br><br><b>Level 0 – Available for Reuse/Not Evaluated</b>
+              <br>
+              <ul>
+                <li>Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
+                <li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li>
+                <li>Asset has completed the Component Prep and Analysis phase.</li>
+              </ul>
+              <br><b>Level 1 – Initial Reuse Analysis</b>
+              <br>
+              <ul>
+                <li>Inspection portion of DI2E Framework Evaluation Checklist complete.  </li>
+                <li>These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided.
+                </li>
+                <li>This level does not represent the pass or fail, the Consumer must read the Evaluation Report. </li>
+              </ul>
+              <br><b>Level 2 – Integration and Test</b>
+              <br>
+              <ul>
+                <li>Integration and Test portion of the DI2E Framework Evaluation Checklist complete.</li>
+                <li>These questions focus on the interoperability and ease of reuse, and will normally include an I&amp;T plan.</li>
+                <li>This level does not indicate a pass or fail of the conformance test.</li>
+                <li>Consumer will read the Test Report linked in the storefront entry for program functionality.</li>
+              </ul>
+              <br><b>Level 3 – DI2E Framework Reference Implementation</b>
+              <br>
+              <ul>
+                <li>Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.</li>
+              </ul>
+              <br><b>NA – No Evaluation Planned</b>
+              <br>
+              <ul>
+                <li>Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Storefront (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.).</li>
+                <li>N/A indicates no evaluation is expected.</li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- polyfill for the carousel -->
+<script type="text/javascript">
+
+// Adapted from https://gist.github.com/paulirish/1579671 which derived from 
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+// requestAnimationFrame polyfill by Erik Möller.
+// Fixes from Paul Irish, Tino Zijdel, Andrew Mao, Klemen Slavič, Darius Bacon
+
+// MIT license
+
+if (!Date.now)
+  Date.now = function() { return new Date().getTime(); };
+
+(function() {
+  'use strict';
+
+  var vendors = ['webkit', 'moz'];
+  for (var i = 0; i < vendors.length && !window.requestAnimationFrame; ++i) {
+    var vp = vendors[i];
+    window.requestAnimationFrame = window[vp+'RequestAnimationFrame'];
+    window.cancelAnimationFrame = (window[vp+'CancelAnimationFrame']
+     || window[vp+'CancelRequestAnimationFrame']);
+  }
+  if (/iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent) // iOS6 is buggy
+    || !window.requestAnimationFrame || !window.cancelAnimationFrame) {
+    var lastTime = 0;
+  window.requestAnimationFrame = function(callback) {
+    var now = Date.now();
+    var nextTime = Math.max(lastTime + 16, now);
+    return setTimeout(function() { callback(lastTime = nextTime); },
+      nextTime - now);
+  };
+  window.cancelAnimationFrame = clearTimeout;
+}
+}());
+
+
+</script>

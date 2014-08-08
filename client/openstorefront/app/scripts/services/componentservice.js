@@ -19,7 +19,7 @@
 /*global isEmpty, MOCKDATA2*/
 
 app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q, localCache) {
-  
+
   // default to 60 second expire time.
   var minute = 60 * 1000;
   var componentservice = {};
@@ -100,6 +100,17 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   };
 
+  componentservice.batchGetComponentDetails = function(list) {
+    var result = $q.defer();
+    // var url = '/api/v1/resource/component/list=?'
+    var total = _.filter(MOCKDATA2.componentList, function(item){
+      return _.some(list, function(id){
+        return parseInt(id) === item.componentId;
+      });
+    });
+    result.resolve(total);
+    return result.promise;
+  };
 
   componentservice.doSearch = function(type, key) {
     var deferred = $q.defer();
