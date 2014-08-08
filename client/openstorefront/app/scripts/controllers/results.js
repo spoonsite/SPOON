@@ -220,8 +220,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         if (result) {
           $scope.filters = result;
           $scope.filters = angular.copy($scope.filters);
-          console.log('$scope.filters', $scope.filters);
-
           $scope.filters = _.sortBy($scope.filters, function(item){
             return item.description;
           });

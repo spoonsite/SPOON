@@ -55,6 +55,10 @@ var app = angular
     templateUrl: 'views/login.html',
     controller: 'LoginCtrl'
   })
+  .when('/compare', {
+    templateUrl: 'views/compare.html',
+    controller: 'CompareCtrl'
+  })
   .otherwise({
     redirectTo: '/'
   });
@@ -181,7 +185,7 @@ tagsInputConfigProvider
   * This funciton resets the search query when we don't want to be showing it
   ***************************************************************/
   $rootScope.$on('$locationChangeStart', function (event, next, current) {
-    if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing')) {
+    if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing' && $location.path() !== '/compare')) {
       $location.search({});
     }
   });
