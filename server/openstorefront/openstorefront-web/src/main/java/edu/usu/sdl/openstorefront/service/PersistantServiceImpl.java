@@ -16,6 +16,7 @@
 
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -25,7 +26,6 @@ import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,12 +40,12 @@ public class PersistantServiceImpl
 {
 	private static final Logger log = Logger.getLogger(PersistantServiceImpl.class.getName());
 	
-	@PersistenceContext(unitName = "openstorefront-ds") 
-	EntityManager entityManager;
+//	@PersistenceContext(unitName = "openstorefront-ds") 	
+//	EntityManager entityManager;
 
 	public EntityManager getEntityManger()
-	{
-		return entityManager;
+	{		
+		return DBManager.getEntityManager();
 	}
 	
 	public <T> T persist(T entity)

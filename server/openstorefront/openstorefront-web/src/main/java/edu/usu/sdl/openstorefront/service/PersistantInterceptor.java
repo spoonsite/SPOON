@@ -14,34 +14,20 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.web.init;
+package edu.usu.sdl.openstorefront.service;
 
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import java.util.logging.Logger;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 
 /**
  *
  * @author dshurtleff
  */
-@WebListener
-public class ApplicationInit
-	implements ServletContextListener
+public class PersistantInterceptor
 {
-	private static final Logger log = Logger.getLogger(ApplicationInit.class.getName());
-
-	@Override
-	public void contextInitialized(ServletContextEvent sce) 
+	@AroundInvoke
+	public void interceptCall(InvocationContext ctx)
 	{
-		DBManager.initialize();
+		
 	}
-
-	@Override
-	public void contextDestroyed(ServletContextEvent sce)
-	{		
-		DBManager.shutdown();
-	}
-	
 }

@@ -14,34 +14,23 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.web.init;
+package edu.usu.sdl.openstorefront.test;
 
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import java.util.logging.Logger;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+import org.junit.Test;
 
 /**
  *
  * @author dshurtleff
  */
-@WebListener
-public class ApplicationInit
-	implements ServletContextListener
+public class ResourceTest
 {
-	private static final Logger log = Logger.getLogger(ApplicationInit.class.getName());
-
-	@Override
-	public void contextInitialized(ServletContextEvent sce) 
+	@Test 
+	public void testResourceFind()
 	{
-		DBManager.initialize();
-	}
-
-	@Override
-	public void contextDestroyed(ServletContextEvent sce)
-	{		
-		DBManager.shutdown();
+//		URL url = new JPAProvider().getClass().getResource("/META-INF/persistence.xml");
+//		Collection<PersistenceUnitInfo> allUnitInfos = (Collection<PersistenceUnitInfo>) PersistenceXmlUtil.parse(new JPAProvider().getClass().getResource("/META-INF/persistence.xml"));
+//		System.out.println(allUnitInfos);
+//		
 	}
 	
 }
