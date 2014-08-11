@@ -195,7 +195,11 @@ tagsInputConfigProvider
   * This function is what is called when the view has finally been loaded
   ***************************************************************/
   $rootScope.$on('$viewContentLoaded', function() {
-    $rootScope.typeahead = Business.typeahead();
+    Business.componentservice.getComponentDetails().then(function(result) {
+      Business.typeahead(result, null).then(function(value){
+        $rootScope.typeahead = value;
+      });
+    });
     
     $timeout(function() {
       $('[data-toggle=\'tooltip\']').tooltip();

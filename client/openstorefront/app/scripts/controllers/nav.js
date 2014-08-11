@@ -36,7 +36,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   * Set up typeahead, and then watch for selection made
   ***************************************************************/
   Business.componentservice.getComponentDetails().then(function(result) {
-    Business.typeahead(result, 'name').then(function(value){
+    Business.typeahead(result, null).then(function(value){
       $scope.typeahead = value;
     });
   });

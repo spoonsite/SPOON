@@ -149,6 +149,9 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   business.landingPage = function(key, value, wait) {
     var deferred = $q.defer();
+    if (key && value) {
+      updateCache('landingRoute', {'key': key, 'value': value});
+    }
     var landingRoute = checkExpire('landingRoute', minute * 1440);
     if (landingRoute) {
       deferred.resolve(landingRoute);
@@ -187,6 +190,9 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
           } else {
             deferred.reject('We need a new target in order to refresh the data');
           }
+        } else {
+          save('typeahead', collection);
+          deferred.resolve(collection);
         }
       }
     }

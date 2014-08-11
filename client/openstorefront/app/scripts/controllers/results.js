@@ -566,7 +566,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             ($filter('componentFilter')
               ($filter('filter')
               //filter by the string
-              ($scope.total, $scope.query),
+              ($scope.total, $scope.query.name),
             // filter the data by the filters
             $scope.filters),
           // filter the data by the tags
