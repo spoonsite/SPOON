@@ -1,5 +1,29 @@
-<div>
-  <p>
-    This is where the tools to edit individual components will eventually be found.
-  </p>
+<div ng-controller="AdminEditcomponentCtrl">
+  <div ng-show="!found">
+    <h4>Select a Component</h4>
+    <label for="editComponent">
+    </label>
+    <form role="search" ng-submit="doComponentSearch()">
+      <input id="editComponent" style="width: auto; display:inline-block;" type="text" class="form-control" ng-model="componentListKey" ng-options="key as key.name for key in typeahead" placeholder="Search Components" bs-typeahead>
+      <button class="btn btn-default" class="display:inline-block;" ng-click="doComponentSearch()">Search</button>
+    </form>
+    <h5 ng-show="search.length > 0">Choose one of these</h5>
+    <div id="itemList" ng-show="search.length > 0" ng-repeat="thing in search track by $index">
+      <button class="btn btn-default" style="text-align: left; width: 100%" ng-click="setItem(thing.componentId)">{{thing.name}}</button>
+    </div>
+  </div>
+  <div ng-show="found">
+    <h4>Edit Component: {{item.name}} &mdash; Last Updated: {{getDate(item.updateDts)}}</h4>
+    <button class="btn btn-default pull-left" ng-click="resetForm()">Save/Cancel</button>
+    <div ng-if="nav.bars.length" style="clear:both; padding-top: 10px;" >
+      <ul class="nav nav-tabs">
+        <li ng-repeat="bar in nav.bars" ng-class="{active: nav.current == bar.title, firstNav: $first}" >
+          <a href="javascript: void(0)" ng-click="nav.current = bar.title" data-toggle="tab">{{bar.title}}</a>
+        </li>
+      </ul>
+      <div ng-repeat="bar in nav.bars" ng-if="bar.title === nav.current">
+        <div ng-include="bar.location"></div>
+      </div>
+    </div>
+  </div>
 </div>

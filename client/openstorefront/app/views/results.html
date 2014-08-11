@@ -32,7 +32,7 @@ limitations under the License.
       </select>
       <br>
       <label for="searchFilter">Filter By Text: </label>
-      <input type="text" id="searchFilter" class="form-control" placeholder="Filter Search" ng-model="query" ng-options="key for key in typeahead" bs-typeahead/>
+      <input type="text" id="searchFilter" class="form-control" placeholder="Filter Search" ng-model="query" ng-options="key.name as key.name for key in typeahead" bs-typeahead/>
       <br>
       <label for="tagsFilter">Filter By Tag: </label>
       <tags-input class="bootstrap" min-length="1" ng-model="tagsFilter" replace-spaces-with-dashes="false" add-from-autocomplete-only="true" on-tag-added="applyFilters();" on-tag-removed="applyFilters();"><auto-complete min-length="1" source="checkTagsList($query, tagsFilter, tagsList)"></auto-complete></tags-input>

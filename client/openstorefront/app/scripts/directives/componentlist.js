@@ -24,7 +24,6 @@
 ***************************************************************/
 app.directive('componentList', ['localCache', 'business', '$timeout', '$location', function (localCache, Business, $timeout, $location) {/*jshint unused:false*/
   var uniqueId = 1;
-  var list = [];
   var getTemplateUrl = function(element, attrs) {
     var mode = attrs.mode || null;
     if (mode && mode === 'compare') {
@@ -39,12 +38,14 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
     restrict: 'AE',
     scope: {
       data: '=',
+      list: '=',
       filters: '=',
       setFilters: '=',
       clickCallback: '=',
       hideMore: '@',
     },
     link: function postLink(scope, element, attrs) {
+      var list = [];
 
       /***************************************************************
       * Here we are setting up the id's of different sections so that our current
@@ -93,6 +94,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         } else {
           list.push(id);
         }
+        scope.list = list;
       };
 
       scope.$watch('data', function() {
@@ -173,6 +175,9 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
         scope.isTitle = true;
         scope.title = attrs.title;
+      }
+      if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
+        scope.showCompare = true;
       }
 
       /***************************************************************

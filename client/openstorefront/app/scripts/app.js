@@ -195,7 +195,11 @@ tagsInputConfigProvider
   * This function is what is called when the view has finally been loaded
   ***************************************************************/
   $rootScope.$on('$viewContentLoaded', function() {
-    $rootScope.typeahead = Business.typeahead();
+    Business.componentservice.getComponentDetails().then(function(result) {
+      Business.typeahead(result, null).then(function(value){
+        $rootScope.typeahead = value;
+      });
+    });
     
     $timeout(function() {
       $('[data-toggle=\'tooltip\']').tooltip();
@@ -387,7 +391,8 @@ tagsInputConfigProvider
     }, 1000);
     return [200, result.promise, {}];
   });
-  $httpBackend.whenGET(/\/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
+
+  $httpBackend.whenGET(/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
     var request = new XMLHttpRequest();
     request.open('GET', 'views/temp/landingpage.html', false);
     request.send(null);

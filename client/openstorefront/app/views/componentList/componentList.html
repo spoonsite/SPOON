@@ -31,12 +31,12 @@
                     <div ng-bind-html="item.description"></div>
                     <br>
                     <span class="componentListDate pull-left" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span>
-                    <span class="componentListDate pull-right checkbox" style="margin-top: -5px; margin-bottom: 0px; padding-left: 0px;" ng-show="item.updateDts">
+                    <span class="componentListDate pull-right checkbox" style="margin-top: -5px; margin-bottom: 0px; padding-left: 0px;" ng-show="item.updateDts && showCompare">
                       <label>
                         <input type="checkbox" ng-model="compare" ng-checked="compare" ng-change="addToCompare(item.componentId)">
                         <span ng-show="!compare" style="line-height:20px;">Add To Compare</span> <span ng-show="compare" style="line-height:20px;">Remove From Compare</span> 
                       </label>
-                      <button ng-show="compare" class="btn btn-default btn-xs" ng-click="goToCompare()">Compare</button>
+                      <button ng-show="compare && list.length > 1" class="btn btn-default btn-xs" ng-click="goToCompare()">Compare</button>
                     </span>
                   </div>
                 </div>

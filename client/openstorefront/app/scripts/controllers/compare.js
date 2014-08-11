@@ -33,13 +33,13 @@ app.controller('CompareCtrl', ['$scope', 'business', '$location', function ($sco
   $scope.article = null;
 
   var requestChange = function(id, article) {
-    console.log('we changed one!');
+    // console.log('we changed one!');
     if ($scope.pair && $scope.pair.length === 2 && id !== $scope.pair[1].componentId && id !== $scope.pair[0].componentId) {
       $scope.id = id;
       $scope.article = article;
       $scope.showChoices = true;
     } else {
-      triggerAlert('This component is already present in the \'Side By Side\'', 'alreadyPresent');
+      triggerAlert('This component is already present in the \'Side By Side\'', 'alreadyPresent', 'body', 1300);
     }
   };
 
@@ -57,16 +57,16 @@ app.controller('CompareCtrl', ['$scope', 'business', '$location', function ($sco
 
 
   $scope.setCompare = function(id, article){
-    if (!article.type) {
+    if (!article.type && !$scope.showChoices) {
       if (!$scope.pair[0] && !$scope.pair[1]) {
         $scope.pair[0] = _.find($scope.data, {'componentId': id});
-        console.log('$scope.pair[0]', $scope.pair[0]);
+        // console.log('$scope.pair[0]', $scope.pair[0]);
       } else if(!$scope.pair[1] && $scope.pair[0] && id !== $scope.pair[0].componentId) {
         $scope.pair[1] = _.find($scope.data, {'componentId': id});
-        console.log('$scope.pair[1]', $scope.pair[1]);
+        // console.log('$scope.pair[1]', $scope.pair[1]);
       } else if(!$scope.pair[0] && $scope.pair[1] && id !== $scope.pair[1].componentId) {
         $scope.pair[0] = _.find($scope.data, {'componentId': id});
-        console.log('$scope.pair[0]', $scope.pair[0]);
+        // console.log('$scope.pair[0]', $scope.pair[0]);
       } else {
         requestChange(id, article);
       }
