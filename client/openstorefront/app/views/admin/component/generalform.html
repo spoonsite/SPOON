@@ -1,31 +1,100 @@
-<h5>{{item.name}}&nbsp;&mdash;&nbsp;ID:&nbsp;{{item.componentId}}</h5>
-<p>
-  Release Date: {{getDate(item.releaseDate)}}
-</p>
-<p>
-  Organization: {{item.organization}}
-</p>
-<p>
-  Last Activity Date: {{getDate(item.lastActivityDate)}}
-</p>
-<p>
-  GUID: {{item.guid}}
-</p>
-<p>
-  Description: {{item.description}}
-</p>
-<p>
-  Dependancies: {{item.dependancies}}
-</p>
-<p>
-  Create User: {{item.createUser}}
-</p>
-<p>
-  Create Date: {{getDate(item.createDts)}}
-</p>
-<p>
-  Parent Component: {{item.parentComponent}}
-</p>
-<p>
-  Sub Components: {{item.subComponents}}
-</p>
+<form role="form" class="form-horizontal" ng-submit="save-base()" style="margin-top:10px;">
+  <div class="col-sm-6">
+
+    <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+      <label for="name" class="col-sm-4 control-label">Component Name: </label>
+      <div class="col-sm-8">
+        <input id="name" class="form-control" type="text" ng-model="item.name">
+      </div>
+    </div>
+    <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+      <label for="release" class="col-sm-4 control-label">Release Date: </label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <label class="input-group-addon" for="release"> <i class="fa fa-calendar"></i> </label>
+          <input id="release" type="text" class="form-control" data-date-format="MM-dd-yyyy" data-start-view="2" data-min-view="1" autoclose="true" ng-model="item.releaseDate" placeholder="Release Date" bs-datepicker> 
+        </div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+      <label for="createion" class="col-sm-4 control-label">Creation Date: </label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <label class="input-group-addon" for="createion"> <i class="fa fa-calendar"></i> </label>
+          <input id="createion" type="text" class="form-control" data-date-format="MM-dd-yyyy" data-start-view="2" data-min-view="0" autoclose="true" ng-model="item.createDts" placeholder="Creation Date" bs-datepicker> 
+        </div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+      <label for="activity" class="col-sm-4 control-label">Activity Date: </label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <label class="input-group-addon" for="activity"> <i class="fa fa-calendar"></i> </label>
+          <input id="activity" type="text" class="form-control" data-date-format="MM-dd-yyyy" data-start-view="2" data-min-view="0" autoclose="true" ng-model="item.lastActivityDate" placeholder="Last Activity Date" bs-datepicker> 
+        </div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+      <label for="activeStatus" class="col-sm-4 control-label">Active Status: </label>
+      <div class="col-sm-8">
+        <select id="activeStatus" class="form-control" name="" ng-model="item.activeStatus">
+          <option value="A">Active</option>    
+          <option value="I">Inactive</option>    
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+      <label for="organization" class="col-sm-4 control-label">Organization: </label>
+      <div class="col-sm-8">
+        <input id="organization" class="form-control" type="text" ng-model="item.organization">
+      </div>
+    </div>
+    <div ng-repeat="filter in filters">
+      <div ng-if="filter.requiredFlg">
+        <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+          <label for="{{filter.description}}" class="col-sm-4 control-label">{{filter.description}}: </label>
+          <div class="col-sm-8">
+            <select class="form-control" name="{{filter.description}}" id="{{filter.description}}" ng-model="requiredAttributes[filter.description]" ng-options="code.label for code in filter.codes">
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+      <label for="approvalState" class="col-sm-4 control-label">Approval State: </label>
+      <div class="col-sm-8">
+        <select id="approvalState" class="form-control" name="" ng-model="item.approvalState">
+          <option value="A">Approved</option>    
+          <option value="P">Pending</option>    
+        </select>
+      </div>
+    </div>
+  </div>
+  <div style="clear:both;"></div>
+  <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+    <label for="dependancies" class="col-sm-2 control-label">Dependancies: </label>
+    <div class="col-sm-10">
+      <input id="dependancies" class="form-control" type="text" ng-model="item.dependancies">
+    </div>
+  </div>
+  <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+    <label for="parentComponent" class="col-sm-2 control-label">Parent Comopnent: </label>
+    <div class="col-sm-10">
+      <input id="parentComponent" class="form-control" type="text" ng-model="item.parentComponent">
+    </div>
+  </div>
+  <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+    <label for="subComponents" class="col-sm-2 control-label">Sub Comopnents: </label>
+    <div class="col-sm-10">
+      <input id="subComponents" class="form-control" type="text" ng-model="item.subComponents">
+    </div>
+  </div>
+  <div class="form-group" style="margin-left: 0px; margin-right: 0px;">
+    <label class="col-sm-12">Description: </label>
+    <div class="col-sm-12">
+      <textarea ckeditor="editorOptions" ng-model="item.description"></textarea>
+    </div>
+  </div>
+</form>

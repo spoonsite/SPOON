@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('AdminEditcomponentCtrl', ['$scope', 'business', function ($scope, Business) {
+app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', function ($scope, Business, $timeout) {
 
   $scope._scopename = 'editComponent?';
   $scope.componentListKey = null;
@@ -28,12 +28,27 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', function ($scope
       'title': 'Reviews/Tags/Q&A',
       'location': 'views/admin/component/reviews.html'
     }],
-    'current': 'General'
+    'current': ''
   };
+
+  $scope.requiredAttributes = [];
+  Business.getFilters().then(function(result){
+    if (result) {
+      $scope.filters = result;
+      _.each($scope.filters, function(filter){
+        if (filter.requiredFlg) {
+          $scope.requiredAttributes[filter.description] = filter.codes[0];
+        }
+      });
+    }
+  });
+
+  $scope.base = {};
 
   $scope.resetForm = function(){
     $scope.found = false;
   };
+
 
   $scope.doComponentSearch = function() {
     if (typeof $scope.componentListKey === 'object') {
@@ -42,7 +57,10 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', function ($scope
       $scope.found = true;
       $scope.search = null;
       $scope.$apply();
-      console.log('$scope.item', $scope.item);
+      $timeout(function(){
+        $scope.nav.current = 'General';
+        console.log('$scope.item', $scope.item);
+      });
       
     } else {
       console.log('String ', $scope.componentListKey);
@@ -59,8 +77,11 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', function ($scope
       if (result) {
         $scope.item = result;
         $scope.found = true;
-        console.log('$scope.item', $scope.item);
         
+        $timeout(function(){
+          $scope.nav.current = 'General';
+          console.log('$scope.item', $scope.item);
+        });
       }
     });
   };
