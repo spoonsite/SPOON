@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package edu.usu.sdl.openstorefront.sort;
-
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.Comparator;
+package edu.usu.sdl.openstorefront.storage.model;
 
 /**
- * 
+ *
  * @author dshurtleff
- * @param <T>
  */
-public class LookupComparator <T extends LookupEntity>
-	implements Comparator<T>
+public class TestEntity
+	extends LookupEntity
 {
 
-	@Override
-	public int compare(T t, T t1)
+	public TestEntity()
 	{
-		return t.getDescription().compareToIgnoreCase(t1.getDescription());
 	}
-	
+
 }

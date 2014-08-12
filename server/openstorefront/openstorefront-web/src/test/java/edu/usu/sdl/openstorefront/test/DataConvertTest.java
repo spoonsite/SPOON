@@ -19,8 +19,8 @@ package edu.usu.sdl.openstorefront.test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
 import edu.usu.sdl.openstorefront.service.io.AttributeImport;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
@@ -748,7 +748,7 @@ public class DataConvertTest
 						
 						ComponentExternalDependancy externalDependancy = new ComponentExternalDependancy();
 						externalDependancy.setComment(comment);
-						externalDependancy.setDependancy(dependancy);
+						externalDependancy.setDependency(dependancy);
 						componentDetail.getDependencies().add(externalDependancy);
 					}					
 				}

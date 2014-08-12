@@ -16,8 +16,8 @@
 
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,11 +49,11 @@ public class LookupResouce
 		Object data;
 		try
 		{			
-			Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.api.model.jpa." + type);
+			Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.storage.model." + type);
 			Object obj = lookupClass.newInstance();
 			if (obj instanceof BaseEntity)
 			{				
-				data = service.findLookup(lookupClass, all);
+				data = service.getLookupService().findLookup(lookupClass, all);
 			}
 			else
 			{

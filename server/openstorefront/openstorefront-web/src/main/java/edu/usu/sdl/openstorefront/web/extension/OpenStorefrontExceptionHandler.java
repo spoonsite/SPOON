@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
@@ -36,6 +38,8 @@ import net.sourceforge.stripes.exception.DefaultExceptionHandler;
 public class OpenStorefrontExceptionHandler
 	extends DefaultExceptionHandler
 {
+	private static final Logger log = Logger.getLogger(OpenStorefrontExceptionHandler.class.getName());
+	
 	private final SystemErrorModel systemErrorModel = new SystemErrorModel();
 	
 	public Resolution handleopenstorefrontException(OpenStorefrontRuntimeException error, HttpServletRequest request, HttpServletResponse response) 
@@ -47,6 +51,7 @@ public class OpenStorefrontExceptionHandler
 	public Resolution handleAll(Throwable error, HttpServletRequest request, HttpServletResponse response) 
 	{
 		 ActionBean action = (ActionBean) request.getAttribute(StripesConstants.REQ_ATTR_ACTION_BEAN);
+		log.log(Level.FINE, "System Error Occured", error);
 		
 		  //TODO: Generate Error Ticket
 		 // Capture all request information, stacktraces, user info

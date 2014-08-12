@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.sort;
+package edu.usu.sdl.openstorefront.util;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.Comparator;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * 
+ *
  * @author dshurtleff
- * @param <T>
  */
-public class LookupComparator <T extends LookupEntity>
-	implements Comparator<T>
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface PK
 {
-
-	@Override
-	public int compare(T t, T t1)
-	{
-		return t.getDescription().compareToIgnoreCase(t1.getDescription());
-	}
 	
 }

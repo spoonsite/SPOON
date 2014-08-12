@@ -14,24 +14,44 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.sort;
+package edu.usu.sdl.openstorefront.service;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 
+ *
  * @author dshurtleff
- * @param <T>
  */
-public class LookupComparator <T extends LookupEntity>
-	implements Comparator<T>
+public class ProxyContext
 {
+	private PersistenceService persistenceService;
+	private Map<String, Object> workingProperties = new HashMap<>();
 
-	@Override
-	public int compare(T t, T t1)
+	public ProxyContext()
 	{
-		return t.getDescription().compareToIgnoreCase(t1.getDescription());
 	}
+
+	public PersistenceService getPersistenceService()
+	{
+		return persistenceService;
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService)
+	{
+		this.persistenceService = persistenceService;
+	}
+
+	public Map<String, Object> getWorkingProperties()
+	{
+		return workingProperties;
+	}
+
+	public void setWorkingProperties(Map<String, Object> workingProperties)
+	{
+		this.workingProperties = workingProperties;
+	}
+	
+	
 	
 }

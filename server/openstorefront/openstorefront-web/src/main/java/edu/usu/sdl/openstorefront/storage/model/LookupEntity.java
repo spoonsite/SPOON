@@ -14,35 +14,53 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.web.rest.model;
+package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author dshurtleff
  */
-public class LookupTypeEntity
+public abstract class LookupEntity
 	extends BaseEntity
 {
+	
+	@PK
 	@NotNull
+	@Size(min = 1, max = 20)
 	protected String code;
+	
 	@NotNull
+	@Size(min = 1, max = 255)	
 	protected String description;
-	@NotNull
-	protected String activeStatus;
-	@NotNull
-	protected String createUser;	
-	@NotNull
-	protected Date createDts;	
-	@NotNull
-	protected String updateUser;	
-	@NotNull
-	protected Date updateDts;	
 
-	public LookupTypeEntity()
+	
+	@NotNull	
+	protected String activeStatus;
+	
+	
+	@NotNull
+	@Size(min = 1, max = 80)	
+	protected String createUser;
+	
+	
+	@NotNull	
+	protected Date createDts;
+	
+	
+	@NotNull
+	@Size(min = 1, max = 80)	
+	protected String updateUser;
+	
+	
+	@NotNull		
+	protected Date updateDts;	
+	
+	public LookupEntity()
 	{
 	}
 
@@ -65,7 +83,7 @@ public class LookupTypeEntity
 	{
 		this.description = description;
 	}
-
+	
 	public String getActiveStatus()
 	{
 		return activeStatus;
@@ -115,6 +133,36 @@ public class LookupTypeEntity
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}	
+	
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		hash += (code != null ? code.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof TestEntity))
+		{
+			return false;
+		}
+		TestEntity other = (TestEntity) object;
+		if ((this.code == null && other.code != null) || (this.code != null && !this.code.equals(other.code)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "edu.usu.sdl.openstorefront.storage.lookup[ code=" + code + " ]";
 	}
 	
 }

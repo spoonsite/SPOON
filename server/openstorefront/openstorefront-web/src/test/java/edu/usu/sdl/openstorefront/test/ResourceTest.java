@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.sort;
+package edu.usu.sdl.openstorefront.test;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.Comparator;
+import org.junit.Test;
 
 /**
- * 
+ *
  * @author dshurtleff
- * @param <T>
  */
-public class LookupComparator <T extends LookupEntity>
-	implements Comparator<T>
+public class ResourceTest
 {
-
-	@Override
-	public int compare(T t, T t1)
+	@Test 
+	public void testResourceFind()
 	{
-		return t.getDescription().compareToIgnoreCase(t1.getDescription());
+//		URL url = new JPAProvider().getClass().getResource("/META-INF/persistence.xml");
+//		Collection<PersistenceUnitInfo> allUnitInfos = (Collection<PersistenceUnitInfo>) PersistenceXmlUtil.parse(new JPAProvider().getClass().getResource("/META-INF/persistence.xml"));
+//		System.out.println(allUnitInfos);
+//		
 	}
 	
 }

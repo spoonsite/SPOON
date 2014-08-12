@@ -16,7 +16,7 @@
 
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.model.jpa.Test;
+import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
@@ -34,12 +34,12 @@ public class TestResource
 	
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public List<Test> getTest()
+	public List<TestEntity> getTest()
 	{
-		Test test = new Test();
+		TestEntity test = new TestEntity();
 		test.setCode("Hello");
 		test.setDescription("World");
-		List<Test> tests = new ArrayList<>();
+		List<TestEntity> tests = new ArrayList<>();
 		tests.add(test);
 		return tests;
 	}

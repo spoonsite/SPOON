@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.sort;
+package edu.usu.sdl.openstorefront.service;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.Comparator;
+import java.lang.reflect.Method;
 
 /**
- * 
+ *
  * @author dshurtleff
- * @param <T>
  */
-public class LookupComparator <T extends LookupEntity>
-	implements Comparator<T>
+public interface ProxyInterceptor
 {
-
-	@Override
-	public int compare(T t, T t1)
-	{
-		return t.getDescription().compareToIgnoreCase(t1.getDescription());
-	}
-	
+	/**
+	 * Runs before the Method call
+	 * @param proxy
+	 * @param m
+	 * @param args 
+	 * @param context 
+	 * @return  true to skip the actual call to the method
+	 */
+	boolean before(Object proxy, Method m, Object[] args,  ProxyContext context);
+	void after(Object proxy, Method m, Object[] args,  ProxyContext context);
+	void handleException(Object proxy, Method m, Object[] args,  ProxyContext context);
+	void requiredAfterRun(Object proxy, Method m, Object[] args,  ProxyContext context);
 }
