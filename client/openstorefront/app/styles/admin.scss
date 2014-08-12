@@ -18,7 +18,7 @@
 * This css is used for the styles found in the admin tools page
 ***************************************************************/
 .adminTools {
-  position:relative;
+  position:fixed;
   z-index: 1;
   background: white;
   width: 250px !important;
@@ -34,7 +34,6 @@
   display: inline-block;
   vertical-align: top;
   width: 100%;
-  margin-left: -250px;
   padding-left: 250px;
 }
 
