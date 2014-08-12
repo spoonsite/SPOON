@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.service;
+package edu.usu.sdl.openstorefront.util;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author dshurtleff
  */
-public class PersistantInterceptor
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface PK
 {
-	@AroundInvoke
-	public void interceptCall(InvocationContext ctx)
-	{
-		
-	}
+	
 }

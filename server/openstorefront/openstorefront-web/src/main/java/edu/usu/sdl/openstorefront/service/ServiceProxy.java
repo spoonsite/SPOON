@@ -14,24 +14,37 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.sort;
+package edu.usu.sdl.openstorefront.service;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.Comparator;
+import edu.usu.sdl.openstorefront.service.api.LookupService;
 
 /**
- * 
+ *  Entry point to the service layer;  Expecting one Service Proxy per thread.
+ *  Not thread Safe;
  * @author dshurtleff
- * @param <T>
  */
-public class LookupComparator <T extends LookupEntity>
-	implements Comparator<T>
+public class ServiceProxy
 {
-
-	@Override
-	public int compare(T t, T t1)
+	protected PersistenceService persistenceService = new PersistenceService();
+	protected LookupService lookupService;
+		
+	public ServiceProxy()
 	{
-		return t.getDescription().compareToIgnoreCase(t1.getDescription());
 	}
+	
+	public PersistenceService getPersistenceService()
+	{
+		return persistenceService;
+	}
+	
+	public LookupService getLookupService()
+	{
+		if (lookupService == null)
+		{
+			lookupService = DynamicProxy.newInstance(new LookupServiceImpl());
+		}
+		return lookupService;
+	}
+	
 	
 }

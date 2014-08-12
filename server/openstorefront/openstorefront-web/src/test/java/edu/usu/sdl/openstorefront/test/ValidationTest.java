@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.sort;
+package edu.usu.sdl.openstorefront.test;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.Comparator;
+import org.junit.Test;
 
 /**
- * 
+ *
  * @author dshurtleff
- * @param <T>
  */
-public class LookupComparator <T extends LookupEntity>
-	implements Comparator<T>
+public class ValidationTest
 {
-
-	@Override
-	public int compare(T t, T t1)
+	@Test
+	public void testValidation()
 	{
-		return t.getDescription().compareToIgnoreCase(t1.getDescription());
+//		PersistenceService persistenceService = new PersistenceService();
+//		edu.usu.sdl.openstorefront.storage.model.Test test = new edu.usu.sdl.openstorefront.storage.model.Test();
+//				
+//		Set<ConstraintViolation<edu.usu.sdl.openstorefront.storage.model.Test>> results = persistenceService.validate(test);
+//		results.forEach(r ->{
+//			System.out.println(r.getMessage());
+//		});
 	}
 	
 }

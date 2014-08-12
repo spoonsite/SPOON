@@ -39,6 +39,9 @@ public class PropertiesManager
 	public static final String KEY_USE_REST_PROXY = "service.rest.proxy";
 	public static final String KEY_DB_CONNECT_MIN = "db.connectionpool.min";
 	public static final String KEY_DB_CONNECT_MAX= "db.connectionpool.max";
+	public static final String KEY_DB_USER= "db.user";
+	public static final String KEY_DB_PASSWORD= "db.pw";
+	
 	
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();

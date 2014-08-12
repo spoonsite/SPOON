@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.sort;
+package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.Comparator;
+import java.io.Serializable;
 
 /**
- * 
+ *
  * @author dshurtleff
- * @param <T>
  */
-public class LookupComparator <T extends LookupEntity>
-	implements Comparator<T>
+public abstract class BaseEntity
+	implements Serializable
 {
-
-	@Override
-	public int compare(T t, T t1)
-	{
-		return t.getDescription().compareToIgnoreCase(t1.getDescription());
-	}
+	public static final String ACTIVE_STATUS = "A";
+	public static final String INACTIVE_STATUS = "I";
+		
+	
+	public abstract void setActiveStatus(String activeStatus);
 	
 }

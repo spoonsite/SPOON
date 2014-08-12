@@ -23,7 +23,6 @@ import com.orientechnologies.orient.server.OServerMain;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.EntityManager;
 
 /**
  *
@@ -34,6 +33,7 @@ public class DBManager
 	private static final Logger log = Logger.getLogger(DBManager.class.getName());	
 	
 	private static OServer server;
+	private static OObjectDatabasePool globalInstance;
 	
 	/**
 	 * Called once at application Startup
@@ -62,10 +62,14 @@ public class DBManager
 				log.log(Level.INFO, "Done");				
 			}
 						
-			OObjectDatabaseTx db = OObjectDatabasePool.global(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)))
-											.acquire("remote:localhost/openstorefront", "app", "aPpw0rd!");
-			db.getEntityManager().registerEntityClasses("edu.usu.sdl.openstorefront.jpa");
-						
+			globalInstance  = OObjectDatabasePool.global(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
+			
+			try (OObjectDatabaseTx db = getConnection())
+			{
+				db.getEntityManager().registerEntityClasses("edu.usu.sdl.openstorefront.storage.model");
+				//db.getEntityManager().registerEntityClass(TestEntity.class);
+				
+			}
 			
 			
 			log.info("Finished.");
@@ -82,16 +86,15 @@ public class DBManager
 	public static void shutdown()
 	{
 		log.info("Shutting down Orient DB...");
-		 OObjectDatabasePool.global().close();		
+		globalInstance.close();		
 		server.shutdown();
 		
 		log.info("Finished.");		
 	}	
 
-	public static EntityManager getEntityManager()
+	public static OObjectDatabaseTx getConnection()
 	{
-		
-		return new ODBEntityManager(OObjectDatabasePool.global().acquire());
+		return  globalInstance.acquire("remote:localhost/openstorefront", PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_PASSWORD));
 	}
 	
 }

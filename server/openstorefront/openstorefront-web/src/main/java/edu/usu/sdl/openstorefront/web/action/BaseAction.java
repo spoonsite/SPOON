@@ -16,8 +16,7 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.usu.sdl.openstorefront.service.api.OpenStorefrontService;
-import edu.usu.sdl.openstorefront.util.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.viewmodel.JsonFormLoad;
 import edu.usu.sdl.openstorefront.web.viewmodel.JsonResponse;
@@ -52,7 +51,7 @@ public abstract class BaseAction
 	protected ActionBeanContext context;
 	protected String projectId;
 		
-	protected final OpenStorefrontService service = ServiceProxy.getProxy();	
+	protected final ServiceProxy service = new ServiceProxy();
 	
 	protected void mapFields(Map<String, Object> fields, Object data, String propertyRoot)
 	{

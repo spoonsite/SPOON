@@ -53,7 +53,6 @@ public class ComponentDetail
 	@NotNull	
 	private String organization;
 	
-	@NotNull
 	private Date releaseDate;
 	private String version;
 			
