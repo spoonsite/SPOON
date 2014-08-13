@@ -1,5 +1,6 @@
 describe('Search the entire store', function() {
-    
+
+    grunt.log.subhead('searchAll_spec.js');
     // *** varies, depending on what is in the sample database ***
     var totalResults = 59;
     
@@ -11,7 +12,9 @@ describe('Search the entire store', function() {
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
 
         // Should return 58 results
-        expect(element.all(by.repeater('item in data')).count()).toEqual(totalResults);
+        expect(element.all(by.repeater('item in data')).count()).toEqual(totalResults), function() {
+            grunt.log.ok('Returned ' + totalResults + ' expected current search results');
+        };
     });
 
     it('for a LONG string with special characters, pseudo search returns zero results', function() {
