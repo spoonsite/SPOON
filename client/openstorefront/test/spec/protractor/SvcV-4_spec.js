@@ -1,6 +1,5 @@
 describe('SvcV-4 button from the home page', function() {
 
-    grunt.log.subhead('SvcV-4_spec.js');
     it('Expand the buttons in the categories', function () {
         // Open the main site
         browser.get('http://di2e.github.io/openstorefront');
@@ -16,7 +15,11 @@ describe('SvcV-4 button from the home page', function() {
             browser.driver.sleep(1);
         }
 
+        // Logfile
+    /*    grunt.log.subhead('SvcV-4_spec.js');
+        grunt.log.ok('Successfully expanded the buttons in the categories');
+     */
     });
 
-    grunt.log.ok('Successfully expanded the buttons in the categories');
+
 });
