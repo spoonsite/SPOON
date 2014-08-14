@@ -26,6 +26,9 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -78,12 +81,6 @@ public class PersistenceService
 			db.close();
 		}
 	}
-	
-//	public <T> Set<ConstraintViolation<T>> validate(T entity)
-//	{
-//		 ValidatorFactory factory = Validation.byProvider(
-//		return  factory.getValidator().validate(entity);	 
-//	}
 	
 	public void begin()
 	{
@@ -215,7 +212,7 @@ public class PersistenceService
 	private String findIdField(Class entityClass)
 	{
 		String idField = null;
-		//Start at the root (The first Id found wins ...there should only be one)
+		//Start at the root (The last Id found wins ...there should only be one)
 		if(entityClass.getSuperclass() != null)
 		{
 			idField = findIdField(entityClass.getSuperclass());
@@ -425,8 +422,16 @@ public class PersistenceService
 		OObjectDatabaseTx db = getConnection();		
 		T t = null;
 		try
-		{		
-			 t = db.save(entity);		
+		{	
+			ValidationResult validationResult =  ValidationUtil.validate(new ValidationModel(entity));
+			if (validationResult.valid())
+			{
+				 t = db.save(entity);		
+			}
+			else
+			{
+				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules.");
+			}	
 		} finally
 		{
 			closeConnection(db);

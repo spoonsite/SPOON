@@ -14,32 +14,22 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.test;
+package edu.usu.sdl.openstorefront.doc;
 
-import org.junit.Test;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author dshurtleff
  */
-public class ValidationTest
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ValidValueType
 {
-	@Test
-	public void testValidation()
-	{
-//		TestEntity testEntity = null;
-//
-//		UserProfile userProfile = new UserProfile();
-//		UserTypeCode userTypeCode = new UserTypeCode();
-//		userTypeCode.setCode("User");
-//		userTypeCode.setDescription("End-User");
-//		userProfile.getUserTypeCode().add(userTypeCode);
-//		
-//		boolean valid = ValidationUtil.isValid(new ValidationModel(userProfile));		
-//		System.out.println("Valid: " + valid);
-//		
-//		ValidationResult validationResult = ValidationUtil.validate(new ValidationModel(userProfile));
-//		System.out.println(validationResult.toString());
-	}
-	
+	String[] value();
 }
