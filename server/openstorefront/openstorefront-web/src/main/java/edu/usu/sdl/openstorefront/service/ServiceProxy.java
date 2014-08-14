@@ -16,7 +16,11 @@
 
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.service.api.AttributeService;
+import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
+import edu.usu.sdl.openstorefront.service.api.SearchService;
+import edu.usu.sdl.openstorefront.service.api.UserService;
 
 /**
  *  Entry point to the service layer;  Expecting one Service Proxy per thread.
@@ -27,6 +31,10 @@ public class ServiceProxy
 {
 	protected PersistenceService persistenceService = new PersistenceService();
 	protected LookupService lookupService;
+	protected AttributeService attributeService;
+	protected ComponentService componentService;
+	protected SearchService searchService;
+	protected UserService userService;
 		
 	public ServiceProxy()
 	{
@@ -44,6 +52,42 @@ public class ServiceProxy
 			lookupService = DynamicProxy.newInstance(new LookupServiceImpl());
 		}
 		return lookupService;
+	}
+
+	public AttributeService getAttributeService()
+	{
+		if (attributeService == null)
+		{
+			attributeService = DynamicProxy.newInstance(new AttributeServiceImpl());
+		}
+		return attributeService;
+	}
+
+	public ComponentService getComponentService()
+	{
+		if (componentService == null)
+		{
+			componentService = DynamicProxy.newInstance(new ComponentServiceImpl());
+		}
+		return componentService;
+	}
+
+	public SearchService getSearchService()
+	{
+		if (searchService == null)
+		{
+			searchService = DynamicProxy.newInstance(new SearchServiceImpl());
+		}
+		return searchService;
+	}
+
+	public UserService getUserService()
+	{
+		if (userService == null)
+		{
+			userService = DynamicProxy.newInstance(new UserServiceImpl());
+		}
+		return userService;
 	}
 	
 	

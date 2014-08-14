@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.service;
-
-import edu.usu.sdl.openstorefront.service.api.UserService;
-import java.util.logging.Logger;
+package edu.usu.sdl.openstorefront.service.api;
 
 /**
- *  Handles all user business logic
+ *
  * @author dshurtleff
  */
-public class UserServiceImpl
-	extends ServiceProxy
-	implements UserService
+public interface SearchService
 {
-	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
-	
-	
 	
 }

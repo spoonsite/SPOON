@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -61,6 +62,12 @@ public class DynamicProxy <T>
 				proxyInterceptors.add((ProxyInterceptor) interceptor.value().newInstance());
 			}
 		}
+		
+		long startTime = System.currentTimeMillis();
+		if (log.isLoggable(Level.FINEST))
+		{
+			log.log(Level.FINEST, "Calling Method: {0} on {1}", new Object[]{m.getName(), proxy.getClass().getName()});
+		}
 
 		ProxyContext proxyContext = new ProxyContext();
 		proxyContext.setPersistenceService(((ServiceProxy)originalObject).getPersistenceService());			
@@ -74,6 +81,10 @@ public class DynamicProxy <T>
 				if (skip)
 				{
 					runMethod = false;
+					if (log.isLoggable(Level.FINEST))
+					{					
+						log.log(Level.FINEST, "Interceptor: {0} Aborted method: {1} call.", new Object[]{proxyInterceptor.getClass().getName(), m.getName()});						
+					}
 				}
 			}
 			
@@ -86,6 +97,11 @@ public class DynamicProxy <T>
 			{
 				 proxyInterceptor.after(proxy, m, args, proxyContext);			
 			}
+		
+			if (log.isLoggable(Level.FINEST))
+			{
+				log.log(Level.FINEST, "Completed Method: {0} on {1} time: {2}", new Object[]{m.getName(), proxy.getClass().getName(), System.currentTimeMillis() - startTime});
+			}
 			
 		}
 		catch (InvocationTargetException e)
@@ -93,6 +109,10 @@ public class DynamicProxy <T>
 			for (ProxyInterceptor proxyInterceptor : proxyInterceptors)
 			{
 				proxyInterceptor.handleException(proxy, m, args, proxyContext);
+			}			
+			if (log.isLoggable(Level.FINEST))
+			{
+				log.log(Level.FINEST, "Call Method FAILED: {0} on {1} time: {2}", new Object[]{m.getName(), proxy.getClass().getName(), System.currentTimeMillis() - startTime});
 			}			
 			throw e.getTargetException();
 		} 
