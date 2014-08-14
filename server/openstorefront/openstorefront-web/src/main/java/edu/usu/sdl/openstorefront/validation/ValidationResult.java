@@ -14,32 +14,46 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.test;
+package edu.usu.sdl.openstorefront.validation;
 
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class ValidationTest
+public class ValidationResult
 {
-	@Test
-	public void testValidation()
+	private List<RuleResult> ruleResults = new ArrayList<>();
+
+	public ValidationResult()
 	{
-//		TestEntity testEntity = null;
-//
-//		UserProfile userProfile = new UserProfile();
-//		UserTypeCode userTypeCode = new UserTypeCode();
-//		userTypeCode.setCode("User");
-//		userTypeCode.setDescription("End-User");
-//		userProfile.getUserTypeCode().add(userTypeCode);
-//		
-//		boolean valid = ValidationUtil.isValid(new ValidationModel(userProfile));		
-//		System.out.println("Valid: " + valid);
-//		
-//		ValidationResult validationResult = ValidationUtil.validate(new ValidationModel(userProfile));
-//		System.out.println(validationResult.toString());
+	}
+	
+	public boolean valid()
+	{
+		return ruleResults.isEmpty();
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		ruleResults.forEach(result ->{
+			sb.append(result.toString()).append("\n");
+		});
+		return sb.toString();
+	}
+
+	public List<RuleResult> getRuleResults()
+	{
+		return ruleResults;
+	}
+
+	public void setRuleResults(List<RuleResult> ruleResults)
+	{
+		this.ruleResults = ruleResults;
 	}
 	
 }

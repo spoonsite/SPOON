@@ -51,7 +51,7 @@ public interface LookupService
 	/**
 	 * Add or Updates a lookup code
 	 * @param lookupEntity 
-	 */
+	*/	
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveLookupValue(LookupEntity lookupEntity);	
 	
