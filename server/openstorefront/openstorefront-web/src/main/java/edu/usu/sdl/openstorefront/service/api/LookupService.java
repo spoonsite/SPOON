@@ -16,7 +16,10 @@
 
 package edu.usu.sdl.openstorefront.service.api;
 
-import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
+import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
+import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import java.util.List;
 
 
@@ -33,7 +36,7 @@ public interface LookupService
 	 * @param <T>
 	 * @param lookTableClass
 	 * @return 
-	 */
+	 */	
 	public <T extends BaseEntity>  List<T> findLookup(Class<T> lookTableClass);
 	
 	/**
@@ -45,4 +48,11 @@ public interface LookupService
 	 */
 	public <T extends BaseEntity>  List<T> findLookup(Class<T> lookTableClass, boolean all);
 		
+	/**
+	 * Add or Updates a lookup code
+	 * @param lookupEntity 
+	*/	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveLookupValue(LookupEntity lookupEntity);	
+	
 }

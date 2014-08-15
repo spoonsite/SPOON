@@ -39,6 +39,10 @@ app.controller('Svc4ArchDiagramController', ['$scope', function($scope) {
       $scope.diagramToggleAllText = 'Collapse All';
     }
   };
+  $scope.hidePopup = function(){
+    $('.popover').remove();
+  };
+  
 }]);
 
 app.directive('svcv4Diagram', function() {

@@ -32,7 +32,7 @@ limitations under the License.
       </select>
       <br>
       <label for="searchFilter">Filter By Text: </label>
-      <input type="text" id="searchFilter" class="form-control" placeholder="Filter Search" ng-model="query" ng-options="key for key in typeahead" bs-typeahead/>
+      <input type="text" id="searchFilter" class="form-control" placeholder="Filter Search" ng-model="query" ng-options="key.name as key.name for key in typeahead" bs-typeahead/>
       <br>
       <label for="tagsFilter">Filter By Tag: </label>
       <tags-input class="bootstrap" min-length="1" ng-model="tagsFilter" replace-spaces-with-dashes="false" add-from-autocomplete-only="true" on-tag-added="applyFilters();" on-tag-removed="applyFilters();"><auto-complete min-length="1" source="checkTagsList($query, tagsFilter, tagsList)"></auto-complete></tags-input>
@@ -172,11 +172,13 @@ limitations under the License.
               <!-- fa fa-file-text, fa fa-book, fa fa-info-circle-->
               <!-- glyphicon glyphicon-info-sign -->
               <span ng-click="setupModal(modal, ''); openModal('descModal'); " class="imitateLink" > {{searchDescription}} <i class="glyphicon glyphicon-info-sign"></i></span>
+              <div>
+                <button class="btn btn-default" ng-click="goToCompare()">Compare All</button>
+              </div>
             </div>
           </div>
           <div ng-if="data.data.length > 0">
-            <component-list click-callback="updateDetails" class-list=""
-            filters="filters" data="data.data" cols="3" ></component-list>
+            <component-list click-callback="updateDetails" class-list="" list="list" filters="filters" data="data.data" cols="3" ></component-list>
           </div>
           <div ng-show="moreThan200" class="moreThan200">
             <button class="btn btn-default">Load More Results...</button>

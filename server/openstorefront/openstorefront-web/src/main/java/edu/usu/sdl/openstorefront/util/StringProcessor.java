@@ -223,4 +223,28 @@ public class StringProcessor
 		return sb.toString();
 	}
 	
+	public static String blankIfNull(String text)
+	{
+		if (text == null)
+		{
+			return "";
+		}
+		else
+		{
+			return text;
+		}
+	}	
+	
+	public static String blankIfNull(Object text)
+	{
+		if (text == null)
+		{
+			return "";
+		}
+		else
+		{
+			return text.toString();
+		}
+	}	
+	
 }

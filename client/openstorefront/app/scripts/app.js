@@ -23,7 +23,7 @@
 ***************************************************************/
 var app = angular
 // Here we add the dependancies for the app
-.module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor', 'ngGrid' , 'ngMockE2E', 'bootstrapLightbox' ])
+.module('openstorefrontApp', ['ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'mgcrea.ngStrap', 'ngTagsInput', 'ngAnimate', 'ngCkeditor', 'ngGrid' , 'ngMockE2E', 'bootstrapLightbox', 'angular-carousel' ])
 // Here we configure the route provider
 .config(function ($routeProvider, tagsInputConfigProvider, LightboxProvider) {
   $routeProvider
@@ -54,6 +54,10 @@ var app = angular
   .when('/login', {
     templateUrl: 'views/login.html',
     controller: 'LoginCtrl'
+  })
+  .when('/compare', {
+    templateUrl: 'views/compare.html',
+    controller: 'CompareCtrl'
   })
   .otherwise({
     redirectTo: '/'
@@ -181,7 +185,7 @@ tagsInputConfigProvider
   * This funciton resets the search query when we don't want to be showing it
   ***************************************************************/
   $rootScope.$on('$locationChangeStart', function (event, next, current) {
-    if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing')) {
+    if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing' && $location.path() !== '/compare')) {
       $location.search({});
     }
   });
@@ -191,7 +195,11 @@ tagsInputConfigProvider
   * This function is what is called when the view has finally been loaded
   ***************************************************************/
   $rootScope.$on('$viewContentLoaded', function() {
-    $rootScope.typeahead = Business.typeahead();
+    Business.componentservice.getComponentDetails().then(function(result) {
+      Business.typeahead(result, null).then(function(value){
+        $rootScope.typeahead = value;
+      });
+    });
     
     $timeout(function() {
       $('[data-toggle=\'tooltip\']').tooltip();
@@ -331,9 +339,9 @@ tagsInputConfigProvider
   //Mock Back End  (use passthough to route to server)
   $httpBackend.whenGET(/views.*/).passThrough();
   
-  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
-  $httpBackend.whenGET('/openstorefront-web/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
-  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
+  $httpBackend.whenGET('/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
+  $httpBackend.whenGET('/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
+  $httpBackend.whenGET(/\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
     var query = getParams(url);
     var result = null;
     // console.log('query Parameters', query);
@@ -362,32 +370,59 @@ tagsInputConfigProvider
     return [200, result, {}];
   });
 
-  $httpBackend.whenGET(/\/openstorefront-web\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
+  $httpBackend.whenGET(/\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
     // grab the url (needed for what the backend will simulate)
     // parse it into an array
     var urlSplit = url.split('/');
     var i = 0;
     // go until we find our resource
     while (urlSplit[i++] !== 'component'){}
-    // if there is an id, grab it for our use.
-  var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
+      // if there is an id, grab it for our use.
+    var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
 
-  var result = $q.defer();
-  $timeout(function() {
-    if (id && id !== '') {
-      var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
-      result.resolve(temp);
-    } else {
-      result.resolve(MOCKDATA2.componentList);
-    }
-  }, 1000);
-  return [200, result.promise, {}];
-});
+    var result = $q.defer();
+    $timeout(function() {
+      if (id && id !== '') {
+        var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
+        result.resolve(temp);
+      } else {
+        result.resolve(MOCKDATA2.componentList);
+      }
+    }, 1000);
+    return [200, result.promise, {}];
+  });
+
   $httpBackend.whenGET(/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
     var request = new XMLHttpRequest();
     request.open('GET', 'views/temp/landingpage.html', false);
     request.send(null);
     return [request.status, request.response, {}];
+  });
+  
+  $httpBackend.whenGET(/\/api\/v1\/resource\/attributes\//).respond(function(method, url, data) {
+    return [200, MOCKDATA.filters, {}];
+  });
+
+  $httpBackend.whenGET(/\/api\/v1\/resource\/tags\//).respond(function(method, url, data) {
+    return [200, MOCKDATA.tagsList, {}];
+  });
+
+  $httpBackend.whenGET(/\/api\/v1\/resource\/pros\//).respond(function(method, url, data) {
+    return [200, MOCKDATA.prosConsList, {}];
+  });
+
+  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/evalLevels\//).respond(function(method, url, data) {
+    var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
+    return [200, result, {}];
+  });
+
+  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/watches\//).respond(function(method, url, data) {
+    return [200, MOCKDATA.watches, {}];
+  });
+
+  $httpBackend.whenPOST(/\/api\/v1\/resource\/lookup\/watches\//).respond(function(method, url, data) {
+    MOCKDATA.watches = data;
+    return [200, angular.fromJson(data), {}];
   });
   ////////////////////////////////////////////////////////////////////////
 

@@ -1,0 +1,47 @@
+exports.config = {
+  //seleniumAddress: 'http://localhost:4444/wd/hub',
+  specs: [
+    'spec/protractor/*_spec.js'
+  ],
+
+ onPrepare: function() {
+     //browser.driver.manage().window().maximize();
+
+/*    var folderName = (new Date()).toString().split(' ').splice(1, 4).join(' ');
+    var mkdirp = require('mkdirp');
+    var newFolder = "./test/spec/protractor/REPORTS/" + folderName;
+    require('jasmine-reporters');
+    
+    mkdirp(newFolder, function(err) {
+      if (err) {
+        console.error(err);
+      } else {
+        jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter(newFolder, true, true));
+      }
+    });
+*/
+     },
+
+ capabilities : {
+    browserName : 'chrome',
+ 'chromeOptions': {
+    args: ['--test-type']
+ }
+ },
+
+/* multiCapabilities : [{
+     'browserName': 'internet explorer'
+ }, {
+     'browsername': 'firefox'
+ }, {
+     'browserName' : 'chrome'
+ }],
+*/
+  jasmineNodeOpts: {
+    onComplete: null,
+    isVerbose: false,
+    showColors: true,
+    includeStackTrace: true,
+    defaultTimeoutInterval: 10000
+  }
+};

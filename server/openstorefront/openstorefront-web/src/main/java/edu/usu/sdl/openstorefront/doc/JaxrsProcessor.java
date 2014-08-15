@@ -28,6 +28,7 @@ import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -433,6 +434,12 @@ public class JaxrsProcessor
 				{
 					validation.append("Needs to Match: ").append(pattern.regexp()).append("<br>");
 				}
+
+				ValidValueType validValueType = (ValidValueType) field.getAnnotation(ValidValueType.class);
+				if (validValueType != null)
+				{
+					validation.append("Set of valid values: ").append(Arrays.toString(validValueType.value())).append("<br>");
+				}				
 
 				fieldModel.setValidation(validation.toString());
 

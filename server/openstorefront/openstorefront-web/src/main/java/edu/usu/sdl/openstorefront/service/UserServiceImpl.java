@@ -16,11 +16,19 @@
 
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.service.api.UserService;
+import java.util.logging.Logger;
+
 /**
  *  Handles all user business logic
  * @author dshurtleff
  */
 public class UserServiceImpl
+	extends ServiceProxy
+	implements UserService
 {
+	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
+	
+	
 	
 }

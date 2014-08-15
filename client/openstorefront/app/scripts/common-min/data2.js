@@ -1677,9 +1677,9 @@ MOCKDATA2.componentList = [ {
   } ],
   "reviews" : [ ],
   "dependencies" : [ {
-    "dependancy" : "Erlang",
+    "dependency" : "Erlang",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 3.0"
   } ]
 }, {
@@ -1820,9 +1820,9 @@ MOCKDATA2.componentList = [ {
     "cons" : [ ]
   } ],
   "dependencies" : [ {
-    "dependancy" : "Ruby",
+    "dependency" : "Ruby",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 2.0+"
   } ]
 }, {
@@ -1965,9 +1965,9 @@ MOCKDATA2.componentList = [ {
     } ]
   } ],
   "dependencies" : [ {
-    "dependancy" : "Tomcat",
+    "dependency" : "Tomcat",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 7 or 8"
   } ]
 }, {
@@ -2638,9 +2638,9 @@ MOCKDATA2.componentList = [ {
     "cons" : [ ]
   } ],
   "dependencies" : [ {
-    "dependancy" : "Tomcat",
+    "dependency" : "Tomcat",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 7 or 8"
   } ]
 }, {
@@ -2778,9 +2778,9 @@ MOCKDATA2.componentList = [ {
     "cons" : [ ]
   } ],
   "dependencies" : [ {
-    "dependancy" : "Windows",
+    "dependency" : "Windows",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 8.1"
   } ]
 }, {
@@ -2908,9 +2908,9 @@ MOCKDATA2.componentList = [ {
   } ],
   "reviews" : [ ],
   "dependencies" : [ {
-    "dependancy" : "Linux",
+    "dependency" : "Linux",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Tested on CentOS 5 and Ubuntu Server 11.0"
   } ]
 }, {
@@ -3026,9 +3026,9 @@ MOCKDATA2.componentList = [ {
   } ],
   "reviews" : [ ],
   "dependencies" : [ {
-    "dependancy" : "Linux",
+    "dependency" : "Linux",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Tested on CentOS 5 and Ubuntu Server 11.0"
   } ]
 }, {
@@ -3194,9 +3194,9 @@ MOCKDATA2.componentList = [ {
     "cons" : [ ]
   } ],
   "dependencies" : [ {
-    "dependancy" : "Erlang",
+    "dependency" : "Erlang",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 3.0"
   } ]
 }, {
@@ -3301,9 +3301,9 @@ MOCKDATA2.componentList = [ {
   } ],
   "reviews" : [ ],
   "dependencies" : [ {
-    "dependancy" : "Windows",
+    "dependency" : "Windows",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 8.1"
   } ]
 }, {
@@ -3621,9 +3621,9 @@ MOCKDATA2.componentList = [ {
     } ]
   } ],
   "dependencies" : [ {
-    "dependancy" : "Linux",
+    "dependency" : "Linux",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Tested on CentOS 5 and Ubuntu Server 11.0"
   } ]
 }, {
@@ -4510,9 +4510,9 @@ MOCKDATA2.componentList = [ {
   } ],
   "reviews" : [ ],
   "dependencies" : [ {
-    "dependancy" : "Tomcat",
+    "dependency" : "Tomcat",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 7 or 8"
   } ]
 }, {
@@ -5037,9 +5037,9 @@ MOCKDATA2.componentList = [ {
   } ],
   "reviews" : [ ],
   "dependencies" : [ {
-    "dependancy" : "Linux",
+    "dependency" : "Linux",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Tested on CentOS 5 and Ubuntu Server 11.0"
   } ]
 }, {
@@ -5805,9 +5805,9 @@ MOCKDATA2.componentList = [ {
   } ],
   "reviews" : [ ],
   "dependencies" : [ {
-    "dependancy" : "Tomcat",
+    "dependency" : "Tomcat",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 7 or 8"
   } ]
 }, {
@@ -8442,9 +8442,9 @@ MOCKDATA2.componentList = [ {
     } ]
   } ],
   "dependencies" : [ {
-    "dependancy" : "Erlang",
+    "dependency" : "Erlang",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 3.0"
   } ]
 }, {
@@ -8673,9 +8673,9 @@ MOCKDATA2.componentList = [ {
     } ]
   } ],
   "dependencies" : [ {
-    "dependancy" : "Tomcat",
+    "dependency" : "Tomcat",
     "version" : null,
-    "dependancyReferenceLink" : null,
+    "dependencyReferenceLink" : null,
     "comment" : "Version 7 or 8"
   } ]
 }, {

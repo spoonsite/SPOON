@@ -34,7 +34,7 @@
           <th class="valign" colspan="2"><h4>External Dependencies</h4></th>
         </tr>             
         <tr data-ng-repeat="row in details.details.dependencies">
-          <td class="text-left-bold">{{row.dependancy}}</td>
+          <td class="text-left-bold">{{row.dependency}}</td>
           <td class="text-left">{{row.comment}}</td>
         </tr>
       </tbody>
@@ -42,7 +42,7 @@
     <table ng-if="details.details.resources[0] !== undefined" class="table table-bordered table-hover" style="table-layout:fixed">
       <tbody>
         <tr>
-          <th class="valign"  colspan="18"><h4>Location of Asset Artifacts</h4></th>
+          <th class="valign"  colspan="18"><h4>Location of Component Atifacts</h4></th>
         </tr>             
         <tr>
           <th class="valign"  colspan="5">Name</th>

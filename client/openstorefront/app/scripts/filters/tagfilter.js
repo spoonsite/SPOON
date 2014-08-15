@@ -28,12 +28,16 @@ app.filter('tagFilter', function () {
       out = _.filter(input, function(entry) {
         var temp = _.find(MOCKDATA2.componentList, {'componentId': entry.componentId});
         // it passes the filter if for every tag
-        return _.every(filters, function(tagListItem) {
-          // one of the tags in its tag list is the same as the one form the filter
-          return _.some(temp.tags, function(tag) {
-            return tagListItem.text  === tag.text;
+        if (temp) {
+          return _.every(filters, function(tagListItem) {
+            // one of the tags in its tag list is the same as the one form the filter
+            return _.some(temp.tags, function(tag) {
+              return tagListItem.text  === tag.text;
+            });
           });
-        });
+        } else {
+          return false;
+        }
       });
       return out;
     } else {

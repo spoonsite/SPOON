@@ -219,13 +219,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       Business.getFilters().then(function(result) {
         if (result) {
           $scope.filters = result;
+          $scope.filters = angular.copy($scope.filters);
+          $scope.filters = _.sortBy($scope.filters, function(item){
+            return item.description;
+          });
         } else {
           $scope.filters = null;
         }
-      });
-      $scope.filters = angular.copy($scope.filters);
-      $scope.filters = _.sortBy($scope.filters, function(item){
-        return item.description;
       });
       /*This is simulating the wait time for building the data so that we get a loader*/
       $timeout(function(){
@@ -519,6 +519,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     //   'id': id
     // });
     // $location.path('/single');
+  };
+
+  /***************************************************************
+  * This function adds a component to the watch list and toggles the buttons
+  ***************************************************************/
+  $scope.goToCompare = function(){
+    var list = [];
+    _.each($scope.data.data, function(item) {
+      list.push(item.componentId);
+    });
+    $location.search({
+      'id': list
+    });
+    $location.path('/compare');
   };
 
   /***************************************************************
