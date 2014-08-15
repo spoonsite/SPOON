@@ -16,73 +16,47 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.PK;
+import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class ResourceFile
+public class ComponentEvaluationSchedulePk
+		implements Serializable
 {
 
-	@PK
 	@NotNull
-	private String resourceFileId;
-
-	@NotNull
-	private String fileName;
+	private String componentId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String originalName;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String evaluationLevelCode;
 
-	@NotNull
-	private String mimeType;
-
-	public ResourceFile()
+	public ComponentEvaluationSchedulePk()
 	{
 	}
 
-	public String getResourceFileId()
+	public String getComponentId()
 	{
-		return resourceFileId;
+		return componentId;
 	}
 
-	public void setResourceFileId(String resourceFileId)
+	public void setComponentId(String componentId)
 	{
-		this.resourceFileId = resourceFileId;
+		this.componentId = componentId;
 	}
 
-	public String getFileName()
+	public String getEvaluationLevelCode()
 	{
-		return fileName;
+		return evaluationLevelCode;
 	}
 
-	public void setFileName(String fileName)
+	public void setEvaluationLevelCode(String evaluationLevelCode)
 	{
-		this.fileName = fileName;
-	}
-
-	public String getMimeType()
-	{
-		return mimeType;
-	}
-
-	public void setMimeType(String mimeType)
-	{
-		this.mimeType = mimeType;
-	}
-
-	public String getOriginalName()
-	{
-		return originalName;
-	}
-
-	public void setOriginalName(String originalName)
-	{
-		this.originalName = originalName;
+		this.evaluationLevelCode = evaluationLevelCode;
 	}
 
 }

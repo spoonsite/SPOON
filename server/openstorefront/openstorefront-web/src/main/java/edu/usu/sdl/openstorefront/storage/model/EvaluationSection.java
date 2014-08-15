@@ -17,9 +17,9 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class MediaType
+public class EvaluationSection
 		extends LookupEntity
 {
 

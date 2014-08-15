@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.PK;
+import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,65 +24,53 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class ResourceFile
+public class ComponentAttributePk
+		implements Serializable
 {
 
-	@PK
 	@NotNull
-	private String resourceFileId;
-
-	@NotNull
-	private String fileName;
+	private String componentId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String originalName;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String attributeType;
 
 	@NotNull
-	private String mimeType;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String attributeCode;
 
-	public ResourceFile()
+	public ComponentAttributePk()
 	{
 	}
 
-	public String getResourceFileId()
+	public String getComponentId()
 	{
-		return resourceFileId;
+		return componentId;
 	}
 
-	public void setResourceFileId(String resourceFileId)
+	public void setComponentId(String componentId)
 	{
-		this.resourceFileId = resourceFileId;
+		this.componentId = componentId;
 	}
 
-	public String getFileName()
+	public String getAttributeType()
 	{
-		return fileName;
+		return attributeType;
 	}
 
-	public void setFileName(String fileName)
+	public void setAttributeType(String attributeType)
 	{
-		this.fileName = fileName;
+		this.attributeType = attributeType;
 	}
 
-	public String getMimeType()
+	public String getAttributeCode()
 	{
-		return mimeType;
+		return attributeCode;
 	}
 
-	public void setMimeType(String mimeType)
+	public void setAttributeCode(String attributeCode)
 	{
-		this.mimeType = mimeType;
-	}
-
-	public String getOriginalName()
-	{
-		return originalName;
-	}
-
-	public void setOriginalName(String originalName)
-	{
-		this.originalName = originalName;
+		this.attributeCode = attributeCode;
 	}
 
 }

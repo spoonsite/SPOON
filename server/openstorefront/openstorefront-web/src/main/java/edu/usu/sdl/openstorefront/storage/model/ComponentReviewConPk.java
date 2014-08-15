@@ -15,12 +15,45 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class MediaType
-		extends LookupEntity
+public class ComponentReviewConPk
+		implements Serializable
 {
+
+	@NotNull
+	private String componentReviewId;
+
+	@NotNull
+	private String reviewCon;
+
+	public ComponentReviewConPk()
+	{
+	}
+
+	public String getComponentReviewId()
+	{
+		return componentReviewId;
+	}
+
+	public void setComponentReviewId(String componentReviewId)
+	{
+		this.componentReviewId = componentReviewId;
+	}
+
+	public String getReviewCon()
+	{
+		return reviewCon;
+	}
+
+	public void setReviewCon(String reviewCon)
+	{
+		this.reviewCon = reviewCon;
+	}
 
 }

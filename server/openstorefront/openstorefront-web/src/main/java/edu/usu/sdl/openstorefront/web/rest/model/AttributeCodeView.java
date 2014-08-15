@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 /**
@@ -22,10 +21,11 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  */
 public class AttributeCodeView
 {
+
 	private String code;
 	private String label;
 	private String description;
-	private boolean fullTextAvailable;
+	private String fullTextLink;
 
 	public AttributeCodeView()
 	{
@@ -51,16 +51,6 @@ public class AttributeCodeView
 		this.description = description;
 	}
 
-	public boolean isFullTextAvailable()
-	{
-		return fullTextAvailable;
-	}
-
-	public void setFullTextAvailable(boolean fullTextAvailable)
-	{
-		this.fullTextAvailable = fullTextAvailable;
-	}
-
 	public String getLabel()
 	{
 		return label;
@@ -70,5 +60,15 @@ public class AttributeCodeView
 	{
 		this.label = label;
 	}
-		
+
+	public String getFullTextLink()
+	{
+		return fullTextLink;
+	}
+
+	public void setFullTextLink(String fullTextLink)
+	{
+		this.fullTextLink = fullTextLink;
+	}
+
 }

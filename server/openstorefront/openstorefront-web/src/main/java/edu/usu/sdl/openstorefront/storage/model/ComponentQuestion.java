@@ -18,34 +18,25 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class UserProfile
-		extends BaseEntity
+public class ComponentQuestion
 {
 
 	@PK
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String username;
+	private String questionId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
-	private String firstName;
+	private String componentId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_LASTNAME)
-	private String lastName;
-
-	@NotNull
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
-	private String email;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_QUESTION)
+	private String question;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
@@ -55,51 +46,18 @@ public class UserProfile
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	private String organization;
 
-	@NotNull
-	private Boolean admin;
-
-	public UserProfile()
+	public ComponentQuestion()
 	{
 	}
 
-	public String getUsername()
+	public String getQuestion()
 	{
-		return username;
+		return question;
 	}
 
-	public void setUsername(String username)
+	public void setQuestion(String question)
 	{
-		this.username = username;
-	}
-
-	public String getFirstName()
-	{
-		return firstName;
-	}
-
-	public void setFirstName(String firstName)
-	{
-		this.firstName = firstName;
-	}
-
-	public String getLastName()
-	{
-		return lastName;
-	}
-
-	public void setLastName(String lastName)
-	{
-		this.lastName = lastName;
-	}
-
-	public String getEmail()
-	{
-		return email;
-	}
-
-	public void setEmail(String email)
-	{
-		this.email = email;
+		this.question = question;
 	}
 
 	public String getUserTypeCode()
@@ -122,14 +80,24 @@ public class UserProfile
 		this.organization = organization;
 	}
 
-	public Boolean getAdmin()
+	public String getQuestionId()
 	{
-		return admin;
+		return questionId;
 	}
 
-	public void setAdmin(Boolean admin)
+	public void setQuestionId(String questionId)
 	{
-		this.admin = admin;
+		this.questionId = questionId;
+	}
+
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
 	}
 
 }

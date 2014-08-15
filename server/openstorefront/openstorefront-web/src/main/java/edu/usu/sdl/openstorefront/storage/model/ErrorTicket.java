@@ -13,134 +13,94 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
-import java.util.Date;
+import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author jlaw
  */
-public class ErrorTicket {
-    private String errorTicketId;
-    private String user;
-    private String calledAction;
-    private String input;
-    private Date createDts;
-    private String ticketFile;
-    private String clientIp;
-    private String errorTypeCode;
+public class ErrorTicket
+		extends BaseEntity
+{
 
-    /**
-     * @return the errorTicketId
-     */
-    public String getErrorTicketId() {
-        return errorTicketId;
-    }
+	@PK
+	@NotNull
+	private String errorTicketId;
+	private String calledAction;
+	private String input;
 
-    /**
-     * @param errorTicketId the errorTicketId to set
-     */
-    public void setErrorTicketId(String errorTicketId) {
-        this.errorTicketId = errorTicketId;
-    }
+	@NotNull
+	private String ticketFile;
+	private String clientIp;
 
-    /**
-     * @return the user
-     */
-    public String getUser() {
-        return user;
-    }
+	@NotNull
+	private String errorTypeCode;
 
-    /**
-     * @param user the user to set
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
+	public ErrorTicket()
+	{
+	}
 
-    /**
-     * @return the calledAction
-     */
-    public String getCalledAction() {
-        return calledAction;
-    }
+	public String getErrorTicketId()
+	{
+		return errorTicketId;
+	}
 
-    /**
-     * @param calledAction the calledAction to set
-     */
-    public void setCalledAction(String calledAction) {
-        this.calledAction = calledAction;
-    }
+	public void setErrorTicketId(String errorTicketId)
+	{
+		this.errorTicketId = errorTicketId;
+	}
 
-    /**
-     * @return the input
-     */
-    public String getInput() {
-        return input;
-    }
+	public String getCalledAction()
+	{
+		return calledAction;
+	}
 
-    /**
-     * @param input the input to set
-     */
-    public void setInput(String input) {
-        this.input = input;
-    }
+	public void setCalledAction(String calledAction)
+	{
+		this.calledAction = calledAction;
+	}
 
-    /**
-     * @return the createDts
-     */
-    public Date getCreateDts() {
-        return createDts;
-    }
+	public String getInput()
+	{
+		return input;
+	}
 
-    /**
-     * @param createDts the createDts to set
-     */
-    public void setCreateDts(Date createDts) {
-        this.createDts = createDts;
-    }
+	public void setInput(String input)
+	{
+		this.input = input;
+	}
 
-    /**
-     * @return the ticketFile
-     */
-    public String getTicketFile() {
-        return ticketFile;
-    }
+	public String getTicketFile()
+	{
+		return ticketFile;
+	}
 
-    /**
-     * @param ticketFile the ticketFile to set
-     */
-    public void setTicketFile(String ticketFile) {
-        this.ticketFile = ticketFile;
-    }
+	public void setTicketFile(String ticketFile)
+	{
+		this.ticketFile = ticketFile;
+	}
 
-    /**
-     * @return the clientIp
-     */
-    public String getClientIp() {
-        return clientIp;
-    }
+	public String getClientIp()
+	{
+		return clientIp;
+	}
 
-    /**
-     * @param clientIp the clientIp to set
-     */
-    public void setClientIp(String clientIp) {
-        this.clientIp = clientIp;
-    }
+	public void setClientIp(String clientIp)
+	{
+		this.clientIp = clientIp;
+	}
 
-    /**
-     * @return the errorTypeCode
-     */
-    public String getErrorTypeCode() {
-        return errorTypeCode;
-    }
+	public String getErrorTypeCode()
+	{
+		return errorTypeCode;
+	}
 
-    /**
-     * @param errorTypeCode the errorTypeCode to set
-     */
-    public void setErrorTypeCode(String errorTypeCode) {
-        this.errorTypeCode = errorTypeCode;
-    }
+	public void setErrorTypeCode(String errorTypeCode)
+	{
+		this.errorTypeCode = errorTypeCode;
+	}
+
 }

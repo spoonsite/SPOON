@@ -13,141 +13,91 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class UserWatch 
-    extends BaseEntity
+public class UserWatch
+		extends BaseEntity
 {
-    private String userWatchId;
-    private Date lastUpdatedDts;
-    private Character activeStatus;
-    private Date createDts;
-    private Date lastViewDts;
-    private String username;
-    private String componentId;
-    private Boolean sendAlert;
-    
-    @Override
-    public void setActiveStatus(String activeStatus) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
-    /**
-     * @return the userWatchId
-     */
-    public String getUserWatchId() {
-        return userWatchId;
-    }
+	@PK
+	@NotNull
+	private String userWatchId;
 
-    /**
-     * @param userWatchId the userWatchId to set
-     */
-    public void setUserWatchId(String userWatchId) {
-        this.userWatchId = userWatchId;
-    }
+	@NotNull
+	private Date lastViewDts;
 
-    /**
-     * @return the lastUpdatedDts
-     */
-    public Date getLastUpdatedDts() {
-        return lastUpdatedDts;
-    }
+	@NotNull
+	private String componentId;
 
-    /**
-     * @param lastUpdatedDts the lastUpdatedDts to set
-     */
-    public void setLastUpdatedDts(Date lastUpdatedDts) {
-        this.lastUpdatedDts = lastUpdatedDts;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	private String username;
 
-    /**
-     * @return the activeStatus
-     */
-    public Character getActiveStatus() {
-        return activeStatus;
-    }
+	@NotNull
+	private Boolean notifyFlg;
 
-    /**
-     * @param activeStatus the activeStatus to set
-     */
-    public void setActiveStatus(Character activeStatus) {
-        this.activeStatus = activeStatus;
-    }
+	public UserWatch()
+	{
+	}
 
-    /**
-     * @return the createDts
-     */
-    public Date getCreateDts() {
-        return createDts;
-    }
+	public String getUserWatchId()
+	{
+		return userWatchId;
+	}
 
-    /**
-     * @param createDts the createDts to set
-     */
-    public void setCreateDts(Date createDts) {
-        this.createDts = createDts;
-    }
+	public void setUserWatchId(String userWatchId)
+	{
+		this.userWatchId = userWatchId;
+	}
 
-    /**
-     * @return the lastViewDts
-     */
-    public Date getLastViewDts() {
-        return lastViewDts;
-    }
+	public Date getLastViewDts()
+	{
+		return lastViewDts;
+	}
 
-    /**
-     * @param lastViewDts the lastViewDts to set
-     */
-    public void setLastViewDts(Date lastViewDts) {
-        this.lastViewDts = lastViewDts;
-    }
+	public void setLastViewDts(Date lastViewDts)
+	{
+		this.lastViewDts = lastViewDts;
+	}
 
-    /**
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
+	public String getComponentId()
+	{
+		return componentId;
+	}
 
-    /**
-     * @param username the username to set
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
 
-    /**
-     * @return the componentId
-     */
-    public String getComponentId() {
-        return componentId;
-    }
+	public String getUsername()
+	{
+		return username;
+	}
 
-    /**
-     * @param componentId the componentId to set
-     */
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
 
-    /**
-     * @return the sendAlert
-     */
-    public Boolean getSendAlert() {
-        return sendAlert;
-    }
+	public Boolean getNotifyFlg()
+	{
+		return notifyFlg;
+	}
 
-    /**
-     * @param sendAlert the sendAlert to set
-     */
-    public void setSendAlert(Boolean sendAlert) {
-        this.sendAlert = sendAlert;
-    }
+	public void setNotifyFlg(Boolean notifyFlg)
+	{
+		this.notifyFlg = notifyFlg;
+	}
+
 }
