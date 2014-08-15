@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.action.test;
 
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
@@ -26,67 +25,69 @@ import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 
 /**
- *  Lookup Service Test
+ * Lookup Service Test
+ *
  * @author dshurtleff
  */
 public class LookupServiceTest
-	extends BaseTestAction
+		extends BaseTestAction
 {
-	
+
 	@HandlesEvent("Find")
 	public Resolution findTest()
 	{
 		TestSuiteModel testSuiteModel = new TestSuiteModel();
 		testSuiteModel.setName("Lookup  Service Tests");
-		
+
 		//save some records - active, inactive
-		testSuiteModel.getTests().add(new BaseTestCase(testServiceProxy())				
+		testSuiteModel.getTests().add(new BaseTestCase(testServiceProxy())
 		{
-			
+
 			@Override
 			public String description()
 			{
 				return "Save Test";
 			}
-			
+
 			@Override
 			protected void runInternalTest()
 			{
-				Arrays.asList("A", "B").forEach(item ->{
+				Arrays.asList("A", "B").forEach(item ->
+				{
 					TestEntity testEntity = new TestEntity();
 					testEntity.setCode(item);
 					testEntity.setDescription(item + " - Description");
 					testEntity.setActiveStatus(TestEntity.ACTIVE_STATUS);
 					testEntity.setCreateUser(TEST_USER);
 					testEntity.setUpdateUser(TEST_USER);
-										
-					service.getLookupService().saveLookupValue(testEntity);					
+
+					service.getLookupService().saveLookupValue(testEntity);
 				});
 				results.append("Saved A, B").append("<br>");
-				
-				Arrays.asList("C", "D").forEach(item ->{
+
+				Arrays.asList("C", "D").forEach(item ->
+				{
 					TestEntity testEntity = new TestEntity();
 					testEntity.setCode(item);
 					testEntity.setDescription(item + " - Description");
 					testEntity.setActiveStatus(TestEntity.INACTIVE_STATUS);
 					testEntity.setCreateUser(TEST_USER);
 					testEntity.setUpdateUser(TEST_USER);
-										
-					service.getLookupService().saveLookupValue(testEntity);					
+
+					service.getLookupService().saveLookupValue(testEntity);
 				});
 				results.append("Saved C, D").append("<br>");
-				
+
 			}
 		});
-		
-		
+
 		//save
 		testSuiteModel.getTests().add(new BaseTestCase(testServiceProxy())
 		{
 			@Override
 			public String description()
 			{
-				return "Find Test";
+				return "Find (Query) Test";
 			}
 
 			@Override
@@ -94,7 +95,8 @@ public class LookupServiceTest
 			{
 				results.append("Active").append("<br>");
 				List<TestEntity> testActiveRecords = testServiceProxy().getLookupService().findLookup(TestEntity.class);
-				testActiveRecords.stream().forEach(record -> {
+				testActiveRecords.stream().forEach(record ->
+				{
 					results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 				});
 				results.append("Check All").append("<br>");
@@ -102,20 +104,17 @@ public class LookupServiceTest
 				if (testInActiveRecords.size() == testActiveRecords.size())
 				{
 					failureReason.append("All return the same count and active.");
-				}
-				else
+				} else
 				{
 					results.append("Pass").append("<br>");
 					success = true;
 				}
 			}
 		});
-		
+
 		//clean up
-		
-		
-		testSuiteModel.runAllTests();		
-		return sendReport(testSuiteModel);	
+		testSuiteModel.runAllTests();
+		return sendReport(testSuiteModel);
 	}
-	
+
 }
