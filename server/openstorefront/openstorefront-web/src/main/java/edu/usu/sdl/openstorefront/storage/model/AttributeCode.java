@@ -25,33 +25,27 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class AttributeType
+public class AttributeCode
 		extends BaseEntity
 {
 
 	@PK
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String attributeType;
+	private AttributeCodePk attributeCodePk;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String label;
+
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String description;
 
 	@NotNull
-	private Boolean visibleFlg;
+	private String fullDescription;
 
 	@NotNull
-	private Boolean requiredFlg;
-
-	@NotNull
-	private Boolean architectureFlg;
-
-	@NotNull
-	private Boolean importantFlg;
-
-	@NotNull
-	private Boolean allowMutlipleFlg;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	private String detailUrl;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
@@ -67,18 +61,8 @@ public class AttributeType
 	@NotNull
 	private Date updateDts;
 
-	public AttributeType()
+	public AttributeCode()
 	{
-	}
-
-	public String getAttributeType()
-	{
-		return attributeType;
-	}
-
-	public void setAttributeType(String attributeType)
-	{
-		this.attributeType = attributeType;
 	}
 
 	public String getDescription()
@@ -91,34 +75,24 @@ public class AttributeType
 		this.description = description;
 	}
 
-	public Boolean getVisibleFlg()
+	public String getFullDescription()
 	{
-		return visibleFlg;
+		return fullDescription;
 	}
 
-	public void setVisibleFlg(Boolean visibleFlg)
+	public void setFullDescription(String fullDescription)
 	{
-		this.visibleFlg = visibleFlg;
+		this.fullDescription = fullDescription;
 	}
 
-	public Boolean getRequiredFlg()
+	public String getDetailUrl()
 	{
-		return requiredFlg;
+		return detailUrl;
 	}
 
-	public void setRequiredFlg(Boolean requiredFlg)
+	public void setDetailUrl(String detailUrl)
 	{
-		this.requiredFlg = requiredFlg;
-	}
-
-	public Boolean getArchitectureFlg()
-	{
-		return architectureFlg;
-	}
-
-	public void setArchitectureFlg(Boolean architectureFlg)
-	{
-		this.architectureFlg = architectureFlg;
+		this.detailUrl = detailUrl;
 	}
 
 	public String getCreateUser()
@@ -161,24 +135,24 @@ public class AttributeType
 		this.updateDts = updateDts;
 	}
 
-	public Boolean getImportantFlg()
+	public String getLabel()
 	{
-		return importantFlg;
+		return label;
 	}
 
-	public void setImportantFlg(Boolean importantFlg)
+	public void setLabel(String label)
 	{
-		this.importantFlg = importantFlg;
+		this.label = label;
 	}
 
-	public Boolean getAllowMutlipleFlg()
+	public AttributeCodePk getAttributeCodePk()
 	{
-		return allowMutlipleFlg;
+		return attributeCodePk;
 	}
 
-	public void setAllowMutlipleFlg(Boolean allowMutlipleFlg)
+	public void setAttributeCodePk(AttributeCodePk attributeCodePk)
 	{
-		this.allowMutlipleFlg = allowMutlipleFlg;
+		this.attributeCodePk = attributeCodePk;
 	}
 
 }

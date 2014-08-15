@@ -13,97 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
-import java.util.Date;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class ApplicationProperties 
-    extends BaseEntity
+public class ApplicationProperties
+		extends BaseEntity
 {
-    private String key;
-    private String value;
-    private String updateUser;
-    private Date updateDts;
-    private Character activeStatus;
 
-    @Override
-    public void setActiveStatus(String activeStatus) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+	@PK
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String key;
 
-    /**
-     * @return the key
-     */
-    public String getKey() {
-        return key;
-    }
+	@NotNull
+	private String value;
 
-    /**
-     * @param key the key to set
-     */
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public ApplicationProperties()
+	{
+	}
 
-    /**
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }
+	public String getKey()
+	{
+		return key;
+	}
 
-    /**
-     * @param value the value to set
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setKey(String key)
+	{
+		this.key = key;
+	}
 
-    /**
-     * @return the updateUser
-     */
-    public String getUpdateUser() {
-        return updateUser;
-    }
+	public String getValue()
+	{
+		return value;
+	}
 
-    /**
-     * @param updateUser the updateUser to set
-     */
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
+	public void setValue(String value)
+	{
+		this.value = value;
+	}
 
-    /**
-     * @return the updateDts
-     */
-    public Date getUpdateDts() {
-        return updateDts;
-    }
-
-    /**
-     * @param updateDts the updateDts to set
-     */
-    public void setUpdateDts(Date updateDts) {
-        this.updateDts = updateDts;
-    }
-
-    /**
-     * @return the activeStatus
-     */
-    public Character getActiveStatus() {
-        return activeStatus;
-    }
-
-    /**
-     * @param activeStatus the activeStatus to set
-     */
-    public void setActiveStatus(Character activeStatus) {
-        this.activeStatus = activeStatus;
-    }
-    
 }

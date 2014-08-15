@@ -15,12 +15,33 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
+
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class MediaType
-		extends LookupEntity
+public class ComponentReviewCon
+		extends BaseEntity
 {
+
+	@PK
+	@NotNull
+	private ComponentReviewConPk componentReviewConPk;
+
+	public ComponentReviewCon()
+	{
+	}
+
+	public ComponentReviewConPk getComponentReviewConPk()
+	{
+		return componentReviewConPk;
+	}
+
+	public void setComponentReviewConPk(ComponentReviewConPk componentReviewConPk)
+	{
+		this.componentReviewConPk = componentReviewConPk;
+	}
 
 }

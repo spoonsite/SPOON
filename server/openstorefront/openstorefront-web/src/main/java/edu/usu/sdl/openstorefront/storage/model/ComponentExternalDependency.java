@@ -22,48 +22,36 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class ComponentMedia
-		extends BaseEntity
+public class ComponentExternalDependency
 {
 
 	@PK
 	@NotNull
-	private String componentMediaId;
+	private String dependencyId;
 
 	@NotNull
 	private String componentId;
 
+	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String fileName;
+	private String dependencyName;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String originalName;
+	private String version;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String mediaTypeCode;
-
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String mimeType;
-
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
-	private String link;
+	private String dependancyReferenceLink;
 
-	public ComponentMedia()
-	{
-	}
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String comment;
 
-	public String getComponentMediaId()
+	public ComponentExternalDependency()
 	{
-		return componentMediaId;
-	}
-
-	public void setComponentMediaId(String componentMediaId)
-	{
-		this.componentMediaId = componentMediaId;
 	}
 
 	public String getComponentId()
@@ -76,54 +64,54 @@ public class ComponentMedia
 		this.componentId = componentId;
 	}
 
-	public String getFileName()
+	public String getVersion()
 	{
-		return fileName;
+		return version;
 	}
 
-	public void setFileName(String fileName)
+	public void setVersion(String version)
 	{
-		this.fileName = fileName;
+		this.version = version;
 	}
 
-	public String getOriginalName()
+	public String getDependancyReferenceLink()
 	{
-		return originalName;
+		return dependancyReferenceLink;
 	}
 
-	public void setOriginalName(String originalName)
+	public void setDependancyReferenceLink(String dependancyReferenceLink)
 	{
-		this.originalName = originalName;
+		this.dependancyReferenceLink = dependancyReferenceLink;
 	}
 
-	public String getMediaTypeCode()
+	public String getComment()
 	{
-		return mediaTypeCode;
+		return comment;
 	}
 
-	public void setMediaTypeCode(String mediaTypeCode)
+	public void setComment(String comment)
 	{
-		this.mediaTypeCode = mediaTypeCode;
+		this.comment = comment;
 	}
 
-	public String getMimeType()
+	public String getDependencyId()
 	{
-		return mimeType;
+		return dependencyId;
 	}
 
-	public void setMimeType(String mimeType)
+	public void setDependencyId(String dependencyId)
 	{
-		this.mimeType = mimeType;
+		this.dependencyId = dependencyId;
 	}
 
-	public String getLink()
+	public String getDependencyName()
 	{
-		return link;
+		return dependencyName;
 	}
 
-	public void setLink(String link)
+	public void setDependencyName(String dependencyName)
 	{
-		this.link = link;
+		this.dependencyName = dependencyName;
 	}
 
 }

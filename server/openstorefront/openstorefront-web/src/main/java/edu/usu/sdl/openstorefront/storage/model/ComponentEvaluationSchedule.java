@@ -13,33 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.rest.model;
+package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
+import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author dshurtleff
  */
 public class ComponentEvaluationSchedule
+		extends BaseEntity
 {
 
-	private String evaluationLevelCode;
+	@PK
+	@NotNull
+	private ComponentEvaluationSchedulePk componentEvaluationSchedulePk;
 	private Date completionDate;
+
+	@NotNull
+	@ValidValueType(
+	{
+		"N",
+		"P",
+		"C",
+		"H"
+	})
 	private String levelStatus;
 
 	public ComponentEvaluationSchedule()
 	{
-	}
-
-	public String getEvaluationLevelCode()
-	{
-		return evaluationLevelCode;
-	}
-
-	public void setEvaluationLevelCode(String evaluationLevelCode)
-	{
-		this.evaluationLevelCode = evaluationLevelCode;
 	}
 
 	public String getLevelStatus()
@@ -60,6 +65,16 @@ public class ComponentEvaluationSchedule
 	public void setCompletionDate(Date completionDate)
 	{
 		this.completionDate = completionDate;
+	}
+
+	public ComponentEvaluationSchedulePk getComponentEvaluationSchedulePk()
+	{
+		return componentEvaluationSchedulePk;
+	}
+
+	public void setComponentEvaluationSchedulePk(ComponentEvaluationSchedulePk componentEvaluationSchedulePk)
+	{
+		this.componentEvaluationSchedulePk = componentEvaluationSchedulePk;
 	}
 
 }

@@ -22,67 +22,69 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class ResourceFile
+public class ComponentMetadata
+		extends BaseEntity
 {
 
 	@PK
 	@NotNull
-	private String resourceFileId;
+	private String metadataId;
 
 	@NotNull
-	private String fileName;
+	private String componentId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String originalName;
+	private String label;
 
 	@NotNull
-	private String mimeType;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String value;
 
-	public ResourceFile()
+	public ComponentMetadata()
 	{
 	}
 
-	public String getResourceFileId()
+	public String getMetadataId()
 	{
-		return resourceFileId;
+		return metadataId;
 	}
 
-	public void setResourceFileId(String resourceFileId)
+	public void setMetadataId(String metadataId)
 	{
-		this.resourceFileId = resourceFileId;
+		this.metadataId = metadataId;
 	}
 
-	public String getFileName()
+	public String getComponentId()
 	{
-		return fileName;
+		return componentId;
 	}
 
-	public void setFileName(String fileName)
+	public void setComponentId(String componentId)
 	{
-		this.fileName = fileName;
+		this.componentId = componentId;
 	}
 
-	public String getMimeType()
+	public String getLabel()
 	{
-		return mimeType;
+		return label;
 	}
 
-	public void setMimeType(String mimeType)
+	public void setLabel(String label)
 	{
-		this.mimeType = mimeType;
+		this.label = label;
 	}
 
-	public String getOriginalName()
+	public String getValue()
 	{
-		return originalName;
+		return value;
 	}
 
-	public void setOriginalName(String originalName)
+	public void setValue(String value)
 	{
-		this.originalName = originalName;
+		this.value = value;
 	}
 
 }

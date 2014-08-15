@@ -18,34 +18,25 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class UserProfile
-		extends BaseEntity
+public class ComponentQuestionResponse
 {
 
 	@PK
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String username;
+	private String responseId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
-	private String firstName;
+	private String questionId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_LASTNAME)
-	private String lastName;
-
-	@NotNull
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
-	private String email;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_RESPONSE)
+	private String response;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
@@ -55,51 +46,38 @@ public class UserProfile
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	private String organization;
 
-	@NotNull
-	private Boolean admin;
-
-	public UserProfile()
+	public ComponentQuestionResponse()
 	{
 	}
 
-	public String getUsername()
+	public String getResponseId()
 	{
-		return username;
+		return responseId;
 	}
 
-	public void setUsername(String username)
+	public void setResponseId(String responseId)
 	{
-		this.username = username;
+		this.responseId = responseId;
 	}
 
-	public String getFirstName()
+	public String getQuestionId()
 	{
-		return firstName;
+		return questionId;
 	}
 
-	public void setFirstName(String firstName)
+	public void setQuestionId(String questionId)
 	{
-		this.firstName = firstName;
+		this.questionId = questionId;
 	}
 
-	public String getLastName()
+	public String getResponse()
 	{
-		return lastName;
+		return response;
 	}
 
-	public void setLastName(String lastName)
+	public void setResponse(String response)
 	{
-		this.lastName = lastName;
-	}
-
-	public String getEmail()
-	{
-		return email;
-	}
-
-	public void setEmail(String email)
-	{
-		this.email = email;
+		this.response = response;
 	}
 
 	public String getUserTypeCode()
@@ -120,16 +98,6 @@ public class UserProfile
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
-	}
-
-	public Boolean getAdmin()
-	{
-		return admin;
-	}
-
-	public void setAdmin(Boolean admin)
-	{
-		this.admin = admin;
 	}
 
 }

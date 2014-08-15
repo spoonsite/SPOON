@@ -13,104 +13,91 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class ComponentTracking {
-    private String componentTrackingId;
-    private String trackEventTypeCode;
-    private String componentId;
-    private String userProfileUsername;
-    private Date eventDts;
-    private String clientIp;
+public class ComponentTracking
+		extends BaseEntity
+{
 
-    /**
-     * @return the componentTrackingId
-     */
-    public String getComponentTrackingId() {
-        return componentTrackingId;
-    }
+	@PK
+	@NotNull
+	private String componentTrackingId;
 
-    /**
-     * @param componentTrackingId the componentTrackingId to set
-     */
-    public void setComponentTrackingId(String componentTrackingId) {
-        this.componentTrackingId = componentTrackingId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String trackEventTypeCode;
 
-    /**
-     * @return the trackEventTypeCode
-     */
-    public String getTrackEventTypeCode() {
-        return trackEventTypeCode;
-    }
+	@NotNull
+	private String componentId;
 
-    /**
-     * @param trackEventTypeCode the trackEventTypeCode to set
-     */
-    public void setTrackEventTypeCode(String trackEventTypeCode) {
-        this.trackEventTypeCode = trackEventTypeCode;
-    }
+	@NotNull
+	private Date eventDts;
 
-    /**
-     * @return the componentId
-     */
-    public String getComponentId() {
-        return componentId;
-    }
+	@NotNull
+	private String clientIp;
 
-    /**
-     * @param componentId the componentId to set
-     */
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
+	public ComponentTracking()
+	{
+	}
 
-    /**
-     * @return the userProfileUsername
-     */
-    public String getUserProfileUsername() {
-        return userProfileUsername;
-    }
+	public String getComponentTrackingId()
+	{
+		return componentTrackingId;
+	}
 
-    /**
-     * @param userProfileUsername the userProfileUsername to set
-     */
-    public void setUserProfileUsername(String userProfileUsername) {
-        this.userProfileUsername = userProfileUsername;
-    }
+	public void setComponentTrackingId(String componentTrackingId)
+	{
+		this.componentTrackingId = componentTrackingId;
+	}
 
-    /**
-     * @return the eventDts
-     */
-    public Date getEventDts() {
-        return eventDts;
-    }
+	public String getTrackEventTypeCode()
+	{
+		return trackEventTypeCode;
+	}
 
-    /**
-     * @param eventDts the eventDts to set
-     */
-    public void setEventDts(Date eventDts) {
-        this.eventDts = eventDts;
-    }
+	public void setTrackEventTypeCode(String trackEventTypeCode)
+	{
+		this.trackEventTypeCode = trackEventTypeCode;
+	}
 
-    /**
-     * @return the clientIp
-     */
-    public String getClientIp() {
-        return clientIp;
-    }
+	public String getComponentId()
+	{
+		return componentId;
+	}
 
-    /**
-     * @param clientIp the clientIp to set
-     */
-    public void setClientIp(String clientIp) {
-        this.clientIp = clientIp;
-    }
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
+
+	public Date getEventDts()
+	{
+		return eventDts;
+	}
+
+	public void setEventDts(Date eventDts)
+	{
+		this.eventDts = eventDts;
+	}
+
+	public String getClientIp()
+	{
+		return clientIp;
+	}
+
+	public void setClientIp(String clientIp)
+	{
+		this.clientIp = clientIp;
+	}
+
 }

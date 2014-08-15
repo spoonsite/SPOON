@@ -13,62 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.rest.model;
+package edu.usu.sdl.openstorefront.storage.model;
+
+import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author dshurtleff
  */
-public class AttributeCodeView
+public class ComponentReviewConPk
+		implements Serializable
 {
 
-	private String code;
-	private String label;
-	private String description;
-	private String fullTextLink;
+	@NotNull
+	private String componentReviewId;
 
-	public AttributeCodeView()
+	@NotNull
+	private String reviewCon;
+
+	public ComponentReviewConPk()
 	{
 	}
 
-	public String getCode()
+	public String getComponentReviewId()
 	{
-		return code;
+		return componentReviewId;
 	}
 
-	public void setCode(String code)
+	public void setComponentReviewId(String componentReviewId)
 	{
-		this.code = code;
+		this.componentReviewId = componentReviewId;
 	}
 
-	public String getDescription()
+	public String getReviewCon()
 	{
-		return description;
+		return reviewCon;
 	}
 
-	public void setDescription(String description)
+	public void setReviewCon(String reviewCon)
 	{
-		this.description = description;
-	}
-
-	public String getLabel()
-	{
-		return label;
-	}
-
-	public void setLabel(String label)
-	{
-		this.label = label;
-	}
-
-	public String getFullTextLink()
-	{
-		return fullTextLink;
-	}
-
-	public void setFullTextLink(String fullTextLink)
-	{
-		this.fullTextLink = fullTextLink;
+		this.reviewCon = reviewCon;
 	}
 
 }

@@ -22,67 +22,55 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class ResourceFile
+public class ComponentTag
+		extends BaseEntity
 {
 
 	@PK
 	@NotNull
-	private String resourceFileId;
+	private String tagId;
 
 	@NotNull
-	private String fileName;
+	private String componentId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String originalName;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_TAG)
+	private String tagText;
 
-	@NotNull
-	private String mimeType;
-
-	public ResourceFile()
+	public ComponentTag()
 	{
 	}
 
-	public String getResourceFileId()
+	public String getTagId()
 	{
-		return resourceFileId;
+		return tagId;
 	}
 
-	public void setResourceFileId(String resourceFileId)
+	public void setTagId(String tagId)
 	{
-		this.resourceFileId = resourceFileId;
+		this.tagId = tagId;
 	}
 
-	public String getFileName()
+	public String getComponentId()
 	{
-		return fileName;
+		return componentId;
 	}
 
-	public void setFileName(String fileName)
+	public void setComponentId(String componentId)
 	{
-		this.fileName = fileName;
+		this.componentId = componentId;
 	}
 
-	public String getMimeType()
+	public String getTagText()
 	{
-		return mimeType;
+		return tagText;
 	}
 
-	public void setMimeType(String mimeType)
+	public void setTagText(String tagText)
 	{
-		this.mimeType = mimeType;
-	}
-
-	public String getOriginalName()
-	{
-		return originalName;
-	}
-
-	public void setOriginalName(String originalName)
-	{
-		this.originalName = originalName;
+		this.tagText = tagText;
 	}
 
 }
