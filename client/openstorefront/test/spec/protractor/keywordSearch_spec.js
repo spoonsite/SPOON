@@ -1,5 +1,5 @@
-describe('Search for Common Map Widget API', function() {
-  it('two search results are returned', function() {
+describe('Search for "Common Map Widget API"', function() {
+  it('2 search results are returned', function() {
     // Open the main site
     browser.get('http://di2e.github.io/openstorefront');
     
@@ -11,7 +11,7 @@ describe('Search for Common Map Widget API', function() {
 
     // Should only be two results
     expect(element.all(by.repeater('item in data')).count()).toEqual(2);
-
-
   });
+
+
 });

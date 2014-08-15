@@ -16,9 +16,11 @@
 
 package edu.usu.sdl.openstorefront.web.action.test;
 
-import edu.usu.sdl.openstorefront.model.jpa.Test;
+import edu.usu.sdl.openstorefront.storage.model.TestEntity;
+import static edu.usu.sdl.openstorefront.web.action.test.BaseTestAction.TEST_USER;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import edu.usu.sdl.openstorefront.web.test.TestSuiteModel;
+import java.util.Arrays;
 import java.util.List;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
@@ -37,6 +39,48 @@ public class LookupServiceTest
 		TestSuiteModel testSuiteModel = new TestSuiteModel();
 		testSuiteModel.setName("Lookup  Service Tests");
 		
+		//save some records - active, inactive
+		testSuiteModel.getTests().add(new BaseTestCase(testServiceProxy())				
+		{
+			
+			@Override
+			public String description()
+			{
+				return "Save Test";
+			}
+			
+			@Override
+			protected void runInternalTest()
+			{
+				Arrays.asList("A", "B").forEach(item ->{
+					TestEntity testEntity = new TestEntity();
+					testEntity.setCode(item);
+					testEntity.setDescription(item + " - Description");
+					testEntity.setActiveStatus(TestEntity.ACTIVE_STATUS);
+					testEntity.setCreateUser(TEST_USER);
+					testEntity.setUpdateUser(TEST_USER);
+										
+					service.getLookupService().saveLookupValue(testEntity);					
+				});
+				results.append("Saved A, B").append("<br>");
+				
+				Arrays.asList("C", "D").forEach(item ->{
+					TestEntity testEntity = new TestEntity();
+					testEntity.setCode(item);
+					testEntity.setDescription(item + " - Description");
+					testEntity.setActiveStatus(TestEntity.INACTIVE_STATUS);
+					testEntity.setCreateUser(TEST_USER);
+					testEntity.setUpdateUser(TEST_USER);
+										
+					service.getLookupService().saveLookupValue(testEntity);					
+				});
+				results.append("Saved C, D").append("<br>");
+				
+			}
+		});
+		
+		
+		//save
 		testSuiteModel.getTests().add(new BaseTestCase(testServiceProxy())
 		{
 			@Override
@@ -49,12 +93,12 @@ public class LookupServiceTest
 			protected void runInternalTest()
 			{
 				results.append("Active").append("<br>");
-				List<Test> testActiveRecords = testServiceProxy().findLookup(Test.class);
+				List<TestEntity> testActiveRecords = testServiceProxy().getLookupService().findLookup(TestEntity.class);
 				testActiveRecords.stream().forEach(record -> {
 					results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 				});
 				results.append("Check All").append("<br>");
-				List<Test> testInActiveRecords = testServiceProxy().findLookup(Test.class, true);
+				List<TestEntity> testInActiveRecords = testServiceProxy().getLookupService().findLookup(TestEntity.class, true);
 				if (testInActiveRecords.size() == testActiveRecords.size())
 				{
 					failureReason.append("All return the same count and active.");
@@ -66,6 +110,9 @@ public class LookupServiceTest
 				}
 			}
 		});
+		
+		//clean up
+		
 		
 		testSuiteModel.runAllTests();		
 		return sendReport(testSuiteModel);	

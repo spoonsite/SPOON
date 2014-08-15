@@ -16,6 +16,8 @@
 
 package edu.usu.sdl.openstorefront.web.init;
 
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -28,17 +30,18 @@ import javax.servlet.annotation.WebListener;
 public class ApplicationInit
 	implements ServletContextListener
 {
+	private static final Logger log = Logger.getLogger(ApplicationInit.class.getName());
 
 	@Override
-	public void contextInitialized(ServletContextEvent sce)
+	public void contextInitialized(ServletContextEvent sce) 
 	{
-		
+		DBManager.initialize();
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce)
-	{
-		
+	{		
+		DBManager.shutdown();
 	}
 	
 }

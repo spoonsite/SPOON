@@ -37,4 +37,10 @@ public class TimeUtil
 		}
 		return newDate;
 	}
+	
+	public static Date currentDate()
+	{
+		return new Date(System.currentTimeMillis());
+	}
+	
 }

@@ -62,7 +62,7 @@ public class AttributeImport
 		Map<String, AttributeTypeView> attributeMap = new HashMap<>();
 		
 		CSVParser parser = new CSVParser();		
-		Path path = Paths.get(FileSystemManager.getImportDir() + "/attributes.csv");		
+		Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.IMPORT_DIR) + "/attributes.csv");				
 		try
 		{
 			
@@ -140,7 +140,7 @@ public class AttributeImport
 		AttributeTypeView attributeTypeView = new AttributeTypeView();
 
 		CSVParser parser = new CSVParser();		
-		Path path = Paths.get(FileSystemManager.getImportDir() + "/di2esv4.csv");	
+		Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.IMPORT_DIR) + "/di2esv4.csv");	
 		int lineNumber = 0;
 		try
 		{
@@ -204,7 +204,7 @@ public class AttributeImport
 		Set<String> codeSet = new HashSet();
 		
 		CSVParser parser = new CSVParser();		
-		Path path = Paths.get(FileSystemManager.getImportDir() + "/jcfsl.csv");				
+		Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.IMPORT_DIR)+ "/jcfsl.csv");				
 		try
 		{
 			List<String> lines = Files.readAllLines(path);
@@ -268,7 +268,7 @@ public class AttributeImport
 		AttributeTypeView attributeTypeView = new AttributeTypeView();
 		
 		CSVParser parser = new CSVParser();		
-		Path path = Paths.get(FileSystemManager.getImportDir() + "/jca.csv");				
+		Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.IMPORT_DIR) + "/jca.csv");				
 		try
 		{
 			List<String> lines = Files.readAllLines(path, Charset.defaultCharset());
@@ -327,7 +327,7 @@ public class AttributeImport
 		AttributeTypeView attributeTypeView = new AttributeTypeView();
 
 		CSVParser parser = new CSVParser();		
-		Path path = Paths.get(FileSystemManager.getImportDir() + "/jarmesl.csv");	
+		Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.IMPORT_DIR) + "/jarmesl.csv");	
 		try
 		{
 			List<String> lines = Files.readAllLines(path);

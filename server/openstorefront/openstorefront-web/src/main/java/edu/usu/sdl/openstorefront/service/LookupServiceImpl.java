@@ -17,51 +17,68 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
-import edu.usu.sdl.openstorefront.model.jpa.Test;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
+import edu.usu.sdl.openstorefront.storage.model.TestEntity;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
 
 /**
  *
  * @author dshurtleff
  */
-@Stateless
-@Local(LookupService.class)
 public class LookupServiceImpl
-	implements LookupService
+	extends ServiceProxy
+	implements LookupService	
 {
 	private static final Logger log = Logger.getLogger(LookupServiceImpl.class.getName());
 	
-	@EJB
-	PersistantServiceImpl ps;
-		
-	@Override
+	@Override	
 	public <T extends BaseEntity> List<T> findLookup(Class<T> lookTableClass)
 	{
 		return findLookup(lookTableClass, false);
 	}	
 	
-	@Override
+	@Override	
 	public <T extends BaseEntity> List<T> findLookup(Class<T> lookTableClass, boolean all)
-	{
+	{	
 		try
 		{
 			T testExample = lookTableClass.newInstance();
 			if (all == false)
 			{
-				testExample.setActiveStatus(Test.ACTIVE_STATUS);		
+				testExample.setActiveStatus(TestEntity.ACTIVE_STATUS);		
 			}
-			return ps.queryByExample(new QueryByExample(testExample));			
+			return persistenceService.queryByExample(new QueryByExample(testExample));			
 		} catch (InstantiationException | IllegalAccessException ex)
 		{		
 			throw new OpenStorefrontRuntimeException(ex);
 		}				
 	}
+
+	@Override
+	public  void saveLookupValue(LookupEntity lookupEntity)
+	{
+		LookupEntity oldEntity = persistenceService.findById(lookupEntity.getClass(), lookupEntity.getCode());
+		if (oldEntity != null)
+		{
+			oldEntity.setDescription(lookupEntity.getDescription());
+			oldEntity.setActiveStatus(lookupEntity.getActiveStatus());			
+			oldEntity.setUpdateUser(lookupEntity.getUpdateUser());			
+			oldEntity.setUpdateDts(TimeUtil.currentDate());
+			persistenceService.persist(oldEntity);					
+		}
+		else
+		{
+			lookupEntity.setCreateDts(TimeUtil.currentDate());
+			lookupEntity.setUpdateDts(TimeUtil.currentDate());
+			persistenceService.persist(lookupEntity);
+		}
+	}
+	
+	
 	
 }

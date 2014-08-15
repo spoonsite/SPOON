@@ -16,8 +16,8 @@
 
 package edu.usu.sdl.openstorefront.web.action;
 
-import edu.usu.sdl.openstorefront.model.jpa.LookupEntity;
 import edu.usu.sdl.openstorefront.sort.LookupComparator;
+import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,11 +48,11 @@ public class LookupAction
 		List<LookupModel> lookups = new ArrayList<>();
 		try
 		{			
-			Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.api.model.jpa." + type);
+			Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.storage.model." + type);
 			Object obj = lookupClass.newInstance();
 			if (obj instanceof LookupEntity)
 			{
-				List<LookupEntity> data = service.findLookup(lookupClass, all);
+				List<LookupEntity> data = service.getLookupService().findLookup(lookupClass, all);
 				data.sort(new LookupComparator<>());
 				data.forEach(d -> {
 					LookupModel lookup = new LookupModel();

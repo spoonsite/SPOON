@@ -1,6 +1,6 @@
 package edu.usu.sdl.openstorefront.web.test;
 
-import edu.usu.sdl.openstorefront.service.api.OpenStorefrontService;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,9 +15,9 @@ public abstract class BaseTestCase
 	protected boolean success;
 	protected StringBuilder failureReason = new StringBuilder();
 	protected StringBuilder results = new StringBuilder();
-	protected final OpenStorefrontService service;
+	protected final ServiceProxy service;
 
-	public BaseTestCase(OpenStorefrontService service)
+	public BaseTestCase(ServiceProxy service)
 	{
 		this.service = service;
 	}

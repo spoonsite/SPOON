@@ -37,9 +37,14 @@ public class PropertiesManager
 	private static final Logger log = Logger.getLogger(PropertiesManager.class.getName());
 	
 	public static final String KEY_USE_REST_PROXY = "service.rest.proxy";
+	public static final String KEY_DB_CONNECT_MIN = "db.connectionpool.min";
+	public static final String KEY_DB_CONNECT_MAX= "db.connectionpool.max";
+	public static final String KEY_DB_USER= "db.user";
+	public static final String KEY_DB_PASSWORD= "db.pw";
+	
 	
 	private static Properties properties;
-	private static final String PROPERTIES_FILENAME = System.getProperty("openstorefront.properties.file", System.getProperty("jboss.server.config.dir") + "/openstorefront.properties");
+	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 	
 	public static String getValue(String key)
 	{
