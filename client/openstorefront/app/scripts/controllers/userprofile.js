@@ -93,11 +93,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     }, 300);
   });
 
+  $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+
 
   /***************************************************************
   * This function toggles a checkbox
   ***************************************************************/
- $scope.changeSwitch = function(tval){
+/* $scope.changeSwitch = function(tval){
   
  // var myValue = $scope.mySwitch;
   //alert(tval);
@@ -133,7 +135,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     //  $scope.mySwitch2.checked = 'true';
     //  $scope.mycheckbox = true;
     }
-  };
+  };*/
 
 
   /***************************************************************
@@ -241,6 +243,32 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
 
   };
 
+  //?fix
+  // cancel user profile edits
+   $scope.cancelUserProfile = function() {
+     // return fields to latest data
+     console.log("cancel Edits");
+
+    $scope.mySwitch = false;
+
+     console.log($scope.mySwitch);
+
+/*     alert("sldjkl");
+  $scope.mySwitch.checked = false;
+  $scope.mySwitch = 0;*/
+
+    Business.userservice.getCurrentUserProfile().then(function(profile) {
+      $scope.userProfile = profile;
+      $scope.userProfileForm = angular.copy(profile);
+
+      _.each($scope.userTypeCodes, function(element, index, list) { /*jshint unused:false*/
+        if (element.code === $scope.userProfileForm.userTypeCode) {
+          $scope.userProfileForm.userRole = element;
+        }
+      });
+    });
+  };
+
   /***************************************************************
   * Load the User profile 
   ***************************************************************/
@@ -263,8 +291,15 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * Save the user profile
   ***************************************************************/
   $scope.saveUserProfile = function() {
-    $scope.mySwitch = false;
+
+   // myCheckValue
+
+   // mask form
     $scope.$emit("$TRIGGERLOAD", 'userLoad');
+
+    $scope.mySwitch = false;
+   // $scope.myCheckValue = false;
+  
     //validate form
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
@@ -277,6 +312,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     // var failure = function(data, status, headers, config) { /*jshint unused:false*/
     //   //mark fields that are bad (add error class) and show our error messages div
     // };
+
     // Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
     Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
       function(data, status, headers, config){ //SUCCESS:: data = return value

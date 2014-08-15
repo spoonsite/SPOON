@@ -83,20 +83,21 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
       deferred.resolve('It worked');
     } else {
       // if the save fails, give them a reason why... with an error object like this
+      //?fix
       /*
       *  {
       *    'success': false,
       *    'errors': [
       *      {
       *        'mainSearchBar' : 'Your input was invalid. Please try again.'
-      *      },
+      *      },ok
       *      {
       *        'element_id' : 'Error message to be displayed in the tooltip'
       *      }
       *    ]
       *  };
       */
-      deferred.reject('It Failed')
+      deferred.reject('It Failed');
     }
     return deferred.promise;
   };

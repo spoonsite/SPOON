@@ -21,52 +21,91 @@ limitations under the License.
 			<div class="panel panel-primary">
 				<div class="panel-heading text-center watch-content-title">USER PROFILE</div>
 				<div class="panel-body">
-					<div class="row text-left" style="padding-left:65px;">
+<!-- 					<div class="row text-left" style="padding-left:65px;">
 						<img src="images/1.jpg" width="96" height="96"></img>
-					</div>
+					</div> -->
 					<!-- ng-init="mySwitch=false"  -->
 					<br>
 					<div>
 						<div class="col-sm-12" style="padding-left:5px;padding-top:0px">
 							<div class="col-sm-6" style="padding-left:5px;padding-top:0px">	
-							<form class="form-horizontal" role="form" ng-submit="saveUserProfile()">
+							<form class="form-horizontal" name='userForm' role="form" novalidate ng-submit="saveUserProfile()">
+								<div class="form-group" >
+									<label class="col-sm-3 control-label"><img src="images/1.jpg" width="96" height="96"></img></label>
+									<div class="col-sm-8"  style="vertical-align:bottom;height:96">
+										<br /><br /><br /><br /> <!-- ng-checked="mySwitch" -->
+										<input type="checkbox" id="myCheckValue" ng-init="false" ng-model="mySwitch" /><label for="myCheckValue">&nbsp;Update User Info</label>
+									</div>
+								</div>	
 								<div class="form-group">
-								<label class="col-sm-3 control-label">Username:</label>
+									<label class="col-sm-3 control-label">Username:</label>
 									<div class="col-sm-8">
 										<label class="control-label">{{userProfileForm.username}}</label>
 									</div>
-								</div>								
-								<div class="form-group">
+								</div>	
+									<!-- show-errors	 -->
+									<!-- ng-class="{'has-error': userForm.firstname.$dirty && userForm.firstname.$invalid}"	 -->
+								<div class="form-group" show-errors >
 									<label class="col-sm-3 control-label">First Name:</label>
 									<div class="col-sm-8">
-										<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="60" id="firstname" ng-model="userProfileForm.firstname" />
-<!-- 										<input  type="text" 
+									<!-- 	<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="60" id="firstname" ng-model="userProfileForm.firstname" required /> -->
+										<input  type="text" 
+												id="firstname"
+												name="firstname"
 									            placeholder="First Name"
-									            ng-class="{error: userProfileForm.firstname.$dirty && userProfileForm.firstname.$invalid}"
+									            ng-disabled="!mySwitch"
 									            class="form-control" 
-									            name="firstname" 
 									            ng-model="userProfileForm.firstname" 
-									            ng-minlength=3 
-									            ng-maxlength=60 required  />
-									</div> -->
-<!-- 								    <div class="error" 
-									  		ng-show="userProfileForm.firstname.$dirty && userProfileForm.firstname.$invalid && !userProfileForm.name.$focused">
-									    <small class="error" ng-show="userProfileForm.firstname.$error.required">Please input a username</small>
-									    <small class="error" ng-show="userProfileForm.firstname.$error.minlength">Your username is required to be at least 3 characters</small>
-									    <small class="error" ng-show="userProfileForm.firstname.$error.maxlength">Your username cannot be longer than 20 characters</small>
-								  </div> -->									
+									            ng-minlength=2 
+									            ng-maxlength=60 
+									            required 
+									            ng-focus />
+											<p ng-show="userForm.firstname.$error.minlength && !userForm.firstname.$focused" class="help-block">First Name must be longer than 1 character in length.</p>
+											<p ng-show="userForm.firstname.$error.required && !userForm.firstname.$focused" class="help-block">First Name is required.</p>
+									</div>
 								</div>
-							</div>
-								<div class="form-group">
+
+								<div class="form-group" show-errors >
+																	            <!-- ng-class="{'has-error': userForm.lastname.$dirty && userForm.lastname.$invalid}" -->
+								<!-- <div class="form-group" ng-class="{'has-error': userForm.lastname.$dirty && userForm.lastname.$invalid && !userForm.lastname.$focused}"> -->
 									<label class="col-sm-3 control-label">Last Name:</label>
 									<div class="col-sm-8">
-										<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="80" id="lastname" ng-model="userProfileForm.lastname">
+										<!-- <input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="80" id="lastname" ng-model="userProfileForm.lastname"> -->
+										<input  type="text" 
+												id="lastname"
+												name="lastname"
+									            placeholder="Last Name"
+									            ng-disabled="!mySwitch"
+									            class="form-control" 
+									            ng-model="userProfileForm.lastname" 
+									            ng-minlength=2 
+									            ng-maxlength=60 
+									            required 
+									            ng-focus />
+
+										<p ng-show="userForm.lastname.$error.minlength && !userForm.lastname.$focused" class="help-block">Last Name must longer than 1 character in length.</p>
+										<p ng-show="userForm.lastname.$error.required && !userForm.lastname.$focused" class="help-block">Last Name is required.</p>
 									</div>
 								</div>								
-								<div class="form-group">
+								<div class="form-group" show-errorsS >
 									<label class="col-sm-3 control-label">Email:</label>
 									<div class="col-sm-8">
-										<input type="email" ng-disabled="!mySwitch" class="form-control" ngMaxlength="200" id="email" ng-model="userProfileForm.email">
+										<input  type="text" 
+												ng-pattern="EMAIL_REGEXP"
+												id="email"
+												name="email"
+									            placeholder="Email"
+									            ng-disabled="!mySwitch"
+									            class="form-control" 
+									            ng-model="userProfileForm.email" 
+									            ng-minlength=6 
+									            ng-maxlength=200 
+									            required 
+									            ng-focus />
+									 
+										<p ng-show="userForm.email.$error.minlength && !userForm.email.$focused" class="help-block">Email must be at least 6 characters in length</p>
+										<p ng-show="userForm.email.$error.required && !userForm.email.$focused" class="help-block">Email is required.</p>	
+										<p ng-show="userForm.email.$invalid && !userForm.email.$focused" class="help-block">Email is invalid and not formatted properly.</p>										
 									</div>
 								</div>	
 								<div class="form-group">
@@ -77,10 +116,23 @@ limitations under the License.
 										</button>										
 									</div>
 								</div>	
-								<div class="form-group">
+								<!-- <div class="form-group" ng-class="{'has-error': userForm.organization.$dirty && userForm.organization.$invalid}"> -->
+								<div class="form-group" show-errors>
 									<label class="col-sm-3 control-label">Organization:</label>
 									<div class="col-sm-8">
-										<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="80" id="organization" ng-model="userProfileForm.organization">									
+										<!-- <input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="80" id="organization" ng-model="userProfileForm.organization">									 -->
+										<input  type="text" 
+												id="organization"
+												name="organization"
+									            placeholder="Organization"
+									            ng-disabled="!mySwitch"
+									            class="form-control" 
+									            ng-model="userProfileForm.organization" 
+									            ng-maxlength=80 
+									            required  
+									            ng-focus />
+									 
+										<p ng-show="userForm.organization.$error.required && !userForm.organization.$focused" class="help-block">Organization is required.</p>	
 									</div>
 								</div>																					
 								<div class="form-group">
@@ -89,21 +141,20 @@ limitations under the License.
 										<label class="control-label">{{userProfileForm.createDts | date:'longDate'}}</label>
 									</div>
 								</div>
-								<input type="checkbox" id="myCheckValue" ng-init="false" ng-model="mySwitch" ng-checked="mySwitch" 
-										/><label for="myCheckValue">Update User Information</label>
-								<!-- <input type="checkbox" ng-init="true" ng-model="mySwitch2" ng-checked="toggle" style="display:block"/>
- -->
-								<!-- <button type="button" class="btn btn-primary" ng-click="saveUserProfile();">Update</button>	 -->
-								<button type="submit" ng-show="mySwitch" class="btn btn-primary" >Save</button>
-						<!-- 	<button type="button" class="btn btn-primary" ng-click="saveUserProfile();">Cancel</button> -->
+								<div class="form-group">
+									<label class="col-sm-3 control-label">&nbsp;</label>
+									<div class="col-sm-8" >
+										<br />
+<!-- 										<input type="checkbox" id="myCheckValue" ng-init="false" ng-model="mySwitch" ng-checked="mySwitch" /><label for="myCheckValue">&nbsp;Update User Info</label>
+										<br /> <br /> -->
+										<button type="submit" ng-show="mySwitch" class="btn btn-primary" ng-disabled="userForm.$invalid" >Save User Profile</button>
+									 	<a id="lnkCancelSave" ng-href="" ng-show="mySwitch" name="cancelSave" ng-click="cancelUserProfile()"><span style="color:blue">Cancel Edits</span></a>
+									</div>
+								</div>
 							</form>
 							<br>
 							<div class="text-left"  style="padding-left:40px;">
-								
-
 							</div>	
-
-
 							</div>						
 						</div>
 					</div>
