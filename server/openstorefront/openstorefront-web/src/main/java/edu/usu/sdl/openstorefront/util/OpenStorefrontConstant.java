@@ -15,10 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  *
  * @author dshurtleff
@@ -49,37 +45,5 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_TAG = 60;
 
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
-	public static enum EvaluationLevelStatus
-	{
-
-		N("Not Started"),
-		P("In Progress"),
-		C("Completed"),
-		H("Halted");
-
-		private final String description;
-
-		private EvaluationLevelStatus(String description)
-		{
-			this.description = description;
-		}
-
-		public String getDescription()
-		{
-			return description;
-		}
-
-		public static String[] allValues()
-		{
-			List<String> codes = new ArrayList<>();
-			Arrays.asList(EvaluationLevelStatus.values()).forEach(value ->
-			{
-				codes.add(value.name());
-			});
-			return (String[]) codes.toArray();
-		}
-
-	}
 
 }
