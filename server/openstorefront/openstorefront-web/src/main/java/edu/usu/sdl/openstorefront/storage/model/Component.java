@@ -15,314 +15,249 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
-import java.util.List;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class Component 
-    extends BaseEntity
+public class Component
+		extends BaseEntity
 {
 
-    @NotNull
-    private String componentId;
-    private String name;
-    private String description;
-    private String parentComponentId;
-    private List<String> subComponentIds;
-    private String guid;
-    private String organization;
-    private Date release_date;
-    private Date post_date;
-    private String version;
-    private Character activeStatus;
-    private Character approvalState;
-    private String approvedUser;
-    private Date approvedDts;
-    private String createUser;
-    private Date createDts;
-    private String updateUser;
-    private Date updateDts;
-    private Date lastActivityDts;
-    
-    
-    
-    /**
-     *
-     * @param activeStatus
-     */
-    @Override
-    public void setActiveStatus(String activeStatus) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+	@PK
+	@NotNull
+	private String componentId;
 
-    /**
-     * @return the componentId
-     */
-    public String getComponentId() {
-        return componentId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_NAME)
+	private String name;
 
-    /**
-     * @param componentId the componentId to set
-     */
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_DESCRIPTION)
+	private String description;
+	private String parentComponentId;
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	private String guid;
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	private String organization;
+	private Date releaseDate;
 
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
+	@NotNull
+	private Date postDate;
 
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String version;
 
-    /**
-     * @return the parentComponentId
-     */
-    public String getParentComponentId() {
-        return parentComponentId;
-    }
+	@NotNull
+	@ValidValueType(
+			{
+				"A", "P"
+			})
+	private String approvalState;
 
-    /**
-     * @param parentComponentId the parentComponentId to set
-     */
-    public void setParentComponentId(String parentComponentId) {
-        this.parentComponentId = parentComponentId;
-    }
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	private String approvedUser;
+	private Date approvedDts;
 
-    /**
-     * @return the subComponentIds
-     */
-    public List<String> getSubComponentIds() {
-        return subComponentIds;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	private String createUser;
 
-    /**
-     * @param subComponentIds the subComponentIds to set
-     */
-    public void setSubComponentIds(List<String> subComponentIds) {
-        this.subComponentIds = subComponentIds;
-    }
+	@NotNull
+	private Date createDts;
 
-    /**
-     * @return the guid
-     */
-    public String getGuid() {
-        return guid;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	private String updateUser;
 
-    /**
-     * @param guid the guid to set
-     */
-    public void setGuid(String guid) {
-        this.guid = guid;
-    }
+	@NotNull
+	private Date updateDts;
 
-    /**
-     * @return the organization
-     */
-    public String getOrganization() {
-        return organization;
-    }
+	@NotNull
+	private Date lastActivityDts;
 
-    /**
-     * @param organization the organization to set
-     */
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
+	public Component()
+	{
+	}
 
-    /**
-     * @return the release_date
-     */
-    public Date getRelease_date() {
-        return release_date;
-    }
+	public String getComponentId()
+	{
+		return componentId;
+	}
 
-    /**
-     * @param release_date the release_date to set
-     */
-    public void setRelease_date(Date release_date) {
-        this.release_date = release_date;
-    }
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
 
-    /**
-     * @return the post_date
-     */
-    public Date getPost_date() {
-        return post_date;
-    }
+	public String getName()
+	{
+		return name;
+	}
 
-    /**
-     * @param post_date the post_date to set
-     */
-    public void setPost_date(Date post_date) {
-        this.post_date = post_date;
-    }
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
-    /**
-     * @return the version
-     */
-    public String getVersion() {
-        return version;
-    }
+	public String getDescription()
+	{
+		return description;
+	}
 
-    /**
-     * @param version the version to set
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 
-    /**
-     * @return the activeStatus
-     */
-    public Character getActiveStatus() {
-        return activeStatus;
-    }
+	public String getParentComponentId()
+	{
+		return parentComponentId;
+	}
 
-    /**
-     * @param activeStatus the activeStatus to set
-     */
-    public void setActiveStatus(Character activeStatus) {
-        this.activeStatus = activeStatus;
-    }
+	public void setParentComponentId(String parentComponentId)
+	{
+		this.parentComponentId = parentComponentId;
+	}
 
-    /**
-     * @return the approvalState
-     */
-    public Character getApprovalState() {
-        return approvalState;
-    }
+	public String getGuid()
+	{
+		return guid;
+	}
 
-    /**
-     * @param approvalState the approvalState to set
-     */
-    public void setApprovalState(Character approvalState) {
-        this.approvalState = approvalState;
-    }
+	public void setGuid(String guid)
+	{
+		this.guid = guid;
+	}
 
-    /**
-     * @return the approvedUser
-     */
-    public String getApprovedUser() {
-        return approvedUser;
-    }
+	public String getOrganization()
+	{
+		return organization;
+	}
 
-    /**
-     * @param approvedUser the approvedUser to set
-     */
-    public void setApprovedUser(String approvedUser) {
-        this.approvedUser = approvedUser;
-    }
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
 
-    /**
-     * @return the approvedDts
-     */
-    public Date getApprovedDts() {
-        return approvedDts;
-    }
+	public String getVersion()
+	{
+		return version;
+	}
 
-    /**
-     * @param approvedDts the approvedDts to set
-     */
-    public void setApprovedDts(Date approvedDts) {
-        this.approvedDts = approvedDts;
-    }
+	public void setVersion(String version)
+	{
+		this.version = version;
+	}
 
-    /**
-     * @return the createUser
-     */
-    public String getCreateUser() {
-        return createUser;
-    }
+	public String getApprovalState()
+	{
+		return approvalState;
+	}
 
-    /**
-     * @param createUser the createUser to set
-     */
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
+	public void setApprovalState(String approvalState)
+	{
+		this.approvalState = approvalState;
+	}
 
-    /**
-     * @return the createDts
-     */
-    public Date getCreateDts() {
-        return createDts;
-    }
+	public String getApprovedUser()
+	{
+		return approvedUser;
+	}
 
-    /**
-     * @param createDts the createDts to set
-     */
-    public void setCreateDts(Date createDts) {
-        this.createDts = createDts;
-    }
+	public void setApprovedUser(String approvedUser)
+	{
+		this.approvedUser = approvedUser;
+	}
 
-    /**
-     * @return the updateUser
-     */
-    public String getUpdateUser() {
-        return updateUser;
-    }
+	public Date getApprovedDts()
+	{
+		return approvedDts;
+	}
 
-    /**
-     * @param updateUser the updateUser to set
-     */
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
+	public void setApprovedDts(Date approvedDts)
+	{
+		this.approvedDts = approvedDts;
+	}
 
-    /**
-     * @return the updateDts
-     */
-    public Date getUpdateDts() {
-        return updateDts;
-    }
+	public String getCreateUser()
+	{
+		return createUser;
+	}
 
-    /**
-     * @param updateDts the updateDts to set
-     */
-    public void setUpdateDts(Date updateDts) {
-        this.updateDts = updateDts;
-    }
+	public void setCreateUser(String createUser)
+	{
+		this.createUser = createUser;
+	}
 
-    /**
-     * @return the lastActivityDts
-     */
-    public Date getLastActivityDts() {
-        return lastActivityDts;
-    }
+	public Date getCreateDts()
+	{
+		return createDts;
+	}
 
-    /**
-     * @param lastActivityDts the lastActivityDts to set
-     */
-    public void setLastActivityDts(Date lastActivityDts) {
-        this.lastActivityDts = lastActivityDts;
-    }
+	public void setCreateDts(Date createDts)
+	{
+		this.createDts = createDts;
+	}
+
+	public String getUpdateUser()
+	{
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser)
+	{
+		this.updateUser = updateUser;
+	}
+
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
+	}
+
+	public Date getLastActivityDts()
+	{
+		return lastActivityDts;
+	}
+
+	public void setLastActivityDts(Date lastActivityDts)
+	{
+		this.lastActivityDts = lastActivityDts;
+	}
+
+	public Date getReleaseDate()
+	{
+		return releaseDate;
+	}
+
+	public void setReleaseDate(Date releaseDate)
+	{
+		this.releaseDate = releaseDate;
+	}
+
+	public Date getPostDate()
+	{
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate)
+	{
+		this.postDate = postDate;
+	}
 
 }

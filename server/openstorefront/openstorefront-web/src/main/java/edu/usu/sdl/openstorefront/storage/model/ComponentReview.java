@@ -13,164 +13,164 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class ComponentReview 
-    extends BaseEntity
+public class ComponentReview
+		extends BaseEntity
 {
-    private String componentReviewId;
-    private String username;
-    private String userTypeCode;
-    private String comment;
-    private String componentId;
-    private String createUser;
-    private Date createDts;
-    private String updateUser;
-    private Date updateDts;
-    private String activeStatus;
 
-    @Override
-    public void setActiveStatus(String activeStatus) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+	@PK
+	@NotNull
+	private String componentReviewId;
 
-    /**
-     * @return the componentReviewId
-     */
-    public String getComponentReviewId() {
-        return componentReviewId;
-    }
+	@NotNull
+	private String componentId;
 
-    /**
-     * @param componentReviewId the componentReviewId to set
-     */
-    public void setComponentReviewId(String componentReviewId) {
-        this.componentReviewId = componentReviewId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String userTypeCode;
 
-    /**
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_REVIEW_COMMENT)
+	private String comment;
 
-    /**
-     * @param username the username to set
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	@NotNull
+	@Min(0)
+	@Max(5)
+	private Integer rating;
 
-    /**
-     * @return the userTypeCode
-     */
-    public String getUserTypeCode() {
-        return userTypeCode;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String title;
 
-    /**
-     * @param userTypeCode the userTypeCode to set
-     */
-    public void setUserTypeCode(String userTypeCode) {
-        this.userTypeCode = userTypeCode;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String experienceTimeType;
 
-    /**
-     * @return the comment
-     */
-    public String getComment() {
-        return comment;
-    }
+	@NotNull
+	private Date lastUsedDate;
 
-    /**
-     * @param comment the comment to set
-     */
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+	@NotNull
+	private Boolean recommend;
 
-    /**
-     * @return the componentId
-     */
-    public String getComponentId() {
-        return componentId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	private String organization;
 
-    /**
-     * @param componentId the componentId to set
-     */
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
+	public ComponentReview()
+	{
+	}
 
-    /**
-     * @return the createUser
-     */
-    public String getCreateUser() {
-        return createUser;
-    }
+	public String getComponentReviewId()
+	{
+		return componentReviewId;
+	}
 
-    /**
-     * @param createUser the createUser to set
-     */
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
+	public void setComponentReviewId(String componentReviewId)
+	{
+		this.componentReviewId = componentReviewId;
+	}
 
-    /**
-     * @return the createDts
-     */
-    public Date getCreateDts() {
-        return createDts;
-    }
+	public String getUserTypeCode()
+	{
+		return userTypeCode;
+	}
 
-    /**
-     * @param createDts the createDts to set
-     */
-    public void setCreateDts(Date createDts) {
-        this.createDts = createDts;
-    }
+	public void setUserTypeCode(String userTypeCode)
+	{
+		this.userTypeCode = userTypeCode;
+	}
 
-    /**
-     * @return the updateUser
-     */
-    public String getUpdateUser() {
-        return updateUser;
-    }
+	public String getComment()
+	{
+		return comment;
+	}
 
-    /**
-     * @param updateUser the updateUser to set
-     */
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
+	public void setComment(String comment)
+	{
+		this.comment = comment;
+	}
 
-    /**
-     * @return the updateDts
-     */
-    public Date getUpdateDts() {
-        return updateDts;
-    }
+	public String getComponentId()
+	{
+		return componentId;
+	}
 
-    /**
-     * @param updateDts the updateDts to set
-     */
-    public void setUpdateDts(Date updateDts) {
-        this.updateDts = updateDts;
-    }
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
 
-    /**
-     * @return the activeStatus
-     */
-    public String getActiveStatus() {
-        return activeStatus;
-    }
+	public Integer getRating()
+	{
+		return rating;
+	}
+
+	public void setRating(Integer rating)
+	{
+		this.rating = rating;
+	}
+
+	public String getTitle()
+	{
+		return title;
+	}
+
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+
+	public String getExperienceTimeType()
+	{
+		return experienceTimeType;
+	}
+
+	public void setExperienceTimeType(String experienceTimeType)
+	{
+		this.experienceTimeType = experienceTimeType;
+	}
+
+	public Boolean getRecommend()
+	{
+		return recommend;
+	}
+
+	public void setRecommend(Boolean recommend)
+	{
+		this.recommend = recommend;
+	}
+
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
+
+	public Date getLastUsedDate()
+	{
+		return lastUsedDate;
+	}
+
+	public void setLastUsedDate(Date lastUsedDate)
+	{
+		this.lastUsedDate = lastUsedDate;
+	}
+
 }

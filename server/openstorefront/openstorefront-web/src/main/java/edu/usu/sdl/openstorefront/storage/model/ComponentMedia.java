@@ -13,102 +13,117 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
+
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class ComponentMedia {
-    private String componentMediaId;
-    private String fileName;
-    private String componentId;
-    private String mediaTypeCode;
-    private String mimeType;
-    private String link;
+public class ComponentMedia
+		extends BaseEntity
+{
 
-    /**
-     * @return the componentMediaId
-     */
-    public String getComponentMediaId() {
-        return componentMediaId;
-    }
+	@PK
+	@NotNull
+	private String componentMediaId;
 
-    /**
-     * @param componentMediaId the componentMediaId to set
-     */
-    public void setComponentMediaId(String componentMediaId) {
-        this.componentMediaId = componentMediaId;
-    }
+	@NotNull
+	private String componentId;
 
-    /**
-     * @return the fileName
-     */
-    public String getFileName() {
-        return fileName;
-    }
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String fileName;
 
-    /**
-     * @param fileName the fileName to set
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String originalName;
 
-    /**
-     * @return the componentId
-     */
-    public String getComponentId() {
-        return componentId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String mediaTypeCode;
 
-    /**
-     * @param componentId the componentId to set
-     */
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String mimeType;
 
-    /**
-     * @return the mediaTypeCode
-     */
-    public String getMediaTypeCode() {
-        return mediaTypeCode;
-    }
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	private String link;
 
-    /**
-     * @param mediaTypeCode the mediaTypeCode to set
-     */
-    public void setMediaTypeCode(String mediaTypeCode) {
-        this.mediaTypeCode = mediaTypeCode;
-    }
+	public ComponentMedia()
+	{
+	}
 
-    /**
-     * @return the mimeType
-     */
-    public String getMimeType() {
-        return mimeType;
-    }
+	public String getComponentMediaId()
+	{
+		return componentMediaId;
+	}
 
-    /**
-     * @param mimeType the mimeType to set
-     */
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
+	public void setComponentMediaId(String componentMediaId)
+	{
+		this.componentMediaId = componentMediaId;
+	}
 
-    /**
-     * @return the link
-     */
-    public String getLink() {
-        return link;
-    }
+	public String getComponentId()
+	{
+		return componentId;
+	}
 
-    /**
-     * @param link the link to set
-     */
-    public void setLink(String link) {
-        this.link = link;
-    }
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
+
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
+	}
+
+	public String getOriginalName()
+	{
+		return originalName;
+	}
+
+	public void setOriginalName(String originalName)
+	{
+		this.originalName = originalName;
+	}
+
+	public String getMediaTypeCode()
+	{
+		return mediaTypeCode;
+	}
+
+	public void setMediaTypeCode(String mediaTypeCode)
+	{
+		this.mediaTypeCode = mediaTypeCode;
+	}
+
+	public String getMimeType()
+	{
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType)
+	{
+		this.mimeType = mimeType;
+	}
+
+	public String getLink()
+	{
+		return link;
+	}
+
+	public void setLink(String link)
+	{
+		this.link = link;
+	}
+
 }

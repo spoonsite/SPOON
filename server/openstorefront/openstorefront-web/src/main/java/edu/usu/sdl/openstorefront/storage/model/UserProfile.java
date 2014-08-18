@@ -13,120 +13,123 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
-import java.util.Date;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class UserProfile {
-    private String username;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String userTypeCode;
-    private Date createDts;
-    private Date updateDts;
+public class UserProfile
+		extends BaseEntity
+{
 
-    /**
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
+	@PK
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	private String username;
 
-    /**
-     * @param username the username to set
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
+	private String firstName;
 
-    /**
-     * @return the firstName
-     */
-    public String getFirstName() {
-        return firstName;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_LASTNAME)
+	private String lastName;
 
-    /**
-     * @param firstName the firstName to set
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	@NotNull
+	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	private String email;
 
-    /**
-     * @return the lastName
-     */
-    public String getLastName() {
-        return lastName;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String userTypeCode;
 
-    /**
-     * @param lastName the lastName to set
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	private String organization;
 
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
+	@NotNull
+	private Boolean admin;
 
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public UserProfile()
+	{
+	}
 
-    /**
-     * @return the userTypeCode
-     */
-    public String getUserTypeCode() {
-        return userTypeCode;
-    }
+	public String getUsername()
+	{
+		return username;
+	}
 
-    /**
-     * @param userTypeCode the userTypeCode to set
-     */
-    public void setUserTypeCode(String userTypeCode) {
-        this.userTypeCode = userTypeCode;
-    }
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
 
-    /**
-     * @return the createDts
-     */
-    public Date getCreateDts() {
-        return createDts;
-    }
+	public String getFirstName()
+	{
+		return firstName;
+	}
 
-    /**
-     * @param createDts the createDts to set
-     */
-    public void setCreateDts(Date createDts) {
-        this.createDts = createDts;
-    }
+	public void setFirstName(String firstName)
+	{
+		this.firstName = firstName;
+	}
 
-    /**
-     * @return the updateDts
-     */
-    public Date getUpdateDts() {
-        return updateDts;
-    }
+	public String getLastName()
+	{
+		return lastName;
+	}
 
-    /**
-     * @param updateDts the updateDts to set
-     */
-    public void setUpdateDts(Date updateDts) {
-        this.updateDts = updateDts;
-    }
-    
+	public void setLastName(String lastName)
+	{
+		this.lastName = lastName;
+	}
+
+	public String getEmail()
+	{
+		return email;
+	}
+
+	public void setEmail(String email)
+	{
+		this.email = email;
+	}
+
+	public String getUserTypeCode()
+	{
+		return userTypeCode;
+	}
+
+	public void setUserTypeCode(String userTypeCode)
+	{
+		this.userTypeCode = userTypeCode;
+	}
+
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
+
+	public Boolean getAdmin()
+	{
+		return admin;
+	}
+
+	public void setAdmin(Boolean admin)
+	{
+		this.admin = admin;
+	}
+
 }

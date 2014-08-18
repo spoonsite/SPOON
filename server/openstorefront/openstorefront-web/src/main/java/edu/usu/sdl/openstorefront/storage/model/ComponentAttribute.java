@@ -13,87 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
+
+import edu.usu.sdl.openstorefront.util.PK;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class ComponentAttribute {
-    private String attributeId;
-    private String componentId;
-    private String attributeType;
-    private String attributeCode;
-    private String attributeValue;
+public class ComponentAttribute
+		extends BaseEntity
+{
 
-    /**
-     * @return the attributeId
-     */
-    public String getAttributeId() {
-        return attributeId;
-    }
+	@PK
+	private ComponentAttributePk componentAttributePk;
 
-    /**
-     * @param attributeId the attributeId to set
-     */
-    public void setAttributeId(String attributeId) {
-        this.attributeId = attributeId;
-    }
+	public ComponentAttribute()
+	{
+	}
 
-    /**
-     * @return the componentId
-     */
-    public String getComponentId() {
-        return componentId;
-    }
+	public ComponentAttributePk getComponentAttributePk()
+	{
+		return componentAttributePk;
+	}
 
-    /**
-     * @param componentId the componentId to set
-     */
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
+	public void setComponentAttributePk(ComponentAttributePk componentAttributePk)
+	{
+		this.componentAttributePk = componentAttributePk;
+	}
 
-    /**
-     * @return the attributeType
-     */
-    public String getAttributeType() {
-        return attributeType;
-    }
-
-    /**
-     * @param attributeType the attributeType to set
-     */
-    public void setAttributeType(String attributeType) {
-        this.attributeType = attributeType;
-    }
-
-    /**
-     * @return the attributeCode
-     */
-    public String getAttributeCode() {
-        return attributeCode;
-    }
-
-    /**
-     * @param attributeCode the attributeCode to set
-     */
-    public void setAttributeCode(String attributeCode) {
-        this.attributeCode = attributeCode;
-    }
-
-    /**
-     * @return the attributeValue
-     */
-    public String getAttributeValue() {
-        return attributeValue;
-    }
-
-    /**
-     * @param attributeValue the attributeValue to set
-     */
-    public void setAttributeValue(String attributeValue) {
-        this.attributeValue = attributeValue;
-    }
 }

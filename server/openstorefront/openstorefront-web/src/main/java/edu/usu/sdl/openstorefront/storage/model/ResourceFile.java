@@ -13,90 +13,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
-import java.util.Date;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class ResourceFile {
-    private String resourceFileId;
-    private String fileName;
-    private Date uploadDts;
-    private String createUser;
-    private Integer fileSizeBytes;
+public class ResourceFile
+{
 
-    /**
-     * @return the resourceFileId
-     */
-    public String getResourceFileId() {
-        return resourceFileId;
-    }
+	@PK
+	@NotNull
+	private String resourceFileId;
 
-    /**
-     * @param resourceFileId the resourceFileId to set
-     */
-    public void setResourceFileId(String resourceFileId) {
-        this.resourceFileId = resourceFileId;
-    }
+	@NotNull
+	private String fileName;
 
-    /**
-     * @return the fileName
-     */
-    public String getFileName() {
-        return fileName;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String originalName;
 
-    /**
-     * @param fileName the fileName to set
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+	@NotNull
+	private String mimeType;
 
-    /**
-     * @return the uploadDts
-     */
-    public Date getUploadDts() {
-        return uploadDts;
-    }
+	public ResourceFile()
+	{
+	}
 
-    /**
-     * @param uploadDts the uploadDts to set
-     */
-    public void setUploadDts(Date uploadDts) {
-        this.uploadDts = uploadDts;
-    }
+	public String getResourceFileId()
+	{
+		return resourceFileId;
+	}
 
-    /**
-     * @return the createUser
-     */
-    public String getCreateUser() {
-        return createUser;
-    }
+	public void setResourceFileId(String resourceFileId)
+	{
+		this.resourceFileId = resourceFileId;
+	}
 
-    /**
-     * @param createUser the createUser to set
-     */
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
+	public String getFileName()
+	{
+		return fileName;
+	}
 
-    /**
-     * @return the fileSizeBytes
-     */
-    public Integer getFileSizeBytes() {
-        return fileSizeBytes;
-    }
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
+	}
 
-    /**
-     * @param fileSizeBytes the fileSizeBytes to set
-     */
-    public void setFileSizeBytes(Integer fileSizeBytes) {
-        this.fileSizeBytes = fileSizeBytes;
-    }
-    
+	public String getMimeType()
+	{
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType)
+	{
+		this.mimeType = mimeType;
+	}
+
+	public String getOriginalName()
+	{
+		return originalName;
+	}
+
+	public void setOriginalName(String originalName)
+	{
+		this.originalName = originalName;
+	}
+
 }

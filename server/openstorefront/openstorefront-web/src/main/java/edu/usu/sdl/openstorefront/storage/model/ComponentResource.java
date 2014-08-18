@@ -13,201 +13,127 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
-import java.util.Date;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class ComponentResource 
-    extends BaseEntity
+public class ComponentResource
+		extends BaseEntity
 {
-    private String resourceId;
-    private String componentId;
-    private String resourceFileId;
-    private String link;
-    private String name;
-    private String description;
-    private Character activeStatus;
-    private String createUser;
-    private Date createDts;
-    private String updateUser;
-    private Date updateDts;
-    private String componentResourceCol;
 
-    @Override
-    public void setActiveStatus(String activeStatus) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+	@PK
+	@NotNull
+	private String resourceId;
 
-    /**
-     * @return the resourceId
-     */
-    public String getResourceId() {
-        return resourceId;
-    }
+	@NotNull
+	private String componentId;
+	private String resourceFileId;
 
-    /**
-     * @param resourceId the resourceId to set
-     */
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String resourceType;
 
-    /**
-     * @return the componentId
-     */
-    public String getComponentId() {
-        return componentId;
-    }
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	private String link;
 
-    /**
-     * @param componentId the componentId to set
-     */
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String name;
 
-    /**
-     * @return the resourceFileId
-     */
-    public String getResourceFileId() {
-        return resourceFileId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
+	private String description;
+	private Boolean restricted;
 
-    /**
-     * @param resourceFileId the resourceFileId to set
-     */
-    public void setResourceFileId(String resourceFileId) {
-        this.resourceFileId = resourceFileId;
-    }
+	public ComponentResource()
+	{
+	}
 
-    /**
-     * @return the link
-     */
-    public String getLink() {
-        return link;
-    }
+	public String getResourceId()
+	{
+		return resourceId;
+	}
 
-    /**
-     * @param link the link to set
-     */
-    public void setLink(String link) {
-        this.link = link;
-    }
+	public void setResourceId(String resourceId)
+	{
+		this.resourceId = resourceId;
+	}
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
+	public String getComponentId()
+	{
+		return componentId;
+	}
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
 
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
+	public String getResourceFileId()
+	{
+		return resourceFileId;
+	}
 
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setResourceFileId(String resourceFileId)
+	{
+		this.resourceFileId = resourceFileId;
+	}
 
-    /**
-     * @return the activeStatus
-     */
-    public Character getActiveStatus() {
-        return activeStatus;
-    }
+	public String getLink()
+	{
+		return link;
+	}
 
-    /**
-     * @param activeStatus the activeStatus to set
-     */
-    public void setActiveStatus(Character activeStatus) {
-        this.activeStatus = activeStatus;
-    }
+	public void setLink(String link)
+	{
+		this.link = link;
+	}
 
-    /**
-     * @return the createUser
-     */
-    public String getCreateUser() {
-        return createUser;
-    }
+	public String getName()
+	{
+		return name;
+	}
 
-    /**
-     * @param createUser the createUser to set
-     */
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
-    /**
-     * @return the createDts
-     */
-    public Date getCreateDts() {
-        return createDts;
-    }
+	public String getDescription()
+	{
+		return description;
+	}
 
-    /**
-     * @param createDts the createDts to set
-     */
-    public void setCreateDts(Date createDts) {
-        this.createDts = createDts;
-    }
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 
-    /**
-     * @return the updateUser
-     */
-    public String getUpdateUser() {
-        return updateUser;
-    }
+	public String getResourceType()
+	{
+		return resourceType;
+	}
 
-    /**
-     * @param updateUser the updateUser to set
-     */
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
+	public void setResourceType(String resourceType)
+	{
+		this.resourceType = resourceType;
+	}
 
-    /**
-     * @return the updateDts
-     */
-    public Date getUpdateDts() {
-        return updateDts;
-    }
+	public Boolean getRestricted()
+	{
+		return restricted;
+	}
 
-    /**
-     * @param updateDts the updateDts to set
-     */
-    public void setUpdateDts(Date updateDts) {
-        this.updateDts = updateDts;
-    }
+	public void setRestricted(Boolean restricted)
+	{
+		this.restricted = restricted;
+	}
 
-    /**
-     * @return the componentResourceCol
-     */
-    public String getComponentResourceCol() {
-        return componentResourceCol;
-    }
-
-    /**
-     * @param componentResourceCol the componentResourceCol to set
-     */
-    public void setComponentResourceCol(String componentResourceCol) {
-        this.componentResourceCol = componentResourceCol;
-    }
 }

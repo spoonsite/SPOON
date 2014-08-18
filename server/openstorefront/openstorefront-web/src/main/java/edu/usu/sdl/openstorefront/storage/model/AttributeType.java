@@ -13,187 +13,172 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class AttributeType 
-    extends BaseEntity
+public class AttributeType
+		extends BaseEntity
 {
-    private String attributeType;
-    private String description;
-    private String iconFile;
-    private Boolean visibleFlg;
-    private Boolean requiredFlg;
-    private Boolean architectureFlg;
-    private Character activeStatus;
-    private String createUser;
-    private Date createDts;
-    private String updateUser;
-    private Date updateDts;
 
-    @Override
-    public void setActiveStatus(String activeStatus) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+	@PK
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String attributeType;
 
-    /**
-     * @return the attributeType
-     */
-    public String getAttributeType() {
-        return attributeType;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
+	private String description;
 
-    /**
-     * @param attributeType the attributeType to set
-     */
-    public void setAttributeType(String attributeType) {
-        this.attributeType = attributeType;
-    }
+	@NotNull
+	private Boolean visibleFlg;
 
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
+	@NotNull
+	private Boolean requiredFlg;
 
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	@NotNull
+	private Boolean architectureFlg;
 
-    /**
-     * @return the iconFile
-     */
-    public String getIconFile() {
-        return iconFile;
-    }
+	@NotNull
+	private Boolean importantFlg;
 
-    /**
-     * @param iconFile the iconFile to set
-     */
-    public void setIconFile(String iconFile) {
-        this.iconFile = iconFile;
-    }
+	@NotNull
+	private Boolean allowMutlipleFlg;
 
-    /**
-     * @return the visibleFlg
-     */
-    public Boolean getVisibleFlg() {
-        return visibleFlg;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	private String createUser;
 
-    /**
-     * @param visibleFlg the visibleFlg to set
-     */
-    public void setVisibleFlg(Boolean visibleFlg) {
-        this.visibleFlg = visibleFlg;
-    }
+	@NotNull
+	private Date createDts;
 
-    /**
-     * @return the requiredFlg
-     */
-    public Boolean getRequiredFlg() {
-        return requiredFlg;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	private String updateUser;
 
-    /**
-     * @param requiredFlg the requiredFlg to set
-     */
-    public void setRequiredFlg(Boolean requiredFlg) {
-        this.requiredFlg = requiredFlg;
-    }
+	@NotNull
+	private Date updateDts;
 
-    /**
-     * @return the architectureFlg
-     */
-    public Boolean getArchitectureFlg() {
-        return architectureFlg;
-    }
+	public AttributeType()
+	{
+	}
 
-    /**
-     * @param architectureFlg the architectureFlg to set
-     */
-    public void setArchitectureFlg(Boolean architectureFlg) {
-        this.architectureFlg = architectureFlg;
-    }
+	public String getAttributeType()
+	{
+		return attributeType;
+	}
 
-    /**
-     * @return the activeStatus
-     */
-    public Character getActiveStatus() {
-        return activeStatus;
-    }
+	public void setAttributeType(String attributeType)
+	{
+		this.attributeType = attributeType;
+	}
 
-    /**
-     * @param activeStatus the activeStatus to set
-     */
-    public void setActiveStatus(Character activeStatus) {
-        this.activeStatus = activeStatus;
-    }
+	public String getDescription()
+	{
+		return description;
+	}
 
-    /**
-     * @return the createUser
-     */
-    public String getCreateUser() {
-        return createUser;
-    }
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 
-    /**
-     * @param createUser the createUser to set
-     */
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
+	public Boolean getVisibleFlg()
+	{
+		return visibleFlg;
+	}
 
-    /**
-     * @return the createDts
-     */
-    public Date getCreateDts() {
-        return createDts;
-    }
+	public void setVisibleFlg(Boolean visibleFlg)
+	{
+		this.visibleFlg = visibleFlg;
+	}
 
-    /**
-     * @param createDts the createDts to set
-     */
-    public void setCreateDts(Date createDts) {
-        this.createDts = createDts;
-    }
+	public Boolean getRequiredFlg()
+	{
+		return requiredFlg;
+	}
 
-    /**
-     * @return the updateUser
-     */
-    public String getUpdateUser() {
-        return updateUser;
-    }
+	public void setRequiredFlg(Boolean requiredFlg)
+	{
+		this.requiredFlg = requiredFlg;
+	}
 
-    /**
-     * @param updateUser the updateUser to set
-     */
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
+	public Boolean getArchitectureFlg()
+	{
+		return architectureFlg;
+	}
 
-    /**
-     * @return the updateDts
-     */
-    public Date getUpdateDts() {
-        return updateDts;
-    }
+	public void setArchitectureFlg(Boolean architectureFlg)
+	{
+		this.architectureFlg = architectureFlg;
+	}
 
-    /**
-     * @param updateDts the updateDts to set
-     */
-    public void setUpdateDts(Date updateDts) {
-        this.updateDts = updateDts;
-    }
-    
+	public String getCreateUser()
+	{
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser)
+	{
+		this.createUser = createUser;
+	}
+
+	public Date getCreateDts()
+	{
+		return createDts;
+	}
+
+	public void setCreateDts(Date createDts)
+	{
+		this.createDts = createDts;
+	}
+
+	public String getUpdateUser()
+	{
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser)
+	{
+		this.updateUser = updateUser;
+	}
+
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
+	}
+
+	public Boolean getImportantFlg()
+	{
+		return importantFlg;
+	}
+
+	public void setImportantFlg(Boolean importantFlg)
+	{
+		this.importantFlg = importantFlg;
+	}
+
+	public Boolean getAllowMutlipleFlg()
+	{
+		return allowMutlipleFlg;
+	}
+
+	public void setAllowMutlipleFlg(Boolean allowMutlipleFlg)
+	{
+		this.allowMutlipleFlg = allowMutlipleFlg;
+	}
+
 }

@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.util.PK;
-import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,43 +24,17 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public abstract class LookupEntity
-	extends BaseEntity
+		extends BaseEntity
 {
-	
+
 	@PK
 	@NotNull
 	@Size(min = 1, max = 20)
 	protected String code;
-	
-	@NotNull
-	@Size(min = 1, max = 255)	
-	protected String description;
 
-	
-	@NotNull	
-	protected String activeStatus;
-	
-	
 	@NotNull
-	@Size(min = 1, max = 80)	
-	protected String createUser;
-	
-	
-	@NotNull	
-	protected Date createDts;
-	
-	
-	@NotNull
-	@Size(min = 1, max = 80)	
-	protected String updateUser;
-	
-	
-	@NotNull		
-	protected Date updateDts;	
-	
-	public LookupEntity()
-	{
-	}
+	@Size(min = 1, max = 255)
+	protected String description;
 
 	public String getCode()
 	{
@@ -83,58 +55,7 @@ public abstract class LookupEntity
 	{
 		this.description = description;
 	}
-	
-	public String getActiveStatus()
-	{
-		return activeStatus;
-	}
 
-	@Override
-	public void setActiveStatus(String activeStatus)
-	{
-		this.activeStatus = activeStatus;
-	}
-
-	public String getCreateUser()
-	{
-		return createUser;
-	}
-
-	public void setCreateUser(String createUser)
-	{
-		this.createUser = createUser;
-	}
-
-	public Date getCreateDts()
-	{
-		return createDts;
-	}
-
-	public void setCreateDts(Date createDts)
-	{
-		this.createDts = createDts;
-	}
-
-	public String getUpdateUser()
-	{
-		return updateUser;
-	}
-
-	public void setUpdateUser(String updateUser)
-	{
-		this.updateUser = updateUser;
-	}
-
-	public Date getUpdateDts()
-	{
-		return updateDts;
-	}
-
-	public void setUpdateDts(Date updateDts)
-	{
-		this.updateDts = updateDts;
-	}	
-	
 	@Override
 	public int hashCode()
 	{
@@ -147,11 +68,11 @@ public abstract class LookupEntity
 	public boolean equals(Object object)
 	{
 		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof TestEntity))
+		if (!(object instanceof LookupEntity))
 		{
 			return false;
 		}
-		TestEntity other = (TestEntity) object;
+		LookupEntity other = (LookupEntity) object;
 		if ((this.code == null && other.code != null) || (this.code != null && !this.code.equals(other.code)))
 		{
 			return false;
@@ -164,5 +85,5 @@ public abstract class LookupEntity
 	{
 		return "edu.usu.sdl.openstorefront.storage.lookup[ code=" + code + " ]";
 	}
-	
+
 }

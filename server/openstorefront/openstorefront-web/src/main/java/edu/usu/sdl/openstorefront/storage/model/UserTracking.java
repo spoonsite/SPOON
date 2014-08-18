@@ -13,195 +13,157 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class UserTracking {
-    private String trackingId;
-    private String trackEventTypeCode;
-    private String browser;
-    private String userAgent;
-    private String browserVersion;
-    private Date eventDts;
-    private Integer screenWidth;
-    private Integer screenHeight;
-    private Boolean mobileDevice;
-    private String osPlatform;
-    private String clientIp;
-    private String userProfileUsername;
+public class UserTracking
+		extends BaseEntity
+{
 
-    /**
-     * @return the trackingId
-     */
-    public String getTrackingId() {
-        return trackingId;
-    }
+	@PK
+	@NotNull
+	private String trackingId;
 
-    /**
-     * @param trackingId the trackingId to set
-     */
-    public void setTrackingId(String trackingId) {
-        this.trackingId = trackingId;
-    }
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String trackEventTypeCode;
 
-    /**
-     * @return the trackEventTypeCode
-     */
-    public String getTrackEventTypeCode() {
-        return trackEventTypeCode;
-    }
+	private String browser;
+	private String userAgent;
+	private String browserVersion;
 
-    /**
-     * @param trackEventTypeCode the trackEventTypeCode to set
-     */
-    public void setTrackEventTypeCode(String trackEventTypeCode) {
-        this.trackEventTypeCode = trackEventTypeCode;
-    }
+	@NotNull
+	private Date eventDts;
 
-    /**
-     * @return the browser
-     */
-    public String getBrowser() {
-        return browser;
-    }
+	private Integer screenWidth;
+	private Integer screenHeight;
+	private Boolean mobileDevice;
+	private String osPlatform;
 
-    /**
-     * @param browser the browser to set
-     */
-    public void setBrowser(String browser) {
-        this.browser = browser;
-    }
+	@NotNull
+	private String clientIp;
 
-    /**
-     * @return the userAgent
-     */
-    public String getUserAgent() {
-        return userAgent;
-    }
+	public UserTracking()
+	{
+	}
 
-    /**
-     * @param userAgent the userAgent to set
-     */
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
+	public String getTrackingId()
+	{
+		return trackingId;
+	}
 
-    /**
-     * @return the browserVersion
-     */
-    public String getBrowserVersion() {
-        return browserVersion;
-    }
+	public void setTrackingId(String trackingId)
+	{
+		this.trackingId = trackingId;
+	}
 
-    /**
-     * @param browserVersion the browserVersion to set
-     */
-    public void setBrowserVersion(String browserVersion) {
-        this.browserVersion = browserVersion;
-    }
+	public String getTrackEventTypeCode()
+	{
+		return trackEventTypeCode;
+	}
 
-    /**
-     * @return the eventDts
-     */
-    public Date getEventDts() {
-        return eventDts;
-    }
+	public void setTrackEventTypeCode(String trackEventTypeCode)
+	{
+		this.trackEventTypeCode = trackEventTypeCode;
+	}
 
-    /**
-     * @param eventDts the eventDts to set
-     */
-    public void setEventDts(Date eventDts) {
-        this.eventDts = eventDts;
-    }
+	public String getBrowser()
+	{
+		return browser;
+	}
 
-    /**
-     * @return the screenWidth
-     */
-    public Integer getScreenWidth() {
-        return screenWidth;
-    }
+	public void setBrowser(String browser)
+	{
+		this.browser = browser;
+	}
 
-    /**
-     * @param screenWidth the screenWidth to set
-     */
-    public void setScreenWidth(Integer screenWidth) {
-        this.screenWidth = screenWidth;
-    }
+	public String getUserAgent()
+	{
+		return userAgent;
+	}
 
-    /**
-     * @return the screenHeight
-     */
-    public Integer getScreenHeight() {
-        return screenHeight;
-    }
+	public void setUserAgent(String userAgent)
+	{
+		this.userAgent = userAgent;
+	}
 
-    /**
-     * @param screenHeight the screenHeight to set
-     */
-    public void setScreenHeight(Integer screenHeight) {
-        this.screenHeight = screenHeight;
-    }
+	public String getBrowserVersion()
+	{
+		return browserVersion;
+	}
 
-    /**
-     * @return the mobileDevice
-     */
-    public Boolean getMobileDevice() {
-        return mobileDevice;
-    }
+	public void setBrowserVersion(String browserVersion)
+	{
+		this.browserVersion = browserVersion;
+	}
 
-    /**
-     * @param mobileDevice the mobileDevice to set
-     */
-    public void setMobileDevice(Boolean mobileDevice) {
-        this.mobileDevice = mobileDevice;
-    }
+	public Date getEventDts()
+	{
+		return eventDts;
+	}
 
-    /**
-     * @return the osPlatform
-     */
-    public String getOsPlatform() {
-        return osPlatform;
-    }
+	public void setEventDts(Date eventDts)
+	{
+		this.eventDts = eventDts;
+	}
 
-    /**
-     * @param osPlatform the osPlatform to set
-     */
-    public void setOsPlatform(String osPlatform) {
-        this.osPlatform = osPlatform;
-    }
+	public Integer getScreenWidth()
+	{
+		return screenWidth;
+	}
 
-    /**
-     * @return the clientIp
-     */
-    public String getClientIp() {
-        return clientIp;
-    }
+	public void setScreenWidth(Integer screenWidth)
+	{
+		this.screenWidth = screenWidth;
+	}
 
-    /**
-     * @param clientIp the clientIp to set
-     */
-    public void setClientIp(String clientIp) {
-        this.clientIp = clientIp;
-    }
+	public Integer getScreenHeight()
+	{
+		return screenHeight;
+	}
 
-    /**
-     * @return the userProfileUsername
-     */
-    public String getUserProfileUsername() {
-        return userProfileUsername;
-    }
+	public void setScreenHeight(Integer screenHeight)
+	{
+		this.screenHeight = screenHeight;
+	}
 
-    /**
-     * @param userProfileUsername the userProfileUsername to set
-     */
-    public void setUserProfileUsername(String userProfileUsername) {
-        this.userProfileUsername = userProfileUsername;
-    }
-    
+	public Boolean getMobileDevice()
+	{
+		return mobileDevice;
+	}
+
+	public void setMobileDevice(Boolean mobileDevice)
+	{
+		this.mobileDevice = mobileDevice;
+	}
+
+	public String getOsPlatform()
+	{
+		return osPlatform;
+	}
+
+	public void setOsPlatform(String osPlatform)
+	{
+		this.osPlatform = osPlatform;
+	}
+
+	public String getClientIp()
+	{
+		return clientIp;
+	}
+
+	public void setClientIp(String clientIp)
+	{
+		this.clientIp = clientIp;
+	}
+
 }
