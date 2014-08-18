@@ -247,7 +247,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   // cancel user profile edits
    $scope.cancelUserProfile = function() {
      // return fields to latest data
-     console.log("cancel Edits");
+     //console.log("cancel Edits");
 
     $scope.mySwitch = false;
 
@@ -295,7 +295,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
    // myCheckValue
 
    // mask form
-    $scope.$emit("$TRIGGERLOAD", 'userLoad');
+    $scope.$emit('$TRIGGERLOAD', 'userLoad');
 
     $scope.mySwitch = false;
    // $scope.myCheckValue = false;
@@ -317,7 +317,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
       function(data, status, headers, config){ //SUCCESS:: data = return value
         $timeout(function(){
-          $scope.$emit("$TRIGGERUNLOAD", 'userLoad');
+          $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
         }, 1000);
         loadUserProfile();
         console.log(data);
@@ -325,7 +325,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
       function(value){ //FAILURE:: value = reason why it failed
         $timeout(function(){
           triggerError(value);
-              $scope.$emit("$TRIGGERUNLOAD", 'userLoad');
+              $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
         }, 1000);
         console.log(value);
       }

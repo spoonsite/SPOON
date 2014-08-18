@@ -16,7 +16,7 @@
 'use strict';
 
 app.directive('ngFocus', [function() {
-  var FOCUS_CLASS = "ng-focused";
+  var FOCUS_CLASS = 'ng-focused';
   return {
     restrict: 'A',
     require: 'ngModel',
@@ -30,5 +30,5 @@ app.directive('ngFocus', [function() {
         scope.$apply(function() {ctrl.$focused = false;});
       });
     }
-  }
+  };
 }]);
