@@ -271,7 +271,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       }
       break;
       case 'H':
-      result = 'HALTED ' + estimated;
+      result = 'HALTED ' + actual;
       if (actual && actual !== 'null') {
         result = 'HALTED ' + actual;
       } else {
@@ -280,14 +280,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       break;
       case 'P':
       if (estimated && estimated !== 'null') {
-        result = 'IN PROGRESS (estimated complete ' + estimated + ')';
+        // result = 'IN PROGRESS (estimated complete ' + estimated + ')';
+        result = 'IN PROGRESS';
       } else {
         result = 'IN PROGRESS';
       }
       break;
       default:
       if (estimated && estimated !== 'null') {
-        result = 'NOT STARTED (estimated complete ' + estimated + ')';
+        // result = 'NOT STARTED (estimated complete ' + estimated + ')';
+        result = 'NOT STARTED';
       } else {
         result = 'NOT STARTED';
       }

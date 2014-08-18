@@ -21,32 +21,37 @@ filtClick, setPageHeight*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$sce', function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $sce) { /*jshint unused: false*/
 
-
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our variables...
   //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
+  // set the page height so the loading masks look good.
   setPageHeight($('.page1'), 52);
+
+  // start the loading masks
   $scope.$emit('$TRIGGERLOAD', 'mainLoader');
+  // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
   $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
+  
+  // set variables
   $scope._scopename         = 'results';
+  $scope.orderProp          = '';
+  $scope.query              = '';
   $scope.lastUsed           = new Date();
-  $scope.searchCode         = null;
-  $scope.searchTitle        = null;
-  $scope.searchDescription  = null;
+  $scope.modal              = {};
   $scope.details            = {};
-  $scope.details.details    = null;
+  $scope.data               = {};
   $scope.isPage1            = true;
   $scope.showSearch         = false;
   $scope.showDetails        = false;
   $scope.showMessage        = false;
-  $scope.orderProp          = '';
-  $scope.query              = '';
-  $scope.noDataMessage      = $sce.trustAsHtml('<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p><button class="btn btn-default" ng-click="clearFilters()">Reset Filters</button>');
+  $scope.modal.isLanding    = false;
+  $scope.single             = false;
+  $scope.isArticle          = false;
+  $scope.searchCode         = null;
+  $scope.filteredTotal      = null;
+  $scope.searchTitle        = null;
+  $scope.searchDescription  = null;
+  $scope.details.details    = null;
   $scope.typeahead          = null;
   $scope.searchGroup        = null;
   $scope.searchKey          = null;
@@ -54,10 +59,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.resetFilters       = null;
   $scope.total              = null;
   $scope.ratingsFilter      = 0;
-  $scope.modal              = {};
-  $scope.modal.isLanding    = false;
-  $scope.single             = false;
-  $scope.isArticle          = false;
+  $scope.rowsPerPage        = 200;
+  $scope.pageNumber         = 1;
+  $scope.maxPageNumber      = 1;
+  $scope.noDataMessage      = $sce.trustAsHtml('<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p><button class="btn btn-default" ng-click="clearFilters()">Reset Filters</button>');
+
+
+  // grab what we need from the server.
   Business.getTagsList().then(function(result) {
     if (result) {
       $scope.tagsList       = result;
@@ -80,57 +88,35 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.watches        = null;
     }
   });
-
-  $scope.expertise          = [
-    //
-    {'value':'1', 'label': 'Less than 1 month'},
-    {'value':'2', 'label': 'Less than 3 months'},
-    {'value':'3', 'label': 'Less than 6 months'},
-    {'value':'4', 'label': 'Less than 1 year'},
-    {'value':'5', 'label': 'Less than 3 years'},
-    {'value':'6', 'label': 'More than 3 years'}
-  //
-  ];
-  $scope.userRoles          = [
-    //
-    {'code':'ENDUSER', 'description': 'User'},
-    {'code':'DEV', 'description': 'Developer'},
-    {'code':'PM', 'description': 'Project Manager'}
-  //
-  ];
-  // These variables are used for the pagination
-  $scope.filteredTotal      = null;
-  $scope.data               = {};
-  $scope.rowsPerPage        = 200;
-  $scope.pageNumber         = 1;
-  $scope.maxPageNumber      = 1;
-
-
-
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  // Here we put our functions...
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-
-  /***************************************************************
-  * Set up typeahead, and then watch for selection made
-  ***************************************************************/
+  Business.lookupservice.getExpertise().then(function(result) {
+    if (result) {
+      $scope.expertise      = result;
+    } else {
+      $scope.expertise      = [];
+    }
+  });
+  Business.lookupservice.getUserTypeCodes().then(function(result) {
+    if (result) {
+      $scope.userTypeCodes  = result;
+    } else {
+      $scope.userTypeCodes  = [];
+    }
+  });
   Business.componentservice.getComponentDetails().then(function(result) {
     Business.typeahead(result, 'name').then(function(value){
-      $scope.typeahead = value;
+      if (value) {
+        $scope.typeahead    = value;
+      } else {
+        $scope.typeahead    = [];
+      }
     });
   });
 
-  /***************************************************************
-  * This grabs the user type codes and sets them to the scope.
-  ***************************************************************/
-  Business.lookupservice.getUserTypeCodes().then(function(lookup){
-    $scope.userTypeCodes  = lookup;
-    //TODO: chain load the review form    
-  });
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Here we put our Functions
+  //////////////////////////////////////////////////////////////////////////////
+
 
   /***************************************************************
   * This function selects the initial tab.
@@ -498,7 +484,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             });
           }
 
-
           /* jshint ignore:end */
 
         }
@@ -602,13 +587,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
 
-
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our Event Watchers
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
   /***************************************************************
@@ -660,11 +640,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
   //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   // Here we put our Scope Watchers
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
   /***************************************************************

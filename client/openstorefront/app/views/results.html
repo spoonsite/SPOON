@@ -25,8 +25,8 @@ limitations under the License.
         <option class="hidden-lg" selected disabled value="" hidden>Sort By</option>
         <option value="+name">Name (A-Z)</option>
         <option value="-name">Name (Z-A)</option>
-        <!-- <option value="-stats.averageRating">Rating (high-low)</option> -->
-        <!-- <option value="+stats.averageRating">Rating (low-high)</option> -->
+        <option value="-stats.averageRating">Rating (high-low)</option>
+        <option value="+stats.averageRating">Rating (low-high)</option>
         <option value="-updateDts">Last Update (newest)</option>
         <option value="+updateDts">Last Update (oldest)</option>
       </select>
@@ -36,11 +36,11 @@ limitations under the License.
       <br>
       <label for="tagsFilter">Filter By Tag: </label>
       <tags-input class="bootstrap" min-length="1" ng-model="tagsFilter" replace-spaces-with-dashes="false" add-from-autocomplete-only="true" on-tag-added="applyFilters();" on-tag-removed="applyFilters();"><auto-complete min-length="1" source="checkTagsList($query, tagsFilter, tagsList)"></auto-complete></tags-input>
-      <!-- <br> -->
-      <!-- <label for="ratingsFilter">Filter By Rating: </label>
+      <br>
+      <label for="ratingsFilter">Filter By Rating: </label>
       <br>
       <raty class="average-raty" id="filterRating" style="min-width:110px; height: 100%;" score="{{ratingsFilter}}" ng-model="ratingsFilter" number="5" path="images/raty/">
-      </raty> -->
+      </raty>
     </div>
 
     <!-- Added these divs for the ability to dynamically make the filters an accordian -->

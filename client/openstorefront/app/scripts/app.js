@@ -137,7 +137,7 @@ tagsInputConfigProvider
 
 // here we add the .run function for intial setup and other useful functions
 
-.run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend','$q', 'auth', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth) {/* jshint unused: false*/
+.run(['$rootScope', 'localCache', 'business',  '$location', '$route', '$timeout', '$httpBackend','$q', 'auth', '$anchorScroll', '$routeParams', function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams) {/* jshint unused: false*/
 
   //////////////////////////////////////////////////////////////////////////////
   // Variables
@@ -249,6 +249,14 @@ tagsInputConfigProvider
     $rootScope.$broadcast('$viewModal', id);
   };
 
+  $rootScope.scrollTo = function(id) {
+    var old = $location.hash();
+    $location.hash(id);
+    $anchorScroll();
+    //reset to old to keep any additional routing logic from kicking in
+    $location.hash(old);
+  };
+
   /***************************************************************
   * This function sends the route to whatever path and search are passed in.
   ***************************************************************/
@@ -340,7 +348,7 @@ tagsInputConfigProvider
   $httpBackend.whenGET(/views.*/).passThrough();
   
   $httpBackend.whenGET('/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
-  $httpBackend.whenGET('/api/v1/resource/lookup/UserTypeCode').respond(MOCKDATA.userTypeCodes);
+  $httpBackend.whenGET('/api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
   $httpBackend.whenGET(/\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
     var query = getParams(url);
     var result = null;
@@ -411,16 +419,30 @@ tagsInputConfigProvider
     return [200, MOCKDATA.prosConsList, {}];
   });
 
-  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/evalLevels\//).respond(function(method, url, data) {
+  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/evalLevels/).respond(function(method, url, data) {
     var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
     return [200, result, {}];
   });
 
-  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/watches\//).respond(function(method, url, data) {
+  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/expertise/).respond(function(method, url, data) {
+    var result = [
+      //
+      {'value':'1', 'label': 'Less than 1 month'},
+      {'value':'2', 'label': 'Less than 3 months'},
+      {'value':'3', 'label': 'Less than 6 months'},
+      {'value':'4', 'label': 'Less than 1 year'},
+      {'value':'5', 'label': 'Less than 3 years'},
+      {'value':'6', 'label': 'More than 3 years'}
+    //
+    ];
+    return [200, result, {}];
+  });
+
+  $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/watches/).respond(function(method, url, data) {
     return [200, MOCKDATA.watches, {}];
   });
 
-  $httpBackend.whenPOST(/\/api\/v1\/resource\/lookup\/watches\//).respond(function(method, url, data) {
+  $httpBackend.whenPOST(/\/api\/v1\/resource\/lookup\/watches/).respond(function(method, url, data) {
     MOCKDATA.watches = data;
     return [200, angular.fromJson(data), {}];
   });
