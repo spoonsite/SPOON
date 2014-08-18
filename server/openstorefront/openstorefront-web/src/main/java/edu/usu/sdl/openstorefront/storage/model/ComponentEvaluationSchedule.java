@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
@@ -34,13 +33,6 @@ public class ComponentEvaluationSchedule
 	private Date completionDate;
 
 	@NotNull
-	@ValidValueType(
-	{
-		"N",
-		"P",
-		"C",
-		"H"
-	})
 	private String levelStatus;
 
 	public ComponentEvaluationSchedule()
