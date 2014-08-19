@@ -281,6 +281,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
           $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
           $scope.searchDescription  = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
+
           if (foundCollection.landing !== undefined && foundCollection.landing !== null) {
             getBody(foundCollection.landing).then(function(result) {
               $scope.modal.modalBody = result;
@@ -290,15 +291,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             $scope.modal.modalBody = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
             $scope.modal.isLanding = false;
           }
+
         } else {
           $scope.searchTitle        = $scope.searchType + ', All';
           $scope.modal.modalTitle   = $scope.searchType + ', All';
           $scope.searchDescription  = 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchType;
-          $scope.modal.modalBody          = 'This will eventually hold a description for this attribute type.';
-          $scope.modal.isLanding = false;
+          $scope.modal.modalBody    = 'This will eventually hold a description for this attribute type.';
+          $scope.modal.isLanding    = false;
         }
       } else if ($scope.searchGroup[0].key === 'search') {
-
         // Otherwise check to see if it is a search
         $scope.searchKey          = 'DOALLSEARCH';
         $scope.showSearch         = true;
@@ -343,8 +344,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       var code = '';
       var query = null;
       if (key === null || key === undefined) {
-        if (!isEmpty($location.search()))
-        {
+        if (!isEmpty($location.search())) {
           query = $location.search();
           if (query.type && query.code) {
             type = query.type;
@@ -357,8 +357,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         code = '';
         // console.log('search', $location.search());
         
-        if (!isEmpty($location.search()))
-        {
+        if (!isEmpty($location.search())) {
           query = $location.search();
           if (query.type && query.code) {
             type = query.type;
@@ -379,8 +378,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       
       var type = 'all';
       var code = '';
-      if (!isEmpty($location.search()))
-      {
+      if (!isEmpty($location.search())) {
         var query = $location.search();
         if (query.type && query.code) {
           type = query.type;
@@ -500,10 +498,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
     window.open(url, 'Component ' + id, 'scrollbars');
-    // $location.search({
-    //   'id': id
-    // });
-    // $location.path('/single');
   };
 
   /***************************************************************
@@ -625,8 +619,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.$on('$viewContentLoaded', function(){
     resetAnimations($('.page1'), $('.page2'), $('.filters'));
     $timeout(function() {
-      // moveButtons($('#showPageRight'), $('.page1'));
-      // moveButtons($('#showPageLeft'), $('.page2'));
       if (fullClick === 0) {
         if ($(window).width() >= 768) {
           if (filtClick === 0) {
