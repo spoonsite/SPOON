@@ -5,13 +5,15 @@
 app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', function ($scope, Business, $timeout) {
 
   $scope._scopename = 'editComponent?';
-  $scope.componentListKey = null;
+  $scope.base = {};
   $scope.subComponent = {};
   $scope.relatedComponent = {};
-  $scope.search = null;
-  $scope.item = null;
-  $scope.found = false;
   $scope.currentDependency = {};
+  $scope.requiredAttributes = [];
+  $scope.item = null;
+  $scope.search = null;
+  $scope.componentListKey = null;
+  $scope.found = false;
   $scope.nav = {
     'bars': [
     {
@@ -36,10 +38,9 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
     'current': ''
   };
 
-  $scope.requiredAttributes = [];
   Business.getFilters().then(function(result){
     if (result) {
-      $scope.filters = result;
+      $scope.filters = angular.copy(result);
       _.each($scope.filters, function(filter){
         if (filter.requiredFlg) {
           $scope.requiredAttributes[filter.description] = filter.codes[0];
@@ -48,16 +49,14 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
     }
   });
 
-  $scope.base = {};
-
-  $scope.resetForm = function(){
-    $scope.found = false;
-  };
-
 
   /***************************************************************
   * Dependency functions
   ***************************************************************/
+  $scope.resetForm = function(){
+    $scope.found = false;
+  };
+
   $scope.editDependency = function($index) {
     $scope.editDep = true;
     $scope.depIndex = $index;
@@ -105,8 +104,6 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
     return passed;
   };
 
-
-
   $scope.saveDependency = function() {
     if (checkDependency()) {
       $scope.editDep = false;
@@ -123,7 +120,6 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
       }
     }
   };
-
 
   $scope.doComponentSearch = function() {
     if (typeof $scope.componentListKey === 'object' && $scope.componentListKey) {
@@ -164,6 +160,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
       $scope.item.subComponents.splice(delIndex, 1);
     }
   };
+  
   $scope.deleteRelatedComponent = function(id) {
     var index = _.find($scope.item.relatedComponents, {'componentId': id});
     var delIndex = $scope.item.relatedComponents.indexOf(index);

@@ -16,6 +16,18 @@
 
 'use strict';
 
+
+/***************************************************************
+* Usage:: <loader trigger="triggerId"></loader>
+*
+* ~~~
+*
+* $scope.$emit('$TRIGGERLOAD', 'triggerId');
+*
+* ~load stuff~
+*
+* $scope.$emit('$TRIGGERUNLOAD', 'triggerId');
+***************************************************************/
 app.directive('loader', function () {
   return {
     template: '<div class="loader-holder modal-backdrop" ng-show="loading"><div class="loader"><!--[if lt IE 10]><span>...Loading...</span><![endif]--></div></div>',

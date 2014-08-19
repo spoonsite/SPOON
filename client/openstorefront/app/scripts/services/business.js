@@ -74,7 +74,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   business.getFilters = function() {
     var deferred = $q.defer();
-    var filters = checkExpire('filters', minute * 0.5);
+    var filters = checkExpire('filters', minute * 1440);
     if (filters) {
       deferred.resolve(filters);
     } else {
