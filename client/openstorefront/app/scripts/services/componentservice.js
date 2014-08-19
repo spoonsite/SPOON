@@ -64,8 +64,6 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     save(name, value);
   };
 
-  updateCache('','');
-
   componentservice.getComponentDetails = function(id) {
     var result = $q.defer();
     var url = '/api/v1/resource/component/';
@@ -90,7 +88,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
             if (id) {
               save('component_'+id, resultObj);
             } else {
-              save('componentList', resultObj);
+              updateCache('componentList', resultObj);
             }
           }
           result.resolve(resultObj);

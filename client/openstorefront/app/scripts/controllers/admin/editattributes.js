@@ -36,10 +36,14 @@ app.controller('AdminEditattributesCtrl',['$scope','business',  function ($scope
     // showGroupPanel: true,
     columnDefs: [
       //
-      {field: 'name', displayName: 'Name', enableCellEdit: true},
-      {field:'key', displayName:'Code', maxWidth: 150, enableCellEdit: true},
-      {field:'src', displayName:'Icon Src', enableCellEdit: true},
-      {field:'key', displayName:'Collection', maxWidth: 150, cellTemplate: '<div class="ngCellText" ng-click="editCollection(row.getProperty(col.field))"><a>Edit Code Collection</a></div>', enableCellEdit: false, groupable: false, sortable: false}
+      {field: 'description', displayName: 'Name', enableCellEdit: true},
+      {field:'type', displayName:'Code', maxWidth: 150, enableCellEdit: true},
+      {field:'visibleFlg', displayName:'Visible Flag', enableCellEdit: true},
+      {field:'requiredFlg', displayName:'Required Flag', enableCellEdit: true},
+      {field:'archtechtureFlg', displayName:'Architecture Flag', enableCellEdit: true},
+      {field:'importantFlg', displayName:'Important Flag', enableCellEdit: true},
+      {field:'allowMutlipleFlg', displayName:'Allow Multiple Flag', enableCellEdit: true},
+      {field:'type', displayName:'Codes', maxWidth: 150, cellTemplate: '<div class="ngCellText" ng-click="editCollection(row.getProperty(col.field))"><a>Edit Code Collection</a></div>', enableCellEdit: false, groupable: false, sortable: false}
     //
     ]
   };

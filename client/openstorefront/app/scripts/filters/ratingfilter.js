@@ -16,6 +16,8 @@
 
 'use strict';
 
+
+//TODO:: REFACTOR TO FIT NEW MODEL
 app.filter('ratingFilter', function () {
   return function (input, rating) {
     // first we make sure that the rating is a possible rating...

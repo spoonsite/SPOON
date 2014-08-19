@@ -64,7 +64,6 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   var updateCache = function(name, value) {
     save(name, value);
   };
-  updateCache('','');
 
 
   /**
@@ -121,7 +120,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
     } else {
       $http({
         'method': 'GET',
-        'url': '/api/v1/resource/lookup/watches/'
+        'url': '/api/v1/resource/lookup/watches'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('watches', data);
@@ -141,7 +140,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
 
     $http({
       'method': 'POST',
-      'url': '/api/v1/resource/lookup/watches/',
+      'url': '/api/v1/resource/lookup/watches',
       'data': watches
     }).success(function(data, status, headers, config) { /*jshint unused:false*/
       if (data && data !== 'false') {
