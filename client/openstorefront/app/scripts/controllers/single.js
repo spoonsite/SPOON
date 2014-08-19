@@ -114,7 +114,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.showDetails = true;
     });
-};
+  }; //
 
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search
@@ -160,7 +160,6 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       }
       $scope.updateDetails(id);
     });
-    //
   };
 
   callSearch();

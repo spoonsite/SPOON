@@ -106,7 +106,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   ***************************************************************/
   $scope.editCollection = function(key) {
     var branch = checkCollection($scope.data, 0, 'codes');
-    $scope.collectionSelection = _.where($scope.filters, {'type': key})[0];
+    $scope.collectionSelection = _.find($scope.filters, {'type': key});
     $scope.editor(branch);
   };
   /***************************************************************
