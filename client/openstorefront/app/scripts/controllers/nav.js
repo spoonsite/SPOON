@@ -37,7 +37,11 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   ***************************************************************/
   Business.componentservice.getComponentDetails().then(function(result) {
     Business.typeahead(result, null).then(function(value){
-      $scope.typeahead = value;
+      if (value) {
+        $scope.typeahead = value;
+      } else {
+        $scope.typeahead = null;
+      }
     });
   });
 

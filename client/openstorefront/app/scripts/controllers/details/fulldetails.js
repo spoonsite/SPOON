@@ -29,6 +29,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
   $scope.componentState                = Business.componentservice.getComponentState();
   $scope.resultsComments               = Business.componentservice.getResultsComments();
+
   Business.userservice.getWatches().then(function(result) {
     if (result) {
       $scope.watches = result;
@@ -36,9 +37,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       $scope.watches = null;
     }
   });
-
   Business.lookupservice.getEvalLevels().then(function(result){
-    $scope.evalLevels = result;
+    if (result) {
+      $scope.evalLevels = result;
+    } else {
+      $scope.evalLevels = null;
+    }
   });
 
 
@@ -66,11 +70,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     ]
   };
 
-  if ($scope.modal) {
-    $scope.$watch('modal.modalBody', function() {
-      $scope.modalBody = $scope.modal.modalBody;
-    });
-  }
+  var mNames = new Array('January', 'February', 'March',
+    'April', 'May', 'June', 'July', 'August', 'September',
+    'October', 'November', 'December');
 
   $scope.detailResultsTabs = [
     //
@@ -83,6 +85,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ];
 
   $scope.tab = $scope.detailResultsTabs[0];
+  $scope.selectedTab = $scope.tabs[0];
+
+  if ($scope.modal) {
+    $scope.$watch('modal.modalBody', function() {
+      $scope.modalBody = $scope.modal.modalBody;
+    });
+  }
 
   /***************************************************************
   * This function does the route redirection to the user profile path in order
@@ -98,22 +107,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     return '';
   };
   $scope.getEvaluationState();
-  $scope.selectedTab = $scope.tabs[0];
-
-  /***************************************************************
-  * This function is triggered by the '$descModal' event.
-  ***************************************************************/
-  $scope.$on('$descModal', function(event) { /*jshint unused: false*/
-    // re-initialize the modal content here if we must
-    if ($scope.modal.nav !== undefined && $scope.modal.nav !== null) {
-
-      if ($rootScope.current) {
-        $scope.modal.nav.current = $rootScope.current;
-      } else {
-        $scope.modal.nav.current = 'Write a Review';
-      }
-    }
-  });
 
   /***************************************************************
   * This function is used by our image modal.
@@ -121,27 +114,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.openLightboxModal = function (index, imageArray) {
     Lightbox.openModal(imageArray, index);
   };
-
-  /***************************************************************
-  * This function watches the details object for changes
-  ***************************************************************/
-  $scope.$watch('details', function () {
-    if ($scope.details){
-      if ($scope.details.details) {
-        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
-        if (found) {
-          $scope.details.details.watched = true;
-        }
-        if ($scope.details.details.reviews) {
-          if ($scope.details.details.reviews[0] !== undefined) {
-            $scope.setupReviewSummary();
-          } else {
-            $scope.reviewSummary = null;
-          }
-        }
-      }
-    }
-  }, true);
 
   /***************************************************************
   * This function take the reviews array from the component details and sets up
@@ -330,11 +302,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     return imageArray;
   };
 
-
-  var mNames = new Array('January', 'February', 'March',
-    'April', 'May', 'June', 'July', 'August', 'September',
-    'October', 'November', 'December');
-
   /***************************************************************
   * This function converts a timestamp to a displayable date
   ***************************************************************/
@@ -374,11 +341,44 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
 
-  
   $scope.getTimes = function(n){
     return new Array(parseInt(n));
   };
 
+  /***************************************************************
+  * This function is triggered by the '$descModal' event.
+  ***************************************************************/
+  $scope.$on('$descModal', function(event) { /*jshint unused: false*/
+    // re-initialize the modal content here if we must
+    if ($scope.modal.nav !== undefined && $scope.modal.nav !== null) {
 
+      if ($rootScope.current) {
+        $scope.modal.nav.current = $rootScope.current;
+      } else {
+        $scope.modal.nav.current = 'Write a Review';
+      }
+    }
+  });
+  
+  /***************************************************************
+  * This function watches the details object for changes
+  ***************************************************************/
+  $scope.$watch('details', function () {
+    if ($scope.details){
+      if ($scope.details.details) {
+        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
+        if (found) {
+          $scope.details.details.watched = true;
+        }
+        if ($scope.details.details.reviews) {
+          if ($scope.details.details.reviews[0] !== undefined) {
+            $scope.setupReviewSummary();
+          } else {
+            $scope.reviewSummary = null;
+          }
+        }
+      }
+    }
+  }, true);
 
 }]);

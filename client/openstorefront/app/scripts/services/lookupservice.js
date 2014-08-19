@@ -53,6 +53,10 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     localCache.save(name+'-time', new Date());
   };
 
+  var updateCache = function(name, value) {
+    save(name, value);
+  };
+
   // var updateCache = function(name, value) {
   //   save(name, value);
   // };
@@ -112,6 +116,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
           save('evalLevels', data);
           deferred.resolve(data);
         } else {
+          updateCache('evalLevels', null);
           deferred.reject('There was an error grabbing the eval levels');
         }
       });

@@ -24,8 +24,19 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   // Variables
   //////////////////////////////////////////////////////////////////////////////
   $scope.data              = {};
+  $scope.details           = {};
+  $scope.modal             = {};
+  $scope.single            = true;
+  $scope.details.details   = null;
+  $scope.modal.isLanding   = false;
+  $scope.showDetails       = false;
+
   Business.componentservice.getComponentDetails().then(function(result) {
-    $scope.data.data       = result;
+    if (result) {
+      $scope.data.data = result;
+    } else {
+      $scope.data.data = null;
+    }
   });
   Business.getProsConsList().then(function(result){
     if (result) {
@@ -34,12 +45,6 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       $scope.prosConsList = null;
     }
   });
-  $scope.details           = {};
-  $scope.modal             = {};
-  $scope.single            = true;
-  $scope.details.details   = null;
-  $scope.modal.isLanding   = false;
-  $scope.showDetails       = false;
   Business.userservice.getWatches().then(function(result){
     if (result) {
       $scope.watches = result;

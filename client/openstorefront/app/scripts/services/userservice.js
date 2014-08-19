@@ -64,7 +64,6 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   var updateCache = function(name, value) {
     save(name, value);
   };
-  updateCache('','');
 
 
   /**
