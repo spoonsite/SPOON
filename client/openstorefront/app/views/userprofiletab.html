@@ -34,7 +34,7 @@ limitations under the License.
 									<label class="col-sm-3 control-label"><img src="images/1.jpg" width="96" height="96"></img></label>
 									<div class="col-sm-8"  style="vertical-align:bottom;height:96">
 										<br /><br /><br /><br /> <!-- ng-checked="mySwitch" -->
-										<input type="checkbox" id="myCheckValue" ng-init="false" ng-model="mySwitch" /><label for="myCheckValue">&nbsp;Update User Info</label>
+										<input type="checkbox" id="myCheckValue" ng-init="false" ng-model="userForm.mySwitch" /><label for="myCheckValue">&nbsp;Update User Info</label>
 									</div>
 								</div>	
 								<div class="form-group">
@@ -53,7 +53,7 @@ limitations under the License.
 												id="firstname"
 												name="firstname"
 									            placeholder="First Name"
-									            ng-disabled="!mySwitch"
+									            ng-disabled="!userForm.mySwitch"
 									            class="form-control" 
 									            ng-model="userProfileForm.firstname" 
 									            ng-minlength=2 
@@ -75,7 +75,7 @@ limitations under the License.
 												id="lastname"
 												name="lastname"
 									            placeholder="Last Name"
-									            ng-disabled="!mySwitch"
+									            ng-disabled="!userForm.mySwitch"
 									            class="form-control" 
 									            ng-model="userProfileForm.lastname" 
 									            ng-minlength=2 
@@ -87,7 +87,7 @@ limitations under the License.
 										<p ng-show="userForm.lastname.$error.required && !userForm.lastname.$focused" class="help-block">Last Name is required.</p>
 									</div>
 								</div>								
-								<div class="form-group" show-errorsS >
+								<div class="form-group" show-errors >
 									<label class="col-sm-3 control-label">Email:</label>
 									<div class="col-sm-8">
 										<input  type="text" 
@@ -95,7 +95,7 @@ limitations under the License.
 												id="email"
 												name="email"
 									            placeholder="Email"
-									            ng-disabled="!mySwitch"
+									            ng-disabled="!userForm.mySwitch"
 									            class="form-control" 
 									            ng-model="userProfileForm.email" 
 									            ng-minlength=6 
@@ -111,7 +111,7 @@ limitations under the License.
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Role:</label>
 									<div class="col-sm-8">
-										<button type="button" ng-disabled="!mySwitch" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
+										<button type="button" ng-disabled="!userForm.mySwitch" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
 										  Select <span class="caret"></span>
 										</button>										
 									</div>
@@ -125,7 +125,7 @@ limitations under the License.
 												id="organization"
 												name="organization"
 									            placeholder="Organization"
-									            ng-disabled="!mySwitch"
+									            ng-disabled="!userForm.mySwitch"
 									            class="form-control" 
 									            ng-model="userProfileForm.organization" 
 									            ng-maxlength=80 
@@ -147,8 +147,9 @@ limitations under the License.
 										<br />
 <!-- 										<input type="checkbox" id="myCheckValue" ng-init="false" ng-model="mySwitch" ng-checked="mySwitch" /><label for="myCheckValue">&nbsp;Update User Info</label>
 										<br /> <br /> -->
-										<button type="submit" ng-show="mySwitch" class="btn btn-primary" ng-disabled="userForm.$invalid" >Save User Profile</button>
-									 	<a id="lnkCancelSave" ng-href="" ng-show="mySwitch" name="cancelSave" ng-click="cancelUserProfile()"><span style="color:blue">Cancel Edits</span></a>
+										<button type="submit" ng-show="userForm.mySwitch" class="btn btn-primary" ng-disabled="userForm.$invalid" >Save User Profile</button>
+									 	&nbsp;&nbsp;
+									 	<a id="lnkCancelSave" ng-href="" ng-show="userForm.mySwitch" name="cancelSave" ng-click="cancelUserProfile()"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel Edits</span></a>
 									</div>
 								</div>
 							</form>

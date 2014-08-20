@@ -199,7 +199,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         $scope.data.push(component);
       }
     });
-
   };
 
   //?fix
@@ -208,9 +207,18 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
      // return fields to latest data
      //console.log("cancel Edits");
 
-    $scope.mySwitch = false;
+    //$scope.mySwitch = 'off';
+    //$scope.mySwitch = false;
 
      console.log($scope.mySwitch);
+
+   // var x1 = document.getElementById("myCheckValue").checked;
+   // alert("value: " + x1);
+    
+    //document.getElementById("myCheckValue").checked = false;
+    //angular.element('mySwitch').trigger('click');
+
+
 
 /*     alert("sldjkl");
   $scope.mySwitch.checked = false;
