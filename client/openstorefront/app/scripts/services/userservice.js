@@ -96,8 +96,8 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
     $http.get('/api/v1/resource/userprofiles/' + username).success(successFunc);
   };
 
-  var saveCurrentUserProfile = function(userProfile, success, failure) { /*jshint unused:false*/
-    saveProfile(CURRENT_USER, userProfile, success, failure);
+  var saveCurrentUserProfile = function(userProfile) { /*jshint unused:false*/
+    return saveProfile(CURRENT_USER, userProfile);
   };
 
   /**
@@ -105,8 +105,28 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   * @param string usernamer
   * @returns {undefined}
   */
-  var saveProfile = function(username, userProfile, success, failure) { /*jshint unused:false*/
+  var saveProfile = function(username, userProfile) { /*jshint unused:false*/
     var deferred = $q.defer();
+    if (true) {
+      deferred.resolve('It worked');
+    } else {
+      // if the save fails, give them a reason why... with an error object like this
+      //?fix
+      /*
+      *  {
+      *    'success': false,
+      *    'errors': [
+      *      {
+      *        'mainSearchBar' : 'Your input was invalid. Please try again.'
+      *      },ok
+      *      {
+      *        'element_id' : 'Error message to be displayed in the tooltip'
+      *      }
+      *    ]
+      *  };
+      */
+      deferred.reject('It Failed');
+    }
     return deferred.promise;
   };
 

@@ -175,7 +175,7 @@ var triggerError = function(errorObj) {
     for (var i in item) {
       $('#'+i).addClass('errorOnInput');
       $('#'+i).tooltip({
-        container: 'body',
+        // container: 'body',
         html: 'true',
         placement: 'top',
         trigger: 'focus',

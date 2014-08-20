@@ -88,9 +88,57 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   });
 
 
+
+  $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+
+
+  /***************************************************************
+  * This function toggles a checkbox
+  ***************************************************************/
+/* $scope.changeSwitch = function(tval){
+  
+ // var myValue = $scope.mySwitch;
+  //alert(tval);
+  $scope.toggle = true;
+
+  //($scope.mySwitch) ? $scope.mySwitch2 = "YES" : $scope.mySwitch2 = "NO";
+  // $scope.mySwitch = true;
+  // $scope.mySwitch2 = false;
+  //($scope.mySwitch) ? $scope.mySwitch2 = 'false' : $scope.mySwitch2 = 'true';
+ 
+  //$scope.mySwitch = true;
+  //$scope.mySwitch2 = true;
+
+  // ($scope.mySwitch) ? alert("true") : alert("not true") ;
+
+
+  //console.log(myCheckBox);
+
+    if (tval == true)
+    {
+       $scope.toggle = true;
+      // $scope.mySwitch = true;
+      // $scope.mySwitch2 = false;
+     // alert("I am checked");
+   //   $scope.mySwitch2.checked = 'false';
+   //   $scope.mycheckbox = false;
+    }
+    else {
+      $scope.toggle = false;
+     // $scope.mySwitch = false;
+     //  $scope.mySwitch2 = true;
+     // alert("I am NOT checked");
+    //  $scope.mySwitch2.checked = 'true';
+    //  $scope.mycheckbox = true;
+    }
+  };*/
+
+
+
   //////////////////////////////////////////////////////////////////////////////
   // Functions
   //////////////////////////////////////////////////////////////////////////////
+
   /***************************************************************
   * This function converts a timestamp to a displayable date
   ***************************************************************/
@@ -147,7 +195,41 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         $scope.data.push(component);
       }
     });
+  };
 
+  //?fix
+  // cancel user profile edits
+   $scope.cancelUserProfile = function() {
+     // return fields to latest data
+     //console.log("cancel Edits");
+
+    //$scope.mySwitch = 'off';
+    //$scope.mySwitch = false;
+
+     console.log($scope.mySwitch);
+
+   // var x1 = document.getElementById("myCheckValue").checked;
+   // alert("value: " + x1);
+    
+    //document.getElementById("myCheckValue").checked = false;
+    //angular.element('mySwitch').trigger('click');
+
+
+
+/*     alert("sldjkl");
+  $scope.mySwitch.checked = false;
+  $scope.mySwitch = 0;*/
+
+    Business.userservice.getCurrentUserProfile().then(function(profile) {
+      $scope.userProfile = profile;
+      $scope.userProfileForm = angular.copy(profile);
+
+      _.each($scope.userTypeCodes, function(element, index, list) { /*jshint unused:false*/
+        if (element.code === $scope.userProfileForm.userTypeCode) {
+          $scope.userProfileForm.userRole = element;
+        }
+      });
+    });
   };
 
   /***************************************************************
@@ -172,19 +254,45 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * Save the user profile
   ***************************************************************/
   $scope.saveUserProfile = function() {
+
+   // myCheckValue
+
+   // mask form
+    $scope.$emit('$TRIGGERLOAD', 'userLoad');
+
+    $scope.mySwitch = false;
+   // $scope.myCheckValue = false;
+  
     //validate form
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
-    //mask form and disable save button
-    var success = function(data, status, headers, config) { /*jshint unused:false*/
-      loadUserProfile();
-      //Show message toaster
-    };
+    // //mask form and disable save button
+    // var success = function(data, status, headers, config) { /*jshint unused:false*/
+    //   loadUserProfile();
+    //   //Show message toasterg
+    // };
 
-    var failure = function(data, status, headers, config) { /*jshint unused:false*/
-      //mark fields that are bad (add error class) and show our error messages div
-    };
-    Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
+    // var failure = function(data, status, headers, config) { /*jshint unused:false*/
+    //   //mark fields that are bad (add error class) and show our error messages div
+    // };
+
+    // Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
+    Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
+      function(data, status, headers, config){ //SUCCESS:: data = return value
+        $timeout(function(){
+          $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+        }, 1000);
+        loadUserProfile();
+        console.log(data);
+      },
+      function(value){ //FAILURE:: value = reason why it failed
+        $timeout(function(){
+          triggerError(value);
+              $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+        }, 1000);
+        console.log(value);
+      }
+    );
   };
 
 
