@@ -34,10 +34,7 @@ public abstract class BaseEntity
 	public static final String INACTIVE_STATUS = "I";
 
 	@NotNull
-	@ValidValueType(
-			{
-				"A", "I"
-			})
+	@ValidValueType({"A", "I"})
 	private String activeStatus;
 
 	@NotNull

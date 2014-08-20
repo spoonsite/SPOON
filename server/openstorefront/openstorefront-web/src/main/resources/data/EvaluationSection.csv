@@ -1,0 +1,21 @@
+DIS,Discoverable
+ACC,Accessible
+DOC,Documentation
+DEP,Deployable
+USAB,Usable
+ERR,Error Handling
+INT,Integrable
+IO,I/O Validation
+TEST,Testing
+MON,Monitoring
+PER,Performance
+SC,Scalability
+SEC,Security
+MAIN,Maintainability
+COM,Community
+CM,Change Management
+CA,CA
+LIC,Licensing
+RM,Roadmap
+WIL,Willingness
+AA,Architecture Alignment

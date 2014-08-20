@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,12 +31,15 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * This will validate an entity by using the bean validation annotations on the entity
+ * This will validate an entity by using the bean validation annotations on the
+ * entity
+ *
  * @author dshurtleff
  */
 public class ValidationUtil
 {
-	private static final List<BaseRule> rules = Arrays.asList(	
+
+	private static final List<BaseRule> rules = Arrays.asList(
 			new MaxValueRule(),
 			new MinValueRule(),
 			new PatternRule(),
@@ -47,36 +47,35 @@ public class ValidationUtil
 			new SizeRule(),
 			new ValidValueRule()
 	);
-	
+
 	private ValidationUtil()
-	{		
+	{
 	}
-	
-	public static  boolean isValid(ValidationModel validateModel)
-	{				
+
+	public static boolean isValid(ValidationModel validateModel)
+	{
 		return validate(validateModel).valid();
 	}
-	
+
 	public static ValidationResult validate(ValidationModel validateModel)
 	{
 		Objects.requireNonNull(validateModel);
-		
-		ValidationResult validationResult = new ValidationResult();	
-		if (validateModel.getDataObject() == null && 
-			validateModel.isAcceptNull() == false)
+
+		ValidationResult validationResult = new ValidationResult();
+		if (validateModel.getDataObject() == null
+				&& validateModel.isAcceptNull() == false)
 		{
 			RuleResult ruleResult = new RuleResult();
 			ruleResult.setMessage("The whole data object is null.");
 			ruleResult.setValidationRule("Don't allow null object");
 			validationResult.getRuleResults().add(ruleResult);
-		}
-		else
+		} else
 		{
-			if (validateModel.getDataObject()  != null)
+			if (validateModel.getDataObject() != null)
 			{
 				if (validateModel.getDataObject() instanceof Collection)
 				{
-					((Collection)validateModel.getDataObject()).stream().forEach((dataObject) ->
+					((Collection) validateModel.getDataObject()).stream().forEach((dataObject) ->
 					{
 						validationResult.getRuleResults().addAll(validate(ValidationModel.copy(validateModel, dataObject)).getRuleResults());
 					});
@@ -85,11 +84,11 @@ public class ValidationUtil
 					validationResult.getRuleResults().addAll(validateFields(validateModel, validateModel.getDataObject().getClass(), null, null));
 				}
 			}
-		}		
+		}
 		return validationResult;
 	}
 
-	private static List<RuleResult> validateFields(final ValidationModel validateModel, Class dataClass, String parentFieldName, String parentType) 
+	private static List<RuleResult> validateFields(final ValidationModel validateModel, Class dataClass, String parentFieldName, String parentType)
 	{
 		List<RuleResult> ruleResults = new ArrayList<>();
 
@@ -100,7 +99,7 @@ public class ValidationUtil
 			validationResult.setMessage("The whole data object is null.");
 			validationResult.setValidationRule("Don't allow null object");
 			validationResult.setEntityClassName(parentType);
-			validationResult.setFieldName(parentFieldName);			
+			validationResult.setFieldName(parentFieldName);
 			ruleResults.add(validationResult);
 		} else
 		{
@@ -126,23 +125,9 @@ public class ValidationUtil
 
 					if (process)
 					{
-						if (!fieldClass.isPrimitive()
-								&& !fieldClass.isArray()
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(String.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Long.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Integer.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Boolean.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Double.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Float.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(BigDecimal.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Date.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Collection.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName())
-								&& !fieldClass.getSimpleName().equalsIgnoreCase(BigInteger.class.getSimpleName()))
+						if (ServiceUtil.isComplexClass(fieldClass))
 						{
-							//composition class					
+							//composition class
 							try
 							{
 								Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
@@ -182,7 +167,7 @@ public class ValidationUtil
 									Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 									for (Object itemObj : (Collection) returnObj)
 									{
-										ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(),  field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
+										ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
 									}
 								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
 								{
