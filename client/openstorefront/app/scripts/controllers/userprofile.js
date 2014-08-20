@@ -161,10 +161,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
     window.open(url, 'Component ' + id, 'scrollbars');
-    // $location.search({
-    //   'id': id
-    // });
-    // $location.path('/single');
   };
 
   /***************************************************************
