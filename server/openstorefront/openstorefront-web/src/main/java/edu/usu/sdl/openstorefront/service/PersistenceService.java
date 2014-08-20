@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service;
 
 import com.orientechnologies.orient.core.id.OClusterPositionFactory;
@@ -26,11 +25,13 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,10 +48,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PersistenceService
 {
+
 	private static final Logger log = Logger.getLogger(PersistenceService.class.getName());
-	
-	private  OObjectDatabaseTx transaction;
-	
+
+	private OObjectDatabaseTx transaction;
+
 	public PersistenceService()
 	{
 	}
@@ -58,17 +60,14 @@ public class PersistenceService
 	public String generateId()
 	{
 		return UUID.randomUUID().toString();
-	}	
+	}
 
 	public OObjectDatabaseTx getConnection()
 	{
 		OObjectDatabaseTx db;
-		if (transaction == null)
-		{
-			db =  DBManager.getConnection();
-		}
-		else
-		{
+		if (transaction == null) {
+			db = DBManager.getConnection();
+		} else {
 			db = transaction;
 		}
 		return db;
@@ -76,213 +75,201 @@ public class PersistenceService
 
 	public void closeConnection(OObjectDatabaseTx db)
 	{
-		if (transaction == null)
-		{
+		if (transaction == null) {
 			db.close();
 		}
 	}
-	
+
 	public void begin()
 	{
-		if (transaction == null)
-		{
+		if (transaction == null) {
 			transaction = getConnection();
 			transaction.getTransaction().begin();
-		}
-		else
-		{
+		} else {
 			throw new OpenStorefrontRuntimeException("Already in a Transaction", "Commit or rollback transaction action before beginning a new one.");
 		}
 	}
-	
-	public void commit()			
+
+	public void commit()
 	{
-		if (transaction == null)
-		{
+		if (transaction == null) {
 			throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
-		}
-		else
-		{
+		} else {
 			transaction.getTransaction().commit();
-		}				
+		}
 	}
-	
+
 	public void rollback()
 	{
-		if (transaction == null)
-		{
+		if (transaction == null) {
 			throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
-		}
-		else
-		{		
+		} else {
 			transaction.getTransaction().rollback();
 		}
-	}	
+	}
 
 	public void endTransaction()
 	{
-		if (transaction != null)
-		{
+		if (transaction != null) {
 			transaction.getTransaction().close();
 			transaction.close();
 			transaction = null;
 		}
-	}	
-		
-	public boolean isTransactionActive() {
+	}
+
+	public boolean isTransactionActive()
+	{
 		boolean active = false;
-		if (transaction != null)
-		{
+		if (transaction != null) {
 			active = transaction.getTransaction().isActive();
-		}		
+		}
 		return active;
-	}	
-	
+	}
+
 	/**
 	 * This only works on managed objects
+	 *
 	 * @param <T>
 	 * @param entityClass
 	 * @param primaryKey
-	 * @return 
+	 * @return
 	 */
-	@SuppressWarnings("unchecked")	
-	public <T> T find(Class<T> entityClass, Object primaryKey) {
+	@SuppressWarnings("unchecked")
+	public <T> T find(Class<T> entityClass, Object primaryKey)
+	{
 		final ORecordId rid;
 
 		OObjectDatabaseTx database = getConnection();
-		try
-		{
-			if (primaryKey instanceof ORecordId)
-			{
+		try {
+			if (primaryKey instanceof ORecordId) {
 				rid = (ORecordId) primaryKey;
-			} else if (primaryKey instanceof String)
-			{
+			} else if (primaryKey instanceof String) {
 				rid = new ORecordId((String) primaryKey);
-			} else if (primaryKey instanceof Number)
-			{
+			} else if (primaryKey instanceof Number) {
 				// COMPOSE THE RID
 				OClass cls = database.getMetadata().getSchema().getClass(entityClass);
-				if (cls == null)
-				{
+				if (cls == null) {
 					throw new IllegalArgumentException("Class '" + entityClass + "' is not configured in the database");
 				}
 				rid = new ORecordId(cls.getDefaultClusterId(), OClusterPositionFactory.INSTANCE.valueOf(((Number) primaryKey).longValue()));
-			} else
-			{
+			} else {
 				throw new IllegalArgumentException("PrimaryKey '" + primaryKey + "' type (" + primaryKey.getClass() + ") is not supported");
 			}
 
 			return (T) database.load(rid);
-		} finally
-		{
+		} finally {
 			closeConnection(database);
 		}
 	}
-	
+
 	public <T> T findById(Class<T> entity, Object id)
 	{
-		OObjectDatabaseTx db = getConnection();	
+		OObjectDatabaseTx db = getConnection();
 		T returnEntity = null;
-		try
-		{
-			String pkFieldName = findIdField(entity);
-			
-			if (pkFieldName == null)
-			{
+		try {
+			Map<String, Object> pkFields = findIdField(entity, id);
+
+			if (pkFields.isEmpty()) {
 				throw new OpenStorefrontRuntimeException("Unable to find PK field", "Mark the Primary Key field (@PK) on the entity: " + entity.getName());
 			}
-			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("idParam", id);
-			
-			List<T> results = db.query(new OSQLSynchQuery<>("select * from " + entity.getSimpleName() + " where " + pkFieldName + " = :idParam"), parameters);
 
-			if (!results.isEmpty())
-			{
-				returnEntity =  results.get(0);
+			StringBuilder whereClause = new StringBuilder();
+			Map<String, Object> parameters = new HashMap<>();
+			for (String fieldName : pkFields.keySet()) {
+				parameters.put(fieldName + "Param", pkFields.get(fieldName));
+				whereClause.append(" ").append(fieldName).append(" = :").append(fieldName).append("Param").append(" AND");
 			}
-		} 
-		finally
-		{
+			String whereClauseString = whereClause.substring(0, whereClause.length() - 3);
+
+			List<T> results = db.query(new OSQLSynchQuery<>("select * from " + entity.getSimpleName() + " where " + whereClauseString), parameters);
+
+			if (!results.isEmpty()) {
+				returnEntity = results.get(0);
+			}
+		} finally {
 			closeConnection(db);
 		}
-		
+
 		return returnEntity;
 	}
-	
-	private String findIdField(Class entityClass)
+
+	private Map<String, Object> findIdField(Class entityClass, Object id)
 	{
-		String idField = null;
-		//Start at the root (The last Id found wins ...there should only be one)
-		if(entityClass.getSuperclass() != null)
-		{
-			idField = findIdField(entityClass.getSuperclass());
+		Map<String, Object> fieldValueMap = new HashMap<>();
+
+		//Start at the root (The fist Id found wins ...there should only be one)
+		if (entityClass.getSuperclass() != null) {
+			fieldValueMap = findIdField(entityClass.getSuperclass(), id);
 		}
-		if (idField == null)
-		{
-			for (Field field : entityClass.getDeclaredFields())
-			{
+		if (fieldValueMap.isEmpty()) {
+			for (Field field : entityClass.getDeclaredFields()) {
 				PK idAnnotation = field.getAnnotation(PK.class);
-				if (idAnnotation != null)
-				{
-					idField = field.getName();
-					break;
+				if (idAnnotation != null) {
+					if (ServiceUtil.isComplexClass(field.getType())) {
+						//PK class should only be one level deep
+						for (Field pkField : field.getType().getDeclaredFields()) {
+							try {
+								Method method = id.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
+								Object returnObj = method.invoke(id, (Object[]) null);
+								fieldValueMap.put(pkField.getName(), returnObj);
+							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+								throw new OpenStorefrontRuntimeException(ex);
+							}
+						}
+					} else {
+						fieldValueMap.put(field.getName(), id);
+						break;
+					}
 				}
 			}
 		}
-		return idField;		
+		return fieldValueMap;
 	}
-	
+
 	public long countClass(Class entityClass)
 	{
-		OObjectDatabaseTx db = getConnection();	
+		OObjectDatabaseTx db = getConnection();
 		long count = 0;
-		try
-		{
+		try {
 			count = db.countClass(entityClass);
-		} 
-		finally
-		{
+		} finally {
 			closeConnection(db);
 		}
 		return count;
-	}	
-	
-	public<T>  long deleteByExample(T example)
+	}
+
+	public <T> long deleteByExample(T example)
 	{
 		long deleteCount = 0;
 		StringBuilder queryString = new StringBuilder();
-		
+
 		queryString.append("delete from ").append(example.getClass().getSimpleName());
-		
+
 		String whereClause = generateWhereClause(example);
-		if (StringUtils.isNotBlank(whereClause))
-		{
-			queryString.append(" where ").append(whereClause);		
+		if (StringUtils.isNotBlank(whereClause)) {
+			queryString.append(" where ").append(whereClause);
 		}
-		
-		OObjectDatabaseTx db = getConnection();		
-		try
-		{		
-			deleteCount  = db.command(new OCommandSQL(queryString.toString()).execute(mapParameters(example)));			
-		} finally
-		{
+
+		OObjectDatabaseTx db = getConnection();
+		try {
+			deleteCount = db.command(new OCommandSQL(queryString.toString()).execute(mapParameters(example)));
+		} finally {
 			closeConnection(db);
-		}		
-		
+		}
+
 		return deleteCount;
-	}	
-	
-	public<T>  void updateByExample(T exampleSet, T exampleWhere)
+	}
+
+	public <T> void updateByExample(T exampleSet, T exampleWhere)
 	{
 		throw new OpenStorefrontRuntimeException("Unsupported operation", "Add support");
-	}	
-	
+	}
+
 	public long countByExample(QueryByExample queryByExample)
 	{
 		long count = 0;
 		StringBuilder queryString = new StringBuilder();
-		switch (queryByExample.getQueryType())
-		{
+		switch (queryByExample.getQueryType()) {
 			case COUNT:
 				queryString.append("select sum(*) ");
 				break;
@@ -290,234 +277,201 @@ public class PersistenceService
 				queryString.append("select sum(distinct(").append(queryByExample.getDistinctField()).append(") ");
 				break;
 			default:
-				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports Count types");						
+				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports Count types");
 		}
 		queryString.append("from ").append(queryByExample.getExample().getClass().getSimpleName());
-		
+
 		String whereClause = generateWhereClause(queryByExample.getExample());
-		if (StringUtils.isNotBlank(whereClause))
-		{
-			queryString.append(" where ").append(whereClause);		
+		if (StringUtils.isNotBlank(whereClause)) {
+			queryString.append(" where ").append(whereClause);
 		}
-		
-		OObjectDatabaseTx db = getConnection();		
-		try
-		{		
-			count  = db.command(new OCommandSQL(queryString.toString()).execute(mapParameters(queryByExample.getExample())));			
-		} finally
-		{
+
+		OObjectDatabaseTx db = getConnection();
+		try {
+			count = db.command(new OCommandSQL(queryString.toString()).execute(mapParameters(queryByExample.getExample())));
+		} finally {
 			closeConnection(db);
-		}			
+		}
 		return count;
-	}	
-	
+	}
+
 	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
 		StringBuilder queryString = new StringBuilder();
-		
-		switch (queryByExample.getQueryType())
-		{
+
+		switch (queryByExample.getQueryType()) {
 			case SELECT:
 				queryString.append("select  ");
 				break;
 			default:
-				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports select");			
+				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports select");
 		}
 		queryString.append(" from ").append(queryByExample.getExample().getClass().getSimpleName());
-		
+
 		String whereClause = generateWhereClause(queryByExample.getExample());
-		if (StringUtils.isNotBlank(whereClause))
-		{
-			queryString.append(" where ").append(whereClause);		
+		if (StringUtils.isNotBlank(whereClause)) {
+			queryString.append(" where ").append(whereClause);
 		}
-		
-		List<T> results  = query(queryString.toString(), mapParameters(queryByExample.getExample()));
+
+		List<T> results = query(queryString.toString(), mapParameters(queryByExample.getExample()));
 		return results;
-	}	
-	
-	private <T> String generateWhereClause (T example)
+	}
+
+	private <T> String generateWhereClause(T example)
 	{
 		StringBuilder where = new StringBuilder();
-		
-		try
-		{
-			Map fieldMap = BeanUtils.describe(example);			
+
+		try {
+			Map fieldMap = BeanUtils.describe(example);
 			boolean addAnd = false;
-			for (Object field :  fieldMap.keySet())
-			{
-				
-				if ("class".equalsIgnoreCase(field.toString()) == false)
-				{
+			for (Object field : fieldMap.keySet()) {
+
+				if ("class".equalsIgnoreCase(field.toString()) == false) {
 					Object value = fieldMap.get(field);
-					if (value != null)
-					{
-						if (addAnd)
-						{
+					if (value != null) {
+						if (addAnd) {
 							where.append(" AND ");
-						}						
-						else
-						{
+						} else {
 							addAnd = true;
 							where.append(" ");
-						}						
-						
+						}
+
 						where.append(field).append(" = :").append(field).append("Param");
 					}
 				}
 			}
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-		{
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 			log.log(Level.SEVERE, null, ex);
 		}
 		return where.toString();
 	}
-	
-	private <T>  Map<String, Object> mapParameters(T example)
+
+	private <T> Map<String, Object> mapParameters(T example)
 	{
 		Map<String, Object> parameterMap = new HashMap<>();
-		try
-		{
-			Map fieldMap = BeanUtils.describe(example);	
-			fieldMap.keySet().stream().filter((field) -> ("class".equalsIgnoreCase(field.toString()) == false)).forEach((field) ->
-			{
+		try {
+			Map fieldMap = BeanUtils.describe(example);
+			fieldMap.keySet().stream().filter((field) -> ("class".equalsIgnoreCase(field.toString()) == false)).forEach((field) -> {
 				Object value = fieldMap.get(field);
-				if (value != null)
-				{
-					parameterMap.put(field + "Param", value);					
+				if (value != null) {
+					parameterMap.put(field + "Param", value);
 				}
 			});
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-		{
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 			log.log(Level.SEVERE, null, ex);
-		}		
+		}
 		return parameterMap;
-	}	
-	
+	}
+
 	public <T> T queryByOneExample(QueryByExample queryByExample)
-	{		
+	{
 		List<T> results = queryByExample(queryByExample);
-		if (results.size() > 0)
-		{
+		if (results.size() > 0) {
 			return results.get(0);
 		}
-		return null;		
+		return null;
 	}
-	
+
 	public <T> List<T> query(String query, Map<String, Object> parameterMap)
 	{
-		OObjectDatabaseTx db = getConnection();	
-		List<T> results  = new ArrayList<>();
-		try
-		{			 
-			results = db.query(new OSQLSynchQuery<>(query), parameterMap);			
-		} finally
-		{
+		OObjectDatabaseTx db = getConnection();
+		List<T> results = new ArrayList<>();
+		try {
+			results = db.query(new OSQLSynchQuery<>(query), parameterMap);
+		} finally {
 			closeConnection(db);
-		}		
+		}
 		return results;
 	}
-	
+
 	public <T> T persist(T entity)
 	{
-		OObjectDatabaseTx db = getConnection();		
+		OObjectDatabaseTx db = getConnection();
 		T t = null;
-		try
-		{	
-			ValidationResult validationResult =  ValidationUtil.validate(new ValidationModel(entity));
-			if (validationResult.valid())
-			{
-				 t = db.save(entity);		
-			}
-			else
-			{
+		try {
+			ValidationModel validationModel = new ValidationModel(entity);
+			validationModel.setSantize(false);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				t = db.save(entity);
+			} else {
 				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules.");
-			}	
-		} finally
-		{
+			}
+		} finally {
 			closeConnection(db);
-		}		
-		
+		}
+
 		return t;
 	}
-	
-	public<T> void delete(T entity)
+
+	public <T> void delete(T entity)
 	{
-		OObjectDatabaseTx db = getConnection();				
-		try
-		{		
-			db.delete(entity);		
-		} finally
-		{
+		OObjectDatabaseTx db = getConnection();
+		try {
+			db.delete(entity);
+		} finally {
 			closeConnection(db);
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Detaches and removes the proxy object
+	 *
 	 * @param <T>
-	 * @param entity 
+	 * @param entity
 	 */
-	public<T> void detach(T entity)
+	public <T> void detach(T entity)
 	{
-		OObjectDatabaseTx db = getConnection();				
-		try
-		{		
+		OObjectDatabaseTx db = getConnection();
+		try {
 			db.detach(entity, true);
-		} finally
-		{
+		} finally {
 			closeConnection(db);
-		}		
+		}
 	}
-	
+
 	/**
-	 *  Detaches the whole object tree and removes the proxy object
+	 * Detaches the whole object tree and removes the proxy object
+	 *
 	 * @param <T>
-	 * @param entity 
+	 * @param entity
 	 */
-	public<T> void deattachAll(T entity)
+	public <T> void deattachAll(T entity)
 	{
-		OObjectDatabaseTx db = getConnection();				
-		try
-		{		
+		OObjectDatabaseTx db = getConnection();
+		try {
 			db.detachAll(entity, true);
-		} finally
-		{
+		} finally {
 			closeConnection(db);
-		}		
-	}	
-	
+		}
+	}
+
 	public <T> List<T> unwrapProxy(Class<T> origClass, List<T> data)
 	{
 		List<T> nonProxyList = new ArrayList<>();
-		for (T dbproxy : data)
-		{			
-			try
-			{
+		for (T dbproxy : data) {
+			try {
 				T nonProxy = origClass.newInstance();
 				BeanUtils.copyProperties(nonProxy, dbproxy);
 				nonProxyList.add(nonProxy);
-			} catch (	IllegalAccessException | InvocationTargetException | InstantiationException ex)
-			{
+			} catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
 				log.log(Level.SEVERE, null, ex);
 			}
-		}		
+		}
 		return nonProxyList;
 	}
-	
+
 	public <T> T unwrapProxyObject(Class<T> origClass, T data)
 	{
 		T nonProxy = data;
-		try
-		{
+		try {
 			nonProxy = origClass.newInstance();
 			BeanUtils.copyProperties(nonProxy, data);
-			
-		} catch (	IllegalAccessException | InvocationTargetException | InstantiationException ex)
-		{
+
+		} catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
 			log.log(Level.SEVERE, null, ex);
 		}
 		return nonProxy;
-	}	
-	
-	
+	}
+
 }

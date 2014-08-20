@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
@@ -22,37 +21,49 @@ import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import java.util.List;
 
-
 /**
- *  This service handles system tables 
+ * This service handles system tables
+ *
  * @author dshurtleff
  */
 public interface LookupService
-{	
-	
+{
+
 	/**
 	 * This return only active
+	 *
 	 * @see findLookup(Class<T> lookTableClass, boolean all);
 	 * @param <T>
 	 * @param lookTableClass
-	 * @return 
-	 */	
-	public <T extends BaseEntity>  List<T> findLookup(Class<T> lookTableClass);
-	
+	 * @return
+	 */
+	public <T extends BaseEntity> List<T> findLookup(Class<T> lookTableClass);
+
 	/**
-	 *  Find items for a given Look up resource
+	 * Find items for a given Look up resource
+	 *
 	 * @param <T>
 	 * @param lookTableClass
 	 * @param all - default to just active
-	 * @return 
+	 * @return
 	 */
-	public <T extends BaseEntity>  List<T> findLookup(Class<T> lookTableClass, boolean all);
-		
+	public <T extends BaseEntity> List<T> findLookup(Class<T> lookTableClass, boolean all);
+
 	/**
 	 * Add or Updates a lookup code
-	 * @param lookupEntity 
-	*/	
+	 *
+	 * @param lookupEntity
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveLookupValue(LookupEntity lookupEntity);	
-	
+	public void saveLookupValue(LookupEntity lookupEntity);
+
+	/**
+	 * This with add or inactive existing codes. Any existing value not in this
+	 * list will be in-activated. Other existing items will be just updated
+	 *
+	 * @param lookupClass
+	 * @param lookupValues
+	 */
+	public <T extends LookupEntity> void syncLookupImport(Class<T> lookupClass, List<LookupEntity> lookupValues);
+
 }

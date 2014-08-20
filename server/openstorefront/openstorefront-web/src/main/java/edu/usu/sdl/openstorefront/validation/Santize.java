@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.validation;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,15 +28,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ValidValueType
+public @interface Santize
 {
 
-	String[] value();
-
-	/**
-	 * This the Lookup Class that defines the Valid Values (Optional)
-	 *
-	 * @return
-	 */
-	Class<? extends LookupEntity>[] lookupClass() default {};
+	Class<? extends Santizer> value();
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.test;
 
 import org.junit.Test;
@@ -24,13 +23,15 @@ import org.junit.Test;
  */
 public class ResourceTest
 {
-	@Test 
+
+	@Test
 	public void testResourceFind()
 	{
+
 //		URL url = new JPAProvider().getClass().getResource("/META-INF/persistence.xml");
 //		Collection<PersistenceUnitInfo> allUnitInfos = (Collection<PersistenceUnitInfo>) PersistenceXmlUtil.parse(new JPAProvider().getClass().getResource("/META-INF/persistence.xml"));
 //		System.out.println(allUnitInfos);
-//		
+//
 	}
-	
+
 }
