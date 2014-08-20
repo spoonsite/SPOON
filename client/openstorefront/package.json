@@ -39,6 +39,7 @@
     "load-grunt-tasks": "~0.4.0",
     "node-zip": "^1.1.0",
     "protractor": "0.24.2",
+    "protractor-html-screenshot-reporter": "0.0.16",
     "time-grunt": "~0.2.1"
   },
   "scripts": {
