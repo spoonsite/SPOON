@@ -355,6 +355,7 @@ module.exports = function (grunt) {
           'bower_components/ckeditor/**/*',
           'bower_components/ng-ckeditor/ng-ckeditor.js',
           'styles/*.css',
+          'scripts/esapi4js/**/*',
           'scripts/common-min/*.js',
           'scripts/common/data.js'
           ]
