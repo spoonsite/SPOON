@@ -24,6 +24,10 @@
     "MOCKDATA": true,
     "_": true,
     "$": true,
-    "jQuery": true
+    "jQuery": true,
+    "$ESAPI": true,
+    "Base": true,
+    "org": true,
+    "Log4js": true
   }
 }

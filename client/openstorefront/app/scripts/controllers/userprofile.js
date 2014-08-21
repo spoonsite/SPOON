@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/*global MOCKDATA2, jQuery, confirm*/
+/*global MOCKDATA2, jQuery, confirm, triggerError*/
 
 app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', function($scope, Business, $rootScope, $location, $timeout) {
 
@@ -278,7 +278,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
 
     // Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
     Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
-      function(data, status, headers, config){ //SUCCESS:: data = return value
+      function(data, status, headers, config){ /* jshint unused:false */ //SUCCESS:: data = return value
         $timeout(function(){
           $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
         }, 1000);
