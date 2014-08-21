@@ -223,7 +223,7 @@ $.fn.popover.Constructor.prototype.leave = function(obj){
 };
 
 
-Base.esapi.properties.logging['ApplicationLogger'] = {
+Base.esapi.properties.logging.ApplicationLogger = {
   Level: org.owasp.esapi.Logger.ALL,
   Appenders: [ new Log4js.ConsoleAppender() ],
   LogUrl: true,
@@ -231,7 +231,7 @@ Base.esapi.properties.logging['ApplicationLogger'] = {
   EncodingRequired: true
 };
 
-Base.esapi.properties.application.Name = "My Application v1.0";
+Base.esapi.properties.application.Name = 'My Application v1.0';
 org.owasp.esapi.ESAPI.initialize();
 // $ESAPI.logger('ApplicationLogger').info(org.owasp.esapi.Logger.EventType.EVENT_SUCCESS, 'This is a test message');
 // document.writeln( $ESAPI.encoder().encodeForHTML( "<a href=\"http://owasp-esapi-js.googlecode.com/this is awesome!\">Check out esapi4js</a>" ) );

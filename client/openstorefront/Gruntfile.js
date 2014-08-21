@@ -169,11 +169,19 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '.jshintrc',
+        jshintignore: '.jshintignore',
         reporter: require('jshint-stylish')
       },
       all: [
       'Gruntfile.js',
-      '<%= yeoman.app %>/scripts/**/*.js'
+      '<%= yeoman.app %>/scripts/common/*.js',
+      '<%= yeoman.app %>/scripts/common-min/*.js',
+      '<%= yeoman.app %>/scripts/controllers/*.js',
+      '<%= yeoman.app %>/scripts/directives/*.js',
+      '<%= yeoman.app %>/scripts/filters/*.js',
+      '<%= yeoman.app %>/scripts/page_specific/*.js',
+      '<%= yeoman.app %>/scripts/services/*.js',
+      '<%= yeoman.app %>/scripts/*.js'
       ],
       test: {
         options: {

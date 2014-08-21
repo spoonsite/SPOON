@@ -22,10 +22,10 @@ app.directive('ngFocus', [function() {
     require: 'ngModel',
     link: function(scope, element, attrs, ctrl) {
       ctrl.$focused = false;
-      element.bind('focus', function(evt) {
+      element.bind('focus', function(evt) { /*jshint unused:false*/
         element.addClass(FOCUS_CLASS);
         scope.$apply(function() {ctrl.$focused = true;});
-      }).bind('blur', function(evt) {
+      }).bind('blur', function(evt) { /*jshint unused:false*/
         element.removeClass(FOCUS_CLASS);
         scope.$apply(function() {ctrl.$focused = false;});
       });
