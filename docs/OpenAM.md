@@ -1,3 +1,4 @@
+# OpenAM
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
@@ -37,4 +38,16 @@
 - http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/#chap-apache-tomcat
 
 ## Configuration of OpenAM
+
 ### Creating the Agent Profile
+
+1. Open up OpenAM in a web browser `http://c00788.usurf.usu.edu:8080/openam`
+2. Log into OpenAM using `amadmin`
+3. Click on `Access Control > Top Level Realm > Agents > J2EE`
+4. Create a new J2EE agent by click on the `New...` button under Agent
+5. Craete the agent with the following parameters
+  - Name: `myagent`
+  - Password: `password`
+  - Configuration: `Centralized`
+  - Server URL: `http://c00788.usurf.usu.edu:8080/openam`
+  - Agent URL: `http://c00788.usurf.usu.edu:8081/agentsample`
