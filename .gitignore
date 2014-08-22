@@ -11,5 +11,6 @@
 /client/openstorefront/dist/
 /client/openstorefront/app/bower_components/
 client/openstorefront/npm-debug.log
+/client/openstorefront/screenshots
 server/openstorefront/openstorefront-web/src/main/webapp/
 idea
