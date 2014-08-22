@@ -14,17 +14,26 @@ exports.config = {
     // For the HTML Reporter
     require('../node_modules/jasmine-reporters');
 
-/*
+
     // Add a reporter and store xml to 'reports'
     jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter({ baseDirectory: 'reports' }));
 
-    // Add a reporter and store screenshots to 'screenshots'
+    // Add a reporter and store screenshots to a directory
     jasmine.getEnv().addReporter(new HtmlReporter({ baseDirectory: 'screenshots', pathBuilder: function pathbuilder (
         spec, descriptions, results, capabilities) {
-        return path.join(helper.currentReportDate(), capabilities.caps_.browserName, descriptions.join('-'));
-    }
+        var rightNow = new Date();
+        //console.log(rightNow);
+
+        var theYear = rightNow.getFullYear();
+        var theMonth = rightNow.getMonth();
+        var theDay = rightNow.getDay();
+        var dtString = theYear + '-' + theMonth + '-' + theDay;
+
+        return path.join(dtString, capabilities.caps_.browserName, descriptions.join('-'));
+
+        }
       }));
-*/
+
 
   },
   
