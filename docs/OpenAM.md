@@ -39,6 +39,32 @@
 
 ## Configuration of OpenAM
 
+http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/getting-started/
+
+### Configure the Policy in OpenAM
+
+1. Open up OpenAM in a web browser `http://c00788.usurf.usu.edu:8080/openam`
+2. Log into OpenAM using `amadmin`
+3. Click on `Access Control > /(Top Level Realm) > Policies`
+4. Click on `New Policy`
+  1. Give the Policy a name of `Storefront Policy`
+  2. In the Rules table click `New`
+    1. select URL Policy Agent and click Next
+    2. Enter the following in `Step 2 of 2: New Rule`
+      - Name: `Allow Storefront Access`
+      - Resource Name: `http://c00788.usurf.usu.edu:8081/agentsample/*`
+      - Check the boxes for `GET` and `POST`
+  1. In the Subjects table click `New`
+    1. Select Authenticated Users and click Next
+    2. Name the rule All Authenticated Users
+    3. Click Finish
+  1. Create a new response provider
+    - In the DynamicAttribute make sure `uid` and `isMemberOf` is selected (ctrl-click)
+    - Click on Finish
+
+#### Reference
+- 
+
 ### Creating the Agent Profile
 
 1. Open up OpenAM in a web browser `http://c00788.usurf.usu.edu:8080/openam`
