@@ -223,20 +223,23 @@ $.fn.popover.Constructor.prototype.leave = function(obj){
 };
 
 
-Base.esapi.properties.logging.ApplicationLogger = {
-  Level: org.owasp.esapi.Logger.ALL,
-  Appenders: [ new Log4js.ConsoleAppender() ],
-  LogUrl: true,
-  LogApplicationName: true,
-  EncodingRequired: true
-};
+// Base.esapi.properties.logging.ApplicationLogger = {
+//   Level: org.owasp.esapi.Logger.ALL,
+//   Appenders: [ new Log4js.ConsoleAppender() ],
+//   LogUrl: true,
+//   LogApplicationName: true,
+//   EncodingRequired: true
+// };
 
-Base.esapi.properties.application.Name = 'My Application v1.0';
-org.owasp.esapi.ESAPI.initialize();
+// Base.esapi.properties.application.Name = 'My Application v1.0';
+// org.owasp.esapi.ESAPI.initialize();
 // $ESAPI.logger('ApplicationLogger').info(org.owasp.esapi.Logger.EventType.EVENT_SUCCESS, 'This is a test message');
-// document.writeln( $ESAPI.encoder().encodeForHTML( "<a href=\"http://owasp-esapi-js.googlecode.com/this is awesome!\">Check out esapi4js</a>" ) );
+// document.writeln( $ESAPI.encoder().encodeForURL( "owasp-esapi-js.googlecode.com/this is awesome!\") );
 
 // Using the validator
 // var validateCreditCard = function() {
   // return $ESAPI.validator().isValidCreditCard( $('CreditCard').value );
 // }
+
+// $ESAPI.validator().isValidDate('DateRangeValidator', '07-07-2014', DateFormat(''), false)
+// console.log("Valid Date: ", $ESAPI.validator().getValidDate( "Jun, 26 2014", "dateTest1", DateFormat.getDateInstance(), false) );

@@ -2488,6 +2488,10 @@ org.owasp.esapi.reference.validation.DefaultValidator = function( oEncoder, oLoc
             return rules[sName];
         },
 
+        getRules: function() {
+            return rules;
+        },
+
         isValidInput: function( sContext, sInput, sType, nMaxLength, bAllowNull ) {
             try {
                 this.getValidInput( sContext, sInput, sType, nMaxLength, bAllowNull );
