@@ -15,21 +15,29 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 /**
+ * The sanitizes HTML to prevent XSS attacks This will allow structure....but no
+ * scripting and it will set the no follow
  *
+ * @See http://jsoup.org/cookbook/cleaning-html/whitelist-sanitizer
  * @author dshurtleff
  */
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Santize
+public class HTMLSanitizer
+		extends Sanitizer
 {
 
-	Class<? extends Santizer> value();
+	@Override
+	public Object santize(Object fieldData)
+	{
+		if (fieldData == null) {
+			return fieldData;
+		} else {
+			String safe = Jsoup.clean(fieldData.toString(), Whitelist.relaxed().addEnforcedAttribute("a", "rel", "nofollow"));
+			return safe;
+		}
+	}
+
 }

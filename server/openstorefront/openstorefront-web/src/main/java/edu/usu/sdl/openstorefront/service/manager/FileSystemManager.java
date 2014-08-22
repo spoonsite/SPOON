@@ -18,9 +18,11 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -56,20 +58,24 @@ public class FileSystemManager
 
 	public static File getImportLookup(String configFilename)
 	{
-		return getFileDir(configFilename, IMPORT_LOOKUP_DIR, "/data/");
+		return getFileDir(configFilename, IMPORT_LOOKUP_DIR, "/data/lookup/");
 	}
 
 	private static File getFileDir(String configFilename, String directory, String resourceDir)
 	{
 		File configFile = new File(getDir(directory) + "/" + configFilename);
-		if (configFile.exists() == false)
-		{
-			try
-			{
-				Files.copy(new DBManager().getClass().getResourceAsStream(resourceDir + configFilename), Paths.get(CONFIG_DIR + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException ex)
-			{
-				throw new OpenStorefrontRuntimeException(ex);
+		if (configFile.exists() == false) {
+			log.log(Level.INFO, "Trying to copy: {0}{1} to {2}", new Object[]{resourceDir, configFilename, configFile});
+
+			URL resourceUrl = new DBManager().getClass().getResource(resourceDir + configFilename);
+			if (resourceUrl != null) {
+				try {
+					Files.copy(new DBManager().getClass().getResourceAsStream(resourceDir + configFilename), Paths.get(directory + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException(ex);
+				}
+			} else {
+				log.log(Level.WARNING, "Unable to find resource: {0}{1}", new Object[]{resourceDir, configFilename});
 			}
 		}
 		return configFile;

@@ -295,7 +295,7 @@ public class PersistenceService
 		return count;
 	}
 
-	public <T> List<T> queryByExample(QueryByExample queryByExample)
+	public <T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample)
 	{
 		StringBuilder queryString = new StringBuilder();
 
@@ -314,6 +314,7 @@ public class PersistenceService
 		}
 
 		List<T> results = query(queryString.toString(), mapParameters(queryByExample.getExample()));
+		results = unwrapProxy(exampleClass, results);
 		return results;
 	}
 
@@ -363,9 +364,9 @@ public class PersistenceService
 		return parameterMap;
 	}
 
-	public <T> T queryByOneExample(QueryByExample queryByExample)
+	public <T> T queryByOneExample(Class<T> exampleClass, QueryByExample queryByExample)
 	{
-		List<T> results = queryByExample(queryByExample);
+		List<T> results = queryByExample(exampleClass, queryByExample);
 		if (results.size() > 0) {
 			return results.get(0);
 		}

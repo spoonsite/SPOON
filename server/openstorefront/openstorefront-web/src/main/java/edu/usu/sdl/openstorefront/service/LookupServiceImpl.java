@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.ehcache.Element;
 
 /**
  *
@@ -59,7 +61,7 @@ public class LookupServiceImpl
 			if (all == false) {
 				testExample.setActiveStatus(TestEntity.ACTIVE_STATUS);
 			}
-			return persistenceService.queryByExample(new QueryByExample(testExample));
+			return persistenceService.queryByExample(lookTableClass, new QueryByExample(testExample));
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
@@ -104,12 +106,12 @@ public class LookupServiceImpl
 						existing.setDetailedDecription(lookupEntity.getDetailedDecription());
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						saveLookupValue(existing);
+						getLookupService().saveLookupValue(existing);
 					} else {
 						lookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 						lookupEntity.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						lookupEntity.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						saveLookupValue(lookupEntity);
+						getLookupService().saveLookupValue(lookupEntity);
 					}
 
 					newCodeSet.add(lookupEntity.getCode());
@@ -127,10 +129,13 @@ public class LookupServiceImpl
 			if (newCodeSet.contains(lookupEntity.getCode()) == false) {
 				lookupEntity.setActiveStatus(LookupEntity.INACTIVE_STATUS);
 				lookupEntity.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-				saveLookupValue(lookupEntity);
+				getLookupService().saveLookupValue(lookupEntity);
 			}
 		}
 
+		List<T> newLookups = findLookup(lookupClass);
+		Element cacheLookup = new Element(lookupClass.getName(), newLookups);
+		OSFCacheManager.getLookupCache().put(cacheLookup);
 	}
 
 }

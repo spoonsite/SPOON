@@ -15,18 +15,28 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+
 /**
+ * Allow basic html tags
  *
+ * @See http://jsoup.org/cookbook/cleaning-html/whitelist-sanitizer
  * @author dshurtleff
  */
-public class HTMLSanitzer
-		extends Santizer
+public class BasicHTMLSanitizer
+		extends Sanitizer
 {
 
 	@Override
 	public Object santize(Object fieldData)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (fieldData == null) {
+			return fieldData;
+		} else {
+			String safe = Jsoup.clean(fieldData.toString(), Whitelist.basic());
+			return safe;
+		}
 	}
 
 }

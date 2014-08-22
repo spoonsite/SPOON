@@ -19,14 +19,16 @@ package edu.usu.sdl.openstorefront.validation;
  *
  * @author dshurtleff
  */
-public class TextSanitzer
-		extends Santizer
+public abstract class Sanitizer
 {
 
-	@Override
-	public Object santize(Object fieldData)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+	/**
+	 * The object should be primary field (single value) object not a complex
+	 * object
+	 *
+	 * @param fieldData
+	 * @return
+	 */
+	public abstract Object santize(Object fieldData);
 
 }
