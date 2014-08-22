@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Versions Used](#versions-used)
+- [Installation of OpenAM Java EE Policy Agent into Tomcat 7.0.55](#installation-of-openam-java-ee-policy-agent-into-tomcat-7055)
+  - [Reference](#reference)
+- [Configuration of OpenAM](#configuration-of-openam)
+  - [Creating the Agent Profile](#creating-the-agent-profile)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Versions Used
 
 * [Tomcat 7.0.55 64-bit Windows zip]( http://mirrors.sonic.net/apache/tomcat/tomcat-7/v7.0.55/bin/apache-tomcat-7.0.55-windows-x64.zip)
