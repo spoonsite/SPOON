@@ -27,6 +27,8 @@ public class ResourceTest
 	@Test
 	public void testResourceFind()
 	{
+//		URL url = new DBManager().getClass().getResource("/data/lookup/MediaType.csv");
+//		System.out.println("Url: " + url);
 
 //		URL url = new JPAProvider().getClass().getResource("/META-INF/persistence.xml");
 //		Collection<PersistenceUnitInfo> allUnitInfos = (Collection<PersistenceUnitInfo>) PersistenceXmlUtil.parse(new JPAProvider().getClass().getResource("/META-INF/persistence.xml"));

@@ -24,19 +24,21 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class ApplicationProperties
+public class ApplicationProperty
 		extends BaseEntity
 {
 
 	@PK
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String key;
 
 	@NotNull
 	private String value;
 
-	public ApplicationProperties()
+	public static final String LOOKUP_IMPORTER_LAST_SYNC_DTS = "LOOKUPSYNCDTS";
+
+	public ApplicationProperty()
 	{
 	}
 

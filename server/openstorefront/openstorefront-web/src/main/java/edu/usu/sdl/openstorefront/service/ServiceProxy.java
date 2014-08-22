@@ -13,42 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.service.api.AttributeService;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
 import edu.usu.sdl.openstorefront.service.api.SearchService;
+import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.api.UserService;
 
 /**
- *  Entry point to the service layer;  Expecting one Service Proxy per thread.
- *  Not thread Safe;
+ * Entry point to the service layer; Expecting one Service Proxy per thread. Not
+ * thread Safe;
+ *
  * @author dshurtleff
  */
 public class ServiceProxy
 {
+
 	protected PersistenceService persistenceService = new PersistenceService();
 	protected LookupService lookupService;
 	protected AttributeService attributeService;
 	protected ComponentService componentService;
 	protected SearchService searchService;
 	protected UserService userService;
-		
+	protected SystemService systemService;
+
 	public ServiceProxy()
 	{
 	}
-	
+
 	public PersistenceService getPersistenceService()
 	{
 		return persistenceService;
 	}
-	
+
 	public LookupService getLookupService()
 	{
-		if (lookupService == null)
-		{
+		if (lookupService == null) {
 			lookupService = DynamicProxy.newInstance(new LookupServiceImpl());
 		}
 		return lookupService;
@@ -56,8 +58,7 @@ public class ServiceProxy
 
 	public AttributeService getAttributeService()
 	{
-		if (attributeService == null)
-		{
+		if (attributeService == null) {
 			attributeService = DynamicProxy.newInstance(new AttributeServiceImpl());
 		}
 		return attributeService;
@@ -65,8 +66,7 @@ public class ServiceProxy
 
 	public ComponentService getComponentService()
 	{
-		if (componentService == null)
-		{
+		if (componentService == null) {
 			componentService = DynamicProxy.newInstance(new ComponentServiceImpl());
 		}
 		return componentService;
@@ -74,8 +74,7 @@ public class ServiceProxy
 
 	public SearchService getSearchService()
 	{
-		if (searchService == null)
-		{
+		if (searchService == null) {
 			searchService = DynamicProxy.newInstance(new SearchServiceImpl());
 		}
 		return searchService;
@@ -83,12 +82,18 @@ public class ServiceProxy
 
 	public UserService getUserService()
 	{
-		if (userService == null)
-		{
+		if (userService == null) {
 			userService = DynamicProxy.newInstance(new UserServiceImpl());
 		}
 		return userService;
 	}
-	
-	
+
+	public SystemService getSystemService()
+	{
+		if (systemService == null) {
+			systemService = DynamicProxy.newInstance(new SystemServiceImpl());
+		}
+		return systemService;
+	}
+
 }

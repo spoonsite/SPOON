@@ -15,20 +15,27 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+
 /**
+ * This will strip html form the text
  *
  * @author dshurtleff
  */
-public abstract class Santizer
+public class TextSanitizer
+		extends Sanitizer
 {
 
-	/**
-	 * The object should be primary field (single value) object not a complex
-	 * object
-	 *
-	 * @param fieldData
-	 * @return
-	 */
-	public abstract Object santize(Object fieldData);
+	@Override
+	public Object santize(Object fieldData)
+	{
+		if (fieldData == null) {
+			return fieldData;
+		} else {
+			String safe = Jsoup.clean(fieldData.toString(), Whitelist.none());
+			return safe;
+		}
+	}
 
 }

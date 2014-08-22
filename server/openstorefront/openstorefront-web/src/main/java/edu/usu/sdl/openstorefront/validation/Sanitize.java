@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
+package edu.usu.sdl.openstorefront.validation;
 
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import java.io.File;
-import org.quartz.jobs.DirectoryScanListener;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author dshurtleff
  */
-public class LookupImportListener
-		implements DirectoryScanListener
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Sanitize
 {
 
-	@Override
-	public void filesUpdatedOrAdded(File[] updatedFiles)
-	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		for (File file : updatedFiles) {
-			System.out.println("Process file: " + file);
-
-			//TODO: finish
-		}
-	}
-
+	Class<? extends Sanitizer> value();
 }

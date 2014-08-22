@@ -15,26 +15,48 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 
 /**
  * Handling Application level caching
  *
  * @author dshurtleff
  */
-public class CacheManager
+public class OSFCacheManager
 {
 
-	private static final Logger log = Logger.getLogger(CacheManager.class.getName());
+	private static final Logger log = Logger.getLogger(OSFCacheManager.class.getName());
+
+	private static Cache lookupCache;
 
 	public static void initialize()
 	{
+		ReentrantLock lock = new ReentrantLock();
+		lock.lock();
+		try {
+			CacheManager singletonManager = CacheManager.create();
+
+			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, true, 0, 0);
+			singletonManager.addCache(memoryOnlyCache);
+			lookupCache = singletonManager.getCache("lookupCache");
+
+		} finally {
+			lock.unlock();
+		}
 
 	}
 
 	public static void shutdown()
 	{
+		CacheManager.getInstance().shutdown();
+	}
 
+	public static Cache getLookupCache()
+	{
+		return lookupCache;
 	}
 
 }

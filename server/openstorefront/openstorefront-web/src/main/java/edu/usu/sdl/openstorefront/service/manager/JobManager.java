@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.job.LookupImportListener;
+import edu.usu.sdl.openstorefront.service.job.LookupImporter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quartz.JobBuilder;
@@ -71,7 +71,7 @@ public class JobManager
 				.build();
 
 		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_NAME, FileSystemManager.IMPORT_LOOKUP_DIR);
-		LookupImportListener lookupImportListener = new LookupImportListener();
+		LookupImporter lookupImportListener = new LookupImporter();
 		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_SCAN_LISTENER_NAME, lookupImportListener.getClass().getName());
 		scheduler.getContext().put(lookupImportListener.getClass().getName(), lookupImportListener);
 		Trigger trigger = newTrigger()

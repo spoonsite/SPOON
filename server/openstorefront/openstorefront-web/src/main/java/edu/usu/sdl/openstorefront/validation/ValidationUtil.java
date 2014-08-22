@@ -63,24 +63,18 @@ public class ValidationUtil
 
 		ValidationResult validationResult = new ValidationResult();
 		if (validateModel.getDataObject() == null
-				&& validateModel.isAcceptNull() == false)
-		{
+				&& validateModel.isAcceptNull() == false) {
 			RuleResult ruleResult = new RuleResult();
 			ruleResult.setMessage("The whole data object is null.");
 			ruleResult.setValidationRule("Don't allow null object");
 			validationResult.getRuleResults().add(ruleResult);
-		} else
-		{
-			if (validateModel.getDataObject() != null)
-			{
-				if (validateModel.getDataObject() instanceof Collection)
-				{
-					((Collection) validateModel.getDataObject()).stream().forEach((dataObject) ->
-					{
+		} else {
+			if (validateModel.getDataObject() != null) {
+				if (validateModel.getDataObject() instanceof Collection) {
+					((Collection) validateModel.getDataObject()).stream().forEach((dataObject) -> {
 						validationResult.getRuleResults().addAll(validate(ValidationModel.copy(validateModel, dataObject)).getRuleResults());
 					});
-				} else
-				{
+				} else {
 					validationResult.getRuleResults().addAll(validateFields(validateModel, validateModel.getDataObject().getClass(), null, null));
 				}
 			}
@@ -93,96 +87,94 @@ public class ValidationUtil
 		List<RuleResult> ruleResults = new ArrayList<>();
 
 		if (validateModel.getDataObject() == null
-				&& validateModel.isAcceptNull() == false)
-		{
+				&& validateModel.isAcceptNull() == false) {
 			RuleResult validationResult = new RuleResult();
 			validationResult.setMessage("The whole data object is null.");
 			validationResult.setValidationRule("Don't allow null object");
 			validationResult.setEntityClassName(parentType);
 			validationResult.setFieldName(parentFieldName);
 			ruleResults.add(validationResult);
-		} else
-		{
-			if (validateModel.getDataObject() != null)
-			{
-				if (dataClass.getSuperclass() != null)
-				{
+		} else {
+			if (validateModel.getDataObject() != null) {
+				if (dataClass.getSuperclass() != null) {
 					ruleResults.addAll(validateFields(validateModel, dataClass.getSuperclass(), null, null));
 				}
 
-				for (Field field : dataClass.getDeclaredFields())
-				{
+				for (Field field : dataClass.getDeclaredFields()) {
 					Class fieldClass = field.getType();
 					boolean process = true;
-					if (validateModel.isConsumeFieldsOnly())
-					{
+					if (validateModel.isConsumeFieldsOnly()) {
 						ConsumeField consumeField = (ConsumeField) field.getAnnotation(ConsumeField.class);
-						if (consumeField == null)
-						{
+						if (consumeField == null) {
 							process = false;
 						}
 					}
 
-					if (process)
-					{
-						if (ServiceUtil.isComplexClass(fieldClass))
-						{
+					if (process) {
+						if (ServiceUtil.isComplexClass(fieldClass)) {
 							//composition class
-							try
-							{
+							try {
 								Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 								Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 								ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, returnObj), fieldClass, field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
-							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
-							{
+							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 								throw new OpenStorefrontRuntimeException(ex);
 							}
 
 						} else if (fieldClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName())
 								|| fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
 								|| fieldClass.getSimpleName().equalsIgnoreCase(Collection.class.getSimpleName())
-								|| fieldClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName()))
-						{
+								|| fieldClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName())) {
 							//multi
-							if (fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName()))
-							{
-								try
-								{
+							if (fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())) {
+								try {
 									Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 									Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 									Map mapObj = (Map) returnObj;
-									for (Object entryObj : mapObj.entrySet())
-									{
+									for (Object entryObj : mapObj.entrySet()) {
 										ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, entryObj), entryObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
 									}
-								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
-								{
+								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 									throw new OpenStorefrontRuntimeException(ex);
 								}
-							} else
-							{
-								try
-								{
+							} else {
+								try {
 									Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 									Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
-									for (Object itemObj : (Collection) returnObj)
-									{
+									for (Object itemObj : (Collection) returnObj) {
 										ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
 									}
-								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
-								{
+								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 									throw new OpenStorefrontRuntimeException(ex);
 								}
 							}
 
-						} else
-						{
+						} else {
 							//simple case
-							for (BaseRule rule : rules)
-							{
+							for (BaseRule rule : rules) {
+								//Stanize if requested
+								if (validateModel.getSantize()) {
+									Sanitize santize = field.getAnnotation(Sanitize.class);
+									if (santize != null) {
+										try {
+											Sanitizer santizer = santize.value().newInstance();
+
+											Method method = dataClass.getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
+											Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
+
+											Object newValue = santizer.santize(returnObj);
+
+											method = dataClass.getMethod("set" + StringUtils.capitalize(field.getName()), String.class);
+											method.invoke(validateModel.getDataObject(), newValue);
+
+										} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
+											throw new OpenStorefrontRuntimeException(ex);
+										}
+									}
+								}
+
 								RuleResult validationResult = rule.processField(field, validateModel.getDataObject());
-								if (validationResult != null)
-								{
+								if (validationResult != null) {
 									ruleResults.add(validationResult);
 								}
 							}

@@ -18,6 +18,9 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -37,11 +40,13 @@ public abstract class LookupEntity
 
 	@NotNull
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
 	protected String description;
 
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
+	@Sanitize(BasicHTMLSanitizer.class)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
 	private String detailedDecription;
 
 	public String getCode()

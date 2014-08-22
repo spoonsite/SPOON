@@ -17,7 +17,7 @@
 		</param-name>
 		<param-value>StripesResources</param-value>
 	</context-param>	
-	
+
 	<listener>
 		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 	</listener>
