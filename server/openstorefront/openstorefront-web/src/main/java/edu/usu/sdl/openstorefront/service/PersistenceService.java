@@ -185,7 +185,6 @@ public class PersistenceService
 
 			if (!results.isEmpty()) {
 				returnEntity = results.get(0);
-				returnEntity = unwrapProxyObject(entity, returnEntity);
 			}
 		} finally {
 			closeConnection(db);
