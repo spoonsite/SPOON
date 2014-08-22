@@ -4,6 +4,7 @@
   "dependencies": {
     "angular-moment": "^0.7.1",
     "bower": "",
+    "logfile-grunt": "^0.1.5",
     "moment": "^2.7.0"
   },
   "devDependencies": {
