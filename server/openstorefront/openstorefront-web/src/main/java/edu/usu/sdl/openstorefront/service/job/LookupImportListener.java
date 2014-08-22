@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.service.job;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import java.io.File;
+import org.quartz.jobs.DirectoryScanListener;
 
 /**
  *
  * @author dshurtleff
  */
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface ValidValueType
+public class LookupImportListener
+		implements DirectoryScanListener
 {
 
-	String[] value();
+	@Override
+	public void filesUpdatedOrAdded(File[] updatedFiles)
+	{
+		ServiceProxy serviceProxy = new ServiceProxy();
+		for (File file : updatedFiles) {
+			System.out.println("Process file: " + file);
 
-	/**
-	 * This the Lookup Class that defines the Valid Values (Optional)
-	 *
-	 * @return
-	 */
-	Class<? extends LookupEntity>[] lookupClass() default {};
+			//TODO: finish
+		}
+	}
+
 }

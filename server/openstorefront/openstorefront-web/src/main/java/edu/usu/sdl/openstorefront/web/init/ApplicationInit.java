@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.init;
 
+import edu.usu.sdl.openstorefront.service.manager.CacheManager;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -28,20 +29,35 @@ import javax.servlet.annotation.WebListener;
  */
 @WebListener
 public class ApplicationInit
-	implements ServletContextListener
+		implements ServletContextListener
 {
+
 	private static final Logger log = Logger.getLogger(ApplicationInit.class.getName());
 
 	@Override
-	public void contextInitialized(ServletContextEvent sce) 
+	public void contextInitialized(ServletContextEvent sce)
 	{
+		log.info("Initing DB Manager...");
 		DBManager.initialize();
+
+		log.info("Initing Job Manager...");
+		JobManager.initialize();
+
+		log.info("Initing Cache Manager...");
+		CacheManager.initialize();
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce)
-	{		
+	{
+		log.info("Shutting down DB Manager...");
 		DBManager.shutdown();
+
+		log.info("Shutting down Job Manager...");
+		JobManager.shutdown();
+
+		log.info("Shutting down Cache Manager...");
+		CacheManager.shutdown();
 	}
-	
+
 }

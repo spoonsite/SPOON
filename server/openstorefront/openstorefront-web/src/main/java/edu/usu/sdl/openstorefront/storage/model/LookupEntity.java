@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -29,12 +31,18 @@ public abstract class LookupEntity
 
 	@PK
 	@NotNull
-	@Size(min = 1, max = 20)
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	protected String code;
 
 	@NotNull
-	@Size(min = 1, max = 255)
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
 	protected String description;
+
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
+	private String detailedDecription;
 
 	public String getCode()
 	{
@@ -56,6 +64,16 @@ public abstract class LookupEntity
 		this.description = description;
 	}
 
+	public String getDetailedDecription()
+	{
+		return detailedDecription;
+	}
+
+	public void setDetailedDecription(String detailedDecription)
+	{
+		this.detailedDecription = detailedDecription;
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -68,13 +86,11 @@ public abstract class LookupEntity
 	public boolean equals(Object object)
 	{
 		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof LookupEntity))
-		{
+		if (!(object instanceof LookupEntity)) {
 			return false;
 		}
 		LookupEntity other = (LookupEntity) object;
-		if ((this.code == null && other.code != null) || (this.code != null && !this.code.equals(other.code)))
-		{
+		if ((this.code == null && other.code != null) || (this.code != null && !this.code.equals(other.code))) {
 			return false;
 		}
 		return true;
@@ -83,7 +99,7 @@ public abstract class LookupEntity
 	@Override
 	public String toString()
 	{
-		return "edu.usu.sdl.openstorefront.storage.lookup[ code=" + code + " ]";
+		return this.getClass().getName() + "[ code=" + code + " ]";
 	}
 
 }

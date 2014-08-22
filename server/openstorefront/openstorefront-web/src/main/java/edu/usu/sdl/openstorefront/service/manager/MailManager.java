@@ -13,31 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.service.manager;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.logging.Logger;
 
 /**
  *
  * @author dshurtleff
  */
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface ValidValueType
+public class MailManager
 {
 
-	String[] value();
+	private static final Logger log = Logger.getLogger(MailManager.class.getName());
 
-	/**
-	 * This the Lookup Class that defines the Valid Values (Optional)
-	 *
-	 * @return
-	 */
-	Class<? extends LookupEntity>[] lookupClass() default {};
 }

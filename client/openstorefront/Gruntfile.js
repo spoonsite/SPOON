@@ -22,8 +22,13 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
+   // Logfile
+   require('logfile-grunt')(grunt, { filePath: '../../../os_autom_grunt_logs/e2e_Storefront_Automation.log' });
+
   grunt.loadNpmTasks('grunt-war');
   grunt.loadNpmTasks("grunt-protractor-runner");
+
+  // grunt.log.write('HELLO WORLD!!!');
 
   // Define the configuration for all the tasks
   grunt.initConfig({

@@ -1,11 +1,31 @@
+// For the HTML reporter
+var HtmlReporter = require('protractor-html-screenshot-reporter');
+var path = require('path');
+
 exports.config = {
   //seleniumAddress: 'http://localhost:4444/wd/hub',
   specs: [
     'spec/protractor/*_spec.js'
   ],
   onPrepare: function() {
-   //browser.driver.manage().window().maximize();
-   browser.driver.manage().window().setSize(1180,1180);
+    //browser.driver.manage().window().maximize();
+    browser.driver.manage().window().setSize(1180,1180);
+
+    // For the HTML Reporter
+    require('../node_modules/jasmine-reporters');
+
+/*
+    // Add a reporter and store xml to 'reports'
+    jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter({ baseDirectory: 'reports' }));
+
+    // Add a reporter and store screenshots to 'screenshots'
+    jasmine.getEnv().addReporter(new HtmlReporter({ baseDirectory: 'screenshots', pathBuilder: function pathbuilder (
+        spec, descriptions, results, capabilities) {
+        return path.join(helper.currentReportDate(), capabilities.caps_.browserName, descriptions.join('-'));
+    }
+      }));
+*/
+
   },
   
   

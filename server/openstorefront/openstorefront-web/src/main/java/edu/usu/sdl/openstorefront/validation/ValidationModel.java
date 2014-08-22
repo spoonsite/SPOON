@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.validation;
 
 /**
@@ -22,9 +21,11 @@ package edu.usu.sdl.openstorefront.validation;
  */
 public class ValidationModel
 {
+
 	private Object dataObject;
 	private boolean acceptNull = false;
 	private boolean consumeFieldsOnly = false;
+	private boolean santize = true;
 
 	public ValidationModel(Object dataObject)
 	{
@@ -38,7 +39,7 @@ public class ValidationModel
 		validateModel.setConsumeFieldsOnly(original.isConsumeFieldsOnly());
 		return validateModel;
 	}
-	
+
 	public Object getDataObject()
 	{
 		return dataObject;
@@ -67,6 +68,16 @@ public class ValidationModel
 	public void setConsumeFieldsOnly(boolean consumeFieldsOnly)
 	{
 		this.consumeFieldsOnly = consumeFieldsOnly;
+	}
+
+	public boolean getSantize()
+	{
+		return santize;
+	}
+
+	public void setSantize(boolean santize)
+	{
+		this.santize = santize;
 	}
 
 }

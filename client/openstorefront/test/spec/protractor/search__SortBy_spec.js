@@ -18,6 +18,11 @@ describe('Search ALL then filter on "Sort By:"', function() {
     });
 
     it('"Last Update (newest)" returns "IdAM" as the first search result', function() {
+
+        // 18 Aug added Sort By:  Rating (high-low); Rating (low-high) DOES NOT WORK CURRENTLY
+        element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
+        element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
+
         // Select sort by drop down
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
 
@@ -38,6 +43,10 @@ describe('Search ALL then filter on "Sort By:"', function() {
     });
 
     it('"Name (A-Z)" returns "Common Map API Javascript Library" as the first search result', function() {
+        // 18 Aug. 2014 Need to go UP more to get past Rating (low-high) and Rating (high-low)
+        element(by.model('orderProp')).sendKeys(protractor.Key.UP);
+        element(by.model('orderProp')).sendKeys(protractor.Key.UP);
+
         // Select sort by drop down
         element(by.model('orderProp')).sendKeys(protractor.Key.UP);
         element(by.model('orderProp')).sendKeys(protractor.Key.UP);
