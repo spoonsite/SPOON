@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.util;
 
 import java.text.ParsePosition;
@@ -27,14 +26,28 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TimeUtil
 {
+
+	private static final String OMP_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'";
+
 	public static Date fromString(String value)
 	{
 		Date newDate = null;
-		if (StringUtils.isNotBlank(value))
-		{
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+		if (StringUtils.isNotBlank(value)) {
+			SimpleDateFormat sdf = new SimpleDateFormat(OMP_DATE_FORMAT);
 			newDate = sdf.parse(value, new ParsePosition(0));
 		}
 		return newDate;
 	}
+
+	public static String dateToString(Date value)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat(OMP_DATE_FORMAT);
+		return sdf.format(value);
+	}
+
+	public static Date currentDate()
+	{
+		return new Date(System.currentTimeMillis());
+	}
+
 }

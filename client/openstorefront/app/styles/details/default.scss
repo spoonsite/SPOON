@@ -95,6 +95,9 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
 .leftCol{
   min-width: 100px;
 }
+.leftCol p a {
+  color: #ff4800;
+}
 
 .leftCol table {
   table-layout: fixed;

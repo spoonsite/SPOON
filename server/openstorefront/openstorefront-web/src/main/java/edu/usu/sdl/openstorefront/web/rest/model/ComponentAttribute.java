@@ -26,6 +26,7 @@ public class ComponentAttribute
 	private String typeDescription;	
 	private String code;
 	private String codeDescription;
+	private String codeLongDescription;
 	private boolean important;	
 
 	public ComponentAttribute()
@@ -80,6 +81,16 @@ public class ComponentAttribute
 	public void setCode(String code)
 	{
 		this.code = code;
+	}
+
+	public String getCodeLongDescription()
+	{
+		return codeLongDescription;
+	}
+
+	public void setCodeLongDescription(String codeLongDescription)
+	{
+		this.codeLongDescription = codeLongDescription;
 	}
 	
 }

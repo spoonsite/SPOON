@@ -29,10 +29,20 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
   $scope.componentState                = Business.componentservice.getComponentState();
   $scope.resultsComments               = Business.componentservice.getResultsComments();
-  $scope.watches                       = Business.getWatches();
 
+  Business.userservice.getWatches().then(function(result) {
+    if (result) {
+      $scope.watches = result;
+    } else {
+      $scope.watches = null;
+    }
+  });
   Business.lookupservice.getEvalLevels().then(function(result){
-    $scope.evalLevels = result;
+    if (result) {
+      $scope.evalLevels = result;
+    } else {
+      $scope.evalLevels = null;
+    }
   });
 
 
@@ -60,11 +70,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     ]
   };
 
-  if ($scope.modal) {
-    $scope.$watch('modal.modalBody', function() {
-      $scope.modalBody = $scope.modal.modalBody;
-    });
-  }
+  var mNames = new Array('January', 'February', 'March',
+    'April', 'May', 'June', 'July', 'August', 'September',
+    'October', 'November', 'December');
 
   $scope.detailResultsTabs = [
     //
@@ -77,6 +85,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ];
 
   $scope.tab = $scope.detailResultsTabs[0];
+  $scope.selectedTab = $scope.tabs[0];
+
+  if ($scope.modal) {
+    $scope.$watch('modal.modalBody', function() {
+      $scope.modalBody = $scope.modal.modalBody;
+    });
+  }
 
   /***************************************************************
   * This function does the route redirection to the user profile path in order
@@ -85,29 +100,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.getEvaluationState = function () {
     if ($scope.details && $scope.details.details && $scope.details.evaluationLevel !== undefined) {
       var code = $scope.details.details.evaluationLevel[0].code;
-      var stateFilter = _.where($scope.filters, {'key': 'evaluationLevel'})[0];
-      var item = _.where(stateFilter.collection, {'code': code})[0];
+      var stateFilter = _.where($scope.filters, {'type': 'DI2ELEVEL'})[0];
+      var item = _.where(stateFilter.codes, {'code': code})[0];
       return item.type;
     }
     return '';
   };
   $scope.getEvaluationState();
-  $scope.selectedTab = $scope.tabs[0];
-
-  /***************************************************************
-  * This function is triggered by the '$descModal' event.
-  ***************************************************************/
-  $scope.$on('$descModal', function(event) { /*jshint unused: false*/
-    // re-initialize the modal content here if we must
-    if ($scope.modal.nav !== undefined && $scope.modal.nav !== null) {
-
-      if ($rootScope.current) {
-        $scope.modal.nav.current = $rootScope.current;
-      } else {
-        $scope.modal.nav.current = 'Write a Review';
-      }
-    }
-  });
 
   /***************************************************************
   * This function is used by our image modal.
@@ -115,27 +114,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.openLightboxModal = function (index, imageArray) {
     Lightbox.openModal(imageArray, index);
   };
-
-  /***************************************************************
-  * This function watches the details object for changes
-  ***************************************************************/
-  $scope.$watch('details', function () {
-    if ($scope.details){
-      if ($scope.details.details) {
-        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
-        if (found) {
-          $scope.details.details.watched = true;
-        }
-        if ($scope.details.details.reviews) {
-          if ($scope.details.details.reviews[0] !== undefined) {
-            $scope.setupReviewSummary();
-          } else {
-            $scope.reviewSummary = null;
-          }
-        }
-      }
-    }
-  }, true);
 
   /***************************************************************
   * This function take the reviews array from the component details and sets up
@@ -172,10 +150,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     //Grab all of the different pros and cons
     if (prosList.length){
       prosList.map( function (a) {
-        if (a in pros) {
-          pros[a] ++;
+        if (a.text in pros) {
+          pros[a.text] ++;
         } else {
-          pros[a] = 1;
+          pros[a.text] = 1;
         }
       });
     } else {
@@ -183,10 +161,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
     if (consList.length){
       consList.map( function (a) {
-        if (a in cons) {
-          cons[a] ++;
+        if (a.text in cons) {
+          cons[a.text] ++;
         } else {
-          cons[a] = 1;
+          cons[a.text] = 1;
         }
       });
     } else {
@@ -198,10 +176,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       'total': 0,
       'count': 0
     };
+    
     for (var key in total) {
       result.total = result.total + (parseInt(key) * total[key]);
-      result.count = result.count + 1;
+      result.count = result.count + total[key];
     }
+
     result.score = result.total / result.count;
     result.recommend = recommend;
     result.recommendPercent = recommend / result.count * 100;
@@ -235,7 +215,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       });
     }
 
-    Business.setWatches($scope.watches);
+    Business.userservice.setWatches($scope.watches);
     $scope.details.details.watched = true;
     _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = true;
     Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
@@ -256,16 +236,35 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     var result = '';
     switch(statusCode){
       case 'C':
-      result = 'COMPLETED ' + actual;
+      if (actual && actual !== 'null') {
+        result = 'COMPLETED ' + actual;
+      } else {
+        result = 'COMPLETED';
+      }
       break;
       case 'H':
-      result = 'HAULTED ' + actual;
+      result = 'HALTED ' + actual;
+      if (actual && actual !== 'null') {
+        result = 'HALTED ' + actual;
+      } else {
+        result = 'HALTED';
+      }
       break;
       case 'P':
-      result = 'IN PROGRESS (estimated complete ' + estimated + ')';
+      if (estimated && estimated !== 'null') {
+        // result = 'IN PROGRESS (estimated complete ' + estimated + ')';
+        result = 'IN PROGRESS';
+      } else {
+        result = 'IN PROGRESS';
+      }
       break;
       default:
-      result = 'NOT STARTED (estimated complete ' + estimated + ')';
+      if (estimated && estimated !== 'null') {
+        // result = 'NOT STARTED (estimated complete ' + estimated + ')';
+        result = 'NOT STARTED';
+      } else {
+        result = 'NOT STARTED';
+      }
       break;
     }
     return result;
@@ -275,7 +274,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function saves a component's tags
   ***************************************************************/
   $scope.getEval = function(levelCode){
-    var level = _.find($scope.evalLevels.collection, {'code': levelCode});
+    var level = _.find($scope.evalLevels.codes, {'code': levelCode});
     return level;
   };
 
@@ -302,11 +301,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     });
     return imageArray;
   };
-
-
-  var mNames = new Array('January', 'February', 'March',
-    'April', 'May', 'June', 'July', 'August', 'September',
-    'October', 'November', 'December');
 
   /***************************************************************
   * This function converts a timestamp to a displayable date
@@ -341,17 +335,50 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       $scope.watches.splice(_.indexOf($scope.watches, a), 1);
     }
 
-    Business.setWatches($scope.watches);
+    Business.userservice.setWatches($scope.watches);
     $scope.details.details.watched = false;
     _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
     Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
 
-  
   $scope.getTimes = function(n){
     return new Array(parseInt(n));
   };
 
+  /***************************************************************
+  * This function is triggered by the '$descModal' event.
+  ***************************************************************/
+  $scope.$on('$descModal', function(event) { /*jshint unused: false*/
+    // re-initialize the modal content here if we must
+    if ($scope.modal.nav !== undefined && $scope.modal.nav !== null) {
 
+      if ($rootScope.current) {
+        $scope.modal.nav.current = $rootScope.current;
+      } else {
+        $scope.modal.nav.current = 'Write a Review';
+      }
+    }
+  });
+  
+  /***************************************************************
+  * This function watches the details object for changes
+  ***************************************************************/
+  $scope.$watch('details', function () {
+    if ($scope.details){
+      if ($scope.details.details) {
+        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
+        if (found) {
+          $scope.details.details.watched = true;
+        }
+        if ($scope.details.details.reviews) {
+          if ($scope.details.details.reviews[0] !== undefined) {
+            $scope.setupReviewSummary();
+          } else {
+            $scope.reviewSummary = null;
+          }
+        }
+      }
+    }
+  }, true);
 
 }]);

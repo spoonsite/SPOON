@@ -16,7 +16,7 @@
 
 package edu.usu.sdl.openstorefront.service.query;
 
-import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 
 /**
  *  Query by Example model
@@ -29,7 +29,8 @@ public class QueryByExample<T extends BaseEntity>
 	private T example;
 	private Integer firstResult;
 	private Integer maxResults;	
-	
+	private String distinctField;
+		
 	public QueryByExample()
 	{
 	}
@@ -77,6 +78,16 @@ public class QueryByExample<T extends BaseEntity>
 	public void setMaxResults(Integer maxResults)
 	{
 		this.maxResults = maxResults;
+	}
+
+	public String getDistinctField()
+	{
+		return distinctField;
+	}
+
+	public void setDistinctField(String distinctField)
+	{
+		this.distinctField = distinctField;
 	}
 		
 }

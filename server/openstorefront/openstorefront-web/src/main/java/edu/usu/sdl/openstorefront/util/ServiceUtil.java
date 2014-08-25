@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -38,116 +29,28 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ServiceUtil
 {
-	private static final ObjectMapper objectMapper = new ObjectMapper();
-	
-	public static ObjectMapper defaultObjectMapper()
+
+	public static boolean isComplexClass(Class fieldClass)
 	{
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-		return objectMapper;
-	}
-	
-	public static String getResourceNameFromUrl(String url)
-	{
-		String resource = url;
-		if (StringUtils.isNotBlank(url))
+		boolean complex = false;
+		if (!fieldClass.isPrimitive()
+				&& !fieldClass.isArray()
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(String.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Long.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Integer.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Boolean.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Double.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Float.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(BigDecimal.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Date.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Collection.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(BigInteger.class.getSimpleName()))
 		{
-			resource = url.substring(url.lastIndexOf("/") + 1, url.length());
+			complex = true;
 		}
-		return resource;
+		return complex;
 	}
-	
-	public static List<String> extractUrls(String text)
-	{
-		List<String> urls = new ArrayList<>();
-		
-		String tokens[] = text.split(" ");
-		for (String token : tokens)
-		{
-			if (token.trim().toLowerCase().startsWith("http://") ||
-			    token.trim().toLowerCase().startsWith("https://"))
-			{
-				urls.add(token.trim());
-			}
-		}
-		
-		return urls;
-	}
-	
-	public static String createHrefUrls(String text)
-	{
-		String replacedText = text;
-		List<String> urls = extractUrls(text);		
-		for (String url : urls)
-		{
-			String link = "<a href='" + url + "' title='" + url + "' target='_blank'> " + getResourceNameFromUrl(url) + "</a>";
-			 replacedText = replacedText.replace(url, link);
-		}		
-		return replacedText;
-	}
-	
-	public static String stripeFieldJSON(String json, Set<String> fieldsToKeep)
-	{
-		ObjectMapper mapper = defaultObjectMapper();
-		
-		try
-		{
-			JsonNode rootNode = mapper.readTree(json);			
-			processNode(rootNode, fieldsToKeep);
-			
-			 Object jsonString = mapper.readValue(rootNode.toString(), Object.class);			 
-			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonString);
-		} catch (IOException ex)
-		{
-			throw new OpenStorefrontRuntimeException(ex);
-		}		
-	}
-	
-	/**
-	 * This only goes down one level
-	 * @param rootNode
-	 * @param fieldsToKeep 
-	 */
-	private static void processNode(JsonNode rootNode, Set<String> fieldsToKeep)
-	{
-		if (rootNode instanceof ObjectNode)
-		{
-			ObjectNode object = (ObjectNode) rootNode;
-			object.retain(fieldsToKeep);
-		}
-		else
-		{
-			for (JsonNode childNode : rootNode) 
-			{
-				processNode(childNode, fieldsToKeep);
-			}
-		}		
-	}
-	
-	public static String printObject(Object o)
-	{
-		StringBuilder sb = new StringBuilder();
-		
-		if (o != null)
-		{
-			try
-			{
-				Map fieldMap = BeanUtils.describe(o);
-				fieldMap.keySet().stream().forEach((key) ->
-				{
-					sb.append(key).append(" = ").append(fieldMap.get(key)).append("\n");										
-				});
-			}
-			catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-			{
-				Logger.getLogger(ServiceUtil.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-		else
-		{
-			sb.append(o);
-		}
-		
-		return sb.toString();
-	}
-	
 }

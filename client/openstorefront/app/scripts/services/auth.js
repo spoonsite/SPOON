@@ -17,7 +17,7 @@
 'use strict';
 
 app.factory('auth', ['$rootScope', 'business', '$q', function($rootScope, Business, $q) {
-  
+
   // This variable will hold the state. (there is only 1 per factory -- singleton)  
   var authState = {};
 
@@ -30,9 +30,14 @@ app.factory('auth', ['$rootScope', 'business', '$q', function($rootScope, Busine
       var deferred = $q.defer();
     // Business.userservice.login(user).then(function(result){
       Business.userservice.getCurrentUserProfile().then(function(result){
-        authState.user = result;
-        deferred.resolve(result);
-        $rootScope.$broadcast('$login', authState.user);
+        if (result) {
+          authState.user = result;
+          deferred.resolve(result);
+          $rootScope.$broadcast('$login', authState.user);
+        } else {
+          authState.user = null;
+          deferred.reject('There was an error retrieving user information');
+        }
       });
       return deferred.promise;
     },

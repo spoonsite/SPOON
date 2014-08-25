@@ -19,7 +19,7 @@
 /*global isEmpty, MOCKDATA2*/
 
 app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q, localCache) {
-  
+
   // default to 60 second expire time.
   var minute = 60 * 1000;
   var componentservice = {};
@@ -60,9 +60,13 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   };
 
 
+  var updateCache = function(name, value) {
+    save(name, value);
+  };
+
   componentservice.getComponentDetails = function(id) {
     var result = $q.defer();
-    var url = '/openstorefront-web/api/v1/resource/component/';
+    var url = '/api/v1/resource/component/';
     var value = null;
     // if they don't give me an ID I send them back the whole list.
     if (id) {
@@ -84,7 +88,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
             if (id) {
               save('component_'+id, resultObj);
             } else {
-              save('componentList', resultObj);
+              updateCache('componentList', resultObj);
             }
           }
           result.resolve(resultObj);
@@ -94,11 +98,22 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   };
 
+  componentservice.batchGetComponentDetails = function(list) {
+    var result = $q.defer();
+    // var url = '/api/v1/resource/component/list=?'
+    var total = _.filter(MOCKDATA2.componentList, function(item){
+      return _.some(list, function(id){
+        return parseInt(id) === item.componentId;
+      });
+    });
+    result.resolve(total);
+    return result.promise;
+  };
 
   componentservice.doSearch = function(type, key) {
     var deferred = $q.defer();
     if (type && key) {
-      $http.get('/openstorefront-web/api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
+      $http.get('/api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       });
     }

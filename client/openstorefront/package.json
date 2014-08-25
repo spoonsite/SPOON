@@ -4,6 +4,7 @@
   "dependencies": {
     "angular-moment": "^0.7.1",
     "bower": "",
+    "logfile-grunt": "^0.1.5",
     "moment": "^2.7.0"
   },
   "devDependencies": {
@@ -33,9 +34,11 @@
     "grunt-verbosity": "^0.2.2",
     "grunt-war": "^0.3.2",
     "jshint-stylish": "~0.1.3",
+    "jasmine-reporters": "~1.0.0",
     "karma": "^0.12.16",
     "karma-ng-html2js-preprocessor": "^0.1.0",
     "karma-ng-scenario": "^0.1.0",
+    "logfile-grunt": "",
     "load-grunt-tasks": "~0.4.0",
     "node-zip": "^1.1.0",
     "protractor": "0.24.2",

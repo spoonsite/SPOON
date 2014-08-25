@@ -16,7 +16,7 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 

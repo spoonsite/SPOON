@@ -23,8 +23,6 @@ package edu.usu.sdl.openstorefront.service.query;
 public enum QueryType
 {
 	SELECT,
-	UPDATE,
-	DELETE,
 	COUNT_DISTINCT,
 	COUNT;
 	

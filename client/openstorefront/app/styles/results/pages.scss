@@ -21,10 +21,10 @@
 .page1{
   /*border: 1px orange solid;*/
   width: 100%;
-  position: relative;
   border-right: 1px solid darkgray;
   overflow-x: hidden;
   overflow-y: scroll;
+  position: relative;
 }
 
 .page1:after, .page1:before{
@@ -144,5 +144,26 @@
   text-transform: none;
   word-spacing: 0;
   letter-spacing: 0;
-  opacity: 0.4;
+  opacity: 0.6;
+}
+
+
+.articleReset h1{
+  color: inherit;
+  padding: inherit;
+  font-weight: inherit;
+  font-size: 45px;
+  line-height: inherit;
+  margin: inherit;
+}
+
+.articleReset h1 span{
+  padding: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-transform: inherit;
+  word-spacing: inherit;
+  letter-spacing: inherit;
+  opacity: 1;
 }

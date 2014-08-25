@@ -16,8 +16,19 @@
 
 'use strict';
 
-angular.module('openstorefrontApp')
-.directive('loader', function () {
+
+/***************************************************************
+* Usage:: <loader trigger="triggerId"></loader>
+*
+* ~~~
+*
+* $scope.$emit('$TRIGGERLOAD', 'triggerId');
+*
+* ~load stuff~
+*
+* $scope.$emit('$TRIGGERUNLOAD', 'triggerId');
+***************************************************************/
+app.directive('loader', function () {
   return {
     template: '<div class="loader-holder modal-backdrop" ng-show="loading"><div class="loader"><!--[if lt IE 10]><span>...Loading...</span><![endif]--></div></div>',
     restrict: 'E',
@@ -36,11 +47,6 @@ angular.module('openstorefrontApp')
           scope.loading = false;
         }
       });
-
-      // If the content that the loader is masking is very tall, we need 
-      // this line to make sure that the loading spinner doesn't disapear
-      // belowe the cuttoff of the page.
-      // element.find('.loader-holder').css('max-height', $(window).height());
     }
   };
 });

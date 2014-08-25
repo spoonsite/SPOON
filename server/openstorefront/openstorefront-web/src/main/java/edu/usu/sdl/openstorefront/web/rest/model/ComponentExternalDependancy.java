@@ -22,23 +22,13 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  */
 public class ComponentExternalDependancy
 {
-	private String dependancy;
+	private String dependency;
 	private String version;
 	private String dependancyReferenceLink;
 	private String comment;
 
 	public ComponentExternalDependancy()
 	{
-	}
-
-	public String getDependancy()
-	{
-		return dependancy;
-	}
-
-	public void setDependancy(String dependancy)
-	{
-		this.dependancy = dependancy;
 	}
 
 	public String getComment()
@@ -69,6 +59,16 @@ public class ComponentExternalDependancy
 	public void setDependancyReferenceLink(String dependancyReferenceLink)
 	{
 		this.dependancyReferenceLink = dependancyReferenceLink;
+	}
+
+	public String getDependency()
+	{
+		return dependency;
+	}
+
+	public void setDependency(String dependency)
+	{
+		this.dependency = dependency;
 	}
 	
 }

@@ -15,5 +15,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <jboss-web>
-  <context-root>/openstorefront-web</context-root>
+  <context-root>/openstorefront</context-root>
 </jboss-web>

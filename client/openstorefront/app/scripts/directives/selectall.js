@@ -7,7 +7,8 @@ app.directive('selectall', [ function () {
     scope: {
       checkboxes: '=',
       allselected: '=allSelected',
-      allclear: '=allClear'
+      allclear: '=allClear',
+      toggleCallback : '='
     },
     template: '<input type="checkbox" ng-model="master" ng-change="masterChange()">',
     link: function postLink(scope, element, attrs) { /*jshint unused:false*/
@@ -15,10 +16,12 @@ app.directive('selectall', [ function () {
         if (scope.master) {
           angular.forEach(scope.checkboxes, function (cb, index) { /*jshint unused:false*/
             cb.checked = true;
+            scope.toggleCallback();
           });
         } else {
           angular.forEach(scope.checkboxes, function (cb, index) { /*jshint unused:false*/
             cb.checked = false;
+            scope.toggleCallback();
           });
         }
       };

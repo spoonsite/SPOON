@@ -1,0 +1,50 @@
+<div class="hideMore componentListItem">
+  <div class="hideMoreArticle">
+    <input ng-show="hasMoreThan3 && showMore" type="checkbox" role="button" class="read_more" />
+    <label ng-show="hasMoreThan3 && showMore" data-toggle="tooltip" data-placement="top" title="Click here to show more!" ng-click="setShown()" class="read_more bottomCircleBase">
+      <span>
+        <i class="fa fa-arrow-down">
+        </i>
+      </span>
+      <span>
+        <i class="fa fa-arrow-up">
+        </i>
+      </span>
+    </label>
+    <br />
+    <div ng-class="listOfClasses">
+      <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
+      <table class="table table-striped" id="resultsTable">
+        <tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;">
+          <td style="white-space: inherit;">
+            <div class="container-fluid">
+              <div class="row" style="margin-left: 0px; margin-right: 0px">
+                <div class="results-content">
+                  <div class="results-content-title">
+                    <div ng-click="clickCallback(item.componentId, {type: item.listingType, route: item.resourceLocation})" id="{{item.componentId}}">
+                      <div class="results-content-title-content" >{{item.name}}
+                        <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="results-content-description">
+                    <div ng-bind-html="item.description"></div>
+                    <br>
+                    <span class="componentListDate pull-left" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span>
+                    <span class="componentListDate pull-right checkbox" style="margin-top: -5px; margin-bottom: 0px; padding-left: 0px;" ng-show="item.updateDts && showCompare">
+                      <label>
+                        <input type="checkbox" ng-model="compare" ng-checked="compare" ng-change="addToCompare(item.componentId)">
+                        <span ng-show="!compare" style="line-height:20px;">Add To Compare</span> <span ng-show="compare" style="line-height:20px;">Remove From Compare</span> 
+                      </label>
+                      <button ng-show="compare && list.length > 1" class="btn btn-default btn-xs" ng-click="goToCompare()">Compare</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

@@ -20,14 +20,14 @@ limitations under the License.
       <h4>
         <blockquote>
           <!-- <strong>DI2E Storefront:</strong><br> -->
-          <small>A registry of applications, services, and components, as well as guidebooks and other DI2E guidance, to support the DI2E user community of developers, system integrators and operational end users.</small>
+          <small>A registry of applications, services, and components, as well as guidebooks and other <span >DI2E</span> guidance, to support the <span >DI2E</span> user community of developers, system integrators and operational end users.</small>
           <!-- <br><span>&mdash;&nbsp;Anonymous</span> -->
         </blockquote>
       </h4>
     </div>
   </div>
 
-  <div class="search ">
+  <div class="search " style="position:relative;">
     <div class="text-center getstarted">
       <h4 >
         <label class="imitateLink" ng-click="focusOnSearch()" for="search-header">Get Started<br>
@@ -37,20 +37,33 @@ limitations under the License.
           <i class="fa fa-caret-down"></i>
         </label>
       </h4>
+        <!--       
+        <div class="svcv4ModeButton imitate" ng-show="!svcv4Mode"><button ng-click="svcv4Mode = !svcv4Mode" class="btn btn-default">SVC-v4 Mode</button></div>
+        <div class="svcv4ModeButton imitate" ng-show="svcv4Mode"><button ng-click="svcv4Mode = !svcv4Mode" class="btn btn-default">Search Mode</button></div> 
+      -->
     </div>
-    <div class="center navSearch defaultSearch ">
-      <div class="pull-right searchAllButton" style="margin-left: 10px;">
-        <button ng-click="goToSearch('search', 'All', true)" style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Show All Listings
-        </button>
+    <div>
+      <div class="center navSearch defaultSearch">
+        <div  ng-show="!svcv4Mode">
+          <div class="pull-right searchAllButton" style="margin-left: 10px;">
+            <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;  margin-left:10px;" class="btn btn-primary pull-right">SvcV-4</button>
+            <button ng-click="goToSearch('search', 'All', true)" style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Show All Listings
+            </button>
+          </div>
+          <form ng-submit="goToSearch('search', searchKey)">
+            <div class="pull-right searchBoxButton">
+              <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
+            </div>
+            <div class="navSearchBar">
+              <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key.name as key.name for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
+            </div>
+          </form>
+        </div>
+        <div ng-show="svcv4Mode">
+          <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Search</button>
+          <svcv4-diagram ng-controller="Svc4ArchDiagramController"></svcv4-diagram>  
+        </div>
       </div>
-      <form ng-submit="goToSearch('search', searchKey)">
-        <div class="pull-right searchBoxButton">
-          <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
-        </div>
-        <div class="navSearchBar">
-          <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
-        </div>
-      </form>
     </div>
   </div>
 
@@ -64,11 +77,11 @@ limitations under the License.
         <div class="row">
           <div  style="text-align: left">
             <ul style="list-style-type:square;">
-              <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">      
-                <a>
-                  <span class="listing_short_title_text">IdAM Landing Page</span>     
+              <li class="imitateLink" style="padding-bottom: 20px;">      
+                <a href="http://www.afei.org/events/4A07/Pages/default.aspx">
+                  <span class="listing_short_title_text">DI2E Plugfest May 22, 2014 George Mason University</span>     
                 </a>
-                <div style="font-size: 12px; color: #555555;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...
+                <div style="font-size: 12px; color: #555555;">DI2E Plugfest is a part of DI2E Teams Week.This year Teams Week participants will be at the Plugfest looking for innovation and new capabilities. Stop by the Army Tactical Cloud Integration Lab and DIA Open Innovation Gateway booths to see what they are looking to add to their offerings and capabilities.
                 </div>    
               </li>
               <li class="imitateLink" ng-click="goTo('single', {id: 12})">
@@ -89,13 +102,13 @@ limitations under the License.
       <div class="content">
         <div class="row">
           <ul style="list-style-type:square;">
-            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage2.html', 'evaluationLevel', 'STATE3')">
+            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage2.html', 'DI2ELEVEL', 'LEVEL1')">
               <a>
-                <span class="listing_short_title_text">Evaluation Level 3 Landing Page</span>  
+                <span class="listing_short_title_text">Evaluation Level 1 Landing Page</span>  
               </a>
               <div style="font-size: 12px; color: #555555;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>    
             </li>     
-            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'categories', 'IDAM')">
+            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'DI2E-SVCV4-A', '1.2.1')">
               <a>
                 <span class="listing_short_title_text">IdAM Landing Page</span>  
               </a>

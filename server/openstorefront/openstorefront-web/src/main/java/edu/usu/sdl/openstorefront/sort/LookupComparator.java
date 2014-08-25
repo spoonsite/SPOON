@@ -16,7 +16,7 @@
 
 package edu.usu.sdl.openstorefront.sort;
 
-import edu.usu.sdl.openstorefront.model.jpa.LookupEntity;
+import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import java.util.Comparator;
 
 /**

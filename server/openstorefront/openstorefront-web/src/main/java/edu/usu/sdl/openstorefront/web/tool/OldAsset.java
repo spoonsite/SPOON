@@ -40,7 +40,7 @@ public class OldAsset
 	private OldAssetUser createdBy;
 	private String uuid;
 	private List<OldAssetUser> owners = new ArrayList<>();
-	private List<OldAssetScreenshot> screenShots = new ArrayList<>();
+	private List<OldAssetScreenshot> screenshots = new ArrayList<>();
 	private String imageLargeUrl;
 	private String imageSmallUrl;
 	private OldAssetState state;
@@ -57,6 +57,7 @@ public class OldAsset
 	private Date approvalDate;
 	private List<OldAssetMetaData> customFields = new ArrayList<>();
 	private List<OldAssetCategory> categories = new ArrayList<>();	
+	private String installUrl;
 	
 	
 	public OldAsset()
@@ -161,16 +162,6 @@ public class OldAsset
 	public void setOwners(List<OldAssetUser> owners)
 	{
 		this.owners = owners;
-	}
-
-	public List<OldAssetScreenshot> getScreenShots()
-	{
-		return screenShots;
-	}
-
-	public void setScreenShots(List<OldAssetScreenshot> screenShots)
-	{
-		this.screenShots = screenShots;
 	}
 
 	public String getImageLargeUrl()
@@ -331,6 +322,26 @@ public class OldAsset
 	public void setCategories(List<OldAssetCategory> categories)
 	{
 		this.categories = categories;
+	}
+
+	public List<OldAssetScreenshot> getScreenshots()
+	{
+		return screenshots;
+	}
+
+	public void setScreenshots(List<OldAssetScreenshot> screenshots)
+	{
+		this.screenshots = screenshots;
+	}
+
+	public String getInstallUrl()
+	{
+		return installUrl;
+	}
+
+	public void setInstallUrl(String installUrl)
+	{
+		this.installUrl = installUrl;
 	}
 	
 }

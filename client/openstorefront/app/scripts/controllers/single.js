@@ -24,17 +24,34 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   // Variables
   //////////////////////////////////////////////////////////////////////////////
   $scope.data              = {};
-  Business.componentservice.getComponentDetails().then(function(result) {
-    $scope.data.data       = result;
-  });
-  $scope.prosConsList      = Business.getProsConsList();
   $scope.details           = {};
   $scope.modal             = {};
   $scope.single            = true;
   $scope.details.details   = null;
   $scope.modal.isLanding   = false;
   $scope.showDetails       = false;
-  $scope.watches           = Business.getWatches();
+
+  Business.componentservice.getComponentDetails().then(function(result) {
+    if (result) {
+      $scope.data.data = result;
+    } else {
+      $scope.data.data = null;
+    }
+  });
+  Business.getProsConsList().then(function(result){
+    if (result) {
+      $scope.prosConsList = result;
+    } else {
+      $scope.prosConsList = null;
+    }
+  });
+  Business.userservice.getWatches().then(function(result){
+    if (result) {
+      $scope.watches = result;
+    } else {
+      $scope.watches = null;
+    }
+  });
 
 
 
@@ -64,7 +81,31 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       {
         $scope.details.details = result;
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
-        console.log('found', found);
+
+        // Code here will be linted with JSHint.
+        /* jshint ignore:start */
+        // Code here will be linted with ignored by JSHint.
+
+        if ($scope.details.details.attributes[0] !== undefined) {
+
+          _.each($scope.details.details.attributes, function(attribute) {
+            if (attribute.type === 'DI2E-SVCV4-A') {
+
+              var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
+                return item.TagValue_Number === attribute.code;
+              });
+              if (svcv4) {
+                attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
+                attribute.svcv4 = svcv4;
+              } else {
+                attribute.svcv4 = null;
+              }
+            }
+          });
+        }
+
+        /* jshint ignore:end */
+
 
         if (found) {
           $scope.details.details.watched = true;
@@ -73,7 +114,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.showDetails = true;
     });
-  };
+  }; //
 
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search
@@ -119,7 +160,6 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
       }
       $scope.updateDetails(id);
     });
-    //
   };
 
   callSearch();

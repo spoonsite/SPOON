@@ -28,8 +28,7 @@
   </div>
   <div>
     <div class="section-headers"><h4>Component Description</h4></div>
-    <p class="results-content-description" style="margin-left: 0px">
-      {{details.details.description}}
+    <p class="results-content-description" style="margin-left: 0px" ng-bind-html="details.details.description">
     </p>
     <br>
   </div>
@@ -57,7 +56,8 @@
         </tr>	 						
         <tr ng-repeat="row in details.details.attributes">
           <td ng-if="row.important === true" colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
-          <td ng-if="row.important === true" colspan="11" class="text-left">{{row.codeDescription}}</td>
+          <td ng-if="row.codeLongDescription && row.important === true" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>
+          <td ng-if="!row.codeLongDescription && row.important === true" colspan="11" class="text-left">{{row.codeDescription}}</td>
         </tr>
       </tbody>
     </table>

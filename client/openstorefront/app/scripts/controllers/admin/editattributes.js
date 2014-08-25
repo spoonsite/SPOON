@@ -17,7 +17,13 @@
 'use strict';
 
 app.controller('AdminEditattributesCtrl',['$scope','business',  function ($scope, Business) {
-  $scope.filters = Business.getFilters();
+  Business.getFilters().then(function(result){
+    if (result) {
+      $scope.filters = angular.copy(result);
+    } else {
+      $scope.filters = null;
+    }
+  });
 
   $scope.gridOptions = {
     data: 'filters',
@@ -30,17 +36,21 @@ app.controller('AdminEditattributesCtrl',['$scope','business',  function ($scope
     // showGroupPanel: true,
     columnDefs: [
       //
-      {field: 'name', displayName: 'Name', enableCellEdit: true},
-      {field:'key', displayName:'Code', maxWidth: 150, enableCellEdit: true},
-      {field:'src', displayName:'Icon Src', enableCellEdit: true},
-      {field:'key', displayName:'Collection', maxWidth: 150, cellTemplate: '<div class="ngCellText" ng-click="editCollection(row.getProperty(col.field))"><a>Edit Code Collection</a></div>', enableCellEdit: false, groupable: false, sortable: false}
+      {field: 'description', displayName: 'Name', enableCellEdit: true},
+      {field: 'type', displayName: 'Code', maxWidth: 150, enableCellEdit: true},
+      {field: 'visibleFlg', displayName: 'Visible Flag', enableCellEdit: true},
+      {field: 'requiredFlg', displayName: 'Required Flag', enableCellEdit: true},
+      {field: 'archtechtureFlg', displayName: 'Architecture Flag', enableCellEdit: true},
+      {field: 'importantFlg', displayName: 'Important Flag', enableCellEdit: true},
+      {field: 'allowMutlipleFlg', displayName: 'Allow Multiple Flag', enableCellEdit: true},
+      {field: 'type', displayName: 'Codes', maxWidth: 150, cellTemplate: '<div class="ngCellText" ng-click="editCollection(row.getProperty(col.field))"><a>Edit Code Collection</a></div>', enableCellEdit: false, groupable: false, sortable: false}
     //
     ]
   };
 
-  $scope.$watch('filters', function() {
-    // This is where we know something changed on the model for the collection that
-    // The user was editing. (Useful for inline editing, possibly useful for modal editing as well.)
-    // console.log('Checks', $scope.collectionContent[0].longDesc);
-  }, true);
+  // $scope.$watch('filters', function() {
+  //   // This is where we know something changed on the model for the collection that
+  //   // The user was editing. (Useful for inline editing, possibly useful for modal editing as well.)
+  //   // console.log('Checks', $scope.collectionContent[0].longDesc);
+  // }, true);
 }]);

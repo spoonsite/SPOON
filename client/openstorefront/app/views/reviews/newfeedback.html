@@ -45,7 +45,7 @@
         </div>
       </div>
     </div>
-   <div class="row" style=" padding-bottom: 10px;">
+    <div class="row" style=" padding-bottom: 10px;">
       <div class="col-sm-12">
         <div class="row" style="margin:0px;">
           <label>Describe Yourself:&nbsp;</label>
@@ -55,6 +55,14 @@
         </button>
       </div>
     </div>	  
+    <div class="row" style=" padding-bottom: 10px;">
+      <div class="col-sm-12">
+        <div class="row" style="margin:0px;">
+          <label>Organization:&nbsp;</label>
+          <input type="text" class="form-control" ng-model="review.organization">
+        </div>
+      </div>
+    </div>
     <div>
       <div class="row">
         <div class="col-sm-12">
@@ -69,11 +77,18 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <label for="recommended">
+          <input type="checkbox" id="recommended" ng-model="review.recommend">&nbsp;I recommend this component for reuse.
+        </label>
+      </div>
+    </div>
     <div>
       <strong>Comments:</strong>      
       <div><textarea name="" id="" rows="10" class="boxsizingBorder"></textarea></div>	  
-  </div>    
-	  <div class="text-center" style="padding-top: 20px;">
-		<button type="button" class="btn btn-primary" ng-click="">Post Review</button>									
-	</div>	  
-</div>
+    </div>    
+    <div class="text-center" style="padding-top: 20px;">
+      <button type="button" class="btn btn-primary" ng-click="">Post Review</button>									
+    </div>	  
+  </div>

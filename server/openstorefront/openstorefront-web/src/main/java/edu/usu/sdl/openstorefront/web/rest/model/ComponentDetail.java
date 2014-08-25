@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
@@ -25,89 +24,87 @@ import javax.validation.constraints.NotNull;
 
 /**
  * ComponentDetail Resource
+ *
  * @author dshurtleff
  */
 public class ComponentDetail
 {
+
 	@NotNull
 	@ParamTypeDescription("Key")
 	private Long componentId;
-	
-	@NotNull	
+
+	@NotNull
 	private String guid;
-	
-	@NotNull	
+
+	@NotNull
 	private String name;
-	
-	@NotNull	
+
+	@NotNull
 	private String description;
-	
+
 	private ComponentRelationship parentComponent;
-	
+
 	@DataType(ComponentRelationship.class)
 	private List<ComponentRelationship> subComponents = new ArrayList<>();
 
-	@DataType(ComponentRelationship.class)
-	private List<ComponentRelationship> relatedComponents = new ArrayList<>();
-	
-	@NotNull	
-	private String organization;
-	
 	@NotNull
+	private String organization;
+
 	private Date releaseDate;
 	private String version;
-			
+
 	@NotNull
 	private String activeStatus;
-	
-	@NotNull 
-	private Date lastActivityDate;
-	
+
+	@NotNull
+	private Date lastActivityDts;
+
 	@NotNull
 	private String createUser;
-	
+
 	@NotNull
 	private Date createDts;
-	
+
 	@NotNull
 	private String updateUser;
-	
+
 	@NotNull
 	private Date updateDts;
-	
+
 	@NotNull
 	private Date approvedDate;
 	private String approvalState;
-	
+
 	@NotNull
 	private String approvedUser;
-	
-	private ComponentEvaluation evaluation = new ComponentEvaluation();	
-	
+
+	private ComponentEvaluation evaluation = new ComponentEvaluation();
+
 	@DataType(ComponentQuestion.class)
-	private List<ComponentQuestion> questions = new ArrayList<>();	
-	
-	@DataType(ComponentAttribute.class)	
+	private List<ComponentQuestion> questions = new ArrayList<>();
+
+	@DataType(ComponentAttribute.class)
 	private List<ComponentAttribute> attributes = new ArrayList<>();
-	
+
 	@DataType(ComponentTag.class)
-	private List<ComponentTag> tags = new ArrayList<>();	
-	
+	private List<ComponentTag> tags = new ArrayList<>();
+
 	@DataType(ComponentMetadata.class)
 	private List<ComponentMetadata> metadata = new ArrayList<>();
-	
+
 	@DataType(ComponentMedia.class)
 	private List<ComponentMedia> componentMedia = new ArrayList<>();
-	
+
 	@DataType(ComponentContact.class)
-	private List<ComponentContact> contacts =  new ArrayList<>();
-	
+	private List<ComponentContact> contacts = new ArrayList<>();
+
 	@DataType(ComponentResource.class)
-	private List<ComponentResource> resources = new ArrayList<>();	
-	
+	private List<ComponentResource> resources = new ArrayList<>();
+
 	@DataType(ComponentReview.class)
 	private List<ComponentReview> reviews = new ArrayList<>();
-	
+
 	@DataType(ComponentExternalDependancy.class)
 	private List<ComponentExternalDependancy> dependencies = new ArrayList<>();
 
@@ -335,16 +332,6 @@ public class ComponentDetail
 		this.approvedUser = approvedUser;
 	}
 
-	public Date getLastActivityDate()
-	{
-		return lastActivityDate;
-	}
-
-	public void setLastActivityDate(Date lastActivityDate)
-	{
-		this.lastActivityDate = lastActivityDate;
-	}
-
 	public List<ComponentQuestion> getQuestions()
 	{
 		return questions;
@@ -375,16 +362,6 @@ public class ComponentDetail
 		this.subComponents = subComponents;
 	}
 
-	public List<ComponentRelationship> getRelatedComponents()
-	{
-		return relatedComponents;
-	}
-
-	public void setRelatedComponents(List<ComponentRelationship> relatedComponents)
-	{
-		this.relatedComponents = relatedComponents;
-	}
-
 	public List<ComponentExternalDependancy> getDependencies()
 	{
 		return dependencies;
@@ -403,6 +380,16 @@ public class ComponentDetail
 	public void setTags(List<ComponentTag> tags)
 	{
 		this.tags = tags;
+	}
+
+	public Date getLastActivityDts()
+	{
+		return lastActivityDts;
+	}
+
+	public void setLastActivityDts(Date lastActivityDts)
+	{
+		this.lastActivityDts = lastActivityDts;
 	}
 
 }

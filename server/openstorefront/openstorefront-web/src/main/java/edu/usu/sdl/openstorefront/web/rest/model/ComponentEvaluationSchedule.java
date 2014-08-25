@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import java.util.Date;
@@ -24,9 +23,9 @@ import java.util.Date;
  */
 public class ComponentEvaluationSchedule
 {
+
 	private String evaluationLevelCode;
-	private Date estimatedCompeletionDate;
-	private Date actualCompeletionDate;
+	private Date completionDate;
 	private String levelStatus;
 
 	public ComponentEvaluationSchedule()
@@ -43,26 +42,6 @@ public class ComponentEvaluationSchedule
 		this.evaluationLevelCode = evaluationLevelCode;
 	}
 
-	public Date getEstimatedCompeletionDate()
-	{
-		return estimatedCompeletionDate;
-	}
-
-	public void setEstimatedCompeletionDate(Date estimatedCompeletionDate)
-	{
-		this.estimatedCompeletionDate = estimatedCompeletionDate;
-	}
-
-	public Date getActualCompeletionDate()
-	{
-		return actualCompeletionDate;
-	}
-
-	public void setActualCompeletionDate(Date actualCompeletionDate)
-	{
-		this.actualCompeletionDate = actualCompeletionDate;
-	}
-
 	public String getLevelStatus()
 	{
 		return levelStatus;
@@ -71,6 +50,16 @@ public class ComponentEvaluationSchedule
 	public void setLevelStatus(String levelStatus)
 	{
 		this.levelStatus = levelStatus;
+	}
+
+	public Date getCompletionDate()
+	{
+		return completionDate;
+	}
+
+	public void setCompletionDate(Date completionDate)
+	{
+		this.completionDate = completionDate;
 	}
 
 }

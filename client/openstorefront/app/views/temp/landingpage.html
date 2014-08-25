@@ -1,24 +1,157 @@
 <h1 style="text-align:center">
   <span style="font-family:trebuchet ms,helvetica,sans-serif">
-    <span style="color:#A52A2A">idAM</span>
+    <span style="color:#A52A2A">IdAM Information</span>
   </span>
 </h1>
 <hr />
-<blockquote>
-  <div>
-    <span style="color:rgb(0, 0, 0); font-family:arial,helvetica,sans-serif; font-size:12px">Description:</span>
-    <br />
-    <span style="color:rgb(0, 0, 0); font-family:arial,helvetica,sans-serif; font-size:12px">PURPOSE: The Defense Information Systems Agency (DISA), Program Executive Office - Information Assurance/NetOps (PEO-IAN), is conducting this Request for Information (RFI) as market research to determine sources with CORE competencies and demonstrated experience in conducting experiments, pilots, and participating in exercises to demonstrate Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations, e.g. Privilege Management. Areas of focus will include development of a Privilege Management strategy for the DoD and evaluation and integration of implementation techniques such as Role Based Access Control (RBAC), Attribute-Based Access Control (ABAC), and Risk Adaptive Access Control (RAdAC). The DoD&#39;s net-centric information sharing environment, and evolution towards increased interoperability with other federal agencies and coalition partners, requires applications and systems to evolve their current authentication, authorization, and access control paradigms to support both anticipated and unanticipated users.
-    </span>
-  </div>
-</blockquote>
+<br>
+<h2>Architecture overview:</h2>
+<a ng-click="scrollTo('functions')">Go To SvcV-4 Functions</a>
+<br>
+<a ng-click="scrollTo('components')">Go To Component List</a>
+<div style="margin-left: 20px;">
+  <ul>
+    <li>
+      <h3>Description: 
+      </h3>
+      <ul>
+        <li>
+          <h4>IdAM includes services that provide criteria used in access decisions and the rules and requirements assessing each request against those criteria. Resources may include applications, services, networks, and computing devices.</h4>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <h3>Definition: 
+      </h3>
+      <ul>
+        <li>
+          <h4>Identity and Access Management (IdAM) defines the set of services that manage permissions required to access each resource.</h4>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <h3>IdAM Capability Functionality Diagram:</h3>
+      <div style="text-align:center">
+        <img src="images/idamCapabilityFunctionality.png" alt="IdAM Capability Functionality" style=" width: 80%; display: inline-block; height: auto;">
+      </div>
+      <a id="functions"></a>
+      <br>
+      <div>&nbsp;</div>
+      <br>
+      <div>&nbsp;</div>
+    </li>
+    <li>
+      <h3>SvcV-4 Functions and Descriptions:</h3>
+      <div style="float:left; width: 50%;">
+        <ul>
+          <li><h4>1.2.1.1 - Local Identity Management</h4>
+            <div>
+              <strong>Description:</strong> Local Identity Management provides the creation, maintenance, and deletion of user accounts, group membership and other user attributes, password maintenance, and the administration of user access rights for local, role-based access control systems. This service also creates local accounts from PKI certificates, and maps the DN from a certificate to a local UserID.
+            </div>
+            <div>
+              <strong>Definition:</strong> Local Identity Management provides the creation, maintenance, and deletion of user accounts, password maintenance, and the administration of user access rights. Also Creates local account from PKI certificate. Maps DN to UserID in local account.
+            </div>
+          </li>
+          <li><h4>1.2.1.2 - Credential Management</h4>
+            <div>
+              <strong>Definition:</strong> Life-cycle management of credentials (e.g., PKI soft token) associated with digital identities. Credential management includes PKI life-cycle management of Identity and Non Person Entity (NPE) (e.g., server) keys and certificates.
+            </div>
+          </li>
+          <li><h4>1.2.1.3 - Resource Policy Management</h4>
+            <div>
+              <strong>Definition:</strong> Resource Policy Management creates and maintains access control policies for protected resources.
+            </div>
+          </li>
+          <li><h4>1.2.1.4 - Authentication Service</h4>
+            <div>
+              <strong>Definition:</strong> Authentication Service performs authentication of entities within the enterprise.
+            </div>
+          </li>
+          <li><h4>1.2.1.5 - Policy Decision Point</h4>
+            <div>
+              <strong>Description:</strong> A Policy Decision Point service hosts Quality of Protection (QoP) parameters and user attributes so that services can flexibly determine and execute protection measures. For example, some services may require X.509 certificate based authentication whereas others may only need username / password authentication. Or, clients that access a resource from different domains may require different “strengths” of authentication and access control. PDPs do this by accepting authorization queries (typically XACML based), evaluating the request based on a variety of inputs (target resource, requested operation, requester's identity, etc.) and returning authorization decision assertions.
+            </div>
+            <div>
+              <strong>Definition:</strong> Policy Decision Points accepts access requests and returns whether the request is appropriate given access rules and conditions.
+            </div>
+          </li>
+          <li><h4>1.2.1.6 - Policy Enforcement Point</h4>
+            <div>
+              <strong>Description:</strong> Policy Enforcement Points sit in front of the requested web services, intercepting incoming requests and outgoing responses to apply the appropriate access policies. The PEP generates the access request to the Policy Decision Point (PDP) and interprets and enforces the PDP's decision. Policies can be built to include, but are not limited to, authentication, authorization, data integrity, and confidentiality. When enforcing authorization policies, the PEP uses the PDP to evaluate an authorization policy for the resource. When a security token is provided to the PEP, that token is validated prior to being trusted. Token validation may occur in the PEP itself, or if the PEP is unable to validate the token, the PEP may leverage an STS to perform validation on its behalf.
+            </div>
+            <div>
+              <strong>Definition:</strong> Policy Enforcement Point (PEP)enforces security-related policies for access to protected resources.
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div style="float:left; width: 50%;">
+        <ul>
 
-<component-list click-callback="updateDetails" hide-more="true" class-list="min" title="idAM Components" data="data" cols="3" type="IDAM" ></component-list>
-<br />
-More content filled with interesting information, links, and other useful resources...<br />
-<br />
-<strong>
-  More Components (with different filters or a different search result)
-</strong>
-<br />
-<component-list click-callback="updateDetails" hide-more="true" class-list="min" title="Visualization Components" data="data" cols="3" type="Visualization" ></component-list>
+          <li><h4>1.2.1.7 - Policy Access Point</h4>
+            <div>
+              <strong>Description:</strong> The Policy Access Point exposes authorization policies by retrieving and managing policies as implemented by Policy Decision Point (PDP) logic (e.g., access control over portlets in a portal server, or whether a service consumer may search the registry for the key to retrieve all implementations). Implementation may optionally be published in the Enterprise Service Registry (ESR) as defined by the DoD/IC Service Registry and Governance Working Group. [SSP note: a recommended format for PAS messages is extensible Access Control Markup Language (XACML)]
+            </div>
+            <div>
+              <strong>Definition:</strong> Policy Access Point enables service providers and applications to request and retrieve access policies.
+            </div>
+          </li>
+          <li><h4>1.2.1.8 - Security Token Service</h4>
+            <div>
+              <strong>Description:</strong> Security Token Service forms the basis for identification and authentication activities by generating security tokens and inserting them in outgoing encrypted messages. Passed security tokens contain authentication and attribute assertions that temporarily authenticate users. Tokens also contain user attributes and a security assertion which can be validated by receiving policy services. The Security Token Service may also perform token validation if required.
+            </div>
+            <div>
+              <strong>Definition:</strong> Security Token Service creates enterprise security tokens to provide authentication across systems and services.
+            </div>
+          </li>
+          <li><h4>1.2.1.9 - Federation Service Management</h4>
+            <div>
+              <strong>Definition:</strong> Federation Service Management establishes trust relationships between different organizations or systems, allowing entities within an environment to access resources within another environment without the need to have an individual account on the remote environment. This service defines and maintains trust relationships, which are then queried by the Security Token Validation service when making validation decisions.
+            </div>
+          </li>
+          <li><h4>1.2.1.10 - Attribute Access</h4>
+            <div>
+              <strong>Description:</strong> Attribute Access accepts attribute requests from authorized consumers and responds with an attribute assertion containing the requested attribute values that are releasable to that consumer. Attributes for either human users or non-person entities (NPE) can be passed and are typically used by Policy Decision Services, Policy Decision Points, Application Servers, or other SAML endpoints. Secure attribute passing supports an Attribute-Based Access Control (ABAC) authorization model.
+            </div>
+            <div>
+              <strong>Definition:</strong> Attribute Access provides values that describe human users and non-person entities (NPE) for the purpose of making authorization decisions.
+            </div>
+          </li>
+          <li><h4>1.2.1.11 - Certificate Validation</h4>
+            <div>
+              <strong>Description:</strong> Certificate Validation ensures a presented PKI certificate has been signed by a trusted CA, is within the valid timeframe, has not been tampered with, has not been revoked, etc. Certificate Validation Service allows clients to delegate some or all certificate validation tasks and is especially useful when a client application has limited Public Key Infrastructure (PKI) services. The service corresponds to a “Tier 2 Validation Service” and shields client applications from such PKI complexities as X.509v3 certificate syntax processing (e.g., expiration), revocation status checking, or certificate path validation. Certificate Validation may include any OCSP responders.
+            </div>
+            <div>
+              <strong>Definition:</strong> Certificate Validation ensures a presented security assertion within a security token matches similar data in the Certification Authority's (CA) root certificate.
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <div style="clear: both">
+    </div>
+    <li>
+      <h3>IdAM Focus Area Success Criteria:</h3>
+      <div>
+        <ul>
+          <li>Secures federated search capabilities within the Intelligence Mission Area of JIE</li>
+          <li>Is interoperable with IdAM on JIE and ICITE-supported networks</li>
+          <li>Is extensible to Disconnected, Degraded, Intermittent, and Low Bandwidth (DDIL) environments</li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+  <a id="components"></a>
+
+  <component-list hide-more="true" click-callback="callback" class-list="min" title="IdAM Compliant Components Found in the StoreFront" data="data" cols="3" type="DI2E Level 1" filters="filters" set-filters="[{'type': 'DI2E-SVCV4-A', 'code': '1.2.1'}]"></component-list>
+  <h3>
+    Other IdAM Compliant Components Coming Soon to the StoreFront
+  </h3>
+  <div>
+    <ul>
+      <li>DataPower</li>
+    </ul>
+  </div>
+
+</div>
+

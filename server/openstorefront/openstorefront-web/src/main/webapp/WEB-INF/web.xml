@@ -17,7 +17,7 @@
 		</param-name>
 		<param-value>StripesResources</param-value>
 	</context-param>	
-	
+
 	<listener>
 		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 	</listener>
@@ -85,7 +85,7 @@
 	
 	<error-page>
 		<error-code>404</error-code>
-		<location>/404-notfound.jsp</location>
+		<location>/404.html</location>
 	</error-page>
 	<error-page>
 		<error-code>401</error-code>

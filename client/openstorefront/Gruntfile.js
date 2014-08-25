@@ -29,30 +29,30 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
      //construct-war
-     war: {
-      target: {
-        options: {
-          war_dist_folder: '<%= yeoman.jvmdist %>',
-          war_verbose: false,
-          war_name: 'openstorefront',
-          webxml_welcome: 'index.html',
-          webxml_display_name: 'Open Storefront',
-          webxml_mime_mapping: [ 
-          { 
-            extension: 'woff', 
-            mime_type: 'application/font-woff' 
-          } ]
-        },
-        files: [
-        {
-          expand: true,
-          cwd: '<%= yeoman.dist %>',
-          src: ['**'],
-          dest: ''
-        }
-        ]
-      }
-    },
+//     war: {
+//      target: {
+//        options: {
+//          war_dist_folder: '<%= yeoman.jvmdist %>',
+//          war_verbose: false,
+//          war_name: 'openstorefront',
+//          webxml_welcome: 'index.html',
+//          webxml_display_name: 'Open Storefront',
+//          webxml_mime_mapping: [ 
+//          { 
+//            extension: 'woff', 
+//            mime_type: 'application/font-woff' 
+//          } ]
+//        },
+//        files: [
+//        {
+//          expand: true,
+//          cwd: '<%= yeoman.dist %>',
+//          src: ['**'],
+//          dest: ''
+//        }
+//        ]
+//      }
+//    },
 
     // Project settings
     yeoman: {
@@ -97,7 +97,7 @@ module.exports = function (grunt) {
       files: [
       '<%= yeoman.app %>/**/*.html',
       '.tmp/styles/**/*.css',
-      '<%= yeoman.app %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
+      '<%= yeoman.app %>/images/**/*.{PNG,png,jpg,jpeg,gif,webp,svg}',
     '<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'
     ]
   }
@@ -169,11 +169,19 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '.jshintrc',
+        jshintignore: '.jshintignore',
         reporter: require('jshint-stylish')
       },
       all: [
       'Gruntfile.js',
-      '<%= yeoman.app %>/scripts/**/*.js'
+      '<%= yeoman.app %>/scripts/common/*.js',
+      '<%= yeoman.app %>/scripts/common-min/*.js',
+      '<%= yeoman.app %>/scripts/controllers/*.js',
+      '<%= yeoman.app %>/scripts/directives/*.js',
+      '<%= yeoman.app %>/scripts/filters/*.js',
+      '<%= yeoman.app %>/scripts/page_specific/*.js',
+      '<%= yeoman.app %>/scripts/services/*.js',
+      '<%= yeoman.app %>/scripts/*.js'
       ],
       test: {
         options: {
@@ -277,7 +285,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>/images',
-          src: '**/*.{png,jpg,jpeg,gif}',
+          src: '**/*.{PNG,png,jpg,jpeg,gif}',
           dest: '<%= yeoman.dist %>/images'
         }]
       }
@@ -345,7 +353,7 @@ module.exports = function (grunt) {
           '.htaccess',
           '*.html',
           'views/**/*.html',
-          'images/**/*.{png,jpg,jpeg,gif,webp,svg}',
+          'images/**/*.{PNG,png,jpg,jpeg,gif,webp,svg}',
           'bower_components/fontawesome/css/font-awesome.css',
           'bower_components/fontawesome/fonts/*',
           'bower_components/bootstrap/dist/fonts/*',
@@ -355,6 +363,7 @@ module.exports = function (grunt) {
           'bower_components/ckeditor/**/*',
           'bower_components/ng-ckeditor/ng-ckeditor.js',
           'styles/*.css',
+          'scripts/esapi4js/**/*',
           'scripts/common-min/*.js',
           'scripts/common/data.js'
           ]
@@ -381,6 +390,12 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.app %>/fonts',
         dest: '<%= yeoman.dist %>/fonts',
         src: '**/*'
+      },
+      server: {
+        expand: true,
+        cwd: '<%= yeoman.dist %>',
+        dest: '../../server/openstorefront/openstorefront-web/src/main/webapp',
+        src: '**/*'        
       }
     },
 
@@ -502,10 +517,19 @@ grunt.registerTask('build', function (target) {
         'uglify',
         'rev',
         'usemin',
-        'htmlmin',
-        'war'
+        'htmlmin'
+        //'war'
         ]);
 });
+
+grunt.registerTask('buildprod', function (target) {
+  grunt.option('appPath', '/openstorefront');
+  grunt.task.run([ 
+    'build',
+   'copy:server'  
+  ]);
+});  
+
 
 grunt.registerTask('default', [
   'newer:jshint',

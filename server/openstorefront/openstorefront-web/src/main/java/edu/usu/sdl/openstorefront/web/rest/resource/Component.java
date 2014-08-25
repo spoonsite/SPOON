@@ -70,7 +70,7 @@ public class Component
 	@GET
 	@APIDescription("Gets full component  details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})	
-	@Path("/detail/{id}")
+	@Path("/{id}/detail")
 	public ComponentDetail getComponentDetails(
 			@PathParam("id") 			
 			@RequiredParam		

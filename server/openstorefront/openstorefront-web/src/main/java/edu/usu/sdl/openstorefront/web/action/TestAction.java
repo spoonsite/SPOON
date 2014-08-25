@@ -17,8 +17,8 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import edu.usu.sdl.openstorefront.model.jpa.BaseEntity;
-import edu.usu.sdl.openstorefront.model.jpa.Test;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
 import edu.usu.sdl.openstorefront.web.tool.OldAsset;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
@@ -54,8 +54,8 @@ public class TestAction
 	public Resolution testList()
 	{
 		List<LookupModel> lookups = new ArrayList<>();
-				
-		List<Test> test = service.findLookup(Test.class);
+		
+		List<TestEntity> test = service.getLookupService().findLookup(TestEntity.class);
 		test.forEach(t -> {
 			LookupModel lookup = new LookupModel();
 			lookup.setCode(t.getCode());

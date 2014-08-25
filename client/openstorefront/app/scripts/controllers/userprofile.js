@@ -15,47 +15,86 @@
 */
 'use strict';
 
-/*global MOCKDATA2, jQuery, confirm*/
+/*global MOCKDATA2, jQuery, confirm, triggerError*/
 
 app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', function($scope, Business, $rootScope, $location, $timeout) {
 
   //////////////////////////////////////////////////////////////////////////////
   // Variables
   //////////////////////////////////////////////////////////////////////////////
-  var immageHack          = 0;
-
   $scope.total            = {};
-  Business.componentservice.getComponentDetails().then(function(result) {
-    $scope.total          = result;
-    resetData();
-  });
-  Business.userservice.getReviews('Dawson TEST').then(function(result){
-    if (result) {
-      $scope.username = 'Dawson TEST';
-      $scope.reviews = result;
-      // console.log('result', result);
-    }
-  });
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
-  $scope.watches          = Business.getWatches();
   $scope.nav              = {
     'current': null,
     'bars': [
       //
       { 'title': 'User Profile', 'include': 'views/userprofiletab.html' },
       { 'title': 'Watches', 'include': 'views/watchestab.html' },
-      { 'title': 'Component Feedback', 'include': 'views/feedbacktab.html' }
+      { 'title': 'Component Reviews', 'include': 'views/feedbacktab.html' }
     //
     ]
   };
 
-  $scope.$on('$includeContentLoaded', function(){
-    $timeout(function() {
-      $('[data-toggle=\'tooltip\']').tooltip();
-    }, 300);
+
+  Business.componentservice.getComponentDetails().then(function(result) {
+    if (result) {
+      $scope.total = result;
+    } else {
+      $scope.total = null;
+    }
+    resetData();
   });
+  Business.userservice.getReviews('Dawson TEST').then(function(result){
+    if (result) {
+      $scope.username = 'Dawson TEST';
+      $scope.reviews = result;
+    } else {
+      $scope.reviews = null;
+    }
+  });
+  Business.userservice.getWatches().then(function(result) {
+    if (result) {
+      $scope.watches = result;
+      $scope.watches = _.sortBy($scope.watches, function(item) {
+        return item.componentName;
+      });
+    } else {
+      $scope.watches = null;
+    }
+  });
+  Business.lookupservice.getExpertise().then(function(result){
+    if (result) {
+      $scope.expertise = result;
+    } else {
+      $scope.expertise = [];
+    }
+  });
+  Business.lookupservice.getUserTypeCodes().then(function(result){
+    if (result) {
+      $scope.userTypeCodes = result;
+    } else {
+      $scope.userTypeCodes = [];
+    }
+    loadUserProfile();
+  });
+  Business.getProsConsList().then(function(result) {
+    if (result) {
+      $scope.prosConsList = result;
+    } else {
+      $scope.prosConsList = null;
+    }
+  });
+
+
+
+  $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Functions
+  //////////////////////////////////////////////////////////////////////////////
 
   /***************************************************************
   * This function converts a timestamp to a displayable date
@@ -72,20 +111,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     return null;
   };
 
-
-
   /***************************************************************
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.goToFullPage = function(id){
-    var url = $location.absUrl().replace($location.url(), '');
-    console.log('url', url);
+    var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
-    window.open(url, 'Component ' + id, 'window settings');
-    // $location.search({
-    //   'id': id
-    // });
-    // $location.path('/single');
+    window.open(url, 'Component ' + id, 'scrollbars');
   };
 
   /***************************************************************
@@ -102,39 +134,10 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     _.find($scope.watches, {'componentId': id}).notifyFlag = value;
   };
 
+  $scope.toggleCollapse = function(id){
+    $('#' + id).collapse('toggle');
+  };
 
-  $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
-    $scope.watches = Business.getWatches();
-    resetData();
-  });
-
-  /***************************************************************
-  * This function grabs the userCodes
-  ***************************************************************/
-  Business.lookupservice.getUserTypeCodes().then(function(lookup) {
-    $scope.userTypeCodes = lookup;
-    loadUserProfile();
-  });
-
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Event Watches
-  //////////////////////////////////////////////////////////////////////////////
-  $rootScope.$on('$profileModal', function(event) { /*jshint unused: false*/
-    if ($rootScope.current) {
-      $scope.nav.current = $rootScope.current;
-    } else {
-      $scope.nav.current = 'User Profile';
-    }
-    resetData();
-    // we re-initialize anything else here
-  });
-
-
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Functions
-  //////////////////////////////////////////////////////////////////////////////
   /***************************************************************
   * This function takes the watch list, and the total data we got back, and 
   * grabs the data items that are really on the watch list. This will change
@@ -145,14 +148,24 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     _.each($scope.watches, function(watch) {
       var component = _.find($scope.total, {'componentId': watch.componentId});
       if (component) {
-        if (immageHack > 2) {
-          immageHack = 0;
-        }
         component.watched = watch.watched;
         $scope.data.push(component);
       }
     });
+  };
 
+   $scope.cancelUserProfile = function() {
+
+    Business.userservice.getCurrentUserProfile().then(function(profile) {
+      $scope.userProfile = profile;
+      $scope.userProfileForm = angular.copy(profile);
+
+      _.each($scope.userTypeCodes, function(element, index, list) { /*jshint unused:false*/
+        if (element.code === $scope.userProfileForm.userTypeCode) {
+          $scope.userProfileForm.userRole = element;
+        }
+      });
+    });
   };
 
   /***************************************************************
@@ -177,19 +190,33 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * Save the user profile
   ***************************************************************/
   $scope.saveUserProfile = function() {
+    // myCheckValue
+    // mask form
+    $scope.$emit('$TRIGGERLOAD', 'userLoad');
+
+    $scope.mySwitch = false;
+  
     //validate form
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
-    //mask form and disable save button
-    var success = function(data, status, headers, config) { /*jshint unused:false*/
-      loadUserProfile();
-      //Show message toaster
-    };
-
-    var failure = function(data, status, headers, config) { /*jshint unused:false*/
-      //mark fields that are bad (add error class) and show our error messages div
-    };
-    Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
+    // Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
+    Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
+      function(data, status, headers, config){ /* jshint unused:false */
+      //SUCCESS:: data = return value
+        $timeout(function(){
+          $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+        }, 1000);
+        loadUserProfile();
+        console.log(data);
+      },
+      function(value){ //FAILURE:: value = reason why it failed
+        $timeout(function(){
+          triggerError(value);
+              $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+        }, 1000);
+        console.log(value);
+      }
+    );
   };
 
 
@@ -200,6 +227,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   ***************************************************************/ //
   $scope.saveProfileChanges = function() {
     $scope.userBackup = jQuery.extend(true, {}, $scope.user);
+  };
+
+  /***************************************************************
+  * This function saves the profile changes in the scope by copying them from
+  * the user variable into the backup variable (this function would be where
+  * you send the saved data to the database to store it)
+  ***************************************************************/ //
+  $scope.submitReview = function(review, revs) {
+    console.log('review', review);
+    console.log('revs', revs);
+    
   };
 
   /***************************************************************
@@ -227,11 +265,49 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         $scope.watches.splice(_.indexOf($scope.watches, a), 1);
       }
 
-      Business.setWatches($scope.watches);
+      Business.userservice.setWatches($scope.watches);
       $scope.$emit('$triggerEvent', '$detailsUpdated', id);
       _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
       Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
     }
   };
+
+
+  $scope.saveNotifyChange = function() {
+      Business.userservice.setWatches($scope.watches);
+      Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
+  };
+
+
+  $scope.$on('$includeContentLoaded', function(){
+    $timeout(function() {
+      $('[data-toggle=\'tooltip\']').tooltip();
+    }, 300);
+  });
+
+  
+  $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
+    Business.userservice.getWatches().then(function(result){
+      if (result) {
+        $scope.watches = result;
+      }
+    });
+    resetData();
+  });
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Event Watches
+  //////////////////////////////////////////////////////////////////////////////
+  $rootScope.$on('$profileModal', function(event) { /*jshint unused: false*/
+    if ($rootScope.current) {
+      $scope.nav.current = $rootScope.current;
+    } else {
+      $scope.nav.current = 'User Profile';
+    }
+    resetData();
+    // we re-initialize anything else here
+  });
+
 }]);
 

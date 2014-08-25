@@ -17,36 +17,41 @@
 
 /* global isEmpty, setupPopovers, openClick:true, setupResults,
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimations,
-filtClick*/
+filtClick, setPageHeight*/
 
 app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$sce', function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $sce) { /*jshint unused: false*/
 
-
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our variables...
   //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
+  // set the page height so the loading masks look good.
+  setPageHeight($('.page1'), 52);
+
+  // start the loading masks
+  $scope.$emit('$TRIGGERLOAD', 'mainLoader');
+  // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
+  $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
+  
+  // set variables
   $scope._scopename         = 'results';
-  setupResults();
-  $scope.tagsList           = Business.getTagsList();
-  $scope.tagsList.sort();
-  $scope.prosConsList       = Business.getProsConsList();
-  $scope.watches            = Business.getWatches();
+  $scope.orderProp          = '';
+  $scope.query              = '';
   $scope.lastUsed           = new Date();
-  $scope.searchCode         = null;
-  $scope.searchTitle        = null;
-  $scope.searchDescription  = null;
+  $scope.modal              = {};
   $scope.details            = {};
-  $scope.details.details    = null;
+  $scope.data               = {};
   $scope.isPage1            = true;
   $scope.showSearch         = false;
   $scope.showDetails        = false;
-  $scope.orderProp          = '';
-  $scope.query              = '';
-  $scope.noDataMessage      = $sce.trustAsHtml('<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p><button class="btn btn-default" ng-click="clearFilters()">Reset Filters</button>');
+  $scope.showMessage        = false;
+  $scope.modal.isLanding    = false;
+  $scope.single             = false;
+  $scope.isArticle          = false;
+  $scope.searchCode         = null;
+  $scope.filteredTotal      = null;
+  $scope.searchTitle        = null;
+  $scope.searchDescription  = null;
+  $scope.details.details    = null;
   $scope.typeahead          = null;
   $scope.searchGroup        = null;
   $scope.searchKey          = null;
@@ -54,59 +59,64 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.resetFilters       = null;
   $scope.total              = null;
   $scope.ratingsFilter      = 0;
-  $scope.modal              = {};
-  $scope.modal.isLanding    = false;
-  $scope.single             = false;
-  $scope.expertise          = [
-    //
-    {'value':'1', 'label': 'Less than 1 month'},
-    {'value':'2', 'label': 'Less than 3 months'},
-    {'value':'3', 'label': 'Less than 6 months'},
-    {'value':'4', 'label': 'Less than 1 year'},
-    {'value':'5', 'label': 'Less than 3 years'},
-    {'value':'6', 'label': 'More than 3 years'}
-  //
-  ];
-  $scope.userRoles          = [
-    //
-    {'code':'ENDUSER', 'description': 'User'},
-    {'code':'DEV', 'description': 'Developer'},
-    {'code':'PM', 'description': 'Project Manager'}
-  //
-  ];
-  // These variables are used for the pagination
-  $scope.filteredTotal      = null;
-  $scope.data               = {};
   $scope.rowsPerPage        = 200;
   $scope.pageNumber         = 1;
   $scope.maxPageNumber      = 1;
+  $scope.noDataMessage      = $sce.trustAsHtml('<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p><button class="btn btn-default" ng-click="clearFilters()">Reset Filters</button>');
 
 
-
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  // Here we put our functions...
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-
-  /***************************************************************
-  * Set up typeahead, and then watch for selection made
-  ***************************************************************/
+  // grab what we need from the server.
+  Business.getTagsList().then(function(result) {
+    if (result) {
+      $scope.tagsList       = result;
+      $scope.tagsList.sort();
+    } else {
+      $scope.tagsList       = null;
+    }
+  });
+  Business.getProsConsList().then(function(result) {
+    if (result) {
+      $scope.prosConsList   = result;
+    } else {
+      $scope.prosConsList   = null;
+    }
+  });
+  Business.userservice.getWatches().then(function(result) {
+    if (result) {
+      $scope.watches        = result;
+    } else {
+      $scope.watches        = null;
+    }
+  });
+  Business.lookupservice.getExpertise().then(function(result) {
+    if (result) {
+      $scope.expertise      = result;
+    } else {
+      $scope.expertise      = [];
+    }
+  });
+  Business.lookupservice.getUserTypeCodes().then(function(result) {
+    if (result) {
+      $scope.userTypeCodes  = result;
+    } else {
+      $scope.userTypeCodes  = [];
+    }
+  });
   Business.componentservice.getComponentDetails().then(function(result) {
     Business.typeahead(result, 'name').then(function(value){
-      $scope.typeahead = value;
+      if (value) {
+        $scope.typeahead    = value;
+      } else {
+        $scope.typeahead    = [];
+      }
     });
   });
 
-  /***************************************************************
-  * This grabs the user type codes and sets them to the scope.
-  ***************************************************************/
-  Business.lookupservice.getUserTypeCodes().then(function(lookup){
-    $scope.userTypeCodes  = lookup;
-    //TODO: chain load the review form    
-  });
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Here we put our Functions
+  //////////////////////////////////////////////////////////////////////////////
+
 
   /***************************************************************
   * This function selects the initial tab.
@@ -168,7 +178,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     return deferred.promise;
   };
 
-
   /***************************************************************
   * This function is called once we have the search request from the business layer
   * The order and manner in which we do this call will most likely change once
@@ -187,34 +196,42 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.searchCode       = '';
     }
 
+    setupResults();
     Business.componentservice.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
       $scope.total = result || {};
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
-      $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
-      $scope.$emit('$TRIGGERLOAD', 'mainLoader');
-      $timeout(function(){
-        $scope.filters = Business.getFilters();
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-        /*This is simulating the wait time for building the data so that we get a loader*/
-        $timeout(function(){
-          $scope.data.data = $scope.total;
-          _.each($scope.data.data, function(item){
-            if (item.description !== null && item.description !== undefined && item.description !== '') {
-              var desc = item.description.match(/^(.*?)[.?!]\s/);
-              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
-            } else {
-              item.shortdescription = 'This is a temporary short description';
-            }
+      Business.getFilters().then(function(result) {
+        if (result) {
+          $scope.filters = result;
+          $scope.filters = angular.copy($scope.filters);
+          $scope.filters = _.sortBy($scope.filters, function(item){
+            return item.description;
           });
-          $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-          $scope.initializeData(key);
-          adjustFilters();
-        }, 500);
+        } else {
+          $scope.filters = null;
+        }
+      });
+      /*This is simulating the wait time for building the data so that we get a loader*/
+      $timeout(function(){
+        $scope.data.data = $scope.total;
+        _.each($scope.data.data, function(item){
+          if (item.description !== null && item.description !== undefined && item.description !== '') {
+            var desc = item.description.match(/^(.*?)[.?!]\s/);
+            item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
+          } else {
+            item.shortdescription = 'This is a temporary short description';
+          }
+        });
+        // $scope.$emit('$TRIGGERUNLOAD', 'resultsLoad');
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+        $scope.initializeData(key);
+        adjustFilters();
       }, 500);
-    });
-};
+    }); //
+  }; //
 
 
   /***************************************************************
@@ -239,7 +256,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // grab all of the keys in the filters
       $scope.searchKey          = $scope.searchGroup[0].key;
       $scope.searchCode         = $scope.searchGroup[0].code;
-      var keys = _.pluck($scope.filters, 'key');
+      var keys = _.pluck($scope.filters, 'type');
+      
       var foundFilter = null;
       var foundCollection = null;
       var type = '';
@@ -250,44 +268,45 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
       if (_.contains(keys, $scope.searchKey)) {
-        $scope.searchGroupItem    = _.where($scope.filters, {'key': $scope.searchKey})[0];
-        $scope.searchType         = $scope.searchGroupItem.name;
         $scope.showSearch         = true;
         
-        foundFilter = _.where($scope.filters, {'key': $scope.searchGroup[0].key})[0];
-        foundCollection = _.where(foundFilter.collection, {'code': $scope.searchGroup[0].code})[0];
-
+        foundFilter = _.where($scope.filters, {'type': $scope.searchGroup[0].key})[0];
+        foundCollection = _.where(foundFilter.codes, {'code': $scope.searchGroup[0].code})[0];
         // if the search group is based on one of those filters do this
-        if ($scope.searchCode !== 'all') {
-          $scope.searchColItem      = _.where($scope.searchGroupItem.collection, {'code': $scope.searchCode})[0];
-          $scope.searchTitle        = $scope.searchType + ', ' + $scope.searchColItem.type;
-          $scope.modal.modalTitle   = $scope.searchType + ', ' + $scope.searchColItem.type;
-          $scope.searchDescription  = $scope.searchColItem.desc;
+        if ($scope.searchCode !== 'all' && foundFilter && foundCollection) {
+          $scope.filters = _.reject($scope.filters, function(filter) {
+            return filter.type === foundFilter.type;
+          });
+          $scope.searchColItem      = foundCollection;
+          $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
+          $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
+          $scope.searchDescription  = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
+
           if (foundCollection.landing !== undefined && foundCollection.landing !== null) {
             getBody(foundCollection.landing).then(function(result) {
               $scope.modal.modalBody = result;
               $scope.modal.isLanding = true;
             });
           } else {
-            $scope.modal.modalBody = $scope.searchColItem.longDesc;
+            $scope.modal.modalBody = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
             $scope.modal.isLanding = false;
           }
+
         } else {
           $scope.searchTitle        = $scope.searchType + ', All';
           $scope.modal.modalTitle   = $scope.searchType + ', All';
           $scope.searchDescription  = 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchType;
-          $scope.modal.modalBody          = 'This will eventually hold a description for this attribute type.';
-          $scope.modal.isLanding = false;
+          $scope.modal.modalBody    = 'This will eventually hold a description for this attribute type.';
+          $scope.modal.isLanding    = false;
         }
       } else if ($scope.searchGroup[0].key === 'search') {
-
         // Otherwise check to see if it is a search
         $scope.searchKey          = 'DOALLSEARCH';
         $scope.showSearch         = true;
         $scope.searchTitle        = $scope.searchGroup[0].code;
         $scope.modal.modalTitle   = $scope.searchGroup[0].code;
-        $scope.searchDescription  = 'Search resutls based on the search key: ' + $scope.searchGroup[0].code;
-        $scope.modal.modalBody    = 'The restuls on this page are restricted by an implied filter on words similar to the search key \'' + $scope.searchGroup[0].code + '\'';
+        $scope.searchDescription  = 'Search results based on the search key: ' + $scope.searchGroup[0].code;
+        $scope.modal.modalBody    = 'The results on this page are restricted by an implied filter on words similar to the search key \'' + $scope.searchGroup[0].code + '\'';
       } else {
         // In this case, our tempData object exists, but has no useable data
         $scope.searchKey          = 'DOALLSEARCH';
@@ -325,8 +344,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       var code = '';
       var query = null;
       if (key === null || key === undefined) {
-        if (!isEmpty($location.search()))
-        {
+        if (!isEmpty($location.search())) {
           query = $location.search();
           if (query.type && query.code) {
             type = query.type;
@@ -339,8 +357,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         code = '';
         // console.log('search', $location.search());
         
-        if (!isEmpty($location.search()))
-        {
+        if (!isEmpty($location.search())) {
           query = $location.search();
           if (query.type && query.code) {
             type = query.type;
@@ -361,8 +378,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       
       var type = 'all';
       var code = '';
-      if (!isEmpty($location.search()))
-      {
+      if (!isEmpty($location.search())) {
         var query = $location.search();
         if (query.type && query.code) {
           type = query.type;
@@ -420,34 +436,82 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   /***************************************************************
   * This function updates the details when a component title is clicked on
   ***************************************************************/
-  $scope.updateDetails = function(id){
-    $('.page2').scrollTop(0);
+  $scope.updateDetails = function(id, article){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    if (!openClick) {
-      buttonOpen();
-    }
-    $scope.showDetails = false;
-    Business.componentservice.getComponentDetails(id).then(function(result){
-      if (result)
-      {
-        $scope.details.details = result;
-      }
+    if (article && article.type === 'Article') {
+      $scope.isArticle = true;
+      localCache.save('landingRoute', article.route);
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);
       $scope.showDetails = true;
-    });
-  };
+      if (!openClick) {
+        buttonOpen();
+      }
+    } else {
+      $scope.isArticle = false;
+
+      $('.page2').scrollTop(0);
+      if (!openClick) {
+        buttonOpen();
+      }
+      $scope.showDetails = false;
+      Business.componentservice.getComponentDetails(id).then( function (result){
+        if (result)
+        {
+          $scope.details.details = result;
+
+          // Code here will be linted with JSHint.
+          /* jshint ignore:start */
+          // Code here will be linted with ignored by JSHint.
+
+          if ($scope.details.details.attributes[0] !== undefined) {
+
+            _.each($scope.details.details.attributes, function(attribute) {
+              if (attribute.type === 'DI2E-SVCV4-A') {
+
+                var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
+                  return item.TagValue_Number === attribute.code;
+                });
+                if (svcv4) {
+                  attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
+                  attribute.svcv4 = svcv4;
+                } else {
+                  attribute.svcv4 = null;
+                }
+              }
+            });
+          }
+
+          /* jshint ignore:end */
+
+        }
+        $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+        $scope.showDetails = true;
+      });
+    } //
+  }; //
 
   /***************************************************************
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.goToFullPage = function(id){
-    var url = $location.absUrl().replace($location.url(), '');
+    var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
-    window.open(url, 'Component ' + id, 'window settings');
-    // $location.search({
-    //   'id': id
-    // });
-    // $location.path('/single');
+    window.open(url, 'Component ' + id, 'scrollbars');
+  };
+
+  /***************************************************************
+  * This function adds a component to the watch list and toggles the buttons
+  ***************************************************************/
+  $scope.goToCompare = function(){
+    var list = [];
+    _.each($scope.data.data, function(item) {
+      list.push(item.componentId);
+    });
+    $location.search({
+      'id': list
+    });
+    $location.path('/compare');
   };
 
   /***************************************************************
@@ -504,7 +568,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
       // Set the data that will be displayed to the first 'n' results of the filtered data
       $scope.data.data = $scope.filteredTotal.slice((($scope.pageNumber - 1) * $scope.rowsPerPage), ($scope.pageNumber * $scope.rowsPerPage));
-
+      if ($scope.data.data.length) {
+        $scope.showMessage = false;
+      } else {
+        $scope.showMessage = true;
+      }
       // after a slight wait, reapply the popovers for the results ratings.
       $timeout(function() {
         setupPopovers();
@@ -513,13 +581,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
 
-
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our Event Watchers
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
   /***************************************************************
@@ -536,7 +599,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.$on('$detailsUpdated', function(event, id) {/*jshint unused: false*/
     if ($scope.details.details && $scope.details.details.componentId === id) {
       $timeout(function() {
-        $scope.updateDetails($scope.details.details.componentId);
+        $scope.updateDetails($scope.details.details.componentId, $scope.details.details.listingType);
       });
     }
   });
@@ -556,8 +619,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.$on('$viewContentLoaded', function(){
     resetAnimations($('.page1'), $('.page2'), $('.filters'));
     $timeout(function() {
-      // moveButtons($('#showPageRight'), $('.page1'));
-      // moveButtons($('#showPageLeft'), $('.page2'));
       if (fullClick === 0) {
         if ($(window).width() >= 768) {
           if (filtClick === 0) {
@@ -571,11 +632,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
   //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   // Here we put our Scope Watchers
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
   /***************************************************************
@@ -651,7 +708,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.$watch('filters',function(val, old){ /* jshint unused:false */
     _.each($scope.filters, function(filter){
-      filter.hasChecked = _.some(filter.collection, function(item){
+      filter.hasChecked = _.some(filter.codes, function(item){
         return item.checked;
       });
       if (!filter.hasChecked) {

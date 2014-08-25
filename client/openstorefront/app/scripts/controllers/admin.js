@@ -23,19 +23,21 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   //this object is used to contain the tree functions
   $scope.myTree = {};
 
-  /***************************************************************
-  * Set up admin variables.
-  ***************************************************************/
-  $scope.filters = Business.getFilters();
   $scope.collection = null;
   $scope.collectionSelection = null;
-  $scope.incLoc = '';
   $scope.data = [];
+  $scope.incLoc = '';
+  $scope.saveContent = '';
   $scope.editedTopic = 'Types';
   $scope.toolTitle = 'idAM Landing Page';
-  $scope.saveContent = '';
 
-
+  Business.getFilters().then(function(result) {
+    if (result) {
+      $scope.filters = angular.copy(result);
+    } else {
+      $scope.filters = null;
+    }
+  });
 
   /***************************************************************
   * If we don't have a landing page, we're going to set up one for now so that
@@ -44,10 +46,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   ***************************************************************/
   if (!$scope.landingRoute) {
     Business.landingPage('IDAM', 'views/temp/landingpage.html', true).then(function (result) { /*jshint unused:false*/
-      Business.landingPage(false, false, true).then(function (result) {
-        $scope.landingRoute = result.value;
-
-      });
+      $scope.landingRoute = result.value;
     });
   }
   
@@ -71,59 +70,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   $scope.$watch('editorContent', function() {
     $scope.saveData();
   });
-
-
-  /***************************************************************
-  * This function sets up the menu on the left for the admin tools.
-  * It isn't completely dynamic right now because the tools are pretty static.
-  * If we ever actually put this information into the database, things might change.
-  ***************************************************************/
-  (function() {
-    var attributes = {};
-    attributes.label = 'Manage Attributes';
-    attributes.location='views/admin/editattributes.html';
-    attributes.children = [];
-    attributes.toolTitle = 'Manage Attributes';
-    attributes.key = 'attributes';
-    attributes.parentKey = null;
-    attributes.data = $scope.filters;
-    attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
-    attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
-
-    var lookupTables = {
-      label: 'Manage Lookups',
-      location:  'views/admin/manageLookups.html',
-      children:  [
-        //
-        {
-          label: 'Reviews PROs List',
-          location: 'views/admin/manageProsList.html',
-          toolTitle: 'Manage PROs List',
-          key: 'REVIEW_PROS',
-          parentKey: 'LOOKUP'
-        },
-        {
-          label: 'Reviews CONs List',
-          location: 'views/admin/manageConsList.html',
-          toolTitle: 'Manage CONs List',
-          key: 'REVIEW_CONS',
-          parentKey: 'LOOKUP'
-        }
-      //
-      ],
-      toolTitle: 'Manage lookups tables',
-      key: 'LOOKUP',
-      parentKey: null
-    };
-
-
-    $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });
-    $scope.data.push(attributes);
-    $scope.data.push(lookupTables);
-
-    $scope.data.push({'label': 'Manage Components', 'location':'views/admin/editcomponents.html', 'toolTitle': 'Manage Components', 'key': 'components' });
-    $scope.data.push({'label': 'Manage Branding', 'location': 'views/admin/editbranding.html', 'toolTitle': 'Manage Branding', 'key': 'branding' });
-  }());
 
 
   /***************************************************************
@@ -160,7 +106,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   ***************************************************************/
   $scope.editCollection = function(key) {
     var branch = checkCollection($scope.data, 0, 'codes');
-    $scope.collectionSelection = _.where($scope.filters, {'key': key})[0];
+    $scope.collectionSelection = _.find($scope.filters, {'type': key});
     $scope.editor(branch);
   };
   /***************************************************************
@@ -235,5 +181,56 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   // setup editor options
   $scope.editorOptions = getCkConfig();
 
+  /***************************************************************
+  * This function sets up the menu on the left for the admin tools.
+  * It isn't completely dynamic right now because the tools are pretty static.
+  * If we ever actually put this information into the database, things might change.
+  ***************************************************************/
+  (function() {
+    var attributes = {};
+    attributes.label = 'Manage Attributes';
+    attributes.location='views/admin/editattributes.html';
+    attributes.children = [];
+    attributes.toolTitle = 'Manage Attributes';
+    attributes.key = 'attributes';
+    attributes.parentKey = null;
+    attributes.data = $scope.filters;
+    attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
+    attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
+
+    var lookupTables = {
+      label: 'Manage Lookups',
+      location:  'views/admin/manageLookups.html',
+      children:  [
+        //
+        {
+          label: 'Reviews PROs List',
+          location: 'views/admin/manageProsList.html',
+          toolTitle: 'Manage PROs List',
+          key: 'REVIEW_PROS',
+          parentKey: 'LOOKUP'
+        },
+        {
+          label: 'Reviews CONs List',
+          location: 'views/admin/manageConsList.html',
+          toolTitle: 'Manage CONs List',
+          key: 'REVIEW_CONS',
+          parentKey: 'LOOKUP'
+        }
+      //
+      ],
+      toolTitle: 'Manage lookups tables',
+      key: 'LOOKUP',
+      parentKey: null
+    };
+
+
+    $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });
+    $scope.data.push(attributes);
+    $scope.data.push(lookupTables);
+
+    $scope.data.push({'label': 'Manage Components', 'location':'views/admin/editcomponents.html', 'toolTitle': 'Manage Components', 'key': 'components' });
+    $scope.data.push({'label': 'Manage Branding', 'location': 'views/admin/editbranding.html', 'toolTitle': 'Manage Branding', 'key': 'branding' });
+  }());
 
 }]);

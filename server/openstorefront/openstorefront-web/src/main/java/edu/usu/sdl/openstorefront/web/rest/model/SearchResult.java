@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,46 +27,50 @@ import javax.validation.constraints.NotNull;
  */
 public class SearchResult
 {
+
 	@NotNull
 	private String listingType; //Componet or Article
 	private Long componentId;
 	private String articleAttributeType;
 	private String articleAttributeCode;
-	
+
 	@NotNull
 	private String name;
-	
-	@NotNull	
+
+	@NotNull
 	private String description;
-	
+
 	@NotNull
 	private String organization;
-	
-	@NotNull				
-	private Date lastActivityDate;	
-	
-	@NotNull	
+
+	@NotNull
+	private Date lastActivityDts;
+
+	@NotNull
 	private Date updateDts;
-	
-	@NotNull	
+
+	@NotNull
 	private int averageRating;
-	
+
 	@NotNull
 	private long views;
-	
+
 	@NotNull
 	private long totalNumberOfReviews;
-	
+
+	@NotNull
+	private String resourceLocation;
+
 	@DataType(SearchResultAttribute.class)
 	private List<SearchResultAttribute> attributes = new ArrayList<>();
-		
-	@ParamTypeDescription("Array of Strings")
-	private List<ComponentTag> tags = new ArrayList<>();	
+
+	@DataType(ComponentTag.class)
+	private List<ComponentTag> tags = new ArrayList<>();
 
 	public SearchResult()
 	{
 	}
-	
+
 	public String getListingType()
 	{
 		return listingType;
@@ -139,14 +141,14 @@ public class SearchResult
 		this.organization = organization;
 	}
 
-	public Date getLastActivityDate()
+	public Date getLastActivityDts()
 	{
-		return lastActivityDate;
+		return lastActivityDts;
 	}
 
-	public void setLastActivityDate(Date lastActivityDate)
+	public void setLastActivityDts(Date lastActivityDts)
 	{
-		this.lastActivityDate = lastActivityDate;
+		this.lastActivityDts = lastActivityDts;
 	}
 
 	public Date getUpdateDts()
@@ -208,5 +210,15 @@ public class SearchResult
 	{
 		this.tags = tags;
 	}
-	
+
+	public String getResourceLocation()
+	{
+		return resourceLocation;
+	}
+
+	public void setResourceLocation(String resourceLocation)
+	{
+		this.resourceLocation = resourceLocation;
+	}
+
 }

@@ -16,8 +16,6 @@
 
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.service.api.OpenStorefrontService;
-import edu.usu.sdl.openstorefront.util.ServiceProxy;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import java.util.List;
 
@@ -27,7 +25,7 @@ import java.util.List;
  */
 public abstract class BaseResource
 {
-	protected final OpenStorefrontService service = ServiceProxy.getProxy();	
+	protected final edu.usu.sdl.openstorefront.service.ServiceProxy service = new edu.usu.sdl.openstorefront.service.ServiceProxy();
 
 	protected <T> RestListResponse<T> sendListResponse(List<T> data)
 	{

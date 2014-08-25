@@ -18,7 +18,6 @@
 /*global setupMain*/
 
 app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
-
   //////////////////////////////////////////////////////////////////////////////
   // Variables
   //////////////////////////////////////////////////////////////////////////////
@@ -28,19 +27,28 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.typeahead  = null;
   $scope.goToLand   = false;
   $scope.searchKey  = $rootScope.searchKey;
-  $scope.filters    = Business.getFilters();
-  $scope.filters    = _.filter($scope.filters, function(item) {
-    return item.showOnFront;
+
+  Business.getFilters().then(function(result){
+    if (result) {
+      $scope.filters = result;
+      $scope.filters    = _.filter($scope.filters, function(item) {
+        return item.showOnFront;
+      });
+    } else {
+      $scope.filters = null;
+    }
   });
 
-  /***************************************************************
-  * Set up typeahead, and then watch for selection made
-  ***************************************************************/
   Business.componentservice.getComponentDetails().then(function(result) {
-    Business.typeahead(result, 'name').then(function(value){
-      $scope.typeahead = value;
+    Business.typeahead(result, null).then(function(value){
+      if (value) {
+        $scope.typeahead = value;
+      } else {
+        $scope.typeahead = null;
+      }
     });
   });
+
   //////////////////////////////////////////////////////////////////////////////
   // Event Watchers
   //////////////////////////////////////////////////////////////////////////////
@@ -105,12 +113,14 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   *******************************************************************************/
   $scope.goToLanding = function(route, searchType, searchKey){ /*jshint unused:false*/
     $(window).scrollTop(0);
+    localCache.save('landingRoute', route);
     localCache.save('landingType', searchType);
     localCache.save('landingCode', searchKey);
-    Business.landingPage('landing', route, true).then(function() {
+    // Business.landingPage('landing', route, true).then(function() {
+      $location.search('route', route);
       $location.path('/landing');
-    });
-    return false;
+    // });
+    return false; //
   };
 
   /***************************************************************

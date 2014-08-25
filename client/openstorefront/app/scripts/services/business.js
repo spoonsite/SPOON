@@ -56,42 +56,102 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     localCache.save(name+'-time', new Date());
   };
 
+  var updateCache = function(name, value) {
+    save(name, value);
+  };
+
   //Services
   business.userservice = userservice;
   business.lookupservice = lookupservice;
   business.componentservice = componentservice;
 
+  business.updateCache = function(name, value) {
+    var deferred = $q.defer();
+    updateCache(name, value);
+    deferred.resolve(true);
+    return deferred.promise;
+  };
 
-
-  //Shared Services  
   business.getFilters = function() {
-    return MOCKDATA.filters;
+    var deferred = $q.defer();
+    var filters = checkExpire('filters', minute * 1440);
+    if (filters) {
+      deferred.resolve(filters);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': '/api/v1/resource/attributes/'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false') {
+          save('filters', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the filters');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      });
+    }
+    return deferred.promise;
   };
 
-  business.updateCache = function(name, item) {
-    save(name, item);
-  };
 
   business.getTagsList = function() {
-    return MOCKDATA.tagsList;
+    var deferred = $q.defer();
+
+
+    var tagsList = checkExpire('tagsList', minute * 0.5);
+    if (tagsList) {
+      deferred.resolve(tagsList);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': '/api/v1/resource/tags/'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false') {
+          save('tagsList', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the tags list');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      });
+    }
+
+    return deferred.promise;
   };
 
   business.getProsConsList = function() {
-    return MOCKDATA.prosConsList;
+    var deferred = $q.defer();
+
+    var prosConsList = checkExpire('prosConsList', minute * 0.5);
+    if (prosConsList) {
+      deferred.resolve(prosConsList);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': '/api/v1/resource/pros/'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false') {
+          save('prosConsList', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the pros and cons list');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      });
+    }
+
+    deferred.resolve(MOCKDATA.prosConsList);
+    return deferred.promise;
   };
 
-  business.getWatches = function() {
-    return MOCKDATA.watches;
-  };
 
-  business.setWatches = function(watches) {
-    MOCKDATA.watches = watches;
-    $rootScope.$broadcast('$updatedWatches');
-    return true;
-  };
 
   business.landingPage = function(key, value, wait) {
     var deferred = $q.defer();
+    if (key && value) {
+      updateCache('landingRoute', {'key': key, 'value': value});
+    }
     var landingRoute = checkExpire('landingRoute', minute * 1440);
     if (landingRoute) {
       deferred.resolve(landingRoute);
@@ -130,6 +190,9 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
           } else {
             deferred.reject('We need a new target in order to refresh the data');
           }
+        } else {
+          save('typeahead', collection);
+          deferred.resolve(collection);
         }
       }
     }
