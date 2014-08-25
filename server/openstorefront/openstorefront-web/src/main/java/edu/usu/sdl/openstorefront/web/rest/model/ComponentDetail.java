@@ -105,9 +105,13 @@ public class ComponentDetail
 	@DataType(ComponentReview.class)
 	private List<ComponentReview> reviews = new ArrayList<>();
 
-	@DataType(ComponentExternalDependancy.class)
-	private List<ComponentExternalDependancy> dependencies = new ArrayList<>();
+	@DataType(ComponentExternalDependency.class)
+	private List<ComponentExternalDependency> dependencies = new ArrayList<>();
 
+	@DataType(Integer.class)
+	private Integer componentViews = 0;
+
+	
 	public ComponentDetail()
 	{
 	}
@@ -362,12 +366,12 @@ public class ComponentDetail
 		this.subComponents = subComponents;
 	}
 
-	public List<ComponentExternalDependancy> getDependencies()
+	public List<ComponentExternalDependency> getDependencies()
 	{
 		return dependencies;
 	}
 
-	public void setDependencies(List<ComponentExternalDependancy> dependencies)
+	public void setDependencies(List<ComponentExternalDependency> dependencies)
 	{
 		this.dependencies = dependencies;
 	}
@@ -390,6 +394,22 @@ public class ComponentDetail
 	public void setLastActivityDts(Date lastActivityDts)
 	{
 		this.lastActivityDts = lastActivityDts;
+	}
+
+	/**
+	 * @return the componentViews
+	 */
+	public Integer getComponentViews()
+	{
+		return componentViews;
+	}
+
+	/**
+	 * @param componentViews the componentViews to set
+	 */
+	public void setComponentViews(Integer componentViews)
+	{
+		this.componentViews = componentViews;
 	}
 
 }
