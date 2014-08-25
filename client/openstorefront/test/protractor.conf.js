@@ -25,7 +25,7 @@ exports.config = {
         //console.log(rightNow);
 
         var theYear = rightNow.getFullYear();
-        var theMonth = rightNow.getMonth();
+        var theMonth = rightNow.getMonth() + 1;
         var theDay = rightNow.getDay();
         var dtString = theYear + '-' + theMonth + '-' + theDay;
 
