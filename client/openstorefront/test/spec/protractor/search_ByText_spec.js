@@ -1,4 +1,4 @@
-describe('Search ALL then filter on "Filter By Text:"', function() {
+describe('Search ALL then filter on Filter By Text', function() {
 
     function textSearch (theText, numFound) {
 
@@ -28,25 +28,25 @@ describe('Search ALL then filter on "Filter By Text:"', function() {
     // TODO:  Make this a 2-dimensional array and loop through it!
     var theText1 = 'DIB';
     var numFound1 = 3;
-    it('Search for "' + theText1 + '" returned ' + numFound1 + ' expected results plus "' + theText1 + '" was in the search results.', function () {
+    it('Search for ' + theText1 + ' returned ' + numFound1 + ' expected results plus ' + theText1 + ' was in the search results.', function () {
         textSearch(theText1, numFound1);
     });
 
     var theText2 = 'the S';
     var numFound2 = 4;
-    it('Search for "' + theText2 + '" returned ' + numFound2 + ' expected results plus "' + theText2 + '" was in the search results.', function () {
+    it('Search for ' + theText2 + ' returned ' + numFound2 + ' expected results plus ' + theText2 + ' was in the search results.', function () {
         textSearch(theText2, numFound2);
     });
 
     var theText3 = 'Widget';
     var numFound3 = 12;
-    it('Search for "' + theText3 + '" returned ' + numFound3 + ' expected results plus "' + theText3 + '" was in the search results.', function () {
+    it('Search for ' + theText3 + ' returned ' + numFound3 + ' expected results plus ' + theText3 + ' was in the search results.', function () {
         textSearch(theText3, numFound3);
     });
 
     var theText4 = 'widgets';
     var numFound4 = 5;
-    it('Search for "' + theText4 + '" returned ' + numFound4 + ' expected results plus "' + theText4 + '" was in the search results.', function () {
+    it('Search for ' + theText4 + ' returned ' + numFound4 + ' expected results plus ' + theText4 + ' was in the search results.', function () {
         textSearch(theText4, numFound4);
     });
 
