@@ -17,6 +17,10 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -28,5 +32,26 @@ public class ComponentServiceImpl
 	implements ComponentService
 {
 	private static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
+
+	@Override
+	public List<Component> getComponents()
+	{
+		ComponentView temp;
+		temp = new ComponentView();
+		temp.
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public Component getComponentSingle(String componentId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public ComponentDetail getComponentDetails(String componentId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 	
 }

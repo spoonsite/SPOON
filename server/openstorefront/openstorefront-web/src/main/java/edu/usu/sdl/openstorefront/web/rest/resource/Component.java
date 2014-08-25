@@ -38,48 +38,43 @@ import javax.ws.rs.core.MediaType;
 public class Component
 	extends BaseResource
 {
-	
+
 	@GET
-	@APIDescription("Get a list components <br>(Note: this only the top level component object, See Componet Detail for composite resource.)")
+	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Componet Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentView.class)
 	public RestListResponse getComponents()
 	{
 		List<ComponentView> componentViews = new ArrayList<>();
-	
-		
+
 		return sendListResponse(componentViews);
-	}	
-	
+	}
+
 	@GET
 	@APIDescription("Gets a component <br>(Note: this only the top level component object)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentView.class)
 	@Path("/{id}")
 	public ComponentView getComponentSingle(
-			@PathParam("id") 			
-			@RequiredParam		
-			Long componentId)
+			@PathParam("id")
+			@RequiredParam Long componentId)
 	{
 		ComponentView componentView = new ComponentView();
-	
-		
+
 		return componentView;
 	}
-	
+
 	@GET
-	@APIDescription("Gets full component  details (This the packed view for displaying)")
-	@Produces({MediaType.APPLICATION_JSON})	
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}/detail")
 	public ComponentDetail getComponentDetails(
-			@PathParam("id") 			
-			@RequiredParam		
-			Long componentId)
+			@PathParam("id")
+			@RequiredParam Long componentId)
 	{
 		ComponentDetail componentDetail = new ComponentDetail();
-	
-		
+
 		return componentDetail;
-	}	
-	
+	}
+
 }
