@@ -14,24 +14,20 @@ exports.config = {
     // For the HTML Reporter
     require('../node_modules/jasmine-reporters');
 
-
     // Add a reporter and store xml to 'reports'
     jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter({ baseDirectory: 'reports' }));
 
     // Add a reporter and store screenshots to a directory
-    jasmine.getEnv().addReporter(new HtmlReporter({ baseDirectory: 'screenshots', pathBuilder: function pathbuilder (
-        spec, descriptions, results, capabilities) {
-        var rightNow = new Date();
-        //console.log(rightNow);
-
-        var theYear = rightNow.getFullYear();
-        var theMonth = rightNow.getMonth() + 1;
-        var theDay = rightNow.getDay();
-        var dtString = theYear + '-' + theMonth + '-' + theDay;
-
-        return path.join(dtString, capabilities.caps_.browserName, descriptions.join('-'));
-
-        }
+    // See http://qainsight.blogspot.com/2014/03/adding-html-reporter-in-protractor-js.html
+      jasmine.getEnv().addReporter(new HtmlReporter({
+          baseDirectory: 'screenshots', pathBuilder: function pathbuilder (spec, descriptions, results, capabilities)
+          {
+            // Build this format:  YYYY-MMM-DD_HH-MM-SS;  2014-Aug-28_16-35-56 GMT -0600 (Mountain Daylight Time)
+            var dt = new Date().toDateString().split(' ');
+            var tm = new Date().toTimeString().split(':');
+            myDateFormat = dt[3] + '-' + dt[1]  + '-' + dt[2] + '_' + tm[0] + '-' + tm[1] + '-' + tm[2];
+            return path.join(myDateFormat, capabilities.caps_.browserName, descriptions.join('-'));
+          }
       }));
 
 
