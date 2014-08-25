@@ -30,7 +30,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluation;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSection;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependancy;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestion;
@@ -715,7 +715,7 @@ public class DataConvertTest
 						String dependancy = keys.remove(0);
 						String comment = externalDependancyMap.get(dependancy);
 
-						ComponentExternalDependancy externalDependancy = new ComponentExternalDependancy();
+						ComponentExternalDependency externalDependancy = new ComponentExternalDependency();
 						externalDependancy.setComment(comment);
 						externalDependancy.setDependency(dependancy);
 						componentDetail.getDependencies().add(externalDependancy);

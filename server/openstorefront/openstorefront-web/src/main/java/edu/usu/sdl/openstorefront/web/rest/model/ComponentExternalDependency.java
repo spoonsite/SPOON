@@ -20,14 +20,14 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentExternalDependancy
+public class ComponentExternalDependency
 {
 	private String dependency;
 	private String version;
 	private String dependancyReferenceLink;
 	private String comment;
 
-	public ComponentExternalDependancy()
+	public ComponentExternalDependency()
 	{
 	}
 
