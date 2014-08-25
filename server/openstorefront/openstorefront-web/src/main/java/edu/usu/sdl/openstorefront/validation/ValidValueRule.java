@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
@@ -30,28 +34,41 @@ import org.apache.commons.beanutils.BeanUtils;
  * @author dshurtleff
  */
 public class ValidValueRule
-	extends BaseRule
+		extends BaseRule
 {
 
 	@Override
 	protected boolean validate(Field field, Object dataObject)
 	{
 		boolean valid = true;
-		
-		ValidValueType validValueType = field.getAnnotation(ValidValueType.class);	
-		if (validValueType != null)
-		{
-			try
-			{
+
+		ValidValueType validValueType = field.getAnnotation(ValidValueType.class);
+		if (validValueType != null) {
+			try {
 				String value = BeanUtils.getProperty(dataObject, field.getName());
+
 				Set<String> validValueSet = new HashSet<>();
+				if (validValueType.lookupClass().length > 1) {
+					for (Class lookupClass : validValueType.lookupClass()) {
+						Element cachedLookup = OSFCacheManager.getLookupCache().get(lookupClass.getName());
+						List<LookupEntity> lookups;
+						if (cachedLookup == null) {
+							ServiceProxy serviceProxy = new ServiceProxy();
+							lookups = serviceProxy.getLookupService().findLookup(lookupClass);
+						} else {
+							lookups = (List<LookupEntity>) cachedLookup.getObjectValue();
+						}
+						lookups.forEach(item -> {
+							validValueSet.add(item.getCode());
+						});
+					}
+				}
 				validValueSet.addAll(Arrays.asList(validValueType.value()));
-				if (validValueSet.contains(value) == false)
-				{
+
+				if (validValueSet.contains(value) == false) {
 					valid = false;
-				}	
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-			{
+				}
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 				throw new OpenStorefrontRuntimeException("Unexpected error occur trying to get value from object.", ex);
 			}
 		}
@@ -67,10 +84,10 @@ public class ValidValueRule
 	@Override
 	protected String getValidationRule(Field field)
 	{
-		StringBuilder sb = new StringBuilder();		
-		ValidValueType validValueType = field.getAnnotation(ValidValueType.class);		
+		StringBuilder sb = new StringBuilder();
+		ValidValueType validValueType = field.getAnnotation(ValidValueType.class);
 		sb.append("Set of valid values: ").append(Arrays.toString(validValueType.value()));
 		return sb.toString();
 	}
-	
+
 }

@@ -14,7 +14,7 @@ exports.config = {
     // For the HTML Reporter
     require('../node_modules/jasmine-reporters');
 
-/*
+
     // Add a reporter and store xml to 'reports'
     jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter({ baseDirectory: 'reports' }));
 
@@ -24,7 +24,7 @@ exports.config = {
         return path.join(helper.currentReportDate(), capabilities.caps_.browserName, descriptions.join('-'));
     }
       }));
-*/
+
 
   },
   
