@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
@@ -25,21 +24,22 @@ import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
- *  Handles all user business logic
+ * Handles all user business logic
+ *
  * @author dshurtleff
  */
 public class UserServiceImpl
-	extends ServiceProxy
-	implements UserService
+        extends ServiceProxy
+        implements UserService
 {
-	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
+
+    private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
 
     @Override
-    public List<UserWatch> getWatches(String userId) 
+    public List<UserWatch> getWatches(String userId)
     {
         UserWatch temp;
         temp = new UserWatch();
@@ -49,12 +49,12 @@ public class UserServiceImpl
     }
 
     /**
-     * 
+     *
      * @param watch
-     * @return 
+     * @return
      */
     @Override
-    public UserWatch addWatch(UserWatch watch) 
+    public UserWatch addWatch(UserWatch watch)
     {
         watch.setCreateDts(new Date());
         watch.setCreateUser(watch.getUsername());
@@ -64,14 +64,14 @@ public class UserServiceImpl
         watch.setLastViewDts(new Date());
         return persistenceService.persist(watch);
     }
-    
+
     /**
-     * 
+     *
      * @param watch
-     * @return 
+     * @return
      */
     @Override
-    public UserWatch updateWatch(UserWatch watch) 
+    public UserWatch updateWatch(UserWatch watch)
     {
         UserWatch temp = persistenceService.findById(UserWatch.class, watch.getUserWatchId());
         if (!watch.getNotifyFlg().equals(temp.getNotifyFlg()))
@@ -100,63 +100,80 @@ public class UserServiceImpl
     }
 
     @Override
-    public Boolean deleteWatch(String watchId) {
+    public Boolean deleteWatch(String watchId)
+    {
         UserWatch temp = persistenceService.findById(UserWatch.class, watchId);
         persistenceService.delete(temp);
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
 
     @Override
-    public UserProfile getUserProfile(String userId) {
-        try 
+    public UserProfile getUserProfile(String userId)
+    {
+        try
         {
-            UserProfile profile = persistenceService.findById(UserProfile.class, userId);            
+            UserProfile profile = persistenceService.findById(UserProfile.class, userId);
             if (profile == null)
             {
-                ;
                 /*TODO: Here we need to create a new profile if it doesn't exist...*/
+                profile = new UserProfile();
+                profile.setActiveStatus(TestEntity.ACTIVE_STATUS);
+                profile.setAdmin(Boolean.FALSE);
+                profile.setCreateDts(new Date());
+                profile.setCreateUser(userId);
+                profile.setEmail("email@email.com");
+                profile.setFirstName("First Name");
+                profile.setLastName("Last Name");
+                profile.setOrganization("Organization");
+                profile.setUpdateDts(new Date());
+                profile.setUpdateUser(userId);
+                profile.setUserTypeCode("USER");
+                profile.setUsername(userId);
+                return persistenceService.persist(profile);
             }
             return profile;
-        } catch(OpenStorefrontRuntimeException ex)
+        }
+        catch (OpenStorefrontRuntimeException ex)
         {
             throw new OpenStorefrontRuntimeException("There was an error getting the user profile");
         }
     }
 
     @Override
-    public UserProfile saveUserProfile(UserProfile user) {
+    public UserProfile saveUserProfile(UserProfile user)
+    {
         UserProfile temp = persistenceService.findById(UserProfile.class, user.getUsername());
-        if (!user.getActiveStatus().equals(temp.getActiveStatus()));
+        if (!user.getActiveStatus().equals(temp.getActiveStatus()))
         {
             temp.setActiveStatus(user.getActiveStatus());
         }
-        
-        if (!user.getEmail().equals(temp.getEmail()));
+
+        if (!user.getEmail().equals(temp.getEmail()))
         {
             temp.setEmail(user.getEmail());
         }
-        
-        if (!user.getFirstName().equals(temp.getFirstName()));
+
+        if (!user.getFirstName().equals(temp.getFirstName()))
         {
             temp.setFirstName(user.getFirstName());
         }
-        
-        if (!user.getLastName().equals(temp.getLastName()));
+
+        if (!user.getLastName().equals(temp.getLastName()))
         {
             temp.setLastName(user.getLastName());
         }
-        
-        if (!user.getOrganization().equals(temp.getOrganization()));
+
+        if (!user.getOrganization().equals(temp.getOrganization()))
         {
             temp.setOrganization(user.getOrganization());
         }
-        
-        if (!user.getUserTypeCode().equals(temp.getUserTypeCode()));
+
+        if (!user.getUserTypeCode().equals(temp.getUserTypeCode()))
         {
             temp.setUserTypeCode(user.getUserTypeCode());
         }
-        
-        if (!user.getUsername().equals(temp.getUsername()));
+
+        if (!user.getUsername().equals(temp.getUsername()))
         {
             temp.setUsername(user.getUsername());
         }
@@ -164,11 +181,10 @@ public class UserServiceImpl
     }
 
     @Override
-    public List<Component> getRecentlyViewed(String userId) {
+    public List<Component> getRecentlyViewed(String userId)
+    {
+        
         //CONTINUE HERE... left off after work on friday.
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-	
-	
-	
 }
