@@ -20,7 +20,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentContact
+public class ComponentContactView
 {	
 	private String postionDescription;
 	private String name;
@@ -28,7 +28,7 @@ public class ComponentContact
 	private String phone;
 	private String organization;
 
-	public ComponentContact()
+	public ComponentContactView()
 	{
 	}
 

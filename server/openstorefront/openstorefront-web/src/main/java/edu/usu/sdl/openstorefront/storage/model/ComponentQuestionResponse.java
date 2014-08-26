@@ -25,6 +25,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentQuestionResponse
+	extends BaseComponent
 {
 
 	@PK

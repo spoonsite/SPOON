@@ -25,15 +25,12 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class ComponentMedia
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private String componentMediaId;
-
-	@NotNull
-	private String componentId;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String fileName;
@@ -52,6 +49,9 @@ public class ComponentMedia
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	private String link;
 
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String caption;
+
 	public ComponentMedia()
 	{
 	}
@@ -64,26 +64,6 @@ public class ComponentMedia
 	public void setComponentMediaId(String componentMediaId)
 	{
 		this.componentMediaId = componentMediaId;
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
-	}
-
-	public String getFileName()
-	{
-		return fileName;
-	}
-
-	public void setFileName(String fileName)
-	{
-		this.fileName = fileName;
 	}
 
 	public String getOriginalName()
@@ -124,6 +104,26 @@ public class ComponentMedia
 	public void setLink(String link)
 	{
 		this.link = link;
+	}
+
+	public String getCaption()
+	{
+		return caption;
+	}
+
+	public void setCaption(String caption)
+	{
+		this.caption = caption;
+	}
+
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
 	}
 
 }

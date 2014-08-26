@@ -25,20 +25,20 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class ComponentEvaluation
+public class ComponentEvaluationView
 {
 	private Date startDate;
 	private Date endDate;
 	private String currentLevelCode = "N/A";
 	private String reviewedVersion;
 	
-	@DataType(ComponentEvaluationSchedule.class)
-	private List<ComponentEvaluationSchedule> evaluationSchedule = new ArrayList<>();
+	@DataType(ComponentEvaluationScheduleView.class)
+	private List<ComponentEvaluationScheduleView> evaluationSchedule = new ArrayList<>();
 	
-	@DataType(ComponentEvaluationSection.class)
-	private List<ComponentEvaluationSection> evaluationSections = new ArrayList<>();
+	@DataType(ComponentEvaluationSectionView.class)
+	private List<ComponentEvaluationSectionView> evaluationSections = new ArrayList<>();
 
-	public ComponentEvaluation()
+	public ComponentEvaluationView()
 	{
 	}
 
@@ -72,12 +72,12 @@ public class ComponentEvaluation
 		this.currentLevelCode = currentLevelCode;
 	}
 
-	public List<ComponentEvaluationSchedule> getEvaluationSchedule()
+	public List<ComponentEvaluationScheduleView> getEvaluationSchedule()
 	{
 		return evaluationSchedule;
 	}
 
-	public void setEvaluationSchedule(List<ComponentEvaluationSchedule> evaluationSchedule)
+	public void setEvaluationSchedule(List<ComponentEvaluationScheduleView> evaluationSchedule)
 	{
 		this.evaluationSchedule = evaluationSchedule;
 	}
@@ -92,12 +92,12 @@ public class ComponentEvaluation
 		this.reviewedVersion = reviewedVersion;
 	}
 
-	public List<ComponentEvaluationSection> getEvaluationSections()
+	public List<ComponentEvaluationSectionView> getEvaluationSections()
 	{
 		return evaluationSections;
 	}
 
-	public void setEvaluationSections(List<ComponentEvaluationSection> evaluationSections)
+	public void setEvaluationSections(List<ComponentEvaluationSectionView> evaluationSections)
 	{
 		this.evaluationSections = evaluationSections;
 	}

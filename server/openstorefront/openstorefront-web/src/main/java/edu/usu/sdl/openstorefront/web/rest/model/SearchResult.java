@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +31,7 @@ public class SearchResult
 
 	@NotNull
 	private String listingType; //Componet or Article
-	private Long componentId;
+	private String componentId;
 	private String articleAttributeType;
 	private String articleAttributeCode;
 
@@ -81,12 +82,12 @@ public class SearchResult
 		this.listingType = listingType;
 	}
 
-	public Long getComponentId()
+	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	public void setComponentId(Long componentId)
+	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}

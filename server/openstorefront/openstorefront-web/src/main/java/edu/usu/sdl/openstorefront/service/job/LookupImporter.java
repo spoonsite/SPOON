@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.service.job;
 
 import au.com.bytecode.opencsv.CSVReader;
 import cern.colt.Arrays;
-import edu.usu.sdl.openstorefront.service.PersistenceService;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
@@ -44,7 +43,7 @@ public class LookupImporter
 		implements DirectoryScanListener
 {
 
-	private static final Logger log = Logger.getLogger(PersistenceService.class.getName());
+	private static final Logger log = Logger.getLogger(LookupImporter.class.getName());
 
 	private static final int CODE = 0;
 	private static final int DESCRIPTION = 1;

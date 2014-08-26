@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import java.util.ArrayList;
@@ -53,9 +54,10 @@ public class Attribute
 	@GET
 	@APIDescription("Gets all active attributes and codes for the attributes in view based model.")	
 	@Path("/{type}/attributeCode/{code}/article")	
-	public String getAttributeArticle()
+	public Article getAttributeArticle()
 	{
-		return "";
+		
+		return new Article();
 	}	
 	
 }

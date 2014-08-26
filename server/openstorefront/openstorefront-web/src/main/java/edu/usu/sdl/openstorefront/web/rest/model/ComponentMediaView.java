@@ -15,62 +15,49 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import java.util.Date;
-
 /**
  *
  * @author dshurtleff
  */
-public class ComponentQuestionResponse
+public class ComponentMediaView
 {
 
-	private String response;
-	private String username;
-	private String userType;
-	private Date answeredDate;
+	private String link;
+	private String contentType;
+	private String caption;
 
-	public ComponentQuestionResponse()
+	public ComponentMediaView()
 	{
 	}
 
-	public String getResponse()
+	public String getLink()
 	{
-		return response;
+		return link;
 	}
 
-	public void setResponse(String response)
+	public void setLink(String link)
 	{
-		this.response = response;
+		this.link = link;
 	}
 
-	public String getUsername()
+	public String getContentType()
 	{
-		return username;
+		return contentType;
 	}
 
-	public void setUsername(String username)
+	public void setContentType(String contentType)
 	{
-		this.username = username;
+		this.contentType = contentType;
 	}
 
-	public Date getAnsweredDate()
+	public String getCaption()
 	{
-		return answeredDate;
+		return caption;
 	}
 
-	public void setAnsweredDate(Date answeredDate)
+	public void setCaption(String caption)
 	{
-		this.answeredDate = answeredDate;
-	}
-
-	public String getUserType()
-	{
-		return userType;
-	}
-
-	public void setUserType(String userType)
-	{
-		this.userType = userType;
+		this.caption = caption;
 	}
 
 }

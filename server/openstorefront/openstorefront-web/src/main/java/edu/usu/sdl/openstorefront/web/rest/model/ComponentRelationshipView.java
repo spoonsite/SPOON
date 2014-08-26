@@ -13,53 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.rest.model;
 
-import java.util.Date;
+package edu.usu.sdl.openstorefront.web.rest.model;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentEvaluationSchedule
+public class ComponentRelationshipView
 {
+	private Long componentId;
+	private String name;
 
-	private String evaluationLevelCode;
-	private Date completionDate;
-	private String levelStatus;
-
-	public ComponentEvaluationSchedule()
+	public ComponentRelationshipView()
 	{
 	}
 
-	public String getEvaluationLevelCode()
+	public Long getComponentId()
 	{
-		return evaluationLevelCode;
+		return componentId;
 	}
 
-	public void setEvaluationLevelCode(String evaluationLevelCode)
+	public void setComponentId(Long componentId)
 	{
-		this.evaluationLevelCode = evaluationLevelCode;
+		this.componentId = componentId;
 	}
 
-	public String getLevelStatus()
+	public String getName()
 	{
-		return levelStatus;
+		return name;
 	}
 
-	public void setLevelStatus(String levelStatus)
+	public void setName(String name)
 	{
-		this.levelStatus = levelStatus;
-	}
-
-	public Date getCompletionDate()
-	{
-		return completionDate;
-	}
-
-	public void setCompletionDate(Date completionDate)
-	{
-		this.completionDate = completionDate;
+		this.name = name;
 	}
 
 }

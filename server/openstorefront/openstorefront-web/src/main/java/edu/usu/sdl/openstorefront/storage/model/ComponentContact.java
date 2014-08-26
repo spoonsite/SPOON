@@ -23,16 +23,13 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class ComponentContact
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private String contactId;
-
-	@NotNull
-	private String componetId;
-
+	
 	@NotNull
 	private String contactType;
 
@@ -56,16 +53,6 @@ public class ComponentContact
 	public void setContactId(String contactId)
 	{
 		this.contactId = contactId;
-	}
-
-	public String getComponetId()
-	{
-		return componetId;
-	}
-
-	public void setComponetId(String componetId)
-	{
-		this.componetId = componetId;
 	}
 
 	public String getContactType()

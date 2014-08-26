@@ -16,12 +16,14 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
  */
 public class ComponentView
 {
-
 
 }

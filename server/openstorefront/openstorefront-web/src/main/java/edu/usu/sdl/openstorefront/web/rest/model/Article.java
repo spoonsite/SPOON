@@ -20,22 +20,45 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentTag
+public class Article
 {
-	private String text;
+	private String attributeCode;
+	private String attributeType;
+	private String html;
 
-	public ComponentTag()
+	public Article()
 	{
 	}
 
-	public String getText()
+	public String getAttributeCode()
 	{
-		return text;
+		return attributeCode;
 	}
 
-	public void setText(String text)
+	public void setAttributeCode(String attributeCode)
 	{
-		this.text = text;
+		this.attributeCode = attributeCode;
 	}
+
+	public String getAttributeType()
+	{
+		return attributeType;
+	}
+
+	public void setAttributeType(String attributeType)
+	{
+		this.attributeType = attributeType;
+	}
+
+	public String getHtml()
+	{
+		return html;
+	}
+
+	public void setHtml(String html)
+	{
+		this.html = html;
+	}
+	
 	
 }
