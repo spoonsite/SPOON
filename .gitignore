@@ -10,7 +10,7 @@
 /client/openstorefront/distwar/
 /client/openstorefront/dist/
 /client/openstorefront/app/bower_components/
-/client/openstorefront/screenshots
+/client/openstorefront/automation_logs
 client/openstorefront/npm-debug.log
 server/openstorefront/openstorefront-web/src/main/webapp/
 idea
