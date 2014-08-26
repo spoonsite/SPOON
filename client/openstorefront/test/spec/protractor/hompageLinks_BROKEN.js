@@ -1,4 +1,4 @@
-describe('homepageLinks_ Click on the listing links on the Storefront home page', function() {
+describe('homepageLinks_Click on the listing links on the Storefront home page', function() {
     it('the pages load and the links are not broken.', function() {
 
         // TODO:  Figure out how to dynamically get the # of links
@@ -22,7 +22,7 @@ describe('homepageLinks_ Click on the listing links on the Storefront home page'
      */
 
     // from stackoverflow (http://stackoverflow.com/questions/21251210/check-whether-anchor-have-href-test-case-using-protractor)
-    it('all tags have a reference (are not null between the tags)', function() {
+    it('all tags have a reference are not null between the tags', function() {
         element.all(by.xpath('/a')).then(function(links) {
             for (var i = 0; i < links.length; i++) {
                 expect(links[i].getAttribute('href')).not.toBeNull();

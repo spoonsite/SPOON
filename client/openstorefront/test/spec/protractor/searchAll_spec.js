@@ -1,4 +1,4 @@
-describe('searchAll_ Search entire database', function() {
+describe('searchAll_Search entire database', function() {
 
     // *** varies, depending on what is in the sample database ***
     var totalResults = 59;

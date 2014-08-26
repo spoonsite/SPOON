@@ -1,4 +1,4 @@
-describe('keywordSearch_ Search for Common Map Widget API', function() {
+describe('keywordSearch_Search for Common Map Widget API', function() {
   it('two search results are returned', function() {
     // Open the main site
     browser.get('http://di2e.github.io/openstorefront');

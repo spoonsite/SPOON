@@ -1,4 +1,4 @@
-describe('SvcV-4_ button from the home page', function() {
+describe('SvcV-4_button from the home page', function() {
 
     it('Expand the buttons in the categories', function () {
         // Open the main site
