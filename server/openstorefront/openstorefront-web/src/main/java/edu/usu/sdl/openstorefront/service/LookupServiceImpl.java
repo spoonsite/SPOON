@@ -73,6 +73,7 @@ public class LookupServiceImpl
 		LookupEntity oldEntity = persistenceService.findById(lookupEntity.getClass(), lookupEntity.getCode());
 		if (oldEntity != null) {
 			oldEntity.setDescription(lookupEntity.getDescription());
+			oldEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
 			oldEntity.setActiveStatus(lookupEntity.getActiveStatus());
 			oldEntity.setUpdateUser(lookupEntity.getUpdateUser());
 			oldEntity.setUpdateDts(TimeUtil.currentDate());
