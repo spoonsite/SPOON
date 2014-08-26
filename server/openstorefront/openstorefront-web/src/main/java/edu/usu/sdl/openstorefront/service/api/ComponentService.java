@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service.api;
+
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
+import java.util.List;
 
 /**
  *
@@ -22,5 +25,26 @@ package edu.usu.sdl.openstorefront.service.api;
  */
 public interface ComponentService
 {
+	/**
+	 * Return the whole list of components.
+	 * (the short view)
+	 * @return 
+	 */
+	public List<Component> getComponents();
 	
+	/**
+	 * Return the component attached to the given componentId.
+	 * (the short view)
+	 * @param componentId
+	 * @return 
+	 */
+	public Component getComponentSingle(String componentId);
+	
+	/**
+	 * Return the details object of the component attached to the given id. 
+	 * (the full view)
+	 * @param componentId
+	 * @return 
+	 */
+	public ComponentDetail getComponentDetails(String componentId);
 }

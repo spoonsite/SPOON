@@ -24,14 +24,15 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     $scope.total = result || {};
   });
   $scope.data = {};
-  $scope.data3 = {};
-  $scope.filters = angular.copy($scope.filters);
   $scope.landingRoute = null;
+  
   Business.getFilters().then(function(result) {
     if (result) {
       $scope.filters = result;
+      $scope.filters = angular.copy($scope.filters);
     } else {
       $scope.filters = null;
+      $scope.filters = angular.copy($scope.filters);
     }
   });
 

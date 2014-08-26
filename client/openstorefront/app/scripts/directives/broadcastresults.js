@@ -18,6 +18,12 @@
 
 /*global setupResults, fullDetailsToggle*/
 
+
+
+/***************************************************************
+* This directive is used in the results.html to trigger the page setup
+* after everything is loaded.
+***************************************************************/
 app.directive('broadcastResults', ['$timeout', function ($timeout) {
   return {
     template: '<div></div>',

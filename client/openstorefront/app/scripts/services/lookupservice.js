@@ -56,25 +56,14 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   var updateCache = function(name, value) {
     save(name, value);
   };
-  updateCache('','');
 
-
+  // var updateCache = function(name, value) {
+  //   save(name, value);
+  // };
 
   //Page Cache (on reload of page I want to reload the data)
-  var userTypeCodes = null;
-
-  var getUserTypeCodes = function() {
-    var deferred = $q.defer();
-    if (userTypeCodes === null) {
-      loadLookupTable('UserTypeCode', function(data, status, headers, config) { /*jshint unused:false*/
-        userTypeCodes = data.data;
-        deferred.resolve(userTypeCodes);
-      });
-    } else {
-      deferred.resolve(userTypeCodes);
-    }
-    return deferred.promise;
-  };
+  var refreshData = [];
+  refreshData.userTypeCodes = true;
 
   /**
   * Load a lookup table
@@ -82,8 +71,37 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   * @param  success function
   */
   var loadLookupTable = function(entityName, successFunc) {
-    $http.get('/api/v1/resource/lookup/' + entityName).success(successFunc);
+    $http.get('/api/v1/resource/lookup/' + entityName).success(successFunc).error(function(data, status, headers, config) { /*jshint unused:false*/
+      /*There was an error with the get*/
+    });
   };
+
+
+  var getUserTypeCodes = function() {
+    var deferred = $q.defer();
+
+    if (refreshData.userTypeCodes) {
+      localCache.clear('userTypeCodes');
+      refreshData.userTypeCodes = false;
+    }
+
+    var userTypeCodes = checkExpire('userTypeCodes', minute * 1440);
+    if (userTypeCodes) {
+      deferred.resolve(userTypeCodes);
+    } else {
+      loadLookupTable('UserTypeCodes', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data) {
+          save('userTypeCodes', data.data);
+          deferred.resolve(data.data);
+        } else {
+          deferred.reject('There was an error grabbing the eval levels');
+        }
+      });
+    }
+
+    return deferred.promise;
+  };
+
 
   
   var getEvalLevels = function() {
@@ -93,27 +111,43 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     if (evalLevels) {
       deferred.resolve(evalLevels);
     } else {
-      $http({
-        'method': 'GET',
-        'url': '/api/v1/resource/lookup/evalLevels/'
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
+      loadLookupTable('evalLevels', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data) {
           save('evalLevels', data);
           deferred.resolve(data);
         } else {
-          deferred.reject('There was an error grabbing the evalLevels');
+          updateCache('evalLevels', null);
+          deferred.reject('There was an error grabbing the eval levels');
         }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
       });
     }
 
     return deferred.promise;
   };
 
+  var getExpertise = function() {
+    var deferred = $q.defer();
+    var expertise = checkExpire('expertise', minute * 1440);
+    if (expertise) {
+      deferred.resolve(expertise);
+    } else {
+      loadLookupTable('expertise', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data) {
+          save('expertise', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the expertise');
+        }
+      });
+    }
+    return deferred.promise;
+  };
+
   //Public API
   return {
     getUserTypeCodes: getUserTypeCodes,
-    getEvalLevels: getEvalLevels
+    getEvalLevels: getEvalLevels,
+    getExpertise: getExpertise
   };
 
 }]);

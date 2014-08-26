@@ -22,7 +22,7 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
-  grunt.loadNpmTasks('grunt-war');
+    grunt.loadNpmTasks('grunt-war');
   grunt.loadNpmTasks("grunt-protractor-runner");
 
   // Define the configuration for all the tasks
@@ -169,11 +169,19 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '.jshintrc',
+        jshintignore: '.jshintignore',
         reporter: require('jshint-stylish')
       },
       all: [
       'Gruntfile.js',
-      '<%= yeoman.app %>/scripts/**/*.js'
+      '<%= yeoman.app %>/scripts/common/*.js',
+      '<%= yeoman.app %>/scripts/common-min/*.js',
+      '<%= yeoman.app %>/scripts/controllers/*.js',
+      '<%= yeoman.app %>/scripts/directives/*.js',
+      '<%= yeoman.app %>/scripts/filters/*.js',
+      '<%= yeoman.app %>/scripts/page_specific/*.js',
+      '<%= yeoman.app %>/scripts/services/*.js',
+      '<%= yeoman.app %>/scripts/*.js'
       ],
       test: {
         options: {
@@ -355,6 +363,7 @@ module.exports = function (grunt) {
           'bower_components/ckeditor/**/*',
           'bower_components/ng-ckeditor/ng-ckeditor.js',
           'styles/*.css',
+          'scripts/esapi4js/**/*',
           'scripts/common-min/*.js',
           'scripts/common/data.js'
           ]

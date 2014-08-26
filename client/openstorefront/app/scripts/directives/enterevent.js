@@ -16,22 +16,28 @@
 
 'use strict';
 
-app.directive('enterEvent', function () {
-  return function(scope, element, attrs) {
-    element.bind('keydown keypress', function(event) {
-      if(event.which === 13) {
-        scope.$apply(function(){
-          scope.$eval(attrs.ngEnter, {'event': event});
-        });
 
-        event.preventDefault();
-      }
-    });
-  };
-});
+/***************************************************************
+* Usage:: <input type="text" ng-enter="doThisFunction()" />
+***************************************************************/
+// app.directive('enterEvent', function () {
+//   return function(scope, element, attrs) {
+//     element.bind('keydown keypress', function(event) {
+//       if(event.which === 13) {
+//         scope.$apply(function(){
+//           scope.$eval(attrs.ngEnter, {'event': event});
+//         });
+//         event.preventDefault();
+//       }
+//     });
+//   };
+// });
 
+
+/***************************************************************
+* Usage:: <input type="text" on-enter="doThisFunction()" />
+***************************************************************/
 app.directive('onEnter',function(){
-
   var linkFn = function(scope,element,attrs) {
     element.bind('keypress', function(event) {
       if(event.which === 13) {
@@ -42,7 +48,6 @@ app.directive('onEnter',function(){
       }
     });
   };
-
   return {
     link:linkFn
   };

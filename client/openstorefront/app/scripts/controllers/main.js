@@ -27,6 +27,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.typeahead  = null;
   $scope.goToLand   = false;
   $scope.searchKey  = $rootScope.searchKey;
+
   Business.getFilters().then(function(result){
     if (result) {
       $scope.filters = result;
@@ -38,14 +39,16 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     }
   });
 
-  /***************************************************************
-  * Set up typeahead, and then watch for selection made
-  ***************************************************************/
   Business.componentservice.getComponentDetails().then(function(result) {
     Business.typeahead(result, null).then(function(value){
-      $scope.typeahead = value;
+      if (value) {
+        $scope.typeahead = value;
+      } else {
+        $scope.typeahead = null;
+      }
     });
   });
+
   //////////////////////////////////////////////////////////////////////////////
   // Event Watchers
   //////////////////////////////////////////////////////////////////////////////
@@ -117,8 +120,8 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
       $location.search('route', route);
       $location.path('/landing');
     // });
-return false;
-};
+    return false; //
+  };
 
   /***************************************************************
   * This function us initiated by the 'GetStarted button'

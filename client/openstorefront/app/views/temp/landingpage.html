@@ -6,6 +6,9 @@
 <hr />
 <br>
 <h2>Architecture overview:</h2>
+<a ng-click="scrollTo('functions')">Go To SvcV-4 Functions</a>
+<br>
+<a ng-click="scrollTo('components')">Go To Component List</a>
 <div style="margin-left: 20px;">
   <ul>
     <li>
@@ -31,6 +34,11 @@
       <div style="text-align:center">
         <img src="images/idamCapabilityFunctionality.png" alt="IdAM Capability Functionality" style=" width: 80%; display: inline-block; height: auto;">
       </div>
+      <a id="functions"></a>
+      <br>
+      <div>&nbsp;</div>
+      <br>
+      <div>&nbsp;</div>
     </li>
     <li>
       <h3>SvcV-4 Functions and Descriptions:</h3>
@@ -133,6 +141,8 @@
       </div>
     </li>
   </ul>
+  <a id="components"></a>
+
   <component-list hide-more="true" click-callback="callback" class-list="min" title="IdAM Compliant Components Found in the StoreFront" data="data" cols="3" type="DI2E Level 1" filters="filters" set-filters="[{'type': 'DI2E-SVCV4-A', 'code': '1.2.1'}]"></component-list>
   <h3>
     Other IdAM Compliant Components Coming Soon to the StoreFront

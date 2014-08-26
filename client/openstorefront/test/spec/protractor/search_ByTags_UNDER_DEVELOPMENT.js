@@ -1,5 +1,5 @@
 describe('Search by TAGS', function() {
-    it('Search for "iSpatial" and clear out any tags', function() {
+    it('Search for iSpatial and clear out any tags', function() {
         // Open the main site
         browser.get('http://di2e.github.io/openstorefront');
 
@@ -23,7 +23,7 @@ describe('Search by TAGS', function() {
     });
 
     // it 'Add new tags'  *** ADDS to search bar NOT the tags bar ***
-    it ('Add a new tag "iAddedThis" to iSpatial', function() {
+    it ('Add a new tag iAddedThis to iSpatial', function() {
         element(by.css('input')).sendKeys('iAddedThis', protractor.Key.ENTER);
 
     });

@@ -1,4 +1,4 @@
-describe('Search for "VANTAGE"', function() {
+describe('Search for VANTAGE', function() {
   it('returns 2 results', function() {
     // Open the main site
     browser.get('http://di2e.github.io/openstorefront');
@@ -13,7 +13,7 @@ describe('Search for "VANTAGE"', function() {
 
 
 describe('Click on the results page.  From the search results page', function() {
-  it('click on the Details, Reviews, and Q&A tabs -- content loads from those tabs', function() {
+  it('click on the Details Reviews and Q&A tabs -- content loads from those tabs', function() {
     // Click on the second or OZONE results
     element.all(by.css('.results-content-title-content')).get(1).click();
 
