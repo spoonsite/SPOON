@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class Component
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK

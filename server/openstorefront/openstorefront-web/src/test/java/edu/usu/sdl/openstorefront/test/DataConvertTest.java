@@ -37,8 +37,8 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestion;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentRelationship;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResource;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentReview;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentTag;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentTagView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchResult;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchResultAttribute;
@@ -556,7 +556,7 @@ public class DataConvertTest
 					int maxAttr = random.nextInt(3);
 					for (int i = 0; i < maxAttr; i++)
 					{
-						ComponentTag componentTag = new ComponentTag();
+						ComponentTagView componentTag = new ComponentTagView();
 						componentTag.setText(tempTags.remove(0));
 						componentDetail.getTags().add(componentTag);
 					}
@@ -654,7 +654,7 @@ public class DataConvertTest
 						String title = keys.remove(0);
 						String comment = reviewMap.get(title);
 
-						ComponentReview componentReview = new ComponentReview();
+						ComponentReviewView componentReview = new ComponentReviewView();
 						componentReview.setTitle(title);
 						componentReview.setComment(comment);
 
@@ -663,7 +663,7 @@ public class DataConvertTest
 						int max = random.nextInt(3);
 						for (int j = 0; j < max; j++)
 						{
-							ComponentTag tag = new ComponentTag();
+							ComponentTagView tag = new ComponentTagView();
 							tag.setText(tempPros.remove(0));
 							componentReview.getPros().add(tag);
 						}
@@ -673,7 +673,7 @@ public class DataConvertTest
 						max = random.nextInt(3);
 						for (int j = 0; j < max; j++)
 						{
-							ComponentTag tag = new ComponentTag();
+							ComponentTagView tag = new ComponentTagView();
 							tag.setText(tempCons.remove(0));
 							componentReview.getCons().add(tag);
 						}

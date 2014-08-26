@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -102,8 +103,8 @@ public class ComponentDetail
 	@DataType(ComponentResource.class)
 	private List<ComponentResource> resources = new ArrayList<>();
 
-	@DataType(ComponentReview.class)
-	private List<ComponentReview> reviews = new ArrayList<>();
+	@DataType(ComponentReviewView.class)
+	private List<ComponentReviewView> reviews = new ArrayList<>();
 
 	@DataType(ComponentExternalDependency.class)
 	private List<ComponentExternalDependency> dependencies = new ArrayList<>();
@@ -276,12 +277,12 @@ public class ComponentDetail
 		this.resources = resources;
 	}
 
-	public List<ComponentReview> getReviews()
+	public List<ComponentReviewView> getReviews()
 	{
 		return reviews;
 	}
 
-	public void setReviews(List<ComponentReview> reviews)
+	public void setReviews(List<ComponentReviewView> reviews)
 	{
 		this.reviews = reviews;
 	}

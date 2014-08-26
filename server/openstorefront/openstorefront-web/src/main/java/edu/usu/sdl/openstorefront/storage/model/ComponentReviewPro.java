@@ -23,12 +23,13 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class ComponentReviewPro
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private ComponentReviewProPk componentReviewProPk;
+	private String text;
 
 	public ComponentReviewPro()
 	{
@@ -42,6 +43,22 @@ public class ComponentReviewPro
 	public void setComponentReviewProPk(ComponentReviewProPk componentReviewProPk)
 	{
 		this.componentReviewProPk = componentReviewProPk;
+	}
+
+	/**
+	 * @return the text
+	 */
+	public String getText()
+	{
+		return text;
+	}
+
+	/**
+	 * @param text the text to set
+	 */
+	public void setText(String text)
+	{
+		this.text = text;
 	}
 
 }

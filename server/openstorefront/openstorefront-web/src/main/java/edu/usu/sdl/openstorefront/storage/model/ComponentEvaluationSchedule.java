@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class ComponentEvaluationSchedule
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK

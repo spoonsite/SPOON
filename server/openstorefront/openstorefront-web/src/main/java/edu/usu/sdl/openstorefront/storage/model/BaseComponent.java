@@ -13,65 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
- * @author dshurtleff
+ * @author jlaw
  */
-public class ComponentMetadata
-		extends BaseComponent
+public class BaseComponent
+	extends BaseEntity
 {
-
-	@PK
+	
 	@NotNull
-	private String metadataId;
+	private String lookupId;	
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String label;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String value;
-
-	public ComponentMetadata()
+	public BaseComponent()
 	{
 	}
-
-	public String getMetadataId()
+	
+	/**
+	 * @return the lookupId
+	 */
+	public String getLookupId()
 	{
-		return metadataId;
+		return lookupId;
 	}
 
-	public void setMetadataId(String metadataId)
+	/**
+	 * @param componentId the lookupId to set
+	 */
+	public void setLookupId(String componentId)
 	{
-		this.metadataId = metadataId;
-	}
-
-	public String getLabel()
-	{
-		return label;
-	}
-
-	public void setLabel(String label)
-	{
-		this.label = label;
-	}
-
-	public String getValue()
-	{
-		return value;
-	}
-
-	public void setValue(String value)
-	{
-		this.value = value;
+		this.lookupId = componentId;
 	}
 
 }

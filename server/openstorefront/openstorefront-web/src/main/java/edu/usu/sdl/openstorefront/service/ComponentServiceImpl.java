@@ -19,25 +19,24 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContact;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluation;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestion;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResource;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentReview;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentTag;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -54,26 +53,17 @@ public class ComponentServiceImpl
 	{
 	}
 	
-	public <T> List<T> findClassInstances(Class<T> classInstance, String methodName, String id)
+	public <T extends BaseComponent> List<T> findClassInstances(Class<T> classInstance, String id, Boolean activeStatus)
 	{
 		try
 		{
 			T temp = classInstance.newInstance();
-			Method method = null;
-			try 
+			temp.setLookupId(id);
+			if (activeStatus)
 			{
-				method = temp.getClass().getMethod(methodName, String.class);
-			} catch (SecurityException | NoSuchMethodException e) {
-				// ...
+				temp.setActiveStatus(BaseComponent.ACTIVE_STATUS);
 			}
-			try 
-			{
-				method.invoke(temp, id);
-			}
-			catch (InvocationTargetException ex) {
-				Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			return persistenceService.queryByExample(classInstance, new QueryByExample((BaseEntity) temp));
+			return persistenceService.queryByExample(classInstance, new QueryByExample(temp));
 		} catch(InstantiationException | IllegalAccessException ex)
 		{
 			throw new OpenStorefrontRuntimeException(ex);
@@ -94,8 +84,7 @@ public class ComponentServiceImpl
 	{
 		if (!componentId.isEmpty()) 
 		{
-			Component temp;
-			temp = new Component();
+			Component temp = new Component();
 			temp.setComponentId(componentId);
 			List<Component> result = persistenceService.queryByExample(Component.class, new QueryByExample(temp));
 			if (!result.isEmpty())
@@ -126,8 +115,22 @@ public class ComponentServiceImpl
 		// all of that stuff there...
 		
 		result.setComponentId(Long.MIN_VALUE /*change the id to a string?*/);
-		result.setTags(findClassInstances(ComponentTag.class, "setComponentId", componentId));
-		result.setReviews(findClassInstances(ComponentReview.class, "setComponentId", componentId));
+		result.setTags(findClassInstances(ComponentTag.class, componentId, Boolean.TRUE));
+		
+		//This may need to change to create a list of the reviews as view objects instead of the storage models
+		List<ComponentReviewView> reviews = (List<ComponentReviewView>)(List<?>)findClassInstances(ComponentReview.class, componentId, Boolean.TRUE);
+		for(ComponentReviewView review: reviews)
+		{
+			ComponentReviewPro tempPro = new ComponentReviewPro();
+			//TODO: Set the composite key here so we can grab the right pros.
+			ComponentReviewCon tempCon = new ComponentReviewCon();
+			//TODO: Set the composite key here so we can grab the right cons.
+			review.setPros(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro)));
+			review.setCons(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempPro)));
+		}
+		result.setReviews(reviews);
+		
+		
 		result.setResources(findClassInstances(ComponentResource.class, "setComponentId", componentId));
 		result.setQuestions(findClassInstances(ComponentQuestion.class, "setComponentId", componentId));
 		result.setMetadata(findClassInstances(ComponentMetadata.class, "setComponentId", componentId));

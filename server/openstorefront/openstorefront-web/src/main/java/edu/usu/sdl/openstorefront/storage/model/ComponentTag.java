@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentTag
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
@@ -33,11 +33,8 @@ public class ComponentTag
 	private String tagId;
 
 	@NotNull
-	private String componentId;
-
-	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_TAG)
-	private String tagText;
+	private String text;
 
 	public ComponentTag()
 	{
@@ -53,24 +50,14 @@ public class ComponentTag
 		this.tagId = tagId;
 	}
 
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
-	}
-
 	public String getTagText()
 	{
-		return tagText;
+		return text;
 	}
 
 	public void setTagText(String tagText)
 	{
-		this.tagText = tagText;
+		this.text = tagText;
 	}
 
 }

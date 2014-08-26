@@ -25,15 +25,13 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class ComponentResource
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private String resourceId;
 
-	@NotNull
-	private String componentId;
 	private String resourceFileId;
 
 	@NotNull
@@ -64,16 +62,6 @@ public class ComponentResource
 	public void setResourceId(String resourceId)
 	{
 		this.resourceId = resourceId;
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
 	}
 
 	public String getResourceFileId()

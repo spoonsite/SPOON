@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class ComponentTracking
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
@@ -36,9 +36,6 @@ public class ComponentTracking
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String trackEventTypeCode;
-
-	@NotNull
-	private String componentId;
 
 	@NotNull
 	private Date eventDts;
@@ -68,16 +65,6 @@ public class ComponentTracking
 	public void setTrackEventTypeCode(String trackEventTypeCode)
 	{
 		this.trackEventTypeCode = trackEventTypeCode;
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
 	}
 
 	public Date getEventDts()

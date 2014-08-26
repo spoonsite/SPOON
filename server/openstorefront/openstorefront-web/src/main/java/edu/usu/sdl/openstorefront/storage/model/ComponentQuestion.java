@@ -25,14 +25,12 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentQuestion
+	extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private String questionId;
-
-	@NotNull
-	private String componentId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_QUESTION)
@@ -88,16 +86,6 @@ public class ComponentQuestion
 	public void setQuestionId(String questionId)
 	{
 		this.questionId = questionId;
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
 	}
 
 }

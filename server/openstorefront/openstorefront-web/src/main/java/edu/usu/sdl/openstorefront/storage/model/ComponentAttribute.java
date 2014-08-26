@@ -22,7 +22,7 @@ import edu.usu.sdl.openstorefront.util.PK;
  * @author dshurtleff
  */
 public class ComponentAttribute
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK

@@ -25,14 +25,12 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentExternalDependency
+	extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private String dependencyId;
-
-	@NotNull
-	private String componentId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -52,16 +50,6 @@ public class ComponentExternalDependency
 
 	public ComponentExternalDependency()
 	{
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
 	}
 
 	public String getVersion()
