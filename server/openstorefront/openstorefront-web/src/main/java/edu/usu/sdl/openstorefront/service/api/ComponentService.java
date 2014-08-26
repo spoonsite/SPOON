@@ -15,36 +15,55 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import java.util.List;
 
 /**
+ * Services that handle all component classes
  *
  * @author dshurtleff
  */
 public interface ComponentService
 {
+
 	/**
-	 * Return the whole list of components.
-	 * (the short view)
-	 * @return 
+	 * This only returns the active
+	 *
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId
+	 * @return
+	 */
+	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId);
+
+	/**
+	 * This can be use to get parts of the component (Eg. ComponentReview)
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId
+	 * @param all (true to get inactive as well)
+	 * @return
+	 */
+	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all);
+
+	/**
+	 * Return the whole list of components. (the short view)
+	 *
+	 * @return
 	 */
 	public List<Component> getComponents();
-	
+
 	/**
-	 * Return the component attached to the given componentId.
-	 * (the short view)
+	 * Return the details object of the component attached to the given id. (the
+	 * full view)
+	 *
 	 * @param componentId
-	 * @return 
+	 * @return
 	 */
-	public Component getComponentSingle(String componentId);
-	
-	/**
-	 * Return the details object of the component attached to the given id. 
-	 * (the full view)
-	 * @param componentId
-	 * @return 
-	 */
-	public ComponentDetail getComponentDetails(String componentId);
+	public ComponentDetailView getComponentDetails(String componentId);
+
 }

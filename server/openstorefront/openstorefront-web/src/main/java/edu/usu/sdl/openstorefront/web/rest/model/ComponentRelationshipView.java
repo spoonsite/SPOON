@@ -20,22 +20,33 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentTag
+public class ComponentRelationshipView
 {
-	private String text;
+	private Long componentId;
+	private String name;
 
-	public ComponentTag()
+	public ComponentRelationshipView()
 	{
 	}
 
-	public String getText()
+	public Long getComponentId()
 	{
-		return text;
+		return componentId;
 	}
 
-	public void setText(String text)
+	public void setComponentId(Long componentId)
 	{
-		this.text = text;
+		this.componentId = componentId;
 	}
-	
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
 }

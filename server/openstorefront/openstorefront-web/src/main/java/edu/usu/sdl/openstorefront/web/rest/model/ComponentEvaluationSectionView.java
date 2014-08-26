@@ -16,27 +16,18 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+
 /**
  *
  * @author dshurtleff
  */
-public class ComponentRelationship
+public class ComponentEvaluationSectionView
 {
-	private Long componentId;
-	private String name;
+	private String name;	
+	private Integer score;
 
-	public ComponentRelationship()
+	public ComponentEvaluationSectionView()
 	{
-	}
-
-	public Long getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(Long componentId)
-	{
-		this.componentId = componentId;
 	}
 
 	public String getName()
@@ -47,6 +38,16 @@ public class ComponentRelationship
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public Integer getScore()
+	{
+		return score;
+	}
+
+	public void setScore(Integer score)
+	{
+		this.score = score;
 	}
 
 }

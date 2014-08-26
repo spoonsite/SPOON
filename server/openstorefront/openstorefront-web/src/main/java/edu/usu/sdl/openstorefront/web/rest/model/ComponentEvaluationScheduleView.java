@@ -13,70 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.DataType;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentComment
+public class ComponentEvaluationScheduleView
 {
-	private String username;
-	private Date postDts;
-	private String comment;
-	
-	@DataType(ComponentComment.class)
-	private List<ComponentComment> replies = new ArrayList<>();
 
-	public ComponentComment()
+	private String evaluationLevelCode;
+	private Date completionDate;
+	private String levelStatus;
+
+	public ComponentEvaluationScheduleView()
 	{
 	}
 
-	public String getUsername()
+	public String getEvaluationLevelCode()
 	{
-		return username;
+		return evaluationLevelCode;
 	}
 
-	public void setUsername(String username)
+	public void setEvaluationLevelCode(String evaluationLevelCode)
 	{
-		this.username = username;
+		this.evaluationLevelCode = evaluationLevelCode;
 	}
 
-	public Date getPostDts()
+	public String getLevelStatus()
 	{
-		return postDts;
+		return levelStatus;
 	}
 
-	public void setPostDts(Date postDts)
+	public void setLevelStatus(String levelStatus)
 	{
-		this.postDts = postDts;
+		this.levelStatus = levelStatus;
 	}
 
-	public String getComment()
+	public Date getCompletionDate()
 	{
-		return comment;
+		return completionDate;
 	}
 
-	public void setComment(String comment)
+	public void setCompletionDate(Date completionDate)
 	{
-		this.comment = comment;
+		this.completionDate = completionDate;
 	}
 
-	public List<ComponentComment> getReplies()
-	{
-		return replies;
-	}
-
-	public void setReplies(List<ComponentComment> replies)
-	{
-		this.replies = replies;
-	}
-	
-	
 }

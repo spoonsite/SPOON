@@ -13,45 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.PK;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
+import java.util.Date;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentMetadata
-		extends BaseComponent
+public class ComponentMetadataView
 {
 
-	@PK
-	@NotNull
-	private String metadataId;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String label;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String value;
+	private Date updateDts;
 
-	public ComponentMetadata()
+	public ComponentMetadataView()
 	{
 	}
 
-	public String getMetadataId()
+	public static ComponentMetadataView toView(ComponentMetadata metadata)
 	{
-		return metadataId;
-	}
-
-	public void setMetadataId(String metadataId)
-	{
-		this.metadataId = metadataId;
+		ComponentMetadataView componentMetadataView = new ComponentMetadataView();
+		componentMetadataView.setLabel(metadata.getLabel());
+		componentMetadataView.setUpdateDts(metadata.getUpdateDts());
+		componentMetadataView.setValue(metadata.getValue());
+		return componentMetadataView;
 	}
 
 	public String getLabel()
@@ -72,6 +60,16 @@ public class ComponentMetadata
 	public void setValue(String value)
 	{
 		this.value = value;
+	}
+
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

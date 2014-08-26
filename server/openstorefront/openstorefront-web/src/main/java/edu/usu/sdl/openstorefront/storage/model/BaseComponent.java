@@ -15,49 +15,31 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.util.PK;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author dshurtleff
+ * @author jlaw
  */
-public class ComponentEvaluationSection
-	extends BaseComponent
+public class BaseComponent
+		extends BaseEntity
 {
 
-	@PK
 	@NotNull
-	private ComponentEvaluationSectionPk componentEvaluationSectionPk;
+	private String componentId;
 
-	@Min(1)
-	@Max(5)
-	private Integer score;
-
-	public ComponentEvaluationSection()
+	public BaseComponent()
 	{
 	}
 
-	public ComponentEvaluationSectionPk getComponentEvaluationSectionPk()
+	public String getComponentId()
 	{
-		return componentEvaluationSectionPk;
+		return componentId;
 	}
 
-	public void setComponentEvaluationSectionPk(ComponentEvaluationSectionPk componentEvaluationSectionPk)
+	public void setComponentId(String componentId)
 	{
-		this.componentEvaluationSectionPk = componentEvaluationSectionPk;
-	}
-
-	public Integer getScore()
-	{
-		return score;
-	}
-
-	public void setScore(Integer score)
-	{
-		this.score = score;
+		this.componentId = componentId;
 	}
 
 }

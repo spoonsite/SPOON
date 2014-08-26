@@ -28,15 +28,12 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class ComponentReview
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private String componentReviewId;
-
-	@NotNull
-	private String componentId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
@@ -57,10 +54,10 @@ public class ComponentReview
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String experienceTimeType;
+	private String usedTimeCode;
 
 	@NotNull
-	private Date lastUsedDate;
+	private Date lastUsed;
 
 	@NotNull
 	private Boolean recommend;
@@ -103,16 +100,6 @@ public class ComponentReview
 		this.comment = comment;
 	}
 
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
-	}
-
 	public Integer getRating()
 	{
 		return rating;
@@ -135,12 +122,12 @@ public class ComponentReview
 
 	public String getExperienceTimeType()
 	{
-		return experienceTimeType;
+		return usedTimeCode;
 	}
 
 	public void setExperienceTimeType(String experienceTimeType)
 	{
-		this.experienceTimeType = experienceTimeType;
+		this.usedTimeCode = experienceTimeType;
 	}
 
 	public Boolean getRecommend()
@@ -165,12 +152,12 @@ public class ComponentReview
 
 	public Date getLastUsedDate()
 	{
-		return lastUsedDate;
+		return lastUsed;
 	}
 
 	public void setLastUsedDate(Date lastUsedDate)
 	{
-		this.lastUsedDate = lastUsedDate;
+		this.lastUsed = lastUsedDate;
 	}
 
 }
