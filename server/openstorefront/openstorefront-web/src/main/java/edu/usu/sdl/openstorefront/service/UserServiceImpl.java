@@ -21,7 +21,9 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
+import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -41,10 +43,9 @@ public class UserServiceImpl
 	@Override
 	public List<UserWatch> getWatches(String userId)
 	{
-		UserWatch temp;
-		temp = new UserWatch();
-		temp.setUsername("Username"/*TODO: set this to the real username*/);
-		temp.setActiveStatus(TestEntity.ACTIVE_STATUS);
+		UserWatch temp = new UserWatch();
+		temp.setUsername(userId);
+		temp.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		return persistenceService.queryByExample(UserWatch.class, new QueryByExample(temp));
 	}
 
@@ -56,12 +57,10 @@ public class UserServiceImpl
 	@Override
 	public UserWatch addWatch(UserWatch watch)
 	{
-		watch.setCreateDts(new Date());
-		watch.setCreateUser(watch.getUsername());
-		watch.setUpdateDts(new Date());
-		watch.setUpdateUser(watch.getUsername());
 		watch.setUserWatchId(persistenceService.generateId());
-		watch.setLastViewDts(new Date());
+		watch.setCreateDts(TimeUtil.currentDate());
+		watch.setUpdateDts(TimeUtil.currentDate());
+		watch.setLastViewDts(TimeUtil.currentDate());
 		return persistenceService.persist(watch);
 	}
 
@@ -77,17 +76,8 @@ public class UserServiceImpl
 		if (!watch.getNotifyFlg().equals(temp.getNotifyFlg())) {
 			temp.setNotifyFlg(watch.getNotifyFlg());
 		}
-		if (!watch.getActiveStatus().equals(temp.getActiveStatus())) {
-			temp.setActiveStatus(watch.getActiveStatus());
-		}
-		if (!watch.getUpdateUser().equals(temp.getUpdateUser())) {
-			temp.setUpdateUser(watch.getUpdateUser());
-		}
 		if (!watch.getLastViewDts().equals(temp.getLastViewDts())) {
 			temp.setLastViewDts(watch.getLastViewDts());
-		}
-		if (!watch.getUsername().equals(temp.getUsername())) {
-			temp.setUsername(watch.getUsername());
 		}
 		temp.setUpdateDts(new Date());
 		temp.setUpdateUser(watch.getUsername());
@@ -114,19 +104,14 @@ public class UserServiceImpl
 				profile.setAdmin(Boolean.FALSE);
 				profile.setCreateDts(new Date());
 				profile.setCreateUser(userId);
-				profile.setEmail("email@email.com");
-				profile.setFirstName("First Name");
-				profile.setLastName("Last Name");
-				profile.setOrganization("Organization");
 				profile.setUpdateDts(new Date());
 				profile.setUpdateUser(userId);
-				profile.setUserTypeCode("USER");
+				profile.setUserTypeCode(UserTypeCode.END_USER);
 				profile.setUsername(userId);
 				return persistenceService.persist(profile);
 			}
 			return profile;
-		}
-		catch (OpenStorefrontRuntimeException ex) {
+		} catch (OpenStorefrontRuntimeException ex) {
 			throw new OpenStorefrontRuntimeException("There was an error getting the user profile");
 		}
 	}
@@ -139,7 +124,7 @@ public class UserServiceImpl
 			temp.setActiveStatus(user.getActiveStatus());
 		}
 
-		if (!user.getEmail().equals(temp.getEmail())) {
+		if (user.getEmail() != null && !user.getEmail().equals(temp.getEmail())) {
 			temp.setEmail(user.getEmail());
 		}
 

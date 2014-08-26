@@ -36,7 +36,7 @@ import javax.ws.rs.core.MediaType;
 @Path("v1/resource/components")
 @APIDescription("Components are the central resource of the system.  The majority of the listing are components.")
 public class Component
-	extends BaseResource
+		extends BaseResource
 {
 
 	@GET

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -24,30 +22,24 @@ import javax.validation.constraints.NotNull;
  * @author jlaw
  */
 public class BaseComponent
-	extends BaseEntity
+		extends BaseEntity
 {
-	
+
 	@NotNull
-	private String lookupId;	
+	private String componentId;
 
 	public BaseComponent()
 	{
 	}
-	
-	/**
-	 * @return the lookupId
-	 */
-	public String getLookupId()
+
+	public String getComponentId()
 	{
-		return lookupId;
+		return componentId;
 	}
 
-	/**
-	 * @param componentId the lookupId to set
-	 */
-	public void setLookupId(String componentId)
+	public void setComponentId(String componentId)
 	{
-		this.lookupId = componentId;
+		this.componentId = componentId;
 	}
 
 }

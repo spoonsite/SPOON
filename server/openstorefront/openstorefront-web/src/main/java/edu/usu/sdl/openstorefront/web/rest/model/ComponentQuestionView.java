@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
-import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,23 +25,34 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentQuestionView
-	extends ComponentQuestion
 {
-	
-	@DataType(ComponentQuestionResponse.class)
-	private List<ComponentQuestionResponse> responses = new ArrayList<>();
+
+	private ComponentQuestion componentQuestion;
+
+	@DataType(ComponentQuestionResponseView.class)
+	private List<ComponentQuestionResponseView> responses = new ArrayList<>();
 
 	public ComponentQuestionView()
 	{
 	}
 
-	public List<ComponentQuestionResponse> getResponses()
+	public List<ComponentQuestionResponseView> getResponses()
 	{
 		return responses;
 	}
 
-	public void setResponses(List<ComponentQuestionResponse> responses)
+	public void setResponses(List<ComponentQuestionResponseView> responses)
 	{
 		this.responses = responses;
+	}
+
+	public ComponentQuestion getComponentQuestion()
+	{
+		return componentQuestion;
+	}
+
+	public void setComponentQuestion(ComponentQuestion componentQuestion)
+	{
+		this.componentQuestion = componentQuestion;
 	}
 }

@@ -13,32 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+package edu.usu.sdl.openstorefront.web.rest.model;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentTagView
-		extends ComponentTag
+public class Article
 {
+	private String attributeCode;
+	private String attributeType;
+	private String html;
 
-	public ComponentTagView()
+	public Article()
 	{
+	}
+
+	public String getAttributeCode()
+	{
+		return attributeCode;
+	}
+
+	public void setAttributeCode(String attributeCode)
+	{
+		this.attributeCode = attributeCode;
+	}
+
+	public String getAttributeType()
+	{
+		return attributeType;
+	}
+
+	public void setAttributeType(String attributeType)
+	{
+		this.attributeType = attributeType;
+	}
+
+	public String getHtml()
+	{
+		return html;
+	}
+
+	public void setHtml(String html)
+	{
+		this.html = html;
 	}
 	
-	public ComponentTagView(ComponentTag tag)
-	{
-		this.setActiveStatus(tag.getActiveStatus());
-		this.setCreateDts(tag.getCreateDts());
-		this.setCreateUser(tag.getCreateUser());
-		this.setLookupId(tag.getLookupId());
-		this.setTagId(tag.getTagId());
-		this.setTagText(tag.getTagText());
-		this.setUpdateDts(tag.getUpdateDts());
-		this.setUpdateUser(tag.getUpdateUser());
-	}
-
+	
 }

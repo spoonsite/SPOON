@@ -17,11 +17,6 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
-import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
-import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
-import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
-import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +33,7 @@ public class ComponentDetailView
 
 	@NotNull
 	@ParamTypeDescription("Key")
-	private Long componentId;
+	private String componentId;
 
 	@NotNull
 	private String guid;
@@ -96,38 +91,36 @@ public class ComponentDetailView
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
 
-	@DataType(ComponentMetadata.class)
-	private List<ComponentMetadata> metadata = new ArrayList<>();
+	@DataType(ComponentMetadataView.class)
+	private List<ComponentMetadataView> metadata = new ArrayList<>();
 
-	@DataType(ComponentMedia.class)
-	private List<ComponentMedia> componentMedia = new ArrayList<>();
+	@DataType(ComponentMediaView.class)
+	private List<ComponentMediaView> componentMedia = new ArrayList<>();
 
-	@DataType(ComponentContact.class)
-	private List<ComponentContact> contacts = new ArrayList<>();
+	@DataType(ComponentContactView.class)
+	private List<ComponentContactView> contacts = new ArrayList<>();
 
-	@DataType(ComponentResource.class)
-	private List<ComponentResource> resources = new ArrayList<>();
+	@DataType(ComponentResourceView.class)
+	private List<ComponentResourceView> resources = new ArrayList<>();
 
 	@DataType(ComponentReviewView.class)
 	private List<ComponentReviewView> reviews = new ArrayList<>();
 
-	@DataType(ComponentExternalDependency.class)
-	private List<ComponentExternalDependency> dependencies = new ArrayList<>();
+	@DataType(ComponentExternalDependencyView.class)
+	private List<ComponentExternalDependencyView> dependencies = new ArrayList<>();
 
-	@DataType(Integer.class)
 	private Integer componentViews = 0;
 
-	
 	public ComponentDetailView()
 	{
 	}
 
-	public Long getComponentId()
+	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	public void setComponentId(Long componentId)
+	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}
@@ -242,42 +235,42 @@ public class ComponentDetailView
 		this.attributes = attributes;
 	}
 
-	public List<ComponentMetadata> getMetadata()
+	public List<ComponentMetadataView> getMetadata()
 	{
 		return metadata;
 	}
 
-	public void setMetadata(List<ComponentMetadata> metadata)
+	public void setMetadata(List<ComponentMetadataView> metadata)
 	{
 		this.metadata = metadata;
 	}
 
-	public List<ComponentMedia> getComponentMedia()
+	public List<ComponentMediaView> getComponentMedia()
 	{
 		return componentMedia;
 	}
 
-	public void setComponentMedia(List<ComponentMedia> componentMedia)
+	public void setComponentMedia(List<ComponentMediaView> componentMedia)
 	{
 		this.componentMedia = componentMedia;
 	}
 
-	public List<ComponentContact> getContacts()
+	public List<ComponentContactView> getContacts()
 	{
 		return contacts;
 	}
 
-	public void setContacts(List<ComponentContact> contacts)
+	public void setContacts(List<ComponentContactView> contacts)
 	{
 		this.contacts = contacts;
 	}
 
-	public List<ComponentResource> getResources()
+	public List<ComponentResourceView> getResources()
 	{
 		return resources;
 	}
 
-	public void setResources(List<ComponentResource> resources)
+	public void setResources(List<ComponentResourceView> resources)
 	{
 		this.resources = resources;
 	}
@@ -372,12 +365,12 @@ public class ComponentDetailView
 		this.subComponents = subComponents;
 	}
 
-	public List<ComponentExternalDependency> getDependencies()
+	public List<ComponentExternalDependencyView> getDependencies()
 	{
 		return dependencies;
 	}
 
-	public void setDependencies(List<ComponentExternalDependency> dependencies)
+	public void setDependencies(List<ComponentExternalDependencyView> dependencies)
 	{
 		this.dependencies = dependencies;
 	}
@@ -402,17 +395,11 @@ public class ComponentDetailView
 		this.lastActivityDts = lastActivityDts;
 	}
 
-	/**
-	 * @return the componentViews
-	 */
 	public Integer getComponentViews()
 	{
 		return componentViews;
 	}
 
-	/**
-	 * @param componentViews the componentViews to set
-	 */
 	public void setComponentViews(Integer componentViews)
 	{
 		this.componentViews = componentViews;

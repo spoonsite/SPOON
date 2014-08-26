@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
+
+import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
+import edu.usu.sdl.openstorefront.storage.model.ResourceType;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 
 /**
  *
@@ -22,13 +25,33 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  */
 public class ComponentResourceView
 {
-	private String name; 
-	private String type;
+
+	private String name;
+	private String resourceType;
+	private String resourceTypeDesc;
 	private String description;
 	private String link;
+	private Boolean restricted;
 
 	public ComponentResourceView()
 	{
+	}
+
+	public static ComponentResourceView toView(ComponentResource componentResource)
+	{
+		ComponentResourceView componentResourceView = new ComponentResourceView();
+		componentResourceView.setDescription(componentResource.getDescription());
+		componentResourceView.setName(componentResource.getName());
+		componentResourceView.setResourceType(componentResource.getResourceType());
+		componentResourceView.setResourceTypeDesc(TranslateUtil.translate(ResourceType.class, componentResource.getResourceType()));
+		componentResourceView.setRestricted(componentResource.getRestricted());
+
+		String link = componentResource.getLink();
+		if (componentResource.getResourceFileId() != null) {
+			link = ComponentResource.LOCAL_RESOURCE_URL + componentResource.getResourceId();
+		}
+		componentResourceView.setLink(link);
+		return componentResourceView;
 	}
 
 	public String getName()
@@ -39,16 +62,6 @@ public class ComponentResourceView
 	public void setName(String name)
 	{
 		this.name = name;
-	}
-
-	public String getType()
-	{
-		return type;
-	}
-
-	public void setType(String type)
-	{
-		this.type = type;
 	}
 
 	public String getDescription()
@@ -69,6 +82,36 @@ public class ComponentResourceView
 	public void setLink(String link)
 	{
 		this.link = link;
+	}
+
+	public String getResourceType()
+	{
+		return resourceType;
+	}
+
+	public void setResourceType(String resourceType)
+	{
+		this.resourceType = resourceType;
+	}
+
+	public Boolean getRestricted()
+	{
+		return restricted;
+	}
+
+	public void setRestricted(Boolean restricted)
+	{
+		this.restricted = restricted;
+	}
+
+	public String getResourceTypeDesc()
+	{
+		return resourceTypeDesc;
+	}
+
+	public void setResourceTypeDesc(String resourceTypeDesc)
+	{
+		this.resourceTypeDesc = resourceTypeDesc;
 	}
 
 }

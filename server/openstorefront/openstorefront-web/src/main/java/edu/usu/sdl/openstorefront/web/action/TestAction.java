@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.action;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -37,59 +36,56 @@ import net.sourceforge.stripes.action.Resolution;
  * @author dshurtleff
  */
 public class TestAction
-	extends BaseAction
+		extends BaseAction
 {
+
 	private boolean generateData;
-	
-	
+
 	@DefaultHandler
 	public Resolution checkSetup()
 	{
 		List<String> data = Arrays.asList("Hello", "Test", "Apple");
-		data = data.stream().filter(item->item.startsWith("A")).collect(Collectors.toList());
+		data = data.stream().filter(item -> item.startsWith("A")).collect(Collectors.toList());
 		return streamResults(data);
 	}
-	
+
 	@HandlesEvent("TestList")
 	public Resolution testList()
 	{
 		List<LookupModel> lookups = new ArrayList<>();
-		
+
 		List<TestEntity> test = service.getLookupService().findLookup(TestEntity.class);
 		test.forEach(t -> {
 			LookupModel lookup = new LookupModel();
 			lookup.setCode(t.getCode());
-			lookup.setDescription(t.getDescription());			
+			lookup.setDescription(t.getDescription());
 			lookups.add(lookup);
 		});
 		return streamResults(lookups);
 	}
-	
+
 	@HandlesEvent("ConvertData")
 	public Resolution convertData() throws IOException
 	{
-		List<OldAsset> assets = objectMapper.readValue(new File("C:\\development\\storefront\\source\\old_data\\new-asset-data-all.json"), new TypeReference<List<OldAsset>>() {});
-		
-		List<ComponentDetailView> newAssets = new ArrayList<>();		
+		List<OldAsset> assets = objectMapper.readValue(new File("C:\\development\\storefront\\source\\old_data\\new-asset-data-all.json"), new TypeReference<List<OldAsset>>()
+		{
+		});
+
+		List<ComponentDetailView> newAssets = new ArrayList<>();
 		assets.forEach(oldAsset -> {
-			
+
 			ComponentDetailView componentDetail = new ComponentDetailView();
 			//defaults
 			componentDetail.setActiveStatus(BaseEntity.ACTIVE_STATUS);
-			
-			//map form old			
-			componentDetail.setComponentId(oldAsset.getId());
-			componentDetail.setGuid(oldAsset.getUuid());
-			
-			
-			if (generateData)	
-			{
+
+			//map form old
+			if (generateData) {
 				//filling some details at random
-			}				
+			}
 
 			newAssets.add(componentDetail);
 		});
-				
+
 		return streamResults(newAssets);
 	}
 
@@ -102,5 +98,5 @@ public class TestAction
 	{
 		this.generateData = generateData;
 	}
-	
+
 }

@@ -26,29 +26,29 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
  */
 public class SolrService
 {
-	private static final String CORE_EXAMPLE = "openstorefront";
-	
-	//Should reuse server to avoid leaks according to docs.
-	private static SolrServer exampleServer;
-	
-	public static void init()
-	{
-		String url = PropertiesManager.getValue("SOLR_BASE_ADDRESS", "http://localhost:8983/solr/") + CORE_EXAMPLE;		
-		exampleServer  = new HttpSolrServer(url, new DefaultHttpClient());		
-	}
-	
-	public static void cleanup()
-	{
-		if (exampleServer != null)
-		{
-			exampleServer.shutdown();
-		}
-	}	
-	
-	public SolrServer getExampleServer()
-	{
-		return exampleServer;
-	}
+//	private static final String CORE_EXAMPLE = "openstorefront";
+//	
+//	//Should reuse server to avoid leaks according to docs.
+//	private static SolrServer exampleServer;
+//	
+//	public static void init()
+//	{
+//		String url = PropertiesManager.getValue("SOLR_BASE_ADDRESS", "http://localhost:8983/solr/") + CORE_EXAMPLE;		
+//		exampleServer  = new HttpSolrServer(url, new DefaultHttpClient());		
+//	}
+//	
+//	public static void cleanup()
+//	{
+//		if (exampleServer != null)
+//		{
+//			exampleServer.shutdown();
+//		}
+//	}	
+//	
+//	public SolrServer getExampleServer()
+//	{
+//		return exampleServer;
+//	}
 	
 	
 	

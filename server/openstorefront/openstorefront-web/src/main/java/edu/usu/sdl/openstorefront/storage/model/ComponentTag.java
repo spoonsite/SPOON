@@ -50,12 +50,12 @@ public class ComponentTag
 		this.tagId = tagId;
 	}
 
-	public String getTagText()
+	public String getText()
 	{
 		return text;
 	}
 
-	public void setTagText(String tagText)
+	public void setText(String tagText)
 	{
 		this.text = tagText;
 	}

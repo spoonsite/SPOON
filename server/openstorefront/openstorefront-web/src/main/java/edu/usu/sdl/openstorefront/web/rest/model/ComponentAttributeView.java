@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -23,11 +22,13 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
  * @author dshurtleff
  */
 public class ComponentAttributeView
-	extends ComponentAttribute
 {
-	private String typeDescription;	
+
+	private String typeDescription;
 	private String codeDescription;
 	private String codeLongDescription;
+	private ComponentAttribute componentAttribute;
+	private boolean importantFlg;
 
 	public ComponentAttributeView()
 	{
@@ -62,5 +63,25 @@ public class ComponentAttributeView
 	{
 		this.codeLongDescription = codeLongDescription;
 	}
-	
+
+	public boolean isImportantFlg()
+	{
+		return importantFlg;
+	}
+
+	public void setImportantFlg(boolean importantFlg)
+	{
+		this.importantFlg = importantFlg;
+	}
+
+	public ComponentAttribute getComponentAttribute()
+	{
+		return componentAttribute;
+	}
+
+	public void setComponentAttribute(ComponentAttribute componentAttribute)
+	{
+		this.componentAttribute = componentAttribute;
+	}
+
 }

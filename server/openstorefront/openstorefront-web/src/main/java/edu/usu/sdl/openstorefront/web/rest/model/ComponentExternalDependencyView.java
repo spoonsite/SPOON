@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 /**
@@ -22,6 +21,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  */
 public class ComponentExternalDependencyView
 {
+
 	private String dependency;
 	private String version;
 	private String dependancyReferenceLink;
@@ -70,5 +70,5 @@ public class ComponentExternalDependencyView
 	{
 		this.dependency = dependency;
 	}
-	
+
 }

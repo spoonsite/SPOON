@@ -10,6 +10,17 @@
 /client/openstorefront/distwar/
 /client/openstorefront/dist/
 /client/openstorefront/app/bower_components/
+client/openstorefront/npm-debug.log
+/server/openstorefront/openstorefront-web/src/main/webapp/scripts/
+/server/openstorefront/openstorefront-web/src/main/webapp/views/
+/server/openstorefront/openstorefront-web/src/main/webapp/images/
+/server/openstorefront/openstorefront-web/src/main/webapp/bower_components/
+/server/openstorefront/openstorefront-web/src/main/webapp/fonts/
+/server/openstorefront/openstorefront-web/src/main/webapp/styles/
+/server/openstorefront/openstorefront-web/src/main/webapp/404.html
+/server/openstorefront/openstorefront-web/src/main/webapp/favicon.ico
+/server/openstorefront/openstorefront-web/src/main/webapp/robots.txt
+/server/openstorefront/openstorefront-web/src/main/webapp/index.html
 /client/openstorefront/screenshots
 client/openstorefront/npm-debug.log
 server/openstorefront/openstorefront-web/src/main/webapp/

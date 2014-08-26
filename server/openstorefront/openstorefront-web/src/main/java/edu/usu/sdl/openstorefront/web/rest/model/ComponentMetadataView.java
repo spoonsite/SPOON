@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
+
+import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
+import java.util.Date;
 
 /**
  *
@@ -22,11 +24,22 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  */
 public class ComponentMetadataView
 {
+
 	private String label;
 	private String value;
+	private Date updateDts;
 
 	public ComponentMetadataView()
 	{
+	}
+
+	public static ComponentMetadataView toView(ComponentMetadata metadata)
+	{
+		ComponentMetadataView componentMetadataView = new ComponentMetadataView();
+		componentMetadataView.setLabel(metadata.getLabel());
+		componentMetadataView.setUpdateDts(metadata.getUpdateDts());
+		componentMetadataView.setValue(metadata.getValue());
+		return componentMetadataView;
 	}
 
 	public String getLabel()
@@ -47,6 +60,16 @@ public class ComponentMetadataView
 	public void setValue(String value)
 	{
 		this.value = value;
+	}
+
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

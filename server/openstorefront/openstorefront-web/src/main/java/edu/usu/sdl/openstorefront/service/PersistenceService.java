@@ -409,7 +409,9 @@ public class PersistenceService
 	{
 		OObjectDatabaseTx db = getConnection();
 		try {
-			db.delete(entity);
+			if (entity != null) {
+				db.delete(entity);
+			}
 		} finally {
 			closeConnection(db);
 		}

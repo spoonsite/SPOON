@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
@@ -21,7 +20,6 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,22 +27,18 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentReviewView
-	extends ComponentReview
 {
-	
+
+	private ComponentReview componentReview;
+
 	@DataType(ComponentReviewPro.class)
 	private List<ComponentReviewPro> pros = new ArrayList<>();
-	
+
 	@DataType(ComponentReviewCon.class)
 	private List<ComponentReviewCon> cons = new ArrayList<>();
 
 	public ComponentReviewView()
 	{
-	}
-
-	public ComponentReviewView(ComponentReview review)
-	{
-		
 	}
 
 	public List<ComponentReviewPro> getPros()
@@ -66,5 +60,15 @@ public class ComponentReviewView
 	{
 		this.cons = cons;
 	}
-	
+
+	public ComponentReview getComponentReview()
+	{
+		return componentReview;
+	}
+
+	public void setComponentReview(ComponentReview componentReview)
+	{
+		this.componentReview = componentReview;
+	}
+
 }

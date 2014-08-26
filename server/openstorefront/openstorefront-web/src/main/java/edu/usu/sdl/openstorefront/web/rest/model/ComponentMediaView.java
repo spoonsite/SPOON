@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 /**
@@ -22,10 +21,10 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  */
 public class ComponentMediaView
 {
+
 	private String link;
 	private String contentType;
 	private String caption;
-	private String description;
 
 	public ComponentMediaView()
 	{
@@ -59,16 +58,6 @@ public class ComponentMediaView
 	public void setCaption(String caption)
 	{
 		this.caption = caption;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
 	}
 
 }
