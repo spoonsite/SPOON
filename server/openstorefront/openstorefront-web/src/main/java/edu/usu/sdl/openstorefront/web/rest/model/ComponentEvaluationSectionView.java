@@ -16,18 +16,17 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+
 /**
  *
  * @author dshurtleff
  */
-public class ComponentResource
+public class ComponentEvaluationSectionView
 {
-	private String name; 
-	private String type;
-	private String description;
-	private String link;
+	private String name;	
+	private Integer score;
 
-	public ComponentResource()
+	public ComponentEvaluationSectionView()
 	{
 	}
 
@@ -41,34 +40,14 @@ public class ComponentResource
 		this.name = name;
 	}
 
-	public String getType()
+	public Integer getScore()
 	{
-		return type;
+		return score;
 	}
 
-	public void setType(String type)
+	public void setScore(Integer score)
 	{
-		this.type = type;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
-
-	public String getLink()
-	{
-		return link;
-	}
-
-	public void setLink(String link)
-	{
-		this.link = link;
+		this.score = score;
 	}
 
 }

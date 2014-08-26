@@ -20,55 +20,55 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentExternalDependency
+public class ComponentMediaView
 {
-	private String dependency;
-	private String version;
-	private String dependancyReferenceLink;
-	private String comment;
+	private String link;
+	private String contentType;
+	private String caption;
+	private String description;
 
-	public ComponentExternalDependency()
+	public ComponentMediaView()
 	{
 	}
 
-	public String getComment()
+	public String getLink()
 	{
-		return comment;
+		return link;
 	}
 
-	public void setComment(String comment)
+	public void setLink(String link)
 	{
-		this.comment = comment;
+		this.link = link;
 	}
 
-	public String getVersion()
+	public String getContentType()
 	{
-		return version;
+		return contentType;
 	}
 
-	public void setVersion(String version)
+	public void setContentType(String contentType)
 	{
-		this.version = version;
+		this.contentType = contentType;
 	}
 
-	public String getDependancyReferenceLink()
+	public String getCaption()
 	{
-		return dependancyReferenceLink;
+		return caption;
 	}
 
-	public void setDependancyReferenceLink(String dependancyReferenceLink)
+	public void setCaption(String caption)
 	{
-		this.dependancyReferenceLink = dependancyReferenceLink;
+		this.caption = caption;
 	}
 
-	public String getDependency()
+	public String getDescription()
 	{
-		return dependency;
+		return description;
 	}
 
-	public void setDependency(String dependency)
+	public void setDescription(String description)
 	{
-		this.dependency = dependency;
+		this.description = description;
 	}
-	
+
 }

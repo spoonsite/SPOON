@@ -17,6 +17,8 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,49 +27,15 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class ComponentQuestion
+public class ComponentQuestionView
+	extends ComponentQuestion
 {
-	private String question;
-	private String username;
-	private String userType;	
-	private Date createDts;
-	private Date updateDts;
 	
 	@DataType(ComponentQuestionResponse.class)
 	private List<ComponentQuestionResponse> responses = new ArrayList<>();
 
-	public ComponentQuestion()
+	public ComponentQuestionView()
 	{
-	}
-	
-	public String getQuestion()
-	{
-		return question;
-	}
-
-	public void setQuestion(String question)
-	{
-		this.question = question;
-	}
-
-	public Date getCreateDts()
-	{
-		return createDts;
-	}
-
-	public void setCreateDts(Date createDts)
-	{
-		this.createDts = createDts;
-	}
-
-	public Date getUpdateDts()
-	{
-		return updateDts;
-	}
-
-	public void setUpdateDts(Date updateDts)
-	{
-		this.updateDts = updateDts;
 	}
 
 	public List<ComponentQuestionResponse> getResponses()
@@ -78,25 +46,5 @@ public class ComponentQuestion
 	public void setResponses(List<ComponentQuestionResponse> responses)
 	{
 		this.responses = responses;
-	}
-
-	public String getUsername()
-	{
-		return username;
-	}
-
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
-
-	public String getUserType()
-	{
-		return userType;
-	}
-
-	public void setUserType(String userType)
-	{
-		this.userType = userType;
 	}
 }

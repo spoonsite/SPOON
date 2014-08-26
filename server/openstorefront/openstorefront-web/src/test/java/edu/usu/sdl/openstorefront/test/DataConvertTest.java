@@ -24,19 +24,19 @@ import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttribute;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentContact;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluation;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSchedule;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSection;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependency;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentMedia;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadata;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestion;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponse;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentRelationship;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentResource;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationScheduleView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSectionView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentRelationshipView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTagView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
@@ -81,8 +81,8 @@ public class DataConvertTest
 
 		List<OldAsset> assets = oldDataWrapper.getData();
 
-		List<ComponentDetail> newAssetMin = processData(assets, false);
-		List<ComponentDetail> newAssetComplete = processData(assets, true);
+		List<ComponentDetailView> newAssetMin = processData(assets, false);
+		List<ComponentDetailView> newAssetComplete = processData(assets, true);
 
 		//System.out.println(objectMapper.writeValueAsString(newAssetMin));
 		objectMapper.writeValue(new File("c:/development/storefront/data/components-min.json"), newAssetMin);
@@ -90,7 +90,7 @@ public class DataConvertTest
 		objectMapper.writeValue(new File("c:/development/storefront/data/searchResults.json"), mapSearchResults(newAssetComplete));
 	}
 
-	private List<ComponentDetail> processData(List<OldAsset> assets, boolean generateData)
+	private List<ComponentDetailView> processData(List<OldAsset> assets, boolean generateData)
 	{
 
 		Set<String> metaTypeToSkip = new HashSet<>();
@@ -227,7 +227,7 @@ public class DataConvertTest
 		AttributeImport attributeImport = new AttributeImport();
 		Map<String, AttributeTypeView> attributeMap = attributeImport.loadAttributeMap();
 
-		ComponentAttribute idamAttribute = new ComponentAttribute();
+		ComponentAttributeView idamAttribute = new ComponentAttributeView();
 		idamAttribute.setType("DI2E-SVCV4-A");
 		idamAttribute.setTypeDescription("DI2E SvcV-4 Alignment");
 		idamAttribute.setCode("1.2.1");
@@ -241,11 +241,11 @@ public class DataConvertTest
 
 		SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
 
-		List<ComponentDetail> newAssets = new ArrayList<>();
+		List<ComponentDetailView> newAssets = new ArrayList<>();
 		assets.forEach(oldAsset ->
 		{
 
-			ComponentDetail componentDetail = new ComponentDetail();
+			ComponentDetailView componentDetail = new ComponentDetailView();
 			//defaults
 			componentDetail.setActiveStatus(BaseEntity.ACTIVE_STATUS);
 
@@ -291,7 +291,7 @@ public class DataConvertTest
 			{
 				//Need to generate
 				Collections.shuffle(peopleNames);
-				ComponentContact contact = new ComponentContact();
+				ComponentContactView contact = new ComponentContactView();
 				contact.setPostionDescription("Technical POC");
 				contact.setName(peopleNames.get(0));
 				contact.setEmail("sample_email@test.com");
@@ -306,7 +306,7 @@ public class DataConvertTest
 				if ("Government Point of Contact Name".equalsIgnoreCase(field.getName()))
 				{
 					Collections.shuffle(peopleNames);
-					ComponentContact contact = new ComponentContact();
+					ComponentContactView contact = new ComponentContactView();
 					contact.setPostionDescription("Government POC");
 					contact.setName(peopleNames.get(0));
 					contact.setEmail("sample_email@test.com");
@@ -329,7 +329,7 @@ public class DataConvertTest
 			//resources
 			oldAsset.getDocUrls().forEach(doc ->
 			{
-				ComponentResource componentResource = new ComponentResource();
+				ComponentResourceView componentResource = new ComponentResourceView();
 				componentResource.setName("Documentation");
 				componentResource.setLink(StringProcessor.createHrefUrls(doc.getUrl(), true));
 				componentResource.setType("Document");
@@ -338,7 +338,7 @@ public class DataConvertTest
 
 			if (StringUtils.isNotBlank(oldAsset.getInstallUrl()))
 			{
-				ComponentResource componentResource = new ComponentResource();
+				ComponentResourceView componentResource = new ComponentResourceView();
 				componentResource.setName("Install Url");
 				componentResource.setLink(StringProcessor.createHrefUrls(oldAsset.getInstallUrl(), true));
 				componentResource.setType("Document");
@@ -362,7 +362,7 @@ public class DataConvertTest
 					}
 					if (type != null)
 					{
-						ComponentResource componentResource = new ComponentResource();
+						ComponentResourceView componentResource = new ComponentResourceView();
 						componentResource.setName(field.getName());
 						componentResource.setLink(StringProcessor.createHrefUrls(field.getValue(), true));
 						componentResource.setType(type);
@@ -372,7 +372,7 @@ public class DataConvertTest
 			});
 
 			//metadata/attributes
-			ComponentAttribute attribute = mapAttribute("TYPE", oldAsset.getTypes().getTitle(), attributeMap);
+			ComponentAttributeView attribute = mapAttribute("TYPE", oldAsset.getTypes().getTitle(), attributeMap);
 			attribute.setImportant(true);
 			componentDetail.getAttributes().add(attribute);
 
@@ -397,7 +397,7 @@ public class DataConvertTest
 			oldAsset.getCategories().forEach(category ->
 			{
 
-				ComponentAttribute catAttribute = new ComponentAttribute();
+				ComponentAttributeView catAttribute = new ComponentAttributeView();
 				AttributeTypeView attributeTypeView = attributeMap.get("DI2E-SVCV4-A");
 				catAttribute.setType(attributeTypeView.getType());
 				catAttribute.setTypeDescription(attributeTypeView.getDescription());
@@ -513,7 +513,7 @@ public class DataConvertTest
 					}
 					if (newType != null && newCodeLabel != null)
 					{
-						ComponentAttribute metaAttribute = mapAttribute(newType, newCodeLabel, attributeMap);
+						ComponentAttributeView metaAttribute = mapAttribute(newType, newCodeLabel, attributeMap);
 						componentDetail.getAttributes().add(metaAttribute);
 					}
 
@@ -532,15 +532,15 @@ public class DataConvertTest
 					{
 						if (random.nextInt(10) < 3)
 						{
-							ComponentDetail component = newAssets.get(random.nextInt(newAssets.size()));
-							ComponentRelationship relationship = new ComponentRelationship();
+							ComponentDetailView component = newAssets.get(random.nextInt(newAssets.size()));
+							ComponentRelationshipView relationship = new ComponentRelationshipView();
 							relationship.setComponentId(component.getComponentId());
 							relationship.setName(component.getName());
 							componentDetail.setParentComponent(relationship);
 						} else if (random.nextInt(10) < 3)
 						{
-							ComponentDetail component = newAssets.get(random.nextInt(newAssets.size()));
-							ComponentRelationship relationship = new ComponentRelationship();
+							ComponentDetailView component = newAssets.get(random.nextInt(newAssets.size()));
+							ComponentRelationshipView relationship = new ComponentRelationshipView();
 							relationship.setComponentId(component.getComponentId());
 							relationship.setName(component.getName());
 							componentDetail.getSubComponents().add(relationship);
@@ -573,7 +573,7 @@ public class DataConvertTest
 					{
 						String question = keys.remove(0);
 						List<String> responses = questionMap.get(question);
-						ComponentQuestion componentQuestion = new ComponentQuestion();
+						ComponentQuestionView componentQuestion = new ComponentQuestionView();
 						componentQuestion.setQuestion(question);
 
 						Collections.shuffle(peopleNames);
@@ -588,7 +588,7 @@ public class DataConvertTest
 
 						for (String reponse : responses)
 						{
-							ComponentQuestionResponse questionResponse = new ComponentQuestionResponse();
+							ComponentQuestionResponseView questionResponse = new ComponentQuestionResponseView();
 							Collections.shuffle(peopleNames);
 							questionResponse.setUsername(peopleNames.get(0));
 
@@ -618,7 +618,7 @@ public class DataConvertTest
 //						String  typeDescription = keys.remove(0);
 //						String  codeDescription =  attriubuteMap.get(typeDescription);
 //
-//						ComponentAttribute metaAttribute = new ComponentAttribute();
+//						ComponentAttributeView metaAttribute = new ComponentAttributeView();
 //						metaAttribute.setTypeDescription(typeDescription);
 //						metaAttribute.setCodeDescription(codeDescription);
 //						componentDetail.getAttributes().add(metaAttribute);
@@ -635,7 +635,7 @@ public class DataConvertTest
 					{
 						String label = keys.remove(0);
 						String value = metadataMap.get(label);
-						ComponentMetadata metadata = new ComponentMetadata();
+						ComponentMetadataView metadata = new ComponentMetadataView();
 						metadata.setLabel(label);
 						metadata.setValue(value);
 						componentDetail.getMetadata().add(metadata);
@@ -715,7 +715,7 @@ public class DataConvertTest
 						String dependancy = keys.remove(0);
 						String comment = externalDependancyMap.get(dependancy);
 
-						ComponentExternalDependency externalDependancy = new ComponentExternalDependency();
+						ComponentExternalDependencyView externalDependancy = new ComponentExternalDependencyView();
 						externalDependancy.setComment(comment);
 						externalDependancy.setDependency(dependancy);
 						componentDetail.getDependencies().add(externalDependancy);
@@ -723,7 +723,7 @@ public class DataConvertTest
 				}
 
 				//eval data
-				ComponentEvaluation evaluation = componentDetail.getEvaluation();
+				ComponentEvaluationView evaluation = componentDetail.getEvaluation();
 
 				if (!"NA".equals(evaluation.getCurrentLevelCode()))
 				{
@@ -731,26 +731,26 @@ public class DataConvertTest
 					if ("LEVEL0".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
 					{
 						//set status to C - complete
-						ComponentEvaluationSchedule componentEvaluationSchedule = new ComponentEvaluationSchedule();
+						ComponentEvaluationScheduleView componentEvaluationSchedule = new ComponentEvaluationScheduleView();
 						componentEvaluationSchedule.setLevelStatus("C");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL0");
 						componentEvaluationSchedule.setCompletionDate(TimeUtil.fromString("2014-1-11T10:15:30.00Z"));
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 
 						//set status to C - complete
-						componentEvaluationSchedule = new ComponentEvaluationSchedule();
+						componentEvaluationSchedule = new ComponentEvaluationScheduleView();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL1");
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 
 						//set status to C - complete
-						componentEvaluationSchedule = new ComponentEvaluationSchedule();
+						componentEvaluationSchedule = new ComponentEvaluationScheduleView();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL2");
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 
 						//set status to C - complete
-						componentEvaluationSchedule = new ComponentEvaluationSchedule();
+						componentEvaluationSchedule = new ComponentEvaluationScheduleView();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL3");
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
@@ -758,7 +758,7 @@ public class DataConvertTest
 					} else if ("LEVEL1".equals(componentDetail.getEvaluation().getCurrentLevelCode()))
 					{
 						//set status to C - complete
-						ComponentEvaluationSchedule componentEvaluationSchedule = new ComponentEvaluationSchedule();
+						ComponentEvaluationScheduleView componentEvaluationSchedule = new ComponentEvaluationScheduleView();
 						componentEvaluationSchedule.setLevelStatus("C");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL0");
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
@@ -768,7 +768,7 @@ public class DataConvertTest
 						evaluation.setStartDate(TimeUtil.fromString("2014-1-03T10:15:30.00Z"));
 						evaluation.setEndDate(TimeUtil.fromString("2014-3-01T10:15:30.00Z"));
 
-						componentEvaluationSchedule = new ComponentEvaluationSchedule();
+						componentEvaluationSchedule = new ComponentEvaluationScheduleView();
 						int check = random.nextInt(10);
 						if (check < 1)
 						{
@@ -784,7 +784,7 @@ public class DataConvertTest
 
 							for (String sectionName : evalSections)
 							{
-								ComponentEvaluationSection section = new ComponentEvaluationSection();
+								ComponentEvaluationSectionView section = new ComponentEvaluationSectionView();
 								section.setName(sectionName);
 								section.setScore(random.nextInt(5) + 1);
 								if (random.nextInt(10) < 1)
@@ -800,13 +800,13 @@ public class DataConvertTest
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 
 						//set status to C - complete
-						componentEvaluationSchedule = new ComponentEvaluationSchedule();
+						componentEvaluationSchedule = new ComponentEvaluationScheduleView();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL2");
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
 
 						//set status to C - complete
-						componentEvaluationSchedule = new ComponentEvaluationSchedule();
+						componentEvaluationSchedule = new ComponentEvaluationScheduleView();
 						componentEvaluationSchedule.setLevelStatus("N");
 						componentEvaluationSchedule.setEvaluationLevelCode("LEVEL3");
 						evaluation.getEvaluationSchedule().add(componentEvaluationSchedule);
@@ -828,9 +828,9 @@ public class DataConvertTest
 		return newAssets;
 	}
 
-	private ComponentAttribute mapAttribute(String attributeType, String codeLabel, Map<String, AttributeTypeView> attributeMap)
+	private ComponentAttributeView mapAttribute(String attributeType, String codeLabel, Map<String, AttributeTypeView> attributeMap)
 	{
-		ComponentAttribute attribute = new ComponentAttribute();
+		ComponentAttributeView attribute = new ComponentAttributeView();
 		AttributeTypeView attributeTypeView = attributeMap.get(attributeType);
 		attribute.setType(attributeTypeView.getType());
 		attribute.setTypeDescription(attributeTypeView.getDescription());
@@ -848,9 +848,9 @@ public class DataConvertTest
 		return attribute;
 	}
 
-	private ComponentMedia createMediaFromUrl(String url)
+	private ComponentMediaView createMediaFromUrl(String url)
 	{
-		ComponentMedia media = new ComponentMedia();
+		ComponentMediaView media = new ComponentMediaView();
 		String baseImagePath = "images/oldsite/";
 		String resource = StringProcessor.getResourceNameFromUrl(url);
 		media.setLink(baseImagePath + resource);
@@ -858,7 +858,7 @@ public class DataConvertTest
 		return media;
 	}
 
-	private List<SearchResult> mapSearchResults(List<ComponentDetail> details)
+	private List<SearchResult> mapSearchResults(List<ComponentDetailView> details)
 	{
 		List<SearchResult> searchResults = new ArrayList<>();
 		Random random = new Random(System.currentTimeMillis());

@@ -16,18 +16,40 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-
 /**
  *
  * @author dshurtleff
  */
-public class ComponentEvaluationSection
-{
-	private String name;	
-	private Integer score;
+public class ComponentContactView
+{	
+	private String postionDescription;
+	private String name;
+	private String email;
+	private String phone;
+	private String organization;
 
-	public ComponentEvaluationSection()
+	public ComponentContactView()
 	{
+	}
+
+	public String getPostionDescription()
+	{
+		return postionDescription;
+	}
+
+	public void setPostionDescription(String postionDescription)
+	{
+		this.postionDescription = postionDescription;
+	}
+
+	public String getPhone()
+	{
+		return phone;
+	}
+
+	public void setPhone(String phone)
+	{
+		this.phone = phone;
 	}
 
 	public String getName()
@@ -40,14 +62,24 @@ public class ComponentEvaluationSection
 		this.name = name;
 	}
 
-	public Integer getScore()
+	public String getEmail()
 	{
-		return score;
+		return email;
 	}
 
-	public void setScore(Integer score)
+	public void setEmail(String email)
 	{
-		this.score = score;
+		this.email = email;
+	}
+
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
 	}
 
 }

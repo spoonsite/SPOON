@@ -38,7 +38,7 @@ public class ComponentQuestion
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String userTypeCode;
+	private String userType;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
@@ -58,14 +58,14 @@ public class ComponentQuestion
 		this.question = question;
 	}
 
-	public String getUserTypeCode()
+	public String getUserType()
 	{
-		return userTypeCode;
+		return userType;
 	}
 
-	public void setUserTypeCode(String userTypeCode)
+	public void setUserType(String userType)
 	{
-		this.userTypeCode = userTypeCode;
+		this.userType = userType;
 	}
 
 	public String getOrganization()

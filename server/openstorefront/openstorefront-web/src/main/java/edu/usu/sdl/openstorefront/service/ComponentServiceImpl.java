@@ -19,22 +19,30 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
+import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttribute;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentContact;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluation;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependency;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentMedia;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadata;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestion;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentResource;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import java.util.List;
 import java.util.logging.Logger;
@@ -104,47 +112,74 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public ComponentDetail getComponentDetails(String componentId)
+	public ComponentDetailView getComponentDetails(String componentId)
 	{
 
 		// TODO: Decide on whether we'll be using the storange models here
 		// or if we'll be using the view models... Currently they're the view models
-		ComponentDetail result = new ComponentDetail();
+		ComponentDetailView result = new ComponentDetailView();
 		
-		// TODO: Make the ComponentDetail extend the storage Component so we can handle
+		// TODO: Make the ComponentDetailView extend the storage Component so we can handle
 		// all of that stuff there...
 		
 		result.setComponentId(Long.MIN_VALUE /*change the id to a string?*/);
 		result.setTags(findClassInstances(ComponentTag.class, componentId, Boolean.TRUE));
+		result.setResources(findClassInstances(ComponentResource.class, componentId, Boolean.TRUE));
+		result.setMetadata(findClassInstances(ComponentMetadata.class, componentId, Boolean.TRUE));
+		result.setComponentMedia(findClassInstances(ComponentMedia.class, componentId, Boolean.TRUE));
+		result.setDependencies(findClassInstances(ComponentExternalDependency.class, componentId, Boolean.TRUE));
+		result.setContacts(findClassInstances(ComponentContact.class, componentId, Boolean.TRUE));
+	    result.setComponentViews(Integer.MIN_VALUE /*figure out a way to get component views*/);
+
 		
-		//This may need to change to create a list of the reviews as view objects instead of the storage models
+		// This may need to change to create a list of the reviews as view objects instead of the storage models
+		// Here we grab the pros and cons for the reviews.
 		List<ComponentReviewView> reviews = (List<ComponentReviewView>)(List<?>)findClassInstances(ComponentReview.class, componentId, Boolean.TRUE);
-		for(ComponentReviewView review: reviews)
-		{
+		reviews.stream().forEach((review) -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
-			//TODO: Set the composite key here so we can grab the right pros.
+			// TODO: Set the composite key here so we can grab the right pros.
 			ComponentReviewCon tempCon = new ComponentReviewCon();
-			//TODO: Set the composite key here so we can grab the right cons.
+			// TODO: Set the composite key here so we can grab the right cons.
 			review.setPros(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro)));
 			review.setCons(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempPro)));
-		}
+		});
 		result.setReviews(reviews);
 		
-		
-		result.setResources(findClassInstances(ComponentResource.class, "setComponentId", componentId));
-		result.setQuestions(findClassInstances(ComponentQuestion.class, "setComponentId", componentId));
-		result.setMetadata(findClassInstances(ComponentMetadata.class, "setComponentId", componentId));
-		result.setComponentMedia(findClassInstances(ComponentMedia.class, "setComponentId", componentId));
-		result.setAttributes(findClassInstances(ComponentAttribute.class, "setComponentId", componentId));
-		result.setDependencies(findClassInstances(ComponentExternalDependency.class, "setComponentId", componentId));
-		result.setContacts(findClassInstances(ComponentContact.class, "setComponentId", componentId));
-	    result.setComponentViews(Integer.MIN_VALUE /*figure out a way to get component views*/);
-	
-		List<ComponentEvaluation> tempEvaluation = findClassInstances(ComponentEvaluation.class, "setComponentId", componentId);
-		if (!tempEvaluation.isEmpty())
-		{
-			result.setEvaluation(tempEvaluation.get(0));
-		}
+		// This may also need to change to create a list of component question views out of the component question results
+		// Here we grab the responses to each question
+		List<ComponentQuestionView> questions = (List<ComponentQuestionView>)(List<?>)findClassInstances(ComponentQuestion.class, componentId, Boolean.TRUE);
+		questions.stream().forEach((question) -> {
+			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
+			tempResponse.setQuestionId(question.getQuestionId());
+			question.setResponses(persistenceService.queryByExample(ComponentQuestionResponse.class, new QueryByExample(tempResponse)));
+		});
+		result.setQuestions(questions);
+
+		// This might change also.
+		// Here we grab the descriptions for each type and code per attribute
+		List<ComponentAttributeView> attributes = (List<ComponentAttributeView>)(List<?>)findClassInstances(ComponentAttribute.class, componentId, Boolean.TRUE);
+		attributes.stream().forEach((attribute) -> {
+			AttributeType tempType = new AttributeType();
+			AttributeCode tempCode = new AttributeCode();
+			tempType.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+			AttributeCodePk codePk = new AttributeCodePk();
+			codePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
+			codePk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+			tempCode.setAttributeCodePk(codePk);
+			
+			tempType = persistenceService.queryByExample(AttributeType.class, new QueryByExample(tempType)).get(0);
+			tempCode = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(tempCode)).get(0);
+			attribute.setCodeDescription(tempCode.getDescription());
+			attribute.setCodeLongDescription(tempCode.getFullDescription());
+			attribute.setTypeDescription(tempType.getDescription());
+		});
+		result.setAttributes(attributes);
+				
+		//List<ComponentEvaluationView> tempEvaluation = findClassInstances(ComponentEvaluationView.class, "setComponentId", componentId);
+		//if (!tempEvaluation.isEmpty())
+		//{
+		//	result.setEvaluation(tempEvaluation.get(0));
+		//}
 		
 		return result;
 	}

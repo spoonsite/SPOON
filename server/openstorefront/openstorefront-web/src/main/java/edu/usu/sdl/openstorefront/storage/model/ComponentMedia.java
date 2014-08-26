@@ -33,7 +33,7 @@ public class ComponentMedia
 	private String componentMediaId;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String fileName;
+	private String description;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -48,6 +48,9 @@ public class ComponentMedia
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	private String link;
+	
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_DESCRIPTION)
+	private String caption;
 
 	public ComponentMedia()
 	{
@@ -63,14 +66,14 @@ public class ComponentMedia
 		this.componentMediaId = componentMediaId;
 	}
 
-	public String getFileName()
+	public String getDescription()
 	{
-		return fileName;
+		return description;
 	}
 
-	public void setFileName(String fileName)
+	public void setDescription(String description)
 	{
-		this.fileName = fileName;
+		this.description = description;
 	}
 
 	public String getOriginalName()
@@ -111,6 +114,22 @@ public class ComponentMedia
 	public void setLink(String link)
 	{
 		this.link = link;
+	}
+
+	/**
+	 * @return the caption
+	 */
+	public String getCaption()
+	{
+		return caption;
+	}
+
+	/**
+	 * @param caption the caption to set
+	 */
+	public void setCaption(String caption)
+	{
+		this.caption = caption;
 	}
 
 }
