@@ -12,7 +12,7 @@ describe('User logged in drop-down', function() {
 
         // Click on User Profile tab
         element.all(by.css('.ng-scope.firstNav')).get(0).click();
-        expect(element(by.id('myCheckValue')).isDisplayed());
+        expect(element(by.id('myCheckValue')));
     });
 
 /*  CURRENTLY YOU CANNOT SAVE AN UPDATED USER PROFILE, WAIT UNTIL SERVER SIDE IS WORKING?

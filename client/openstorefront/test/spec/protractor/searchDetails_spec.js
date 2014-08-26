@@ -27,7 +27,7 @@ describe('Click on the results page.  From the search results page', function() 
     element.all(by.css('.nav-tabs li')).get(3).click();
     element.all(by.css('.nav-tabs li')).get(0).click();
     // ALTERNATE:  element(by.cssContainingText('.nav-tabs','REVIEWS')).click();
-    expect(element.all(by.binding('results-content-description'))).toString();
+    expect(element.all(by.binding('results-content-description')));
 
   });
 
