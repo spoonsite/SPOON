@@ -36,7 +36,7 @@ public class ComponentResource
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String resourceType;
+	private String type;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	private String link;
@@ -106,14 +106,14 @@ public class ComponentResource
 		this.description = description;
 	}
 
-	public String getResourceType()
+	public String getType()
 	{
-		return resourceType;
+		return type;
 	}
 
-	public void setResourceType(String resourceType)
+	public void setType(String type)
 	{
-		this.resourceType = resourceType;
+		this.type = type;
 	}
 
 	public Boolean getRestricted()
