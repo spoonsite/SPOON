@@ -1,4 +1,4 @@
-describe('Search for VANTAGE', function() {
+describe('searchDetails_ Search for VANTAGE', function() {
   it('returns 2 results', function() {
     // Open the main site
     browser.get('http://di2e.github.io/openstorefront');

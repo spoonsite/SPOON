@@ -1,4 +1,4 @@
-describe('User logged in drop-down', function() {
+describe('user-tools_ User logged in drop-down', function() {
     it('Click on Watches, then User Profile tab', function () {
         // Search on ALL entries (null search term)
         browser.get('http://di2e.github.io/openstorefront');

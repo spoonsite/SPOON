@@ -1,7 +1,4 @@
-describe('Click on the listing links on the Storefront home page', function() {
-
-
-
+describe('homepageLinks_ Click on the listing links on the Storefront home page', function() {
     it('the pages load and the links are not broken.', function() {
 
         // TODO:  Figure out how to dynamically get the # of links

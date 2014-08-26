@@ -27,7 +27,7 @@ exports.config = {
             var tm = new Date().toTimeString().split(':');
             myDateFormat = dt[3] + '-' + dt[1]  + '-' + dt[2];
             myTimeFormat = tm[0] + '-' + tm[1] + '_';
-            return path.join(myDateFormat, capabilities.caps_.browserName, myTimeFormat + descriptions.join('-'));
+            return path.join(myDateFormat, capabilities.caps_.browserName, myTimeFormat.toString() + descriptions.join('-'));
           }
       }));
 

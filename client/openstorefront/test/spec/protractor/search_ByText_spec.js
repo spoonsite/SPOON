@@ -1,4 +1,4 @@
-describe('Search ALL then filter on Filter By Text', function() {
+describe('search_ByText_ Filter By Text', function() {
 
     function textSearch (theText, numFound) {
 
