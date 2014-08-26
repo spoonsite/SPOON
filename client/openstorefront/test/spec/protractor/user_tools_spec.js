@@ -1,5 +1,5 @@
-describe('User logged in drop-down', function() {
-    it('Click on Watches, then User Profile tab', function () {
+describe('user-tools_User logged in drop-down', function() {
+    it('Click on Watches then User Profile tab', function () {
         // Search on ALL entries (null search term)
         browser.get('http://di2e.github.io/openstorefront');
 
@@ -12,7 +12,7 @@ describe('User logged in drop-down', function() {
 
         // Click on User Profile tab
         element.all(by.css('.ng-scope.firstNav')).get(0).click();
-        expect(element(by.id('myCheckValue')).isDisplayed());
+        expect(element(by.id('myCheckValue')));
     });
 
 /*  CURRENTLY YOU CANNOT SAVE AN UPDATED USER PROFILE, WAIT UNTIL SERVER SIDE IS WORKING?
