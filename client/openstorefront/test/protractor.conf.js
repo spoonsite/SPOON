@@ -25,9 +25,9 @@ exports.config = {
             // Build this format:  YYYY-MMM-DD_HH-MM-SS;  2014-Aug-28_16-35-56 GMT -0600 (Mountain Daylight Time)
             var dt = new Date().toDateString().split(' ');
             var tm = new Date().toTimeString().split(':');
-            myDateFormat = dt[3] + '-' + dt[1]  + '-' + dt[2];
+            myDateFormat = dt[3] + '-' + dt[1] + '-' + dt[2];
             myTimeFormat = tm[0] + '-' + tm[1] + '_';
-            return path.join(myDateFormat, capabilities.caps_.browserName, myTimeFormat.toString() + descriptions.join('-'));
+            return path.join(myDateFormat, capabilities.caps_.browserName, myTimeFormat + descriptions.join('-'));
           }
       }));
 
