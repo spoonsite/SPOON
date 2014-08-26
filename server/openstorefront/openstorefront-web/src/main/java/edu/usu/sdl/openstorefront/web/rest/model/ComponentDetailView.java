@@ -17,17 +17,23 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
+import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
+import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
+import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
 /**
- * ComponentDetail Resource
+ * ComponentDetailView Resource
  *
  * @author dshurtleff
  */
-public class ComponentDetail
+public class ComponentDetailView
 {
 
 	@NotNull
@@ -43,10 +49,10 @@ public class ComponentDetail
 	@NotNull
 	private String description;
 
-	private ComponentRelationship parentComponent;
+	private ComponentRelationshipView parentComponent;
 
-	@DataType(ComponentRelationship.class)
-	private List<ComponentRelationship> subComponents = new ArrayList<>();
+	@DataType(ComponentRelationshipView.class)
+	private List<ComponentRelationshipView> subComponents = new ArrayList<>();
 
 	@NotNull
 	private String organization;
@@ -79,13 +85,13 @@ public class ComponentDetail
 	@NotNull
 	private String approvedUser;
 
-	private ComponentEvaluation evaluation = new ComponentEvaluation();
+	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
 
-	@DataType(ComponentQuestion.class)
-	private List<ComponentQuestion> questions = new ArrayList<>();
+	@DataType(ComponentQuestionView.class)
+	private List<ComponentQuestionView> questions = new ArrayList<>();
 
-	@DataType(ComponentAttribute.class)
-	private List<ComponentAttribute> attributes = new ArrayList<>();
+	@DataType(ComponentAttributeView.class)
+	private List<ComponentAttributeView> attributes = new ArrayList<>();
 
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
@@ -102,8 +108,8 @@ public class ComponentDetail
 	@DataType(ComponentResource.class)
 	private List<ComponentResource> resources = new ArrayList<>();
 
-	@DataType(ComponentReview.class)
-	private List<ComponentReview> reviews = new ArrayList<>();
+	@DataType(ComponentReviewView.class)
+	private List<ComponentReviewView> reviews = new ArrayList<>();
 
 	@DataType(ComponentExternalDependency.class)
 	private List<ComponentExternalDependency> dependencies = new ArrayList<>();
@@ -112,7 +118,7 @@ public class ComponentDetail
 	private Integer componentViews = 0;
 
 	
-	public ComponentDetail()
+	public ComponentDetailView()
 	{
 	}
 
@@ -216,22 +222,22 @@ public class ComponentDetail
 		this.updateDts = updateDts;
 	}
 
-	public ComponentEvaluation getEvaluation()
+	public ComponentEvaluationView getEvaluation()
 	{
 		return evaluation;
 	}
 
-	public void setEvaluation(ComponentEvaluation evaluation)
+	public void setEvaluation(ComponentEvaluationView evaluation)
 	{
 		this.evaluation = evaluation;
 	}
 
-	public List<ComponentAttribute> getAttributes()
+	public List<ComponentAttributeView> getAttributes()
 	{
 		return attributes;
 	}
 
-	public void setAttributes(List<ComponentAttribute> attributes)
+	public void setAttributes(List<ComponentAttributeView> attributes)
 	{
 		this.attributes = attributes;
 	}
@@ -276,12 +282,12 @@ public class ComponentDetail
 		this.resources = resources;
 	}
 
-	public List<ComponentReview> getReviews()
+	public List<ComponentReviewView> getReviews()
 	{
 		return reviews;
 	}
 
-	public void setReviews(List<ComponentReview> reviews)
+	public void setReviews(List<ComponentReviewView> reviews)
 	{
 		this.reviews = reviews;
 	}
@@ -336,32 +342,32 @@ public class ComponentDetail
 		this.approvedUser = approvedUser;
 	}
 
-	public List<ComponentQuestion> getQuestions()
+	public List<ComponentQuestionView> getQuestions()
 	{
 		return questions;
 	}
 
-	public void setQuestions(List<ComponentQuestion> questions)
+	public void setQuestions(List<ComponentQuestionView> questions)
 	{
 		this.questions = questions;
 	}
 
-	public ComponentRelationship getParentComponent()
+	public ComponentRelationshipView getParentComponent()
 	{
 		return parentComponent;
 	}
 
-	public void setParentComponent(ComponentRelationship parentComponent)
+	public void setParentComponent(ComponentRelationshipView parentComponent)
 	{
 		this.parentComponent = parentComponent;
 	}
 
-	public List<ComponentRelationship> getSubComponents()
+	public List<ComponentRelationshipView> getSubComponents()
 	{
 		return subComponents;
 	}
 
-	public void setSubComponents(List<ComponentRelationship> subComponents)
+	public void setSubComponents(List<ComponentRelationshipView> subComponents)
 	{
 		this.subComponents = subComponents;
 	}

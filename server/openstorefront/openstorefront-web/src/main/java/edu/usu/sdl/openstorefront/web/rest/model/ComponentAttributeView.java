@@ -16,37 +16,51 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+
 /**
  *
  * @author dshurtleff
  */
-public class ComponentRelationship
+public class ComponentAttributeView
+	extends ComponentAttribute
 {
-	private Long componentId;
-	private String name;
+	private String typeDescription;	
+	private String codeDescription;
+	private String codeLongDescription;
 
-	public ComponentRelationship()
+	public ComponentAttributeView()
 	{
 	}
 
-	public Long getComponentId()
+	public String getCodeDescription()
 	{
-		return componentId;
+		return codeDescription;
 	}
 
-	public void setComponentId(Long componentId)
+	public void setCodeDescription(String codeDescription)
 	{
-		this.componentId = componentId;
+		this.codeDescription = codeDescription;
 	}
 
-	public String getName()
+	public String getTypeDescription()
 	{
-		return name;
+		return typeDescription;
 	}
 
-	public void setName(String name)
+	public void setTypeDescription(String typeDescription)
 	{
-		this.name = name;
+		this.typeDescription = typeDescription;
 	}
 
+	public String getCodeLongDescription()
+	{
+		return codeLongDescription;
+	}
+
+	public void setCodeLongDescription(String codeLongDescription)
+	{
+		this.codeLongDescription = codeLongDescription;
+	}
+	
 }

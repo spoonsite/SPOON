@@ -16,46 +16,19 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.DataType;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  *
  * @author dshurtleff
  */
-public class ComponentComment
+public class ComponentExternalDependencyView
 {
-	private String username;
-	private Date postDts;
+	private String dependency;
+	private String version;
+	private String dependancyReferenceLink;
 	private String comment;
-	
-	@DataType(ComponentComment.class)
-	private List<ComponentComment> replies = new ArrayList<>();
 
-	public ComponentComment()
+	public ComponentExternalDependencyView()
 	{
-	}
-
-	public String getUsername()
-	{
-		return username;
-	}
-
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
-
-	public Date getPostDts()
-	{
-		return postDts;
-	}
-
-	public void setPostDts(Date postDts)
-	{
-		this.postDts = postDts;
 	}
 
 	public String getComment()
@@ -68,15 +41,34 @@ public class ComponentComment
 		this.comment = comment;
 	}
 
-	public List<ComponentComment> getReplies()
+	public String getVersion()
 	{
-		return replies;
+		return version;
 	}
 
-	public void setReplies(List<ComponentComment> replies)
+	public void setVersion(String version)
 	{
-		this.replies = replies;
+		this.version = version;
 	}
-	
+
+	public String getDependancyReferenceLink()
+	{
+		return dependancyReferenceLink;
+	}
+
+	public void setDependancyReferenceLink(String dependancyReferenceLink)
+	{
+		this.dependancyReferenceLink = dependancyReferenceLink;
+	}
+
+	public String getDependency()
+	{
+		return dependency;
+	}
+
+	public void setDependency(String dependency)
+	{
+		this.dependency = dependency;
+	}
 	
 }

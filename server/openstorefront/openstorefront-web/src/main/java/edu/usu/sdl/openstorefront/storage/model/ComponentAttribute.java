@@ -22,11 +22,13 @@ import edu.usu.sdl.openstorefront.util.PK;
  * @author dshurtleff
  */
 public class ComponentAttribute
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
 	private ComponentAttributePk componentAttributePk;
+	
+	private boolean important;
 
 	public ComponentAttribute()
 	{
@@ -40,6 +42,22 @@ public class ComponentAttribute
 	public void setComponentAttributePk(ComponentAttributePk componentAttributePk)
 	{
 		this.componentAttributePk = componentAttributePk;
+	}
+
+	/**
+	 * @return the important
+	 */
+	public boolean isImportant()
+	{
+		return important;
+	}
+
+	/**
+	 * @param important the important to set
+	 */
+	public void setImportant(boolean important)
+	{
+		this.important = important;
 	}
 
 }

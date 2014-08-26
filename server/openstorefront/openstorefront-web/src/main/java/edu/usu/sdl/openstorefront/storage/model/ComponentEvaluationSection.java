@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class ComponentEvaluationSection
+	extends BaseComponent
 {
 
 	@PK

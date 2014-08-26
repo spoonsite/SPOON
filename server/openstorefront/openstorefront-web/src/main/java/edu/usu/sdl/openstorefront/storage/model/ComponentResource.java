@@ -25,20 +25,18 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class ComponentResource
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private String resourceId;
 
-	@NotNull
-	private String componentId;
 	private String resourceFileId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String resourceType;
+	private String type;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	private String link;
@@ -64,16 +62,6 @@ public class ComponentResource
 	public void setResourceId(String resourceId)
 	{
 		this.resourceId = resourceId;
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
 	}
 
 	public String getResourceFileId()
@@ -116,14 +104,14 @@ public class ComponentResource
 		this.description = description;
 	}
 
-	public String getResourceType()
+	public String getType()
 	{
-		return resourceType;
+		return type;
 	}
 
-	public void setResourceType(String resourceType)
+	public void setType(String type)
 	{
-		this.resourceType = resourceType;
+		this.type = type;
 	}
 
 	public Boolean getRestricted()

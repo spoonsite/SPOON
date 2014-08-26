@@ -21,7 +21,7 @@ import java.util.Date;
  *
  * @author dshurtleff
  */
-public class ComponentQuestionResponse
+public class ComponentQuestionResponseView
 {
 
 	private String response;
@@ -29,7 +29,7 @@ public class ComponentQuestionResponse
 	private String userType;
 	private Date answeredDate;
 
-	public ComponentQuestionResponse()
+	public ComponentQuestionResponseView()
 	{
 	}
 

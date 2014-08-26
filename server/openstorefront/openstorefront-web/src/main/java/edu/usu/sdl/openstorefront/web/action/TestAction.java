@@ -19,7 +19,7 @@ package edu.usu.sdl.openstorefront.web.action;
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.tool.OldAsset;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.io.File;
@@ -70,10 +70,10 @@ public class TestAction
 	{
 		List<OldAsset> assets = objectMapper.readValue(new File("C:\\development\\storefront\\source\\old_data\\new-asset-data-all.json"), new TypeReference<List<OldAsset>>() {});
 		
-		List<ComponentDetail> newAssets = new ArrayList<>();		
+		List<ComponentDetailView> newAssets = new ArrayList<>();		
 		assets.forEach(oldAsset -> {
 			
-			ComponentDetail componentDetail = new ComponentDetail();
+			ComponentDetailView componentDetail = new ComponentDetailView();
 			//defaults
 			componentDetail.setActiveStatus(BaseEntity.ACTIVE_STATUS);
 			

@@ -64,8 +64,8 @@ public class SearchResult
 	@DataType(SearchResultAttribute.class)
 	private List<SearchResultAttribute> attributes = new ArrayList<>();
 
-	@DataType(ComponentTag.class)
-	private List<ComponentTag> tags = new ArrayList<>();
+	@DataType(ComponentTagView.class)
+	private List<ComponentTagView> tags = new ArrayList<>();
 
 	public SearchResult()
 	{
@@ -201,12 +201,12 @@ public class SearchResult
 		this.attributes = attributes;
 	}
 
-	public List<ComponentTag> getTags()
+	public List<ComponentTagView> getTags()
 	{
 		return tags;
 	}
 
-	public void setTags(List<ComponentTag> tags)
+	public void setTags(List<ComponentTagView> tags)
 	{
 		this.tags = tags;
 	}

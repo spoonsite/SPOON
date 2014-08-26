@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
+
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentTag
+public class ComponentTagView
+		extends ComponentTag
 {
-	private String text;
 
-	public ComponentTag()
+	public ComponentTagView()
 	{
-	}
-
-	public String getText()
-	{
-		return text;
-	}
-
-	public void setText(String text)
-	{
-		this.text = text;
 	}
 	
+	public ComponentTagView(ComponentTag tag)
+	{
+		this.setActiveStatus(tag.getActiveStatus());
+		this.setCreateDts(tag.getCreateDts());
+		this.setCreateUser(tag.getCreateUser());
+		this.setLookupId(tag.getLookupId());
+		this.setTagId(tag.getTagId());
+		this.setTagText(tag.getTagText());
+		this.setUpdateDts(tag.getUpdateDts());
+		this.setUpdateUser(tag.getUpdateUser());
+	}
+
 }

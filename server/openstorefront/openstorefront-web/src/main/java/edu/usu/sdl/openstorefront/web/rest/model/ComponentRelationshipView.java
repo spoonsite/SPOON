@@ -20,36 +20,23 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentContact
-{	
-	private String postionDescription;
+public class ComponentRelationshipView
+{
+	private Long componentId;
 	private String name;
-	private String email;
-	private String phone;
-	private String organization;
 
-	public ComponentContact()
+	public ComponentRelationshipView()
 	{
 	}
 
-	public String getPostionDescription()
+	public Long getComponentId()
 	{
-		return postionDescription;
+		return componentId;
 	}
 
-	public void setPostionDescription(String postionDescription)
+	public void setComponentId(Long componentId)
 	{
-		this.postionDescription = postionDescription;
-	}
-
-	public String getPhone()
-	{
-		return phone;
-	}
-
-	public void setPhone(String phone)
-	{
-		this.phone = phone;
+		this.componentId = componentId;
 	}
 
 	public String getName()
@@ -60,26 +47,6 @@ public class ComponentContact
 	public void setName(String name)
 	{
 		this.name = name;
-	}
-
-	public String getEmail()
-	{
-		return email;
-	}
-
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
-
-	public String getOrganization()
-	{
-		return organization;
-	}
-
-	public void setOrganization(String organization)
-	{
-		this.organization = organization;
 	}
 
 }

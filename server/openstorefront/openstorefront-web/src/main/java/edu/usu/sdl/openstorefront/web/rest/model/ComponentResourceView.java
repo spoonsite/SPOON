@@ -20,33 +20,55 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentMetadata
+public class ComponentResourceView
 {
-	private String label;
-	private String value;
+	private String name; 
+	private String type;
+	private String description;
+	private String link;
 
-	public ComponentMetadata()
+	public ComponentResourceView()
 	{
 	}
 
-	public String getLabel()
+	public String getName()
 	{
-		return label;
+		return name;
 	}
 
-	public void setLabel(String label)
+	public void setName(String name)
 	{
-		this.label = label;
+		this.name = name;
 	}
 
-	public String getValue()
+	public String getType()
 	{
-		return value;
+		return type;
 	}
 
-	public void setValue(String value)
+	public void setType(String type)
 	{
-		this.value = value;
+		this.type = type;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public String getLink()
+	{
+		return link;
+	}
+
+	public void setLink(String link)
+	{
+		this.link = link;
 	}
 
 }

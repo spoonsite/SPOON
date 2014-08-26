@@ -25,6 +25,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentQuestion
+	extends BaseComponent
 {
 
 	@PK
@@ -32,15 +33,12 @@ public class ComponentQuestion
 	private String questionId;
 
 	@NotNull
-	private String componentId;
-
-	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_QUESTION)
 	private String question;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String userTypeCode;
+	private String userType;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
@@ -60,14 +58,14 @@ public class ComponentQuestion
 		this.question = question;
 	}
 
-	public String getUserTypeCode()
+	public String getUserType()
 	{
-		return userTypeCode;
+		return userType;
 	}
 
-	public void setUserTypeCode(String userTypeCode)
+	public void setUserType(String userType)
 	{
-		this.userTypeCode = userTypeCode;
+		this.userType = userType;
 	}
 
 	public String getOrganization()
@@ -88,16 +86,6 @@ public class ComponentQuestion
 	public void setQuestionId(String questionId)
 	{
 		this.questionId = questionId;
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
 	}
 
 }

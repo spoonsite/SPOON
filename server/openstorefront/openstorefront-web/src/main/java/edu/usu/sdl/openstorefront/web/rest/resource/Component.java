@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import java.util.ArrayList;
@@ -68,11 +68,11 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}/detail")
-	public ComponentDetail getComponentDetails(
+	public ComponentDetailView getComponentDetails(
 			@PathParam("id")
 			@RequiredParam Long componentId)
 	{
-		ComponentDetail componentDetail = new ComponentDetail();
+		ComponentDetailView componentDetail = new ComponentDetailView();
 
 		return componentDetail;
 	}
