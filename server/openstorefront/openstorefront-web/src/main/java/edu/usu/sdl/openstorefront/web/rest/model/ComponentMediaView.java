@@ -15,19 +15,31 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
+import edu.usu.sdl.openstorefront.storage.model.MediaType;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
+
 /**
  *
  * @author dshurtleff
  */
 public class ComponentMediaView
 {
-
 	private String link;
 	private String contentType;
 	private String caption;
 
 	public ComponentMediaView()
 	{
+	}
+	
+	public static ComponentMediaView toView(ComponentMedia media)
+	{
+		ComponentMediaView mediaView = new ComponentMediaView();
+		mediaView.setLink(media.getLink());
+		mediaView.setContentType(TranslateUtil.translate(MediaType.class, media.getMimeType()));
+		mediaView.setCaption(media.getCaption());
+		return mediaView;
 	}
 
 	public String getLink()

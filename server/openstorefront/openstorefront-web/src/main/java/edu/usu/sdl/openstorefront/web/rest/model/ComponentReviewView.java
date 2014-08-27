@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,8 +30,18 @@ import java.util.List;
 public class ComponentReviewView
 {
 
-	private ComponentReview componentReview;
+	private String username;
+    private String userType;
+    private String comment;
+    private int rating;
+    private String title;
+    private String usedTimeCode;
+    private Date lastUsed;    
+    private Date updateDate;
+    private String organization;
+    private boolean recommend;
 
+	
 	@DataType(ComponentReviewPro.class)
 	private List<ComponentReviewPro> pros = new ArrayList<>();
 
@@ -39,6 +50,22 @@ public class ComponentReviewView
 
 	public ComponentReviewView()
 	{
+	}
+	
+	public static ComponentReviewView toView(ComponentReview review)
+	{
+		ComponentReviewView view = new ComponentReviewView();
+		view.setUsername(review.getCreateUser());
+		view.setUserType(review.getUserTypeCode());
+		view.setComment(review.getComment());
+		view.setRating(review.getRating());
+		view.setTitle(review.getTitle());
+		view.setUsedTimeCode(review.getExperienceTimeType());
+		view.setLastUsed(review.getLastUsedDate());
+		view.setUpdateDate(review.getUpdateDts());
+		view.setOrganization(review.getOrganization());
+		view.setRecommend(review.getRecommend());
+		return view;
 	}
 
 	public List<ComponentReviewPro> getPros()
@@ -61,14 +88,164 @@ public class ComponentReviewView
 		this.cons = cons;
 	}
 
-	public ComponentReview getComponentReview()
+	/**
+	 * @return the username
+	 */
+	public String getUsername()
 	{
-		return componentReview;
+		return username;
 	}
 
-	public void setComponentReview(ComponentReview componentReview)
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username)
 	{
-		this.componentReview = componentReview;
+		this.username = username;
+	}
+
+	/**
+	 * @return the userType
+	 */
+	public String getUserType()
+	{
+		return userType;
+	}
+
+	/**
+	 * @param userType the userType to set
+	 */
+	public void setUserType(String userType)
+	{
+		this.userType = userType;
+	}
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment()
+	{
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment)
+	{
+		this.comment = comment;
+	}
+
+	/**
+	 * @return the rating
+	 */
+	public int getRating()
+	{
+		return rating;
+	}
+
+	/**
+	 * @param rating the rating to set
+	 */
+	public void setRating(int rating)
+	{
+		this.rating = rating;
+	}
+
+	/**
+	 * @return the title
+	 */
+	public String getTitle()
+	{
+		return title;
+	}
+
+	/**
+	 * @param title the title to set
+	 */
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+
+	/**
+	 * @return the usedTimeCode
+	 */
+	public String getUsedTimeCode()
+	{
+		return usedTimeCode;
+	}
+
+	/**
+	 * @param usedTimeCode the usedTimeCode to set
+	 */
+	public void setUsedTimeCode(String usedTimeCode)
+	{
+		this.usedTimeCode = usedTimeCode;
+	}
+
+	/**
+	 * @return the lastUsed
+	 */
+	public Date getLastUsed()
+	{
+		return lastUsed;
+	}
+
+	/**
+	 * @param lastUsed the lastUsed to set
+	 */
+	public void setLastUsed(Date lastUsed)
+	{
+		this.lastUsed = lastUsed;
+	}
+
+	/**
+	 * @return the updateDate
+	 */
+	public Date getUpdateDate()
+	{
+		return updateDate;
+	}
+
+	/**
+	 * @param updateDate the updateDate to set
+	 */
+	public void setUpdateDate(Date updateDate)
+	{
+		this.updateDate = updateDate;
+	}
+
+	/**
+	 * @return the organization
+	 */
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
+
+	/**
+	 * @return the recommend
+	 */
+	public boolean isRecommend()
+	{
+		return recommend;
+	}
+
+	/**
+	 * @param recommend the recommend to set
+	 */
+	public void setRecommend(boolean recommend)
+	{
+		this.recommend = recommend;
 	}
 
 }

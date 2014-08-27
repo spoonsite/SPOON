@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,14 +27,24 @@ import java.util.List;
  */
 public class ComponentQuestionView
 {
-
-	private ComponentQuestion componentQuestion;
+	private String question;
+    private String username;
+    private String userType;    
+    private Date createDts;
+    private Date updateDts;
 
 	@DataType(ComponentQuestionResponseView.class)
 	private List<ComponentQuestionResponseView> responses = new ArrayList<>();
 
 	public ComponentQuestionView()
 	{
+	}
+	
+	public static ComponentQuestionView toView(ComponentQuestion question, List<ComponentQuestionResponseView> responses)
+	{
+		ComponentQuestionView view = new ComponentQuestionView();
+		view.responses = responses;
+		return view;
 	}
 
 	public List<ComponentQuestionResponseView> getResponses()
@@ -46,13 +57,83 @@ public class ComponentQuestionView
 		this.responses = responses;
 	}
 
-	public ComponentQuestion getComponentQuestion()
+	/**
+	 * @return the question
+	 */
+	public String getQuestion()
 	{
-		return componentQuestion;
+		return question;
 	}
 
-	public void setComponentQuestion(ComponentQuestion componentQuestion)
+	/**
+	 * @param question the question to set
+	 */
+	public void setQuestion(String question)
 	{
-		this.componentQuestion = componentQuestion;
+		this.question = question;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername()
+	{
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+
+	/**
+	 * @return the userType
+	 */
+	public String getUserType()
+	{
+		return userType;
+	}
+
+	/**
+	 * @param userType the userType to set
+	 */
+	public void setUserType(String userType)
+	{
+		this.userType = userType;
+	}
+
+	/**
+	 * @return the createDts
+	 */
+	public Date getCreateDts()
+	{
+		return createDts;
+	}
+
+	/**
+	 * @param createDts the createDts to set
+	 */
+	public void setCreateDts(Date createDts)
+	{
+		this.createDts = createDts;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 }
