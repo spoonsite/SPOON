@@ -20,7 +20,7 @@ exports.config = {
     // Add a reporter and store screenshots to a directory
     // See http://qainsight.blogspot.com/2014/03/adding-html-reporter-in-protractor-js.html
       jasmine.getEnv().addReporter(new HtmlReporter({
-          baseDirectory: 'auomation_logs', pathBuilder: function pathbuilder (spec, descriptions, results, capabilities)
+          baseDirectory: 'automation_logs', pathBuilder: function pathbuilder (spec, descriptions, results, capabilities)
           {
             // Build this format:  YYYY-MMM-DD_HH-MM-SS;  2014-Aug-28_16-35-56 GMT -0600 (Mountain Daylight Time)
             var dt = new Date().toDateString().split(' ');
