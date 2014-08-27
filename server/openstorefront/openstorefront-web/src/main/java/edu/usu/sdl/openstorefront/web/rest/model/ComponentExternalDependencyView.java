@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+
 /**
  *
  * @author dshurtleff
@@ -29,6 +31,16 @@ public class ComponentExternalDependencyView
 
 	public ComponentExternalDependencyView()
 	{
+	}
+	
+	public static ComponentExternalDependencyView toView(ComponentExternalDependency dependency)
+	{
+		ComponentExternalDependencyView view = new ComponentExternalDependencyView();
+		view.setComment(dependency.getComment());
+		view.setVersion(dependency.getVersion());
+		view.setDependancyReferenceLink(dependency.getDependancyReferenceLink());
+		view.setDependency(dependency.getDependencyName());
+		return view;
 	}
 
 	public String getComment()

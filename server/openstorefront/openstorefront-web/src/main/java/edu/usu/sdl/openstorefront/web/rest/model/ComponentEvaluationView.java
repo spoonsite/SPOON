@@ -17,6 +17,8 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +42,31 @@ public class ComponentEvaluationView
 
 	public ComponentEvaluationView()
 	{
+	}
+	
+	public static ComponentEvaluationView toViewFromStorage(List<ComponentEvaluationSchedule> schedules, List<ComponentEvaluationSection> sections)
+	{
+		List<ComponentEvaluationScheduleView> newSchedules = ComponentEvaluationScheduleView.toViewList(schedules);
+		List<ComponentEvaluationSectionView> newSections = ComponentEvaluationSectionView.toViewList(sections);
+		return ComponentEvaluationView.toView(newSchedules, newSections);
+	}
+	
+	public static ComponentEvaluationView toView(List<ComponentEvaluationScheduleView> schedules, List<ComponentEvaluationSectionView> sections)
+	{
+		ComponentEvaluationView view = new ComponentEvaluationView();
+		view.setEvaluationSchedule(schedules);
+		view.setEvaluationSections(sections);
+		
+		//FIXME: TODO: Change this to the correct start date. (where do we get it from?)
+		view.setStartDate(new Date());
+		view.setEndDate(new Date());
+		
+		//FIND THE CORRECT LEVEL CODE SOMEHOW
+		view.setCurrentLevelCode("");
+		
+		// where do we get this from?
+		view.setReviewedVersion(null);
+		return view;
 	}
 
 	public Date getStartDate()

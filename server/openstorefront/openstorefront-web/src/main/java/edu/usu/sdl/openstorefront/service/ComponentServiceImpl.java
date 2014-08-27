@@ -18,13 +18,16 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
-import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
@@ -32,10 +35,20 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationScheduleView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSectionView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -104,15 +117,29 @@ public class ComponentServiceImpl
 			result.getMetadata().add(ComponentMetadataView.toView(metadata));
 		});
 
-		//FIXME:
-//		result.setComponentMedia(getBaseComponent(ComponentMedia.class, componentId));
-//		result.setDependencies(getBaseComponent(ComponentExternalDependency.class, componentId));
-//		result.setContacts(getBaseComponent(ComponentContact.class, componentId));
+		List<ComponentMedia> componentMedia = getBaseComponent(ComponentMedia.class, componentId);
+		componentMedia.forEach(media-> {
+			result.getComponentMedia().add(ComponentMediaView.toView(media));
+		});
+		
+		List<ComponentExternalDependency> componentDependency = getBaseComponent(ComponentExternalDependency.class, componentId);
+		componentDependency.forEach(dependency-> {
+			result.getDependencies().add(ComponentExternalDependencyView.toView(dependency));
+		});
+		
+		List<ComponentContact> componentContact = getBaseComponent(ComponentContact.class, componentId);
+		componentContact.forEach(contact-> {
+			result.getContacts().add(ComponentContactView.toView(contact));
+		});
+		
 		result.setComponentViews(Integer.MIN_VALUE /*figure out a way to get component views*/);
 
-		// This may need to change to create a list of the reviews as view objects instead of the storage models
 		// Here we grab the pros and cons for the reviews.
-		List<ComponentReviewView> reviews = (List<ComponentReviewView>) (List<?>) getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReview> tempReviews = getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReviewView> reviews = new ArrayList();
+		tempReviews.forEach(review->{
+			reviews.add(ComponentReviewView.toView(review));
+		});
 		reviews.stream().forEach((review) -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
 			// TODO: Set the composite key here so we can grab the right pros.
@@ -123,43 +150,47 @@ public class ComponentServiceImpl
 		});
 		result.setReviews(reviews);
 
-		// This may also need to change to create a list of component question views out of the component question results
 		// Here we grab the responses to each question
-		//FIXME
-//		List<ComponentQuestion> questions = getBaseComponent(ComponentQuestion.class, componentId);
-//		questions.stream().forEach((question) -> {
-//			ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
-//			componentQuestionResponseExample.setQuestionId(question.getQuestionId());
-//			question.setResponses(persistenceService.queryByExample(ComponentQuestionResponse.class, new QueryByExample(componentQuestionResponseExample)));
-//		});
-//		result.setQuestions(questions);
+		List<ComponentQuestionView> questionViews = new ArrayList();
+		List<ComponentQuestion> questions = getBaseComponent(ComponentQuestion.class, componentId);
+		for (Iterator<ComponentQuestion> it = questions.iterator(); it.hasNext();) {
+			ComponentQuestion question = it.next();
+			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
+			List<ComponentQuestionResponseView> responseViews = new ArrayList();
+			tempResponse.setQuestionId(question.getQuestionId());
+			responseViews = ComponentQuestionResponseView.toViewList(persistenceService.queryByExample(ComponentQuestionResponse.class, new QueryByExample(tempResponse)));
+			questionViews.add(ComponentQuestionView.toView(question, responseViews));
+		}
+		result.setQuestions(questionViews);
+
+		List<ComponentEvaluationSchedule> evaluationSchedules = getBaseComponent(ComponentEvaluationSchedule.class, componentId);
+		List<ComponentEvaluationSection> evaluationSections = getBaseComponent(ComponentEvaluationSection.class, componentId);
+		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSchedules, evaluationSections));
+		
+		//FIXME:
 		// This might change also.
 		// Here we grab the descriptions for each type and code per attribute
-		List<ComponentAttributeView> attributes = (List<ComponentAttributeView>) (List<?>) getBaseComponent(ComponentAttribute.class, componentId);
-		attributes.stream().forEach((attribute) -> {
-			AttributeType tempType = new AttributeType();
-			AttributeCode tempCode = new AttributeCode();
+//		List<ComponentAttributeView> attributes = (List<ComponentAttributeView>) (List<?>) getBaseComponent(ComponentAttribute.class, componentId);
+//		attributes.stream().forEach((attribute) -> {
+//			AttributeType tempType = new AttributeType();
+//			AttributeCode tempCode = new AttributeCode();
 
-			//FIXME:
 //			tempType.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-			AttributeCodePk codePk = new AttributeCodePk();
+//			AttributeCodePk codePk = new AttributeCodePk();
 //			codePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 //			codePk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-			tempCode.setAttributeCodePk(codePk);
+//			tempCode.setAttributeCodePk(codePk);
 
-			tempType = persistenceService.queryByExample(AttributeType.class, new QueryByExample(tempType)).get(0);
-			tempCode = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(tempCode)).get(0);
-			attribute.setCodeDescription(tempCode.getDescription());
-			attribute.setCodeLongDescription(tempCode.getFullDescription());
-			attribute.setTypeDescription(tempType.getDescription());
-		});
+//			tempType = persistenceService.queryByExample(AttributeType.class, new QueryByExample(tempType)).get(0);
+//			tempCode = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(tempCode)).get(0);
+//			attribute.setCodeDescription(tempCode.getDescription());
+//			attribute.setCodeLongDescription(tempCode.getFullDescription());
+//			attribute.setTypeDescription(tempType.getDescription());
+//		});
+//		result.setAttributes(attributes);
+		List<ComponentAttributeView> attributes = new ArrayList();
 		result.setAttributes(attributes);
 
-		//List<ComponentEvaluationView> tempEvaluation = findClassInstances(ComponentEvaluationView.class, "setComponentId", componentId);
-		//if (!tempEvaluation.isEmpty())
-		//{
-		//	result.setEvaluation(tempEvaluation.get(0));
-		//}
 		return result;
 	}
 

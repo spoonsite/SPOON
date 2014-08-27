@@ -16,6 +16,8 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
+
 /**
  *
  * @author dshurtleff
@@ -32,6 +34,23 @@ public class ComponentContactView
 	{
 	}
 
+	public static ComponentContactView toView(ComponentContact contact)
+	{
+		ComponentContactView view = new ComponentContactView();
+		view.setEmail(contact.getEmail());
+		view.setPostionDescription(contact.getContactType());
+		view.setOrganization(contact.getOrganization());
+		view.setPhone(contact.getPhone());
+		if (contact.getLastName() == null || "".equals(contact.getLastName()))
+		{
+			view.setName(contact.getFirstName());
+		}
+		else 
+		{
+			view.setName(contact.getFirstName()+ " " + contact.getLastName());
+		}
+		return view;
+	}
 	public String getPostionDescription()
 	{
 		return postionDescription;
