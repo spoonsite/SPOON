@@ -15,8 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
+import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import java.util.List;
 
@@ -65,5 +81,47 @@ public interface ComponentService
 	 * @return
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentAttribute(ComponentAttribute attribute);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentContact(ComponentContact contact);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentEvaluationSection(ComponentEvaluationSection section);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentMedia(ComponentMedia media);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentMetadata(ComponentMetadata metadata);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentQuestion(ComponentQuestion question);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentQuesitonResponse(ComponentQuestionResponse response);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentResoure(ComponentResource resource);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentReview(ComponentReview review);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentReviewCon(ComponentReviewCon con);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentReviewPro(ComponentReviewPro pro);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentTag(ComponentTag tag);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentTracking(ComponentTracking tracking);
 
 }
