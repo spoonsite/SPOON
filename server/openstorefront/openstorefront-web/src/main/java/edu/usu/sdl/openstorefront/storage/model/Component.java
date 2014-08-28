@@ -190,41 +190,77 @@ public class Component
 		this.approvedDts = approvedDts;
 	}
 
+	@Override
 	public String getCreateUser()
 	{
 		return createUser;
 	}
 
+	/**
+	 *
+	 * @param createUser
+	 */
+	@Override
 	public void setCreateUser(String createUser)
 	{
 		this.createUser = createUser;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
+	@Override
 	public Date getCreateDts()
 	{
 		return createDts;
 	}
 
+	/**
+	 *
+	 * @param createDts
+	 */
+	@Override
 	public void setCreateDts(Date createDts)
 	{
 		this.createDts = createDts;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
+	@Override
 	public String getUpdateUser()
 	{
 		return updateUser;
 	}
 
+	/**
+	 *
+	 * @param updateUser
+	 */
+	@Override
 	public void setUpdateUser(String updateUser)
 	{
 		this.updateUser = updateUser;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
+	@Override
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
+	/**
+	 *
+	 * @param updateDts
+	 */
+	@Override
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;

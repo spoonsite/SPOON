@@ -22,7 +22,6 @@ import org.jsoup.safety.Whitelist;
  * The sanitizes HTML to prevent XSS attacks This will allow structure....but no
  * scripting and it will set the no follow
  *
- * @See http://jsoup.org/cookbook/cleaning-html/whitelist-sanitizer
  * @author dshurtleff
  */
 public class HTMLSanitizer
