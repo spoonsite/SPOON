@@ -91,45 +91,101 @@ public interface ComponentService
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
 
+	/**
+	 *
+	 * @param attribute
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentAttribute(ComponentAttribute attribute);
 	
+	/**
+	 *
+	 * @param contact
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentContact(ComponentContact contact);
 	
+	/**
+	 *
+	 * @param section
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentEvaluationSection(ComponentEvaluationSection section);
 	
+	/**
+	 *
+	 * @param schedule
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule);
 
+	/**
+	 *
+	 * @param media
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentMedia(ComponentMedia media);
 
+	/**
+	 *
+	 * @param metadata
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentMetadata(ComponentMetadata metadata);
 	
+	/**
+	 *
+	 * @param question
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentQuestion(ComponentQuestion question);
 	
+	/**
+	 *
+	 * @param response
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentQuestionResponse(ComponentQuestionResponse response);
 	
+	/**
+	 *
+	 * @param resource
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentResource(ComponentResource resource);
 	
+	/**
+	 *
+	 * @param review
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentReview(ComponentReview review);
 	
+	/**
+	 *
+	 * @param con
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentReviewCon(ComponentReviewCon con);
 
+	/**
+	 *
+	 * @param pro
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentReviewPro(ComponentReviewPro pro);
 	
+	/**
+	 *
+	 * @param tag
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentTag(ComponentTag tag);
 	
+	/**
+	 *
+	 * @param tracking
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentTracking(ComponentTracking tracking);
 

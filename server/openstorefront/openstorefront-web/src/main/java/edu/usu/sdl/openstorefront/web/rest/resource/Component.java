@@ -46,7 +46,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- *
+ * Component Resource
  * @author dshurtleff
  */
 @Path("v1/resource/components")
@@ -77,23 +77,37 @@ public class Component
 		return componentView;
 	}
 
+//	@GET
+//	@APIDescription("Gets full component details (This the packed view for displaying)")
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@DataType(ComponentDetailView.class)
+//	@Path("/{id}/detail")
+//	public ComponentDetailView getComponentDetails(
+//			@PathParam("id")
+//			@RequiredParam String componentId)
+//	{
+//		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+//		return componentDetail;
+//	}
+	
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/{id}/detail")
-	public ComponentDetailView getComponentDetails(
+	@DataType(ComponentAttribute.class)
+	@Path("/{id}/attribute")
+	public List<ComponentAttribute> getComponentAttribute(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam String id)
 	{
-		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
-		return componentDetail;
+		return service.getComponentService().getBaseComponent(ComponentAttribute.class, id);
 	}
 	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/attribute/")
+	@DataType(ComponentAttribute.class)
+	@Path("/{id}/attribute")
 	public ComponentAttribute addComponentAttribute(
 			@PathParam("id")
 			@RequiredParam ComponentAttribute attribute)
@@ -101,12 +115,13 @@ public class Component
 		service.getComponentService().saveComponentAttribute(attribute);
 		return attribute;
 	}
-	
+
 	@PUT
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/attribute")
+	@DataType(ComponentAttribute.class)
+	@Path("/{id}/attribute")
 	public ComponentAttribute updateComponentAttribute(
 			@PathParam("id")
 			@RequiredParam ComponentAttribute attribute)
@@ -115,11 +130,24 @@ public class Component
 		return attribute;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentContact.class)
+	@Path("/{id}/contact")
+	public List<ComponentContact> getComponentContact(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentContact.class, id);
+	}
+
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/contact")
+	@DataType(ComponentContact.class)
+	@Path("/{id}/contact")
 	public ComponentContact addComponentContact(
 			@PathParam("id")
 			@RequiredParam ComponentContact contact)
@@ -132,7 +160,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/contact")
+	@DataType(ComponentContact.class)
+	@Path("/{id}/contact")
 	public ComponentContact updateComponentContact(
 			@PathParam("id")
 			@RequiredParam ComponentContact contact)
@@ -141,11 +170,24 @@ public class Component
 		return contact;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentEvaluationSection.class)
+	@Path("/{id}/section")
+	public List<ComponentEvaluationSection> getComponentEvaluationSection(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentEvaluationSection.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/section")
+	@DataType(ComponentEvaluationSection.class)
+	@Path("/{id}/section")
 	public ComponentEvaluationSection addComponentEvaluationSection(
 			@PathParam("id")
 			@RequiredParam ComponentEvaluationSection section)
@@ -158,7 +200,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/section")
+	@DataType(ComponentEvaluationSection.class)
+	@Path("/{id}/section")
 	public ComponentEvaluationSection updateComponentEvaluationSection(
 			@PathParam("id")
 			@RequiredParam ComponentEvaluationSection section)
@@ -167,11 +210,24 @@ public class Component
 		return section;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentEvaluationSchedule.class)
+	@Path("/{id}/schedule")
+	public List<ComponentEvaluationSchedule> getComponentEvaluationSchedule(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentEvaluationSchedule.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/schedule")
+	@DataType(ComponentEvaluationSchedule.class)
+	@Path("/{id}/schedule")
 	public ComponentEvaluationSchedule addComponentEvaluationSchedule(
 			@PathParam("id")
 			@RequiredParam ComponentEvaluationSchedule schedule)
@@ -184,7 +240,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/schedule")
+	@DataType(ComponentEvaluationSchedule.class)
+	@Path("/{id}/schedule")
 	public ComponentEvaluationSchedule updateComponentEvaluationSchedule(
 			@PathParam("id")
 			@RequiredParam ComponentEvaluationSchedule schedule)
@@ -193,11 +250,24 @@ public class Component
 		return schedule;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMedia.class)
+	@Path("/{id}/media")
+	public List<ComponentMedia> getComponentMedia(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentMedia.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/media")
+	@DataType(ComponentMedia.class)
+	@Path("/{id}/media")
 	public ComponentMedia addComponentMedia(
 			@PathParam("id")
 			@RequiredParam ComponentMedia media)
@@ -210,7 +280,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/media")
+	@DataType(ComponentMedia.class)
+	@Path("/{id}/media")
 	public ComponentMedia updateComponentMedia(
 			@PathParam("id")
 			@RequiredParam ComponentMedia media)
@@ -219,11 +290,24 @@ public class Component
 		return media;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMetadata.class)
+	@Path("/{id}/metadata")
+	public List<ComponentMetadata> getComponentMetadata(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentMetadata.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/metadata")
+	@DataType(ComponentMetadata.class)
+	@Path("/{id}/metadata")
 	public ComponentMetadata addComponentMetadata(
 			@PathParam("id")
 			@RequiredParam ComponentMetadata metadata)
@@ -236,7 +320,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/metadata")
+	@DataType(ComponentMetadata.class)
+	@Path("/{id}/metadata")
 	public ComponentMetadata updateComponentMetadata(
 			@PathParam("id")
 			@RequiredParam ComponentMetadata metadata)
@@ -245,11 +330,24 @@ public class Component
 		return metadata;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentQuestion.class)
+	@Path("/{id}/question")
+	public List<ComponentQuestion> getComponentQuestion(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentQuestion.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/question")
+	@DataType(ComponentQuestion.class)
+	@Path("/{id}/question")
 	public ComponentQuestion addComponentQuestion(
 			@PathParam("id")
 			@RequiredParam ComponentQuestion question)
@@ -262,7 +360,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/question")
+	@DataType(ComponentQuestion.class)
+	@Path("/{id}/question")
 	public ComponentQuestion updateComponentQuestion(
 			@PathParam("id")
 			@RequiredParam ComponentQuestion question)
@@ -271,11 +370,24 @@ public class Component
 		return question;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentQuestionResponse.class)
+	@Path("/{id}/response")
+	public List<ComponentQuestionResponse> getComponentQuestionResponse(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentQuestionResponse.class, id);
+	}
+
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/response")
+	@DataType(ComponentQuestionResponse.class)
+	@Path("/{id}/response")
 	public ComponentQuestionResponse addComponentQuestionResponse(
 			@PathParam("id")
 			@RequiredParam ComponentQuestionResponse response)
@@ -288,7 +400,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/response")
+	@DataType(ComponentQuestionResponse.class)
+	@Path("/{id}/response")
 	public ComponentQuestionResponse updateComponentQuestionResponse(
 			@PathParam("id")
 			@RequiredParam ComponentQuestionResponse response)
@@ -297,11 +410,24 @@ public class Component
 		return response;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentResource.class)
+	@Path("/{id}/resource")
+	public List<ComponentResource> getComponentResource(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentResource.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/resource")
+	@DataType(ComponentResource.class)
+	@Path("/{id}/resource")
 	public ComponentResource addComponentResource(
 			@PathParam("id")
 			@RequiredParam ComponentResource resource)
@@ -314,7 +440,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/resource")
+	@DataType(ComponentResource.class)
+	@Path("/{id}/resource")
 	public ComponentResource updateComponentResource(
 			@PathParam("id")
 			@RequiredParam ComponentResource resource)
@@ -323,11 +450,24 @@ public class Component
 		return resource;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReview.class)
+	@Path("/{id}/review")
+	public List<ComponentReview> getComponentReview(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentReview.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/review")
+	@DataType(ComponentReview.class)
+	@Path("/{id}/review")
 	public ComponentReview addComponentReview(
 			@PathParam("id")
 			@RequiredParam ComponentReview review)
@@ -340,7 +480,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/review")
+	@DataType(ComponentReview.class)
+	@Path("/{id}/review")
 	public ComponentReview updateComponentReview(
 			@PathParam("id")
 			@RequiredParam ComponentReview review)
@@ -349,11 +490,24 @@ public class Component
 		return review;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReviewCon.class)
+	@Path("/{id}/con")
+	public List<ComponentReviewCon> getComponentReviewCon(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentReviewCon.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/con")
+	@DataType(ComponentReviewCon.class)
+	@Path("/{id}/con")
 	public ComponentReviewCon addComponentReviewCon(
 			@PathParam("id")
 			@RequiredParam ComponentReviewCon con)
@@ -366,7 +520,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/con")
+	@DataType(ComponentReviewCon.class)
+	@Path("/{id}/con")
 	public ComponentReviewCon updateComponentReviewCon(
 			@PathParam("id")
 			@RequiredParam ComponentReviewCon con)
@@ -375,37 +530,64 @@ public class Component
 		return con;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReviewPro.class)
+	@Path("/{id}/pro")
+	public List<ComponentReviewPro> getComponentReviewPro(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentReviewPro.class, id);
+	}
+//	
+//	@POST
+//	@APIDescription("Gets full component details (This the packed view for displaying)")
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@DataType(ComponentReviewPro.class)
+//	@Path("/{id}/pro")
+//	public ComponentReviewPro addComponentReviewPro(
+//			@PathParam("id")
+//			@RequiredParam ComponentReviewPro pro)
+//	{
+//		service.getComponentService().saveComponentReviewPro(pro);
+//		return pro;
+//	}
+//	
+//	@PUT
+//	@APIDescription("Gets full component details (This the packed view for displaying)")
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@DataType(ComponentReviewPro.class)
+//	@Path("/{id}/pro")
+//	public ComponentReviewPro updateComponentReviewPro(
+//			@PathParam("id")
+//			@RequiredParam ComponentReviewPro pro)
+//	{
+//		service.getComponentService().saveComponentReviewPro(pro);
+//		return pro;
+//	}
+//	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tag")
+	public List<ComponentTag> getComponentTag(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentTag.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/pro")
-	public ComponentReviewPro addComponentReviewPro(
-			@PathParam("id")
-			@RequiredParam ComponentReviewPro pro)
-	{
-		service.getComponentService().saveComponentReviewPro(pro);
-		return pro;
-	}
-	
-	@PUT
-	@APIDescription("Gets full component details (This the packed view for displaying)")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/pro")
-	public ComponentReviewPro updateComponentReviewPro(
-			@PathParam("id")
-			@RequiredParam ComponentReviewPro pro)
-	{
-		service.getComponentService().saveComponentReviewPro(pro);
-		return pro;
-	}
-	
-	@POST
-	@APIDescription("Gets full component details (This the packed view for displaying)")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/tag")
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tag")
 	public ComponentTag addComponentTag(
 			@PathParam("id")
 			@RequiredParam ComponentTag tag)
@@ -418,7 +600,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/tag")
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tag")
 	public ComponentTag updateComponentTag(
 			@PathParam("id")
 			@RequiredParam ComponentTag tag)
@@ -427,11 +610,24 @@ public class Component
 		return tag;
 	}
 	
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTracking.class)
+	@Path("/{id}/tracking")
+	public List<ComponentTracking> getComponentTracking(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		return service.getComponentService().getBaseComponent(ComponentTracking.class, id);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/tracking")
+	@DataType(ComponentTracking.class)
+	@Path("/{id}/tracking")
 	public ComponentTracking addComponentTracking(
 			@PathParam("id")
 			@RequiredParam ComponentTracking tracking)
@@ -444,7 +640,8 @@ public class Component
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/detail/tracking")
+	@DataType(ComponentTracking.class)
+	@Path("/{id}/tracking")
 	public ComponentTracking updateComponentTracking(
 			@PathParam("id")
 			@RequiredParam ComponentTracking tracking)
