@@ -27,6 +27,7 @@ public class OpenStorefrontConstant
 	public static final String MAX_RECORDS = Integer.toString(Integer.MAX_VALUE);
 	public static final String SYSTEM_USER = "SYSTEM";
 	public static final String SYSTEM_ADMIN_USER = "SYSTEM-ADMIN";
+	public static final String ANONYMOUS_USER = "ANONYMOUS";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_USERNAME = 80;

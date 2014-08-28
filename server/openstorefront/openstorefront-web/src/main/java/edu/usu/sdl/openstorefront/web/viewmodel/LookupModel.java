@@ -15,7 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.viewmodel;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,6 +36,21 @@ public class LookupModel
 	{
 	}
 
+	@Override
+	public String toString()
+	{
+		String result = "Code: " + code + "Description: " + description;
+		try
+		{
+			result = StringProcessor.defaultObjectMapper().writeValueAsString(this);
+		}
+		catch (JsonProcessingException ex)
+		{
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+		return result;
+	}
+	
 	public String getCode()
 	{
 		return code;

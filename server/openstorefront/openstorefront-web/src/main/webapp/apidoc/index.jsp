@@ -63,9 +63,6 @@ limitations under the License.
 			<h5>Application Resources</h5>	
 			<ul>
 				<li>
-					<a href="branding.html">Branding</a>
-				</li>
-				<li>
 					<a href="appproperties.html">Application Properties</a>
 				</li>
 				<li>

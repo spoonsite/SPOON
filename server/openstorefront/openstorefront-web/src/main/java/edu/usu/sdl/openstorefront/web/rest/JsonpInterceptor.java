@@ -32,17 +32,19 @@ import org.apache.commons.lang3.StringUtils;
 @Provider
 public class JsonpInterceptor implements WriterInterceptor, ContainerResponseFilter
 {
-	private String callback;
+	private static final String CALLBACK = "CALLBACK";
 	
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException
 	{
-		callback = requestContext.getUriInfo().getQueryParameters().getFirst("callback");
+		String callback = requestContext.getUriInfo().getQueryParameters().getFirst("callback");
+		requestContext.setProperty(CALLBACK, callback);
 	}
 	
 	@Override
 	public void aroundWriteTo(WriterInterceptorContext responseContext) throws IOException			
 	{	
+		String callback = (String) responseContext.getProperty(CALLBACK);
 		if (StringUtils.isNotBlank(callback))
 		{			
 			responseContext.getOutputStream().write((callback + "(").getBytes());

@@ -15,13 +15,18 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 
 /**
  *
@@ -54,7 +59,49 @@ public class ServiceUtil
 		}
 		return complex;
 	}
-
+	
+	public static boolean isCollectionClass(Class checkClass)
+	{
+		boolean collection = false;
+		if (!checkClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName())
+			&& !checkClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
+			&& !checkClass.getSimpleName().equalsIgnoreCase(Collection.class.getSimpleName())
+			&& !checkClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName()))
+		{
+			collection = true;
+		}
+		return collection;
+	}
+	
+	public static List<Field> getAllFields(Class typeClass)
+	{
+		List<Field> fields = new ArrayList<>();
+		if (typeClass.getSuperclass() != null)
+		{
+			fields.addAll(getAllFields(typeClass.getSuperclass()));
+		}
+		for (Field field : typeClass.getDeclaredFields())
+		{
+			if (Modifier.isStatic(field.getModifiers()) == false &&
+			     Modifier.isFinal(field.getModifiers()) == false)
+			{
+				fields.add(field);
+			}
+		}		
+		return fields;	
+	}
+	
+	public static String getCurrentUserName()
+	{
+		String username = OpenStorefrontConstant.ANONYMOUS_USER;
+		Subject currentUser = SecurityUtils.getSubject();	
+		if (currentUser.getPrincipal() == null)
+		{
+			username =  currentUser.getPrincipal().toString();
+		}
+		return username;			
+	}
+	
 	public static boolean isSubLookupEntity(Class entityClass)
 	{
 		if (entityClass == null) {

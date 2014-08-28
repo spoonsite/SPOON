@@ -19,10 +19,10 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -48,13 +48,13 @@ public class LookupServiceImpl
 	private static final Logger log = Logger.getLogger(LookupServiceImpl.class.getName());
 
 	@Override
-	public <T extends BaseEntity> List<T> findLookup(Class<T> lookTableClass)
+	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass)
 	{
 		return findLookup(lookTableClass, false);
 	}
 
 	@Override
-	public <T extends BaseEntity> List<T> findLookup(Class<T> lookTableClass, boolean all)
+	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass, boolean all)
 	{
 		try {
 			T testExample = lookTableClass.newInstance();
@@ -138,6 +138,20 @@ public class LookupServiceImpl
 		List<T> newLookups = findLookup(lookupClass);
 		Element cacheLookup = new Element(lookupClass.getName(), newLookups);
 		OSFCacheManager.getLookupCache().put(cacheLookup);
+	}
+
+
+	@Override
+	public <T extends LookupEntity> void removeValue(Class<T> lookTableClass, String code)
+	{
+		LookupEntity lookupEntity = persistenceService.findById(lookTableClass, code);
+		if (lookupEntity != null)
+		{
+			lookupEntity.setActiveStatus(LookupEntity.INACTIVE_STATUS);
+			lookupEntity.setUpdateDts(TimeUtil.currentDate());
+			lookupEntity.setUpdateUser(ServiceUtil.getCurrentUserName());
+			persistenceService.persist(lookupEntity);
+		}		
 	}
 
 }

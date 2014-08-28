@@ -32,8 +32,9 @@ public abstract class LookupEntity
 		extends BaseEntity
 {
 
-	@PK
+	@PK	
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	protected String code;
 
