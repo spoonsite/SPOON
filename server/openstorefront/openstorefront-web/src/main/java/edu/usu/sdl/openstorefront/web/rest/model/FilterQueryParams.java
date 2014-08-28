@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 
@@ -25,29 +28,58 @@ import javax.ws.rs.QueryParam;
  * @author dshurtleff
  */
 public class FilterQueryParams
-{	
+{
+
 	@QueryParam("max")
-	@DefaultValue("2147483648")		
+	@DefaultValue("20000000")
 	private int max;
-	
+
 	@QueryParam("sortField")
-	@DefaultValue("description")		
+	@DefaultValue("description")
 	private String sortField;
-	
+
 	@QueryParam("sortOrder")
-	@DefaultValue(OpenStorefrontConstant.SORT_DESCENDING)		
+	@DefaultValue(OpenStorefrontConstant.SORT_DESCENDING)
 	private String sortOrder;
-	
+
 	@QueryParam("offset")
-	@DefaultValue("0")		
+	@DefaultValue("0")
 	private int offset;
-	
+
 	@QueryParam("status")
-	@DefaultValue("A")		
+	@DefaultValue("A")
 	private String status;
 
 	public FilterQueryParams()
 	{
+	}
+
+	/**
+	 * This will apply everything but status it assume that was applied all
+	 * ready
+	 *
+	 * @param <T>
+	 * @param data
+	 * @return
+	 */
+	public <T> List<T> filter(List<T> data)
+	{
+		List<T> results = new ArrayList<>();
+		//sort
+		Collections.sort(data, new BeanComparator<>(sortField, sortOrder));
+
+		//window
+		if (offset < data.size() && max > 0) {
+			int count = 0;
+			for (int i = offset; i < data.size(); i++) {
+				results.add(data.get(i));
+				count++;
+				if (count >= max) {
+					break;
+				}
+			}
+		}
+		return results;
 	}
 
 	public int getMax()
@@ -99,5 +131,5 @@ public class FilterQueryParams
 	{
 		this.status = status;
 	}
-		
+
 }

@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Highlight  new item type: link, component...")
 public class HighlightType
 		extends LookupEntity
 {

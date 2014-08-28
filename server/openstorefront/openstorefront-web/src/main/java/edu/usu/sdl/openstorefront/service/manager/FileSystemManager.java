@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,7 +66,7 @@ public class FileSystemManager
 	{
 		File configFile = new File(getDir(directory) + "/" + configFilename);
 		if (configFile.exists() == false) {
-			log.log(Level.INFO, "Trying to copy: {0}{1} to {2}", new Object[]{resourceDir, configFilename, configFile});
+			log.log(Level.INFO, MessageFormat.format("Trying to copy: {0}{1} to {2}", new Object[]{resourceDir, configFilename, configFile}));
 
 			URL resourceUrl = new DBManager().getClass().getResource(resourceDir + configFilename);
 			if (resourceUrl != null) {
@@ -75,7 +76,7 @@ public class FileSystemManager
 					throw new OpenStorefrontRuntimeException(ex);
 				}
 			} else {
-				log.log(Level.WARNING, "Unable to find resource: {0}{1}", new Object[]{resourceDir, configFilename});
+				log.log(Level.WARNING, MessageFormat.format("Unable to find resource: {0}{1}", new Object[]{resourceDir, configFilename}));
 			}
 		}
 		return configFile;

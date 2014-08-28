@@ -22,11 +22,13 @@ import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -70,7 +72,7 @@ public class LookupImporter
 
 			if (process) {
 				//log
-				log.log(Level.INFO, "Syncing lookup: {0}", file);
+				log.log(Level.INFO, MessageFormat.format("Syncing lookup: {0}", file));
 
 				//parse
 				List<LookupEntity> lookupEntities = new ArrayList<>();
@@ -78,7 +80,7 @@ public class LookupImporter
 				Class lookupClass = null;
 				try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(file)));) {
 
-					lookupClass = Class.forName("edu.usu.sdl.openstorefront.storage.model." + className);
+					lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + className);
 					List<String[]> allData = reader.readAll();
 					for (String data[] : allData) {
 						if (data.length >= 2) {
@@ -93,7 +95,7 @@ public class LookupImporter
 
 							lookupEntities.add(lookupEntity);
 						} else {
-							log.log(Level.WARNING, "(Missing Required Fields  -Code,Description) Unable Process line: {0} in file: {1}", new Object[]{Arrays.toString(data), file});
+							log.log(Level.WARNING, MessageFormat.format("(Missing Required Fields  -Code,Description) Unable Process line: {0} in file: {1}", new Object[]{Arrays.toString(data), file}));
 						}
 					}
 
@@ -126,8 +128,8 @@ public class LookupImporter
 
 			Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 			for (Class entityClass : entityClasses) {
-				if ("LookupEntity".equals(entityClass.getSimpleName()) == false) {
-					if (isSubLookupEntity(entityClass)) {
+				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
+					if (ServiceUtil.isSubLookupEntity(entityClass)) {
 						File codeFile = FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv");
 						if (codeFile.exists()) {
 							lookupCodeFiles.add(codeFile);
@@ -140,16 +142,4 @@ public class LookupImporter
 		}
 	}
 
-	private boolean isSubLookupEntity(Class entityClass)
-	{
-		if (entityClass == null) {
-			return false;
-		}
-
-		if ("LookupEntity".equals(entityClass.getSimpleName())) {
-			return true;
-		} else {
-			return isSubLookupEntity(entityClass.getSuperclass());
-		}
-	}
 }

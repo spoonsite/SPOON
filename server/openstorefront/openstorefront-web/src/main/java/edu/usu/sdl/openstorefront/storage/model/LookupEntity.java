@@ -34,7 +34,6 @@ public abstract class LookupEntity
 
 	@PK
 	@NotNull
-	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	protected String code;
 
