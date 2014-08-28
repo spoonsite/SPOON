@@ -21,7 +21,6 @@ import org.jsoup.safety.Whitelist;
 /**
  * Allow basic html tags
  *
- * @See http://jsoup.org/cookbook/cleaning-html/whitelist-sanitizer
  * @author dshurtleff
  */
 public class BasicHTMLSanitizer
