@@ -31,14 +31,23 @@ describe('searchDetails_Click on the results', function() {
 
   });
 
-  it('click page tabs to hide parts of page', function() {
-    element(by.id('showPageRight')).click();
+  it('click page tabs to hide parts of page  click tabs again', function() {
+    element(by.id('showPageLeft')).click();
     browser.driver.sleep(1000);
     element(by.id('showPageRight')).click();
     browser.driver.sleep(1000);
     element(by.id('showPageRight')).click();
-    browser.driver.sleep(3000);
-    //expect(element.all(by.css('.showPageRight')).count()).toEqual(0);
+    browser.driver.sleep(1000);
+    // Assume if buttons are they they were clicked on (if not visible still there)
+    expect(true).toBe(true);
+
+    // Click on the tabs from search results details page
+    element.all(by.css('.nav-tabs li')).get(1).click();
+    element.all(by.css('.nav-tabs li')).get(2).click();
+    element.all(by.css('.nav-tabs li')).get(3).click();
+    element.all(by.css('.nav-tabs li')).get(0).click();
+    expect(element.all(by.binding('results-content-description')));
   });
+
 
 });
