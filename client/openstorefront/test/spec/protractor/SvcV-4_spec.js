@@ -15,6 +15,8 @@ describe('SvcV-4_button from the home page', function() {
             browser.driver.sleep(1);
         }
 
+        // Brittle
+        expect(element.all(by.css('.btn')).count()).toEqual(7);
     });
 
 
