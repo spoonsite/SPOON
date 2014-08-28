@@ -35,6 +35,19 @@ public class ComponentReviewPro
 	{
 	}
 
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		ComponentReviewProPk temp = new ComponentReviewProPk();
+		//TODO: Do the logic here to set the primary key to the correct pro pk
+	}
+
+	@Override
+	public Object getPrimaryKey()
+	{
+		return componentReviewProPk;
+	}
+	
 	public ComponentReviewProPk getComponentReviewProPk()
 	{
 		return componentReviewProPk;

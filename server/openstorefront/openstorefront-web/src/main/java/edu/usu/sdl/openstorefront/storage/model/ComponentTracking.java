@@ -47,6 +47,18 @@ public class ComponentTracking
 	{
 	}
 
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		componentTrackingId = itemId;
+	}
+	
+	@Override
+	public Object getPrimaryKey()
+	{
+		return componentTrackingId;
+	}
+	
 	public String getComponentTrackingId()
 	{
 		return componentTrackingId;

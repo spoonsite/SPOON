@@ -40,6 +40,22 @@ public class ComponentEvaluationSection
 	{
 	}
 
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		ComponentEvaluationSectionPk temp = new ComponentEvaluationSectionPk();
+		temp.setComponentId(componentId);
+		temp.setEvaulationSection(itemId);
+		componentEvaluationSectionPk = temp;
+	}
+
+	@Override
+	public Object getPrimaryKey()
+	{
+		return componentEvaluationSectionPk;
+	}
+
+	
 	public ComponentEvaluationSectionPk getComponentEvaluationSectionPk()
 	{
 		return componentEvaluationSectionPk;

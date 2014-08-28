@@ -55,6 +55,18 @@ public class ComponentResource
 	public ComponentResource()
 	{
 	}
+	
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		resourceId = itemId;
+	}
+	
+	@Override
+	public Object getPrimaryKey()
+	{
+		return resourceId;
+	}
 
 	public String getResourceId()
 	{
