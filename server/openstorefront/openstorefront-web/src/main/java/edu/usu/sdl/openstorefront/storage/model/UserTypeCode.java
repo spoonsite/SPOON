@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
+
 /**
  *
  * @author jlaw
  */
+@APIDescription("User Types available")
 public class UserTypeCode
 		extends LookupEntity
 {

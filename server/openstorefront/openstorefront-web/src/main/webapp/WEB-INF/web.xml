@@ -77,11 +77,25 @@
 		<servlet-class>net.sourceforge.stripes.controller.DispatcherServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+
+	<servlet>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>edu.usu.sdl.openstorefront.web.rest</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>	
 	
 	<servlet-mapping>
 		<servlet-name>StripesDispatcher</servlet-name>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>*.action</url-pattern>		
 	</servlet-mapping>	
+	<servlet-mapping>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<url-pattern>/api/*</url-pattern>				
+	</servlet-mapping>
 	
 	<error-page>
 		<error-code>404</error-code>
