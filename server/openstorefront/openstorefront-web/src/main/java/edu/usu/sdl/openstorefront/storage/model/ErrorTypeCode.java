@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Type of Error")
 public class ErrorTypeCode
 		extends LookupEntity
 {

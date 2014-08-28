@@ -32,6 +32,8 @@ public class DBManager
 
 	private static final Logger log = Logger.getLogger(DBManager.class.getName());
 
+	public static final String ENTITY_MODEL_PACKAGE = "edu.usu.sdl.openstorefront.storage.model";
+
 	private static OServer server;
 	private static OObjectDatabasePool globalInstance;
 
@@ -63,12 +65,7 @@ public class DBManager
 			globalInstance = OObjectDatabasePool.global(Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MIN)), Integer.parseInt(PropertiesManager.getValue(PropertiesManager.KEY_DB_CONNECT_MAX)));
 
 			try (OObjectDatabaseTx db = getConnection()) {
-				db.getEntityManager().registerEntityClasses("edu.usu.sdl.openstorefront.storage.model");
-				//db.getEntityManager().registerEntityClass(TestEntity.class);
-//				db.getEntityManager().getRegisteredEntities().forEach(entityClass -> {
-//					db..browseClass(entityClass);
-//
-//				});
+				db.getEntityManager().registerEntityClasses(ENTITY_MODEL_PACKAGE);
 			}
 
 			log.info("Finished.");

@@ -13,17 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.openstorefront.web.rest;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
+import java.io.IOException;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.ext.Provider;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-@APIDescription("Resource Type: Docuemnt, Homepage, Releases...etc")
-public class ResourceType
-		extends LookupEntity
+@Provider
+public class SecurityFilter
+		implements ContainerResponseFilter
 {
+
+	@Override
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException
+	{
+		//TODO:
+
+	}
 
 }

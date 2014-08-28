@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Evaluation Section Names")
 public class EvaluationSection
 		extends LookupEntity
 {

@@ -30,6 +30,8 @@ import java.util.Set;
 public class ServiceUtil
 {
 
+	public static final String LOOKUP_ENTITY = "LookupEntity";
+
 	public static boolean isComplexClass(Class fieldClass)
 	{
 		boolean complex = false;
@@ -47,10 +49,22 @@ public class ServiceUtil
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Collection.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName())
-				&& !fieldClass.getSimpleName().equalsIgnoreCase(BigInteger.class.getSimpleName()))
-		{
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(BigInteger.class.getSimpleName())) {
 			complex = true;
 		}
 		return complex;
+	}
+
+	public static boolean isSubLookupEntity(Class entityClass)
+	{
+		if (entityClass == null) {
+			return false;
+		}
+
+		if ("LookupEntity".equals(entityClass.getSimpleName())) {
+			return true;
+		} else {
+			return isSubLookupEntity(entityClass.getSuperclass());
+		}
 	}
 }

@@ -15,12 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Testing")
 public class TestEntity
-	extends LookupEntity
+		extends LookupEntity
 {
 
 	public TestEntity()
