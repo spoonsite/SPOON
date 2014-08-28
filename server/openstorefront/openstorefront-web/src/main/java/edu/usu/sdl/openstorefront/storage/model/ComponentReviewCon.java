@@ -34,6 +34,19 @@ public class ComponentReviewCon
 	public ComponentReviewCon()
 	{
 	}
+	
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		ComponentReviewConPk temp = new ComponentReviewConPk();
+		//TODO: Do the logic here to set the primary key to the correct con pk
+	}
+	
+	@Override
+	public Object getPrimaryKey()
+	{
+		return componentReviewConPk;
+	}
 
 	public ComponentReviewConPk getComponentReviewConPk()
 	{

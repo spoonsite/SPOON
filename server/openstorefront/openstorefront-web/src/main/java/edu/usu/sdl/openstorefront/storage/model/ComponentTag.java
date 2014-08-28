@@ -40,6 +40,18 @@ public class ComponentTag
 	{
 	}
 
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		tagId = itemId;
+	}
+
+	@Override
+	public Object getPrimaryKey()
+	{
+		return tagId;
+	}
+	
 	public String getTagId()
 	{
 		return tagId;

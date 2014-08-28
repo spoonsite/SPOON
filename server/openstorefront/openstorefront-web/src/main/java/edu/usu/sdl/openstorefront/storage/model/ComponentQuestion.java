@@ -48,6 +48,18 @@ public class ComponentQuestion
 	{
 	}
 
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		questionId = itemId;
+	}
+
+	@Override
+	public Object getPrimaryKey()
+	{
+		return questionId;
+	}
+
 	public String getQuestion()
 	{
 		return question;

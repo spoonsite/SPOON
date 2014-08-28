@@ -31,6 +31,24 @@ public class ComponentAttribute
 	public ComponentAttribute()
 	{
 	}
+	
+		
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		ComponentAttributePk temp = new ComponentAttributePk();
+		temp.setAttributeCode(itemCode);		
+		temp.setAttributeCode(itemId);
+		temp.setComponentId(componentId);
+		componentAttributePk = temp;
+	}
+		
+	@Override
+	public Object getPrimaryKey()
+	{
+		return componentAttributePk;
+	}
+
 
 	public ComponentAttributePk getComponentAttributePk()
 	{
