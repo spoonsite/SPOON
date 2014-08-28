@@ -26,4 +26,8 @@ public class ExperienceTimeType
 		extends LookupEntity
 {
 
+	public ExperienceTimeType()
+	{
+	}
+
 }

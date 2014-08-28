@@ -26,4 +26,8 @@ public class ContactType
 		extends LookupEntity
 {
 
+	public ContactType()
+	{
+	}
+
 }

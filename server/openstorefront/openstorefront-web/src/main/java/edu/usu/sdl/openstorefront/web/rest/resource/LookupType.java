@@ -30,9 +30,9 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.GenericLookupEntity;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +49,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -97,7 +96,7 @@ public class LookupType
 	@GET
 	@APIDescription("Get a entity type codes")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(value=UserTypeCode.class, actualClassName = "LookupEntity")
+	@DataType(value = UserTypeCode.class, actualClassName = "LookupEntity")
 	@Path("/{entity}")
 	public List<LookupEntity> getEntityValues(
 			@PathParam("entity")
@@ -124,57 +123,51 @@ public class LookupType
 	@POST
 	@RequireAdmin
 	@APIDescription("Adds a new code to a given entity")
-	@Consumes({MediaType.APPLICATION_JSON})	
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}")
 	public Response postNewEntity(
 			@PathParam("entity")
-			@RequiredParam String entityName,			
-			LookupEntity lookupEntity)
+			@RequiredParam String entityName,
+			GenericLookupEntity genericLookupEntity)
 	{
-		return handlePostPutCode(entityName, lookupEntity, true);
+		return handlePostPutCode(entityName, genericLookupEntity, true);
 	}
-	
-	private Response handlePostPutCode(String entityName, LookupEntity lookupEntity,  boolean post)
+
+	private Response handlePostPutCode(String entityName, LookupEntity lookupEntity, boolean post)
 	{
 		checkEntity(entityName);
 		ValidationModel validationModel = new ValidationModel(lookupEntity);
-		validationModel.setConsumeFieldsOnly(true);		
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
-		if (validationResult.valid())
-		{
-			try
-			{
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			try {
 				Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
 				LookupEntity newLookupEntity = (LookupEntity) lookupClass.newInstance();
-				BeanUtils.copyProperties(newLookupEntity, lookupEntity);
+				newLookupEntity.setCode(lookupEntity.getCode());
+				newLookupEntity.setDescription(lookupEntity.getDescription());
+				newLookupEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
+
 				newLookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-				newLookupEntity.setCreateUser(entityName);
-				service.getLookupService().saveLookupValue(newLookupEntity);				
-			}
-			catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e)
-			{
+				newLookupEntity.setCreateUser(ServiceUtil.getCurrentUserName());
+				newLookupEntity.setUpdateUser(ServiceUtil.getCurrentUserName());
+				service.getLookupService().saveLookupValue(newLookupEntity);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				throw new OpenStorefrontRuntimeException(" (System Issue) Unable to process entity. " + entityName, "System error...contact support.", e);
 			}
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
 		}
-		else
-		{
-			return Response.ok(validationResult.toRestError()).build();			
-		}		
-		if (post)
-		{
+		if (post) {
 			return Response.created(URI.create(lookupEntity.getCode())).build();
-		}
-		else
-		{
+		} else {
 			return Response.ok().build();
 		}
 	}
-	
-	
+
 	@GET
 	@APIDescription("Get a entity type detail for the given id")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(UserTypeCode.class)
+	@DataType(value = UserTypeCode.class, actualClassName = "LookupEntity")
 	@Path("/{entity}/{code}")
 	public Response getEntityValues(
 			@PathParam("entity")
@@ -199,13 +192,10 @@ public class LookupType
 			throw new OpenStorefrontRuntimeException("(System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
 		}
 		Response response;
-		if (lookupEntity == null)
-		{
-			 response = Response.status(Response.Status.NOT_FOUND).entity(lookupEntity).build();			
-		}		
-		else
-		{
-			 response = Response.ok(lookupEntity).build();			
+		if (lookupEntity == null) {
+			response = Response.status(Response.Status.NOT_FOUND).entity(lookupEntity).build();
+		} else {
+			response = Response.ok(lookupEntity).build();
 		}
 		return response;
 	}
@@ -213,37 +203,41 @@ public class LookupType
 	@PUT
 	@RequireAdmin
 	@APIDescription("Updates descriptions for a given entity and code.")
-	@Consumes({MediaType.APPLICATION_JSON})	
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}/{code}")
 	public Response updateEntityValue(
 			@PathParam("entity")
 			@RequiredParam String entityName,
-			@DataType(UserTypeCode.class)
-			LookupEntity lookupEntity)
+			@PathParam("code")
+			@RequiredParam String code,
+			GenericLookupEntity genericLookupEntity)
 	{
-		return handlePostPutCode(entityName, lookupEntity, false);
+		//TODO: validate the code
+		genericLookupEntity.setCode(code);
+
+		return handlePostPutCode(entityName, genericLookupEntity, false);
 	}
 
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Remove a code from the entity")
-	@Consumes({MediaType.APPLICATION_JSON})	
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}/{code}")
 	public void deleteEntityValue(
 			@PathParam("entity")
 			@RequiredParam String entityName,
 			@PathParam("code")
 			@RequiredParam String code)
-	{		
+	{
 		checkEntity(entityName);
 		try {
-			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);			
-			service.getLookupService().removeValue(lookupClass, code);			
+			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
+			service.getLookupService().removeValue(lookupClass, code);
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException("(System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
-		}		
+		}
 	}
-	
+
 	private void checkEntity(String entityName)
 	{
 		boolean valid = false;

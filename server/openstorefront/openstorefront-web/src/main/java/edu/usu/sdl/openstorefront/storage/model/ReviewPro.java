@@ -26,4 +26,8 @@ public class ReviewPro
 		extends LookupEntity
 {
 
+	public ReviewPro()
+	{
+	}
+
 }

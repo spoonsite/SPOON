@@ -26,4 +26,8 @@ public class ResourceType
 		extends LookupEntity
 {
 
+	public ResourceType()
+	{
+	}
+
 }
