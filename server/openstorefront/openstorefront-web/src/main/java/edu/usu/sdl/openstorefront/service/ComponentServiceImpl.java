@@ -515,5 +515,12 @@ public class ComponentServiceImpl
 			persistenceService.persist(tracking);
 		}
 	}
+	
+	@Override
+	public void saveComponent()
+	{
+		// We need to figure out how to pass all the data we need to this function
+		// so we can do it in one transaction.
+	}
 
 }

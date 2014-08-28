@@ -221,4 +221,13 @@ public interface ComponentService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentTracking(ComponentTracking tracking);
 
+	/**
+	 * 
+	 * @return 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponent();
+	// Todo: Make an object that we can pass in to this function, or figure out which
+	// combination we'll need...
+	
 }
