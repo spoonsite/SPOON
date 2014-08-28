@@ -29,8 +29,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface DataType
+public @interface ReturnType
 {
 	Class value();
-	String actualClassName() default "";
 }

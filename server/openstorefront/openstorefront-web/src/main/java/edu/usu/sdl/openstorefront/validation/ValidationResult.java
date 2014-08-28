@@ -16,6 +16,7 @@
 
 package edu.usu.sdl.openstorefront.validation;
 
+import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,26 @@ public class ValidationResult
 		return sb.toString();
 	}
 
+	public RestErrorModel toRestError()
+	{
+		RestErrorModel restErrorModel = new RestErrorModel();
+		for (RuleResult ruleResult : ruleResults)
+		{
+			if (restErrorModel.getErrors().containsKey(ruleResult.getFieldName()))
+			{
+				String message = restErrorModel.getErrors().get(ruleResult.getFieldName());				
+				message = ", " +  ruleResult.getMessage();
+				restErrorModel.getErrors().put(ruleResult.getFieldName(), message);
+			}
+			else
+			{
+				restErrorModel.getErrors().put(ruleResult.getFieldName(), ruleResult.getMessage());
+			}				
+		}
+		
+		return restErrorModel;
+	}
+	
 	public List<RuleResult> getRuleResults()
 	{
 		return ruleResults;

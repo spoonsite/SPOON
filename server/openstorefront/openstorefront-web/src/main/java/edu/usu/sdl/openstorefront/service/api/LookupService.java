@@ -37,7 +37,7 @@ public interface LookupService
 	 * @param lookTableClass
 	 * @return
 	 */
-	public <T extends BaseEntity> List<T> findLookup(Class<T> lookTableClass);
+	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass);
 
 	/**
 	 * Find items for a given Look up resource
@@ -47,7 +47,7 @@ public interface LookupService
 	 * @param all - default to just active
 	 * @return
 	 */
-	public <T extends BaseEntity> List<T> findLookup(Class<T> lookTableClass, boolean all);
+	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass, boolean all);
 
 	/**
 	 * Add or Updates a lookup code
@@ -56,11 +56,21 @@ public interface LookupService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveLookupValue(LookupEntity lookupEntity);
+	
+	/**
+	 * In-activates code if code is not found this will still succeed
+	 * @param <T>
+	 * @param lookTableClass
+	 * @param code 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends LookupEntity> void removeValue(Class<T> lookTableClass, String code);
 
 	/**
 	 * This with add or inactive existing codes. Any existing value not in this
 	 * list will be in-activated. Other existing items will be just updated
 	 *
+	 * @param <T>
 	 * @param lookupClass
 	 * @param lookupValues
 	 */
