@@ -34,7 +34,7 @@ public class ComponentReviewProPk
 	public ComponentReviewProPk()
 	{
 	}
-
+	
 	public ComponentReviewProPk getComponentReviewProPk()
 	{
 		return componentReviewProPk;

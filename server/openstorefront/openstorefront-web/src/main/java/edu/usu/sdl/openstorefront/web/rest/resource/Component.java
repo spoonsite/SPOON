@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -77,18 +78,18 @@ public class Component
 		return componentView;
 	}
 
-//	@GET
-//	@APIDescription("Gets full component details (This the packed view for displaying)")
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@DataType(ComponentDetailView.class)
-//	@Path("/{id}/detail")
-//	public ComponentDetailView getComponentDetails(
-//			@PathParam("id")
-//			@RequiredParam String componentId)
-//	{
-//		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
-//		return componentDetail;
-//	}
+	@GET
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentDetailView.class)
+	@Path("/{id}/detail")
+	public ComponentDetailView getComponentDetails(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+		return componentDetail;
+	}
 	
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
@@ -101,6 +102,22 @@ public class Component
 	{
 		return service.getComponentService().getBaseComponent(ComponentAttribute.class, id);
 	}
+	
+	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentAttribute.class)
+	@Path("/{id}/attribute")
+	public void deleteComponentAttribute(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemType,
+			@RequiredParam String itemCode)
+	{
+				service.getComponentService().deactivateBaseComponent(ComponentAttribute.class, itemType, itemCode, componentId);
+	}
+	
 	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
@@ -140,6 +157,19 @@ public class Component
 			@RequiredParam String id)
 	{
 		return service.getComponentService().getBaseComponent(ComponentContact.class, id);
+	}
+	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentContact.class)
+	@Path("/{id}/contact")
+	public void deleteComponentContact(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentContact.class, itemId, componentId);
 	}
 
 	@POST
@@ -182,6 +212,19 @@ public class Component
 		return service.getComponentService().getBaseComponent(ComponentEvaluationSection.class, id);
 	}
 	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentEvaluationSection.class)
+	@Path("/{id}/section")
+	public void deleteComponentEvaluationSection(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, itemId, componentId);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -220,6 +263,19 @@ public class Component
 			@RequiredParam String id)
 	{
 		return service.getComponentService().getBaseComponent(ComponentEvaluationSchedule.class, id);
+	}
+	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentEvaluationSchedule.class)
+	@Path("/{id}/schedule")
+	public void deleteComponentEvaluationSchedule(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSchedule.class, itemId, componentId);
 	}
 	
 	@POST
@@ -262,6 +318,19 @@ public class Component
 		return service.getComponentService().getBaseComponent(ComponentMedia.class, id);
 	}
 	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMedia.class)
+	@Path("/{id}/media")
+	public void deleteComponentMedia(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentMedia.class, itemId, componentId);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -300,6 +369,19 @@ public class Component
 			@RequiredParam String id)
 	{
 		return service.getComponentService().getBaseComponent(ComponentMetadata.class, id);
+	}
+	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMetadata.class)
+	@Path("/{id}/metadata")
+	public void deleteComponentMetadata(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentMetadata.class, itemId, componentId);
 	}
 	
 	@POST
@@ -342,6 +424,19 @@ public class Component
 		return service.getComponentService().getBaseComponent(ComponentQuestion.class, id);
 	}
 	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentQuestion.class)
+	@Path("/{id}/question")
+	public void deleteComponentQuestion(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentQuestion.class, itemId, componentId);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -380,6 +475,19 @@ public class Component
 			@RequiredParam String id)
 	{
 		return service.getComponentService().getBaseComponent(ComponentQuestionResponse.class, id);
+	}
+
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentQuestionResponse.class)
+	@Path("/{id}/response")
+	public void deleteComponentQuestionResponse(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, itemId, componentId);
 	}
 
 	@POST
@@ -422,6 +530,19 @@ public class Component
 		return service.getComponentService().getBaseComponent(ComponentResource.class, id);
 	}
 	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentResource.class)
+	@Path("/{id}/resource")
+	public void deleteComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentResource.class, itemId, componentId);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -460,6 +581,19 @@ public class Component
 			@RequiredParam String id)
 	{
 		return service.getComponentService().getBaseComponent(ComponentReview.class, id);
+	}
+	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReview.class)
+	@Path("/{id}/review")
+	public void deleteComponentReview(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentReview.class, itemId, componentId);
 	}
 	
 	@POST
@@ -502,6 +636,19 @@ public class Component
 		return service.getComponentService().getBaseComponent(ComponentReviewCon.class, id);
 	}
 	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReviewCon.class)
+	@Path("/{id}/con")
+	public void deleteComponentReviewCon(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentReviewCon.class, itemId, componentId);
+	}
+	
 	@POST
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -541,35 +688,48 @@ public class Component
 	{
 		return service.getComponentService().getBaseComponent(ComponentReviewPro.class, id);
 	}
-//	
-//	@POST
-//	@APIDescription("Gets full component details (This the packed view for displaying)")
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@DataType(ComponentReviewPro.class)
-//	@Path("/{id}/pro")
-//	public ComponentReviewPro addComponentReviewPro(
-//			@PathParam("id")
-//			@RequiredParam ComponentReviewPro pro)
-//	{
-//		service.getComponentService().saveComponentReviewPro(pro);
-//		return pro;
-//	}
-//	
-//	@PUT
-//	@APIDescription("Gets full component details (This the packed view for displaying)")
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@DataType(ComponentReviewPro.class)
-//	@Path("/{id}/pro")
-//	public ComponentReviewPro updateComponentReviewPro(
-//			@PathParam("id")
-//			@RequiredParam ComponentReviewPro pro)
-//	{
-//		service.getComponentService().saveComponentReviewPro(pro);
-//		return pro;
-//	}
-//	
+	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReviewPro.class)
+	@Path("/{id}/pro")
+	public void deleteComponentReviewPro(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentReviewPro.class, itemId, componentId);
+	}
+	
+	@POST
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentReviewPro.class)
+	@Path("/{id}/pro")
+	public ComponentReviewPro addComponentReviewPro(
+			@PathParam("id")
+			@RequiredParam ComponentReviewPro pro)
+	{
+		service.getComponentService().saveComponentReviewPro(pro);
+		return pro;
+	}
+	
+	@PUT
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentReviewPro.class)
+	@Path("/{id}/pro")
+	public ComponentReviewPro updateComponentReviewPro(
+			@PathParam("id")
+			@RequiredParam ComponentReviewPro pro)
+	{
+		service.getComponentService().saveComponentReviewPro(pro);
+		return pro;
+	}
+	
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -580,6 +740,19 @@ public class Component
 			@RequiredParam String id)
 	{
 		return service.getComponentService().getBaseComponent(ComponentTag.class, id);
+	}
+	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tag")
+	public void deleteComponentTag(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentTag.class, itemId, componentId);
 	}
 	
 	@POST
@@ -620,6 +793,19 @@ public class Component
 			@RequiredParam String id)
 	{
 		return service.getComponentService().getBaseComponent(ComponentTracking.class, id);
+	}
+	
+	@DELETE
+	@APIDescription("Gets full component details (This the packed view for displaying)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTracking.class)
+	@Path("/{id}/tracking")
+	public void deleteComponentTracking(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam String itemId)
+	{
+		service.getComponentService().deactivateBaseComponent(ComponentTracking.class, itemId, componentId);
 	}
 	
 	@POST

@@ -51,6 +51,18 @@ public class ComponentQuestionResponse
 	{
 	}
 
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		responseId = itemId;
+	}
+
+	@Override
+	public Object getPrimaryKey()
+	{
+		return responseId;
+	}
+	
 	public String getResponseId()
 	{
 		return responseId;

@@ -70,6 +70,19 @@ public class ComponentReview
 	{
 	}
 
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		componentReviewId = itemId;
+	}
+
+	@Override
+	public Object getPrimaryKey()
+	{
+		return componentReviewId;
+	}
+
+	
 	public String getComponentReviewId()
 	{
 		return componentReviewId;
