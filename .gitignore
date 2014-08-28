@@ -1,5 +1,4 @@
 client/openstorefront/npm-debug.log
-client/openstorefront/npm-debug.log
 /.idea
 /client/openstorefront/app/bower_components/
 /client/openstorefront/automation_logs
@@ -8,10 +7,6 @@ client/openstorefront/npm-debug.log
 /client/openstorefront/nbproject/private/
 /client/openstorefront/screenshots
 /nbproject/private/
-/server/opencatalog-web/target/
-/server/openstron-web/target/
-/server/openstorefront-api/target/
-/server/openstorefront-web/target/
 /server/openstorefront/openstorefront-api/target/
 /server/openstorefront/openstorefront-web/src/main/webapp/scripts/
 /server/openstorefront/openstorefront-web/src/main/webapp/views/
@@ -25,5 +20,3 @@ client/openstorefront/npm-debug.log
 /server/openstorefront/openstorefront-web/src/main/webapp/index.html
 /server/openstorefront/openstorefront-web/target/
 /site/mobile/nbproject/private/
-
-server/openstorefront/openstorefront-web/target/
