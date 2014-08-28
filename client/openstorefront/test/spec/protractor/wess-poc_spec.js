@@ -1,14 +1,17 @@
 describe('wess-poc_', function() {
-    it('clears the search', function() {
+    it('click default to clear searches', function() {
         browser.get('http://wess.usurf.usu.edu');
         element(by.id('searchButton')).click();
         element(by.id('clearSearch')).click();
 
         element.all(by.css('.criteriaTitle')).get(0).click();
         browser.driver.sleep(2000);
+
+        // POC don't worry about checking, no map displayed anyway.
+        expect(true).toBe(true);
     });
 
-    it('go to Settings and click on buttons', function() {
+    it('go to Settings and click on buttons- POC', function() {
         element.all(by.css('.ui-btn.ui-icon-gear')).get(0).click();
         browser.driver.sleep(1500);
 
@@ -24,6 +27,8 @@ describe('wess-poc_', function() {
         element(by.id('mapFileBounds')).sendKeys(protractor.Key.ENTER);
         browser.driver.sleep(1500);
 
+        // POC don't worry about checking, no map displayed anyway.
+        expect(1).toBe(1);
 
     });
 

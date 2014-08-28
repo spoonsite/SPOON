@@ -45,6 +45,20 @@ public class ComponentContact
 	{
 	}
 
+	
+	@Override
+	public void setPrimaryKey(String itemId, String itemCode, String componentId)
+	{
+		contactId = itemId;
+	}
+	
+	@Override
+	public Object getPrimaryKey()
+	{
+		return contactId;
+	}
+
+	
 	public String getContactId()
 	{
 		return contactId;

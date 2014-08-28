@@ -35,7 +35,6 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
-import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
@@ -51,6 +50,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -84,7 +84,40 @@ public class ComponentServiceImpl
 				baseComponentExample.setActiveStatus(BaseComponent.ACTIVE_STATUS);
 			}
 			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
-		} catch (InstantiationException | IllegalAccessException ex) {
+		}
+		catch (InstantiationException | IllegalAccessException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+	}
+
+	@Override
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String componentId)
+	{
+		return deactivateBaseComponent(subComponentClass, itemId, "", componentId, false);
+	}
+
+	@Override
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId)
+	{
+		return deactivateBaseComponent(subComponentClass, itemId, itemCode, componentId, false);
+	}
+
+	@Override
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String componentId, String itemId, String itemCode, boolean all)
+	{
+		try {
+			T baseComponentExample = subComponentClass.newInstance();
+			baseComponentExample.setPrimaryKey(itemId, itemCode, componentId);
+			T found = persistenceService.findById(subComponentClass, baseComponentExample.getPrimaryKey());
+			if (found != null) 
+			{
+				found.setActiveStatus(T.INACTIVE_STATUS);
+				persistenceService.persist(found);
+			}
+			return found;
+		}
+		catch (InstantiationException | IllegalAccessException ex) {
+			Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
@@ -96,7 +129,7 @@ public class ComponentServiceImpl
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		return ComponentView.toViewList(persistenceService.queryByExample(Component.class, new QueryByExample(componentExample)));
 	}
-	
+
 	@Override
 	public ComponentView getComponent(String componentId)
 	{
@@ -128,26 +161,26 @@ public class ComponentServiceImpl
 		});
 
 		List<ComponentMedia> componentMedia = getBaseComponent(ComponentMedia.class, componentId);
-		componentMedia.forEach(media-> {
+		componentMedia.forEach(media -> {
 			result.getComponentMedia().add(ComponentMediaView.toView(media));
 		});
-		
+
 		List<ComponentExternalDependency> componentDependency = getBaseComponent(ComponentExternalDependency.class, componentId);
-		componentDependency.forEach(dependency-> {
+		componentDependency.forEach(dependency -> {
 			result.getDependencies().add(ComponentExternalDependencyView.toView(dependency));
 		});
-		
+
 		List<ComponentContact> componentContact = getBaseComponent(ComponentContact.class, componentId);
-		componentContact.forEach(contact-> {
+		componentContact.forEach(contact -> {
 			result.getContacts().add(ComponentContactView.toView(contact));
 		});
-		
+
 		result.setComponentViews(Integer.MIN_VALUE /*figure out a way to get component views*/);
 
 		// Here we grab the pros and cons for the reviews.
 		List<ComponentReview> tempReviews = getBaseComponent(ComponentReview.class, componentId);
 		List<ComponentReviewView> reviews = new ArrayList();
-		tempReviews.forEach(review->{
+		tempReviews.forEach(review -> {
 			reviews.add(ComponentReviewView.toView(review));
 		});
 		reviews.stream().forEach((review) -> {
@@ -175,7 +208,7 @@ public class ComponentServiceImpl
 		List<ComponentEvaluationSchedule> evaluationSchedules = getBaseComponent(ComponentEvaluationSchedule.class, componentId);
 		List<ComponentEvaluationSection> evaluationSections = getBaseComponent(ComponentEvaluationSection.class, componentId);
 		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSchedules, evaluationSections));
-		
+
 		//FIXME:
 		// This might change also.
 		// Here we grab the descriptions for each type and code per attribute
@@ -183,13 +216,11 @@ public class ComponentServiceImpl
 //		attributes.stream().forEach((attribute) -> {
 //			AttributeType tempType = new AttributeType();
 //			AttributeCode tempCode = new AttributeCode();
-
 //			tempType.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 //			AttributeCodePk codePk = new AttributeCodePk();
 //			codePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 //			codePk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 //			tempCode.setAttributeCodePk(codePk);
-
 //			tempType = persistenceService.queryByExample(AttributeType.class, new QueryByExample(tempType)).get(0);
 //			tempCode = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(tempCode)).get(0);
 //			attribute.setCodeDescription(tempCode.getDescription());
@@ -212,11 +243,12 @@ public class ComponentServiceImpl
 			oldAttribute.setActiveStatus(attribute.getActiveStatus());
 			oldAttribute.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(oldAttribute);
-		} else {
+		}
+		else {
 			attribute.setCreateDts(TimeUtil.currentDate());
 			attribute.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(attribute);
-		}	
+		}
 	}
 
 	@Override
@@ -234,11 +266,12 @@ public class ComponentServiceImpl
 			oldContact.setUpdateDts(TimeUtil.currentDate());
 			oldContact.setUpdateUser(contact.getUpdateUser());
 			persistenceService.persist(oldContact);
-		} else {
+		}
+		else {
 			contact.setCreateDts(TimeUtil.currentDate());
 			contact.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(contact);
-		}	
+		}
 	}
 
 	@Override
@@ -251,11 +284,12 @@ public class ComponentServiceImpl
 			oldSection.setUpdateDts(TimeUtil.currentDate());
 			oldSection.setUpdateUser(section.getUpdateUser());
 			persistenceService.persist(oldSection);
-		} else {
+		}
+		else {
 			section.setCreateDts(TimeUtil.currentDate());
 			section.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(section);
-		}	
+		}
 	}
 
 	@Override
@@ -269,11 +303,12 @@ public class ComponentServiceImpl
 			oldSchedule.setUpdateDts(TimeUtil.currentDate());
 			oldSchedule.setUpdateUser(schedule.getUpdateUser());
 			persistenceService.persist(oldSchedule);
-		} else {
+		}
+		else {
 			schedule.setCreateDts(TimeUtil.currentDate());
 			schedule.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(schedule);
-		}	
+		}
 	}
 
 	@Override
@@ -291,11 +326,12 @@ public class ComponentServiceImpl
 			oldMedia.setUpdateDts(TimeUtil.currentDate());
 			oldMedia.setUpdateUser(media.getUpdateUser());
 			persistenceService.persist(oldMedia);
-		} else {
+		}
+		else {
 			media.setCreateDts(TimeUtil.currentDate());
 			media.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(media);
-		}	
+		}
 	}
 
 	@Override
@@ -309,11 +345,12 @@ public class ComponentServiceImpl
 			oldMetadata.setUpdateDts(TimeUtil.currentDate());
 			oldMetadata.setUpdateUser(metadata.getUpdateUser());
 			persistenceService.persist(oldMetadata);
-		} else {
+		}
+		else {
 			metadata.setCreateDts(TimeUtil.currentDate());
 			metadata.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(metadata);
-		}	
+		}
 	}
 
 	@Override
@@ -328,11 +365,12 @@ public class ComponentServiceImpl
 			oldQuestion.setUpdateDts(TimeUtil.currentDate());
 			oldQuestion.setUpdateUser(question.getUpdateUser());
 			persistenceService.persist(oldQuestion);
-		} else {
+		}
+		else {
 			question.setCreateDts(TimeUtil.currentDate());
 			question.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(question);
-		}	
+		}
 	}
 
 	@Override
@@ -348,11 +386,12 @@ public class ComponentServiceImpl
 			oldResponse.setUpdateDts(TimeUtil.currentDate());
 			oldResponse.setUpdateUser(response.getUpdateUser());
 			persistenceService.persist(oldResponse);
-		} else {
+		}
+		else {
 			response.setCreateDts(TimeUtil.currentDate());
 			response.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(response);
-		}	
+		}
 	}
 
 	@Override
@@ -370,11 +409,12 @@ public class ComponentServiceImpl
 			oldResource.setUpdateDts(TimeUtil.currentDate());
 			oldResource.setUpdateUser(resource.getUpdateUser());
 			persistenceService.persist(oldResource);
-		} else {
+		}
+		else {
 			resource.setCreateDts(TimeUtil.currentDate());
 			resource.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(resource);
-		}	
+		}
 	}
 
 	@Override
@@ -394,7 +434,8 @@ public class ComponentServiceImpl
 			oldReview.setUpdateDts(TimeUtil.currentDate());
 			oldReview.setUpdateUser(review.getUpdateUser());
 			persistenceService.persist(oldReview);
-		} else {
+		}
+		else {
 			review.setCreateDts(TimeUtil.currentDate());
 			review.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(review);
@@ -411,7 +452,8 @@ public class ComponentServiceImpl
 			oldCon.setUpdateDts(TimeUtil.currentDate());
 			oldCon.setUpdateUser(con.getUpdateUser());
 			persistenceService.persist(oldCon);
-		} else {
+		}
+		else {
 			con.setCreateDts(TimeUtil.currentDate());
 			con.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(con);
@@ -428,7 +470,8 @@ public class ComponentServiceImpl
 			oldPro.setUpdateDts(TimeUtil.currentDate());
 			oldPro.setUpdateUser(pro.getUpdateUser());
 			persistenceService.persist(oldPro);
-		} else {
+		}
+		else {
 			pro.setCreateDts(TimeUtil.currentDate());
 			pro.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(pro);
@@ -445,7 +488,8 @@ public class ComponentServiceImpl
 			oldTag.setUpdateDts(TimeUtil.currentDate());
 			oldTag.setUpdateUser(tag.getUpdateUser());
 			persistenceService.persist(oldTag);
-		} else {
+		}
+		else {
 			tag.setCreateDts(TimeUtil.currentDate());
 			tag.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(tag);
@@ -464,12 +508,12 @@ public class ComponentServiceImpl
 			oldTracking.setUpdateDts(TimeUtil.currentDate());
 			oldTracking.setUpdateUser(tracking.getUpdateUser());
 			persistenceService.persist(oldTracking);
-		} else {
+		}
+		else {
 			tracking.setCreateDts(TimeUtil.currentDate());
 			tracking.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(tracking);
 		}
 	}
-
 
 }

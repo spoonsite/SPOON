@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.service.api;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
-import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
@@ -66,6 +65,39 @@ public interface ComponentService
 	 * @return
 	 */
 	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all);
+
+	/**
+	 * This only returns the active
+	 *
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId
+	 * @return
+	 */
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String componentId);
+
+	/**
+	 * This only returns the active
+	 *
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId
+	 * @return
+	 */
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId);
+
+	/**
+	 * This can be use to get parts of the component (Eg. ComponentReview)
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId
+	 * @param all (true to get inactive as well)
+	 * @return
+	 */
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId, boolean all);
 
 	/**
 	 * Return the whole list of components. (the short view)

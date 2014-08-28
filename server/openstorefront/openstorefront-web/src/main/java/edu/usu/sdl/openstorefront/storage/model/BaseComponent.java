@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author jlaw
  */
-public class BaseComponent
+public abstract class BaseComponent
 		extends BaseEntity
 {
 
@@ -41,5 +41,19 @@ public class BaseComponent
 	{
 		this.componentId = componentId;
 	}
+	
+	public void setPrimaryKey(String itemId)
+	{
+		setPrimaryKey(itemId, "", "");
+	}
+
+	public void setPrimaryKey(String itemId, String componentId)
+	{
+		setPrimaryKey(itemId, "", componentId);
+	}
+	
+	abstract public void setPrimaryKey(String itemId, String itemCode, String componentId);	
+	
+	abstract public Object getPrimaryKey();
 
 }
