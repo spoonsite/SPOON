@@ -52,6 +52,7 @@ public class OpenStorefrontExceptionHandler
 	{
 		 ActionBean action = (ActionBean) request.getAttribute(StripesConstants.REQ_ATTR_ACTION_BEAN);
 		log.log(Level.FINE, "System Error Occured", error);
+		error.printStackTrace();
 		
 		  //TODO: Generate Error Ticket
 		 // Capture all request information, stacktraces, user info
@@ -63,7 +64,7 @@ public class OpenStorefrontExceptionHandler
 		
 		//Strip and senstive info (See Checklist Q: 410)
 		
-		systemErrorModel.setMessage(error.getLocalizedMessage());			
+		systemErrorModel.setMessage(error.getMessage());			
 		
 		final ObjectMapper objectMapper =  StringProcessor.defaultObjectMapper();
 		return new StreamingResolution(MediaType.APPLICATION_JSON) {

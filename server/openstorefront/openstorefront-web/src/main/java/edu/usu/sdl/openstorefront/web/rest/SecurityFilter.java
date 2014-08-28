@@ -34,6 +34,8 @@ public class SecurityFilter
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException
 	{
 		//TODO:
+		
+		
 
 	}
 

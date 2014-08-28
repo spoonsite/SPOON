@@ -65,9 +65,7 @@ public class FilterQueryParams
 	public <T> List<T> filter(List<T> data)
 	{
 		List<T> results = new ArrayList<>();
-		//sort
-		Collections.sort(data, new BeanComparator<>(sortField, sortOrder));
-
+		
 		//window
 		if (offset < data.size() && max > 0) {
 			int count = 0;
@@ -79,6 +77,8 @@ public class FilterQueryParams
 				}
 			}
 		}
+		//sort
+		Collections.sort(results, new BeanComparator<>(sortOrder, sortField));
 		return results;
 	}
 

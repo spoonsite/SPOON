@@ -25,6 +25,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -106,7 +107,7 @@ public class JaxrsProcessor
 		int methodId = 0;
 		for (Method method : resource.getDeclaredMethods())
 		{
-
+			
 			APIMethodModel methodModel = new APIMethodModel();
 			methodModel.setId(methodId++);
 
@@ -133,6 +134,12 @@ public class JaxrsProcessor
 				restMethods.add("DELETE");
 			}
 			methodModel.setRestMethod(String.join(",", restMethods));
+
+			if (restMethods.isEmpty())
+			{
+				//skip non-rest methods
+				break;
+			}
 
 			//produces
 			Produces produces = (Produces) method.getAnnotation(Produces.class);
@@ -168,27 +175,56 @@ public class JaxrsProcessor
 
 			try
 			{
-				if (!(method.getReturnType().getSimpleName().equals(Void.class.getSimpleName()))
-						&& !("javax.ws.rs.core.Response".equals(method.getReturnType().getName())))
+				if (!(method.getReturnType().getSimpleName().equalsIgnoreCase(Void.class.getSimpleName())))
 				{
 					APIValueModel valueModel = new APIValueModel();
 					valueModel.setValueObjectName(method.getReturnType().getSimpleName());
-					valueModel.setValueObject(objectMapper.writeValueAsString(method.getReturnType().newInstance()));
-					mapValueField(valueModel.getValueFields(), method.getReturnType().getDeclaredFields());
-					mapComplexTypes(valueModel.getAllComplexTypes(), method.getReturnType().getDeclaredFields(), false);
-
+					ReturnType returnType = (ReturnType) method.getAnnotation(ReturnType.class);					
+					Class returnTypeClass;
+					if (returnType != null)
+					{
+						returnTypeClass = returnType.value();
+					}
+					else
+					{
+						returnTypeClass = method.getReturnType();
+					}
+					if (!("javax.ws.rs.core.Response".equals(method.getReturnType().getName())))
+					{
+						if (ServiceUtil.isCollectionClass(method.getReturnType()) == false)
+						{
+							try
+							{
+								valueModel.setValueObject(objectMapper.writeValueAsString(returnTypeClass.newInstance()));
+								mapValueField(valueModel.getValueFields(), ServiceUtil.getAllFields(method.getReturnType()).toArray(new Field[0]));								
+								mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(method.getReturnType()).toArray(new Field[0]), false);
+							}
+							catch (InstantiationException iex)
+							{
+								log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", returnTypeClass));
+							}
+						}
+					}
+					
 					DataType dataType = (DataType) method.getAnnotation(DataType.class);
 					if (dataType != null)
 					{
 						valueModel.setTypeObjectName(dataType.value().getSimpleName());
-						valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
-						mapValueField(valueModel.getTypeFields(), dataType.value().getDeclaredFields());
-						mapComplexTypes(valueModel.getAllComplexTypes(), dataType.value().getDeclaredFields(), false);
+						try
+						{
+							valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
+							mapValueField(valueModel.getTypeFields(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]));
+							mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), false);
+						}
+						catch (InstantiationException iex)
+						{
+							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", dataType.value()));
+						}					
 					}
 
 					methodModel.setResponseObject(valueModel);
 				}
-			} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex)
+			} catch (IllegalAccessException | JsonProcessingException ex)
 			{
 				log.log(Level.WARNING, null, ex);
 			}
@@ -235,25 +271,41 @@ public class JaxrsProcessor
 			{
 				APIValueModel valueModel = new APIValueModel();
 				try
-				{
-					valueModel.setValueObject(objectMapper.writeValueAsString(parameter.getType().newInstance()));
+				{					
 					valueModel.setValueObjectName(parameter.getType().getSimpleName());
-					Set<String> fieldList = mapValueField(valueModel.getValueFields(), parameter.getType().getDeclaredFields(), true);
-					String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getValueObject(), fieldList);
-					valueModel.setValueObject(cleanUpJson);
-					mapComplexTypes(valueModel.getAllComplexTypes(), parameter.getType().getDeclaredFields(), true);
+					
+					try
+					{
+						valueModel.setValueObject(objectMapper.writeValueAsString(parameter.getType().newInstance()));
+						Set<String> fieldList = mapValueField(valueModel.getValueFields(), ServiceUtil.getAllFields(parameter.getType()).toArray(new Field[0]), true);
+						String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getValueObject(), fieldList);
+						valueModel.setValueObject(cleanUpJson);
+						mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(parameter.getType()).toArray(new Field[0]), true);
+					}
+					catch (InstantiationException iex)
+					{
+						log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
+					}
 
 					DataType dataType = (DataType) parameter.getAnnotation(DataType.class);
 					if (dataType != null)
 					{
 						valueModel.setTypeObjectName(dataType.value().getSimpleName());
-						valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
-						fieldList = mapValueField(valueModel.getTypeFields(), dataType.value().getDeclaredFields(), true);
-						cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getValueObject(), fieldList);
-						valueModel.setValueObject(cleanUpJson);
-						mapComplexTypes(valueModel.getAllComplexTypes(), dataType.value().getDeclaredFields(), true);
+						
+						try
+						{
+							valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
+							Set<String> fieldList = mapValueField(valueModel.getTypeFields(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), true);
+							String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getTypeObject(), fieldList);
+							valueModel.setValueObject(cleanUpJson);
+							mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), true);
+						}
+						catch (InstantiationException iex)
+						{
+							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
+						}						
 					}
-				} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex)
+				} catch (IllegalAccessException | JsonProcessingException ex)
 				{
 					log.log(Level.WARNING, null, ex);
 				}
@@ -475,7 +527,7 @@ public class JaxrsProcessor
 			if (beanParam != null)
 			{
 				Class paramClass = parameter.getType();
-				mapParameters(parameterList, paramClass.getDeclaredFields());
+				mapParameters(parameterList, ServiceUtil.getAllFields(paramClass).toArray(new Field[0]));
 			}
 			if (StringUtils.isNotBlank(paramModel.getParameterType()))
 			{
