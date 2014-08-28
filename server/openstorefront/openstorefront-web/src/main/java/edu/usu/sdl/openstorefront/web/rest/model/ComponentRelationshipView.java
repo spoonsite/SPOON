@@ -20,12 +20,12 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class ComponentRelationship
+public class ComponentRelationshipView
 {
 	private Long componentId;
 	private String name;
 
-	public ComponentRelationship()
+	public ComponentRelationshipView()
 	{
 	}
 

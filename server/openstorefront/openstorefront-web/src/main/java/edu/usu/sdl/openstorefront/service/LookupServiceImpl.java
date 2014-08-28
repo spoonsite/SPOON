@@ -73,6 +73,7 @@ public class LookupServiceImpl
 		LookupEntity oldEntity = persistenceService.findById(lookupEntity.getClass(), lookupEntity.getCode());
 		if (oldEntity != null) {
 			oldEntity.setDescription(lookupEntity.getDescription());
+			oldEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
 			oldEntity.setActiveStatus(lookupEntity.getActiveStatus());
 			oldEntity.setUpdateUser(lookupEntity.getUpdateUser());
 			oldEntity.setUpdateDts(TimeUtil.currentDate());
@@ -104,6 +105,7 @@ public class LookupServiceImpl
 					if (existing != null) {
 						existing.setDescription(lookupEntity.getDescription());
 						existing.setDetailedDecription(lookupEntity.getDetailedDecription());
+						existing.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						getLookupService().saveLookupValue(existing);

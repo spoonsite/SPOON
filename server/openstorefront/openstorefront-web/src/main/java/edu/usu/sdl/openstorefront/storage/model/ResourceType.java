@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
+
 /**
  *
  * @author jlaw
  */
+@APIDescription("Resource Type: Docuemnt, Homepage, Releases...etc")
 public class ResourceType
 		extends LookupEntity
 {

@@ -15,21 +15,42 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentEvaluationSchedule
+public class ComponentEvaluationScheduleView
 {
 
 	private String evaluationLevelCode;
 	private Date completionDate;
 	private String levelStatus;
 
-	public ComponentEvaluationSchedule()
+	public ComponentEvaluationScheduleView()
 	{
+	}
+	
+	public static ComponentEvaluationScheduleView toView(ComponentEvaluationSchedule schedule)
+	{
+		ComponentEvaluationScheduleView view = new ComponentEvaluationScheduleView();
+		view.setCompletionDate(schedule.getCompletionDate());
+		view.setEvaluationLevelCode(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode());
+		view.setLevelStatus(schedule.getLevelStatus());
+		return view;
+	}
+	
+	public static List<ComponentEvaluationScheduleView> toViewList(List<ComponentEvaluationSchedule> schedules)
+	{
+		List<ComponentEvaluationScheduleView> viewList = new ArrayList();
+		schedules.forEach(schedule->{
+			viewList.add(ComponentEvaluationScheduleView.toView(schedule));
+		});
+		return viewList;
 	}
 
 	public String getEvaluationLevelCode()

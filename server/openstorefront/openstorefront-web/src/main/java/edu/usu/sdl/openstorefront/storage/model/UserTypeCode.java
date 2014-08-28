@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
+
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 
 /**
  *
  * @author jlaw
  */
-public class UserTypeCode 
-    extends LookupEntity
+@APIDescription("User Types available")
+public class UserTypeCode
+		extends LookupEntity
 {
-    
+
+	public static final String END_USER = "USER";
+
 }

@@ -15,36 +15,113 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
+import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetail;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
+import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import java.util.List;
 
 /**
+ * Services that handle all component classes
  *
  * @author dshurtleff
  */
 public interface ComponentService
 {
+
 	/**
-	 * Return the whole list of components.
-	 * (the short view)
-	 * @return 
+	 * This only returns the active
+	 *
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId
+	 * @return
+	 */
+	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId);
+
+	/**
+	 * This can be use to get parts of the component (Eg. ComponentReview)
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId
+	 * @param all (true to get inactive as well)
+	 * @return
+	 */
+	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all);
+
+	/**
+	 * Return the whole list of components. (the short view)
+	 *
+	 * @return
 	 */
 	public List<Component> getComponents();
-	
+
 	/**
-	 * Return the component attached to the given componentId.
-	 * (the short view)
+	 * Return the details object of the component attached to the given id. (the
+	 * full view)
+	 *
 	 * @param componentId
-	 * @return 
+	 * @return
 	 */
-	public Component getComponentSingle(String componentId);
+	public ComponentDetailView getComponentDetails(String componentId);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentAttribute(ComponentAttribute attribute);
 	
-	/**
-	 * Return the details object of the component attached to the given id. 
-	 * (the full view)
-	 * @param componentId
-	 * @return 
-	 */
-	public ComponentDetail getComponentDetails(String componentId);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentContact(ComponentContact contact);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentEvaluationSection(ComponentEvaluationSection section);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentMedia(ComponentMedia media);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentMetadata(ComponentMetadata metadata);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentQuestion(ComponentQuestion question);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentQuesitonResponse(ComponentQuestionResponse response);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentResoure(ComponentResource resource);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentReview(ComponentReview review);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentReviewCon(ComponentReviewCon con);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentReviewPro(ComponentReviewPro pro);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentTag(ComponentTag tag);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentTracking(ComponentTracking tracking);
+
 }

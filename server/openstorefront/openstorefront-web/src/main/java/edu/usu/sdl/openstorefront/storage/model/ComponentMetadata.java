@@ -25,15 +25,12 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentMetadata
-		extends BaseEntity
+		extends BaseComponent
 {
 
 	@PK
 	@NotNull
 	private String metadataId;
-
-	@NotNull
-	private String componentId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -55,16 +52,6 @@ public class ComponentMetadata
 	public void setMetadataId(String metadataId)
 	{
 		this.metadataId = metadataId;
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
 	}
 
 	public String getLabel()

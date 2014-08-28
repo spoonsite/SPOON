@@ -16,18 +16,39 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentEvaluationSection
+public class ComponentEvaluationSectionView
 {
 	private String name;	
 	private Integer score;
 
-	public ComponentEvaluationSection()
+	public ComponentEvaluationSectionView()
 	{
+	}
+	
+	public static ComponentEvaluationSectionView toView(ComponentEvaluationSection section)
+	{
+		ComponentEvaluationSectionView view = new ComponentEvaluationSectionView();
+		view.setName(section.getComponentEvaluationSectionPk().getEvaulationSection());
+		view.setScore(section.getScore());
+		return view;
+	}
+		
+	public static List<ComponentEvaluationSectionView> toViewList(List<ComponentEvaluationSection> sections)
+	{
+		List<ComponentEvaluationSectionView> viewList = new ArrayList();
+		sections.forEach(section->{
+			viewList.add(ComponentEvaluationSectionView.toView(section));
+		});
+		return viewList;
 	}
 
 	public String getName()

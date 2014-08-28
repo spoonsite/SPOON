@@ -15,13 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentQuestionResponse
+public class ComponentQuestionResponseView
 {
 
 	private String response;
@@ -29,8 +32,22 @@ public class ComponentQuestionResponse
 	private String userType;
 	private Date answeredDate;
 
-	public ComponentQuestionResponse()
+	public ComponentQuestionResponseView()
 	{
+	}
+	
+	public static List<ComponentQuestionResponseView> toViewList(List<ComponentQuestionResponse> responses)
+	{
+		List<ComponentQuestionResponseView> viewList = new ArrayList();
+		responses.forEach(response->{
+			ComponentQuestionResponseView tempView = new ComponentQuestionResponseView();
+			tempView.setAnsweredDate(response.getCreateDts());
+			tempView.setResponse(response.getResponse());
+			tempView.setUserType(response.getUserTypeCode());
+			tempView.setUsername(response.getUpdateUser());
+			viewList.add(tempView);
+		});
+		return viewList;
 	}
 
 	public String getResponse()

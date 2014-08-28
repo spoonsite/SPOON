@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Reviews  Pros List")
 public class ReviewPro
 		extends LookupEntity
 {
