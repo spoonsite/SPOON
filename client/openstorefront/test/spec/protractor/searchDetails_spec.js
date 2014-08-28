@@ -31,16 +31,14 @@ describe('searchDetails_Click on the results', function() {
 
   });
 
-/*
-  it('all tags have a reference are not null between the tags', function() {
-    element.all(by.xpath('/a')).then(function(links) {
-        for (var i = 0; i < links.length; i++) {
-            // THIS COMES BACK AS 'UNDEFINED' IN RESULTS
-            expect(links[i].getAttribute('href')).not.toBeNull();
-            }
-        });
-    });
-*/
-
+  it('click page tabs to hide parts of page', function() {
+    element(by.id('showPageRight')).click();
+    browser.driver.sleep(1000);
+    element(by.id('showPageRight')).click();
+    browser.driver.sleep(1000);
+    element(by.id('showPageRight')).click();
+    browser.driver.sleep(3000);
+    //expect(element.all(by.css('.showPageRight')).count()).toEqual(0);
+  });
 
 });
