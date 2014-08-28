@@ -48,8 +48,8 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -90,11 +90,20 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public List<Component> getComponents()
+	public List<ComponentView> getComponents()
 	{
 		Component componentExample = new Component();
-		componentExample.setActiveStatus(TestEntity.ACTIVE_STATUS);
-		return persistenceService.queryByExample(Component.class, new QueryByExample(componentExample));
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		return ComponentView.toViewList(persistenceService.queryByExample(Component.class, new QueryByExample(componentExample)));
+	}
+	
+	@Override
+	public ComponentView getComponent(String componentId)
+	{
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setComponentId(componentId);
+		return ComponentView.toView(persistenceService.queryByOneExample(Component.class, new QueryByExample(componentExample)));
 	}
 
 	@Override
@@ -152,16 +161,15 @@ public class ComponentServiceImpl
 		result.setReviews(reviews);
 
 		// Here we grab the responses to each question
-		List<ComponentQuestionView> questionViews = new ArrayList();
+		List<ComponentQuestionView> questionViews = new ArrayList<>();
 		List<ComponentQuestion> questions = getBaseComponent(ComponentQuestion.class, componentId);
-		for (Iterator<ComponentQuestion> it = questions.iterator(); it.hasNext();) {
-			ComponentQuestion question = it.next();
+		questions.stream().forEach((question) -> {
 			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
-			List<ComponentQuestionResponseView> responseViews = new ArrayList();
+			List<ComponentQuestionResponseView> responseViews;
 			tempResponse.setQuestionId(question.getQuestionId());
 			responseViews = ComponentQuestionResponseView.toViewList(persistenceService.queryByExample(ComponentQuestionResponse.class, new QueryByExample(tempResponse)));
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
-		}
+		});
 		result.setQuestions(questionViews);
 
 		List<ComponentEvaluationSchedule> evaluationSchedules = getBaseComponent(ComponentEvaluationSchedule.class, componentId);
@@ -328,7 +336,7 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void saveComponentQuesitonResponse(ComponentQuestionResponse response)
+	public void saveComponentQuestionResponse(ComponentQuestionResponse response)
 	{
 		ComponentQuestionResponse oldResponse = persistenceService.findById(ComponentQuestionResponse.class, response.getResponseId());
 		if (oldResponse != null) {
@@ -348,7 +356,7 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void saveComponentResoure(ComponentResource resource)
+	public void saveComponentResource(ComponentResource resource)
 	{
 		ComponentResource oldResource = persistenceService.findById(ComponentResource.class, resource.getResourceId());
 		if (oldResource != null) {
@@ -462,5 +470,6 @@ public class ComponentServiceImpl
 			persistenceService.persist(tracking);
 		}
 	}
+
 
 }

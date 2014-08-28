@@ -34,6 +34,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import java.util.List;
 
 /**
@@ -71,7 +72,15 @@ public interface ComponentService
 	 *
 	 * @return
 	 */
-	public List<Component> getComponents();
+	public List<ComponentView> getComponents();
+
+	/**
+	 * Return the whole list of components. (the short view)
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	public ComponentView getComponent(String componentId);
 
 	/**
 	 * Return the details object of the component attached to the given id. (the
@@ -104,10 +113,10 @@ public interface ComponentService
 	public void saveComponentQuestion(ComponentQuestion question);
 	
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentQuesitonResponse(ComponentQuestionResponse response);
+	public void saveComponentQuestionResponse(ComponentQuestionResponse response);
 	
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentResoure(ComponentResource resource);
+	public void saveComponentResource(ComponentResource resource);
 	
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentReview(ComponentReview review);

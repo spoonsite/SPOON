@@ -32,7 +32,6 @@ public interface LookupService
 	/**
 	 * This return only active
 	 *
-	 * @see findLookup(Class<T> lookTableClass, boolean all);
 	 * @param <T>
 	 * @param lookTableClass
 	 * @return
