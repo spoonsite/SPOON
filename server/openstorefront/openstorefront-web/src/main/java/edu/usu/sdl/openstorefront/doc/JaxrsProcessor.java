@@ -77,8 +77,7 @@ public class JaxrsProcessor
 		resourceModel.setResourceName(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(resource.getSimpleName())));
 
 		APIDescription aPIDescription = (APIDescription) resource.getAnnotation(APIDescription.class);
-		if (aPIDescription != null)
-		{
+		if (aPIDescription != null) {
 			resourceModel.setResourceDescription(aPIDescription.value());
 		}
 
@@ -86,14 +85,12 @@ public class JaxrsProcessor
 		ApplicationPath basePath = (ApplicationPath) RestConfiguration.class.getAnnotation(ApplicationPath.class);
 
 		Path path = (Path) resource.getAnnotation(Path.class);
-		if (path != null)
-		{
+		if (path != null) {
 			resourceModel.setResourcePath(basePath.value() + "/" + path.value());
 		}
 
 		RequireAdmin requireAdmin = (RequireAdmin) resource.getAnnotation(RequireAdmin.class);
-		if (requireAdmin != null)
-		{
+		if (requireAdmin != null) {
 			resourceModel.setRequireAdmin(true);
 		}
 
@@ -105,9 +102,8 @@ public class JaxrsProcessor
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 		int methodId = 0;
-		for (Method method : resource.getDeclaredMethods())
-		{
-			
+		for (Method method : resource.getDeclaredMethods()) {
+
 			APIMethodModel methodModel = new APIMethodModel();
 			methodModel.setId(methodId++);
 
@@ -117,115 +113,104 @@ public class JaxrsProcessor
 			POST postMethod = (POST) method.getAnnotation(POST.class);
 			PUT putMethod = (PUT) method.getAnnotation(PUT.class);
 			DELETE deleteMethod = (DELETE) method.getAnnotation(DELETE.class);
-			if (getMethod != null)
-			{
+			if (getMethod != null) {
 				restMethods.add("GET");
 			}
-			if (postMethod != null)
-			{
+			if (postMethod != null) {
 				restMethods.add("POST");
 			}
-			if (putMethod != null)
-			{
+			if (putMethod != null) {
 				restMethods.add("PUT");
 			}
-			if (deleteMethod != null)
-			{
+			if (deleteMethod != null) {
 				restMethods.add("DELETE");
 			}
 			methodModel.setRestMethod(String.join(",", restMethods));
 
-			if (restMethods.isEmpty())
-			{
+			if (restMethods.isEmpty()) {
 				//skip non-rest methods
-				break;
+				continue;
 			}
 
 			//produces
 			Produces produces = (Produces) method.getAnnotation(Produces.class);
-			if (produces != null)
-			{
+			if (produces != null) {
 				methodModel.setProducesTypes(String.join(",", produces.value()));
 			}
 
 			//consumes
 			Consumes consumes = (Consumes) method.getAnnotation(Consumes.class);
-			if (consumes != null)
-			{
+			if (consumes != null) {
 				methodModel.setConsumesTypes(String.join(",", consumes.value()));
 			}
 
 			aPIDescription = (APIDescription) method.getAnnotation(APIDescription.class);
-			if (aPIDescription != null)
-			{
+			if (aPIDescription != null) {
 				methodModel.setDescription(aPIDescription.value());
 			}
 
 			path = (Path) method.getAnnotation(Path.class);
-			if (path != null)
-			{
+			if (path != null) {
 				methodModel.setMethodPath(path.value());
 			}
 
 			requireAdmin = (RequireAdmin) method.getAnnotation(RequireAdmin.class);
-			if (requireAdmin != null)
-			{
+			if (requireAdmin != null) {
 				methodModel.setRequireAdmin(true);
 			}
 
-			try
-			{
-				if (!(method.getReturnType().getSimpleName().equalsIgnoreCase(Void.class.getSimpleName())))
-				{
+			try {
+				if (!(method.getReturnType().getSimpleName().equalsIgnoreCase(Void.class.getSimpleName()))) {
 					APIValueModel valueModel = new APIValueModel();
-					valueModel.setValueObjectName(method.getReturnType().getSimpleName());
-					ReturnType returnType = (ReturnType) method.getAnnotation(ReturnType.class);					
-					Class returnTypeClass;
-					if (returnType != null)
-					{
-						returnTypeClass = returnType.value();
-					}
-					else
-					{
-						returnTypeClass = method.getReturnType();
-					}
-					if (!("javax.ws.rs.core.Response".equals(method.getReturnType().getName())))
-					{
-						if (ServiceUtil.isCollectionClass(method.getReturnType()) == false)
-						{
-							try
-							{
-								valueModel.setValueObject(objectMapper.writeValueAsString(returnTypeClass.newInstance()));
-								mapValueField(valueModel.getValueFields(), ServiceUtil.getAllFields(method.getReturnType()).toArray(new Field[0]));								
-								mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(method.getReturnType()).toArray(new Field[0]), false);
-							}
-							catch (InstantiationException iex)
-							{
-								log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", returnTypeClass));
-							}
-						}
-					}
-					
 					DataType dataType = (DataType) method.getAnnotation(DataType.class);
-					if (dataType != null)
-					{
-						valueModel.setTypeObjectName(dataType.value().getSimpleName());
-						try
-						{
-							valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
-							mapValueField(valueModel.getTypeFields(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]));
-							mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), false);
-						}
-						catch (InstantiationException iex)
-						{
-							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", dataType.value()));
-						}					
+
+					boolean addResponseObject = true;
+					if ("javax.ws.rs.core.Response".equals(method.getReturnType().getName())
+							&& dataType == null) {
+						addResponseObject = false;
 					}
 
-					methodModel.setResponseObject(valueModel);
+					if (addResponseObject) {
+						valueModel.setValueObjectName(method.getReturnType().getSimpleName());
+						ReturnType returnType = (ReturnType) method.getAnnotation(ReturnType.class);
+						Class returnTypeClass;
+						if (returnType != null) {
+							returnTypeClass = returnType.value();
+						} else {
+							returnTypeClass = method.getReturnType();
+						}
+
+						if (!"javax.ws.rs.core.Response".equals(method.getReturnType().getName())) {
+							if (ServiceUtil.isCollectionClass(method.getReturnType()) == false) {
+								try {
+									valueModel.setValueObject(objectMapper.writeValueAsString(returnTypeClass.newInstance()));
+									mapValueField(valueModel.getValueFields(), ServiceUtil.getAllFields(returnTypeClass).toArray(new Field[0]));
+									mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(returnTypeClass).toArray(new Field[0]), false);
+								} catch (InstantiationException iex) {
+									log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", returnTypeClass));
+								}
+							}
+						}
+
+						if (dataType != null) {
+							String typeName = dataType.value().getSimpleName();
+							if (StringUtils.isNotBlank(dataType.actualClassName())) {
+								typeName = dataType.actualClassName();
+							}
+							valueModel.setTypeObjectName(typeName);
+							try {
+								valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
+								mapValueField(valueModel.getTypeFields(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]));
+								mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), false);
+							} catch (InstantiationException iex) {
+								log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", dataType.value()));
+							}
+						}
+
+						methodModel.setResponseObject(valueModel);
+					}
 				}
-			} catch (IllegalAccessException | JsonProcessingException ex)
-			{
+			} catch (IllegalAccessException | JsonProcessingException ex) {
 				log.log(Level.WARNING, null, ex);
 			}
 
@@ -245,8 +230,7 @@ public class JaxrsProcessor
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-		for (Parameter parameter : parameters)
-		{
+		for (Parameter parameter : parameters) {
 			//deterimine if this is "Body" object
 			List<Annotation> paramAnnotation = new ArrayList<>();
 			paramAnnotation.add(parameter.getAnnotation(QueryParam.class));
@@ -258,55 +242,47 @@ public class JaxrsProcessor
 			paramAnnotation.add(parameter.getAnnotation(BeanParam.class));
 
 			boolean consumeObject = true;
-			for (Annotation annotation : paramAnnotation)
-			{
-				if (annotation != null)
-				{
+			for (Annotation annotation : paramAnnotation) {
+				if (annotation != null) {
 					consumeObject = false;
 					break;
 				}
 			}
 
-			if (consumeObject)
-			{
+			if (consumeObject) {
 				APIValueModel valueModel = new APIValueModel();
-				try
-				{					
+				try {
 					valueModel.setValueObjectName(parameter.getType().getSimpleName());
-					
-					try
-					{
-						valueModel.setValueObject(objectMapper.writeValueAsString(parameter.getType().newInstance()));
-						Set<String> fieldList = mapValueField(valueModel.getValueFields(), ServiceUtil.getAllFields(parameter.getType()).toArray(new Field[0]), true);
-						String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getValueObject(), fieldList);
-						valueModel.setValueObject(cleanUpJson);
-						mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(parameter.getType()).toArray(new Field[0]), true);
-					}
-					catch (InstantiationException iex)
-					{
-						log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
-					}
 
 					DataType dataType = (DataType) parameter.getAnnotation(DataType.class);
-					if (dataType != null)
-					{
-						valueModel.setTypeObjectName(dataType.value().getSimpleName());
-						
-						try
-						{
+					if (dataType != null) {
+						String typeName = dataType.value().getSimpleName();
+						if (StringUtils.isNotBlank(dataType.actualClassName())) {
+							typeName = dataType.actualClassName();
+						}
+						valueModel.setTypeObjectName(typeName);
+
+						try {
 							valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
 							Set<String> fieldList = mapValueField(valueModel.getTypeFields(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), true);
 							String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getTypeObject(), fieldList);
-							valueModel.setValueObject(cleanUpJson);
+							valueModel.setTypeObject(cleanUpJson);
 							mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), true);
-						}
-						catch (InstantiationException iex)
-						{
+						} catch (InstantiationException iex) {
 							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
-						}						
+						}
+					} else {
+						try {
+							valueModel.setValueObject(objectMapper.writeValueAsString(parameter.getType().newInstance()));
+							Set<String> fieldList = mapValueField(valueModel.getValueFields(), ServiceUtil.getAllFields(parameter.getType()).toArray(new Field[0]), true);
+							String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getValueObject(), fieldList);
+							valueModel.setValueObject(cleanUpJson);
+							mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(parameter.getType()).toArray(new Field[0]), true);
+						} catch (InstantiationException iex) {
+							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
+						}
 					}
-				} catch (IllegalAccessException | JsonProcessingException ex)
-				{
+				} catch (IllegalAccessException | JsonProcessingException ex) {
 					log.log(Level.WARNING, null, ex);
 				}
 
@@ -322,47 +298,38 @@ public class JaxrsProcessor
 	{
 		//Should strip duplicate types
 		Set<String> typesInList = new HashSet<>();
-		typeModels.forEach(type ->
-		{
+		typeModels.forEach(type -> {
 			typesInList.add(type.getName());
 		});
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-		for (Field field : fields)
-		{
+		for (Field field : fields) {
 			boolean capture = true;
-			if (onlyConsumeField)
-			{
+			if (onlyConsumeField) {
 				ConsumeField consumeField = (ConsumeField) field.getAnnotation(ConsumeField.class);
-				if (consumeField == null)
-				{
+				if (consumeField == null) {
 					capture = false;
 				}
 			}
 
-			if (capture)
-			{
+			if (capture) {
 
 				Class fieldClass = field.getType();
 				DataType dataType = (DataType) field.getAnnotation(DataType.class);
-				if (dataType != null)
-				{
+				if (dataType != null) {
 					fieldClass = dataType.value();
 				}
 
-				if (ServiceUtil.isComplexClass(fieldClass))
-				{
+				if (ServiceUtil.isComplexClass(fieldClass)) {
 
 					APITypeModel typeModel = new APITypeModel();
 					typeModel.setName(fieldClass.getSimpleName());
 					mapValueField(typeModel.getFields(), fieldClass.getDeclaredFields(), onlyConsumeField);
-					try
-					{
+					try {
 						typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
-					} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex)
-					{
+					} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex) {
 						log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
 						typeModel.setObject("{ Unable to view }");
 					}
@@ -385,88 +352,77 @@ public class JaxrsProcessor
 	{
 		Set<String> fieldNamesCaptured = new HashSet<>();
 
-		for (Field field : fields)
-		{
+		for (Field field : fields) {
 			boolean capture = true;
 
-			if (onlyComsumeField)
-			{
+			if (onlyComsumeField) {
 				ConsumeField consumeField = (ConsumeField) field.getAnnotation(ConsumeField.class);
-				if (consumeField == null)
-				{
+				if (consumeField == null) {
 					capture = false;
 				}
 			}
 
-			if (capture)
-			{
+			if (capture) {
 				APIValueFieldModel fieldModel = new APIValueFieldModel();
 				fieldModel.setFieldName(field.getName());
 				fieldNamesCaptured.add(field.getName());
 				fieldModel.setType(field.getType().getSimpleName());
 
 				DataType dataType = (DataType) field.getAnnotation(DataType.class);
-				if (dataType != null)
-				{
-					fieldModel.setType(fieldModel.getType() + ":  " + dataType.value().getSimpleName());
+				if (dataType != null) {
+					String typeName = dataType.value().getSimpleName();
+					if (StringUtils.isNotBlank(dataType.actualClassName())) {
+						typeName = dataType.actualClassName();
+					}
+					fieldModel.setType(fieldModel.getType() + ":  " + typeName);
 				}
 
 				NotNull requiredParam = (NotNull) field.getAnnotation(NotNull.class);
-				if (requiredParam != null)
-				{
+				if (requiredParam != null) {
 					fieldModel.setRequired(true);
 				}
 
 				StringBuilder validation = new StringBuilder();
 				ParamTypeDescription description = (ParamTypeDescription) field.getAnnotation(ParamTypeDescription.class);
-				if (description != null)
-				{
+				if (description != null) {
 					validation.append(description.value()).append("<br>");
 				}
 
-				if ("Date".equals(field.getType().getSimpleName()))
-				{
+				if ("Date".equals(field.getType().getSimpleName())) {
 					validation.append("Timestamp (milliseconds since UNIX Epoch<br>");
 				}
 
-				if ("boolean".equalsIgnoreCase(field.getType().getSimpleName()))
-				{
+				if ("boolean".equalsIgnoreCase(field.getType().getSimpleName())) {
 					validation.append("T | F");
 				}
 
 				ValidationRequirement validationRequirement = (ValidationRequirement) field.getAnnotation(ValidationRequirement.class);
-				if (validationRequirement != null)
-				{
+				if (validationRequirement != null) {
 					validation.append(validationRequirement.value()).append("<br>");
 				}
 
 				Min min = (Min) field.getAnnotation(Min.class);
-				if (min != null)
-				{
+				if (min != null) {
 					validation.append("Min Value: ").append(min.value()).append("<br>");
 				}
 
 				Max max = (Max) field.getAnnotation(Max.class);
-				if (max != null)
-				{
+				if (max != null) {
 					validation.append("Max Value: ").append(max.value()).append("<br>");
 				}
 
 				Size size = (Size) field.getAnnotation(Size.class);
-				if (size != null)
-				{
+				if (size != null) {
 					validation.append("Min Length: ").append(size.min()).append(" Max Length: ").append(size.max()).append("<br>");
 				}
 
 				Pattern pattern = (Pattern) field.getAnnotation(Pattern.class);
-				if (pattern != null)
-				{
+				if (pattern != null) {
 					validation.append("Needs to Match: ").append(pattern.regexp()).append("<br>");
 				}
 
 				ValidValueType validValueType = (ValidValueType) field.getAnnotation(ValidValueType.class);
-				if (validValueType != null)
-				{
+				if (validValueType != null) {
 					validation.append("Set of valid values: ").append(Arrays.toString(validValueType.value())).append("<br>");
 				}
 
@@ -480,8 +436,7 @@ public class JaxrsProcessor
 
 	private static void mapMethodParameters(List<APIParamModel> parameterList, Parameter parameters[])
 	{
-		for (Parameter parameter : parameters)
-		{
+		for (Parameter parameter : parameters) {
 			APIParamModel paramModel = new APIParamModel();
 			paramModel.setFieldName(parameter.getName());
 
@@ -493,65 +448,53 @@ public class JaxrsProcessor
 			PathParam pathParam = (PathParam) parameter.getAnnotation(PathParam.class);
 			BeanParam beanParam = (BeanParam) parameter.getAnnotation(BeanParam.class);
 
-			if (queryParam != null)
-			{
+			if (queryParam != null) {
 				paramModel.setParameterType(QueryParam.class.getSimpleName());
 				paramModel.setParameterName(queryParam.value());
 			}
-			if (formParam != null)
-			{
+			if (formParam != null) {
 				paramModel.setParameterType(FormParam.class.getSimpleName());
 				paramModel.setParameterName(formParam.value());
 			}
-			if (matrixParam != null)
-			{
+			if (matrixParam != null) {
 				paramModel.setParameterType(MatrixParam.class.getSimpleName());
 				paramModel.setParameterName(matrixParam.value());
 			}
-			if (pathParam != null)
-			{
+			if (pathParam != null) {
 				paramModel.setParameterType(PathParam.class.getSimpleName());
 				paramModel.setParameterName(pathParam.value());
 			}
-			if (headerParam != null)
-			{
+			if (headerParam != null) {
 				paramModel.setParameterType(HeaderParam.class.getSimpleName());
 				paramModel.setParameterName(headerParam.value());
 			}
-			if (cookieParam != null)
-			{
+			if (cookieParam != null) {
 				paramModel.setParameterType(CookieParam.class.getSimpleName());
 				paramModel.setParameterName(cookieParam.value());
 			}
 
-			if (beanParam != null)
-			{
+			if (beanParam != null) {
 				Class paramClass = parameter.getType();
 				mapParameters(parameterList, ServiceUtil.getAllFields(paramClass).toArray(new Field[0]));
 			}
-			if (StringUtils.isNotBlank(paramModel.getParameterType()))
-			{
+			if (StringUtils.isNotBlank(paramModel.getParameterType())) {
 				APIDescription aPIDescription = (APIDescription) parameter.getAnnotation(APIDescription.class);
-				if (aPIDescription != null)
-				{
+				if (aPIDescription != null) {
 					paramModel.setParameterDescription(aPIDescription.value());
 				}
 
 				ParameterRestrictions restrictions = (ParameterRestrictions) parameter.getAnnotation(ParameterRestrictions.class);
-				if (restrictions != null)
-				{
+				if (restrictions != null) {
 					paramModel.setRestrictions(restrictions.value());
 				}
 
 				RequiredParam requiredParam = (RequiredParam) parameter.getAnnotation(RequiredParam.class);
-				if (requiredParam != null)
-				{
+				if (requiredParam != null) {
 					paramModel.setRequired(true);
 				}
 
 				DefaultValue defaultValue = (DefaultValue) parameter.getAnnotation(DefaultValue.class);
-				if (defaultValue != null)
-				{
+				if (defaultValue != null) {
 					paramModel.setDefaultValue(defaultValue.value());
 				}
 
@@ -562,8 +505,7 @@ public class JaxrsProcessor
 
 	private static void mapParameters(List<APIParamModel> parameterList, Field fields[])
 	{
-		for (Field field : fields)
-		{
+		for (Field field : fields) {
 			APIParamModel paramModel = new APIParamModel();
 			paramModel.setFieldName(field.getName());
 
@@ -575,67 +517,55 @@ public class JaxrsProcessor
 			PathParam pathParam = (PathParam) field.getAnnotation(PathParam.class);
 			BeanParam beanParam = (BeanParam) field.getAnnotation(BeanParam.class);
 
-			if (queryParam != null)
-			{
+			if (queryParam != null) {
 				paramModel.setParameterType(QueryParam.class.getSimpleName());
 				paramModel.setParameterName(queryParam.value());
 			}
-			if (formParam != null)
-			{
+			if (formParam != null) {
 				paramModel.setParameterType(FormParam.class.getSimpleName());
 				paramModel.setParameterName(formParam.value());
 			}
-			if (matrixParam != null)
-			{
+			if (matrixParam != null) {
 				paramModel.setParameterType(MatrixParam.class.getSimpleName());
 				paramModel.setParameterName(matrixParam.value());
 			}
-			if (pathParam != null)
-			{
+			if (pathParam != null) {
 				paramModel.setParameterType(PathParam.class.getSimpleName());
 				paramModel.setParameterName(pathParam.value());
 			}
-			if (headerParam != null)
-			{
+			if (headerParam != null) {
 				paramModel.setParameterType(HeaderParam.class.getSimpleName());
 				paramModel.setParameterName(headerParam.value());
 			}
-			if (cookieParam != null)
-			{
+			if (cookieParam != null) {
 				paramModel.setParameterType(CookieParam.class.getSimpleName());
 				paramModel.setParameterName(cookieParam.value());
 			}
 
-			if (beanParam != null)
-			{
+			if (beanParam != null) {
 				Class fieldClass = field.getDeclaringClass();
 				mapParameters(parameterList, fieldClass.getDeclaredFields());
 			}
 
-			if (StringUtils.isNotBlank(paramModel.getParameterType()))
-			{
+			if (StringUtils.isNotBlank(paramModel.getParameterType())) {
 
 				APIDescription aPIDescription = (APIDescription) field.getAnnotation(APIDescription.class);
-				if (aPIDescription != null)
-				{
+				if (aPIDescription != null) {
 					paramModel.setParameterDescription(aPIDescription.value());
 				}
 
 				ParameterRestrictions restrictions = (ParameterRestrictions) field.getAnnotation(ParameterRestrictions.class);
-				if (restrictions != null)
-				{
+				if (restrictions != null) {
 					paramModel.setRestrictions(restrictions.value());
 				}
 
 				RequiredParam requiredParam = (RequiredParam) field.getAnnotation(RequiredParam.class);
-				if (requiredParam != null)
-				{
+				if (requiredParam != null) {
 					paramModel.setRequired(true);
 				}
 
 				DefaultValue defaultValue = (DefaultValue) field.getAnnotation(DefaultValue.class);
-				if (defaultValue != null)
-				{
+				if (defaultValue != null) {
 					paramModel.setDefaultValue(defaultValue.value());
 				}
 

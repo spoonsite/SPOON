@@ -26,4 +26,8 @@ public class EvaluationSection
 		extends LookupEntity
 {
 
+	public EvaluationSection()
+	{
+	}
+
 }

@@ -26,4 +26,8 @@ public class MediaType
 		extends LookupEntity
 {
 
+	public MediaType()
+	{
+	}
+
 }

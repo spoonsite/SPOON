@@ -26,4 +26,8 @@ public class HighlightType
 		extends LookupEntity
 {
 
+	public HighlightType()
+	{
+	}
+
 }

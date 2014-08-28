@@ -26,4 +26,8 @@ public class LevelStatus
 		extends LookupEntity
 {
 
+	public LevelStatus()
+	{
+	}
+
 }
