@@ -38,9 +38,13 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
+import java.net.URI;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -64,6 +68,7 @@ public class Component
 		extends BaseResource
 {
 
+	// COMPONENT GENERAL FUNCTIONS
 	@GET
 	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -102,6 +107,9 @@ public class Component
 		return componentDetail;
 	}
 
+	
+	
+	// Component ATTRIBUTE Section
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -145,10 +153,22 @@ public class Component
 			@RequiredParam
 			ComponentAttribute attribute)
 	{
-		service.getComponentService().saveComponentAttribute(attribute);
-		return Response.ok().build();
+		ValidationModel validationModel = new ValidationModel(attribute);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentAttribute(attribute);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.created(URI.create(attribute.getComponentAttributePk().getAttributeType() + attribute.getComponentAttributePk().getAttributeCode())).build();
 	}
 
+	
+	// Component CONTACT section
 	@GET
 	@APIDescription("Remove a contact from the entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -190,8 +210,7 @@ public class Component
 			@RequiredParam
 			ComponentContact contact)
 	{
-		service.getComponentService().saveComponentContact(contact);
-		return Response.ok().build();
+		return saveContact(contact, true);
 	}
 
 	@PUT
@@ -205,10 +224,31 @@ public class Component
 			String componentId,
 			ComponentContact contact)
 	{
-		service.getComponentService().saveComponentContact(contact);
-		return Response.ok().build();
+		return saveContact(contact, false);
 	}
+	private Response saveContact(ComponentContact contact, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(contact);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentContact(contact);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			return Response.created(URI.create(contact.getContactId())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
 
+
+	// Component Evaluation Section section
 	@GET
 	@APIDescription("Gets an evaluation section associated to the entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -250,8 +290,7 @@ public class Component
 			@RequiredParam
 			ComponentEvaluationSection section)
 	{
-		service.getComponentService().saveComponentEvaluationSection(section);
-		return Response.ok().build();
+		return saveSection(section, true);
 	}
 
 	@PUT
@@ -266,10 +305,32 @@ public class Component
 			@RequiredParam
 			ComponentEvaluationSection section)
 	{
-		service.getComponentService().saveComponentEvaluationSection(section);
-		return Response.ok().build();
+		return saveSection(section, false);
+	}
+	private Response saveSection(ComponentEvaluationSection section, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(section);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentEvaluationSection(section);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(section.getComponentEvaluationSectionPk().getEvaulationSection())).build();
+		} else {
+			return Response.ok().build();
+		}
 	}
 
+	
+	
+	// Component Evaluation Schedule section
 	@GET
 	@APIDescription("Gets a list of evaluation schedules associated to the entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -311,8 +372,7 @@ public class Component
 			@RequiredParam
 			ComponentEvaluationSchedule schedule)
 	{
-		service.getComponentService().saveComponentEvaluationSchedule(schedule);
-		return Response.ok().build();
+		return saveSchedule(schedule, true);
 	}
 
 	@PUT
@@ -327,10 +387,32 @@ public class Component
 			@RequiredParam
 			ComponentEvaluationSchedule schedule)
 	{
-		service.getComponentService().saveComponentEvaluationSchedule(schedule);
-		return Response.ok().build();
+		return saveSchedule(schedule, false);
 	}
+	private Response saveSchedule(ComponentEvaluationSchedule schedule, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(schedule);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentEvaluationSchedule(schedule);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
 
+	
+	// Component MEDIA section
 	@GET
 	@APIDescription("Gets the list of media associated to an entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -376,8 +458,7 @@ public class Component
 			@RequiredParam
 			ComponentMedia media)
 	{
-		service.getComponentService().saveComponentMedia(media);
-		return Response.ok().build();
+		return saveMedia(media, true);
 	}
 
 	@PUT
@@ -392,10 +473,32 @@ public class Component
 			@RequiredParam
 			ComponentMedia media)
 	{
-		service.getComponentService().saveComponentMedia(media);
-		return Response.ok().build();
+		return saveMedia(media, false);
 	}
+	
+	private Response saveMedia(ComponentMedia media, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(media);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentMedia(media);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(media.getComponentMediaId())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
 
+	// Component METADATA section
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -437,8 +540,7 @@ public class Component
 			@RequiredParam
 			ComponentMetadata metadata)
 	{
-		service.getComponentService().saveComponentMetadata(metadata);
-		return Response.ok().build();
+		return saveMetadata(metadata, true);
 	}
 
 	@PUT
@@ -453,10 +555,32 @@ public class Component
 			@RequiredParam
 			ComponentMetadata metadata)
 	{
-		service.getComponentService().saveComponentMetadata(metadata);
-		return Response.ok().build();
+		return saveMetadata(metadata, false);
 	}
-
+		
+	private Response saveMetadata(ComponentMetadata metadata, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(metadata);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentMetadata(metadata);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(metadata.getMetadataId())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
+	
+	// Component QUESTION section
 	@GET
 	@APIDescription("Get the questions associated with the specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -498,8 +622,7 @@ public class Component
 			@RequiredParam
 			ComponentQuestion question)
 	{
-		service.getComponentService().saveComponentQuestion(question);
-		return Response.ok().build();
+		return saveQuestion(question, true);
 	}
 
 	@PUT
@@ -514,10 +637,32 @@ public class Component
 			@RequiredParam
 			ComponentQuestion question)
 	{
-		service.getComponentService().saveComponentQuestion(question);
-		return Response.ok().build();
+		return saveQuestion(question, false);
 	}
-
+		
+	private Response saveQuestion(ComponentQuestion question, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(question);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentQuestion(question);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(question.getQuestionId())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
+	
+	// Component QUESTION RESPONSE section
 	@GET
 	@APIDescription("Gets the responses for a given question associated to the specified entity ")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -561,8 +706,7 @@ public class Component
 			@RequiredParam
 			ComponentQuestionResponse response)
 	{
-		service.getComponentService().saveComponentQuestionResponse(response);
-		return Response.ok().build();
+		return saveQuestionResponse(response, true);
 	}
 
 	@PUT
@@ -577,10 +721,32 @@ public class Component
 			@RequiredParam
 			ComponentQuestionResponse response)
 	{
-		service.getComponentService().saveComponentQuestionResponse(response);
-		return Response.ok().build();
+		return saveQuestionResponse(response, false);
 	}
+			
+	private Response saveQuestionResponse(ComponentQuestionResponse response, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(response);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentQuestionResponse(response);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(response.getResponseId())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
 
+	// Component RESOURCE section
 	@GET
 	@APIDescription("Get the resources associated to the given entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -622,8 +788,7 @@ public class Component
 			@RequiredParam
 			ComponentResource resource)
 	{
-		service.getComponentService().saveComponentResource(resource);
-		return Response.ok().build();
+		return saveResource(resource, true);
 	}
 
 	@PUT
@@ -638,10 +803,32 @@ public class Component
 			@RequiredParam
 			ComponentResource resource)
 	{
-		service.getComponentService().saveComponentResource(resource);
-		return Response.ok().build();
+		return saveResource(resource, false);
 	}
+	
+	private Response saveResource(ComponentResource resource, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(resource);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentResource(resource);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(resource.getResourceId())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
 
+	// Component REVIEW section
 	@GET
 	@APIDescription("Get the reviews for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -683,8 +870,7 @@ public class Component
 			@RequiredParam
 			ComponentReview review)
 	{
-		service.getComponentService().saveComponentReview(review);
-		return Response.ok().build();
+		return saveReview(review, true);
 	}
 
 	@PUT
@@ -699,10 +885,32 @@ public class Component
 			@RequiredParam
 			ComponentReview review)
 	{
-		service.getComponentService().saveComponentReview(review);
-		return Response.ok().build();
+		return saveReview(review, false);
 	}
+		
+	private Response saveReview(ComponentReview review, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(review);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentReview(review);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(review.getComponentReviewId())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
 
+	// Component REVIEW CON section
 	@GET
 	@APIDescription("Get the cons associated to a review on the specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -744,10 +952,24 @@ public class Component
 			@RequiredParam
 			ComponentReviewCon con)
 	{
-		service.getComponentService().saveComponentReviewCon(con);
-		return Response.ok().build();
+		ValidationModel validationModel = new ValidationModel(con);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentReviewCon(con);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		// Again, how are we going to handle composite keys?
+		return Response.created(URI.create(con.getComponentReviewConPk().getReviewCon())).build();
 	}
 
+	
+	
+	// Component REVIEW PRO section
 	@GET
 	@APIDescription("Get the pros for a review associated with the given entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -789,10 +1011,23 @@ public class Component
 			@RequiredParam
 			ComponentReviewPro pro)
 	{
-		service.getComponentService().saveComponentReviewPro(pro);
-		return Response.ok().build();
+		ValidationModel validationModel = new ValidationModel(pro);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentReviewPro(pro);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		// Again, how are we going to handle composite keys?
+		return Response.created(URI.create(pro.getComponentReviewProPk().getReviewPro())).build();
 	}
 
+	
+	// Component TAG section
 	@GET
 	@APIDescription("Get the tag list for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -833,11 +1068,23 @@ public class Component
 			String componentId,
 			@RequiredParam
 			ComponentTag tag)
-	{
-		service.getComponentService().saveComponentTag(tag);
-		return Response.ok().build();
+	{		
+		ValidationModel validationModel = new ValidationModel(tag);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentTag(tag);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.created(URI.create(tag.getTagId())).build();
 	}
 
+	
+	// Component TRACKING section
 	@GET
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified entity")
@@ -879,8 +1126,7 @@ public class Component
 			@RequiredParam
 			ComponentTracking tracking)
 	{
-		service.getComponentService().saveComponentTracking(tracking);
-		return Response.ok().build();
+		return saveTracking(tracking, true);
 	}
 
 	@PUT
@@ -895,8 +1141,28 @@ public class Component
 			@RequiredParam
 			ComponentTracking tracking)
 	{
-		service.getComponentService().saveComponentTracking(tracking);
-		return Response.ok().build();
+		return saveTracking(tracking, false);
 	}
 
+	private Response saveTracking(ComponentTracking tracking, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(tracking);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponentTracking(tracking);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			// TODO: How does this work with composite keys?
+			return Response.created(URI.create(tracking.getComponentTrackingId())).build();
+		} else {
+			return Response.ok().build();
+		}
+	}
+	
 }
