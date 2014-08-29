@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -29,7 +30,7 @@ public class ComponentAttribute
 	@PK
 	@ConsumeField
 	private ComponentAttributePk componentAttributePk;
-
+	
 	public ComponentAttribute()
 	{
 	}
@@ -66,5 +67,4 @@ public class ComponentAttribute
 	{
 		this.componentAttributePk = componentAttributePk;
 	}
-
 }
