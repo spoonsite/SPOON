@@ -51,6 +51,10 @@ public abstract class BaseEntity
 	@NotNull
 	private Date updateDts;
 
+	public BaseEntity()
+	{
+	}
+
 	public String getActiveStatus()
 	{
 		return activeStatus;

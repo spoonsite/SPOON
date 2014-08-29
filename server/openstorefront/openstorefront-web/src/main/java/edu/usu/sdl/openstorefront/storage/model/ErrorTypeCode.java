@@ -26,4 +26,8 @@ public class ErrorTypeCode
 		extends LookupEntity
 {
 
+	public ErrorTypeCode()
+	{
+	}
+
 }

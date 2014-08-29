@@ -26,4 +26,8 @@ public class TrackEventCode
 		extends LookupEntity
 {
 
+	public TrackEventCode()
+	{
+	}
+
 }
