@@ -77,6 +77,12 @@ public class ComponentReview
 	}
 
 	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		componentReviewId = (String) pk;
+	}
+
+	@Override
 	public Object getPrimaryKey()
 	{
 		return componentReviewId;

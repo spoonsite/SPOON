@@ -47,6 +47,12 @@ public class ComponentTag
 	}
 
 	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		tagId = (String)pk;
+	}
+
+	@Override
 	public Object getPrimaryKey()
 	{
 		return tagId;

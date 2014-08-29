@@ -97,6 +97,12 @@ public class Component
 	}
 	
 	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		componentId = (String)pk;
+	}
+	
+	@Override
 	public Object getPrimaryKey()
 	{
 		return componentId;

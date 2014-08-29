@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
 
@@ -31,25 +32,36 @@ public class ComponentContact
 	private String contactId;
 	
 	@NotNull
+	@ConsumeField
 	private String contactType;
 
 	@NotNull
+	@ConsumeField
 	private String firstName;
+	@ConsumeField
 	private String lastName;
+	@ConsumeField
 	private String email;
+	@ConsumeField
 	private String phone;
 	@NotNull
+	@ConsumeField
 	private String organization;
 
 	public ComponentContact()
 	{
 	}
-
 	
 	@Override
 	public void setPrimaryKey(String itemId, String itemCode, String componentId)
 	{
 		contactId = itemId;
+	}
+	
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		contactId = (String)pk;
 	}
 	
 	@Override

@@ -52,6 +52,12 @@ public class ComponentTracking
 	{
 		componentTrackingId = itemId;
 	}
+
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		componentTrackingId = (String)pk;
+	}
 	
 	@Override
 	public Object getPrimaryKey()

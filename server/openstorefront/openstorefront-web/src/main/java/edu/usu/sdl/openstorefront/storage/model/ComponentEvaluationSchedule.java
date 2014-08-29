@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
@@ -28,11 +29,15 @@ public class ComponentEvaluationSchedule
 {
 
 	@PK
+	@ConsumeField
 	@NotNull
 	private ComponentEvaluationSchedulePk componentEvaluationSchedulePk;
+
+	@ConsumeField
 	private Date completionDate;
 
 	@NotNull
+	@ConsumeField
 	private String levelStatus;
 
 	public ComponentEvaluationSchedule()
@@ -46,6 +51,12 @@ public class ComponentEvaluationSchedule
 		temp.setComponentId(componentId);
 		temp.setEvaluationLevelCode(itemId);
 		componentEvaluationSchedulePk = temp;
+	}
+	
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		componentEvaluationSchedulePk = (ComponentEvaluationSchedulePk)pk;
 	}
 	
 	@Override

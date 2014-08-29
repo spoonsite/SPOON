@@ -63,6 +63,12 @@ public class ComponentResource
 	}
 	
 	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		resourceId = (String)pk;
+	}
+	
+	@Override
 	public Object getPrimaryKey()
 	{
 		return resourceId;
