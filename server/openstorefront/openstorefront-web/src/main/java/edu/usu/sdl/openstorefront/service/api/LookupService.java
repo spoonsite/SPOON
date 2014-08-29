@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import java.util.List;
 
@@ -43,10 +42,10 @@ public interface LookupService
 	 *
 	 * @param <T>
 	 * @param lookTableClass
-	 * @param all - default to just active
+	 * @param activeStatus
 	 * @return
 	 */
-	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass, boolean all);
+	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass, String activeStatus);
 
 	/**
 	 * Add or Updates a lookup code
@@ -55,12 +54,13 @@ public interface LookupService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveLookupValue(LookupEntity lookupEntity);
-	
+
 	/**
 	 * In-activates code if code is not found this will still succeed
+	 *
 	 * @param <T>
 	 * @param lookTableClass
-	 * @param code 
+	 * @param code
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public <T extends LookupEntity> void removeValue(Class<T> lookTableClass, String code);
@@ -74,5 +74,33 @@ public interface LookupService
 	 * @param lookupValues
 	 */
 	public <T extends LookupEntity> void syncLookupImport(Class<T> lookupClass, List<LookupEntity> lookupValues);
+
+	/**
+	 * Looks up the entity the for a given code
+	 *
+	 * @param <T>
+	 * @param lookupClass
+	 * @param code
+	 * @return the LookEntity or null if it can't be found
+	 */
+	public <T extends LookupEntity> T getLookupEnity(Class<T> lookupClass, String code);
+
+	/**
+	 * This looks up the class and then the code
+	 *
+	 * @param lookClassName
+	 * @param code
+	 * @return the LookEntity or null if it can't be found
+	 */
+	public LookupEntity getLookupEnity(String lookClassName, String code);
+
+	/**
+	 * Refreshes the cache for a given class.....for most part this used
+	 * internally However, there are case where it's useful outside.
+	 *
+	 * @param <T>
+	 * @param lookupClass
+	 */
+	public <T extends LookupEntity> void refreshCache(Class<T> lookupClass);
 
 }

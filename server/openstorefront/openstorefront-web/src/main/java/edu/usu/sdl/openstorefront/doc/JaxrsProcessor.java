@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.doc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import edu.usu.sdl.openstorefront.sort.ApiMethodComparator;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.RestConfiguration;
@@ -28,6 +29,7 @@ import java.lang.reflect.Parameter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -222,6 +224,7 @@ public class JaxrsProcessor
 
 			resourceModel.getMethods().add(methodModel);
 		}
+		Collections.sort(resourceModel.getMethods(), new ApiMethodComparator<>());
 		return resourceModel;
 	}
 

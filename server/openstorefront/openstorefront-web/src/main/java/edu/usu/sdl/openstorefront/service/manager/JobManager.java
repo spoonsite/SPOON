@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.job.LookupImporter;
+import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quartz.JobBuilder;
@@ -35,6 +35,7 @@ import org.quartz.jobs.DirectoryScanJob;
  * @author dshurtleff
  */
 public class JobManager
+		implements Initializable
 {
 
 	private static final Logger log = Logger.getLogger(JobManager.class.getName());
@@ -42,7 +43,7 @@ public class JobManager
 	private static final String JOB_GROUP_SYSTEM = "SYSTEM";
 	private static Scheduler scheduler;
 
-	public static void initialize()
+	public static void init()
 	{
 		try {
 			StdSchedulerFactory factory = new StdSchedulerFactory(FileSystemManager.getConfig("quartz.properties").getPath());
@@ -86,13 +87,25 @@ public class JobManager
 		scheduler.scheduleJob(job, trigger);
 	}
 
-	public static void shutdown()
+	public static void cleanup()
 	{
 		try {
 			scheduler.shutdown();
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Failed to init quartz.", ex);
 		}
+	}
+
+	@Override
+	public void initialize()
+	{
+		JobManager.init();
+	}
+
+	@Override
+	public void shutdown()
+	{
+		JobManager.cleanup();
 	}
 
 }

@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.init;
 
-import edu.usu.sdl.openstorefront.service.job.LookupImporter;
+import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import java.text.MessageFormat;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -38,34 +41,37 @@ public class ApplicationInit
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
-		log.info("Initing DB Manager...");
-		DBManager.initialize();
+		//Order is important
+		startupManager(new DBManager());
+		startupManager(new OSFCacheManager());
+		startupManager(new LookupImporter());
+		startupManager(new JobManager());
+	}
 
-		log.info("Initing Cache Manager...");
-		OSFCacheManager.initialize();
-
-		log.info("Initing LookupImporter");
-		LookupImporter lookupImporter = new LookupImporter();
-		lookupImporter.initImport();
-
-		log.info("Initing Job Manager...");
-		JobManager.initialize();
-
+	private void startupManager(Initializable initializable)
+	{
+		log.log(Level.INFO, MessageFormat.format("Starting up:{0}", initializable.getClass().getSimpleName()));
+		initializable.initialize();
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce)
 	{
 		//Shutdown in reverse order to make sure the dependancies are good.
+		shutdownManager(new JobManager());
+		shutdownManager(new OSFCacheManager());
+		shutdownManager(new DBManager());
+	}
 
-		log.info("Shutting down Job Manager...");
-		JobManager.shutdown();
-
-		log.info("Shutting down Cache Manager...");
-		OSFCacheManager.shutdown();
-
-		log.info("Shutting down DB Manager...");
-		DBManager.shutdown();
+	private void shutdownManager(Initializable initializable)
+	{
+		//On shutdown we want it to roll through
+		log.log(Level.INFO, MessageFormat.format("Shutting down:{0}", initializable.getClass().getSimpleName()));
+		try {
+			initializable.shutdown();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Unable to Shutdown: " + initializable.getClass().getSimpleName(), e);
+		}
 	}
 
 }

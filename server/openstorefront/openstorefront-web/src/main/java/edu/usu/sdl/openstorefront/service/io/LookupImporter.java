@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
+package edu.usu.sdl.openstorefront.service.io;
 
 import au.com.bytecode.opencsv.CSVReader;
 import cern.colt.Arrays;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
@@ -42,7 +43,7 @@ import org.quartz.jobs.DirectoryScanListener;
  * @author dshurtleff
  */
 public class LookupImporter
-		implements DirectoryScanListener
+		implements DirectoryScanListener, Initializable
 {
 
 	private static final Logger log = Logger.getLogger(LookupImporter.class.getName());
@@ -118,7 +119,8 @@ public class LookupImporter
 		serviceProxy.getSystemService().saveProperty(ApplicationProperty.LOOKUP_IMPORTER_LAST_SYNC_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
 	}
 
-	public void initImport()
+	@Override
+	public void initialize()
 	{
 		String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.LOOKUP_IMPORTER_LAST_SYNC_DTS);
 		if (lastSyncDts == null) {
@@ -139,7 +141,22 @@ public class LookupImporter
 			}
 
 			filesUpdatedOrAdded((File[]) lookupCodeFiles.toArray(new File[0]));
+		} else {
+			//load cache
+			Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
+			for (Class entityClass : entityClasses) {
+				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
+					if (ServiceUtil.isSubLookupEntity(entityClass)) {
+						serviceProxy.getLookupService().refreshCache(entityClass);
+					}
+				}
+			}
 		}
+	}
+
+	@Override
+	public void shutdown()
+	{
 	}
 
 }
