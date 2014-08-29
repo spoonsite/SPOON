@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -29,11 +30,13 @@ public class ComponentEvaluationSection
 {
 
 	@PK
+	@ConsumeField
 	@NotNull
 	private ComponentEvaluationSectionPk componentEvaluationSectionPk;
 
 	@Min(1)
 	@Max(5)
+	@ConsumeField
 	private Integer score;
 
 	public ComponentEvaluationSection()
@@ -47,6 +50,12 @@ public class ComponentEvaluationSection
 		temp.setComponentId(componentId);
 		temp.setEvaulationSection(itemId);
 		componentEvaluationSectionPk = temp;
+	}
+
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		componentEvaluationSectionPk = (ComponentEvaluationSectionPk)pk;
 	}
 
 	@Override

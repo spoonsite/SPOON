@@ -67,32 +67,53 @@ public interface ComponentService
 	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all);
 
 	/**
-	 * This only returns the active
-	 *
-	 *
+	 * 
 	 * @param <T>
 	 * @param subComponentClass
+	 * @param itemId
 	 * @param componentId
-	 * @return
+	 * @return 
 	 */
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String componentId);
 
 	/**
-	 * This only returns the active
-	 *
-	 *
+	 * 
 	 * @param <T>
 	 * @param subComponentClass
+	 * @param itemId
+	 * @param itemCode
 	 * @param componentId
-	 * @return
+	 * @return 
 	 */
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId);
 
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param pk
+	 * @return 
+	 */
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk);
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param pk
+	 * @param all
+	 * @return 
+	 */
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all);
+
+	
 	/**
 	 * This can be use to get parts of the component (Eg. ComponentReview)
 	 *
 	 * @param <T>
 	 * @param subComponentClass
+	 * @param itemId
+	 * @param itemCode
 	 * @param componentId
 	 * @param all (true to get inactive as well)
 	 * @return
@@ -223,7 +244,6 @@ public interface ComponentService
 
 	/**
 	 * 
-	 * @return 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponent();

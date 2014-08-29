@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
@@ -33,6 +34,7 @@ public class ComponentMedia
 	private String componentMediaId;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ConsumeField
 	private String fileName;
 
 	@NotNull
@@ -47,9 +49,11 @@ public class ComponentMedia
 	private String mimeType;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@ConsumeField
 	private String link;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ConsumeField
 	private String caption;
 
 	public ComponentMedia()
@@ -60,6 +64,12 @@ public class ComponentMedia
 	public void setPrimaryKey(String itemId, String itemCode, String componentId)
 	{
 		componentMediaId = itemId;
+	}
+
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		componentMediaId = (String)pk;
 	}
 
 	@Override

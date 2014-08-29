@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
@@ -27,22 +27,36 @@ public class ComponentReviewProPk
 		implements Serializable
 {
 
-	@PK
 	@NotNull
-	private ComponentReviewProPk componentReviewProPk;
+	@ConsumeField
+	private String componentReviewId;
+
+	@NotNull
+	@ConsumeField
+	private String reviewPro;
 
 	public ComponentReviewProPk()
 	{
 	}
-	
-	public ComponentReviewProPk getComponentReviewProPk()
+
+	public String getComponentReviewId()
 	{
-		return componentReviewProPk;
+		return componentReviewId;
 	}
 
-	public void setComponentReviewProPk(ComponentReviewProPk componentReviewProPk)
+	public void setComponentReviewId(String componentReviewId)
 	{
-		this.componentReviewProPk = componentReviewProPk;
+		this.componentReviewId = componentReviewId;
+	}
+
+	public String getReviewPro()
+	{
+		return reviewPro;
+	}
+
+	public void setReviewPro(String reviewPro)
+	{
+		this.reviewPro = reviewPro;
 	}
 
 }

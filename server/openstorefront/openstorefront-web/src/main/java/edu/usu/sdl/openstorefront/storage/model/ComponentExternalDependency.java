@@ -59,6 +59,12 @@ public class ComponentExternalDependency
 	}
 	
 	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		dependencyId = (String)pk;
+	}
+	
+	@Override
 	public Object getPrimaryKey()
 	{
 		return dependencyId;

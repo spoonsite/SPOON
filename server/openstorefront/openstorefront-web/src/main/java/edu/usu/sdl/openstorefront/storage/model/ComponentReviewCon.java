@@ -39,7 +39,15 @@ public class ComponentReviewCon
 	public void setPrimaryKey(String itemId, String itemCode, String componentId)
 	{
 		ComponentReviewConPk temp = new ComponentReviewConPk();
-		//TODO: Do the logic here to set the primary key to the correct con pk
+		temp.setComponentReviewId(componentId);
+		temp.setReviewCon(itemId);
+		componentReviewConPk = temp;
+	}
+	
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		componentReviewConPk = (ComponentReviewConPk)pk;
 	}
 	
 	@Override

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
@@ -27,9 +28,11 @@ public class ComponentReviewConPk
 {
 
 	@NotNull
+	@ConsumeField
 	private String componentReviewId;
 
 	@NotNull
+	@ConsumeField
 	private String reviewCon;
 
 	public ComponentReviewConPk()
