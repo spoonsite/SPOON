@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import java.util.List;
@@ -247,7 +248,7 @@ public interface ComponentService
 	 * 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponent();
+	public Boolean saveComponent(RequiredForComponent component);
 	// Todo: Make an object that we can pass in to this function, or figure out which
 	// combination we'll need...
 	

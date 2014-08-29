@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -1186,6 +1187,29 @@ public class Component
 		} else {
 			return Response.ok().build();
 		}
+	}
+	
+	@POST
+	@RequireAdmin
+	@APIDescription("Update a tracking entry for the specified entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/new")
+	public Response updateComponentTracking(
+			@RequiredParam
+			RequiredForComponent component)
+	{
+		ValidationModel validationModel = new ValidationModel(component);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			service.getComponentService().saveComponent(component);
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.created(URI.create(component.getComponent().getComponentId())).build();
 	}
 	
 }

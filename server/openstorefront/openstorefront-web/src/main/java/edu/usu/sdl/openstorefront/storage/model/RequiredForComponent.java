@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.service.AttributeServiceImpl;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -25,7 +27,12 @@ import java.util.List;
 public class RequiredForComponent
 {
 
+	@NotNull
+	@ConsumeField
 	private Component component;
+	
+	@NotNull
+	@ConsumeField
 	private List<ComponentAttribute> attributes;
 
 	public RequiredForComponent()
@@ -38,21 +45,21 @@ public class RequiredForComponent
 		{
 			return Boolean.FALSE;
 		}
-		AttributeServiceImpl attributeService = new AttributeServiceImpl();
-		List<AttributeType> requireds = attributeService.getRequiredAttributes();
-		boolean found = false;
-		for (AttributeType required : requireds) {
-			for (ComponentAttribute attribute : attributes) {
-				if (required.getAttributeType().equals(attribute.getComponentAttributePk().getAttributeType())) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				return Boolean.FALSE;
-			}
-			found = false;
-		}
+//		AttributeServiceImpl attributeService = new AttributeServiceImpl();
+//		List<AttributeType> requireds = attributeService.getRequiredAttributes();
+//		boolean found = false;
+//		for (AttributeType required : requireds) {
+//			for (ComponentAttribute attribute : attributes) {
+//				if (required.getAttributeType().equals(attribute.getComponentAttributePk().getAttributeType())) {
+//					found = true;
+//					break;
+//				}
+//			}
+//			if (!found) {
+//				return Boolean.FALSE;
+//			}
+//			found = false;
+//		}
 		return Boolean.TRUE;
 	}
 
