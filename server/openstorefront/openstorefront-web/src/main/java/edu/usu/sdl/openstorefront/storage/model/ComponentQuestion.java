@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
@@ -33,14 +34,17 @@ public class ComponentQuestion
 	private String questionId;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_QUESTION)
 	private String question;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String userType;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	private String organization;
 
@@ -52,6 +56,12 @@ public class ComponentQuestion
 	public void setPrimaryKey(String itemId, String itemCode, String componentId)
 	{
 		questionId = itemId;
+	}
+
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		questionId = (String)pk;
 	}
 
 	@Override

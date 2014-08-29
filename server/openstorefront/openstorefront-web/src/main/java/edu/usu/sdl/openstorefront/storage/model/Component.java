@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -36,26 +37,36 @@ public class Component
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_NAME)
+	@ConsumeField
 	private String name;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_DESCRIPTION)
+	@ConsumeField
 	private String description;
+
+	@ConsumeField
 	private String parentComponentId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@ConsumeField
 	private String guid;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	@ConsumeField
 	private String organization;
+
+	@ConsumeField
 	private Date releaseDate;
 
 	@NotNull
+	@ConsumeField
 	private Date postDate;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ConsumeField
 	private String version;
 
 	@NotNull
@@ -63,6 +74,7 @@ public class Component
 			{
 				"A", "P"
 			})
+	@ConsumeField
 	private String approvalState;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
@@ -94,6 +106,12 @@ public class Component
 	public void setPrimaryKey(String itemId, String itemCode, String componentId)
 	{
 		componentId = itemId;
+	}
+	
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		componentId = (String)pk;
 	}
 	
 	@Override

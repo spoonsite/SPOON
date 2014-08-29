@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.List;
  * Services that handle all component classes
  *
  * @author dshurtleff
+ * @author jlaw
  */
 public interface ComponentService
 {
@@ -67,32 +69,53 @@ public interface ComponentService
 	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all);
 
 	/**
-	 * This only returns the active
-	 *
-	 *
+	 * 
 	 * @param <T>
 	 * @param subComponentClass
+	 * @param itemId
 	 * @param componentId
-	 * @return
+	 * @return 
 	 */
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String componentId);
 
 	/**
-	 * This only returns the active
-	 *
-	 *
+	 * 
 	 * @param <T>
 	 * @param subComponentClass
+	 * @param itemId
+	 * @param itemCode
 	 * @param componentId
-	 * @return
+	 * @return 
 	 */
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId);
 
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param pk
+	 * @return 
+	 */
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk);
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param pk
+	 * @param all
+	 * @return 
+	 */
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all);
+
+	
 	/**
 	 * This can be use to get parts of the component (Eg. ComponentReview)
 	 *
 	 * @param <T>
 	 * @param subComponentClass
+	 * @param itemId
+	 * @param itemCode
 	 * @param componentId
 	 * @param all (true to get inactive as well)
 	 * @return
@@ -221,4 +244,12 @@ public interface ComponentService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentTracking(ComponentTracking tracking);
 
+	/**
+	 * 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Boolean saveComponent(RequiredForComponent component);
+	// Todo: Make an object that we can pass in to this function, or figure out which
+	// combination we'll need...
+	
 }

@@ -52,6 +52,8 @@ public abstract class BaseComponent
 		setPrimaryKey(itemId, "", componentId);
 	}
 	
+	abstract public void setPrimaryKey(Object pk);
+	
 	abstract public void setPrimaryKey(String itemId, String itemCode, String componentId);	
 	
 	abstract public Object getPrimaryKey();

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
@@ -29,9 +30,11 @@ public class ComponentEvaluationSchedulePk
 {
 
 	@NotNull
+	@ConsumeField
 	private String componentId;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String evaluationLevelCode;
 

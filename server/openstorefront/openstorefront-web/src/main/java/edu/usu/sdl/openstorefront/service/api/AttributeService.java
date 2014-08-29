@@ -16,11 +16,14 @@
 
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
  */
 public interface AttributeService
 {
-	
+	public List<AttributeType> getRequiredAttributes();
 }

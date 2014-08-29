@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
@@ -33,10 +34,12 @@ public class ComponentMetadata
 	private String metadataId;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String label;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String value;
 
@@ -48,6 +51,12 @@ public class ComponentMetadata
 	public void setPrimaryKey(String itemId, String itemCode, String componentId)
 	{
 		metadataId = itemId;
+	}
+	
+	@Override
+	public void setPrimaryKey(Object pk)
+	{
+		metadataId = (String)pk;
 	}
 
 	@Override

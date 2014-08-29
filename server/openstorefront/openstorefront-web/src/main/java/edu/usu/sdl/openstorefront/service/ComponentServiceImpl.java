@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
@@ -35,6 +36,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
@@ -50,12 +52,12 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
  * @author dshurtleff
+ * @author jlaw
  */
 public class ComponentServiceImpl
 		extends ServiceProxy
@@ -89,37 +91,23 @@ public class ComponentServiceImpl
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
-
+	
 	@Override
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String componentId)
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk)
 	{
-		return deactivateBaseComponent(subComponentClass, itemId, "", componentId, false);
+		return deactivateBaseComponent(subComponentClass, pk, false);
 	}
-
+	
 	@Override
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId)
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all)
 	{
-		return deactivateBaseComponent(subComponentClass, itemId, itemCode, componentId, false);
-	}
-
-	@Override
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String componentId, String itemId, String itemCode, boolean all)
-	{
-		try {
-			T baseComponentExample = subComponentClass.newInstance();
-			baseComponentExample.setPrimaryKey(itemId, itemCode, componentId);
-			T found = persistenceService.findById(subComponentClass, baseComponentExample.getPrimaryKey());
-			if (found != null) 
-			{
-				found.setActiveStatus(T.INACTIVE_STATUS);
-				persistenceService.persist(found);
-			}
-			return found;
+		T found = persistenceService.findById(subComponentClass, pk);
+		if (found != null) 
+		{
+			found.setActiveStatus(T.INACTIVE_STATUS);
+			persistenceService.persist(found);
 		}
-		catch (InstantiationException | IllegalAccessException ex) {
-			Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-			throw new OpenStorefrontRuntimeException(ex);
-		}
+		return found;
 	}
 
 	@Override
@@ -514,6 +502,51 @@ public class ComponentServiceImpl
 			tracking.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(tracking);
 		}
+	}
+	
+	@Override
+	public Boolean saveComponent(RequiredForComponent component)
+	{
+		if (component.checkForComplete())
+		{
+			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
+			component.getComponent().setCreateDts(TimeUtil.currentDate());
+			component.getComponent().setUpdateDts(TimeUtil.currentDate());
+			component.getComponent().setComponentId(persistenceService.generateId());
+			persistenceService.persist(component.getComponent());
+			component.getAttributes().forEach(attribute->{
+				attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				ComponentAttributePk pk = new ComponentAttributePk();
+				pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
+				pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+				pk.setComponentId(component.getComponent().getComponentId());
+				attribute.setComponentAttributePk(pk);
+				attribute.setComponentId(component.getComponent().getComponentId());
+				persistenceService.persist(attribute);
+			});
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+		// We need to figure out how to pass all the data we need to this function
+		// so we can do it in one transaction.
+	}
+
+	@Override
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String componentId)
+	{
+		return deactivateBaseComponent(subComponentClass, (Object)itemId, false);
+	}
+
+	@Override
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId)
+	{
+		return deactivateBaseComponent(subComponentClass, (Object)itemId, false);
+	}
+
+	@Override
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId, boolean all)
+	{
+		return deactivateBaseComponent(subComponentClass, (Object)itemId, all);
 	}
 
 }
