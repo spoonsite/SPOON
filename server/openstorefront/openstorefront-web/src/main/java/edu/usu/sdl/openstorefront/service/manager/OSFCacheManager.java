@@ -26,13 +26,14 @@ import net.sf.ehcache.CacheManager;
  * @author dshurtleff
  */
 public class OSFCacheManager
+		implements Initializable
 {
 
 	private static final Logger log = Logger.getLogger(OSFCacheManager.class.getName());
 
 	private static Cache lookupCache;
 
-	public static void initialize()
+	public static void init()
 	{
 		ReentrantLock lock = new ReentrantLock();
 		lock.lock();
@@ -49,7 +50,7 @@ public class OSFCacheManager
 
 	}
 
-	public static void shutdown()
+	public static void cleanUp()
 	{
 		CacheManager.getInstance().shutdown();
 	}
@@ -57,6 +58,18 @@ public class OSFCacheManager
 	public static Cache getLookupCache()
 	{
 		return lookupCache;
+	}
+
+	@Override
+	public void initialize()
+	{
+		OSFCacheManager.init();
+	}
+
+	@Override
+	public void shutdown()
+	{
+		OSFCacheManager.cleanUp();
 	}
 
 }

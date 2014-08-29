@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.sort.LookupComparator;
@@ -34,45 +33,41 @@ import net.sourceforge.stripes.validation.Validate;
  * @author dshurtleff
  */
 public class LookupAction
-	extends BaseAction
+		extends BaseAction
 {
+
 	private static final Logger log = Logger.getLogger(LookupAction.class.getName());
-	
+
 	@Validate(required = true)
 	private String type;
-	private boolean all;	
-	
+	private String status;
+
 	@DefaultHandler
 	public Resolution lookup()
 	{
 		List<LookupModel> lookups = new ArrayList<>();
-		try
-		{			
+		try {
 			Class lookupClass = Class.forName("edu.usu.sdl.openstorefront.storage.model." + type);
 			Object obj = lookupClass.newInstance();
-			if (obj instanceof LookupEntity)
-			{
-				List<LookupEntity> data = service.getLookupService().findLookup(lookupClass, all);
+			if (obj instanceof LookupEntity) {
+				List<LookupEntity> data = service.getLookupService().findLookup(lookupClass, status);
 				data.sort(new LookupComparator<>());
 				data.forEach(d -> {
 					LookupModel lookup = new LookupModel();
 					lookup.setCode(d.getCode());
-					lookup.setDescription(d.getDescription());			
+					lookup.setDescription(d.getDescription());
 					lookups.add(lookup);
-				});				
-			}
-			else
-			{
+				});
+			} else {
 				Map<String, String> errors = new HashMap<>();
 				errors.put("request", "Type exists but is not a lookup enity.");
 				return streamErrorResponse(errors);
 			}
-			
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex)
-		{
+
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
 			String message = "Type: " + type + " doesn't exist";
 			log.log(Level.SEVERE, message);
-			log.log(Level.FINEST, message ,ex);
+			log.log(Level.FINEST, message, ex);
 			Map<String, String> errors = new HashMap<>();
 			errors.put("request", message);
 			return streamErrorResponse(errors);
@@ -90,14 +85,14 @@ public class LookupAction
 		this.type = type;
 	}
 
-	public boolean getAll()
+	public String getStatus()
 	{
-		return all;
+		return status;
 	}
 
-	public void setAll(boolean all)
+	public void setStatus(String status)
 	{
-		this.all = all;
+		this.status = status;
 	}
-	
+
 }

@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.PersistenceService;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
@@ -32,7 +31,6 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.GenericLookupEntity;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,17 +74,14 @@ public class LookupType
 		for (Class entityClass : entityClasses) {
 			if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ServiceUtil.isSubLookupEntity(entityClass)) {
-					File codeFile = FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv");
-					if (codeFile.exists()) {
-						LookupModel lookupModel = new LookupModel();
+					LookupModel lookupModel = new LookupModel();
 
-						lookupModel.setCode(entityClass.getSimpleName());
-						APIDescription aPIDescription = (APIDescription) entityClass.getAnnotation(APIDescription.class);
-						if (aPIDescription != null) {
-							lookupModel.setDescription(aPIDescription.value());
-						}
-						lookupModels.add(lookupModel);
+					lookupModel.setCode(entityClass.getSimpleName());
+					APIDescription aPIDescription = (APIDescription) entityClass.getAnnotation(APIDescription.class);
+					if (aPIDescription != null) {
+						lookupModel.setDescription(aPIDescription.value());
 					}
+					lookupModels.add(lookupModel);
 				}
 			}
 		}
@@ -105,14 +100,10 @@ public class LookupType
 	{
 		checkEntity(entityName);
 
-		boolean all = false;
-		if (LookupEntity.ACTIVE_STATUS.equals(filterQueryParams.getStatus()) == false) {
-			all = true;
-		}
 		List<LookupEntity> lookups = new ArrayList<>();
 		try {
 			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
-			lookups = service.getLookupService().findLookup(lookupClass, all);
+			lookups = service.getLookupService().findLookup(lookupClass, filterQueryParams.getStatus());
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
 		}
@@ -158,7 +149,7 @@ public class LookupType
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create(lookupEntity.getCode())).build();
+			return Response.created(URI.create("v1/resource/lookuptypes/" + entityName + "/" + lookupEntity.getCode())).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -209,19 +200,22 @@ public class LookupType
 			@PathParam("entity")
 			@RequiredParam String entityName,
 			@PathParam("code")
+			@APIDescription("Passing the code in the body is optional")
 			@RequiredParam String code,
 			GenericLookupEntity genericLookupEntity)
 	{
-		//TODO: validate the code
-		genericLookupEntity.setCode(code);
 
+		LookupEntity lookupEntity = service.getLookupService().getLookupEnity(entityName, code.toUpperCase());
+		if (lookupEntity == null) {
+			throw new OpenStorefrontRuntimeException("Lookup code not found", "Check code passed in. (Case-InSensitive)");
+		}
+		genericLookupEntity.setCode(code.toUpperCase());
 		return handlePostPutCode(entityName, genericLookupEntity, false);
 	}
 
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Remove a code from the entity")
-	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}/{code}")
 	public void deleteEntityValue(
 			@PathParam("entity")
@@ -250,7 +244,7 @@ public class LookupType
 			}
 		}
 		if (!valid) {
-			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in.");
+			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");
 		}
 	}
 

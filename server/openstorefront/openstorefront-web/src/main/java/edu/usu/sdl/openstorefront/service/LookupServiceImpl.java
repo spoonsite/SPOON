@@ -17,16 +17,17 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +36,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.ehcache.Element;
+import org.apache.commons.lang.StringUtils;
 
 /**
+ * Handles all lookup entities
  *
  * @author dshurtleff
  */
@@ -50,17 +53,15 @@ public class LookupServiceImpl
 	@Override
 	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass)
 	{
-		return findLookup(lookTableClass, false);
+		return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
 	}
 
 	@Override
-	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass, boolean all)
+	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass, String activeStatus)
 	{
 		try {
 			T testExample = lookTableClass.newInstance();
-			if (all == false) {
-				testExample.setActiveStatus(TestEntity.ACTIVE_STATUS);
-			}
+			testExample.setActiveStatus(activeStatus);
 			return persistenceService.queryByExample(lookTableClass, new QueryByExample(testExample));
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
@@ -79,6 +80,7 @@ public class LookupServiceImpl
 			oldEntity.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(oldEntity);
 		} else {
+			lookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 			lookupEntity.setCreateDts(TimeUtil.currentDate());
 			lookupEntity.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(lookupEntity);
@@ -88,7 +90,7 @@ public class LookupServiceImpl
 	@Override
 	public <T extends LookupEntity> void syncLookupImport(Class<T> lookupClass, List<LookupEntity> lookupValues)
 	{
-		List<T> existingLookups = findLookup(lookupClass, true);
+		List<T> existingLookups = findLookup(lookupClass, null);
 		Map<String, T> lookupMap = new HashMap<>();
 		for (T lookup : existingLookups) {
 			lookupMap.put(lookup.getCode(), lookup);
@@ -135,23 +137,64 @@ public class LookupServiceImpl
 			}
 		}
 
-		List<T> newLookups = findLookup(lookupClass);
-		Element cacheLookup = new Element(lookupClass.getName(), newLookups);
-		OSFCacheManager.getLookupCache().put(cacheLookup);
+		refreshCache(lookupClass);
 	}
-
 
 	@Override
 	public <T extends LookupEntity> void removeValue(Class<T> lookTableClass, String code)
 	{
 		LookupEntity lookupEntity = persistenceService.findById(lookTableClass, code);
-		if (lookupEntity != null)
-		{
+		if (lookupEntity != null) {
 			lookupEntity.setActiveStatus(LookupEntity.INACTIVE_STATUS);
 			lookupEntity.setUpdateDts(TimeUtil.currentDate());
 			lookupEntity.setUpdateUser(ServiceUtil.getCurrentUserName());
 			persistenceService.persist(lookupEntity);
-		}		
+		}
+	}
+
+	@Override
+	public <T extends LookupEntity> T getLookupEnity(Class<T> lookupClass, String code)
+	{
+		T lookupEntity = null;
+		if (StringUtils.isNotBlank(code)) {
+			Element element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
+			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
+			lookupEntity = lookupCacheMap.get(code);
+		}
+		return lookupEntity;
+	}
+
+	@Override
+	public LookupEntity getLookupEnity(String lookClassName, String code)
+	{
+		LookupEntity lookupEntity = null;
+		try {
+			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + lookClassName);
+			lookupEntity = getLookupEnity(lookupClass, code);
+		} catch (ClassNotFoundException ex) {
+			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");
+		}
+		return lookupEntity;
+	}
+
+	@Override
+	public <T extends LookupEntity> void refreshCache(Class<T> lookupClass)
+	{
+		log.log(Level.FINE, MessageFormat.format("Refresh Cache of: {0}", lookupClass.getSimpleName()));
+
+		List<T> lookups = findLookup(lookupClass);
+		Map<String, T> lookupCacheMap = new HashMap<>();
+		for (T lookup : lookups) {
+			if (lookupCacheMap.containsKey(lookup.getCode())) {
+				//remove any duplicates from the db
+				T existing = persistenceService.findById(lookupClass, lookup.getCode());
+				persistenceService.delete(existing);
+			} else {
+				lookupCacheMap.put(lookup.getCode(), lookup);
+			}
+		}
+		Element cachedLookup = new Element(lookupClass.getName(), lookupCacheMap);
+		OSFCacheManager.getLookupCache().put(cachedLookup);
 	}
 
 }

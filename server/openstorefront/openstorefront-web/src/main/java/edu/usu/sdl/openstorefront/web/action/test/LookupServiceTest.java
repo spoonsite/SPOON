@@ -52,8 +52,7 @@ public class LookupServiceTest
 			@Override
 			protected void runInternalTest()
 			{
-				Arrays.asList("A", "B").forEach(item ->
-				{
+				Arrays.asList("A", "B").forEach(item -> {
 					TestEntity testEntity = new TestEntity();
 					testEntity.setCode(item);
 					testEntity.setDescription(item + " - Description");
@@ -65,8 +64,7 @@ public class LookupServiceTest
 				});
 				results.append("Saved A, B").append("<br>");
 
-				Arrays.asList("C", "D").forEach(item ->
-				{
+				Arrays.asList("C", "D").forEach(item -> {
 					TestEntity testEntity = new TestEntity();
 					testEntity.setCode(item);
 					testEntity.setDescription(item + " - Description");
@@ -95,17 +93,14 @@ public class LookupServiceTest
 			{
 				results.append("Active").append("<br>");
 				List<TestEntity> testActiveRecords = testServiceProxy().getLookupService().findLookup(TestEntity.class);
-				testActiveRecords.stream().forEach(record ->
-				{
+				testActiveRecords.stream().forEach(record -> {
 					results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 				});
 				results.append("Check All").append("<br>");
-				List<TestEntity> testInActiveRecords = testServiceProxy().getLookupService().findLookup(TestEntity.class, true);
-				if (testInActiveRecords.size() == testActiveRecords.size())
-				{
+				List<TestEntity> testInActiveRecords = testServiceProxy().getLookupService().findLookup(TestEntity.class, null);
+				if (testInActiveRecords.size() == testActiveRecords.size()) {
 					failureReason.append("All return the same count and active.");
-				} else
-				{
+				} else {
 					results.append("Pass").append("<br>");
 					success = true;
 				}

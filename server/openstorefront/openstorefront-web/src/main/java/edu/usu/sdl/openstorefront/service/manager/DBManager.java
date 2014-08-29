@@ -28,6 +28,7 @@ import java.util.logging.Logger;
  * @author dshurtleff
  */
 public class DBManager
+		implements Initializable
 {
 
 	private static final Logger log = Logger.getLogger(DBManager.class.getName());
@@ -37,11 +38,24 @@ public class DBManager
 	private static OServer server;
 	private static OObjectDatabasePool globalInstance;
 
+	@Override
+	public void initialize()
+	{
+		DBManager.init();
+	}
+
+	@Override
+	public void shutdown()
+	{
+		DBManager.cleanup();
+	}
+
 	/**
 	 * Called once at application Startup
 	 */
-	public static void initialize()
+	public static void init()
 	{
+
 		try {
 			log.info("Starting Orient DB...");
 			server = OServerMain.create();
@@ -77,7 +91,7 @@ public class DBManager
 	/**
 	 * Called once at application shutdown
 	 */
-	public static void shutdown()
+	public static void cleanup()
 	{
 		log.info("Shutting down Orient DB...");
 		globalInstance.close();
