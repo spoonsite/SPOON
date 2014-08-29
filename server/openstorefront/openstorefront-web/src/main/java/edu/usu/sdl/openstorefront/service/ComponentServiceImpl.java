@@ -50,12 +50,12 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
  * @author dshurtleff
+ * @author jlaw
  */
 public class ComponentServiceImpl
 		extends ServiceProxy

@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -54,6 +55,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -61,6 +63,7 @@ import javax.ws.rs.core.Response;
  * Component Resource
  *
  * @author dshurtleff
+ * @author jlaw
  */
 @Path("v1/resource/components")
 @APIDescription("Components are the central resource of the system.  The majority of the listing are components.")
@@ -76,6 +79,26 @@ public class Component
 	public RestListResponse getComponents()
 	{
 		List<ComponentView> componentViews = service.getComponentService().getComponents();
+		return sendListResponse(componentViews);
+	}
+
+	@GET
+	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentView.class)
+	@Path("/list")
+	public RestListResponse batchGetComponents(
+			@QueryParam("idList")
+			@RequiredParam
+			List<String> idList
+	)
+	{
+		List<ComponentView> componentViews = new ArrayList<>();
+		idList.forEach(componentId->{
+			ComponentView view = service.getComponentService().getComponent(componentId);
+			componentViews.add(view);
+		});
+		
 		return sendListResponse(componentViews);
 	}
 

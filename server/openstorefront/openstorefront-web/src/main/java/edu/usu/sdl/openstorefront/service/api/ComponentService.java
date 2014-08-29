@@ -40,6 +40,7 @@ import java.util.List;
  * Services that handle all component classes
  *
  * @author dshurtleff
+ * @author jlaw
  */
 public interface ComponentService
 {
