@@ -33,8 +33,24 @@ exports.config = {
 
 
   },
-  
-  
+
+    jasmineNodeOpts: {
+    onComplete: null,
+    isVerbose: true,
+    showColors: true,
+    includeStackTrace: true,
+    defaultTimeoutInterval: 30000,
+    allScriptsTimeout: 18000
+  },
+
+    multiCapabilities: [{
+        'browserName': 'chrome'
+    }, {
+        'browserName': 'firefox'
+    }]
+
+
+
     // Start these browsers, currently available:
     // - Chrome
     // - ChromeCanary
@@ -43,19 +59,16 @@ exports.config = {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    
-  capabilities : {
-    browserName : 'chrome',
-    'chromeOptions': {
-        args: ['--test-type']
-    }
-  },
-  jasmineNodeOpts: {
-    onComplete: null,
-    isVerbose: true,
-    showColors: true,
-    includeStackTrace: true,
-    defaultTimeoutInterval: 30000,
-    allScriptsTimeout: 18000
-  }
+
+    //chromeOnly: false,
+
+    /*  Changed to "multiCapabilities" 8/30/14
+     capabilities : {
+     browserName : 'chrome',
+     'chromeOptions': {
+     args: ['--test-type']
+     }
+     },
+     */
+
 };
