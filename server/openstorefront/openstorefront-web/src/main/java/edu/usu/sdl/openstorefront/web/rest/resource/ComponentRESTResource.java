@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
@@ -38,14 +39,12 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
-import edu.usu.sdl.openstorefront.storage.model.RequiredForComponent;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
-import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
+import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,14 +61,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Component Resource
+ * ComponentRESTResource Resource
  *
  * @author dshurtleff
  * @author jlaw
  */
 @Path("v1/resource/components")
 @APIDescription("Components are the central resource of the system.  The majority of the listing are components.")
-public class Component
+public class ComponentRESTResource
 		extends BaseResource
 {
 
@@ -77,45 +76,94 @@ public class Component
 	@GET
 	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentView.class)
-	public RestListResponse getComponents()
+	@DataType(Component.class)
+	public List<Component> getComponents()
 	{
-		List<ComponentView> componentViews = service.getComponentService().getComponents();
-		return sendListResponse(componentViews);
+		List<Component> componentViews = service.getComponentService().getComponents();
+		return componentViews;
 	}
 
 	@GET
-	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
+	@APIDescription("Get a list of components by an id set.  If it can't find a component for a griven id it's not returned.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentView.class)
+	@DataType(Component.class)
 	@Path("/list")
-	public RestListResponse batchGetComponents(
+	public List<Component> batchGetComponents(
 			@QueryParam("idList")
-			@RequiredParam
-			List<String> idList
+			@RequiredParam List<String> idList
 	)
 	{
-		List<ComponentView> componentViews = new ArrayList<>();
-		idList.forEach(componentId->{
-			ComponentView view = service.getComponentService().getComponent(componentId);
-			componentViews.add(view);
+		List<Component> componentViews = new ArrayList<>();
+		idList.forEach(componentId -> {
+			Component view = service.getPersistenceService().findById(Component.class, componentId);
+			if (view != null) {
+				componentViews.add(view);
+			}
+
+			//TODO:  What to do if the id don't match any component....is that an error or just return the ones it can find.
 		});
-		
-		return sendListResponse(componentViews);
+
+		return componentViews;
 	}
 
 	@GET
 	@APIDescription("Gets a component <br>(Note: this only the top level component object)")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentView.class)
+	@DataType(Component.class)
 	@Path("/{id}")
-	public ComponentView getComponentSingle(
+	public Component getComponentSingle(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId)
+			@RequiredParam String componentId)
 	{
-		ComponentView componentView = service.getComponentService().getComponent(componentId);
-		return componentView;
+		Component view = service.getPersistenceService().findById(Component.class, componentId);
+		return view;
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Create a component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response createComponent(
+			@RequiredParam RequiredForComponent component)
+	{
+		ValidationModel validationModel = new ValidationModel(component);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+
+			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
+			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
+
+			service.getComponentService().saveComponent(component);
+			return Response.created(URI.create("v1/resource/components/" + component.getComponent().getComponentId())).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Update a component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}")
+	public Response updateComponent(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam RequiredForComponent component)
+	{
+		component.getComponent().setComponentId(componentId);
+		component.getAttributes().forEach(attribute -> {
+			attribute.getComponentAttributePk().setComponentId(componentId);
+			attribute.setComponentId(componentId);
+		});
+		ValidationModel validationModel = new ValidationModel(component);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			return Response.ok().build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 	@GET
@@ -125,16 +173,13 @@ public class Component
 	@Path("/{id}/detail")
 	public ComponentDetailView getComponentDetails(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
 		return componentDetail;
 	}
 
-	
-	
-	// Component ATTRIBUTE Section
+	// ComponentRESTResource ATTRIBUTE Section
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -142,12 +187,10 @@ public class Component
 	@Path("/{id}/attribute")
 	public List<ComponentAttribute> getComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentAttribute.class, componentId);
 	}
-
 
 	@DELETE
 	@RequireAdmin
@@ -156,14 +199,11 @@ public class Component
 	@Path("/{id}/attribute")
 	public void deleteComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
-			@RequiredParam
-			ComponentAttributePk attributePk)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentAttributePk attributePk)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentAttribute.class, attributePk);
 	}
-
 
 	@POST
 	@RequireAdmin
@@ -173,27 +213,21 @@ public class Component
 	@Path("/{id}/attribute")
 	public Response addComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
-			@RequiredParam
-			ComponentAttribute attribute)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentAttribute attribute)
 	{
 		ValidationModel validationModel = new ValidationModel(attribute);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentAttribute(attribute);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create(attribute.getComponentAttributePk().getAttributeType() + attribute.getComponentAttributePk().getAttributeCode())).build();
 	}
 
-	
-	// Component CONTACT section
+	// ComponentRESTResource CONTACT section
 	@GET
 	@APIDescription("Remove a contact from the entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -201,8 +235,7 @@ public class Component
 	@Path("/{id}/contact")
 	public List<ComponentContact> getComponentContact(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentContact.class, componentId);
 	}
@@ -211,15 +244,16 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a contact from the entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/contact")
+	@Path("/{id}/contact/{contactId}")
 	public void deleteComponentContact(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String contactId)
+			@RequiredParam String componentId,
+			@PathParam("contactId")
+			@RequiredParam String contactId)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentContact.class, contactId, componentId);
+		//TODO:  Validate that the contact belongs to the component that the are try to delete
+
+		service.getComponentService().deactivateBaseComponent(ComponentContact.class, contactId);
 	}
 
 	@POST
@@ -230,10 +264,8 @@ public class Component
 	@Path("/{id}/contact")
 	public Response addComponentContact(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentContact contact)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentContact contact)
 	{
 		return saveContact(contact, true);
 	}
@@ -245,23 +277,20 @@ public class Component
 	@Path("/{id}/contact")
 	public Response updateComponentContact(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			ComponentContact contact)
 	{
 		return saveContact(contact, false);
 	}
+
 	private Response saveContact(ComponentContact contact, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(contact);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentContact(contact);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -270,10 +299,8 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
 
-
-	// Component Evaluation Section section
+	// ComponentRESTResource Evaluation Section section
 	@GET
 	@APIDescription("Gets an evaluation section associated to the entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -281,8 +308,7 @@ public class Component
 	@Path("/{id}/section")
 	public List<ComponentEvaluationSection> getComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentEvaluationSection.class, componentId);
 	}
@@ -294,12 +320,10 @@ public class Component
 	@Path("/{id}/section")
 	public void deleteComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
-			@RequiredParam 
-			ComponentEvaluationSectionPk evaluationId)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentEvaluationSectionPk evaluationId)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object)evaluationId);
+		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object) evaluationId);
 	}
 
 	@POST
@@ -310,10 +334,8 @@ public class Component
 	@Path("/{id}/section")
 	public Response addComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentEvaluationSection section)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentEvaluationSection section)
 	{
 		return saveSection(section, true);
 	}
@@ -325,24 +347,20 @@ public class Component
 	@Path("/{id}/section")
 	public Response updateComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentEvaluationSection section)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentEvaluationSection section)
 	{
 		return saveSection(section, false);
 	}
+
 	private Response saveSection(ComponentEvaluationSection section, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(section);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentEvaluationSection(section);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -353,9 +371,7 @@ public class Component
 		}
 	}
 
-	
-	
-	// Component Evaluation Schedule section
+	// ComponentRESTResource Evaluation Schedule section
 	@GET
 	@APIDescription("Gets a list of evaluation schedules associated to the entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -363,8 +379,7 @@ public class Component
 	@Path("/{id}/schedule")
 	public List<ComponentEvaluationSchedule> getComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentEvaluationSchedule.class, componentId);
 	}
@@ -376,10 +391,8 @@ public class Component
 	@Path("/{id}/schedule")
 	public void deleteComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
-			@RequiredParam 
-			ComponentEvaluationSchedulePk scheduleId)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentEvaluationSchedulePk scheduleId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSchedule.class, scheduleId);
 	}
@@ -392,10 +405,8 @@ public class Component
 	@Path("/{id}/schedule")
 	public Response addComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
-			@RequiredParam
-			ComponentEvaluationSchedule schedule)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentEvaluationSchedule schedule)
 	{
 		return saveSchedule(schedule, true);
 	}
@@ -407,24 +418,20 @@ public class Component
 	@Path("/{id}/schedule")
 	public Response updateComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentEvaluationSchedule schedule)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentEvaluationSchedule schedule)
 	{
 		return saveSchedule(schedule, false);
 	}
+
 	private Response saveSchedule(ComponentEvaluationSchedule schedule, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(schedule);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentEvaluationSchedule(schedule);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -434,10 +441,8 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
 
-	
-	// Component MEDIA section
+	// ComponentRESTResource MEDIA section
 	@GET
 	@APIDescription("Gets the list of media associated to an entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -445,8 +450,7 @@ public class Component
 	@Path("/{id}/media")
 	public List<ComponentMedia> getComponentMedia(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentMedia.class, componentId);
 	}
@@ -459,17 +463,13 @@ public class Component
 	@Path("/{id}/media")
 	public void deleteComponentMedia(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
-			@RequiredParam
-			String mediaId)
+			@RequiredParam String componentId,
+			@RequiredParam String mediaId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentMedia.class, mediaId);
 	}
 
-	
 	// TODO: Figure out how to recieve the actual media object?
-	
 	@POST
 	@RequireAdmin
 	@APIDescription("Add media to the specified entity")
@@ -478,10 +478,8 @@ public class Component
 	@Path("/{id}/media")
 	public Response addComponentMedia(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentMedia media)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentMedia media)
 	{
 		return saveMedia(media, true);
 	}
@@ -493,25 +491,20 @@ public class Component
 	@Path("/{id}/media")
 	public Response updateComponentMedia(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentMedia media)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentMedia media)
 	{
 		return saveMedia(media, false);
 	}
-	
+
 	private Response saveMedia(ComponentMedia media, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(media);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentMedia(media);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -521,9 +514,8 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
 
-	// Component METADATA section
+	// ComponentRESTResource METADATA section
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -531,8 +523,7 @@ public class Component
 	@Path("/{id}/metadata")
 	public List<ComponentMetadata> getComponentMetadata(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentMetadata.class, componentId);
 	}
@@ -544,10 +535,8 @@ public class Component
 	@Path("/{id}/metadata")
 	public void deleteComponentMetadata(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String metadataId)
+			@RequiredParam String componentId,
+			@RequiredParam String metadataId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentMetadata.class, metadataId);
 	}
@@ -560,10 +549,8 @@ public class Component
 	@Path("/{id}/metadata")
 	public Response addComponentMetadata(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentMetadata metadata)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentMetadata metadata)
 	{
 		return saveMetadata(metadata, true);
 	}
@@ -575,25 +562,20 @@ public class Component
 	@Path("/{id}/metadata")
 	public Response updateComponentMetadata(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentMetadata metadata)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentMetadata metadata)
 	{
 		return saveMetadata(metadata, false);
 	}
-		
+
 	private Response saveMetadata(ComponentMetadata metadata, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(metadata);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentMetadata(metadata);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -603,9 +585,8 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
-	
-	// Component QUESTION section
+
+	// ComponentRESTResource QUESTION section
 	@GET
 	@APIDescription("Get the questions associated with the specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -613,8 +594,7 @@ public class Component
 	@Path("/{id}/question")
 	public List<ComponentQuestion> getComponentQuestion(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentQuestion.class, componentId);
 	}
@@ -623,15 +603,16 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a question from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/question")
+	@Path("/{id}/question/{questionId}")
 	public void deleteComponentQuestion(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String questionId)
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentQuestion.class, questionId, componentId);
+		//TODO:  Validate that the question belongs to the component that htey are try to delete
+
+		service.getComponentService().deactivateBaseComponent(ComponentQuestion.class, questionId);
 	}
 
 	@POST
@@ -642,10 +623,8 @@ public class Component
 	@Path("/{id}/question")
 	public Response addComponentQuestion(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentQuestion question)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentQuestion question)
 	{
 		return saveQuestion(question, true);
 	}
@@ -657,25 +636,20 @@ public class Component
 	@Path("/{id}/question")
 	public Response updateComponentQuestion(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentQuestion question)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentQuestion question)
 	{
 		return saveQuestion(question, false);
 	}
-		
+
 	private Response saveQuestion(ComponentQuestion question, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(question);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentQuestion(question);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -685,9 +659,8 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
-	
-	// Component QUESTION RESPONSE section
+
+	// ComponentRESTResource QUESTION RESPONSE section
 	@GET
 	@APIDescription("Gets the responses for a given question associated to the specified entity ")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -695,10 +668,8 @@ public class Component
 	@Path("/{id}/response")
 	public List<ComponentQuestionResponse> getComponentQuestionResponse(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String questionId)
+			@RequiredParam String componentId,
+			@RequiredParam String questionId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentQuestionResponse.class, questionId);
 	}
@@ -710,10 +681,8 @@ public class Component
 	@Path("/{id}/response")
 	public void deleteComponentQuestionResponse(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String questionResponseId)
+			@RequiredParam String componentId,
+			@RequiredParam String questionResponseId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, questionResponseId);
 	}
@@ -726,10 +695,8 @@ public class Component
 	@Path("/{id}/response")
 	public Response addComponentQuestionResponse(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentQuestionResponse response)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentQuestionResponse response)
 	{
 		return saveQuestionResponse(response, true);
 	}
@@ -741,25 +708,20 @@ public class Component
 	@Path("/{id}/response")
 	public Response updateComponentQuestionResponse(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentQuestionResponse response)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentQuestionResponse response)
 	{
 		return saveQuestionResponse(response, false);
 	}
-			
+
 	private Response saveQuestionResponse(ComponentQuestionResponse response, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(response);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentQuestionResponse(response);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -769,9 +731,8 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
 
-	// Component RESOURCE section
+	// ComponentRESTResource RESOURCE section
 	@GET
 	@APIDescription("Get the resources associated to the given entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -779,8 +740,7 @@ public class Component
 	@Path("/{id}/resource")
 	public List<ComponentResource> getComponentResource(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentResource.class, componentId);
 	}
@@ -792,10 +752,8 @@ public class Component
 	@Path("/{id}/resource")
 	public void deleteComponentResource(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String resourceId)
+			@RequiredParam String componentId,
+			@RequiredParam String resourceId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
 	}
@@ -804,14 +762,12 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Add a resource to the given entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentResource.class)
+	@DataType(ComponentRESTResource.class)
 	@Path("/{id}/resource")
 	public Response addComponentResource(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentResource resource)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentResource resource)
 	{
 		return saveResource(resource, true);
 	}
@@ -823,25 +779,20 @@ public class Component
 	@Path("/{id}/resource")
 	public Response updateComponentResource(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentResource resource)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentResource resource)
 	{
 		return saveResource(resource, false);
 	}
-	
+
 	private Response saveResource(ComponentResource resource, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(resource);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentResource(resource);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -851,9 +802,8 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
 
-	// Component REVIEW section
+	// ComponentRESTResource REVIEW section
 	@GET
 	@APIDescription("Get the reviews for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -861,8 +811,7 @@ public class Component
 	@Path("/{id}/review")
 	public List<ComponentReview> getComponentReview(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentReview.class, componentId);
 	}
@@ -874,10 +823,8 @@ public class Component
 	@Path("/{id}/review")
 	public void deleteComponentReview(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String reviewId)
+			@RequiredParam String componentId,
+			@RequiredParam String reviewId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentReview.class, reviewId);
 	}
@@ -890,10 +837,8 @@ public class Component
 	@Path("/{id}/review")
 	public Response addComponentReview(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentReview review)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentReview review)
 	{
 		return saveReview(review, true);
 	}
@@ -905,25 +850,20 @@ public class Component
 	@Path("/{id}/review")
 	public Response updateComponentReview(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentReview review)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentReview review)
 	{
 		return saveReview(review, false);
 	}
-		
+
 	private Response saveReview(ComponentReview review, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(review);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentReview(review);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -933,9 +873,8 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
 
-	// Component REVIEW CON section
+	// ComponentRESTResource REVIEW CON section
 	@GET
 	@APIDescription("Get the cons associated to a review on the specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -943,8 +882,7 @@ public class Component
 	@Path("/{id}/con")
 	public List<ComponentReviewCon> getComponentReviewCon(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentReviewCon.class, componentId);
 	}
@@ -956,10 +894,8 @@ public class Component
 	@Path("/{id}/con")
 	public void deleteComponentReviewCon(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentReviewConPk conId)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentReviewConPk conId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentReviewCon.class, conId);
 	}
@@ -972,29 +908,22 @@ public class Component
 	@Path("/{id}/con")
 	public Response addComponentReviewCon(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentReviewCon con)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentReviewCon con)
 	{
 		ValidationModel validationModel = new ValidationModel(con);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentReviewCon(con);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
 		return Response.created(URI.create(con.getComponentReviewConPk().getReviewCon())).build();
 	}
 
-	
-	
-	// Component REVIEW PRO section
+	// ComponentRESTResource REVIEW PRO section
 	@GET
 	@APIDescription("Get the pros for a review associated with the given entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1002,8 +931,7 @@ public class Component
 	@Path("/{id}/pro")
 	public List<ComponentReviewPro> getComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentReviewPro.class, componentId);
 	}
@@ -1015,10 +943,8 @@ public class Component
 	@Path("/{id}/pro")
 	public void deleteComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentReviewProPk proId)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentReviewProPk proId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentReviewPro.class, proId);
 	}
@@ -1031,28 +957,22 @@ public class Component
 	@Path("/{id}/pro")
 	public Response addComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentReviewPro pro)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentReviewPro pro)
 	{
 		ValidationModel validationModel = new ValidationModel(pro);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentReviewPro(pro);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
 		return Response.created(URI.create(pro.getComponentReviewProPk().getReviewPro())).build();
 	}
 
-	
-	// Component TAG section
+	// ComponentRESTResource TAG section
 	@GET
 	@APIDescription("Get the tag list for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1060,8 +980,7 @@ public class Component
 	@Path("/{id}/tag")
 	public List<ComponentTag> getComponentTag(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentTag.class, componentId);
 	}
@@ -1073,10 +992,8 @@ public class Component
 	@Path("/{id}/tag")
 	public void deleteComponentTag(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String tagId)
+			@RequiredParam String componentId,
+			@RequiredParam String tagId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentTag.class, tagId);
 	}
@@ -1089,27 +1006,21 @@ public class Component
 	@Path("/{id}/tag")
 	public Response addComponentTag(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentTag tag)
-	{		
+			@RequiredParam String componentId,
+			@RequiredParam ComponentTag tag)
+	{
 		ValidationModel validationModel = new ValidationModel(tag);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentTag(tag);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create(tag.getTagId())).build();
 	}
 
-	
-	// Component TRACKING section
+	// ComponentRESTResource TRACKING section
 	@GET
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified entity")
@@ -1118,8 +1029,7 @@ public class Component
 	@Path("/{id}/tracking")
 	public List<ComponentTracking> getComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentTracking.class, componentId);
 	}
@@ -1131,10 +1041,8 @@ public class Component
 	@Path("/{id}/tracking")
 	public void deleteComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			String trackingId)
+			@RequiredParam String componentId,
+			@RequiredParam String trackingId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentTracking.class, trackingId);
 	}
@@ -1146,10 +1054,8 @@ public class Component
 	@Path("/{id}/tracking")
 	public Response addComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentTracking tracking)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentTracking tracking)
 	{
 		return saveTracking(tracking, true);
 	}
@@ -1161,10 +1067,8 @@ public class Component
 	@Path("/{id}/tracking")
 	public Response updateComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			ComponentTracking tracking)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentTracking tracking)
 	{
 		return saveTracking(tracking, false);
 	}
@@ -1174,12 +1078,9 @@ public class Component
 		ValidationModel validationModel = new ValidationModel(tracking);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			service.getComponentService().saveComponentTracking(tracking);
-		}
-		else 
-		{
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -1189,61 +1090,5 @@ public class Component
 			return Response.ok().build();
 		}
 	}
-	
-	@POST
-	@RequireAdmin
-	@APIDescription("Create a component")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/new")
-	public Response createComponent(
-			@RequiredParam
-			RequiredForComponent component)
-	{
-		ValidationModel validationModel = new ValidationModel(component);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
-			return Response.ok(service.getComponentService().saveComponent(component)).build();
-		}
-		else 
-		{
-			return Response.ok(validationResult.toRestError()).build();
-		}
-//		return Response.created(URI.create(component.getComponent().getComponentId())).build();
-	}
 
-		
-	@POST
-	@RequireAdmin
-	@APIDescription("Update a compnent")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/new/{updateId}")
-	public Response updateComponent(
-			@PathParam("updateId")
-			@RequiredParam
-			String componentId,
-			@RequiredParam
-			RequiredForComponent component)
-	{
-		component.getComponent().setComponentId(componentId);
-		component.getAttributes().forEach(attribute->{
-			attribute.getComponentAttributePk().setComponentId(componentId);
-			attribute.setComponentId(componentId);
-		});
-		ValidationModel validationModel = new ValidationModel(component);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
-			return Response.ok(service.getComponentService().saveComponent(component)).build();
-		}
-		else 
-		{
-			return Response.ok(validationResult.toRestError()).build();
-		}
-//		return Response.ok(component).build();
-//		return Response.created(URI.create(component.getComponent().getComponentId())).build();
-	}
-	
 }

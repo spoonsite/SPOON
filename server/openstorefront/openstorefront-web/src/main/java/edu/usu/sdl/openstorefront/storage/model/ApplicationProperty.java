@@ -37,6 +37,7 @@ public class ApplicationProperty
 	private String value;
 
 	public static final String LOOKUP_IMPORTER_LAST_SYNC_DTS = "LOOKUPSYNCDTS";
+	public static final String ATTRIBUTE_IMPORTER_LAST_SYNC_DTS = "ATTRIBUTSYNCDTS";
 
 	public ApplicationProperty()
 	{

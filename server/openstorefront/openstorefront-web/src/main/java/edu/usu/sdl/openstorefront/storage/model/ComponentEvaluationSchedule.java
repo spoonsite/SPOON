@@ -43,27 +43,6 @@ public class ComponentEvaluationSchedule
 	public ComponentEvaluationSchedule()
 	{
 	}
-	
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		ComponentEvaluationSchedulePk temp = new ComponentEvaluationSchedulePk();
-		temp.setComponentId(componentId);
-		temp.setEvaluationLevelCode(itemId);
-		componentEvaluationSchedulePk = temp;
-	}
-	
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		componentEvaluationSchedulePk = (ComponentEvaluationSchedulePk)pk;
-	}
-	
-	@Override
-	public Object getPrimaryKey()
-	{
-		return componentEvaluationSchedulePk;
-	}
 
 	public String getLevelStatus()
 	{

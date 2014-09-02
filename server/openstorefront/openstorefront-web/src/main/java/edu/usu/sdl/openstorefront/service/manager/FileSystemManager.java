@@ -43,6 +43,7 @@ public class FileSystemManager
 	public static final String CONFIG_DIR = "/var/openstorefront/config";
 	public static final String IMPORT_DIR = "/var/openstorefront/import";
 	public static final String IMPORT_LOOKUP_DIR = "/var/openstorefront/import/lookup";
+	public static final String IMPORT_ATTRIBUTE_DIR = "/var/openstorefront/import/attribute";
 	public static final String DB_DIR = "/var/openstorefront/db";
 
 	public static File getDir(String directory)
@@ -60,6 +61,11 @@ public class FileSystemManager
 	public static File getImportLookup(String configFilename)
 	{
 		return getFileDir(configFilename, IMPORT_LOOKUP_DIR, "/data/lookup/");
+	}
+
+	public static File getImportAttribute(String configFilename)
+	{
+		return getFileDir(configFilename, IMPORT_ATTRIBUTE_DIR, "/data/attribute/");
 	}
 
 	private static File getFileDir(String configFilename, String directory, String resourceDir)

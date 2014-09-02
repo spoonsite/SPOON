@@ -48,16 +48,16 @@ limitations under the License.
 			</h4>
 			<ul>
 				<li>
-					<a href="#../API.action?API&resourceClass=UserProfile">User Profile</a>
+					<a href="#../API.action?API&resourceClass=UserProfileResource">User Profile</a>
 				</li>
 				<li>
-					<a href="#../API.action?API&resourceClass=Component">Component</a>
+					<a href="#../API.action?API&resourceClass=ComponentRESTResource">Component</a>
 				</li>
 				<li>
-					<a href="#../API.action?API&resourceClass=Attribute">Attributes</a>
+					<a href="#../API.action?API&resourceClass=AttributeResource">Attributes</a>
 				</li>	
 				<li>
-					<a href="#../API.action?API&resourceClass=LookupType">Lookup Type </a>
+					<a href="#../API.action?API&resourceClass=LookupTypeResource">Lookup Type </a>
 				</li>				
 			</ul>
 			<h5>Application Resources</h5>	

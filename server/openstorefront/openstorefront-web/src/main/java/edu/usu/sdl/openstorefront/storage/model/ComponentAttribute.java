@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.PK;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -30,33 +29,10 @@ public class ComponentAttribute
 	@PK
 	@ConsumeField
 	private ComponentAttributePk componentAttributePk;
-	
+
 	public ComponentAttribute()
 	{
 	}
-		
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		ComponentAttributePk temp = new ComponentAttributePk();
-		temp.setAttributeCode(itemCode);		
-		temp.setAttributeCode(itemId);
-		temp.setComponentId(componentId);
-		componentAttributePk = temp;
-	}
-		
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		componentAttributePk = (ComponentAttributePk)pk;
-	}
-		
-	@Override
-	public Object getPrimaryKey()
-	{
-		return componentAttributePk;
-	}
-
 
 	public ComponentAttributePk getComponentAttributePk()
 	{
