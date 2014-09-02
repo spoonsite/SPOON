@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class ComponentEvaluationSection
-	extends BaseComponent
+		extends BaseComponent
 {
 
 	@PK
@@ -43,28 +43,6 @@ public class ComponentEvaluationSection
 	{
 	}
 
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		ComponentEvaluationSectionPk temp = new ComponentEvaluationSectionPk();
-		temp.setComponentId(componentId);
-		temp.setEvaulationSection(itemId);
-		componentEvaluationSectionPk = temp;
-	}
-
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		componentEvaluationSectionPk = (ComponentEvaluationSectionPk)pk;
-	}
-
-	@Override
-	public Object getPrimaryKey()
-	{
-		return componentEvaluationSectionPk;
-	}
-
-	
 	public ComponentEvaluationSectionPk getComponentEvaluationSectionPk()
 	{
 		return componentEvaluationSectionPk;

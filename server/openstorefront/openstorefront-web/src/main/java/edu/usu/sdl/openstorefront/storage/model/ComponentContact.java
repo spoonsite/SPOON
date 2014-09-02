@@ -30,7 +30,7 @@ public class ComponentContact
 	@PK
 	@NotNull
 	private String contactId;
-	
+
 	@NotNull
 	@ConsumeField
 	private String contactType;
@@ -38,12 +38,16 @@ public class ComponentContact
 	@NotNull
 	@ConsumeField
 	private String firstName;
+
 	@ConsumeField
 	private String lastName;
+
 	@ConsumeField
 	private String email;
+
 	@ConsumeField
 	private String phone;
+
 	@NotNull
 	@ConsumeField
 	private String organization;
@@ -51,26 +55,7 @@ public class ComponentContact
 	public ComponentContact()
 	{
 	}
-	
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		contactId = itemId;
-	}
-	
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		contactId = (String)pk;
-	}
-	
-	@Override
-	public Object getPrimaryKey()
-	{
-		return contactId;
-	}
 
-	
 	public String getContactId()
 	{
 		return contactId;

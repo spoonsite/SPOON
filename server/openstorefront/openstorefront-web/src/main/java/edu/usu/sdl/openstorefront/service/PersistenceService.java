@@ -211,7 +211,7 @@ public class PersistenceService
 							try {
 								Method method = id.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
 								Object returnObj = method.invoke(id, (Object[]) null);
-								fieldValueMap.put(pkField.getName(), returnObj);
+								fieldValueMap.put(field.getName() + "." + pkField.getName(), returnObj);
 							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 								throw new OpenStorefrontRuntimeException(ex);
 							}
@@ -320,6 +320,11 @@ public class PersistenceService
 
 	private <T> String generateWhereClause(T example)
 	{
+		return generateWhereClause(example, "");
+	}
+
+	private <T> String generateWhereClause(T example, String parentFieldName)
+	{
 		StringBuilder where = new StringBuilder();
 
 		try {
@@ -330,36 +335,75 @@ public class PersistenceService
 				if ("class".equalsIgnoreCase(field.toString()) == false) {
 					Object value = fieldMap.get(field);
 					if (value != null) {
-						if (addAnd) {
-							where.append(" AND ");
-						} else {
-							addAnd = true;
-							where.append(" ");
-						}
 
-						where.append(field).append(" = :").append(field).append("Param");
+						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
+						Object returnObj = method.invoke(example, (Object[]) null);
+						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+							if (StringUtils.isNotBlank(parentFieldName)) {
+								parentFieldName = parentFieldName + ".";
+							}
+							parentFieldName = parentFieldName + field;
+							where.append(generateWhereClause(returnObj, parentFieldName));
+						} else {
+							if (addAnd) {
+								where.append(" AND ");
+							} else {
+								addAnd = true;
+								where.append(" ");
+							}
+
+							String fieldName = field.toString();
+							if (StringUtils.isNotBlank(parentFieldName)) {
+								fieldName = parentFieldName + "." + fieldName;
+							}
+
+							where.append(fieldName).append(" = :").append(fieldName.replace(".", "_")).append("Param");
+						}
 					}
 				}
 			}
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-			log.log(Level.SEVERE, null, ex);
+			throw new RuntimeException(ex);
 		}
 		return where.toString();
 	}
 
 	private <T> Map<String, Object> mapParameters(T example)
 	{
+		return mapParameters(example, "");
+	}
+
+	private <T> Map<String, Object> mapParameters(T example, String parentFieldName)
+	{
 		Map<String, Object> parameterMap = new HashMap<>();
 		try {
 			Map fieldMap = BeanUtils.describe(example);
-			fieldMap.keySet().stream().filter((field) -> ("class".equalsIgnoreCase(field.toString()) == false)).forEach((field) -> {
-				Object value = fieldMap.get(field);
-				if (value != null) {
-					parameterMap.put(field + "Param", value);
+			for (Object field : fieldMap.keySet()) {
+
+				if ("class".equalsIgnoreCase(field.toString()) == false) {
+					Object value = fieldMap.get(field);
+					if (value != null) {
+
+						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
+						Object returnObj = method.invoke(example, (Object[]) null);
+						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+							if (StringUtils.isNotBlank(parentFieldName)) {
+								parentFieldName = parentFieldName + "_";
+							}
+							parentFieldName = parentFieldName + field;
+							parameterMap.putAll(mapParameters(returnObj, parentFieldName));
+						} else {
+							String fieldName = field.toString();
+							if (StringUtils.isNotBlank(parentFieldName)) {
+								fieldName = parentFieldName + "_" + fieldName;
+							}
+							parameterMap.put(fieldName + "Param", value);
+						}
+					}
 				}
-			});
+			}
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-			log.log(Level.SEVERE, null, ex);
+			throw new RuntimeException(ex);
 		}
 		return parameterMap;
 	}

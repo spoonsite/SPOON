@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentQuestion
-	extends BaseComponent
+		extends BaseComponent
 {
 
 	@PK
@@ -50,24 +50,6 @@ public class ComponentQuestion
 
 	public ComponentQuestion()
 	{
-	}
-
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		questionId = itemId;
-	}
-
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		questionId = (String)pk;
-	}
-
-	@Override
-	public Object getPrimaryKey()
-	{
-		return questionId;
 	}
 
 	public String getQuestion()

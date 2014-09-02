@@ -35,27 +35,6 @@ public class ComponentReviewPro
 	{
 	}
 
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		ComponentReviewProPk temp = new ComponentReviewProPk();
-		temp.setComponentReviewId(componentId);
-		temp.setReviewPro(itemId);
-		componentReviewProPk = temp;
-	}
-
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		componentReviewProPk = (ComponentReviewProPk)pk;
-	}
-	
-	@Override
-	public Object getPrimaryKey()
-	{
-		return componentReviewProPk;
-	}
-	
 	public ComponentReviewProPk getComponentReviewProPk()
 	{
 		return componentReviewProPk;

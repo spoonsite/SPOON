@@ -30,11 +30,10 @@ public class ComponentAttributePk
 {
 
 	@NotNull
-	@ConsumeField
 	private String componentId;
 
 	@NotNull
-	@ConsumeField	
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String attributeType;
 

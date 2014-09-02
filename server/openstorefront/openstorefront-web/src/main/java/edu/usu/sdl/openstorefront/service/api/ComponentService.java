@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.api;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
@@ -32,9 +33,8 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
-import edu.usu.sdl.openstorefront.storage.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
+import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.util.List;
 
 /**
@@ -69,73 +69,31 @@ public interface ComponentService
 	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param itemId
 	 * @param componentId
-	 * @return 
-	 */
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String componentId);
-
-	/**
-	 * 
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param itemId
-	 * @param itemCode
-	 * @param componentId
-	 * @return 
-	 */
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId);
-
-	/**
-	 * 
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param pk
-	 * @return 
+	 * @return
 	 */
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param pk
 	 * @param all
-	 * @return 
+	 * @return
 	 */
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all);
 
-	
-	/**
-	 * This can be use to get parts of the component (Eg. ComponentReview)
-	 *
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param itemId
-	 * @param itemCode
-	 * @param componentId
-	 * @param all (true to get inactive as well)
-	 * @return
-	 */
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, String itemId, String itemCode, String componentId, boolean all);
-
 	/**
 	 * Return the whole list of components. (the short view)
 	 *
 	 * @return
 	 */
-	public List<ComponentView> getComponents();
-
-	/**
-	 * Return the whole list of components. (the short view)
-	 *
-	 * @param componentId
-	 * @return
-	 */
-	public ComponentView getComponent(String componentId);
+	public List<Component> getComponents();
 
 	/**
 	 * Return the details object of the component attached to the given id. (the
@@ -152,21 +110,21 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentAttribute(ComponentAttribute attribute);
-	
+
 	/**
 	 *
 	 * @param contact
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentContact(ComponentContact contact);
-	
+
 	/**
 	 *
 	 * @param section
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentEvaluationSection(ComponentEvaluationSection section);
-	
+
 	/**
 	 *
 	 * @param schedule
@@ -187,35 +145,35 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentMetadata(ComponentMetadata metadata);
-	
+
 	/**
 	 *
 	 * @param question
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentQuestion(ComponentQuestion question);
-	
+
 	/**
 	 *
 	 * @param response
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentQuestionResponse(ComponentQuestionResponse response);
-	
+
 	/**
 	 *
 	 * @param resource
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentResource(ComponentResource resource);
-	
+
 	/**
 	 *
 	 * @param review
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentReview(ComponentReview review);
-	
+
 	/**
 	 *
 	 * @param con
@@ -229,14 +187,14 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentReviewPro(ComponentReviewPro pro);
-	
+
 	/**
 	 *
 	 * @param tag
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentTag(ComponentTag tag);
-	
+
 	/**
 	 *
 	 * @param tracking
@@ -245,13 +203,13 @@ public interface ComponentService
 	public void saveComponentTracking(ComponentTracking tracking);
 
 	/**
-	 * 
+	 *
 	 * @param component
-	 * @return 
+	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public RequiredForComponent saveComponent(RequiredForComponent component);
 	// Todo: Make an object that we can pass in to this function, or figure out which
 	// combination we'll need...
-	
+
 }

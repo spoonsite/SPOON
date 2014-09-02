@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
-import edu.usu.sdl.openstorefront.service.AttributeServiceImpl;
+import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
@@ -30,9 +32,10 @@ public class RequiredForComponent
 	@NotNull
 	@ConsumeField
 	private Component component;
-	
+
 	@NotNull
 	@ConsumeField
+	@DataType(ComponentAttribute.class)
 	private List<ComponentAttribute> attributes;
 
 	public RequiredForComponent()
@@ -41,8 +44,7 @@ public class RequiredForComponent
 
 	public Boolean checkForComplete()
 	{
-		if (component == null || component.getClass() != Component.class)
-		{
+		if (component == null || component.getClass() != Component.class) {
 			return Boolean.FALSE;
 		}
 //		AttributeServiceImpl attributeService = new AttributeServiceImpl();

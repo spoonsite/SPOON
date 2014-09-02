@@ -56,11 +56,11 @@ import org.apache.commons.lang.StringUtils;
  */
 @Path("v1/resource/lookuptypes")
 @APIDescription("A lookup entity provide a set of valid values for a given entity. For Example: this can be used to fill drop-downs with values.")
-public class LookupType
+public class LookupTypeResource
 		extends BaseResource
 {
 
-	private static final Logger log = Logger.getLogger(LookupType.class.getName());
+	private static final Logger log = Logger.getLogger(LookupTypeResource.class.getName());
 
 	@GET
 	@APIDescription("Get a list of available lookup entities")
@@ -91,7 +91,7 @@ public class LookupType
 	@GET
 	@APIDescription("Get a entity type codes")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(value = UserTypeCode.class, actualClassName = "LookupEntity")
+	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}")
 	public List<LookupEntity> getEntityValues(
 			@PathParam("entity")
@@ -109,6 +109,35 @@ public class LookupType
 		}
 		lookups = filterQueryParams.filter(lookups);
 		return lookups;
+	}
+
+	@GET
+	@APIDescription("Get a entity type codes.  Lighter Model for dropdown boxes")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
+	@Path("/{entity}/view")
+	public List<LookupModel> getEntityValuesView(
+			@PathParam("entity")
+			@RequiredParam String entityName,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		checkEntity(entityName);
+
+		List<LookupModel> lookupViews = new ArrayList<>();
+		try {
+			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
+			List<LookupEntity> lookups = service.getLookupService().findLookup(lookupClass, filterQueryParams.getStatus());
+			for (LookupEntity lookupEntity : lookups) {
+				LookupModel lookupModel = new LookupModel();
+				lookupModel.setCode(lookupEntity.getCode());
+				lookupModel.setDescription(lookupEntity.getDescription());
+				lookupViews.add(lookupModel);
+			}
+		} catch (ClassNotFoundException e) {
+			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
+		}
+		lookupViews = filterQueryParams.filter(lookupViews);
+		return lookupViews;
 	}
 
 	@POST
