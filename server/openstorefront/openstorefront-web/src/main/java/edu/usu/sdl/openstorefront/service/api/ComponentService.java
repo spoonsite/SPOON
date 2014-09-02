@@ -246,9 +246,11 @@ public interface ComponentService
 
 	/**
 	 * 
+	 * @param component
+	 * @return 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public Boolean saveComponent(RequiredForComponent component);
+	public RequiredForComponent saveComponent(RequiredForComponent component);
 	// Todo: Make an object that we can pass in to this function, or figure out which
 	// combination we'll need...
 	

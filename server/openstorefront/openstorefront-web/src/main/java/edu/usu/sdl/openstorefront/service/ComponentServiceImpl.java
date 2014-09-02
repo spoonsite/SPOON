@@ -505,14 +505,25 @@ public class ComponentServiceImpl
 	}
 	
 	@Override
-	public Boolean saveComponent(RequiredForComponent component)
+	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
-		if (component.checkForComplete())
+		// uncomment this to remove all of the components to start clean
+		// Component temp = new Component();
+		// temp.setActiveStatus(Component.ACTIVE_STATUS);
+		// persistenceService.deleteByExample(temp);
+		
+		
+		Component oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
+		if (oldComponent == null && component.checkForComplete())
 		{
+			component.getComponent().setPostDate(TimeUtil.currentDate());
 			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
 			component.getComponent().setCreateDts(TimeUtil.currentDate());
 			component.getComponent().setUpdateDts(TimeUtil.currentDate());
+			component.getComponent().setLastActivityDts(TimeUtil.currentDate());
 			component.getComponent().setComponentId(persistenceService.generateId());
+			component.getComponent().setCreateUser("User");
+			component.getComponent().setUpdateUser("User");
 			persistenceService.persist(component.getComponent());
 			component.getAttributes().forEach(attribute->{
 				attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -522,11 +533,24 @@ public class ComponentServiceImpl
 				pk.setComponentId(component.getComponent().getComponentId());
 				attribute.setComponentAttributePk(pk);
 				attribute.setComponentId(component.getComponent().getComponentId());
+				attribute.setCreateUser("User");
+				attribute.setUpdateUser("User");
+				attribute.setCreateDts(TimeUtil.currentDate());
+				attribute.setUpdateDts(TimeUtil.currentDate());
 				persistenceService.persist(attribute);
 			});
-			return Boolean.TRUE;
+			return component;
+		} 
+		else if (component.checkForComplete())
+		{
+			oldComponent.setPostDate(TimeUtil.currentDate());
+			oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
+			oldComponent.setUpdateDts(TimeUtil.currentDate());
+			oldComponent.setUpdateUser(component.getComponent().getUpdateUser());
+			//persistenceService.persist(oldComponent);
+			return component;
 		}
-		return Boolean.FALSE;
+		return null;
 		// We need to figure out how to pass all the data we need to this function
 		// so we can do it in one transaction.
 	}

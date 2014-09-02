@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -1191,10 +1192,10 @@ public class Component
 	
 	@POST
 	@RequireAdmin
-	@APIDescription("Update a tracking entry for the specified entity")
+	@APIDescription("Create a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/new")
-	public Response updateComponentTracking(
+	public Response createComponent(
 			@RequiredParam
 			RequiredForComponent component)
 	{
@@ -1203,13 +1204,46 @@ public class Component
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid())
 		{
-			service.getComponentService().saveComponent(component);
+			return Response.ok(service.getComponentService().saveComponent(component)).build();
 		}
 		else 
 		{
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		return Response.created(URI.create(component.getComponent().getComponentId())).build();
+//		return Response.created(URI.create(component.getComponent().getComponentId())).build();
+	}
+
+		
+	@POST
+	@RequireAdmin
+	@APIDescription("Update a compnent")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/new/{updateId}")
+	public Response updateComponent(
+			@PathParam("updateId")
+			@RequiredParam
+			String componentId,
+			@RequiredParam
+			RequiredForComponent component)
+	{
+		component.getComponent().setComponentId(componentId);
+		component.getAttributes().forEach(attribute->{
+			attribute.getComponentAttributePk().setComponentId(componentId);
+			attribute.setComponentId(componentId);
+		});
+		ValidationModel validationModel = new ValidationModel(component);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid())
+		{
+			return Response.ok(service.getComponentService().saveComponent(component)).build();
+		}
+		else 
+		{
+			return Response.ok(validationResult.toRestError()).build();
+		}
+//		return Response.ok(component).build();
+//		return Response.created(URI.create(component.getComponent().getComponentId())).build();
 	}
 	
 }
