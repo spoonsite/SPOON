@@ -26,8 +26,6 @@ describe('search__SortBy', function() {
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
         element(by.model('orderProp')).sendKeys(protractor.Key.TAB);
 
-        browser.driver.sleep(9000);
-
         // Select sort by drop down
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
         element(by.model('orderProp')).sendKeys(protractor.Key.TAB);
