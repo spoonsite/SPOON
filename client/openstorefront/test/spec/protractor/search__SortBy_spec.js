@@ -10,6 +10,8 @@ describe('search__SortBy', function() {
         // Select sort by drop down
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
+        // Add tab for Firefox as it needs to loose focus in order to dynamically sort (Chrome is automatic without the tabbing)
+        element(by.model('orderProp')).sendKeys(protractor.Key.TAB);
 
         // VERIFY it is sorted Z - A
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
@@ -19,12 +21,16 @@ describe('search__SortBy', function() {
 
     it('Last Update newest returns IdAM as the first search result', function() {
 
-        // 18 Aug added Sort By:  Rating (high-low); Rating (low-high) DOES NOT WORK CURRENTLY
+        // 18 Aug added Sort By:  Rating (high-low); Rating (low-high)
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
+        element(by.model('orderProp')).sendKeys(protractor.Key.TAB);
+
+        browser.driver.sleep(9000);
 
         // Select sort by drop down
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
+        element(by.model('orderProp')).sendKeys(protractor.Key.TAB);
 
         // VERIFY it is sorted correctly
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
@@ -35,6 +41,7 @@ describe('search__SortBy', function() {
     it('Last Update oldest returns Common Map API Javascript Library as the first search result', function() {
         // Select sort by drop down
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
+        element(by.model('orderProp')).sendKeys(protractor.Key.TAB);
 
         // VERIFY it is sorted correctly
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
@@ -46,11 +53,11 @@ describe('search__SortBy', function() {
         // 18 Aug. 2014 Need to go UP more to get past Rating (low-high) and Rating (high-low)
         element(by.model('orderProp')).sendKeys(protractor.Key.UP);
         element(by.model('orderProp')).sendKeys(protractor.Key.UP);
-
         // Select sort by drop down
         element(by.model('orderProp')).sendKeys(protractor.Key.UP);
         element(by.model('orderProp')).sendKeys(protractor.Key.UP);
         element(by.model('orderProp')).sendKeys(protractor.Key.UP);
+        element(by.model('orderProp')).sendKeys(protractor.Key.TAB);
 
         // VERIFY it is sorted correctly
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
