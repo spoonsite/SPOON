@@ -507,11 +507,12 @@ public class ComponentServiceImpl
 	@Override
 	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
-		// uncomment this to remove all of the components to start clean
-		// Component temp = new Component();
-		// temp.setActiveStatus(Component.ACTIVE_STATUS);
-		// persistenceService.deleteByExample(temp);
-		
+//		 uncomment this to remove all of the components to start clean
+//		 Component temp = new Component();
+//		 temp.setActiveStatus(Component.ACTIVE_STATUS);
+//		 persistenceService.deleteByExample(temp);
+//		
+//		 return component;
 		
 		Component oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 		if (oldComponent == null && component.checkForComplete())

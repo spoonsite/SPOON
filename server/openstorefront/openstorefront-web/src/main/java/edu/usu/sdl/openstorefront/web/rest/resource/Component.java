@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
@@ -48,6 +49,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -148,20 +150,57 @@ public class Component
 		return service.getComponentService().getBaseComponent(ComponentAttribute.class, componentId);
 	}
 
+	@GET
+	@APIDescription("Get the code for a specified attribute type of an entity")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeCode.class)
+	@Path("/{id}/attribute/{attributeType}")
+	public List<AttributeCode> getComponentAttribute(
+			@PathParam("id")
+			@RequiredParam 
+			String componentId,
+			@PathParam("attributeType")
+			@RequiredParam
+			String attributeType)
+	{
+		List<ComponentAttribute> attributes = service.getComponentService().getBaseComponent(ComponentAttribute.class, componentId);
+		List<AttributeCode> attributeCodes = new ArrayList<>();
+		for (Iterator<ComponentAttribute> iter = attributes.listIterator(); iter.hasNext(); ) {
+		    ComponentAttribute a = iter.next();
+			if (!a.getComponentAttributePk().getAttributeType().equals(attributeType)) {
+				iter.remove();
+			} 
+			else
+			{
+				attributeCodes.add(new AttributeCode());
+				// TODO: Implement getAttributeCode
+				//attributeCodes.add(service.getAttributeService().getAttributeCode(a.getComponentAttributePk().getAttributeCode()));
+			}
+		}
+		return attributeCodes;
+	}
 
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Remove an attribute from the entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/attribute")
+	@Path("/{id}/attribute/{attributeType}/{attributeCode}")
 	public void deleteComponentAttribute(
 			@PathParam("id")
 			@RequiredParam 
 			String componentId,
+			@PathParam("attributeType")
 			@RequiredParam
-			ComponentAttributePk attributePk)
+			String attributeType,
+			@PathParam("attributeCode")
+			@RequiredParam
+			String attributeCode)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentAttribute.class, attributePk);
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setAttributeCode(attributeCode);
+		pk.setAttributeType(attributeType);
+		pk.setComponentId(componentId);
+		service.getComponentService().deactivateBaseComponent(ComponentAttribute.class, pk);
 	}
 
 
@@ -211,11 +250,12 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a contact from the entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/contact")
+	@Path("/{id}/contact/{contactId}")
 	public void deleteComponentContact(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("contactId")
 			@RequiredParam
 			String contactId)
 	{
@@ -242,13 +282,18 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Update a contact associated to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/contact")
+	@Path("/{id}/contact/{contactId}")
 	public Response updateComponentContact(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("contactId")
+			@RequiredParam
+			String contactId,
 			ComponentContact contact)
 	{
+		contact.setComponentId(componentId);
+		contact.setContactId(contactId);
 		return saveContact(contact, false);
 	}
 	private Response saveContact(ComponentContact contact, Boolean post)
@@ -291,15 +336,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Removes an evaluation section from the entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/section")
+	@Path("/{id}/section/{evalSection}")
 	public void deleteComponentEvaluationSection(
 			@PathParam("id")
 			@RequiredParam 
 			String componentId,
-			@RequiredParam 
-			ComponentEvaluationSectionPk evaluationId)
+			@PathParam("evalSection")
+			@RequiredParam
+			String evalSection)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object)evaluationId);
+		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
+		pk.setComponentId(componentId);
+		pk.setEvaulationSection(evalSection);
+		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object)pk);
 	}
 
 	@POST
@@ -322,14 +371,21 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/section")
+	@Path("/{id}/section/{evalSection}")
 	public Response updateComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam
+			@RequiredParam 
 			String componentId,
+			@PathParam("evalSection")
+			@RequiredParam
+			String evalSection,
 			@RequiredParam
 			ComponentEvaluationSection section)
 	{
+		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
+		pk.setComponentId(componentId);
+		pk.setEvaulationSection(evalSection);
+		section.setComponentEvaluationSectionPk(pk);
 		return saveSection(section, false);
 	}
 	private Response saveSection(ComponentEvaluationSection section, Boolean post)
@@ -373,15 +429,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Removes the specified evaluation schedule from the entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/schedule")
+	@Path("/{id}/schedule/{evalLevel}")
 	public void deleteComponentEvaluationSchedule(
 			@PathParam("id")
 			@RequiredParam 
 			String componentId,
-			@RequiredParam 
-			ComponentEvaluationSchedulePk scheduleId)
+			@PathParam("evalLevel")
+			@RequiredParam
+			String evalLevel)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSchedule.class, scheduleId);
+		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
+		pk.setComponentId(componentId);
+		pk.setEvaluationLevelCode(evalLevel);
+		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSchedule.class, pk);
 	}
 
 	@POST
@@ -404,14 +464,21 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Updates a component evaluation schedule associated to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/schedule")
+	@Path("/{id}/schedule/{evalLevel}")
 	public Response updateComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam
+			@RequiredParam 
 			String componentId,
+			@PathParam("evalLevel")
+			@RequiredParam
+			String evalLevel,
 			@RequiredParam
 			ComponentEvaluationSchedule schedule)
 	{
+		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
+		pk.setComponentId(componentId);
+		pk.setEvaluationLevelCode(evalLevel);
+		schedule.setComponentEvaluationSchedulePk(pk);
 		return saveSchedule(schedule, false);
 	}
 	private Response saveSchedule(ComponentEvaluationSchedule schedule, Boolean post)
@@ -456,11 +523,12 @@ public class Component
 	@APIDescription("Removes media from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentMedia.class)
-	@Path("/{id}/media")
+	@Path("/{id}/media/{mediaId}")
 	public void deleteComponentMedia(
 			@PathParam("id")
 			@RequiredParam 
 			String componentId,
+			@PathParam("mediaId")
 			@RequiredParam
 			String mediaId)
 	{
@@ -490,14 +558,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Update media associated to the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/media")
+	@Path("/{id}/media/{mediaId}")
 	public Response updateComponentMedia(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("mediaId")
+			@RequiredParam
+			String mediaId,
 			@RequiredParam
 			ComponentMedia media)
 	{
+		media.setComponentId(componentId);
+		media.setComponentMediaId(mediaId);
 		return saveMedia(media, false);
 	}
 	
@@ -541,11 +614,12 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Removes metadata from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/metadata")
+	@Path("/{id}/metadata/{metadataId}")
 	public void deleteComponentMetadata(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("metadataId")
 			@RequiredParam
 			String metadataId)
 	{
@@ -572,14 +646,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Update metadata associated to the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/metadata")
+	@Path("/{id}/metadata/{metadataId}")
 	public Response updateComponentMetadata(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("metadataId")
+			@RequiredParam
+			String metadataId,
 			@RequiredParam
 			ComponentMetadata metadata)
 	{
+		metadata.setMetadataId(metadataId);
+		metadata.setComponentId(componentId);
 		return saveMetadata(metadata, false);
 	}
 		
@@ -623,11 +702,12 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a question from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/question")
+	@Path("/{id}/question/{questionId}")
 	public void deleteComponentQuestion(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("questionId")
 			@RequiredParam
 			String questionId)
 	{
@@ -654,14 +734,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Update a question associated with the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/question")
+	@Path("/{id}/question/{questionId}")
 	public Response updateComponentQuestion(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("questionId")
+			@RequiredParam
+			String questionId,
 			@RequiredParam
 			ComponentQuestion question)
 	{
+		question.setComponentId(componentId);
+		question.setQuestionId(questionId);
 		return saveQuestion(question, false);
 	}
 		
@@ -707,15 +792,16 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a response from the given question on the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/response")
+	@Path("/{id}/response/{responseId}")
 	public void deleteComponentQuestionResponse(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("responseId")
 			@RequiredParam
-			String questionResponseId)
+			String responseId)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, questionResponseId);
+		service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, responseId);
 	}
 
 	@POST
@@ -738,14 +824,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/response")
+	@Path("/{id}/response/{responseId}")
 	public Response updateComponentQuestionResponse(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("responseId")
+			@RequiredParam
+			String responseId,
 			@RequiredParam
 			ComponentQuestionResponse response)
 	{
+		response.setComponentId(componentId);
+		response.setResponseId(responseId);
 		return saveQuestionResponse(response, false);
 	}
 			
@@ -789,11 +880,12 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a given resource from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/resource")
+	@Path("/{id}/resource/{resourceId}")
 	public void deleteComponentResource(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("resourceId")
 			@RequiredParam
 			String resourceId)
 	{
@@ -820,14 +912,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Update a resource associated with a given entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/resource")
+	@Path("/{id}/resource/{resourceId}")
 	public Response updateComponentResource(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("resourceId")
+			@RequiredParam
+			String resourceId,
 			@RequiredParam
 			ComponentResource resource)
 	{
+		resource.setComponentId(componentId);
+		resource.setResourceId(resourceId);
 		return saveResource(resource, false);
 	}
 	
@@ -871,11 +968,12 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a review from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/review")
+	@Path("/{id}/review/{reviewId}")
 	public void deleteComponentReview(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("reviewId")
 			@RequiredParam
 			String reviewId)
 	{
@@ -902,14 +1000,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Update a review associated with the given entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/review")
+	@Path("/{id}/review/{reviewId}")
 	public Response updateComponentReview(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("reviewId")
+			@RequiredParam
+			String reviewId,
 			@RequiredParam
 			ComponentReview review)
 	{
+		review.setComponentId(componentId);
+		review.setComponentReviewId(reviewId);
 		return saveReview(review, false);
 	}
 		
@@ -953,15 +1056,22 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a con from the given review accociated with the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/con")
+	@Path("/{id}/con/{reviewId}/{con}")
 	public void deleteComponentReviewCon(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("reviewId")
 			@RequiredParam
-			ComponentReviewConPk conId)
+			String reviewId,
+			@PathParam("con")
+			@RequiredParam
+			String con)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentReviewCon.class, conId);
+		ComponentReviewConPk pk = new ComponentReviewConPk();
+		pk.setComponentReviewId(reviewId);
+		pk.setReviewCon(con);
+		service.getComponentService().deactivateBaseComponent(ComponentReviewCon.class, pk);
 	}
 
 	@POST
@@ -1012,15 +1122,22 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a pro from the review associated with a specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/pro")
+	@Path("/{id}/pro/{reviewId}/{pro}")
 	public void deleteComponentReviewPro(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("reviewId")
 			@RequiredParam
-			ComponentReviewProPk proId)
+			String reviewId,
+			@PathParam("pro")
+			@RequiredParam
+			String pro)
 	{
-		service.getComponentService().deactivateBaseComponent(ComponentReviewPro.class, proId);
+		ComponentReviewProPk pk = new ComponentReviewProPk();
+		pk.setComponentReviewId(reviewId);
+		pk.setReviewPro(pro);
+		service.getComponentService().deactivateBaseComponent(ComponentReviewPro.class, pk);
 	}
 
 	@POST
@@ -1070,11 +1187,12 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a tag from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/tag")
+	@Path("/{id}/tag/{tagId}")
 	public void deleteComponentTag(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("tagId")
 			@RequiredParam
 			String tagId)
 	{
@@ -1128,11 +1246,12 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Remove a tracking entry from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/tracking")
+	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("id")
 			@RequiredParam
 			String trackingId)
 	{
@@ -1158,14 +1277,19 @@ public class Component
 	@RequireAdmin
 	@APIDescription("Update a tracking entry for the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/tracking")
+	@Path("/{id}/tracking/{trackingId}")
 	public Response updateComponentTracking(
 			@PathParam("id")
 			@RequiredParam
 			String componentId,
+			@PathParam("trackingId")
+			@RequiredParam
+			String trackingId,
 			@RequiredParam
 			ComponentTracking tracking)
 	{
+		tracking.setComponentTrackingId(trackingId);
+		tracking.setComponentId(componentId);
 		return saveTracking(tracking, false);
 	}
 
