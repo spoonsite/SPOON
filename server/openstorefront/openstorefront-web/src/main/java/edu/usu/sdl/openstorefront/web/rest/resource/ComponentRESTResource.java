@@ -126,17 +126,16 @@ public class ComponentRESTResource
 	@APIDescription("Create a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createComponent(
-			@RequiredParam RequiredForComponent component)
+			@RequiredParam 
+			RequiredForComponent
+			component)
 	{
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-
 			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
-
-			service.getComponentService().saveComponent(component);
 			return Response.created(URI.create("v1/resource/components/" + component.getComponent().getComponentId())).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -162,7 +161,9 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			return Response.ok().build();
+			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
+			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
+			return Response.ok(service.getComponentService().saveComponent(component)).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
