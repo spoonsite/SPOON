@@ -481,14 +481,13 @@ public class ComponentServiceImpl
 	@Override
 	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
-		// uncomment this to remove all of the components to start clean
+		//uncomment this to remove all of the components to start clean
 		// Component temp = new Component();
 		// temp.setActiveStatus(Component.ACTIVE_STATUS);
 		// persistenceService.deleteByExample(temp);
-		Component oldComponent = null;
-		if (component.getComponent().getComponentId() != null) {
-			oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
-		}
+		// return component;
+		Component oldComponent = new Component();
+		oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 
 		//TODO: Validate attribute (type, codes)
 		if (oldComponent == null && component.checkForComplete()) {
@@ -519,16 +518,22 @@ public class ComponentServiceImpl
 		} else if (component.checkForComplete()) {
 
 			//FIXME: Finish the Update 
-			oldComponent.setCreateDts(TimeUtil.currentDate());
+			oldComponent.setName(component.getComponent().getName());
+			oldComponent.setApprovalState(component.getComponent().getApprovalState());
+			oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
+			oldComponent.setDescription(component.getComponent().getDescription());
+			oldComponent.setGuid(component.getComponent().getGuid());
+			oldComponent.setComponentId(component.getComponent().getComponentId());
+			oldComponent.setLastActivityDts(TimeUtil.currentDate());
+			oldComponent.setOrganization(component.getComponent().getOrganization());
+			oldComponent.setParentComponentId(component.getComponent().getParentComponentId());
+			oldComponent.setReleaseDate(component.getComponent().getReleaseDate());
 			oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
 			oldComponent.setUpdateDts(TimeUtil.currentDate());
-			oldComponent.setUpdateUser(component.getComponent().getUpdateUser());
-			//persistenceService.persist(oldComponent);
+			persistenceService.persist(oldComponent);
 			return component;
 		}
 		return null;
-		// We need to figure out how to pass all the data we need to this function
-		// so we can do it in one transaction.
 	}
 
 }
