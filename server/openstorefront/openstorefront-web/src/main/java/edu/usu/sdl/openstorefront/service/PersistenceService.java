@@ -177,7 +177,7 @@ public class PersistenceService
 			Map<String, Object> parameters = new HashMap<>();
 			for (String fieldName : pkFields.keySet()) {
 				parameters.put(fieldName + "Param", pkFields.get(fieldName));
-				whereClause.append(" ").append(fieldName.replace(".", "_")).append(" = :").append(fieldName).append("Param").append(" AND");
+				whereClause.append(" ").append(fieldName).append(" = :").append(fieldName.replace(".", "_")).append("Param").append(" AND");
 			}
 			String whereClauseString = whereClause.substring(0, whereClause.length() - 3);
 
