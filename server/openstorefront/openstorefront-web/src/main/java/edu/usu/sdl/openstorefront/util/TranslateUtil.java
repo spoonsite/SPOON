@@ -15,11 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
-import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import java.util.List;
 import java.util.logging.Logger;
-import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -35,16 +33,10 @@ public class TranslateUtil
 	{
 		String translated = code;
 		if (StringUtils.isNotBlank(code)) {
-
-			Element element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
-			if (element != null) {
-				List<LookupEntity> lookups = (List<LookupEntity>) element.getObjectValue();
-				for (LookupEntity lookup : lookups) {
-					if (lookup.getCode().equals(code)) {
-						translated = lookup.getDescription();
-						break;
-					}
-				}
+			ServiceProxy serviceProxy = new ServiceProxy();
+			LookupEntity lookupEntity = serviceProxy.getLookupService().getLookupEnity(lookupClass, code);
+			if (lookupEntity != null) {
+				translated = lookupEntity.getDescription();
 			} else {
 				log.warning("Unable to find: " + code + " in lookup: " + lookupClass.getName());
 			}
