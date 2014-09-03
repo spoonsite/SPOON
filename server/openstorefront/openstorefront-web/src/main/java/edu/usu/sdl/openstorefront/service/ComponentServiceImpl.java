@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedulePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
@@ -51,6 +52,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -105,6 +107,25 @@ public class ComponentServiceImpl
 			persistenceService.persist(found);
 		}
 		return found;
+	}
+	
+	@Override
+	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId)
+	{
+		deleteBaseComponent(subComponentClass, componentId, false);
+	}
+
+	@Override
+	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId, Boolean all)
+	{
+		try {
+			T example = subComponentClass.newInstance();
+			example.setComponentId(componentId);
+			persistenceService.deleteByExample(example);
+		}
+		catch (InstantiationException | IllegalAccessException ex) {
+			Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
 	@Override
@@ -180,6 +201,7 @@ public class ComponentServiceImpl
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
 		});
 		result.setQuestions(questionViews);
+		
 
 		List<ComponentEvaluationSchedule> evaluationSchedules = getBaseComponent(ComponentEvaluationSchedule.class, componentId);
 		List<ComponentEvaluationSection> evaluationSections = getBaseComponent(ComponentEvaluationSection.class, componentId);
@@ -214,7 +236,7 @@ public class ComponentServiceImpl
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
 		// How are we doing a 'find by ID' with a composite PK?
-		ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentId()/*attribute.getComponentAttributePk()*/);
+		ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
 		if (oldAttribute != null) {
 			oldAttribute.setActiveStatus(attribute.getActiveStatus());
 			oldAttribute.setUpdateDts(TimeUtil.currentDate());
@@ -242,6 +264,7 @@ public class ComponentServiceImpl
 			oldContact.setUpdateUser(contact.getUpdateUser());
 			persistenceService.persist(oldContact);
 		} else {
+			contact.setContactId(persistenceService.generateId());
 			contact.setCreateDts(TimeUtil.currentDate());
 			contact.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(contact);
@@ -249,9 +272,30 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public void saveComponentDependency(ComponentExternalDependency dependency)
+	{
+		ComponentExternalDependency oldDependency = persistenceService.findById(ComponentExternalDependency.class, dependency.getDependencyId());
+		if (oldDependency != null) {
+			oldDependency.setComment(dependency.getComment());
+			oldDependency.setDependancyReferenceLink(dependency.getDependancyReferenceLink());
+			oldDependency.setDependencyName(dependency.getDependencyName());
+			oldDependency.setVersion(dependency.getVersion());
+			oldDependency.setActiveStatus(dependency.getActiveStatus());
+			oldDependency.setUpdateDts(TimeUtil.currentDate());
+			oldDependency.setUpdateUser(dependency.getUpdateUser());
+			persistenceService.persist(oldDependency);
+		} else {
+			dependency.setDependencyId(persistenceService.generateId());
+			dependency.setCreateDts(TimeUtil.currentDate());
+			dependency.setUpdateDts(TimeUtil.currentDate());
+			persistenceService.persist(dependency);
+		}
+	}
+
+	@Override
 	public void saveComponentEvaluationSection(ComponentEvaluationSection section)
 	{
-		ComponentEvaluationSection oldSection = persistenceService.findById(ComponentEvaluationSection.class, section.getComponentId()/*section.getComponentEvaluationSectionPk()*/);
+		ComponentEvaluationSection oldSection = persistenceService.findById(ComponentEvaluationSection.class, section.getComponentEvaluationSectionPk());
 		if (oldSection != null) {
 			oldSection.setActiveStatus(section.getActiveStatus());
 			oldSection.setScore(section.getScore());
@@ -268,7 +312,7 @@ public class ComponentServiceImpl
 	@Override
 	public void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule)
 	{
-		ComponentEvaluationSchedule oldSchedule = persistenceService.findById(ComponentEvaluationSchedule.class, schedule.getComponentId()/*schedule.getComponentEvaluationSchedulePk()*/);
+		ComponentEvaluationSchedule oldSchedule = persistenceService.findById(ComponentEvaluationSchedule.class, schedule.getComponentEvaluationSchedulePk());
 		if (oldSchedule != null) {
 			oldSchedule.setCompletionDate(schedule.getCompletionDate());
 			oldSchedule.setLevelStatus(schedule.getLevelStatus());
@@ -277,6 +321,7 @@ public class ComponentServiceImpl
 			oldSchedule.setUpdateUser(schedule.getUpdateUser());
 			persistenceService.persist(oldSchedule);
 		} else {
+			schedule.getComponentEvaluationSchedulePk().setComponentId(schedule.getComponentId());
 			schedule.setCreateDts(TimeUtil.currentDate());
 			schedule.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(schedule);
@@ -299,6 +344,7 @@ public class ComponentServiceImpl
 			oldMedia.setUpdateUser(media.getUpdateUser());
 			persistenceService.persist(oldMedia);
 		} else {
+			media.setComponentMediaId(persistenceService.generateId());
 			media.setCreateDts(TimeUtil.currentDate());
 			media.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(media);
@@ -317,6 +363,7 @@ public class ComponentServiceImpl
 			oldMetadata.setUpdateUser(metadata.getUpdateUser());
 			persistenceService.persist(oldMetadata);
 		} else {
+			metadata.setMetadataId(persistenceService.generateId());
 			metadata.setCreateDts(TimeUtil.currentDate());
 			metadata.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(metadata);
@@ -336,6 +383,7 @@ public class ComponentServiceImpl
 			oldQuestion.setUpdateUser(question.getUpdateUser());
 			persistenceService.persist(oldQuestion);
 		} else {
+			question.setQuestionId(persistenceService.generateId());
 			question.setCreateDts(TimeUtil.currentDate());
 			question.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(question);
@@ -356,6 +404,7 @@ public class ComponentServiceImpl
 			oldResponse.setUpdateUser(response.getUpdateUser());
 			persistenceService.persist(oldResponse);
 		} else {
+			response.setResponseId(persistenceService.generateId());
 			response.setCreateDts(TimeUtil.currentDate());
 			response.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(response);
@@ -378,6 +427,7 @@ public class ComponentServiceImpl
 			oldResource.setUpdateUser(resource.getUpdateUser());
 			persistenceService.persist(oldResource);
 		} else {
+			resource.setResourceId(persistenceService.generateId());
 			resource.setCreateDts(TimeUtil.currentDate());
 			resource.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(resource);
@@ -390,8 +440,8 @@ public class ComponentServiceImpl
 		ComponentReview oldReview = persistenceService.findById(ComponentReview.class, review.getComponentReviewId());
 		if (oldReview != null) {
 			oldReview.setComment(review.getComment());
-			oldReview.setExperienceTimeType(review.getExperienceTimeType());
-			oldReview.setLastUsedDate(review.getLastUsedDate());
+			oldReview.setUserTimeCode(review.getUserTimeCode());
+			oldReview.setLastUsed(review.getLastUsed());
 			oldReview.setOrganization(review.getOrganization());
 			oldReview.setRating(review.getRating());
 			oldReview.setRecommend(review.getRecommend());
@@ -402,6 +452,7 @@ public class ComponentServiceImpl
 			oldReview.setUpdateUser(review.getUpdateUser());
 			persistenceService.persist(oldReview);
 		} else {
+			review.setComponentReviewId(persistenceService.generateId());
 			review.setCreateDts(TimeUtil.currentDate());
 			review.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(review);
@@ -411,7 +462,7 @@ public class ComponentServiceImpl
 	@Override
 	public void saveComponentReviewCon(ComponentReviewCon con)
 	{
-		ComponentReviewCon oldCon = persistenceService.findById(ComponentReviewCon.class, con.getComponentId()/*con.getComponentReviewConPk()*/);
+		ComponentReviewCon oldCon = persistenceService.findById(ComponentReviewCon.class, con.getComponentReviewConPk());
 		if (oldCon != null) {
 			oldCon.setText(con.getText());
 			oldCon.setActiveStatus(con.getActiveStatus());
@@ -428,7 +479,7 @@ public class ComponentServiceImpl
 	@Override
 	public void saveComponentReviewPro(ComponentReviewPro pro)
 	{
-		ComponentReviewPro oldPro = persistenceService.findById(ComponentReviewPro.class, pro.getComponentId()/*pro.getComponentReviewProPk()*/);
+		ComponentReviewPro oldPro = persistenceService.findById(ComponentReviewPro.class, pro.getComponentReviewProPk());
 		if (oldPro != null) {
 			oldPro.setText(pro.getText());
 			oldPro.setActiveStatus(pro.getActiveStatus());
@@ -453,6 +504,7 @@ public class ComponentServiceImpl
 			oldTag.setUpdateUser(tag.getUpdateUser());
 			persistenceService.persist(oldTag);
 		} else {
+			tag.setTagId(persistenceService.generateId());
 			tag.setCreateDts(TimeUtil.currentDate());
 			tag.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(tag);
@@ -472,6 +524,7 @@ public class ComponentServiceImpl
 			oldTracking.setUpdateUser(tracking.getUpdateUser());
 			persistenceService.persist(oldTracking);
 		} else {
+			tracking.setComponentTrackingId(persistenceService.generateId());
 			tracking.setCreateDts(TimeUtil.currentDate());
 			tracking.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(tracking);
@@ -516,7 +569,6 @@ public class ComponentServiceImpl
 			});
 			return component;
 		} else if (component.checkForComplete()) {
-
 			//FIXME: Finish the Update 
 			oldComponent.setName(component.getComponent().getName());
 			oldComponent.setApprovalState(component.getComponent().getApprovalState());

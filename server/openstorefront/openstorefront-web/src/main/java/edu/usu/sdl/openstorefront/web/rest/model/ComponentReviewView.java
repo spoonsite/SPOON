@@ -60,8 +60,8 @@ public class ComponentReviewView
 		view.setComment(review.getComment());
 		view.setRating(review.getRating());
 		view.setTitle(review.getTitle());
-		view.setUsedTimeCode(review.getExperienceTimeType());
-		view.setLastUsed(review.getLastUsedDate());
+		view.setUsedTimeCode(review.getUserTimeCode());
+		view.setLastUsed(review.getLastUsed());
 		view.setUpdateDate(review.getUpdateDts());
 		view.setOrganization(review.getOrganization());
 		view.setRecommend(review.getRecommend());
