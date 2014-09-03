@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentExternalDependency
-	extends BaseComponent
+		extends BaseComponent
 {
 
 	@PK
@@ -51,25 +51,6 @@ public class ComponentExternalDependency
 	public ComponentExternalDependency()
 	{
 	}
-	
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		dependencyId = itemId;
-	}
-	
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		dependencyId = (String)pk;
-	}
-	
-	@Override
-	public Object getPrimaryKey()
-	{
-		return dependencyId;
-	}
-
 
 	public String getVersion()
 	{

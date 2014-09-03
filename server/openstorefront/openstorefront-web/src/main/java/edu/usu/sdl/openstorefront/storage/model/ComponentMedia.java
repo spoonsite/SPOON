@@ -60,24 +60,6 @@ public class ComponentMedia
 	{
 	}
 
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		componentMediaId = itemId;
-	}
-
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		componentMediaId = (String)pk;
-	}
-
-	@Override
-	public Object getPrimaryKey()
-	{
-		return componentMediaId;
-	}
-	
 	public String getComponentMediaId()
 	{
 		return componentMediaId;

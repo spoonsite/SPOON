@@ -41,21 +41,5 @@ public abstract class BaseComponent
 	{
 		this.componentId = componentId;
 	}
-	
-	public void setPrimaryKey(String itemId)
-	{
-		setPrimaryKey(itemId, "", "");
-	}
-
-	public void setPrimaryKey(String itemId, String componentId)
-	{
-		setPrimaryKey(itemId, "", componentId);
-	}
-	
-	abstract public void setPrimaryKey(Object pk);
-	
-	abstract public void setPrimaryKey(String itemId, String itemCode, String componentId);	
-	
-	abstract public Object getPrimaryKey();
 
 }

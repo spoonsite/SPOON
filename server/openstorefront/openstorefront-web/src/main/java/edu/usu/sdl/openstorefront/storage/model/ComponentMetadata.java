@@ -46,24 +46,6 @@ public class ComponentMetadata
 	public ComponentMetadata()
 	{
 	}
-	
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		metadataId = itemId;
-	}
-	
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		metadataId = (String)pk;
-	}
-
-	@Override
-	public Object getPrimaryKey()
-	{
-		return metadataId;
-	}
 
 	public String getMetadataId()
 	{

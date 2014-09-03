@@ -47,24 +47,6 @@ public class ComponentTracking
 	{
 	}
 
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		componentTrackingId = itemId;
-	}
-
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		componentTrackingId = (String)pk;
-	}
-	
-	@Override
-	public Object getPrimaryKey()
-	{
-		return componentTrackingId;
-	}
-	
 	public String getComponentTrackingId()
 	{
 		return componentTrackingId;

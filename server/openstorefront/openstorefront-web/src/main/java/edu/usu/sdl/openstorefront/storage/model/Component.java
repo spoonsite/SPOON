@@ -61,10 +61,6 @@ public class Component
 	@ConsumeField
 	private Date releaseDate;
 
-	@NotNull
-	@ConsumeField
-	private Date postDate;
-
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String version;
@@ -82,52 +78,10 @@ public class Component
 	private Date approvedDts;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String createUser;
-
-	@NotNull
-	private Date createDts;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String updateUser;
-
-	@NotNull
-	private Date updateDts;
-
-	@NotNull
 	private Date lastActivityDts;
 
 	public Component()
 	{
-	}
-	
-	@Override
-	public void setPrimaryKey(String itemId, String itemCode, String componentId)
-	{
-		componentId = itemId;
-	}
-	
-	@Override
-	public void setPrimaryKey(Object pk)
-	{
-		componentId = (String)pk;
-	}
-	
-	@Override
-	public Object getPrimaryKey()
-	{
-		return componentId;
-	}
-
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
 	}
 
 	public String getName()
@@ -220,82 +174,6 @@ public class Component
 		this.approvedDts = approvedDts;
 	}
 
-	@Override
-	public String getCreateUser()
-	{
-		return createUser;
-	}
-
-	/**
-	 *
-	 * @param createUser
-	 */
-	@Override
-	public void setCreateUser(String createUser)
-	{
-		this.createUser = createUser;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public Date getCreateDts()
-	{
-		return createDts;
-	}
-
-	/**
-	 *
-	 * @param createDts
-	 */
-	@Override
-	public void setCreateDts(Date createDts)
-	{
-		this.createDts = createDts;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public String getUpdateUser()
-	{
-		return updateUser;
-	}
-
-	/**
-	 *
-	 * @param updateUser
-	 */
-	@Override
-	public void setUpdateUser(String updateUser)
-	{
-		this.updateUser = updateUser;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public Date getUpdateDts()
-	{
-		return updateDts;
-	}
-
-	/**
-	 *
-	 * @param updateDts
-	 */
-	@Override
-	public void setUpdateDts(Date updateDts)
-	{
-		this.updateDts = updateDts;
-	}
-
 	public Date getLastActivityDts()
 	{
 		return lastActivityDts;
@@ -314,16 +192,6 @@ public class Component
 	public void setReleaseDate(Date releaseDate)
 	{
 		this.releaseDate = releaseDate;
-	}
-
-	public Date getPostDate()
-	{
-		return postDate;
-	}
-
-	public void setPostDate(Date postDate)
-	{
-		this.postDate = postDate;
 	}
 
 }

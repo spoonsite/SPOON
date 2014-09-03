@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.init;
 
+import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
@@ -45,6 +46,7 @@ public class ApplicationInit
 		startupManager(new DBManager());
 		startupManager(new OSFCacheManager());
 		startupManager(new LookupImporter());
+		startupManager(new AttributeImporter());
 		startupManager(new JobManager());
 	}
 
