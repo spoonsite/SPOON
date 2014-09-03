@@ -50,6 +50,7 @@ public class PersistenceService
 {
 
 	private static final Logger log = Logger.getLogger(PersistenceService.class.getName());
+	private static final String PARAM_NAME_SEPARATOR = "1";
 
 	private OObjectDatabaseTx transaction;
 
@@ -176,8 +177,8 @@ public class PersistenceService
 			StringBuilder whereClause = new StringBuilder();
 			Map<String, Object> parameters = new HashMap<>();
 			for (String fieldName : pkFields.keySet()) {
-				parameters.put(fieldName + "Param", pkFields.get(fieldName));
-				whereClause.append(" ").append(fieldName).append(" = :").append(fieldName.replace(".", "_")).append("Param").append(" AND");
+				parameters.put(fieldName.replace(".", PARAM_NAME_SEPARATOR) + "Param", pkFields.get(fieldName));
+				whereClause.append(" ").append(fieldName).append(" = :").append(fieldName.replace(".", PARAM_NAME_SEPARATOR)).append("Param").append(" AND");
 			}
 			String whereClauseString = whereClause.substring(0, whereClause.length() - 3);
 
@@ -357,7 +358,7 @@ public class PersistenceService
 								fieldName = parentFieldName + "." + fieldName;
 							}
 
-							where.append(fieldName).append(" = :").append(fieldName.replace(".", "_")).append("Param");
+							where.append(fieldName).append(" = :").append(fieldName.replace(".", PARAM_NAME_SEPARATOR)).append("Param");
 						}
 					}
 				}
@@ -388,14 +389,14 @@ public class PersistenceService
 						Object returnObj = method.invoke(example, (Object[]) null);
 						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
 							if (StringUtils.isNotBlank(parentFieldName)) {
-								parentFieldName = parentFieldName + "_";
+								parentFieldName = parentFieldName + PARAM_NAME_SEPARATOR;
 							}
 							parentFieldName = parentFieldName + field;
 							parameterMap.putAll(mapParameters(returnObj, parentFieldName));
 						} else {
 							String fieldName = field.toString();
 							if (StringUtils.isNotBlank(parentFieldName)) {
-								fieldName = parentFieldName + "_" + fieldName;
+								fieldName = parentFieldName + PARAM_NAME_SEPARATOR + fieldName;
 							}
 							parameterMap.put(fieldName + "Param", value);
 						}
