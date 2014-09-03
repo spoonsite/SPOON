@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedulePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSectionPk;
+import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
@@ -134,9 +135,10 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
 			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
-			return Response.created(URI.create("v1/resource/components/" + component.getComponent().getComponentId())).build();
+			return Response.created(URI.create("v1/resource/components/" + service.getComponentService().saveComponent(component).getComponent().getComponentId())).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -259,15 +261,103 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentAttribute attribute)
 	{
+		attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		
 		ValidationModel validationModel = new ValidationModel(attribute);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			attribute.setCreateUser(ServiceUtil.getCurrentUserName());
+			attribute.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentAttribute(attribute);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create(attribute.getComponentAttributePk().getAttributeType() + attribute.getComponentAttributePk().getAttributeCode())).build();
+	}
+
+	// ComponentRESTResource DEPENDENCY section
+	@GET
+	@APIDescription("Get the dependencies from the entity")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentContact.class)
+	@Path("/{id}/dependency")
+	public List<ComponentExternalDependency> getComponentDependency(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		return service.getComponentService().getBaseComponent(ComponentExternalDependency.class, componentId);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Remove a dependency from the entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/dependency/{dependencyId}")
+	public void deleteComponentDependency(
+			@PathParam("id")
+			@RequiredParam
+			String componentId,
+			@PathParam("dependencyId")
+			@RequiredParam
+			String dependencyId)
+	{
+		//TODO:  Validate that the contact belongs to the component that the are try to delete
+		service.getComponentService().deactivateBaseComponent(ComponentExternalDependency.class, dependencyId);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Add a dependency to the entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentContact.class)
+	@Path("/{id}/dependency")
+	public Response addComponentDependency(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam ComponentExternalDependency dependency)
+	{
+		dependency.setComponentId(componentId);
+		dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
+		return saveDependency(dependency, true);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Update a contact associated to the entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}/dependency/{dependencyId}")
+	public Response updateComponentDependency(
+			@PathParam("id")
+			@RequiredParam
+			String componentId,
+			@PathParam("dependencyId")
+			@RequiredParam
+			String dependencyId,
+			ComponentExternalDependency dependency)
+	{
+		dependency.setComponentId(componentId);
+		dependency.setDependencyId(dependencyId);
+		return saveDependency(dependency, false);
+	}
+
+	private Response saveDependency(ComponentExternalDependency dependency, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(dependency);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			dependency.setCreateUser(ServiceUtil.getCurrentUserName());
+			dependency.setUpdateUser(ServiceUtil.getCurrentUserName());
+			service.getComponentService().saveComponentDependency(dependency);
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			return Response.created(URI.create(dependency.getDependencyId())).build();
+		} else {
+			return Response.ok().build();
+		}
 	}
 
 	// ComponentRESTResource CONTACT section
@@ -312,6 +402,8 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentContact contact)
 	{
+		contact.setComponentId(componentId);
+		contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 		return saveContact(contact, true);
 	}
 
@@ -340,6 +432,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			contact.setCreateUser(ServiceUtil.getCurrentUserName());
+			contact.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentContact(contact);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -383,6 +477,20 @@ public class ComponentRESTResource
 		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object)pk);
 	}
 
+	
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Removes an evaluation section from the entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/section/all")
+	public void deleteAllComponentEvaluationSections(
+			@PathParam("id")
+			@RequiredParam 
+			String componentId)
+	{
+		service.getComponentService().deleteBaseComponent(ComponentEvaluationSection.class, componentId);
+	}
+	
 	@POST
 	@RequireAdmin
 	@APIDescription("Add an evaluation section to the entity")
@@ -394,6 +502,9 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentEvaluationSection section)
 	{
+		section.setComponentId(componentId);
+		section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
+		section.getComponentEvaluationSectionPk().setComponentId(componentId);
 		return saveSection(section, true);
 	}
 
@@ -412,10 +523,9 @@ public class ComponentRESTResource
 			@RequiredParam
 			ComponentEvaluationSection section)
 	{
-		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
-		pk.setComponentId(componentId);
-		pk.setEvaulationSection(evalSection);
-		section.setComponentEvaluationSectionPk(pk);
+		section.setComponentId(componentId);
+		section.getComponentEvaluationSectionPk().setComponentId(componentId);
+		section.getComponentEvaluationSectionPk().setEvaulationSection(evalSection);
 		return saveSection(section, false);
 	}
 
@@ -425,6 +535,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			section.setCreateUser(ServiceUtil.getCurrentUserName());
+			section.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSection(section);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -480,6 +592,9 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentEvaluationSchedule schedule)
 	{
+		schedule.setComponentId(componentId);
+		schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
+		schedule.getComponentEvaluationSchedulePk().setComponentId(componentId);
 		return saveSchedule(schedule, true);
 	}
 
@@ -498,10 +613,9 @@ public class ComponentRESTResource
 			@RequiredParam
 			ComponentEvaluationSchedule schedule)
 	{
-		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
-		pk.setComponentId(componentId);
-		pk.setEvaluationLevelCode(evalLevel);
-		schedule.setComponentEvaluationSchedulePk(pk);
+		schedule.setComponentId(componentId);
+		schedule.getComponentEvaluationSchedulePk().setComponentId(componentId);
+		schedule.getComponentEvaluationSchedulePk().setEvaluationLevelCode(evalLevel);
 		return saveSchedule(schedule, false);
 	}
 
@@ -511,6 +625,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			schedule.setCreateUser(ServiceUtil.getCurrentUserName());
+			schedule.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSchedule(schedule);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -565,6 +681,8 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMedia media)
 	{
+		media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+		media.setComponentId(componentId);
 		return saveMedia(media, true);
 	}
 
@@ -594,6 +712,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			media.setCreateUser(ServiceUtil.getCurrentUserName());
+			media.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMedia(media);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -646,6 +766,8 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMetadata metadata)
 	{
+		metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
+		metadata.setComponentId(componentId);
 		return saveMetadata(metadata, true);
 	}
 
@@ -675,6 +797,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			metadata.setCreateUser(ServiceUtil.getCurrentUserName());
+			metadata.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMetadata(metadata);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -698,6 +822,28 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentQuestion.class, componentId);
+	}
+
+	// ComponentRESTResource QUESTION section
+	@GET
+	@APIDescription("Get the questions associated with the specified entity")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentQuestion.class)
+	@Path("/{id}/question/{questionId}/responses")
+	public List<ComponentQuestionResponse> getComponentQuestionResponses(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId)
+	{
+		List<ComponentQuestionResponse> responses = service.getComponentService().getBaseComponent(ComponentQuestionResponse.class, componentId);
+		for (Iterator<ComponentQuestionResponse> iter = responses.listIterator(); iter.hasNext(); ) {
+		    ComponentQuestionResponse a = iter.next();
+			if (!a.getQuestionId().equals(questionId)) {
+				iter.remove();
+			} 
+		}
+		return responses;
 	}
 
 	@DELETE
@@ -729,6 +875,8 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentQuestion question)
 	{
+		question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		question.setComponentId(componentId);
 		return saveQuestion(question, true);
 	}
 
@@ -758,6 +906,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			question.setCreateUser(ServiceUtil.getCurrentUserName());
+			question.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -805,12 +955,17 @@ public class ComponentRESTResource
 	@APIDescription("Add a response to the given question on the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionResponse.class)
-	@Path("/{id}/response")
+	@Path("/{id}/response/{questionId}")
 	public Response addComponentQuestionResponse(
 			@PathParam("id")
 			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId,
 			@RequiredParam ComponentQuestionResponse response)
 	{
+		response.setComponentId(componentId);
+		response.setQuestionId(questionId);
+		response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 		return saveQuestionResponse(response, true);
 	}
 
@@ -840,6 +995,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			response.setCreateUser(ServiceUtil.getCurrentUserName());
+			response.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -892,6 +1049,8 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentResource resource)
 	{
+		resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
+		resource.setComponentId(componentId);
 		return saveResource(resource, true);
 	}
 
@@ -921,6 +1080,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			resource.setCreateUser(ServiceUtil.getCurrentUserName());
+			resource.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentResource(resource);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -973,6 +1134,8 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentReview review)
 	{
+		review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+		review.setComponentId(componentId);
 		return saveReview(review, true);
 	}
 
@@ -1002,6 +1165,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			review.setCreateUser(ServiceUtil.getCurrentUserName());
+			review.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReview(review);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -1060,16 +1225,20 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentReviewCon con)
 	{
+		con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
+		con.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(con);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			con.setCreateUser(ServiceUtil.getCurrentUserName());
+			con.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReviewCon(con);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
-		return Response.created(URI.create(con.getComponentReviewConPk().getReviewCon())).build();
+		return Response.created(URI.create(con.getComponentReviewConPk().getComponentReviewId())).build();
 	}
 
 	// ComponentRESTResource REVIEW PRO section
@@ -1118,16 +1287,20 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentReviewPro pro)
 	{
+		pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+		pro.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(pro);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			pro.setCreateUser(ServiceUtil.getCurrentUserName());
+			pro.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReviewPro(pro);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
-		return Response.created(URI.create(pro.getComponentReviewProPk().getReviewPro())).build();
+		return Response.created(URI.create(pro.getComponentReviewProPk().getComponentReviewId())).build();
 	}
 
 	// ComponentRESTResource TAG section
@@ -1170,10 +1343,14 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentTag tag)
 	{
+		tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+		tag.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(tag);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			tag.setCreateUser(ServiceUtil.getCurrentUserName());
+			tag.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTag(tag);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -1221,6 +1398,8 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentTracking tracking)
 	{
+		tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
+		tracking.setComponentId(componentId);
 		return saveTracking(tracking, true);
 	}
 
@@ -1250,6 +1429,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			tracking.setCreateUser(ServiceUtil.getCurrentUserName());
+			tracking.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(tracking);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
