@@ -17,6 +17,8 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 
@@ -27,7 +29,7 @@ import javax.validation.constraints.NotNull;
 public class UserWatchView
 {
 	@NotNull
-	private long watchId;
+	private String watchId;
 	
 	@NotNull
 	private Date lastUpdateDts;
@@ -43,7 +45,7 @@ public class UserWatchView
 	
 	@NotNull
 	@ConsumeField
-	private long componentId;
+	private String componentId;
 
 	@NotNull
 	@ConsumeField
@@ -52,13 +54,26 @@ public class UserWatchView
 	public UserWatchView()
 	{
 	}
+	
+	public static UserWatchView toView(UserWatch watch, Component component)
+	{
+		UserWatchView view = new UserWatchView();
+		view.setComponentId(watch.getComponentId());
+		view.setComponentName(component.getName());
+		view.setCreateDts(watch.getCreateDts());
+		view.setLastUpdateDts(component.getLastActivityDts());
+		view.setLastViewDts(watch.getLastViewDts());
+		view.setNotifyFlag(watch.getNotifyFlg());
+		view.setWatchId(watch.getUserWatchId());
+		return view;
+	}
 
-	public long getWatchId()
+	public String getWatchId()
 	{
 		return watchId;
 	}
 
-	public void setWatchId(long watchId)
+	public void setWatchId(String watchId)
 	{
 		this.watchId = watchId;
 	}
@@ -103,12 +118,12 @@ public class UserWatchView
 		this.componentName = componentName;
 	}
 
-	public long getComponentId()
+	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	public void setComponentId(long componentId)
+	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}

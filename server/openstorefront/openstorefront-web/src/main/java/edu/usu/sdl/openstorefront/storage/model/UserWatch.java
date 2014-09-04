@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
@@ -34,16 +35,20 @@ public class UserWatch
 	private String userWatchId;
 
 	@NotNull
+	@ConsumeField
 	private Date lastViewDts;
 
 	@NotNull
+	@ConsumeField
 	private String componentId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	@ConsumeField
 	private String username;
 
 	@NotNull
+	@ConsumeField
 	private Boolean notifyFlg;
 
 	public UserWatch()

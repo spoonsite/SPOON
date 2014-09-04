@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
@@ -35,27 +36,33 @@ public class UserProfile
 	private String username;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
 	private String firstName;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_LASTNAME)
 	private String lastName;
 
 	@NotNull
 	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@ConsumeField
 	private String email;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ConsumeField
 	private String userTypeCode;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	@ConsumeField
 	private String organization;
 
 	@NotNull
+	@ConsumeField
 	private Boolean admin;
 
 	public UserProfile()

@@ -17,7 +17,11 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.UserProfile;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -59,6 +63,32 @@ public class UserProfileView
 
 	public UserProfileView()
 	{
+	}
+	
+	public static UserProfileView toView(UserProfile profile)
+	{
+		UserProfileView view = new UserProfileView();
+		view.setAdmin(profile.getAdmin());
+		view.setEmail(profile.getEmail());
+		view.setFirstname(profile.getFirstName());
+		view.setLastname(profile.getLastName());
+		view.setOrganization(profile.getOrganization());
+		view.setUserTypeCode(profile.getUserTypeCode());
+		view.setUsername(profile.getUsername());
+		view.setCreateDts(profile.getCreateDts());
+		view.setUpdateDts(profile.getUpdateDts());
+		view.setUpdateUser(profile.getUpdateUser());
+		
+		return view;
+	}
+	
+	public static List<UserProfileView> toViewList(List<UserProfile> profiles)
+	{
+		List<UserProfileView> views = new ArrayList<>();
+		profiles.forEach(profile->{
+			views.add(UserProfileView.toView(profile));
+		});
+		return views;
 	}
 
 	public String getUsername()

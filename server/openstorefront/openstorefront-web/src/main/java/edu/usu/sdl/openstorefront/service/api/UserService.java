@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
+import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import java.util.List;
 
@@ -28,6 +30,64 @@ public interface UserService
 {
 
 	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param userId
+	 * @return 
+	 */
+	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId);
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param userId
+	 * @param all
+	 * @return 
+	 */
+	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId, boolean all);
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param userId
+	 * @return 
+	 */
+	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId);
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param userId
+	 * @param all
+	 * @return 
+	 */
+	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId, boolean all);
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param pk
+	 * @return 
+	 */
+	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk);
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param pk
+	 * @param all
+	 * @return 
+	 */
+	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk, Boolean all);
+
+	
+	/**
 	 * Return the list of watches tied to a userID
 	 *
 	 * @param userId
@@ -36,19 +96,19 @@ public interface UserService
 	public List<UserWatch> getWatches(String userId);
 
 	/**
+	 * Return the list of watches tied to a userID
 	 *
-	 * @param watch
+	 * @param watchId
 	 * @return
 	 */
-	public UserWatch addWatch(UserWatch watch);
+	public UserWatch getWatch(String watchId);
 
 	/**
-	 * Update a watch in the user's watch list
 	 *
 	 * @param watch
 	 * @return
 	 */
-	public UserWatch updateWatch(UserWatch watch);
+	public UserWatch saveWatch(UserWatch watch);
 
 	/**
 	 * Delete a watch from the user's watch list
@@ -67,6 +127,13 @@ public interface UserService
 	public UserProfile getUserProfile(String userId);
 
 	/**
+	 * Get the user profile based on the userID
+	 *
+	 * @return
+	 */
+	public List<UserProfile> getAllProfiles();
+
+	/**
 	 * Save any changes to the user profile
 	 *
 	 * @param user
@@ -75,11 +142,26 @@ public interface UserService
 	public UserProfile saveUserProfile(UserProfile user);
 
 	/**
-	 * Get the most recently viewed components list for a user
+	 * Save any changes to the user profile
 	 *
 	 * @param userId
-	 * @return
+	 * @return 
 	 */
-	public List<Component> getRecentlyViewed(String userId);
+	public Boolean deleteProfile(String userId);
+
+	/**
+	 * 
+	 * @param tracking
+	 * @return 
+	 */
+	public UserTracking saveUserTracking(UserTracking tracking);
+//  This will be fleshed out more later
+//	/**
+//	 * Get the most recently viewed components list for a user
+//	 *
+//	 * @param userId
+//	 * @return
+//	 */
+//	public List<Component> getRecentlyViewed(String userId);
 
 }
