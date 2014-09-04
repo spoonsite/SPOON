@@ -18,11 +18,13 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.UserService;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
+import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +43,66 @@ public class UserServiceImpl
 	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
 
 	@Override
+	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId)
+	{
+		return getBaseEntity(subComponentClass, userId, false);
+	}
+
+	@Override
+	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId, boolean all)
+	{
+		try {
+			T baseComponentExample = subComponentClass.newInstance();
+			baseComponentExample.setUpdateUser(userId);
+			if (all == false) {
+				baseComponentExample.setActiveStatus(BaseEntity.ACTIVE_STATUS);
+			}
+			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
+		} catch (InstantiationException | IllegalAccessException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+	}
+	
+	@Override
+	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId)
+	{
+		return getBaseEntity(subComponentClass, userId, false);
+	}
+
+	@Override
+	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId, boolean all)
+	{
+		try {
+			T baseComponentExample = subComponentClass.newInstance();
+//			baseComponentExample.setCreateUser(userId);
+			if (all == false) {
+				baseComponentExample.setActiveStatus(BaseEntity.ACTIVE_STATUS);
+			}
+			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
+		} catch (InstantiationException | IllegalAccessException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+	}
+	
+	@Override
+	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk)
+	{
+		return deactivateBaseEntity(subComponentClass, pk, false);
+	}
+
+	@Override
+	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk, Boolean all)
+	{
+		T found = persistenceService.findById(subComponentClass, pk);
+		if (found != null) {
+			found.setActiveStatus(T.INACTIVE_STATUS);
+			persistenceService.persist(found);
+		}
+		return found;
+	}
+	
+	
+	@Override
 	public List<UserWatch> getWatches(String userId)
 	{
 		UserWatch temp = new UserWatch();
@@ -49,19 +111,12 @@ public class UserServiceImpl
 		return persistenceService.queryByExample(UserWatch.class, new QueryByExample(temp));
 	}
 
-	/**
-	 *
-	 * @param watch
-	 * @return
-	 */
 	@Override
-	public UserWatch addWatch(UserWatch watch)
+	public UserWatch getWatch(String watchId)
 	{
-		watch.setUserWatchId(persistenceService.generateId());
-		watch.setCreateDts(TimeUtil.currentDate());
-		watch.setUpdateDts(TimeUtil.currentDate());
-		watch.setLastViewDts(TimeUtil.currentDate());
-		return persistenceService.persist(watch);
+		UserWatch temp = new UserWatch();
+		temp.setUserWatchId(watchId);
+		return persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(temp));
 	}
 
 	/**
@@ -70,18 +125,22 @@ public class UserServiceImpl
 	 * @return
 	 */
 	@Override
-	public UserWatch updateWatch(UserWatch watch)
+	public UserWatch saveWatch(UserWatch watch)
 	{
-		UserWatch temp = persistenceService.findById(UserWatch.class, watch.getUserWatchId());
-		if (!watch.getNotifyFlg().equals(temp.getNotifyFlg())) {
-			temp.setNotifyFlg(watch.getNotifyFlg());
+		UserWatch oldWatch = persistenceService.findById(UserWatch.class, watch.getUserWatchId());
+		if (oldWatch != null)
+		{
+			oldWatch.setActiveStatus(watch.getActiveStatus());
+			oldWatch.setLastViewDts(watch.getLastViewDts());
+			oldWatch.setNotifyFlg(watch.getNotifyFlg());
+			oldWatch.setUpdateUser(watch.getUpdateUser());
+			return persistenceService.persist(oldWatch);
 		}
-		if (!watch.getLastViewDts().equals(temp.getLastViewDts())) {
-			temp.setLastViewDts(watch.getLastViewDts());
-		}
-		temp.setUpdateDts(new Date());
-		temp.setUpdateUser(watch.getUsername());
-		return persistenceService.persist(temp);
+		watch.setUserWatchId(persistenceService.generateId());
+		watch.setCreateDts(TimeUtil.currentDate());
+		watch.setUpdateDts(TimeUtil.currentDate());
+		watch.setLastViewDts(TimeUtil.currentDate());
+		return persistenceService.persist(watch);
 	}
 
 	@Override
@@ -117,44 +176,88 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public UserProfile saveUserProfile(UserProfile user)
+	public List<UserProfile> getAllProfiles()
 	{
-		UserProfile temp = persistenceService.findById(UserProfile.class, user.getUsername());
-		if (!user.getActiveStatus().equals(temp.getActiveStatus())) {
-			temp.setActiveStatus(user.getActiveStatus());
-		}
-
-		if (user.getEmail() != null && !user.getEmail().equals(temp.getEmail())) {
-			temp.setEmail(user.getEmail());
-		}
-
-		if (!user.getFirstName().equals(temp.getFirstName())) {
-			temp.setFirstName(user.getFirstName());
-		}
-
-		if (!user.getLastName().equals(temp.getLastName())) {
-			temp.setLastName(user.getLastName());
-		}
-
-		if (!user.getOrganization().equals(temp.getOrganization())) {
-			temp.setOrganization(user.getOrganization());
-		}
-
-		if (!user.getUserTypeCode().equals(temp.getUserTypeCode())) {
-			temp.setUserTypeCode(user.getUserTypeCode());
-		}
-
-		if (!user.getUsername().equals(temp.getUsername())) {
-			temp.setUsername(user.getUsername());
-		}
-		return persistenceService.persist(temp);
+		UserProfile example = new UserProfile();
+		example.setActiveStatus(UserProfile.ACTIVE_STATUS);
+		return persistenceService.queryByExample(UserProfile.class, new QueryByExample(example));
 	}
 
 	@Override
-	public List<Component> getRecentlyViewed(String userId)
+	public UserProfile saveUserProfile(UserProfile user)
 	{
-
-		//CONTINUE HERE... left off after work on friday.
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		UserProfile temp = persistenceService.findById(UserProfile.class, user.getUsername());
+		if (temp != null)
+		{
+			temp.setActiveStatus(user.getActiveStatus());
+			temp.setEmail(user.getEmail());
+			temp.setFirstName(user.getFirstName());
+			temp.setLastName(user.getLastName());
+			temp.setOrganization(user.getOrganization());
+			temp.setUserTypeCode(user.getUserTypeCode());
+			temp.setUpdateUser(ServiceUtil.getCurrentUserName());
+			return persistenceService.persist(temp);
+		}
+		else
+		{
+			user.setCreateDts(TimeUtil.currentDate());
+			user.setUpdateDts(TimeUtil.currentDate());
+			user.setCreateUser(ServiceUtil.getCurrentUserName());
+			user.setUpdateUser(ServiceUtil.getCurrentUserName());
+			return persistenceService.persist(user);
+		}
 	}
+	
+	@Override
+	public Boolean deleteProfile(String userId)
+	{
+		UserProfile profile = persistenceService.findById(UserProfile.class, userId);
+		if (profile != null)
+		{
+			profile.setActiveStatus(UserProfile.INACTIVE_STATUS);
+			if (persistenceService.persist(profile) != null)
+			{
+				return Boolean.TRUE;
+			}
+			return Boolean.FALSE;
+		}
+		return Boolean.TRUE;
+	}
+
+	@Override
+	public UserTracking saveUserTracking(UserTracking tracking)
+	{
+		UserTracking oldTracking = persistenceService.findById(UserTracking.class, tracking.getTrackingId());
+		if (oldTracking != null)
+		{
+			oldTracking.setActiveStatus(tracking.getActiveStatus());
+			oldTracking.setBrowser(tracking.getBrowser());
+			oldTracking.setBrowserVersion(tracking.getBrowserVersion());
+			oldTracking.setClientIp(tracking.getClientIp());
+			oldTracking.setUpdateDts(TimeUtil.currentDate());
+			oldTracking.setUpdateUser(tracking.getUpdateUser());
+			oldTracking.setEventDts(tracking.getEventDts());
+			oldTracking.setMobileDevice(tracking.getMobileDevice());
+			oldTracking.setOsPlatform(tracking.getOsPlatform());
+			oldTracking.setScreenHeight(tracking.getScreenHeight());
+			oldTracking.setScreenWidth(tracking.getScreenWidth());
+			oldTracking.setTrackEventTypeCode(tracking.getTrackEventTypeCode());
+			oldTracking.setUserAgent(tracking.getUserAgent());
+			return persistenceService.persist(oldTracking);
+		}
+		tracking.setCreateDts(TimeUtil.currentDate());
+		tracking.setUpdateDts(TimeUtil.currentDate());
+		tracking.setTrackingId(persistenceService.generateId());
+		return persistenceService.persist(tracking);
+	}
+
+	
+//  This will be fleshed out more later
+//	@Override
+//	public List<Component> getRecentlyViewed(String userId)
+//	{
+//
+//		//CONTINUE HERE... left off after work on friday.
+//		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//	}
 }

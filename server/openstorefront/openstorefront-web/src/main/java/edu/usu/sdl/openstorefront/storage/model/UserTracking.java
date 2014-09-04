@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
@@ -34,22 +35,37 @@ public class UserTracking
 	private String trackingId;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String trackEventTypeCode;
 
+	@ConsumeField
 	private String browser;
+
+	@ConsumeField
 	private String userAgent;
+	
+	@ConsumeField
 	private String browserVersion;
 
 	@NotNull
+	@ConsumeField
 	private Date eventDts;
 
+	@ConsumeField
 	private Integer screenWidth;
+
+	@ConsumeField
 	private Integer screenHeight;
+
+	@ConsumeField
 	private Boolean mobileDevice;
+
+	@ConsumeField
 	private String osPlatform;
 
 	@NotNull
+	@ConsumeField
 	private String clientIp;
 
 	public UserTracking()
