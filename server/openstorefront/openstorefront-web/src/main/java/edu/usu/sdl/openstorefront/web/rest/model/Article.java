@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 /**
+ * Topic landing page/article
  *
  * @author dshurtleff
  */
 public class Article
 {
+
 	private String attributeCode;
 	private String attributeType;
 	private String html;
@@ -59,6 +60,5 @@ public class Article
 	{
 		this.html = html;
 	}
-	
-	
+
 }
