@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
@@ -28,28 +27,24 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 public class RequiredRule
-	extends BaseRule
+		extends BaseRule
 {
 
 	@Override
 	protected boolean validate(Field field, Object dataObject)
 	{
 		boolean valid = true;
-		
-		NotNull notNull = field.getAnnotation(NotNull.class);	
-		if (notNull != null)
-		{
-			try
-			{
+
+		NotNull notNull = field.getAnnotation(NotNull.class);
+		if (notNull != null) {
+			try {
 				String value = BeanUtils.getProperty(dataObject, field.getName());
-				
-				//This also consider Blank as null
-				if (StringUtils.isBlank(value))
-				{
+
+				//This also considers Blank as null
+				if (StringUtils.isBlank(value)) {
 					valid = false;
 				}
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-			{
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 				throw new OpenStorefrontRuntimeException("Unexpected error occur trying to get value from object.", ex);
 			}
 		}
@@ -65,9 +60,9 @@ public class RequiredRule
 	@Override
 	protected String getValidationRule(Field field)
 	{
-		StringBuilder sb = new StringBuilder();					
+		StringBuilder sb = new StringBuilder();
 		sb.append("Value must not be null.");
 		return sb.toString();
 	}
-	
+
 }
