@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
@@ -36,34 +37,42 @@ public class ComponentReview
 	private String componentReviewId;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String userTypeCode;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_REVIEW_COMMENT)
 	private String comment;
 
 	@NotNull
 	@Min(0)
 	@Max(5)
+	@ConsumeField
 	private Integer rating;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ConsumeField
 	private String title;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String usedTimeCode;
+	@ConsumeField
+	private String userTimeCode;
 
 	@NotNull
+	@ConsumeField
 	private Date lastUsed;
 
 	@NotNull
+	@ConsumeField
 	private Boolean recommend;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	@ConsumeField
 	private String organization;
 
 	public ComponentReview()
@@ -120,14 +129,14 @@ public class ComponentReview
 		this.title = title;
 	}
 
-	public String getExperienceTimeType()
+	public String getUserTimeCode()
 	{
-		return usedTimeCode;
+		return userTimeCode;
 	}
 
-	public void setExperienceTimeType(String experienceTimeType)
+	public void setUserTimeCode(String userTimeCode)
 	{
-		this.usedTimeCode = experienceTimeType;
+		this.userTimeCode = userTimeCode;
 	}
 
 	public Boolean getRecommend()
@@ -150,14 +159,14 @@ public class ComponentReview
 		this.organization = organization;
 	}
 
-	public Date getLastUsedDate()
+	public Date getLastUsed()
 	{
 		return lastUsed;
 	}
 
-	public void setLastUsedDate(Date lastUsedDate)
+	public void setLastUsed(Date lastUsed)
 	{
-		this.lastUsed = lastUsedDate;
+		this.lastUsed = lastUsed;
 	}
 
 }

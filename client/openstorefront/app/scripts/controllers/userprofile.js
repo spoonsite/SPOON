@@ -37,6 +37,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     ]
   };
 
+  $scope.old = $scope.nav.current;
+  $scope.$watch('nav', function(){
+    if ($scope.old && $scope.nav.current !== $scope.old) {
+      $rootScope.sendPageView('Modal-ProfileModal-tabSwitchTo-'+$scope.nav.current);
+    }
+    $scope.old = $scope.nav.current;
+  }, true);
 
   Business.componentservice.getComponentDetails().then(function(result) {
     if (result) {
@@ -273,7 +280,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   };
 
 
-  $scope.saveNotifyChange = function() {
+  $scope.saveNotifyChange = function(id) {
       Business.userservice.setWatches($scope.watches);
       Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
@@ -300,6 +307,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   // Event Watches
   //////////////////////////////////////////////////////////////////////////////
   $rootScope.$on('$profileModal', function(event) { /*jshint unused: false*/
+    $scope.old = null;
     if ($rootScope.current) {
       $scope.nav.current = $rootScope.current;
     } else {

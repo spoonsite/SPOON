@@ -49,7 +49,7 @@
   <!-- Tabbing for Results Page -->
   <div class="col-md-12" style="background:white; margin-top: -11px;" id="detailsTabs">
     <tabset type="">  <!-- pills -->
-      <tab ng-repeat="tab in detailResultsTabs" heading="{{tab.title}}" class="{{tab.class}}">
+      <tab ng-repeat="tab in detailResultsTabs" ng-click="sendPageView(details.details.name+'-'+tab.title)" heading="{{tab.title}}" class="{{tab.class}}">
         <div ng-include="tab.relpath"></div>
         <br>
       </tab>

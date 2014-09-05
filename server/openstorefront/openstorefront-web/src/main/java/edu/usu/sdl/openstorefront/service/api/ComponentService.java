@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
@@ -72,8 +73,7 @@ public interface ComponentService
 	 *
 	 * @param <T>
 	 * @param subComponentClass
-	 * @param itemId
-	 * @param componentId
+	 * @param pk
 	 * @return
 	 */
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk);
@@ -88,6 +88,24 @@ public interface ComponentService
 	 */
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all);
 
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId 
+	 */
+	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId);
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param componentId
+	 * @param all 
+	 */
+	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId, Boolean all);
+
+	
 	/**
 	 * Return the whole list of components. (the short view)
 	 *
@@ -117,6 +135,13 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentContact(ComponentContact contact);
+
+	/**
+	 *
+	 * @param dependency
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentDependency(ComponentExternalDependency dependency);
 
 	/**
 	 *

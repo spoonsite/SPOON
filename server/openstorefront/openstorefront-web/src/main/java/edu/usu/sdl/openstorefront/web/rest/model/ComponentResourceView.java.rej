@@ -1,0 +1,17 @@
+diff a/server/openstorefront/openstorefront-web/src/main/java/edu/usu/sdl/openstorefront/web/rest/model/ComponentResourceView.java b/server/openstorefront/openstorefront-web/src/main/java/edu/usu/sdl/openstorefront/web/rest/model/ComponentResourceView.java	(rejected hunks)
+@@ -25,13 +25,8 @@
+  */
+ public class ComponentResourceView
+ {
+-
+-	private String name;
+-	private String resourceType;
+-	private String resourceTypeDesc;
+-	private String description;
+-	private String link;
+-	private Boolean restricted;
++	private ComponentResource componentResource;
++	private ResourceType resourceType;
+ 
+ 	public ComponentResourceView()
+ 	{

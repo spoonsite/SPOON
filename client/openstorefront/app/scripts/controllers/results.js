@@ -439,6 +439,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.updateDetails = function(id, article){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     if (article && article.type === 'Article') {
+      $scope.sendPageView('article' + article.route);
       $scope.isArticle = true;
       localCache.save('landingRoute', article.route);
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
@@ -458,6 +459,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       Business.componentservice.getComponentDetails(id).then( function (result){
         if (result)
         {
+          $scope.sendPageView(result.name);
           $scope.details.details = result;
 
           // Code here will be linted with JSHint.
@@ -610,6 +612,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.$on('$typeahead.select', function(event, value, index) {/*jshint unused: false*/
     $scope.applyFilters();
+    $scope.sendEvent('Filter Set', 'Text', $scope.query);
   });
 
   /*******************************************************************************
