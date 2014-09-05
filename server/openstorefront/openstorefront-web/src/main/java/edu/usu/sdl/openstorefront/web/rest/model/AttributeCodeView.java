@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author dshurtleff
@@ -29,6 +32,22 @@ public class AttributeCodeView
 
 	public AttributeCodeView()
 	{
+	}
+
+	public static AttributeCodeView toView(AttributeCode attributeCode)
+	{
+		AttributeCodeView attributeCodeView = new AttributeCodeView();
+		attributeCodeView.setCode(attributeCode.getAttributeCodePk().getAttributeCode());
+		attributeCodeView.setLabel(attributeCode.getLabel());
+		attributeCodeView.setDescription(attributeCode.getDescription());
+
+		if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
+			attributeCodeView.setFullTextLink("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
+		} else {
+			attributeCodeView.setFullTextLink(attributeCode.getDetailUrl());
+		}
+
+		return attributeCodeView;
 	}
 
 	public String getCode()
