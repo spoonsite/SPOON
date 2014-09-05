@@ -38,7 +38,8 @@ var app = angular
     'ngGrid',
     'ngMockE2E',
     'bootstrapLightbox',
-    'angular-carousel'
+    'angular-carousel',
+    'angulartics.google.analytics'
   // end of dependency injections
   ]
 // end of the module creation
@@ -167,7 +168,8 @@ var app = angular
     'auth',
     '$anchorScroll',
     '$routeParams',
-    function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams) {/* jshint unused: false*/
+    '$analytics',
+    function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics) {/* jshint unused: false*/
       //////////////////////////////////////////////////////////////////////////////
       // Variables
       //////////////////////////////////////////////////////////////////////////////
@@ -209,6 +211,8 @@ var app = angular
 
       $rootScope.$on('$routeChangeSuccess', function (event, next, current){
       });
+
+
 
       /***************************************************************
       * This funciton resets the search query when we don't want to be showing it
@@ -271,11 +275,29 @@ var app = angular
       //////////////////////////////////////////////////////////////////////////////
       // Functions
       //////////////////////////////////////////////////////////////////////////////
+      $rootScope.sendPageView = function(view) {
+        console.log('we got a page view', view);
+        
+        $analytics.pageTrack($location.url()+'/'+view);
+      };
+
+      // All three arguments are required 
+      $rootScope.sendEvent = function(name, category, label) {
+        if (name === 'Filter Checked'){
+          label = label? 'checked': 'unChecked';
+        }
+        
+        console.log('we got an event', name, category, label);
+        $analytics.eventTrack(name,{'category': category, 'label': label});
+      };
+  
+
       $rootScope.openModal = function(id, current) {
         $rootScope.current = current;
         $rootScope.$broadcast('$' + id);
         $rootScope.$broadcast('updateBody');
         $rootScope.$broadcast('$viewModal', id);
+        $rootScope.sendPageView('Modal-'+id+'-'+current);
       };
 
       $rootScope.scrollTo = function(id) {
