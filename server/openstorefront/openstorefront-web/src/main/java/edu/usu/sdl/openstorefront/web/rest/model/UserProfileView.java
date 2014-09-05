@@ -34,10 +34,10 @@ public class UserProfileView
 	private String username;
 	
 	@ConsumeField
-	private String firstname;
+	private String firstName;
 	
 	@ConsumeField
-	private String lastname;
+	private String lastName;
 	
 	@ConsumeField
 	private String email;
@@ -70,8 +70,8 @@ public class UserProfileView
 		UserProfileView view = new UserProfileView();
 		view.setAdmin(profile.getAdmin());
 		view.setEmail(profile.getEmail());
-		view.setFirstname(profile.getFirstName());
-		view.setLastname(profile.getLastName());
+		view.setFirstName(profile.getFirstName());
+		view.setLastName(profile.getLastName());
 		view.setOrganization(profile.getOrganization());
 		view.setUserTypeCode(profile.getUserTypeCode());
 		view.setUsername(profile.getUsername());
@@ -101,24 +101,24 @@ public class UserProfileView
 		this.username = username;
 	}
 
-	public String getFirstname()
+	public String getFirstName()
 	{
-		return firstname;
+		return firstName;
 	}
 
-	public void setFirstname(String firstname)
+	public void setFirstName(String firstName)
 	{
-		this.firstname = firstname;
+		this.firstName = firstName;
 	}
 
-	public String getLastname()
+	public String getLastName()
 	{
-		return lastname;
+		return lastName;
 	}
 
-	public void setLastname(String lastname)
+	public void setLastName(String lastName)
 	{
-		this.lastname = lastname;
+		this.lastName = lastName;
 	}
 
 	public String getEmail()

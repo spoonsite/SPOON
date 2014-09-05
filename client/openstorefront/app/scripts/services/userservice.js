@@ -20,7 +20,7 @@
 app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function($rootScope, localCache, $http, $q) {
 
   //Constants
-  var CURRENT_USER = 'CURRENTUSER';
+  var CURRENT_USER = 'JONLAW';
   var minute = 60 * 1000;
   var day = minute * 1440; //1 day
   var MAX_USER_CACHE_TIME = day; /*jshint unused:false*/
@@ -78,6 +78,8 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
     } else {
       loadProfile(CURRENT_USER, function(data, status, headers, config) { /*jshint unused:false*/
         if (data) {
+          // console.log('data', data);
+          
           save('currentUserProfile', data);
           deferred.resolve(data);
         }
@@ -93,7 +95,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   * @returns {undefined}
   */
   var loadProfile = function(username, successFunc) {
-    $http.get('/api/v1/resource/userprofiles/' + username).success(successFunc);
+    $http.get('api/v1/resource/userprofiles/'+username).success(successFunc);
   };
 
   var saveCurrentUserProfile = function(userProfile) { /*jshint unused:false*/
@@ -108,7 +110,21 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   var saveProfile = function(username, userProfile) { /*jshint unused:false*/
     var deferred = $q.defer();
     if (true) {
-      deferred.resolve('It worked');
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/resource/userprofiles/'+ username,
+        'data': userProfile
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        // console.log('data', data);
+        if (data && data !== 'false') {
+          updateCache('currentUserProfile', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an saving the user profile.');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('It didn\'t work...');
+      });
     } else {
       // if the save fails, give them a reason why... with an error object like this
       //?fix
@@ -140,7 +156,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
     } else {
       $http({
         'method': 'GET',
-        'url': '/api/v1/resource/lookup/watches'
+        'url': 'api/v1/resource/lookup/watches'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('watches', data);
@@ -160,7 +176,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
 
     $http({
       'method': 'POST',
-      'url': '/api/v1/resource/lookup/watches',
+      'url': 'api/v1/resource/lookup/watches',
       'data': watches
     }).success(function(data, status, headers, config) { /*jshint unused:false*/
       if (data && data !== 'false') {

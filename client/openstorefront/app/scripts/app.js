@@ -395,12 +395,14 @@ var app = angular
       //////////////////////////////////////////////////////////////////////////////
       // HttpBackend
       //////////////////////////////////////////////////////////////////////////////
-      //Mock Back End  (use passthough to route to server)
+      //Mock Back End  (use passThrough to route to server)
       $httpBackend.whenGET(/views.*/).passThrough();
       
-      $httpBackend.whenGET('/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
-      $httpBackend.whenGET('/api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
-      $httpBackend.whenGET(/\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/userprofiles/JONLAW').passThrough();
+      $httpBackend.whenPUT('api/v1/resource/userprofiles/JONLAW').passThrough();
+      $httpBackend.whenGET('api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
+      $httpBackend.whenGET('api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
+      $httpBackend.whenGET(/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
         var query = getParams(url);
         var result = null;
         // console.log('query Parameters', query);
@@ -429,7 +431,7 @@ var app = angular
         return [200, result, {}];
       });
       //
-      $httpBackend.whenGET(/\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
+      $httpBackend.whenGET(/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
         // grab the url (needed for what the backend will simulate)
         // parse it into an array
         var urlSplit = url.split('/');
@@ -451,31 +453,31 @@ var app = angular
         return [200, result.promise, {}];
       });
 
-      $httpBackend.whenGET(/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/attributes/DI2E-SVCV4-A/attributeCode/1.2.1/article').respond(function(method, url, data) {
         var request = new XMLHttpRequest();
         request.open('GET', 'views/temp/landingpage.html', false);
         request.send(null);
         return [request.status, request.response, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/attributes\//).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/attributes').respond(function(method, url, data) {
         return [200, MOCKDATA.filters, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/tags\//).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/tags').respond(function(method, url, data) {
         return [200, MOCKDATA.tagsList, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/pros\//).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
         return [200, MOCKDATA.prosConsList, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/evalLevels/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/lookup/evalLevels').respond(function(method, url, data) {
         var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
         return [200, result, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/expertise/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/lookup/expertise').respond(function(method, url, data) {
         var result = [
           //
           {'value':'1', 'label': 'Less than 1 month'},
@@ -489,11 +491,11 @@ var app = angular
         return [200, result, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/watches/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/lookup/watches').respond(function(method, url, data) {
         return [200, MOCKDATA.watches, {}];
       });
 
-      $httpBackend.whenPOST(/\/api\/v1\/resource\/lookup\/watches/).respond(function(method, url, data) {
+      $httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method, url, data) {
         MOCKDATA.watches = data;
         return [200, angular.fromJson(data), {}];
       });

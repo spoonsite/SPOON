@@ -66,7 +66,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
 
   componentservice.getComponentDetails = function(id) {
     var result = $q.defer();
-    var url = '/api/v1/resource/component/';
+    var url = 'api/v1/resource/component/';
     var value = null;
     // if they don't give me an ID I send them back the whole list.
     if (id) {
@@ -113,7 +113,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   componentservice.doSearch = function(type, key) {
     var deferred = $q.defer();
     if (type && key) {
-      $http.get('/api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
+      $http.get('api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       });
     }

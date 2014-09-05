@@ -163,6 +163,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
 			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
 			return Response.ok(service.getComponentService().saveComponent(component)).build();
@@ -318,7 +319,6 @@ public class ComponentRESTResource
 			@RequiredParam ComponentExternalDependency dependency)
 	{
 		dependency.setComponentId(componentId);
-		dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
 		return saveDependency(dependency, true);
 	}
 
@@ -347,6 +347,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
 			dependency.setCreateUser(ServiceUtil.getCurrentUserName());
 			dependency.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentDependency(dependency);
@@ -403,7 +404,6 @@ public class ComponentRESTResource
 			@RequiredParam ComponentContact contact)
 	{
 		contact.setComponentId(componentId);
-		contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 		return saveContact(contact, true);
 	}
 
@@ -432,6 +432,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 			contact.setCreateUser(ServiceUtil.getCurrentUserName());
 			contact.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentContact(contact);
@@ -503,7 +504,6 @@ public class ComponentRESTResource
 			@RequiredParam ComponentEvaluationSection section)
 	{
 		section.setComponentId(componentId);
-		section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
 		section.getComponentEvaluationSectionPk().setComponentId(componentId);
 		return saveSection(section, true);
 	}
@@ -535,6 +535,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
 			section.setCreateUser(ServiceUtil.getCurrentUserName());
 			section.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSection(section);
@@ -593,7 +594,6 @@ public class ComponentRESTResource
 			@RequiredParam ComponentEvaluationSchedule schedule)
 	{
 		schedule.setComponentId(componentId);
-		schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
 		schedule.getComponentEvaluationSchedulePk().setComponentId(componentId);
 		return saveSchedule(schedule, true);
 	}
@@ -625,6 +625,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
 			schedule.setCreateUser(ServiceUtil.getCurrentUserName());
 			schedule.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSchedule(schedule);
@@ -681,7 +682,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMedia media)
 	{
-		media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 		media.setComponentId(componentId);
 		return saveMedia(media, true);
 	}
@@ -712,6 +712,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			media.setCreateUser(ServiceUtil.getCurrentUserName());
 			media.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMedia(media);
@@ -766,7 +767,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMetadata metadata)
 	{
-		metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 		metadata.setComponentId(componentId);
 		return saveMetadata(metadata, true);
 	}
@@ -797,6 +797,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 			metadata.setCreateUser(ServiceUtil.getCurrentUserName());
 			metadata.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMetadata(metadata);
@@ -875,7 +876,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentQuestion question)
 	{
-		question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 		question.setComponentId(componentId);
 		return saveQuestion(question, true);
 	}
@@ -906,6 +906,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 			question.setCreateUser(ServiceUtil.getCurrentUserName());
 			question.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
@@ -965,7 +966,6 @@ public class ComponentRESTResource
 	{
 		response.setComponentId(componentId);
 		response.setQuestionId(questionId);
-		response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 		return saveQuestionResponse(response, true);
 	}
 
@@ -995,6 +995,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			response.setCreateUser(ServiceUtil.getCurrentUserName());
 			response.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
@@ -1049,7 +1050,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentResource resource)
 	{
-		resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 		resource.setComponentId(componentId);
 		return saveResource(resource, true);
 	}
@@ -1080,6 +1080,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 			resource.setCreateUser(ServiceUtil.getCurrentUserName());
 			resource.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentResource(resource);
@@ -1134,7 +1135,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentReview review)
 	{
-		review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		review.setComponentId(componentId);
 		return saveReview(review, true);
 	}
@@ -1165,6 +1165,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			review.setCreateUser(ServiceUtil.getCurrentUserName());
 			review.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReview(review);
@@ -1398,7 +1399,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentTracking tracking)
 	{
-		tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 		tracking.setComponentId(componentId);
 		return saveTracking(tracking, true);
 	}
@@ -1429,6 +1429,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 			tracking.setCreateUser(ServiceUtil.getCurrentUserName());
 			tracking.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(tracking);

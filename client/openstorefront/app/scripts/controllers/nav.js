@@ -89,6 +89,16 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
     }
   });
 
+  $scope.$on('$RESETUSER', function(event, data){
+    Business.userservice.getCurrentUserProfile().then(function(result){
+      if (result) {
+        $scope.user.info = result;
+      } else {
+        Auth.logout();
+      }
+    });
+  });
+
 
   /***************************************************************
   * Catch the enter/select event here

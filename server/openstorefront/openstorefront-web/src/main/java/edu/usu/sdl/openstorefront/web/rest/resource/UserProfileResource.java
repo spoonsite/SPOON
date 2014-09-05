@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
@@ -131,6 +132,7 @@ public class UserProfileResource
 			@RequiredParam
 			UserProfile inputProfile) 
 	{
+		inputProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		inputProfile.setUsername(userId);
 		ValidationModel validationModel = new ValidationModel(inputProfile);
 		validationModel.setConsumeFieldsOnly(true);
@@ -232,6 +234,7 @@ public class UserProfileResource
 			@RequiredParam
 			UserWatch userWatch) 
 	{
+		userWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		userWatch.setUsername(userId);
 		userWatch.setUserWatchId(watchId);
 		return saveWatch(userWatch, Boolean.FALSE);
@@ -335,6 +338,7 @@ public class UserProfileResource
 			@RequiredParam
 			UserTracking tracking)
 	{
+		tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 		tracking.setTrackingId(trackingId);
 		tracking.setCreateUser(userId);
 		return saveTracking(tracking, false);
