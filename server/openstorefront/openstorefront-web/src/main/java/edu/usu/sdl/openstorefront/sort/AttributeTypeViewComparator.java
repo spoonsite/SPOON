@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.manager;
+package edu.usu.sdl.openstorefront.sort;
 
-import java.util.logging.Logger;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import java.util.Comparator;
 
 /**
  *
  * @author dshurtleff
+ * @param <T>
  */
-public class IndexManager
+public class AttributeTypeViewComparator<T extends AttributeTypeView>
+		implements Comparator<T>
 {
 
-	private static final Logger log = Logger.getLogger(IndexManager.class.getName());
+	@Override
+	public int compare(T o1, T o2)
+	{
+		return o1.getType().compareTo(o2.getType());
+	}
 
 }

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
@@ -30,14 +31,30 @@ public class AttributeCodePk
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ConsumeField
 	private String attributeType;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ConsumeField
 	private String attributeCode;
 
 	public AttributeCodePk()
 	{
+	}
+
+	public String toKey()
+	{
+		return attributeType + "-" + attributeCode;
+	}
+
+	public static AttributeCodePk fromKey(String key)
+	{
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		String keySplit[] = key.split("-");
+		attributeCodePk.setAttributeType(keySplit[0]);
+		attributeCodePk.setAttributeCode(keySplit[1]);
+		return attributeCodePk;
 	}
 
 	public String getAttributeType()

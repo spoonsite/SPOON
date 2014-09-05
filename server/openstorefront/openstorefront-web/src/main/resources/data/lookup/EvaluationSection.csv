@@ -1,21 +1,21 @@
-DIS,Discoverable
-ACC,Accessible
-DOC,Documentation
-DEP,Deployable
-USAB,Usable
-ERR,Error Handling
-INT,Integrable
-IO,I/O Validation
-TEST,Testing
-MON,Monitoring
-PER,Performance
-SC,Scalability
-SEC,Security
-MAIN,Maintainability
-COM,Community
-CM,Change Management
-CA,CA
-LIC,Licensing
-RM,Roadmap
-WIL,Willingness
-AA,Architecture Alignment
+DIS,Discoverable,Determines how easily the asset can be discovered by a potential consumer - which registries/catalogs the asset described in, and how easy those registries/catalogs are to access. Another factor is how prevalent the use of the registries/catalogs are for the potential consumers.
+ACC,Accessible,Describes how easily the asset can be accessed (either to use or to download) by potential consumers. For enterprise capabilities the consumers could include end users (who access the capability via a website or widget) in addition to developers accessing the capability via web services or APIs. Also includes questions on how well packaged the asset is and what additional burdens are in place (special firewall rules, additional credentials/PKI certificates, etc.).
+DOC,Documentation,Determines how well documented the asset is. An asset should be documented enough that it can be re-deployed or used without requiring intervention from the asset provider. Documentation should also be easily discoverable and accessible by the potential consumers.
+DEP,Deployable,Focuses on how easy it is to re-deploy an asset, especially on how configurable the asset is and what dependencies exist. Includes items like LDAP, security, and web container dependencies and how flexible the asset is. Easily deployable assets will support multiple containers/security configurations and be easy to configure for any environment. 
+USAB,Usable,Determines how easy it is to use the asset. The focus is mostly on the user interface of the asset and how intuitive and well documented it is, but also includes reviewing how effectively the asset provides it's advertised functions/capabilities.
+ERR,Error Handling,Determines if /how well the asset deals with errors. Does the asset provide meaningful error messages to the consumer? Is there adequate information in the message or log files to easily determine the root cause of an error?
+INT,Integrable,Determines how easy it is to integrate the asset into another system/enterprise. Focuses on items such as the APIs, how well encapsulated the functionality is, are common protocols/standards used, are all APIs documented (i.e., no hidden or secret access for some consumers).
+IO,I/O Validation,Determines if inputs - both user and API based - are validated before processing and when returning data. This would include validation of inputs to prevent things like SQL injection attacks, providing quicker/better feedback about input errors, and ensuring that returned data is valid.
+TEST,Testing,Determines if the asset has sufficient testing for the asset itself (i.e., not tests for the asset when deployed into a larger system). This includes unit testing done during the development process, how well documented the tests are, the availability of good test data, and UI usability testing.
+MON,Monitoring,Determines if the asset produces sufficient metrics to allow for adequate monitoring of the activities of the asset - this would include both usage and auditing data. The asset should also be configurable to allow for production level monitoring versus debug level monitoring.
+PER,Performance,Determines if the asset performs at a reasonable level, especially for UI assets where response times are critical. A reasonable level depends on the function being performed - a security lookup must be very fast where a broad search does not.
+SC,Scalability,Determines if the asset is designed/architected such that it can be easily scaled to meet increasing demands. Also looks at how well understood the performance profile is - i.e. in a 4 core/16 Gigabyte VM it can typically supports 50 simultaneous users.
+SEC,Security,Determines if the asset has any known vulnerabilities (typically assessed using code scanning tools) and if it can easily integrated into well known IdAM frameworks.
+MAIN,Maintainability,Determines how easily the asset can be maintained and upgraded as future releases are provided. Assets should be easily configurable to ease maintenance for system operators. Assets should be well packaged and installation should occur seamlessly whether it is an initial install or an upgrade, and there should be a well defined versioning strategy for the asset. APIs and data formats used by the asset must also be resilient to change - data changes are constantly necessary over the life of any asset.
+COM,Community,Determines how active the consumer community is and how well the program of record supports that community. This includes the ability to create and track bug and enhancement requests (using something like JIRA), the ability to easily interact with other users of the asset (via email groups or forums), and the ability to understand who the users of the asset are.
+CM,Change Management,Determines if the asset can be easily managed throughout its deployment as part of a system with a long lifecycle. The ability to find and know what patches are available and to contribute patches or fixes back into the baseline are important.
+CA,CA,As the C&A process for systems is very time consuming the ability to find and share C&A documentation for an asset (as deployed in other systems for example) can greatly reduce the burden on new systems when preparing their own documentation. The ability to determine where else the asset has been accredited and who the appropriate POCs are can also be helpful with potential reciprocity. 
+LIC,Licensing,Determines what licensing restrictions/costs are involved with deploying/using the asset. Intellectual property rights and license concerns are a huge barrier to easy reuse of assets with the government and ensuring that the government has appropriate rights for all software it pays to have developed (unlimited government use rights should be specified) is critical.
+RM,Roadmap,Is it easy to determine the plan for the next few releases of the asset so a consumer can easily incorporate the asset changes into their system plans.
+WIL,Willingness,How willing is the provider to continue to support the asset as an enterprise asset.
+AA,Architecture Alignment,How well does the asset map to commonly used functional taxonomies such as the DI2E SvcV-4, JCFSL, JCA, or JARM?

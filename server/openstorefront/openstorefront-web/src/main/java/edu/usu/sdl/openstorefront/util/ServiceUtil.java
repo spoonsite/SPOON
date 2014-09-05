@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
@@ -34,6 +36,8 @@ import org.apache.shiro.subject.Subject;
  */
 public class ServiceUtil
 {
+
+	private static final Logger log = Logger.getLogger(ServiceUtil.class.getName());
 
 	public static final String LOOKUP_ENTITY = "LookupEntity";
 
@@ -90,9 +94,13 @@ public class ServiceUtil
 	public static String getCurrentUserName()
 	{
 		String username = OpenStorefrontConstant.ANONYMOUS_USER;
-		Subject currentUser = SecurityUtils.getSubject();
-		if (currentUser.getPrincipal() != null) {
-			username = currentUser.getPrincipal().toString();
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			if (currentUser.getPrincipal() != null) {
+				username = currentUser.getPrincipal().toString();
+			}
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started.");
 		}
 		return username;
 	}
