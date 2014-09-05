@@ -24,7 +24,8 @@
     "angular-touch": "~1.2.14",
     "angular-loading-bar": "~0.3.0",
     "lodash": "~2.4.1",
-    "angular-carousel": "~0.2.5"
+    "angular-carousel": "~0.2.5",
+    "angulartics": "~0.16.5"
   },
   "devDependencies": {
     "angular-scenario": "1.2.15"

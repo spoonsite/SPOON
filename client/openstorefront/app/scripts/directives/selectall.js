@@ -5,6 +5,7 @@ app.directive('selectall', [ function () {
     replace: true,
     restrict: 'E',
     scope: {
+      label: '=',
       checkboxes: '=',
       allselected: '=allSelected',
       allclear: '=allClear',
@@ -14,11 +15,13 @@ app.directive('selectall', [ function () {
     link: function postLink(scope, element, attrs) { /*jshint unused:false*/
       scope.masterChange = function () {
         if (scope.master) {
+          scope.$parent.sendEvent('Filter Set', scope.label, 'All forcedOn');
           angular.forEach(scope.checkboxes, function (cb, index) { /*jshint unused:false*/
             cb.checked = true;
             scope.toggleCallback();
           });
         } else {
+          scope.$parent.sendEvent('Filter Set', scope.label, 'All forcedOff');
           angular.forEach(scope.checkboxes, function (cb, index) { /*jshint unused:false*/
             cb.checked = false;
             scope.toggleCallback();

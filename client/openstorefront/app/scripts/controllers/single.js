@@ -79,6 +79,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     Business.componentservice.getComponentDetails(id).then(function(result){
       if (result)
       {
+        $scope.sendPageView(result.name);
         $scope.details.details = result;
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
 
