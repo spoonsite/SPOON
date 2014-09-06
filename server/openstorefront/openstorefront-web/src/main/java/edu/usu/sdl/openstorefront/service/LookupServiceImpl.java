@@ -120,7 +120,7 @@ public class LookupServiceImpl
 
 					newCodeSet.add(lookupEntity.getCode());
 				} else {
-					log.log(Level.WARNING, "(Data Sync) Unable to Add Code:  {0} Validation Issues:\n{1}", new Object[]{lookupEntity.getCode(), validationResult.toString()});
+					log.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Code:  {0} Validation Issues:\n{1}", new Object[]{lookupEntity.getCode(), validationResult.toString()}));
 				}
 
 			} catch (Exception e) {
@@ -160,6 +160,17 @@ public class LookupServiceImpl
 			Element element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
 			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
 			lookupEntity = lookupCacheMap.get(code);
+			if (lookupEntity == null) {
+				//cache miss
+				try {
+					T example = lookupClass.newInstance();
+					example.setCode(code);
+					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+					lookupEntity = persistenceService.queryByOneExample(lookupClass, new QueryByExample(example));
+				} catch (InstantiationException | IllegalAccessException e) {
+					throw new OpenStorefrontRuntimeException(e);
+				}
+			}
 		}
 		return lookupEntity;
 	}

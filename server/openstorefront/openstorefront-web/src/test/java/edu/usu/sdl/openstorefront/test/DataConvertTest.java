@@ -15,6 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.test;
 
+import au.com.bytecode.opencsv.CSVWriter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.service.io.AttributeImport;
+import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
+
 /**
  *
  * @author dshurtleff
@@ -801,19 +815,55 @@ public class DataConvertTest
 //		return searchResults;
 //	}
 //
-//	@Test
-//	public void testAttribute() throws JsonProcessingException, IOException
-//	{
-//		RestListResponse<AttributeTypeView> response = new RestListResponse<>();
-//
-//		AttributeImport attributeImport = new AttributeImport();
+	@Test
+	public void testAttribute() throws JsonProcessingException, IOException
+	{
+		//RestListResponse<AttributeTypeView> response = new RestListResponse<>();
+
+		AttributeImport attributeImport = new AttributeImport();
 //		response.setData(attributeImport.loadAttributes());
 //		response.setResults(response.getData().size());
 //		response.setTotalResults(response.getData().size());
 //
 //		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
 //		objectMapper.writeValue(new File("c:/development/storefront/data/attributes.json"), response);
-//	}
+
+		List<AttributeTypeView> attributeTypeViews = attributeImport.loadAttributes();
+		Collections.sort(attributeTypeViews, new AttributeTypeViewComparator<>());
+		try (CSVWriter out = new CSVWriter(new OutputStreamWriter(new FileOutputStream("C:\\var\\openstorefront\\import\\allattributes.csv")));) {
+			//write header
+			List<String> data = new ArrayList<>();
+			data.add("Attribute Type");
+			data.add("Type Description");
+			data.add("Archtechture flag");
+			data.add("Visible");
+			data.add("Important");
+			data.add("Required");
+			data.add("Code");
+			data.add("Code Label");
+			data.add("Code Description");
+			data.add("External Link");
+
+			out.writeNext(data.toArray(new String[0]));
+			for (AttributeTypeView attributeTypeView : attributeTypeViews) {
+				for (AttributeCodeView attributeCodeView : attributeTypeView.getCodes()) {
+					data = new ArrayList<>();
+					data.add(attributeTypeView.getType());
+					data.add(attributeTypeView.getDescription());
+					data.add(Boolean.toString(attributeTypeView.getArchtechtureFlg()));
+					data.add(Boolean.toString(attributeTypeView.getVisibleFlg()));
+					data.add(Boolean.toString(attributeTypeView.getImportantFlg()));
+					data.add(Boolean.toString(attributeTypeView.getRequiredFlg()));
+					data.add(attributeCodeView.getCode());
+					data.add(attributeCodeView.getLabel());
+					data.add(attributeCodeView.getDescription());
+					data.add(attributeCodeView.getFullTextLink());
+					out.writeNext(data.toArray(new String[0]));
+				}
+			}
+		}
+
+	}
 //
 ////	@Test
 ////	public void formatInput()

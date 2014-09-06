@@ -15,9 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
-import java.util.Date;
+import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,36 +33,26 @@ public class AttributeCode
 {
 
 	@PK
+	@NotNull
 	private AttributeCodePk attributeCodePk;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
 	private String label;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
+	@Sanitize(BasicHTMLSanitizer.class)
+	@ConsumeField
 	private String description;
 
-	@NotNull
-	private String fullDescription;
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String articleFilename;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@ConsumeField
 	private String detailUrl;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String createUser;
-
-	@NotNull
-	private Date createDts;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String updateUser;
-
-	@NotNull
-	private Date updateDts;
 
 	public AttributeCode()
 	{
@@ -75,16 +68,6 @@ public class AttributeCode
 		this.description = description;
 	}
 
-	public String getFullDescription()
-	{
-		return fullDescription;
-	}
-
-	public void setFullDescription(String fullDescription)
-	{
-		this.fullDescription = fullDescription;
-	}
-
 	public String getDetailUrl()
 	{
 		return detailUrl;
@@ -93,46 +76,6 @@ public class AttributeCode
 	public void setDetailUrl(String detailUrl)
 	{
 		this.detailUrl = detailUrl;
-	}
-
-	public String getCreateUser()
-	{
-		return createUser;
-	}
-
-	public void setCreateUser(String createUser)
-	{
-		this.createUser = createUser;
-	}
-
-	public Date getCreateDts()
-	{
-		return createDts;
-	}
-
-	public void setCreateDts(Date createDts)
-	{
-		this.createDts = createDts;
-	}
-
-	public String getUpdateUser()
-	{
-		return updateUser;
-	}
-
-	public void setUpdateUser(String updateUser)
-	{
-		this.updateUser = updateUser;
-	}
-
-	public Date getUpdateDts()
-	{
-		return updateDts;
-	}
-
-	public void setUpdateDts(Date updateDts)
-	{
-		this.updateDts = updateDts;
 	}
 
 	public String getLabel()
@@ -153,6 +96,16 @@ public class AttributeCode
 	public void setAttributeCodePk(AttributeCodePk attributeCodePk)
 	{
 		this.attributeCodePk = attributeCodePk;
+	}
+
+	public String getArticleFilename()
+	{
+		return articleFilename;
+	}
+
+	public void setArticleFilename(String articleFilename)
+	{
+		this.articleFilename = articleFilename;
 	}
 
 }

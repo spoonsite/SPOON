@@ -13,52 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.rest.model;
+package edu.usu.sdl.openstorefront.service.api;
 
 /**
- * Topic landing page/article
  *
  * @author dshurtleff
  */
-public class Article
+public interface ReportService
 {
-
-	private String attributeCode;
-	private String attributeType;
-	private String html;
-
-	public Article()
-	{
-	}
-
-	public String getAttributeCode()
-	{
-		return attributeCode;
-	}
-
-	public void setAttributeCode(String attributeCode)
-	{
-		this.attributeCode = attributeCode;
-	}
-
-	public String getAttributeType()
-	{
-		return attributeType;
-	}
-
-	public void setAttributeType(String attributeType)
-	{
-		this.attributeType = attributeType;
-	}
-
-	public String getHtml()
-	{
-		return html;
-	}
-
-	public void setHtml(String html)
-	{
-		this.html = html;
-	}
 
 }
