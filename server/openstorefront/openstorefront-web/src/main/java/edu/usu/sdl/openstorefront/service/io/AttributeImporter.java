@@ -16,8 +16,24 @@
 package edu.usu.sdl.openstorefront.service.io;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
+import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
+import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
+import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quartz.jobs.DirectoryScanListener;
 
@@ -35,46 +51,85 @@ public class AttributeImporter
 	@Override
 	public void filesUpdatedOrAdded(File[] updatedFiles)
 	{
-//		String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS);
-//		for (File file : updatedFiles) {
-//
-//			boolean process = true;
-//			Date lastSyncDate = null;
-//			if (lastSyncDts != null) {
-//				lastSyncDate = TimeUtil.fromString(lastSyncDts);
-//			}
-//			if (lastSyncDate != null) {
-//				if (file.lastModified() <= lastSyncDate.getTime()) {
-//					process = false;
-//				}
-//			}
-//
-//			if (process) {
-//				//log
-//				log.log(Level.INFO, MessageFormat.format("Syncing lookup: {0}", file));
-//
-//			}
-//		}
-//		serviceProxy.getSystemService().saveProperty(ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
+		String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS);
+		for (File file : updatedFiles) {
+
+			boolean process = true;
+			Date lastSyncDate = null;
+			if (lastSyncDts != null) {
+				lastSyncDate = TimeUtil.fromString(lastSyncDts);
+			}
+			if (lastSyncDate != null) {
+				if (file.lastModified() <= lastSyncDate.getTime()) {
+					process = false;
+				}
+			}
+
+			if (process) {
+				//log
+				log.log(Level.INFO, MessageFormat.format("Syncing Attributes: {0}", file));
+				for (FileMap fileMap : FileMap.values()) {
+					if (fileMap.getFilename().equals(file.getName())) {
+						try {
+							Map<AttributeType, List<AttributeCode>> attributeMap = fileMap.getParser().parse(new FileInputStream(file));
+							serviceProxy.getAttributeService().syncAttribute(attributeMap);
+						} catch (FileNotFoundException ex) {
+							log.log(Level.SEVERE, "Failed processing file: " + file, ex);
+						}
+					}
+				}
+			}
+		}
+		serviceProxy.getSystemService().saveProperty(ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
 	}
 
 	@Override
 	public void initialize()
 	{
-//		String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS);
-//		if (lastSyncDts == null) {
-//			//get the files and process.
-//
-//
-//		} else {
-//			//load cache
-//
-//		}
+		String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS);
+		if (lastSyncDts == null) {
+			//get the files and process.
+			List<File> attributeFiles = new ArrayList<>();
+			for (FileMap fileMap : FileMap.values()) {
+				attributeFiles.add(FileSystemManager.getImportAttribute(fileMap.getFilename()));
+			}
+			filesUpdatedOrAdded(attributeFiles.toArray(new File[0]));
+		} else {
+			//load cache
+			serviceProxy.getAttributeService().refreshCache();
+		}
 	}
 
 	@Override
 	public void shutdown()
 	{
+	}
+
+	private enum FileMap
+	{
+
+		ATTIBUTES("allattributes.csv", new MainAttributeParser()),
+		SVCV4("svcv-4_export.csv", new SvcAttributeParser());
+
+		private final String filename;
+		private final BaseAttributeParser parser;
+
+		private FileMap(String filename, BaseAttributeParser parser)
+		{
+			this.filename = filename;
+			this.parser = parser;
+		}
+
+		public String getFilename()
+		{
+			return filename;
+		}
+
+		public BaseAttributeParser getParser()
+		{
+			return parser;
+		}
+
 	}
 
 }

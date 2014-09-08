@@ -32,6 +32,7 @@ public class OSFCacheManager
 	private static final Logger log = Logger.getLogger(OSFCacheManager.class.getName());
 
 	private static Cache lookupCache;
+	private static Cache attributeCache;
 
 	public static void init()
 	{
@@ -43,6 +44,10 @@ public class OSFCacheManager
 			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
 			lookupCache = singletonManager.getCache("lookupCache");
+
+			memoryOnlyCache = new Cache("attributeCache", 500, false, true, 0, 0);
+			singletonManager.addCache(memoryOnlyCache);
+			attributeCache = singletonManager.getCache("attributeCache");
 
 		} finally {
 			lock.unlock();
@@ -58,6 +63,11 @@ public class OSFCacheManager
 	public static Cache getLookupCache()
 	{
 		return lookupCache;
+	}
+
+	public static Cache getAttributeCache()
+	{
+		return attributeCache;
 	}
 
 	@Override

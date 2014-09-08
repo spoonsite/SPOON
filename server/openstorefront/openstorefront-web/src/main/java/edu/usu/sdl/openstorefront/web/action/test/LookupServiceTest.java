@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.action.test;
 
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import static edu.usu.sdl.openstorefront.web.action.test.BaseTestAction.TEST_USER;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
@@ -105,6 +108,46 @@ public class LookupServiceTest
 					success = true;
 				}
 			}
+		});
+
+		//clean up
+		testSuiteModel.runAllTests();
+		return sendReport(testSuiteModel);
+	}
+
+	@HandlesEvent("FindPK")
+	public Resolution findTestPk()
+	{
+		TestSuiteModel testSuiteModel = new TestSuiteModel();
+		testSuiteModel.setName("PK Tests");
+
+		//save some records - active, inactive
+		testSuiteModel.getTests().add(new BaseTestCase(testServiceProxy())
+		{
+
+			@Override
+			public String description()
+			{
+				return "Checking PK";
+			}
+
+			@Override
+			protected void runInternalTest()
+			{
+				ComponentEvaluationSectionPk componentEvaluationSectionPk = new ComponentEvaluationSectionPk();
+				componentEvaluationSectionPk.setEvaulationSection("TEST");
+				componentEvaluationSectionPk.setComponentId("883045");
+
+				ComponentEvaluationSection section = service.getPersistenceService().findById(ComponentEvaluationSection.class, componentEvaluationSectionPk);
+
+				ComponentEvaluationSection sectionExample = new ComponentEvaluationSection();
+				sectionExample.setComponentEvaluationSectionPk(componentEvaluationSectionPk);
+				service.getPersistenceService().queryByExample(ComponentEvaluationSection.class, new QueryByExample(sectionExample));
+
+				results.append("Pass").append("<br>");
+				success = true;
+			}
+
 		});
 
 		//clean up

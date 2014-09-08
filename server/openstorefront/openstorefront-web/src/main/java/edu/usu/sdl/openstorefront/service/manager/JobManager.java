@@ -108,7 +108,7 @@ public class JobManager
 				.build();
 
 		// Tell quartz to schedule the job using our trigger
-		//scheduler.scheduleJob(job, trigger);
+		scheduler.scheduleJob(job, trigger);
 	}
 
 	public static void cleanup()

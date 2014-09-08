@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
-import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,43 +32,62 @@ public class AttributeType
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ConsumeField
 	private String attributeType;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
+	@ConsumeField
 	private String description;
 
 	@NotNull
+	@ConsumeField
 	private Boolean visibleFlg;
 
 	@NotNull
+	@ConsumeField
 	private Boolean requiredFlg;
 
 	@NotNull
+	@ConsumeField
 	private Boolean architectureFlg;
 
 	@NotNull
+	@ConsumeField
 	private Boolean importantFlg;
 
 	@NotNull
+	@ConsumeField
 	private Boolean allowMutlipleFlg;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String createUser;
-
-	@NotNull
-	private Date createDts;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String updateUser;
-
-	@NotNull
-	private Date updateDts;
+	public static final String DI2E_SVCV4 = "DI2E-SVCV4-A";
 
 	public AttributeType()
 	{
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		hash += (attributeType != null ? attributeType.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		if (!(object instanceof AttributeType)) {
+			return false;
+		}
+		AttributeType other = (AttributeType) object;
+		if (this.attributeType == null && other.attributeType == null) {
+			return super.equals(object);
+		}
+		if ((this.attributeType == null && other.attributeType != null) || (this.attributeType != null && !this.attributeType.equals(other.attributeType))) {
+			return false;
+		}
+		return true;
 	}
 
 	public String getAttributeType()
@@ -119,46 +138,6 @@ public class AttributeType
 	public void setArchitectureFlg(Boolean architectureFlg)
 	{
 		this.architectureFlg = architectureFlg;
-	}
-
-	public String getCreateUser()
-	{
-		return createUser;
-	}
-
-	public void setCreateUser(String createUser)
-	{
-		this.createUser = createUser;
-	}
-
-	public Date getCreateDts()
-	{
-		return createDts;
-	}
-
-	public void setCreateDts(Date createDts)
-	{
-		this.createDts = createDts;
-	}
-
-	public String getUpdateUser()
-	{
-		return updateUser;
-	}
-
-	public void setUpdateUser(String updateUser)
-	{
-		this.updateUser = updateUser;
-	}
-
-	public Date getUpdateDts()
-	{
-		return updateDts;
-	}
-
-	public void setUpdateDts(Date updateDts)
-	{
-		this.updateDts = updateDts;
 	}
 
 	public Boolean getImportantFlg()
