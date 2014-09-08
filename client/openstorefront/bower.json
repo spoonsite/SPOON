@@ -25,8 +25,7 @@
     "angular-loading-bar": "~0.5.2",
     "lodash": "~2.4.1",
     "angular-carousel": "~0.2.5",
-    "angulartics": "~0.16.5",
-    "angular-strap": "~2.1.0"
+    "angulartics": "~0.16.5"
   },
   "devDependencies": {
     "angular-scenario": "1.2.23"
