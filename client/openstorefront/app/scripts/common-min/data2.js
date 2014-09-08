@@ -6709,64 +6709,64 @@ MOCKDATA2.componentList = [ {
     } ],
     "evaluationSections" : [ {
       "name" : "Discoverable",
-      "score" : 3
+      "score" : 2
     }, {
       "name" : "Accessible",
       "score" : 2
     }, {
       "name" : "Documentation",
-      "score" : 5
+      "score" : 3
     }, {
       "name" : "Deployable",
-      "score" : 1
+      "score" : 4
     }, {
       "name" : "Usable",
-      "score" : 0
+      "score" : 5
     }, {
       "name" : "Error Handling",
-      "score" : 1
+      "score" : 2
     }, {
       "name" : "Integrable",
       "score" : 4
     }, {
       "name" : "I/O Validation",
-      "score" : 3
+      "score" : 2
     }, {
       "name" : "Testing",
-      "score" : 1
+      "score" : 2
     }, {
       "name" : "Monitoring",
-      "score" : 2
+      "score" : 1
     }, {
       "name" : "Performance",
       "score" : 3
     }, {
       "name" : "Scalability",
-      "score" : 4
+      "score" : 2
     }, {
       "name" : "Security",
-      "score" : 1
+      "score" : 3
     }, {
       "name" : "Maintainability",
       "score" : 2
     }, {
       "name" : "Community",
-      "score" : 5
+      "score" : 1
     }, {
       "name" : "Change Management",
-      "score" : 4
-    }, {
-      "name" : "CA",
       "score" : 2
     }, {
+      "name" : "CA",
+      "score" : 1
+    }, {
       "name" : "Licensing",
-      "score" : 0
+      "score" : 2
     }, {
       "name" : "Roadmap",
-      "score" : 4
+      "score" : 1
     }, {
       "name" : "Willingness",
-      "score" : 4
+      "score" : 2
     }, {
       "name" : "Architecture Alignment",
       "score" : 5
@@ -6861,7 +6861,7 @@ MOCKDATA2.componentList = [ {
     "name" : "DI2E Framework Evaluation Report URL",
     "type" : "DI2E Framework Evaluation Report URL",
     "description" : null,
-    "link" : "<a href='https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx' title='https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx' target='_blank'> https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx</a>"
+    "link" : "<a href='https://confluence.di2e.net/display/DI2E/JView+API+Evaluation' title='https://confluence.di2e.net/display/DI2E/JView+API+Evaluation' target='_blank'> https://confluence.di2e.net/display/DI2E/JView+API+Evaluation</a>"
   }, {
     "name" : "Product Homepage",
     "type" : "Homepage",
