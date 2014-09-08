@@ -210,11 +210,13 @@ public class PersistenceService
 						//PK class should only be one level deep
 						for (Field pkField : field.getType().getDeclaredFields()) {
 							try {
-								Method pkMethod = id.getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
-								Object pkObj = pkMethod.invoke(id, (Object[]) null);
-
-								Method method = pkObj.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
-								Object returnObj = method.invoke(pkObj, (Object[]) null);
+//								Method pkMethod = id.getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
+//								Object pkObj = pkMethod.invoke(id, (Object[]) null);
+//
+//								Method method = pkObj.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
+//								Object returnObj = method.invoke(pkObj, (Object[]) null);
+								Method method = id.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
+								Object returnObj = method.invoke(id, (Object[]) null);
 								fieldValueMap.put(field.getName() + "." + pkField.getName(), returnObj);
 							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 								throw new OpenStorefrontRuntimeException(ex);

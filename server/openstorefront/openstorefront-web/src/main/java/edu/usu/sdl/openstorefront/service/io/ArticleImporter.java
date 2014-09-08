@@ -1,0 +1,89 @@
+/*
+ * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package edu.usu.sdl.openstorefront.service.io;
+
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.quartz.jobs.DirectoryScanListener;
+
+/**
+ *
+ * @author dshurtleff
+ */
+public class ArticleImporter
+		implements DirectoryScanListener
+{
+
+	private static final Logger log = Logger.getLogger(ArticleImporter.class.getName());
+	private static final long MAX_ARTICLE_SIZE = 10485760;
+
+	private final ServiceProxy serviceProxy = new ServiceProxy();
+
+	@Override
+	public void filesUpdatedOrAdded(File[] updatedFiles)
+	{
+		String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.ARTICLE_IMPORTER_LAST_SYNC_DTS);
+		for (File article : updatedFiles) {
+
+			boolean process = true;
+			Date lastSyncDate = null;
+			if (lastSyncDts != null) {
+				lastSyncDate = TimeUtil.fromString(lastSyncDts);
+			}
+			if (lastSyncDate != null) {
+				if (article.lastModified() <= lastSyncDate.getTime()) {
+					process = false;
+				}
+			}
+
+			if (process) {
+				log.log(Level.INFO, MessageFormat.format("Importing article: {0}", article.getName()));
+				if (article.length() <= MAX_ARTICLE_SIZE) {
+
+					try {
+						String key = article.getName();
+						if (article.getName().contains(".")) {
+							key = article.getName().substring(0, article.getName().indexOf("."));
+						}
+
+						if (key.contains("-")) {
+							AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(key);
+							String articleText = new String(Files.readAllBytes(Paths.get(article.getPath())));
+							serviceProxy.getAttributeService().saveArticle(attributeCodePk, articleText);
+						} else {
+							log.log(Level.WARNING, MessageFormat.format("Invalid filename: {0} make sure to follow this format.  <TYPE>-<CODE>.htm", article.getName()));
+						}
+					} catch (Exception e) {
+						log.log(Level.SEVERE, "Unable to process article: " + article.getPath(), e);
+					}
+				} else {
+					log.log(Level.WARNING, MessageFormat.format("Article: {0} has exceeded max allowed.  (MAX: {1})", new Object[]{article.getPath(), MAX_ARTICLE_SIZE}));
+				}
+			}
+		}
+		serviceProxy.getSystemService().saveProperty(ApplicationProperty.ARTICLE_IMPORTER_LAST_SYNC_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
+	}
+
+}

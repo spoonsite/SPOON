@@ -34,6 +34,7 @@ public class AttributeCode
 
 	@PK
 	@NotNull
+	@ConsumeField
 	private AttributeCodePk attributeCodePk;
 
 	@NotNull
