@@ -61,6 +61,10 @@ public class ComponentDetailView
 	@NotNull
 	private Date lastActivityDts;
 
+	private Date lastViewedDts;
+
+	private Date today;
+
 	@NotNull
 	private String createUser;
 
@@ -403,6 +407,38 @@ public class ComponentDetailView
 	public void setComponentViews(Integer componentViews)
 	{
 		this.componentViews = componentViews;
+	}
+
+	/**
+	 * @return the lastViewedDts
+	 */
+	public Date getLastViewedDts()
+	{
+		return lastViewedDts;
+	}
+
+	/**
+	 * @param lastViewedDts the lastViewedDts to set
+	 */
+	public void setLastViewedDts(Date lastViewedDts)
+	{
+		this.lastViewedDts = lastViewedDts;
+	}
+
+	/**
+	 * @return the today
+	 */
+	public Date getToday()
+	{
+		return today;
+	}
+
+	/**
+	 * @param today the today to set
+	 */
+	public void setToday(Date today)
+	{
+		this.today = today;
 	}
 
 }

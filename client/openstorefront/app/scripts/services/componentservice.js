@@ -80,6 +80,8 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           url: url
         })
         .success(function(data, status, headers, config) { /*jshint unused:false*/
+          console.log('data', data);
+          
           if (data && !isEmpty(data)) {
             save('component_'+id, data);
           }

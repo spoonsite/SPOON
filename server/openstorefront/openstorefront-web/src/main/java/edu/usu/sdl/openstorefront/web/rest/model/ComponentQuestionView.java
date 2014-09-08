@@ -43,7 +43,11 @@ public class ComponentQuestionView
 	public static ComponentQuestionView toView(ComponentQuestion question, List<ComponentQuestionResponseView> responses)
 	{
 		ComponentQuestionView view = new ComponentQuestionView();
-		view.responses = responses;
+		view.setResponses(responses);
+		view.setQuestion(question.getQuestion());
+		view.setUsername(question.getCreateUser());
+		view.setUserType(question.getUserType());
+		view.setUpdateDts(question.getUpdateDts());
 		return view;
 	}
 

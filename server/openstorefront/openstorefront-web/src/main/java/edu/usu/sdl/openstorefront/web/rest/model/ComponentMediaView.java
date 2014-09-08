@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.MediaType;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
+import java.util.Date;
 
 /**
  *
@@ -28,6 +29,7 @@ public class ComponentMediaView
 	private String link;
 	private String contentType;
 	private String caption;
+	private Date updateDts;
 
 	public ComponentMediaView()
 	{
@@ -39,6 +41,7 @@ public class ComponentMediaView
 		mediaView.setLink(media.getLink());
 		mediaView.setContentType(TranslateUtil.translate(MediaType.class, media.getMimeType()));
 		mediaView.setCaption(media.getCaption());
+		mediaView.setUpdateDts(media.getUpdateDts());
 		return mediaView;
 	}
 
@@ -70,6 +73,22 @@ public class ComponentMediaView
 	public void setCaption(String caption)
 	{
 		this.caption = caption;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

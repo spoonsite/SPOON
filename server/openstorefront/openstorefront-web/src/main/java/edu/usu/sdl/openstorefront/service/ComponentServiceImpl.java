@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedulePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
@@ -37,6 +36,8 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
@@ -51,6 +52,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -141,7 +143,22 @@ public class ComponentServiceImpl
 	{
 
 		ComponentDetailView result = new ComponentDetailView();
+		Component tempComponent = persistenceService.findById(Component.class, componentId);
+		
+		UserWatch tempWatch = new UserWatch();
+		// TODO: take this out of the comments once we're in production.
+		//tempWatch.setUsername(ServiceUtil.getCurrentUserName());
+		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
+		tempWatch.setComponentId(componentId);
+		UserWatch tempUserWatch = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(tempWatch));
+		if (tempUserWatch != null)
+		{
+			result.setLastViewedDts(tempUserWatch.getLastViewDts());
+		}
 
+		result.setLastActivityDts(tempComponent.getLastActivityDts());
+
+		
 		// TODO: Make the ComponentDetailView extend the storage Component so we can handle
 		// all of that stuff there...
 		result.setComponentId(componentId);
@@ -201,7 +218,6 @@ public class ComponentServiceImpl
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
 		});
 		result.setQuestions(questionViews);
-		
 
 		List<ComponentEvaluationSchedule> evaluationSchedules = getBaseComponent(ComponentEvaluationSchedule.class, componentId);
 		List<ComponentEvaluationSection> evaluationSections = getBaseComponent(ComponentEvaluationSection.class, componentId);
@@ -229,6 +245,8 @@ public class ComponentServiceImpl
 		List<ComponentAttributeView> attributes = new ArrayList();
 		result.setAttributes(attributes);
 
+		result.setToday(new Date());
+		
 		return result;
 	}
 
