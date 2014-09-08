@@ -44,23 +44,14 @@ exports.config = {
   },
 
     multiCapabilities: [{
-        'browserName': 'chrome'
+        browserName: 'internet explorer'
     }, {
-        'browserName': 'firefox'
+        // 8 Aug '14 Firefox QUIT WORKING
+        //'browserName': 'firefox'
+        //browserName: 'internet explorer',
+        //version: '11'
+        //'browserName': 'chrome'
     }]
-
-
-
-    // Start these browsers, currently available:
-    // - Chrome
-    // - ChromeCanary
-    // - Firefox
-    // - Opera
-    // - Safari (only Mac)
-    // - PhantomJS
-    // - IE (only Windows)
-
-    //chromeOnly: false,
 
     /*  Changed to "multiCapabilities" 8/30/14
      capabilities : {
