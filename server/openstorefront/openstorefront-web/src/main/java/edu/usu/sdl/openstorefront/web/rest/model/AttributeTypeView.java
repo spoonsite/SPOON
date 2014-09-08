@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -27,32 +27,47 @@ import javax.validation.constraints.NotNull;
  */
 public class AttributeTypeView
 {
+
 	@NotNull
 	private String type;
-	
+
 	@NotNull
 	private String description;
-	
+
 	@NotNull
 	private boolean visibleFlg;
-	
+
 	@NotNull
 	private boolean requiredFlg;
-	
+
 	@NotNull
 	private boolean archtechtureFlg;
-	
+
 	@NotNull
 	private boolean importantFlg;
-	
+
 	@NotNull
-	private boolean allowMutlipleFlg;		
-	
+	private boolean allowMutlipleFlg;
+
 	@DataType(AttributeCodeView.class)
 	private List<AttributeCodeView> codes = new ArrayList<>();
 
 	public AttributeTypeView()
 	{
+	}
+
+	public static AttributeTypeView toView(AttributeType attributeType)
+	{
+		AttributeTypeView attributeTypeView = new AttributeTypeView();
+		attributeTypeView.setType(attributeType.getAttributeType());
+		attributeTypeView.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
+		attributeTypeView.setArchtechtureFlg(attributeType.getArchitectureFlg());
+		attributeTypeView.setDescription(attributeType.getDescription());
+		attributeTypeView.setImportantFlg(attributeType.getImportantFlg());
+		attributeTypeView.setRequiredFlg(attributeType.getRequiredFlg());
+		attributeTypeView.setVisibleFlg(attributeType.getVisibleFlg());
+
+		return attributeTypeView;
 	}
 
 	public String getType()
@@ -74,7 +89,6 @@ public class AttributeTypeView
 	{
 		this.description = description;
 	}
-
 
 	public List<AttributeCodeView> getCodes()
 	{
