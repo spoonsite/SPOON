@@ -56,6 +56,7 @@ public interface AttributeService
 	/**
 	 * Saves code
 	 *
+	 * @param attributeCode
 	 * @param AttributeCode
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
@@ -64,20 +65,29 @@ public interface AttributeService
 	/**
 	 * Grabs the article for a give code or type
 	 *
-	 * @param type
-	 * @param code
+	 * @param attributeCodePk
 	 * @return article data or null for no article.
 	 */
-	public String getArticle(String type, String code);
+	public String getArticle(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Saves a new article (This will scub the article data prior to save)
 	 *
-	 * @param type
-	 * @param code
+	 * @param attributeCodePk
 	 * @param article
 	 */
-	public void saveArticle(String type, String code, String article);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveArticle(AttributeCodePk attributeCodePk, String article);
+
+	/**
+	 * Deletes a article. WARNING: This will remove the link and delete any
+	 * internal file.
+	 *
+	 * @param attributeCodePk
+	 * @param article
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteArticle(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Remove Type

@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.io.ArticleImporter;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import java.util.logging.Level;
@@ -65,6 +66,7 @@ public class JobManager
 		log.log(Level.FINEST, "Setting up Lookup Import Job...");
 		setupLookupCodeJob();
 		setupAttributeJob();
+		setupArticleJob();
 	}
 
 	private static void setupLookupCodeJob() throws SchedulerException
@@ -101,6 +103,29 @@ public class JobManager
 		scheduler.getContext().put(attributeImporter.getClass().getName(), attributeImporter);
 		Trigger trigger = newTrigger()
 				.withIdentity("AttruibuteTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInSeconds(30)
+						.repeatForever())
+				.build();
+
+		// Tell quartz to schedule the job using our trigger
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void setupArticleJob() throws SchedulerException
+	{
+		JobDetail job = JobBuilder.newJob(DirectoryScanJob.class)
+				.withIdentity("ArticleImport", JOB_GROUP_SYSTEM)
+				.build();
+
+		FileSystemManager.getDir(FileSystemManager.IMPORT_ARTICLE_DIR);
+		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_NAME, FileSystemManager.IMPORT_ARTICLE_DIR);
+		ArticleImporter articleImporter = new ArticleImporter();
+		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_SCAN_LISTENER_NAME, articleImporter.getClass().getName());
+		scheduler.getContext().put(articleImporter.getClass().getName(), articleImporter);
+		Trigger trigger = newTrigger()
+				.withIdentity("ArticleTrigger", JOB_GROUP_SYSTEM)
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInSeconds(30)
