@@ -127,7 +127,7 @@ public class AttributeServiceImpl
 	@Override
 	public void saveAttributeCode(AttributeCode attributeCode)
 	{
-		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode);
+		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeCode.getUpdateUser());
@@ -145,16 +145,13 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public String getArticle(String type, String code)
+	public String getArticle(AttributeCodePk attributeCodePk)
 	{
 		String article = null;
 
-		Objects.requireNonNull(type, "Type is required.");
-		Objects.requireNonNull(code, "Code is required.");
-
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code);
-		attributeCodePk.setAttributeType(type);
+		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
+		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
+		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
@@ -164,7 +161,7 @@ public class AttributeServiceImpl
 					byte data[] = Files.readAllBytes(Paths.get(articleDir.getPath() + "/" + attributeCode.getArticleFilename()));
 					article = new String(data);
 				} catch (IOException e) {
-					throw new OpenStorefrontRuntimeException("Unable to find article for type: " + type + " code: " + code, "Contact system admin to confirm file exists and is not corrupt.", e);
+					throw new OpenStorefrontRuntimeException("Unable to find article for type: " + attributeCodePk.getAttributeType() + " code: " + attributeCodePk.getAttributeCode(), "Contact system admin to confirm file exists and is not corrupt.", e);
 				}
 			}
 		}
@@ -172,15 +169,12 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveArticle(String type, String code, String article)
+	public void saveArticle(AttributeCodePk attributeCodePk, String article)
 	{
-		Objects.requireNonNull(type, "Type is required.");
-		Objects.requireNonNull(code, "Code is required.");
+		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
+		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
+		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 		Objects.requireNonNull(article, "Article is required.");
-
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code);
-		attributeCodePk.setAttributeType(type);
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
@@ -188,7 +182,7 @@ public class AttributeServiceImpl
 			article = sanitizer.santize(article).toString();
 
 			//save the article
-			String filename = attributeCode.getAttributeCodePk().toKey() + ".htm";
+			String filename = attributeCodePk.toKey() + ".htm";
 			File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
 			try {
 				Files.write(Paths.get(articleDir.getPath() + "/" + filename), article.getBytes());
@@ -202,7 +196,26 @@ public class AttributeServiceImpl
 				throw new OpenStorefrontRuntimeException("Unable to save article.", "Contact system admin.  Check permissions on the directory and make sure device has enough space.");
 			}
 		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find attribute for type: " + type + " code: " + code, "Add attribute first before posting article");
+			throw new OpenStorefrontRuntimeException("Unable to find attribute for type: " + attributeCodePk.getAttributeType() + " code: " + attributeCodePk.getAttributeCode(), "Add attribute first before posting article");
+		}
+	}
+
+	@Override
+	public void deleteArticle(AttributeCodePk attributeCodePk)
+	{
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			attributeCode.setDetailUrl(null);
+			if (attributeCode.getArticleFilename() != null) {
+				File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
+				File ariticleFile = new File(articleDir.getPath() + "/" + attributeCode.getArticleFilename());
+				if (ariticleFile.exists()) {
+					ariticleFile.delete();
+				}
+				attributeCode.setArticleFilename(null);
+			}
+			attributeCode.setUpdateUser(ServiceUtil.getCurrentUserName());
+			saveAttributeCode(attributeCode);
 		}
 	}
 
@@ -213,7 +226,7 @@ public class AttributeServiceImpl
 
 		AttributeType attributeType = persistenceService.findById(AttributeType.class, type);
 		if (attributeType != null) {
-			attributeType.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+			attributeType.setActiveStatus(AttributeCode.INACTIVE_STATUS);
 			attributeType.setUpdateDts(TimeUtil.currentDate());
 			attributeType.setUpdateUser(ServiceUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
@@ -227,7 +240,7 @@ public class AttributeServiceImpl
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
-			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+			attributeCode.setActiveStatus(AttributeCode.INACTIVE_STATUS);
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
 			attributeCode.setUpdateUser(ServiceUtil.getCurrentUserName());
 			persistenceService.persist(attributeCode);
