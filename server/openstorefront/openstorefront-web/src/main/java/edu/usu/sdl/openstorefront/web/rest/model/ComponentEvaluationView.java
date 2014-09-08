@@ -69,7 +69,7 @@ public class ComponentEvaluationView
 		// where do we get this from?
 		view.setReviewedVersion(null);
 		Date max;
-		max = (schedules.get(0) != null)? schedules.get(0).getUpdateDts(): null;
+		max = (schedules.size() > 0 && schedules.get(0) != null)? schedules.get(0).getUpdateDts(): null;
 		for (ComponentEvaluationScheduleView schedule : schedules) {
 			if (schedule.getUpdateDts().compareTo(max) > 0)
 			{

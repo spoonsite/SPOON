@@ -229,6 +229,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     $scope.applyFilters();
   };
 
+
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.getEvalDescription = function(name){
+    return MOCKDATA.evalSectionDescriptionMap[name];
+  };
+
   /***************************************************************
   * This function saves a component's tags
   ***************************************************************/
@@ -360,6 +368,66 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
   
+  var sqlToJsDate = function(sqlDate){
+    //sqlDate in SQL DATETIME format ("yyyy-mm-ddThh:mm:ss.ms")
+    var sqlDateArr1 = sqlDate.split('-');
+    //format of sqlDateArr1[] = ['yyyy','mm','dd hh:mm:ms']
+    var sYear = sqlDateArr1[0];
+    var sMonth = (Number(sqlDateArr1[1]) - 1).toString();
+    var sqlDateArr2 = sqlDateArr1[2].split('T');
+    //format of sqlDateArr2[] = ['dd', 'hh:mm:ss.ms']
+    var sDay = sqlDateArr2[0];
+    var sqlDateArr3 = sqlDateArr2[1].split(':');
+    //format of sqlDateArr3[] = ['hh','mm','ss.ms']
+    var sHour = sqlDateArr3[0];
+    var sMinute = sqlDateArr3[1];
+    var sqlDateArr4 = sqlDateArr3[2].split('.');
+    //format of sqlDateArr4[] = ['ss','ms']
+    var sSecond = sqlDateArr4[0];
+    var sMillisecond = sqlDateArr4[1];
+
+    return new Date(sYear,sMonth,sDay,sHour,sMinute,sSecond,sMillisecond);
+  }
+
+
+
+  var setupUpdateFlags = function(){
+    $scope.summaryUpdate = {};
+    $scope.detailsUpdate = {};
+    $scope.reviewsUpdate = {};
+    $scope.qandaUpdate = {};
+    if ($scope.details.details.lastViewedDts)
+    {
+      var component = $scope.details.details;
+      var lastViewedDts = sqlToJsDate(component.lastViewedDts);
+      _.each(component.componentMedia, function(media){
+        if (sqlToJsDate(media.updateDts) > lastViewedDts)
+        {
+          console.log('media Date', media.updateDts);
+          console.log('lastViewed', lastViewedDts);
+          
+        }
+      });
+      console.log('Date', $scope.details.details.lastViewedDts);
+      $timeout(function() {
+        var settings={
+          trigger: 'hover',
+          toggle: 'tooltip',
+          placement: 'left',
+          container: 'body',
+          title:' this has been updated',
+          template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+        }
+        $('#updatedStuff2').tooltip(settings);
+      });
+    }
+  }
+
+
+
+
+
+
   /***************************************************************
   * This function watches the details object for changes
   ***************************************************************/
@@ -377,6 +445,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
             $scope.reviewSummary = null;
           }
         }
+        setupUpdateFlags();
       }
     }
   }, true);
