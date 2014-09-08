@@ -403,55 +403,57 @@ var app = angular
       $httpBackend.whenGET('api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
       $httpBackend.whenGET('api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
       $httpBackend.whenGET(/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
-        var query = getParams(url);
-        var result = null;
-        // console.log('query Parameters', query);
-        // console.log('Key', query.key);
-        if (query.type === 'search' && (query.key === 'all' || query.key === 'All'))
-        {
-          query.key = '';
-        }
-        if (query.key !== '' && query.type === 'search') {
-          result = _.filter(MOCKDATA2.resultsList, function(item) {
-            return _.contains(item.name, query.key) || _.contains(item.description, query.key) /*|| _.contains(item.owner, query.key)*/;
-          });
-        } else if (query.type && query.type === 'search'){
-          result = MOCKDATA2.resultsList;
-        } else if (query.type){
-          result = _.filter(MOCKDATA2.resultsList, function(item){
-            return _.some(item.attributes, function(code) {
-              if (code.type === query.type) {
-                return code.code === query.key;
-              } else {
-                return false;
-              }
-            });
-          });
-        }
+        // var query = getParams(url);
+        // var result = null;
+        // // console.log('query Parameters', query);
+        // // console.log('Key', query.key);
+        // if (query.type === 'search' && (query.key === 'all' || query.key === 'All'))
+        // {
+        //   query.key = '';
+        // }
+        // if (query.key !== '' && query.type === 'search') {
+        //   result = _.filter(MOCKDATA2.resultsList, function(item) {
+        //     return _.contains(item.name, query.key) || _.contains(item.description, query.key) || _.contains(item.owner, query.key);
+        //   });
+        // } else if (query.type && query.type === 'search'){
+        //   result = MOCKDATA2.resultsList;
+        // } else if (query.type){
+        //   result = _.filter(MOCKDATA2.resultsList, function(item){
+        //     return _.some(item.attributes, function(code) {
+        //       if (code.type === query.type) {
+        //         return code.code === query.key;
+        //       } else {
+        //         return false;
+        //       }
+        //     });
+        //   });
+        // }
         return [200, result, {}];
       });
       //
-      $httpBackend.whenGET(/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
-        // grab the url (needed for what the backend will simulate)
-        // parse it into an array
-        var urlSplit = url.split('/');
-        var i = 0;
-        // go until we find our resource
-        while (urlSplit[i++] !== 'component'){}
-          // if there is an id, grab it for our use.
-        var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
+      $httpBackend.whenGET('api/v1/resource/components').passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
+      // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
+      //   // grab the url (needed for what the backend will simulate)
+      //   // parse it into an array
+      //   var urlSplit = url.split('/');
+      //   var i = 0;
+      //   // go until we find our resource
+      //   while (urlSplit[i++] !== 'component'){}
+      //     // if there is an id, grab it for our use.
+      //   var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
 
-        var result = $q.defer();
-        $timeout(function() {
-          if (id && id !== '') {
-            var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
-            result.resolve(temp);
-          } else {
-            result.resolve(MOCKDATA2.componentList);
-          }
-        }, 1000);
-        return [200, result.promise, {}];
-      });
+      //   var result = $q.defer();
+      //   $timeout(function() {
+      //     if (id && id !== '') {
+      //       var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
+      //       result.resolve(temp);
+      //     } else {
+      //       result.resolve(MOCKDATA2.componentList);
+      //     }
+      //   }, 1000);
+      //   return [200, result.promise, {}];
+      // });
 
       $httpBackend.whenGET('api/v1/resource/attributes/DI2E-SVCV4-A/attributeCode/1.2.1/article').respond(function(method, url, data) {
         var request = new XMLHttpRequest();

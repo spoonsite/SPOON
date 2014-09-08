@@ -66,15 +66,38 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
 
   componentservice.getComponentDetails = function(id) {
     var result = $q.defer();
-    var url = 'api/v1/resource/component/';
+    if (id)
+    {
+      var url = 'api/v1/resource/components/'+id+'/detail';
+      var value = null;
+      // if they don't give me an ID I send them back the whole list.
+      value = checkExpire('component_'+id, minute * 2);
+      if (value) {
+        result.resolve(value);
+      } else {
+        $http({
+          method: 'GET',
+          url: url
+        })
+        .success(function(data, status, headers, config) { /*jshint unused:false*/
+          if (data && !isEmpty(data)) {
+            save('component_'+id, data);
+          }
+          result.resolve(data);
+        });
+      }
+    } else{
+      result.reject('A unique ID is required to retrieve component details');
+    }
+    return result.promise;
+  };
+
+  componentservice.getComponentList = function() {
+    var result = $q.defer();
+    var url = 'api/v1/resource/components';
     var value = null;
     // if they don't give me an ID I send them back the whole list.
-    if (id) {
-      url = url + id + '/';
-      value = checkExpire('component_'+id, minute * 2);
-    } else {
-      value = checkExpire('componentList', minute * 2);
-    }
+    value = checkExpire('componentList', minute * 10);
     if (value) {
       result.resolve(value);
     } else {
@@ -83,16 +106,10 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         url: url
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        data.then(function(resultObj) {
-          if (resultObj && !isEmpty(resultObj)) {
-            if (id) {
-              save('component_'+id, resultObj);
-            } else {
-              updateCache('componentList', resultObj);
-            }
-          }
-          result.resolve(resultObj);
-        });
+        if (data && !isEmpty(data)) {
+          save('componentList', data);
+        }
+        result.resolve(data);
       });
     }
     return result.promise;
@@ -113,7 +130,8 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   componentservice.doSearch = function(type, key) {
     var deferred = $q.defer();
     if (type && key) {
-      $http.get('api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
+      // $http.get('api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
+      $http.get('api/v1/resource/components').success(function(data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       });
     }
