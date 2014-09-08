@@ -68,7 +68,11 @@ public class BeanComparator<T>
 					return -1;
 				} else if (value1 != null && value2 != null) {
 
-					if (StringUtils.isNumeric(value1) && StringUtils.isNumeric(value2)) {
+					if (StringUtils.isNotBlank(value1)
+							&& StringUtils.isNotBlank(value2)
+							&& StringUtils.isNumeric(value1)
+							&& StringUtils.isNumeric(value2)) {
+
 						BigDecimal numValue1 = new BigDecimal(value1);
 						BigDecimal numValue2 = new BigDecimal(value2);
 						return numValue1.compareTo(numValue2);
