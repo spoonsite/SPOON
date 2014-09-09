@@ -373,7 +373,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
 
   $scope.getIsUpdated = function(item)
   {
-    console.log('item', item);
     
     return _.contains(updateList, item);
   }
@@ -475,7 +474,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         }
       });
 
-      console.log('Update list', updateList);
       $timeout(function() {
         var settings={
           trigger: 'hover',

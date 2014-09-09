@@ -1,94 +1,100 @@
-<div class="row">
-  <div class="col-sm-12">
+<div ng-controller="DetailsReviewCtrl">
+  <form ng-submit="submitReview($event, review, revs)">
     <div class="row">
       <div class="col-sm-12">
-        <h3> How many stars:&nbsp; 
-          <raty class="large-raty" id="star{{$index}}" style="min-width:110px; height: 100%; margin: -6px 10px -4px 0px;" score="0" number="5" path="../../images/raty/">
-          </raty>
-        </h3>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="row" style="margin:0px;">
-          <strong>Title:&nbsp;</strong>
-        </div>
-        <input type="text" class="form-control" style="width: 325px; display:inline-block;" placeholder="Enter Review Title Here">
-      </div>
-    </div>
-    <div class="col-sm-12">
-      &nbsp;
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="row" style="margin:0px;">
-          <label>How long have you used it:&nbsp;</label>
-        </div>
-        <button type="button" class="btn btn-default" style="width: 325px;" ng-model="review.usedTime" data-html="1" ng-options="level.label for level in expertise" data-animation="am-flip-x" bs-select>
-          Action <span class="caret"></span>
-        </button>
-      </div>
-    </div>
-    <div class="col-sm-12">
-      &nbsp;
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="form-group">
-          <div class="row" style="margin:0px;">
-            <label class="control-label">Last Used:&nbsp;</label>
-          </div>
-          <div class="form-group" >
-            <input type="text" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM-yyyy" data-start-view="2" data-min-view="1" autoclose="true" ng-model="lastUsed" data-max-date="{{untilDate}}" placeholder="Last Used" bs-datepicker> 
-            &nbsp;<i class="fa fa-calendar"></i> <span><small>Defaults to "The Present"</small></span>
+        <div class="row">
+          <div class="col-sm-12">
+            <h3> How many stars:&nbsp; 
+              <raty class="large-raty" id="star{{$index}}" style="min-width:110px; height: 100%; margin: -6px 10px -4px 0px;" score="{{review.rating}}" number="5" path="../../images/raty/">
+              </raty>
+            </h3>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="row" style=" padding-bottom: 10px;">
-      <div class="col-sm-12">
-        <div class="row" style="margin:0px;">
-          <label>Describe Yourself:&nbsp;</label>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="row" style="margin:0px;">
+              <strong>Title:&nbsp;</strong>
+            </div>
+            <input type="text" class="form-control" style="width: 325px; display:inline-block;" placeholder="Enter Review Title Here" ng-model="review.title">
+          </div>
         </div>
-        <button type="button" class="btn btn-default" style="width: 325px;" ng-model="review.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes"  data-animation="am-flip-x" bs-select>
-          Action <span class="caret"></span>
-        </button>
-      </div>
-    </div>	  
-    <div class="row" style=" padding-bottom: 10px;">
-      <div class="col-sm-12">
-        <div class="row" style="margin:0px;">
-          <label>Organization:&nbsp;</label>
-          <input type="text" class="form-control" ng-model="review.organization">
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="row">
         <div class="col-sm-12">
-          <strong>Pros: </strong>
-          <tags-input class="bootstrap" min-length="1" ng-model="reviewPros" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="" on-tag-removed=""><auto-complete min-length="1" source="checkTagsList($query, reviewPros, prosConsList.pros)"></auto-complete></tags-input>
+          &nbsp;
         </div>
-      </div>
-      <div class="row">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="row" style="margin:0px;">
+              <label>How long have you used it:&nbsp;</label>
+            </div>
+            <button type="button" class="btn btn-default" style="width: 325px;" ng-model="review.usedTimeCode" data-html="1" ng-options="level.label for level in expertise" data-animation="am-flip-x" bs-select>
+              Action <span class="caret"></span>
+            </button>
+          </div>
+        </div>
         <div class="col-sm-12">
-          <strong>Cons: </strong>
-          <tags-input class="bootstrap" min-length="1" ng-model="reviewCons" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="" on-tag-removed=""><auto-complete min-length="1" source="checkTagsList($query, reviewCons, prosConsList.cons)"></auto-complete></tags-input>
+          &nbsp;
         </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group">
+              <div class="row" style="margin:0px;">
+                <label class="control-label">Last Used:&nbsp;</label>
+              </div>
+              <div class="form-group" >
+                <input type="text" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM-yyyy" data-start-view="2" data-min-view="1" autoclose="true" ng-model="review.lastUsed" data-max-date="{{untilDate}}" placeholder="Last Used" data-date-type="number" bs-datepicker> 
+                &nbsp;<i class="fa fa-calendar"></i> <span><small>Defaults to "The Present"</small></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" style=" padding-bottom: 10px;">
+          <div class="col-sm-12">
+            <div class="row" style="margin:0px;">
+              <label>Describe Yourself:&nbsp;</label>
+            </div>
+            <button type="button" class="btn btn-default" style="width: 325px;" ng-model="review.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes"  data-animation="am-flip-x" bs-select>
+              Action <span class="caret"></span>
+            </button>
+          </div>
+        </div> 
+        <div class="row" style=" padding-bottom: 10px;">
+          <div class="col-sm-12">
+            <div class="row" style="margin:0px;">
+              <label>Organization:&nbsp;</label>
+              <input type="text" class="form-control" ng-model="review.organization">
+            </div>
+          </div>
+        </div>    
+        <div>
+          <div class="row">
+            <div class="col-sm-12">
+              <strong>Pros: </strong>
+              <tags-input class="bootstrap" min-length="1" ng-model="review.pros" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="" on-tag-removed=""><auto-complete min-length="1" source="checkTagsList($query, review.pros, prosConsList.pros)"></auto-complete></tags-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <strong>Cons: </strong>
+              <tags-input class="bootstrap" min-length="1" ng-model="review.cons" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="" on-tag-removed=""><auto-complete min-length="1" source="checkTagsList($query, review.cons, prosConsList.cons)"></auto-complete></tags-input>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <label for="recommended">
+              <input type="checkbox" id="recommended" ng-model="review.recommend" ng-checked="review.recommend">&nbsp;I recommend this component for reuse.
+            </label>
+          </div>
+        </div>
+        <div>
+          <strong>Comments:</strong>      
+          <div><textarea name="" id="" rows="10" class="boxsizingBorder">{{review.comment}}</textarea></div>    
+        </div>    
+        <div class="text-center" style="padding-top: 20px;">
+          <button type="submit" class="btn btn-primary">Update Review</button>                  
+          <button type="button" class="btn btn-primary" ng-click="revs.edit = !!!revs.edit">Cancel</button>                  
+        </div>    
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <label for="recommended">
-          <input type="checkbox" id="recommended" ng-model="review.recommend">&nbsp;I recommend this component for reuse.
-        </label>
-      </div>
-    </div>
-    <div>
-      <strong>Comments:</strong>      
-      <div><textarea name="" id="" rows="10" class="boxsizingBorder"></textarea></div>	  
-    </div>    
-    <div class="text-center" style="padding-top: 20px;">
-      <button type="button" class="btn btn-primary" ng-click="">Post Review</button>									
-    </div>	  
-  </div>
+  </form>
+</div>

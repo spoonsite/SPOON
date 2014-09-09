@@ -247,7 +247,6 @@ var sqlToJsDate = function(sqlDate){
   return new Date(sYear,sMonth,sDay,sHour,sMinute,sSecond,sMillisecond);
 }
 
-
 // Base.esapi.properties.logging.ApplicationLogger = {
 //   Level: org.owasp.esapi.Logger.ALL,
 //   Appenders: [ new Log4js.ConsoleAppender() ],

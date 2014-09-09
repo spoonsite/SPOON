@@ -229,16 +229,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $scope.userBackup = jQuery.extend(true, {}, $scope.user);
   };
 
-  /***************************************************************
-  * This function saves the profile changes in the scope by copying them from
-  * the user variable into the backup variable (this function would be where
-  * you send the saved data to the database to store it)
-  ***************************************************************/ //
-  $scope.submitReview = function(review, revs) {
-    // console.log('review', review);
-    // console.log('revs', revs);
-    
-  };
 
   /***************************************************************
   * This function reverts the changes in the profile form by just copying back
