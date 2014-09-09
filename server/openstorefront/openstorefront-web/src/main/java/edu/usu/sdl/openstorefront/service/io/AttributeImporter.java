@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.io;
 
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
@@ -24,64 +23,26 @@ import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quartz.jobs.DirectoryScanListener;
 
 /**
  *
  * @author dshurtleff
  */
 public class AttributeImporter
-		implements DirectoryScanListener, Initializable
+		extends BaseDirImporter
+		implements Initializable
 {
 
 	private static final Logger log = Logger.getLogger(AttributeImporter.class.getName());
-	private final ServiceProxy serviceProxy = new ServiceProxy();
-
-	@Override
-	public void filesUpdatedOrAdded(File[] updatedFiles)
-	{
-		String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS);
-		for (File file : updatedFiles) {
-
-			boolean process = true;
-			Date lastSyncDate = null;
-			if (lastSyncDts != null) {
-				lastSyncDate = TimeUtil.fromString(lastSyncDts);
-			}
-			if (lastSyncDate != null) {
-				if (file.lastModified() <= lastSyncDate.getTime()) {
-					process = false;
-				}
-			}
-
-			if (process) {
-				//log
-				log.log(Level.INFO, MessageFormat.format("Syncing Attributes: {0}", file));
-				for (FileMap fileMap : FileMap.values()) {
-					if (fileMap.getFilename().equals(file.getName())) {
-						try {
-							Map<AttributeType, List<AttributeCode>> attributeMap = fileMap.getParser().parse(new FileInputStream(file));
-							serviceProxy.getAttributeService().syncAttribute(attributeMap);
-						} catch (FileNotFoundException ex) {
-							log.log(Level.SEVERE, "Failed processing file: " + file, ex);
-						}
-					}
-				}
-			}
-		}
-		serviceProxy.getSystemService().saveProperty(ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
-	}
 
 	@Override
 	public void initialize()
@@ -103,6 +64,29 @@ public class AttributeImporter
 	@Override
 	public void shutdown()
 	{
+	}
+
+	@Override
+	protected String getSyncProperty()
+	{
+		return ApplicationProperty.ATTRIBUTE_IMPORTER_LAST_SYNC_DTS;
+	}
+
+	@Override
+	protected void processFile(File file)
+	{
+		//log
+		log.log(Level.INFO, MessageFormat.format("Syncing Attributes: {0}", file));
+		for (FileMap fileMap : FileMap.values()) {
+			if (fileMap.getFilename().equals(file.getName())) {
+				try {
+					Map<AttributeType, List<AttributeCode>> attributeMap = fileMap.getParser().parse(new FileInputStream(file));
+					serviceProxy.getAttributeService().syncAttribute(attributeMap);
+				} catch (FileNotFoundException ex) {
+					log.log(Level.SEVERE, "Failed processing file: " + file, ex);
+				}
+			}
+		}
 	}
 
 	private enum FileMap

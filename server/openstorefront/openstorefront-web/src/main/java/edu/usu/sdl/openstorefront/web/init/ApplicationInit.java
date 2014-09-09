@@ -18,11 +18,15 @@ package edu.usu.sdl.openstorefront.web.init;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -42,6 +46,13 @@ public class ApplicationInit
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
+		try {
+			//Init Logger
+			LogManager.getLogManager().readConfiguration(new FileInputStream(FileSystemManager.getConfig("logging.properties")));
+		} catch (IOException ex) {
+			log.log(Level.SEVERE, "Unable to initialize logger....check logging.properties of the application.", ex);
+		}
+
 		//Order is important
 		startupManager(new DBManager());
 		startupManager(new OSFCacheManager());

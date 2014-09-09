@@ -45,7 +45,7 @@ public class AttributeCodePk
 
 	public String toKey()
 	{
-		return attributeType + "-" + attributeCode;
+		return getAttributeType() + "-" + getAttributeCode();
 	}
 
 	public static AttributeCodePk fromKey(String key)
