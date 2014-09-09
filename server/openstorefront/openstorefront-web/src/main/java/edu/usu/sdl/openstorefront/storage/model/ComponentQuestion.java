@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -90,6 +92,11 @@ public class ComponentQuestion
 	public void setQuestionId(String questionId)
 	{
 		this.questionId = questionId;
+	}
+
+	public void figureUpdateDts(List<ComponentQuestionResponseView> responseViews)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }

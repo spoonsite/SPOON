@@ -6,7 +6,7 @@
         <div id="eval-level-div">
           <a href="javascript: void(0)" data-toggle="modal" data-target="#basicModal2"><i class="glyphicon glyphicon-info-sign"></i></a>
           <span style="font-size:12px; color:black; margin-left:5px">Evaluation start: January 1, 2014</span>
-          <div class="col-md-12" style="padding:0;" >
+          <div class="col-md-12" style="padding:0;" id="evaluationScheduleUpdate" >
             <div ng-repeat="rows in details.details.evaluation.evaluationSchedule" ng-class="rows.levelStatus === 'C'? 'complete': rows.levelStatus === 'H'? 'haulted': rows.levelStatus === 'P'? 'inprogress': 'notstarted'" class="col-md-3" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Evaluation Level {{$index}}<br/> {{getEval(rows.evaluationLevelCode).label}}" data-container="body" data-content="<p class='dd'>{{getEval(rows.evaluationLevelCode).description}}</p>">
             <span class="helpcontent" >
               <a href="javascript:void(0)" 
@@ -33,7 +33,7 @@
         <tr>
           <th class="valign" colspan="2"><h4>External Dependencies</h4></th>
         </tr>             
-        <tr data-ng-repeat="row in details.details.dependencies">
+        <tr id="dependencies{{$index}}Update" data-ng-repeat="row in details.details.dependencies">
           <td class="text-left-bold">{{row.dependency}}</td>
           <td class="text-left">{{row.comment}}</td>
         </tr>
@@ -49,7 +49,7 @@
           <th class="valign"  colspan="5">Description</th>
           <th class="valign"  colspan="8">Link</th>
         </tr>             
-        <tr data-ng-repeat="row in details.details.resources">
+        <tr id="resources{{$index}}Update" data-ng-repeat="row in details.details.resources">
           <td colspan="5" class="text-left-bold hasLinks" style="overflow:hidden;">{{row.name}}</td>
           <td ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td>
           <td ng-if="!row.description" colspan="5" class="text-left">&mdash;</td>
@@ -73,7 +73,7 @@
           <th class="valign"  colspan="4">Phone</th>
           <th class="valign"  colspan="6">Email</th>
         </tr>             
-        <tr data-ng-repeat="row in details.details.contacts">
+        <tr id="contacts{{$index}}Update" data-ng-repeat="row in details.details.contacts">
           <td colspan="4" class="text-left">{{row.positionDescription}}<span ng-if="row.organization">&nbsp;&mdash;&nbsp;{{row.organization}}</span></td>
           <td colspan="4" class="text-left">{{row.name}}</td>
           <td ng-if="row.phone" colspan="4" class="text-left">{{row.phone}}</td>

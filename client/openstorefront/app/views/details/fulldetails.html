@@ -17,7 +17,7 @@
             </span>
           </div>
           <div class="pull-right" id="detailsToolButtons">
-            <button class='btn btn-default detailsTitleButton collapsed' id="data-collapse-tags" ng-click="toggleTags('#tagsCollapse')"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
+            <button class='btn btn-default detailsTitleButton collapsed' id="data-collapse-tags" ng-click="toggleTags('#tagsUpdate')"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
               <i class="fa fa-tags imitateLink"></i>
             </button>
             <button class='btn btn-default detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
@@ -38,7 +38,7 @@
       <!-- injected evaluations start -->
 
       <!-- injected evaluations start -->
-      <div style="padding: 0px 10px;" id="tagsCollapse" class="panel-collapse collapse">
+      <div style="padding: 0px 10px;" id="tagsUpdate" class="panel-collapse collapse">
         <tags-input class="bootstrap" min-length="1" ng-model="details.details.tags" replace-spaces-with-dashes="false" on-tag-added="saveTags(details.details.componentId, details.details.tags);" on-tag-removed="saveTags(details.details.componentId, details.details.tags);"><auto-complete min-length="1" source="checkTagsList($query, details.details.assetTags, tagsList)"></auto-complete></tags-input>
       </div>
     </div>

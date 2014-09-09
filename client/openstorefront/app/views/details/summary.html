@@ -1,7 +1,7 @@
 
 <div class="leftCol hideTheExtra">
   <div ng-if="details.details.evaluation.startDate !== null" class="rightCol">
-    <table class="table table-bordered table-hover" style="table-layout: fixed;">
+    <table class="table table-bordered table-hover" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
       <tbody>
         <tr>
           <th ng-if="details.details.evaluation.evaluationSections[0] !== undefined" class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>
@@ -18,7 +18,7 @@
               </i>
               <span ng-if="col.score <= 0">&nbsp;</span>
             </div>
-            <div class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;"  popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>" >
+            <div class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;"  popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>{{getEvalDescription(col.name)}}" >
               <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
             </div>
           </td>
@@ -32,7 +32,7 @@
     </p>
     <br>
   </div>
-  <div ng-if="details.details.componentMedia[0]" class="leftCol hideTheExtra" id="updatedStuff2">
+  <div ng-if="details.details.componentMedia[0]" class="leftCol hideTheExtra" id="mediaUpdate">
     <div class="section-headers"><h4>Screenshots / Media</h4></div>
     <br>
     <div class="containers">

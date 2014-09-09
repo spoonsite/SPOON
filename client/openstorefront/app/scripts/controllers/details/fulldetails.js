@@ -367,30 +367,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       }
     }
   });
-  
-  var sqlToJsDate = function(sqlDate){
-    //sqlDate in SQL DATETIME format ("yyyy-mm-ddThh:mm:ss.ms")
-    var sqlDateArr1 = sqlDate.split('-');
-    //format of sqlDateArr1[] = ['yyyy','mm','dd hh:mm:ms']
-    var sYear = sqlDateArr1[0];
-    var sMonth = (Number(sqlDateArr1[1]) - 1).toString();
-    var sqlDateArr2 = sqlDateArr1[2].split('T');
-    //format of sqlDateArr2[] = ['dd', 'hh:mm:ss.ms']
-    var sDay = sqlDateArr2[0];
-    var sqlDateArr3 = sqlDateArr2[1].split(':');
-    //format of sqlDateArr3[] = ['hh','mm','ss.ms']
-    var sHour = sqlDateArr3[0];
-    var sMinute = sqlDateArr3[1];
-    var sqlDateArr4 = sqlDateArr3[2].split('.');
-    //format of sqlDateArr4[] = ['ss','ms']
-    var sSecond = sqlDateArr4[0];
-    var sMillisecond = sqlDateArr4[1];
 
-    return new Date(sYear,sMonth,sDay,sHour,sMinute,sSecond,sMillisecond);
-  }
-
-
-
+  /***************************************************************
+  * This function sets up the 'show updated flags'
+  ***************************************************************/  
   var setupUpdateFlags = function(){
     $scope.summaryUpdate = {};
     $scope.detailsUpdate = {};
@@ -400,15 +380,86 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     {
       var component = $scope.details.details;
       var lastViewedDts = sqlToJsDate(component.lastViewedDts);
+      var shown = false;
+      var updateList = [];
       _.each(component.componentMedia, function(media){
-        if (sqlToJsDate(media.updateDts) > lastViewedDts)
+        if (!shown && sqlToJsDate(media.updateDts) > lastViewedDts)
         {
-          console.log('media Date', media.updateDts);
-          console.log('lastViewed', lastViewedDts);
-          
+          //media.updateDts is more recent. We should show it as updated
+          updateList.push('media');
+          shown = true;
         }
       });
-      console.log('Date', $scope.details.details.lastViewedDts);
+      shown = false;
+      _.each(component.tags, function(tag){
+        if (!shown && sqlToJsDate(tag.updateDts) > lastViewedDts)
+        {
+          updateList.push('tags');
+          shown = true;
+        }
+      });
+      shown = false;
+      _.each(component.reviews, function(review, index){
+        if (!shown && sqlToJsDate(review.updateDate) > lastViewedDts)
+        {
+          updateList.push('reviews'+index);
+          shown = true;
+        }
+      });
+      _.each(component.resources, function(resource, index){
+        if (sqlToJsDate(resource.updateDts) > lastViewedDts)
+        {
+          updateList.push('resources'+index);
+        }
+      });
+      _.each(component.questions, function(question, index){
+        if (sqlToJsDate(question.updateDts) > lastViewedDts)
+        {
+          updateList.push('questions'+index);
+        }
+      });
+      shown = false;
+      _.each(component.metadata, function(data){
+        if (!shown && sqlToJsDate(data.updateDts) > lastViewedDts)
+        {
+          updateList.push('metadata');
+          shown = true;
+        }
+      });
+      if (sqlToJsDate(component.evaluation.updateDts) > lastViewedDts)
+      {
+        shown = false;
+        _.each(component.evaluation.evaluationSections, function(section, index){
+          if (!shown && sqlToJsDate(section.updateDts) > lastViewedDts)
+          {
+            updateList.push('evaluationSections');
+            shown = true;
+          }
+        });
+        shown = false;
+        _.each(component.evaluation.evaluationSchedule, function(schedule, index){
+          if (!shown && sqlToJsDate(schedule.updateDts) > lastViewedDts)
+          {
+            updateList.push('evaluationSchedule');
+            shown = true;
+          }
+        });
+        updateList.push('evaluation');
+      }
+      _.each(component.dependencies, function(dependency, index){
+        if (sqlToJsDate(dependency.updateDts) > lastViewedDts)
+        {
+          updateList.push('dependencies'+index);
+        }
+      });
+      _.each(component.contacts, function(contact, index){
+        if (sqlToJsDate(contact.updateDts) > lastViewedDts)
+        {
+          updateList.push('contacts'+index);
+        }
+      });
+
+      console.log('Update list', updateList);
       $timeout(function() {
         var settings={
           trigger: 'hover',
@@ -418,15 +469,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           title:' this has been updated',
           template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
         }
-        $('#updatedStuff2').tooltip(settings);
+        _.each(updateList, function(updateId){
+          $('#'+updateId+'Update').tooltip(settings);
+        })
       });
     }
   }
-
-
-
-
-
 
   /***************************************************************
   * This function watches the details object for changes

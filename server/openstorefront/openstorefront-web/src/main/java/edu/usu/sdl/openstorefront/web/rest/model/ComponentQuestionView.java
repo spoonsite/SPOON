@@ -27,11 +27,12 @@ import java.util.List;
  */
 public class ComponentQuestionView
 {
+
 	private String question;
-    private String username;
-    private String userType;    
-    private Date createDts;
-    private Date updateDts;
+	private String username;
+	private String userType;
+	private Date createDts;
+	private Date updateDts;
 
 	@DataType(ComponentQuestionResponseView.class)
 	private List<ComponentQuestionResponseView> responses = new ArrayList<>();
@@ -39,7 +40,7 @@ public class ComponentQuestionView
 	public ComponentQuestionView()
 	{
 	}
-	
+
 	public static ComponentQuestionView toView(ComponentQuestion question, List<ComponentQuestionResponseView> responses)
 	{
 		ComponentQuestionView view = new ComponentQuestionView();
@@ -47,7 +48,17 @@ public class ComponentQuestionView
 		view.setQuestion(question.getQuestion());
 		view.setUsername(question.getCreateUser());
 		view.setUserType(question.getUserType());
-		view.setUpdateDts(question.getUpdateDts());
+		Date max;
+		if (responses.size() > 0) {
+			max = responses.get(0).getUpdateDts();
+			for(ComponentQuestionResponseView response: responses){
+				if (response.getUpdateDts().compareTo(max) > 0) {
+					max = response.getUpdateDts();
+				}
+			}
+			view.setUpdateDts(max);
+		}
+
 		return view;
 	}
 
