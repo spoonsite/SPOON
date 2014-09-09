@@ -46,9 +46,9 @@ exports.config = {
     multiCapabilities: [
         // Will run up to 3 or 4 at a time on my machine
         // Options:  'chrome', 'firefox', 'internet explorer', 'opera', 'safari'
-    //  {browserName: 'chrome'},
-    //  {browserName: 'chrome'},
+        //{browserName: 'firefox'},
         {browserName: 'chrome'}
+
     ]
         // 8 Aug '14 Firefox QUIT WORKING
         //browserName: 'internet explorer',
