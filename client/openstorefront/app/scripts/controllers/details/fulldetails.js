@@ -229,6 +229,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     $scope.applyFilters();
   };
 
+
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.getEvalDescription = function(name){
+    return MOCKDATA.evalSectionDescriptionMap[name];
+  };
+
   /***************************************************************
   * This function saves a component's tags
   ***************************************************************/
