@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
 import java.util.Date;
@@ -119,6 +120,25 @@ public class ComponentDetailView
 	{
 	}
 
+	public void setComponentDetails(Component component, Component parentComponent)
+	{
+		name = component.getName();
+		guid = component.getGuid();
+		description = component.getDescription();
+		approvedDate = component.getApprovedDts();
+		approvedUser = component.getApprovedUser();
+		createUser = component.getCreateUser();
+		createDts = component.getCreateDts();
+		version = component.getVersion();
+		activeStatus = component.getActiveStatus();
+		releaseDate = component.getReleaseDate();
+		organization = component.getOrganization();
+		parentComponent.setComponentId(parentComponent.getComponentId());
+		parentComponent.setName(parentComponent.getName());
+		parentComponent.setUpdateDts(parentComponent.getUpdateDts());
+		lastActivityDts = component.getLastActivityDts();	
+	}
+	
 	public String getComponentId()
 	{
 		return componentId;

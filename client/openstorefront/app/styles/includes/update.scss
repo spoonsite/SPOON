@@ -1,0 +1,9 @@
+.updatedForUser{
+  background: -moz-linear-gradient(left,  rgba(216,184,0,0.5) 0%, rgba(255,255,255,0) 50%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(216,184,0,0.5)), color-stop(50%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left,  rgba(216,184,0,0.5) 0%,rgba(255,255,255,0) 50%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left,  rgba(216,184,0,0.5) 0%,rgba(255,255,255,0) 50%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(left,  rgba(216,184,0,0.5) 0%,rgba(255,255,255,0) 50%); /* IE10+ */
+  background: linear-gradient(to right,  rgba(216,184,0,0.5) 0%,rgba(255,255,255,0) 50%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80d8b800', endColorstr='#00ffffff',GradientType=1 ); /* IE6-9 */
+}

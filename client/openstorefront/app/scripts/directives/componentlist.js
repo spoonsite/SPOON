@@ -177,7 +177,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         scope.title = attrs.title;
       }
       if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
-        scope.showCompare = true;
+        // scope.showCompare = true;
       }
 
       /***************************************************************

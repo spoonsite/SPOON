@@ -368,20 +368,32 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
 
+  var updateList = [];
+
+
+  $scope.getIsUpdated = function(item)
+  {
+    console.log('item', item);
+    
+    return _.contains(updateList, item);
+  }
+
   /***************************************************************
-  * This function sets up the 'show updated flags'
+  * This function sets up the 'show updated flags' and creates the tooltips.
   ***************************************************************/  
   var setupUpdateFlags = function(){
-    $scope.summaryUpdate = {};
-    $scope.detailsUpdate = {};
-    $scope.reviewsUpdate = {};
-    $scope.qandaUpdate = {};
-    if ($scope.details.details.lastViewedDts)
+    // remove old tooltips so that when we setup the update flags, they'll be fresh
+    _.each(updateList, function(list){
+      $('#'+list+'Update').tooltip('destroy');
+    });
+    // reset the update list
+    updateList = [];
+
+    if ($scope.details.details.lastViewedDts !== undefined)
     {
       var component = $scope.details.details;
       var lastViewedDts = sqlToJsDate(component.lastViewedDts);
       var shown = false;
-      var updateList = [];
       _.each(component.componentMedia, function(media){
         if (!shown && sqlToJsDate(media.updateDts) > lastViewedDts)
         {
@@ -394,6 +406,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       _.each(component.tags, function(tag){
         if (!shown && sqlToJsDate(tag.updateDts) > lastViewedDts)
         {
+          if (!$('#tagsUpdate').hasClass('in'))
+          {
+            $scope.toggleTags('#tagsUpdate');
+          }
           updateList.push('tags');
           shown = true;
         }
@@ -466,8 +482,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           toggle: 'tooltip',
           placement: 'left',
           container: 'body',
-          title:' this has been updated',
-          template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+          title:'This content has been updated',
+          template: '<div class="tooltip removeOnChange" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
         }
         _.each(updateList, function(updateId){
           $('#'+updateId+'Update').tooltip(settings);
@@ -493,6 +509,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
             $scope.reviewSummary = null;
           }
         }
+        // setup the update list.
         setupUpdateFlags();
       }
     }

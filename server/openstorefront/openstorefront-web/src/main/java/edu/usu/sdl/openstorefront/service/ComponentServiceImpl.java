@@ -144,7 +144,16 @@ public class ComponentServiceImpl
 
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
-		
+		Component tempParentComponent;
+		if (tempComponent != null && tempComponent.getParentComponentId() != null)
+		{
+			tempParentComponent = persistenceService.findById(Component.class, tempComponent.getParentComponentId());
+		}
+		else {
+			tempParentComponent = new Component();
+		}
+		result.setComponentDetails(tempComponent, tempParentComponent);
+
 		UserWatch tempWatch = new UserWatch();
 		// TODO: take this out of the comments once we're in production.
 		//tempWatch.setUsername(ServiceUtil.getCurrentUserName());

@@ -24,7 +24,7 @@ import java.util.Date;
  */
 public class ComponentRelationshipView
 {
-	private Long componentId;
+	private String componentId;
 	private String name;
 	private Date updateDts;
 
@@ -32,12 +32,12 @@ public class ComponentRelationshipView
 	{
 	}
 
-	public Long getComponentId()
+	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	public void setComponentId(Long componentId)
+	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}
