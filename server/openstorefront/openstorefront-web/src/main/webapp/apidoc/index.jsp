@@ -57,22 +57,19 @@ limitations under the License.
 					<a href="#../API.action?API&resourceClass=AttributeResource">Attributes</a>
 				</li>	
 				<li>
-					<a href="#../API.action?API&resourceClass=LookupTypeResource">Lookup Type </a>
+					<a href="#../API.action?API&resourceClass=LookupTypeResource">Lookup Type</a>
+				</li>
+				<li>
+					<a href="#../API.action?API&resourceClass=HighlightResource">Highlights</a>
 				</li>				
 			</ul>
 			<h5>Application Resources</h5>	
 			<ul>
 				<li>
-					<a href="appproperties.html">Application Properties</a>
+					<a href="#../API.action?API&resourceClass=ApplicationPropertyResource">Application Properties</a>
 				</li>
 				<li>
-					<a href="userTracking.html">User Tracking</a>
-				</li>				
-				<li>
-					<a href="componentTracking.html">Component Tracking</a>
-				</li>
-				<li>
-					<a href="errorTickets.html">Error Ticket</a>
+					<a href="#../API.action?API&resourceClass=ErrorTicketResource">Error Ticket</a>
 				</li>				
 			</ul>
 			

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.io.ArticleImporter;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
+import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,10 +51,7 @@ public class JobManager
 		try {
 			StdSchedulerFactory factory = new StdSchedulerFactory(FileSystemManager.getConfig("quartz.properties").getPath());
 			scheduler = factory.getScheduler();
-
-			//Init system Jobs
 			initSystemJobs();
-
 			scheduler.start();
 
 		} catch (SchedulerException ex) {
@@ -63,10 +61,11 @@ public class JobManager
 
 	private static void initSystemJobs() throws SchedulerException
 	{
-		log.log(Level.FINEST, "Setting up Lookup Import Job...");
+		log.log(Level.FINEST, "Setting up Import Jobs...");
 		setupLookupCodeJob();
 		setupAttributeJob();
 		setupArticleJob();
+		setupHighlightJob();
 	}
 
 	private static void setupLookupCodeJob() throws SchedulerException
@@ -87,7 +86,6 @@ public class JobManager
 						.repeatForever())
 				.build();
 
-		// Tell quartz to schedule the job using our trigger
 		scheduler.scheduleJob(job, trigger);
 	}
 
@@ -109,7 +107,6 @@ public class JobManager
 						.repeatForever())
 				.build();
 
-		// Tell quartz to schedule the job using our trigger
 		scheduler.scheduleJob(job, trigger);
 	}
 
@@ -132,7 +129,28 @@ public class JobManager
 						.repeatForever())
 				.build();
 
-		// Tell quartz to schedule the job using our trigger
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void setupHighlightJob() throws SchedulerException
+	{
+		JobDetail job = JobBuilder.newJob(DirectoryScanJob.class)
+				.withIdentity("HightlightImport", JOB_GROUP_SYSTEM)
+				.build();
+
+		FileSystemManager.getDir(FileSystemManager.IMPORT_HIGHLIGHT_DIR);
+		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_NAME, FileSystemManager.IMPORT_HIGHLIGHT_DIR);
+		HighlightImporter highlightImporter = new HighlightImporter();
+		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_SCAN_LISTENER_NAME, highlightImporter.getClass().getName());
+		scheduler.getContext().put(highlightImporter.getClass().getName(), highlightImporter);
+		Trigger trigger = newTrigger()
+				.withIdentity("HightlightTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInSeconds(30)
+						.repeatForever())
+				.build();
+
 		scheduler.scheduleJob(job, trigger);
 	}
 
