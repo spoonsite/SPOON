@@ -6757,7 +6757,7 @@ MOCKDATA2.componentList = [ {
       "score" : 2
     }, {
       "name" : "CA",
-      "score" : 1
+      "score" : 0
     }, {
       "name" : "Licensing",
       "score" : 2
