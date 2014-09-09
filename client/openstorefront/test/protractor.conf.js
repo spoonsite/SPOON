@@ -43,15 +43,16 @@ exports.config = {
     allScriptsTimeout: 18000
   },
 
-    multiCapabilities: [{
-        browserName: 'internet explorer'
-    }, {
+    multiCapabilities: [
+        // Will run up to 3 or 4 at a time on my machine
+        // Options:  'chrome', 'firefox', 'internet explorer', 'opera', 'safari'
+        //{browserName: 'firefox'},
+        {browserName: 'chrome'}
+
+    ]
         // 8 Aug '14 Firefox QUIT WORKING
-        //'browserName': 'firefox'
         //browserName: 'internet explorer',
         //version: '11'
-        //'browserName': 'chrome'
-    }]
 
     /*  Changed to "multiCapabilities" 8/30/14
      capabilities : {
