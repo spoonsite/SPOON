@@ -1,7 +1,7 @@
 describe('user-tools_User logged in drop-down', function() {
 
     it('Click on UserName then User Profile', function () {
-        browser.get('http://di2e.github.io/openstorefront');
+        browser.get(theSite);
         // Click on User Name
         element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         // Click on 2nd menu item which is "User Profile"

@@ -5,7 +5,7 @@ describe('searchAll_Search entire database', function() {
     
     it('returns ' + totalResults + ' expected current search results', function() {
         // Open the main site
-        browser.get('http://di2e.github.io/openstorefront');
+        browser.get(theSite);
 
         // Search on ALL entries (null search term)
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
@@ -17,7 +17,7 @@ describe('searchAll_Search entire database', function() {
 
     it('for a LONG string with special characters, pseudo search returns zero results', function() {
         // Open the main site
-        browser.get('http://di2e.github.io/openstorefront');
+        browser.get(theSite);
 
         // Search on a LONG, special character string
         var bigEntry = '€β™±≠∞µ∑Ω①↖≤ÿñà—””…<HTML>INSERT INTO<table></table>asdljasdoiewrueowoiupewriuocvxnewrq423523#$%&^$#%@#$^#%$^@#$@!$#%@#^@#$^%#$%%$@#645987@#$$@#~~~```/???/\/\|{}{[][][;';
