@@ -28,6 +28,7 @@ import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.Validate;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -44,8 +45,6 @@ public class LoggingAction
 
 	@Validate(required = true, on = {"UpdateLogLevel", "Handlers"})
 	private String logger;
-
-	@Validate(required = true, on = {"UpdateLogLevel", "Handlers"})
 	private String level;
 
 	@DefaultHandler
@@ -83,7 +82,11 @@ public class LoggingAction
 	{
 		Logger localLogger = LogManager.getLogManager().getLogger(logger);
 		if (localLogger != null) {
-			localLogger.setLevel(Level.parse(level));
+			if (StringUtils.isNotBlank(level)) {
+				localLogger.setLevel(Level.parse(level));
+			} else {
+				localLogger.setLevel(null);
+			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find logger", "Check name");
 		}
@@ -99,7 +102,11 @@ public class LoggingAction
 
 			for (Handler handlerLocal : localLogger.getHandlers()) {
 				if (handlerLocal.getClass().getName().equals(handler)) {
-					handlerLocal.setLevel(Level.parse(level));
+					if (StringUtils.isNotBlank(level)) {
+						handlerLocal.setLevel(Level.parse(level));
+					} else {
+						handlerLocal.setLevel(null);
+					}
 				}
 			}
 		} else {
