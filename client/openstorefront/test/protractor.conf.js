@@ -46,7 +46,7 @@ exports.config = {
     multiCapabilities: [
         // Will run up to 3 or 4 at a time on my machine
         // Options:  'chrome', 'firefox', 'internet explorer', 'opera', 'safari'
-        //{browserName: 'firefox'},
+        //{browserName: 'internet explorer'},
         {browserName: 'chrome'}
 
     ]

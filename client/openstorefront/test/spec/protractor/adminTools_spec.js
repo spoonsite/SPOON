@@ -1,6 +1,6 @@
 describe('adminTools', function() {
     it('Navigate from user dropdown upper right to admin tools ', function () {
-        browser.get('http://di2e.github.io/openstorefront');
+        browser.get(theSite);
 
         // Click on User Name
         element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();

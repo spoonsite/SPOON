@@ -3,7 +3,7 @@ describe('search_ByText__Filter By Text', function() {
     function textSearch (theText, numFound) {
 
         // Search on ALL entries (null search term)
-        browser.get('http://di2e.github.io/openstorefront');
+        browser.get(theSite);
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
 
         // Verify some results are returned, doesn't matter at this point how many

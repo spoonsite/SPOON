@@ -130,7 +130,7 @@ public class SystemServiceImpl
 	@Override
 	public void syncHighlights(List<Highlight> highlights)
 	{
-		long removeCount = persistenceService.deleteByExample(new Highlight());
+		int removeCount = persistenceService.deleteByExample(new Highlight());
 		log.log(Level.FINE, MessageFormat.format("Old Highlights removed: {0}", removeCount));
 
 		for (Highlight highlight : highlights) {

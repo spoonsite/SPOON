@@ -244,9 +244,9 @@ public class PersistenceService
 		return count;
 	}
 
-	public <T> long deleteByExample(T example)
+	public <T> int deleteByExample(T example)
 	{
-		long deleteCount = 0;
+		int deleteCount = 0;
 		StringBuilder queryString = new StringBuilder();
 
 		queryString.append("delete from ").append(example.getClass().getSimpleName());
@@ -258,7 +258,7 @@ public class PersistenceService
 
 		OObjectDatabaseTx db = getConnection();
 		try {
-			deleteCount = db.command(new OCommandSQL(queryString.toString()).execute(mapParameters(example)));
+			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(example));
 		} finally {
 			closeConnection(db);
 		}
@@ -271,9 +271,9 @@ public class PersistenceService
 		throw new OpenStorefrontRuntimeException("Unsupported operation", "Add support");
 	}
 
-	public long countByExample(QueryByExample queryByExample)
+	public int countByExample(QueryByExample queryByExample)
 	{
-		long count = 0;
+		int count = 0;
 		StringBuilder queryString = new StringBuilder();
 		switch (queryByExample.getQueryType()) {
 			case COUNT:
@@ -294,7 +294,7 @@ public class PersistenceService
 
 		OObjectDatabaseTx db = getConnection();
 		try {
-			count = db.command(new OCommandSQL(queryString.toString()).execute(mapParameters(queryByExample.getExample())));
+			count = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(queryByExample.getExample()));
 		} finally {
 			closeConnection(db);
 		}

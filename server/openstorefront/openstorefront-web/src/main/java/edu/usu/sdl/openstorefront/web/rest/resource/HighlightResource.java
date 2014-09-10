@@ -65,6 +65,23 @@ public class HighlightResource
 		return highlights;
 	}
 
+	@GET
+	@APIDescription("Gets a Highlight")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Highlight.class)
+	@Path("/{id}")
+	public Response getHighlightById(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		Highlight highlight = service.getPersistenceService().findById(Highlight.class, id);
+		if (highlight == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} else {
+			return Response.ok(highlight).build();
+		}
+	}
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Creates a new Highlight")
@@ -107,7 +124,7 @@ public class HighlightResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/highlights/" + highlight.getHighlightId())).build();
+			return Response.created(URI.create("v1/resource/highlights/" + highlight.getHighlightId())).entity(highlight).build();
 		} else {
 			return Response.ok().build();
 		}
