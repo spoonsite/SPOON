@@ -178,7 +178,8 @@ public class LookupTypeResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/lookuptypes/" + entityName + "/" + lookupEntity.getCode())).build();
+			LookupEntity lookupEntityCreated = service.getLookupService().getLookupEnity(entityName, lookupEntity.getCode());
+			return Response.created(URI.create("v1/resource/lookuptypes/" + entityName + "/" + lookupEntity.getCode())).entity(lookupEntityCreated).build();
 		} else {
 			return Response.ok().build();
 		}

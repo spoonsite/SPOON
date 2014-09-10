@@ -124,7 +124,7 @@ public class HighlightResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/highlights/" + highlight.getHighlightId())).build();
+			return Response.created(URI.create("v1/resource/highlights/" + highlight.getHighlightId())).entity(highlight).build();
 		} else {
 			return Response.ok().build();
 		}
