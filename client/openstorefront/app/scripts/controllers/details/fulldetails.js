@@ -122,7 +122,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * adds a review to the details. (which currently isn't implemented)
   ***************************************************************/
   $scope.setupReviewSummary = function(){
-    var total = [];
+    var total = [0, 0, 0, 0, 0];
     var pros = {};
     var cons = {};
     var prosList = [];
@@ -177,8 +177,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       'count': 0
     };
     
-    for (var key in total) {
-      result.total = result.total + (parseInt(key) * total[key]);
+    for ( var key = 0; key < total.length; key++) {
+      result.total = result.total + (key * total[key]);
       result.count = result.count + total[key];
     }
 
