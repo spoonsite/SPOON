@@ -1,7 +1,7 @@
 describe('searchDetails_Search for VANTAGE', function() {
   it('returns 2 results', function() {
     // Open the main site
-    browser.get('http://di2e.github.io/openstorefront');
+    browser.get(theSite);
     
     // Enter the search term (changed to enter after updates to search keys 7/28)
     element(by.id('mainSearchBar')).sendKeys('VANTAGE', protractor.Key.ENTER);

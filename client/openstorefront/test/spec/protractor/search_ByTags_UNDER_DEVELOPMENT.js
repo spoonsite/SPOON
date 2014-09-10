@@ -1,7 +1,7 @@
 describe('Search by TAGS', function() {
     it('Search for iSpatial and clear out any tags', function() {
         // Open the main site
-        browser.get('http://di2e.github.io/openstorefront');
+        browser.get(theSite);
 
         // Enter the search term
         element(by.id('mainSearchBar')).sendKeys('iSpatial', protractor.Key.ENTER);

@@ -1,6 +1,6 @@
 describe('search_byAttribute_Rating_Reset_Filters', function() {
     // Open the main site
-    browser.get('http://di2e.github.io/openstorefront');
+    browser.get(theSite);
     element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
 
     it('Search filter by 5 star Rating', function () {
