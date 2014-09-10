@@ -460,6 +460,7 @@ module.exports = function (grunt) {
         configFile: "test/protractor.conf.js",
         args: {
           seleniumServerJar: 'node_modules/protractor/selenium/selenium-server-standalone-2.42.0.jar',
+          //ieDriver: 'node_modules/protractor/selenium/IEDriverServer.exe',
           chromeDriver: 'node_modules/protractor/selenium/chromedriver.exe'
         }
       },
