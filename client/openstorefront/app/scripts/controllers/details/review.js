@@ -34,8 +34,16 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', function ($scope, Bus
   * you send the saved data to the database to store it)
   ***************************************************************/ //
   $scope.submitReview = function(event, review, revs) {
+    var body = {};
+    body.userTypeCode = review.userRole.code;
+    body.comment = review.comment;
+    body.title = review.title;
+    body.rating = review.rating? review.rating: 0;
+    body.lastUsed = new Date(review.lastUsed).toISOString();
+    body.recommend = review.recommend;
+    body.organization = review.organization;
     event.preventDefault();
-    review.lastUsed = new Date(review.lastUsed).toISOString();
+    console.log('body', body);
     console.log('review', review);
     console.log('revs', revs);
     return false;

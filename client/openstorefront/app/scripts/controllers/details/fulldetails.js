@@ -443,12 +443,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       });
       if (sqlToJsDate(component.evaluation.updateDts) > lastViewedDts)
       {
-        shown = false;
         _.each(component.evaluation.evaluationSections, function(section, index){
-          if (!shown && sqlToJsDate(section.updateDts) > lastViewedDts)
+          if (sqlToJsDate(section.updateDts) > lastViewedDts)
           {
             updateList.push('evaluationSections');
-            shown = true;
           }
         });
         shown = false;
@@ -480,11 +478,18 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           toggle: 'tooltip',
           placement: 'left',
           container: 'body',
-          title:'This content has been updated',
+          title:'Updated!',
           template: '<div class="tooltip removeOnChange" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
         }
         _.each(updateList, function(updateId){
-          $('#'+updateId+'Update').tooltip(settings);
+          if (updateId === 'evaluationSections')
+          {
+            settings.placement = 'top';
+            $('#'+updateId+'Update').tooltip(settings);
+            settings.placement = 'left';
+          } else {
+            $('#'+updateId+'Update').tooltip(settings);
+          }
         })
       });
     }

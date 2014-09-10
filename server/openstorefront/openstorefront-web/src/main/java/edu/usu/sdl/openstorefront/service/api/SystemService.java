@@ -66,7 +66,7 @@ public interface SystemService
 	/**
 	 * Saves Highlights (generates Id on create)
 	 *
-	 * @param highlights
+	 * @param highlight
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveHightlight(Highlight highlight);
