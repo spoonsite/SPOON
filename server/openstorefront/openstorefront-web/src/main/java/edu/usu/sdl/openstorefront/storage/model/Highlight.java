@@ -36,7 +36,7 @@ public class Highlight
 
 	@NotNull
 	@ConsumeField
-	@ValidValueType(value = "", lookupClass = HighlightType.class)
+	@ValidValueType(value = {Highlight.TYPE_ARTICLE, Highlight.TYPE_COMPONENT, Highlight.TYPE_EXTERNAL_LINK}, lookupClass = HighlightType.class)
 	private String highlightType;
 
 	@NotNull
@@ -49,10 +49,14 @@ public class Highlight
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
 	private String description;
 
+	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	private String link;
 
 	public static final String FIELD_TITLE = "title";
+	public static final String TYPE_COMPONENT = "C";
+	public static final String TYPE_ARTICLE = "A";
+	public static final String TYPE_EXTERNAL_LINK = "EL";
 
 	public Highlight()
 	{

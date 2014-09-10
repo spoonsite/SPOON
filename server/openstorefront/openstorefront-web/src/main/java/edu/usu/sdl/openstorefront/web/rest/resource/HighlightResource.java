@@ -65,6 +65,23 @@ public class HighlightResource
 		return highlights;
 	}
 
+	@GET
+	@APIDescription("Gets a Highlight")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Highlight.class)
+	@Path("/{id}")
+	public Response getHighlightById(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		Highlight highlight = service.getPersistenceService().findById(Highlight.class, id);
+		if (highlight == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} else {
+			return Response.ok(highlight).build();
+		}
+	}
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Creates a new Highlight")
