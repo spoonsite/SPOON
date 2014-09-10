@@ -33,7 +33,9 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewConPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
@@ -204,15 +206,22 @@ public class ComponentServiceImpl
 		List<ComponentReview> tempReviews = getBaseComponent(ComponentReview.class, componentId);
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review -> {
-			reviews.add(ComponentReviewView.toView(review));
-		});
-		reviews.stream().forEach((review) -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
-			// TODO: Set the composite key here so we can grab the right pros.
+			
+			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
+			tempProPk.setComponentReviewId(review.getComponentReviewId());
+			tempPro.setComponentReviewProPk(tempProPk);
+			
 			ComponentReviewCon tempCon = new ComponentReviewCon();
-			// TODO: Set the composite key here so we can grab the right cons.
-			review.setPros(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro)));
-			review.setCons(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempPro)));
+			
+			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
+			tempConPk.setComponentReviewId(review.getComponentReviewId());
+			tempCon.setComponentReviewConPk(tempConPk);
+			
+			ComponentReviewView tempView = ComponentReviewView.toView(review);
+			tempView.setPros(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro)));
+			tempView.setCons(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempPro)));
+			reviews.add(tempView);
 		});
 		result.setReviews(reviews);
 
@@ -492,6 +501,7 @@ public class ComponentServiceImpl
 		ComponentReviewCon oldCon = persistenceService.findById(ComponentReviewCon.class, con.getComponentReviewConPk());
 		if (oldCon != null) {
 			oldCon.setText(con.getText());
+			oldCon.getComponentReviewConPk().setReviewCon(con.getText());
 			oldCon.setActiveStatus(con.getActiveStatus());
 			oldCon.setUpdateDts(TimeUtil.currentDate());
 			oldCon.setUpdateUser(con.getUpdateUser());
@@ -509,6 +519,7 @@ public class ComponentServiceImpl
 		ComponentReviewPro oldPro = persistenceService.findById(ComponentReviewPro.class, pro.getComponentReviewProPk());
 		if (oldPro != null) {
 			oldPro.setText(pro.getText());
+			oldPro.getComponentReviewProPk().setReviewPro(pro.getText());
 			oldPro.setActiveStatus(pro.getActiveStatus());
 			oldPro.setUpdateDts(TimeUtil.currentDate());
 			oldPro.setUpdateUser(pro.getUpdateUser());

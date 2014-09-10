@@ -114,7 +114,7 @@ public class UserProfileResource
 		}
 		else if (validationResult.valid())
 		{
-			return Response.created(URI.create((service.getUserService().saveUserProfile(inputProfile)).getUsername())).build();
+			return Response.created(URI.create((service.getUserService().saveUserProfile(inputProfile)).getUsername())).entity(inputProfile).build();
 		}
 		return Response.ok(validationResult.toRestError()).build();
 	}
@@ -250,7 +250,7 @@ public class UserProfileResource
 			watch.setUpdateUser(ServiceUtil.getCurrentUserName());
 			if (post)
 			{
-				return Response.created(URI.create("v1/resource/userProfile/" + service.getUserService().saveWatch(watch).getUserWatchId())).build();
+				return Response.created(URI.create("v1/resource/userProfile/" + service.getUserService().saveWatch(watch).getUserWatchId())).entity(watch).build();
 			}
 			return Response.ok(service.getUserService().saveWatch(watch)).build();
 		} else {
@@ -353,7 +353,7 @@ public class UserProfileResource
 			tracking.setUpdateUser(ServiceUtil.getCurrentUserName());
 			if (post) {
 				// TODO: How does this work with composite keys?
-				return Response.created(URI.create(service.getUserService().saveUserTracking(tracking).getTrackingId())).build();
+				return Response.created(URI.create(service.getUserService().saveUserTracking(tracking).getTrackingId())).entity(tracking).build();
 			} else {
 				return Response.ok(service.getUserService().saveUserTracking(tracking)).build();
 			}

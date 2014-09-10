@@ -91,7 +91,7 @@
           <div><textarea rows="10" class="boxsizingBorder" ng-model="review.comment"></textarea></div>    
         </div>    
         <div class="text-center" style="padding-top: 20px;">
-          <button type="submit" class="btn btn-primary">Update Review</button>                  
+          <button type="submit" class="btn btn-primary"><span ng-show="!revs">Save</span><span ng-show="revs && revs.edit">Update</span>&nbsp;Review</button>                  
           <button type="button" class="btn btn-primary" ng-click="revs.edit = !!!revs.edit">Cancel</button>                  
         </div>    
       </div>

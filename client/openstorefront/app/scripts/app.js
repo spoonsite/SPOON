@@ -253,6 +253,13 @@ var app = angular
       });
 
       /***************************************************************
+      * This function is what is called when the modal event is fired
+      ***************************************************************/
+      $rootScope.$on('$hideModal', function(event, id) {
+        $('#' + id).modal('hide');
+      });
+
+      /***************************************************************
       * These functions trigger and untrigger loading masks
       ***************************************************************/
       $rootScope.$on('$TRIGGERLOAD', function(event, value){
@@ -298,6 +305,17 @@ var app = angular
         $rootScope.$broadcast('updateBody');
         $rootScope.$broadcast('$viewModal', id);
         $rootScope.sendPageView('Modal-'+id+'-'+current);
+      }; 
+
+      $rootScope.setComponentId = function(id) {
+        console.log('We set the id');
+        
+        $rootScope.refId = id;
+      };
+
+      $rootScope.getComponentId = function() {
+        console.log('We got the id');
+        return $rootScope.refId;
       };
 
       $rootScope.scrollTo = function(id) {
@@ -433,6 +451,9 @@ var app = angular
       //
       $httpBackend.whenGET('api/v1/resource/components').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?con/).passThrough();
       // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
       //   // grab the url (needed for what the backend will simulate)
       //   // parse it into an array

@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('DetailsReviewCtrl', ['$scope', 'business', function ($scope, Business) {
-  
+app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', function ($scope, Business, $rootScope) {
+
   Business.lookupservice.getExpertise().then(function(result){
     if (result) {
       $scope.expertise = result;
@@ -25,8 +25,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', function ($scope, Bus
     }
   });
 
-
-
+  console.log('$scope.getComponentId', $rootScope.getComponentId());
 
   /***************************************************************
   * This function saves the profile changes in the scope by copying them from
@@ -42,10 +41,52 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', function ($scope, Bus
     body.lastUsed = new Date(review.lastUsed).toISOString();
     body.recommend = review.recommend;
     body.organization = review.organization;
-    event.preventDefault();
+    body.userTimeCode = review.usedTimeCode.label;
     console.log('body', body);
     console.log('review', review);
     console.log('revs', revs);
+    event.preventDefault();
+    
+    var componentId = $rootScope.getComponentId();
+    if (!revs) {
+      Business.componentservice.saveReview(componentId, body).then(function(result){
+        console.log('result', result);
+        if (result && result.componentReviewId)
+        {
+          var reviewId = result.componentReviewId;
+          _.each(review.pros, function(pro){
+            Business.componentservice.saveReviewPros(componentId, reviewId, pro.text).then(function(result){
+              console.log('result', result);
+            })
+          });
+          _.each(review.cons, function(con){
+            Business.componentservice.saveReviewCons(componentId, reviewId, con.text).then(function(result){
+              console.log('result', result);
+            })
+          });
+          $scope.$emit('$hideModal', 'descModal');
+        }
+      });
+    } else {
+      // Business.componentservice.updateReview(componentId, body).then(function(result){
+      //   console.log('result', result);
+      //   if (result && result.componentReviewId)
+      //   {
+      //     var reviewId = result.componentReviewId;
+      //     Business.componentservice.deleteProsandCons(componentId, reviewId);
+      //     _.each(review.pros, function(pro){
+      //       Business.componentservice.saveReviewPros(componentId, reviewId, pro.text).then(function(result){
+      //         console.log('result', result);
+      //       })
+      //     });
+      //     _.each(review.cons, function(con){
+      //       Business.componentservice.saveReviewCons(componentId, reviewId, con.text).then(function(result){
+      //         console.log('result', result);
+      //       })
+      //     });
+      //   }
+      // });
+    }
     return false;
   };
 

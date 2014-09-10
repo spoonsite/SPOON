@@ -17,7 +17,7 @@
 
 /*global MOCKDATA2*/
 
-app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', function ($rootScope, $scope, Business, $location, Lightbox, $timeout) { /*jshint unused:false*/
+app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
 
   $scope.scoreCard                     = Business.componentservice.getScoreCard();
   $scope.externalDepend                = Business.componentservice.getExternalDepend();
@@ -29,6 +29,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
   $scope.componentState                = Business.componentservice.getComponentState();
   $scope.resultsComments               = Business.componentservice.getResultsComments();
+
+  $scope.setComponentId = function(id) {
+    var deferred = $q.defer();
+    $rootScope.refId = id;
+    deferred.resolve();
+    return deferred.promise;
+  }
 
   Business.userservice.getWatches().then(function(result) {
     if (result) {

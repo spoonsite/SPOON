@@ -64,6 +64,93 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     save(name, value);
   };
 
+  componentservice.saveReview = function(id, review) {
+    console.log('id', id);
+    console.log('review', review);
+        
+    var result = $q.defer();
+    if (id && review)
+    {
+      var url = 'api/v1/resource/components/'+id+'/review';
+      $http({
+        method: 'POST',
+        url: url,
+        data: review
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data);
+      });
+    } else{
+      result.reject('A unique ID and review object is required to save a component review');
+    }
+    return result.promise;
+  }
+
+  componentservice.deleteProsandCons = function(id, reviewId) {
+    var result = $q.defer();
+    if (id && reviewId && pro)
+    {
+      var url = 'api/v1/resource/components/'+id+'/review/'+reviewId+'/pro';
+      $http({
+        method: 'DELETE',
+        url: url,
+        data: "test"
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+      });
+      url = 'api/v1/resource/components/'+id+'/review/'+reviewId+'/con';
+      $http({
+        method: 'DELETE',
+        url: url,
+        data: "test"
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+      });
+    } else{
+      result.reject('A unique ID and pro object is required to save a component pro');
+    }
+    return result.promise;
+  }
+
+  componentservice.saveReviewPros = function(id, reviewId, pro) {
+    var result = $q.defer();
+    if (id && reviewId && pro)
+    {
+      var url = 'api/v1/resource/components/'+id+'/review/'+reviewId+'/pro';
+      $http({
+        method: 'POST',
+        url: url,
+        data: pro
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data);
+      });
+    } else{
+      result.reject('A unique ID and pro object is required to save a component pro');
+    }
+    return result.promise;
+  }
+
+  componentservice.saveReviewCons = function(id, reviewId, con) {
+    var result = $q.defer();
+    if (id && reviewId && con)
+    {
+      var url = 'api/v1/resource/components/'+id+'/review/'+reviewId + '/con';
+      $http({
+        method: 'POST',
+        url: url,
+        data: con
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data);
+      });
+    } else{
+      result.reject('A unique ID and con object is required to save a component con');
+    }
+    return result.promise;
+  }
+
+
   componentservice.getComponentDetails = function(id) {
     var result = $q.defer();
     if (id)
@@ -133,95 +220,95 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var deferred = $q.defer();
     if (type && key) {
       // $http.get('api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
-      $http.get('api/v1/resource/components').success(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      });
-    }
-    return deferred.promise;
-  };
+        $http.get('api/v1/resource/components').success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);
+        });
+      }
+      return deferred.promise;
+    };
 
 
-  componentservice.search = function(type, key, wait) {
-    var deferred = $q.defer();
-    var searchKey = checkExpire('searchKey', minute * 1440);
-    if (searchKey) {
-      deferred.resolve(searchKey);
-    } else {
-      if (!type && key) {
-        save('searchKey', [{'key': 'search', 'code': key}]);
-        searchKey = key;
-        deferred.resolve(searchKey);
-      } else if (type && key) {
-        save('searchKey', [{'key': type, 'code': key}]);
-        searchKey = key;
+    componentservice.search = function(type, key, wait) {
+      var deferred = $q.defer();
+      var searchKey = checkExpire('searchKey', minute * 1440);
+      if (searchKey) {
         deferred.resolve(searchKey);
       } else {
-        deferred.reject('A key is required for a search!');
-        searchKey = null;
+        if (!type && key) {
+          save('searchKey', [{'key': 'search', 'code': key}]);
+          searchKey = key;
+          deferred.resolve(searchKey);
+        } else if (type && key) {
+          save('searchKey', [{'key': type, 'code': key}]);
+          searchKey = key;
+          deferred.resolve(searchKey);
+        } else {
+          deferred.reject('A key is required for a search!');
+          searchKey = null;
+        }
       }
-    }
-    if (wait) {
-      return deferred.promise;
-    }
-    return searchKey;
-  };
-
-
-  componentservice.getComponentDetailsByType = function(input) {
-    return _.filter(MOCKDATA.assets.assets, function(item) {
-      return item.type === input;
-    });
-  };
-  componentservice.getScoreCard = function() {
-    return MOCKDATA.scoreTable;
-  };
-  componentservice.getExternalDepend = function() {
-    return MOCKDATA.externalDepend;
-  };
-  componentservice.getLocalAssetArtifacts = function() {
-    return MOCKDATA.localAssetArtifacts;
-  };
-  componentservice.getComponentVitals = function() {
-    return MOCKDATA.componentVitals;
-  };
-  componentservice.getPointsContact = function() {
-    return MOCKDATA.pointsContact;
-  };
-  componentservice.getComponentSummary = function() {
-    return MOCKDATA.componentSummary;
-  };
-  componentservice.getComponentEvalProgressBar = function() {
-    return MOCKDATA.componentEvalProgressBar;
-  };
-  componentservice.getComponentState = function() {
-    return MOCKDATA.componentState;
-  };
-  componentservice.getComponentEvalProgressBarDates = function() {
-    return MOCKDATA.componentEvalProgressBarDates;
-  };
-  componentservice.getResultsComments = function() {
-    return MOCKDATA.resultsComments;
-  };
-  componentservice.saveTags = function(id, tags) {
-    var a = _.find(MOCKDATA2.componentList, {'componentId': id});
-    componentservice.updateTagCloud(tags);
-    if (a) {
-      a.tags = tags;
-    }
-    return true;
-  };
-  componentservice.updateTagCloud = function(tags) {
-    _.each(tags, function(tag) {
-      if (!_.contains(MOCKDATA.tagsList, tag.text)) {
-        MOCKDATA.tagsList.push(tag.text);
+      if (wait) {
+        return deferred.promise;
       }
-    });
-    MOCKDATA.tagsList.sort();
-  };
+      return searchKey;
+    };
+
+
+    componentservice.getComponentDetailsByType = function(input) {
+      return _.filter(MOCKDATA.assets.assets, function(item) {
+        return item.type === input;
+      });
+    };
+    componentservice.getScoreCard = function() {
+      return MOCKDATA.scoreTable;
+    };
+    componentservice.getExternalDepend = function() {
+      return MOCKDATA.externalDepend;
+    };
+    componentservice.getLocalAssetArtifacts = function() {
+      return MOCKDATA.localAssetArtifacts;
+    };
+    componentservice.getComponentVitals = function() {
+      return MOCKDATA.componentVitals;
+    };
+    componentservice.getPointsContact = function() {
+      return MOCKDATA.pointsContact;
+    };
+    componentservice.getComponentSummary = function() {
+      return MOCKDATA.componentSummary;
+    };
+    componentservice.getComponentEvalProgressBar = function() {
+      return MOCKDATA.componentEvalProgressBar;
+    };
+    componentservice.getComponentState = function() {
+      return MOCKDATA.componentState;
+    };
+    componentservice.getComponentEvalProgressBarDates = function() {
+      return MOCKDATA.componentEvalProgressBarDates;
+    };
+    componentservice.getResultsComments = function() {
+      return MOCKDATA.resultsComments;
+    };
+    componentservice.saveTags = function(id, tags) {
+      var a = _.find(MOCKDATA2.componentList, {'componentId': id});
+      componentservice.updateTagCloud(tags);
+      if (a) {
+        a.tags = tags;
+      }
+      return true;
+    };
+    componentservice.updateTagCloud = function(tags) {
+      _.each(tags, function(tag) {
+        if (!_.contains(MOCKDATA.tagsList, tag.text)) {
+          MOCKDATA.tagsList.push(tag.text);
+        }
+      });
+      MOCKDATA.tagsList.sort();
+    };
 
 
 
 
 
-  return componentservice;
-}]);
+    return componentservice;
+  }]);
