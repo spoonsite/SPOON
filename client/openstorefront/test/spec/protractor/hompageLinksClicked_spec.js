@@ -28,7 +28,11 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
         browser.driver.navigate().back();
         element.all(by.css('.column:nth-child(4) li')).get(0).click();
         browser.driver.navigate().back();
+        // Skip column 4, no. 1, General Questions as it is an email link
         element.all(by.css('.column:nth-child(4) li')).get(2).click();
+        browser.driver.navigate().back();
+        // Bottom copyright "Consent to Monitoring" link
+        element.all(by.css('.copyright')).get(0).click();
         browser.driver.navigate().back();
         expect(true).toBe(true);  // No page load failures, links exist
         browser.driver.sleep(750);
