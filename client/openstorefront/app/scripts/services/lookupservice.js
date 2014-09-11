@@ -71,7 +71,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   * @param  success function
   */
   var loadLookupTable = function(entityName, successFunc) {
-    $http.get('api/v1/resource/lookup/' + entityName).success(successFunc).error(function(data, status, headers, config) { /*jshint unused:false*/
+    $http.get('api/v1/resource/lookuptypes/' + entityName + '/view').success(successFunc).error(function(data, status, headers, config) { /*jshint unused:false*/
       /*There was an error with the get*/
     });
   };
@@ -81,17 +81,17 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     var deferred = $q.defer();
 
     if (refreshData.userTypeCodes) {
-      localCache.clear('userTypeCodes');
+      localCache.clear('UserTypeCode');
       refreshData.userTypeCodes = false;
     }
 
-    var userTypeCodes = checkExpire('userTypeCodes', minute * 1440);
+    var userTypeCodes = checkExpire('UserTypeCode', minute * 1440);
     if (userTypeCodes) {
       deferred.resolve(userTypeCodes);
     } else {
-      loadLookupTable('UserTypeCodes', function(data, status, headers, config) { /*jshint unused:false*/
+      loadLookupTable('UserTypeCode', function(data, status, headers, config) { /*jshint unused:false*/
         if (data) {
-          save('userTypeCodes', data.data);
+          save('UserTypeCode', data.data);
           deferred.resolve(data.data);
         } else {
           deferred.reject('There was an error grabbing the eval levels');
@@ -111,13 +111,13 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     if (evalLevels) {
       deferred.resolve(evalLevels);
     } else {
-      loadLookupTable('evalLevels', function(data, status, headers, config) { /*jshint unused:false*/
-        if (data) {
+      $http.get('api/v1/resource/attributes/attributetypes/DI2ELEVEL/attributecodes').success(function(data, status, headers, config){
+        if (data && data != "false")
+        {
           save('evalLevels', data);
           deferred.resolve(data);
         } else {
-          updateCache('evalLevels', null);
-          deferred.reject('There was an error grabbing the eval levels');
+          deferred.reject('There was an error grabbing the evaluation levels');
         }
       });
     }
@@ -127,16 +127,52 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
 
   var getExpertise = function() {
     var deferred = $q.defer();
-    var expertise = checkExpire('expertise', minute * 1440);
+    var expertise = checkExpire('ExperienceTimeType', minute * 1440);
     if (expertise) {
       deferred.resolve(expertise);
     } else {
-      loadLookupTable('expertise', function(data, status, headers, config) { /*jshint unused:false*/
+      loadLookupTable('ExperienceTimeType', function(data, status, headers, config) { /*jshint unused:false*/
         if (data) {
-          save('expertise', data);
+          save('ExperienceTimeType', data);
           deferred.resolve(data);
         } else {
           deferred.reject('There was an error grabbing the expertise');
+        }
+      });
+    }
+    return deferred.promise;
+  };
+
+  var getReviewConList = function() {
+    var deferred = $q.defer();
+    var reviewCon = checkExpire('ReviewCon', minute * 1440);
+    if (reviewCon) {
+      deferred.resolve(reviewCon);
+    } else {
+      loadLookupTable('ReviewCon', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data) {
+          save('ReviewCon', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the review con list');
+        }
+      });
+    }
+    return deferred.promise;
+  };
+  
+  var getReviewProList = function() {
+    var deferred = $q.defer();
+    var reviewPro = checkExpire('ReviewPro', minute * 1440);
+    if (reviewPro) {
+      deferred.resolve(reviewPro);
+    } else {
+      loadLookupTable('ReviewPro', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data) {
+          save('ReviewPro', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the review pro list');
         }
       });
     }
@@ -147,7 +183,9 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   return {
     getUserTypeCodes: getUserTypeCodes,
     getEvalLevels: getEvalLevels,
-    getExpertise: getExpertise
+    getExpertise: getExpertise,
+    getReviewConList: getReviewConList,
+    getReviewProList: getReviewProList
   };
 
 }]);

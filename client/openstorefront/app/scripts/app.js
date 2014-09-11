@@ -495,24 +495,26 @@ var app = angular
         return [200, MOCKDATA.prosConsList, {}];
       });
 
-      $httpBackend.whenGET('api/v1/resource/lookup/evalLevels').respond(function(method, url, data) {
-        var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
-        return [200, result, {}];
-      });
+      $httpBackend.whenGET('api/v1/resource/attributes/attributetypes/DI2ELEVEL/attributecodes').passThrough();
+      // respond(function(method, url, data) {
+      //   var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
+      //   return [200, result, {}];
+      // });
 
-      $httpBackend.whenGET('api/v1/resource/lookup/expertise').respond(function(method, url, data) {
-        var result = [
-          //
-          {'value':'1', 'label': 'Less than 1 month'},
-          {'value':'2', 'label': 'Less than 3 months'},
-          {'value':'3', 'label': 'Less than 6 months'},
-          {'value':'4', 'label': 'Less than 1 year'},
-          {'value':'5', 'label': 'Less than 3 years'},
-          {'value':'6', 'label': 'More than 3 years'}
-        //
-        ];
-        return [200, result, {}];
-      });
+      $httpBackend.whenGET(/api\/v1\/resource\/lookuptypes\/[^\/][^\/]*\/?view/).passThrough();
+      // respond(function(method, url, data) {
+      //   var result = [
+      //     //
+      //     {'value':'1', 'label': 'Less than 1 month'},
+      //     {'value':'2', 'label': 'Less than 3 months'},
+      //     {'value':'3', 'label': 'Less than 6 months'},
+      //     {'value':'4', 'label': 'Less than 1 year'},
+      //     {'value':'5', 'label': 'Less than 3 years'},
+      //     {'value':'6', 'label': 'More than 3 years'}
+      //   //
+      //   ];
+      //   return [200, result, {}];
+      // });
 
       $httpBackend.whenGET('api/v1/resource/lookup/watches').respond(function(method, url, data) {
         return [200, MOCKDATA.watches, {}];
