@@ -1,4 +1,6 @@
 //var theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';  OpenAM
+
+// GLOBAL Variable for the tests
 theSite = 'http://di2e.github.io/openstorefront';
 
 describe('SvcV-4_button from the home page', function() {
