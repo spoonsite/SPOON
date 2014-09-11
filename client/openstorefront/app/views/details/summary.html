@@ -53,7 +53,7 @@
       <tbody> 
         <tr>
           <th class="valign" colspan="16"><h4>Important Component Vitals</h4></th>
-        </tr>	 						
+        </tr> 
         <tr ng-repeat="row in details.details.attributes">
           <td ng-if="row.importantFlg === true" colspan="5" class="text-left-bold"><span ng-class="getIsUpdated('row.codeDescription')? 'updatedForUser': ''">{{row.typeDescription}}</span></td>
           <td ng-if="row.codeLongDescription && row.importantFlg === true" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>

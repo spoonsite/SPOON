@@ -32,19 +32,19 @@ import java.util.List;
 public class ComponentAttributeView
 {
 
-	private String typeDescription;
 	private String type;
 	private String code;
+	private String typeDescription;
 	private String codeDescription;
 	private String typeLongDescription;
 	private String codeLongDescription;
+	private String externalLink;
 	private boolean visibleFlg;
 	private boolean requiredFlg;
 	private boolean allowMultipleFlg;
 	private boolean architectureFlg;
 	private boolean importantFlg;
 	private Date updateDts;
-	
 	public ComponentAttributeView()
 	{
 	}
@@ -59,9 +59,11 @@ public class ComponentAttributeView
 		AttributeCode code = service.getPersistenceService().findById(AttributeCode.class, pk);
 		AttributeType type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 		
-		view.setCodeDescription(code.getDescription());
+		view.setExternalLink(code.getDetailUrl());
+		view.setCodeDescription(code.getLabel());
 		view.setCodeLongDescription(code.getDescription());
 		view.setTypeDescription(type.getDescription());
+		view.setTypeLongDescription(type.getDescription());
 		view.setType(type.getAttributeType());
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
 		view.setImportantFlg(type.getImportantFlg());
@@ -249,6 +251,22 @@ public class ComponentAttributeView
 	public void setCode(String code)
 	{
 		this.code = code;
+	}
+
+	/**
+	 * @return the externalLink
+	 */
+	public String getExternalLink()
+	{
+		return externalLink;
+	}
+
+	/**
+	 * @param externalLink the externalLink to set
+	 */
+	public void setExternalLink(String externalLink)
+	{
+		this.externalLink = externalLink;
 	}
 
 }
