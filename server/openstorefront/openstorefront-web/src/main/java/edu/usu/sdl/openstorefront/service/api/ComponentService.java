@@ -132,6 +132,7 @@ public interface ComponentService
 	/**
 	 *
 	 * @param attribute
+	 * @return 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Boolean checkComponentAttribute(ComponentAttribute attribute);

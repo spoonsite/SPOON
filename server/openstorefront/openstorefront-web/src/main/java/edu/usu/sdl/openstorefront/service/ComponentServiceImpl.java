@@ -202,7 +202,6 @@ public class ComponentServiceImpl
 
 		result.setComponentViews(Integer.MIN_VALUE /*figure out a way to get component views*/);
 
-		// Here we grab the pros and cons for the reviews.
 		List<ComponentReview> tempReviews = getBaseComponent(ComponentReview.class, componentId);
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review -> {
@@ -220,7 +219,7 @@ public class ComponentServiceImpl
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
 			tempView.setPros(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro)));
-			tempView.setCons(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempPro)));
+			tempView.setCons(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon)));
 			reviews.add(tempView);
 		});
 		result.setReviews(reviews);
