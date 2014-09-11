@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.service.api;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.Highlight;
+import java.util.List;
 
 /**
  *
@@ -52,5 +54,38 @@ public interface SystemService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveProperty(String key, String value);
+
+	/**
+	 * Saves Highlights
+	 *
+	 * @param highlights
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveHightlight(List<Highlight> highlights);
+
+	/**
+	 * Saves Highlights (generates Id on create)
+	 *
+	 * @param highlight
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveHightlight(Highlight highlight);
+
+	/**
+	 * Inactive Hightlight
+	 *
+	 * @param hightlightId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeHighlight(String hightlightId);
+
+	/**
+	 * Delete all old and save new highlights This assume to be called by the
+	 * importer and is meant to sync the DB with the file
+	 *
+	 * @param highlights
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void syncHighlights(List<Highlight> highlights);
 
 }

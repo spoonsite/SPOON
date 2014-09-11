@@ -1,7 +1,7 @@
 describe('search__SortBy', function() {
     it('Name Z-A returns Vega as the first search result', function() {
         // Search on ALL entries (null search term)
-        browser.get('http://di2e.github.io/openstorefront');
+        browser.get(theSite);
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
 
         // Verify some results are returned, doesn't matter at this point how many

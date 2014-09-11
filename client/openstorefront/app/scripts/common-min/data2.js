@@ -21,7 +21,7 @@
 
 var MOCKDATA2 = {};
 MOCKDATA2.componentList = [ {
-  "componentId" : 67,
+  "componentId" : 'ce453c31-679f-4061-b1b3-2ef2d15a9925',
   "guid" : "3a57b4c2-a90b-4098-8c56-916618afd8ee",
   "name" : "Central Authentication Service (CAS)",
   "description" : "The Central Authentication Service (CAS) is a single sign-on protocol for the web. Its purpose is to permit a user to access multiple applications while providing their credentials (such as userid and password) only once. It also allows web applications to authenticate users without gaining access to a user's security credentials, such as a password. The name CAS also refers to a software package that implements this protocol. <br> <br>CAS provides enterprise single sign-on service: <br>-An open and well-documented protocol <br>-An open-source Java server component <br>-A library of clients for Java, .Net, PHP, Perl, Apache, uPortal, and others <br>-Integrates with uPortal, Sakai, BlueSocket, TikiWiki, Mule, Liferay, Moodle and others <br>-Community documentation and implementation support <br>-An extensive community of adopters",
@@ -6665,7 +6665,7 @@ MOCKDATA2.componentList = [ {
   "componentId" : 42,
   "guid" : "a2a4488f-a139-41a2-b455-a1b9ea87f7c8",
   "name" : "JView",
-  "description" : "JView is a Java-based API (application programmer's interface) that was developed to reduce the time, cost, & effort associated with the creation of computer visualization applications. <br> <br> <br> <br>JView provides the programmer with the ability to quickly develop 2-dimensional and 3-dimensional visualization applications that are tailored to address a specific problem. <br> <br>The JView API is government-owned and available free of charge to government agencies and their contractors. <br> <br>JView License information:  Full release of JView is currently being made available to government agencies and their contractors. This release includes, source code, sample JView-based applications, sample models and terrain, and documentation. A limited release that does not include source code is available to universities and foreign governments. All releases are subject to the approval of the JView program office. One can request a copy of JView by visiting <a href='https://extranet.rl.af.mil/jview/.' title='https://extranet.rl.af.mil/jview/.' target='_blank'> .</a> Formal configuration management and distribution of JView is performed through the Information Management Services program.",
+  "description" : "JView is a Java-based API (application programmer's interface) that was developed to reduce the time, cost, & effort associated with the creation of computer visualization applications. <br> <br> <br> <br>JView provides the programmer with the ability to quickly develop 2-dimensional and 3-dimensional visualization applications that are tailored to address a specific problem. <br> <br>The JView API is government-owned and available free of charge to government agencies and their contractors. <br> <br>JView License information:  Full release of JView is currently being made available to government agencies and their contractors. This release includes, source code, sample JView-based applications, sample models and terrain, and documentation (including map information). A limited release that does not include source code is available to universities and foreign governments. All releases are subject to the approval of the JView program office. One can request a copy of JView by visiting <a href='https://extranet.rl.af.mil/jview/.' title='https://extranet.rl.af.mil/jview/.' target='_blank'> .</a> Formal configuration management and distribution of JView is performed through the Information Management Services program.",
   "parentComponent" : null,
   "subComponents" : [ ],
   "relatedComponents" : [ ],
@@ -6757,7 +6757,7 @@ MOCKDATA2.componentList = [ {
       "score" : 2
     }, {
       "name" : "CA",
-      "score" : 1
+      "score" : 0
     }, {
       "name" : "Licensing",
       "score" : 2
@@ -8913,7 +8913,7 @@ MOCKDATA2.componentList = [ {
 
 MOCKDATA2.resultsList = [ {
   "listingType" : "Component",
-  "componentId" : 67,
+  "componentId" : 'ce453c31-679f-4061-b1b3-2ef2d15a9925',
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Central Authentication Service (CAS)",
@@ -10473,7 +10473,7 @@ MOCKDATA2.resultsList = [ {
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "JView",
-  "description" : "JView is a Java-based API (application programmer's interface) that was developed to reduce the time, cost, & effort associated with the creation of computer visualization applications.    JView provides the programmer with the ability to quickly develop 2-dimensional and 3-dimensional visualization <a href='https://extranet.rl.af.mil/jview/.' title='https://extranet.rl.af.mil/jview/.' target='_blank'> .</a> Formal configuration management and distribution of JView is performed through the Information Management Services program. ...",
+  "description" : "JView is a Java-based API (application programmer's interface) that was developed to reduce the time, cost, & effort associated with the creation of computer visualization applications.    JView provides the programmer with the ability to quickly develop 2-dimensional and 3-dimensional visualization with map information <a href='https://extranet.rl.af.mil/jview/.' title='https://extranet.rl.af.mil/jview/.' target='_blank'> .</a> Formal configuration management and distribution of JView is performed through the Information Management Services program. ...",
   "organization" : "AFRL",
   "lastActivityDate" : null,
   "updateDts" : 1405370213000,

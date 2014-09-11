@@ -138,7 +138,7 @@ public class ComponentRESTResource
 			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
 			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
-			return Response.created(URI.create("v1/resource/components/" + service.getComponentService().saveComponent(component).getComponent().getComponentId())).build();
+			return Response.created(URI.create("v1/resource/components/" + service.getComponentService().saveComponent(component).getComponent().getComponentId())).entity(component).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -163,6 +163,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
 			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
 			return Response.ok(service.getComponentService().saveComponent(component)).build();
@@ -273,7 +274,7 @@ public class ComponentRESTResource
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		return Response.created(URI.create(attribute.getComponentAttributePk().getAttributeType() + attribute.getComponentAttributePk().getAttributeCode())).build();
+		return Response.created(URI.create(attribute.getComponentAttributePk().getAttributeType() + attribute.getComponentAttributePk().getAttributeCode())).entity(attribute).build();
 	}
 
 	// ComponentRESTResource DEPENDENCY section
@@ -318,7 +319,6 @@ public class ComponentRESTResource
 			@RequiredParam ComponentExternalDependency dependency)
 	{
 		dependency.setComponentId(componentId);
-		dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
 		return saveDependency(dependency, true);
 	}
 
@@ -347,6 +347,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
 			dependency.setCreateUser(ServiceUtil.getCurrentUserName());
 			dependency.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentDependency(dependency);
@@ -354,7 +355,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create(dependency.getDependencyId())).build();
+			return Response.created(URI.create(dependency.getDependencyId())).entity(dependency).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -403,7 +404,6 @@ public class ComponentRESTResource
 			@RequiredParam ComponentContact contact)
 	{
 		contact.setComponentId(componentId);
-		contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 		return saveContact(contact, true);
 	}
 
@@ -432,6 +432,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 			contact.setCreateUser(ServiceUtil.getCurrentUserName());
 			contact.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentContact(contact);
@@ -439,7 +440,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create(contact.getContactId())).build();
+			return Response.created(URI.create(contact.getContactId())).entity(contact).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -503,7 +504,6 @@ public class ComponentRESTResource
 			@RequiredParam ComponentEvaluationSection section)
 	{
 		section.setComponentId(componentId);
-		section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
 		section.getComponentEvaluationSectionPk().setComponentId(componentId);
 		return saveSection(section, true);
 	}
@@ -535,6 +535,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
 			section.setCreateUser(ServiceUtil.getCurrentUserName());
 			section.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSection(section);
@@ -543,7 +544,7 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(section.getComponentEvaluationSectionPk().getEvaulationSection())).build();
+			return Response.created(URI.create(section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -593,7 +594,6 @@ public class ComponentRESTResource
 			@RequiredParam ComponentEvaluationSchedule schedule)
 	{
 		schedule.setComponentId(componentId);
-		schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
 		schedule.getComponentEvaluationSchedulePk().setComponentId(componentId);
 		return saveSchedule(schedule, true);
 	}
@@ -625,6 +625,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
 			schedule.setCreateUser(ServiceUtil.getCurrentUserName());
 			schedule.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSchedule(schedule);
@@ -633,7 +634,7 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).build();
+			return Response.created(URI.create(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).entity(schedule).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -681,7 +682,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMedia media)
 	{
-		media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 		media.setComponentId(componentId);
 		return saveMedia(media, true);
 	}
@@ -712,6 +712,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			media.setCreateUser(ServiceUtil.getCurrentUserName());
 			media.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMedia(media);
@@ -720,7 +721,7 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(media.getComponentMediaId())).build();
+			return Response.created(URI.create(media.getComponentMediaId())).entity(media).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -766,7 +767,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMetadata metadata)
 	{
-		metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 		metadata.setComponentId(componentId);
 		return saveMetadata(metadata, true);
 	}
@@ -797,6 +797,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 			metadata.setCreateUser(ServiceUtil.getCurrentUserName());
 			metadata.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMetadata(metadata);
@@ -875,7 +876,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentQuestion question)
 	{
-		question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 		question.setComponentId(componentId);
 		return saveQuestion(question, true);
 	}
@@ -906,6 +906,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 			question.setCreateUser(ServiceUtil.getCurrentUserName());
 			question.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
@@ -914,7 +915,7 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(question.getQuestionId())).build();
+			return Response.created(URI.create(question.getQuestionId())).entity(question).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -965,7 +966,6 @@ public class ComponentRESTResource
 	{
 		response.setComponentId(componentId);
 		response.setQuestionId(questionId);
-		response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 		return saveQuestionResponse(response, true);
 	}
 
@@ -995,6 +995,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			response.setCreateUser(ServiceUtil.getCurrentUserName());
 			response.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
@@ -1003,7 +1004,7 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(response.getResponseId())).build();
+			return Response.created(URI.create(response.getResponseId())).entity(response).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -1049,7 +1050,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentResource resource)
 	{
-		resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 		resource.setComponentId(componentId);
 		return saveResource(resource, true);
 	}
@@ -1080,6 +1080,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 			resource.setCreateUser(ServiceUtil.getCurrentUserName());
 			resource.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentResource(resource);
@@ -1088,7 +1089,7 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(resource.getResourceId())).build();
+			return Response.created(URI.create(resource.getResourceId())).entity(resource).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -1134,7 +1135,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentReview review)
 	{
-		review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		review.setComponentId(componentId);
 		return saveReview(review, true);
 	}
@@ -1165,6 +1165,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			review.setCreateUser(ServiceUtil.getCurrentUserName());
 			review.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReview(review);
@@ -1173,7 +1174,7 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(review.getComponentReviewId())).build();
+			return Response.created(URI.create(review.getComponentReviewId())).entity(review).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -1196,7 +1197,7 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Remove a con from the given review accociated with the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/con/{reviewId}/{con}")
+	@Path("/{id}/review/{reviewId}/con")
 	public void deleteComponentReviewCon(
 			@PathParam("id")
 			@RequiredParam
@@ -1204,13 +1205,15 @@ public class ComponentRESTResource
 			@PathParam("reviewId")
 			@RequiredParam
 			String reviewId,
-			@PathParam("con")
 			@RequiredParam
 			String con)
 	{
+		ComponentReviewCon example = new ComponentReviewCon();
 		ComponentReviewConPk pk = new ComponentReviewConPk();
 		pk.setComponentReviewId(reviewId);
-		pk.setReviewCon(con);
+//		pk.setReviewCon(con);
+		example.setComponentReviewConPk(pk);
+		service.getPersistenceService().deleteByExample(example);
 		service.getComponentService().deactivateBaseComponent(ComponentReviewCon.class, pk);
 	}
 
@@ -1219,12 +1222,22 @@ public class ComponentRESTResource
 	@APIDescription("Add a con to the given review associated with the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewCon.class)
-	@Path("/{id}/con")
+	@Path("/{id}/review/{reviewId}/con")
 	public Response addComponentReviewCon(
 			@PathParam("id")
-			@RequiredParam String componentId,
-			@RequiredParam ComponentReviewCon con)
+			@RequiredParam
+			String componentId,
+			@PathParam("reviewId")
+			@RequiredParam
+			String reviewId,
+			@RequiredParam String text)
 	{
+		ComponentReviewCon con = new ComponentReviewCon();
+		ComponentReviewConPk pk = new ComponentReviewConPk();
+		pk.setComponentReviewId(reviewId);
+		pk.setReviewCon(text);
+		con.setComponentReviewConPk(pk);
+		con.setText(text);
 		con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 		con.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(con);
@@ -1238,7 +1251,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
-		return Response.created(URI.create(con.getComponentReviewConPk().getComponentReviewId())).build();
+		return Response.created(URI.create(con.getComponentReviewConPk().getComponentReviewId())).entity(con).build();
 	}
 
 	// ComponentRESTResource REVIEW PRO section
@@ -1249,7 +1262,8 @@ public class ComponentRESTResource
 	@Path("/{id}/pro")
 	public List<ComponentReviewPro> getComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam
+			String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentReviewPro.class, componentId);
 	}
@@ -1258,7 +1272,7 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Remove a pro from the review associated with a specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/pro/{reviewId}/{pro}")
+	@Path("/{id}/review/{reviewId}/pro")
 	public void deleteComponentReviewPro(
 			@PathParam("id")
 			@RequiredParam
@@ -1266,13 +1280,15 @@ public class ComponentRESTResource
 			@PathParam("reviewId")
 			@RequiredParam
 			String reviewId,
-			@PathParam("pro")
 			@RequiredParam
 			String pro)
 	{
+		ComponentReviewPro example = new ComponentReviewPro();
 		ComponentReviewProPk pk = new ComponentReviewProPk();
 		pk.setComponentReviewId(reviewId);
-		pk.setReviewPro(pro);
+//		pk.setReviewPro(pro);
+		example.setComponentReviewProPk(pk);
+		service.getPersistenceService().deleteByExample(example);
 		service.getComponentService().deactivateBaseComponent(ComponentReviewPro.class, pk);
 	}
 
@@ -1281,12 +1297,22 @@ public class ComponentRESTResource
 	@APIDescription("Add a pro to the review associated with the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewPro.class)
-	@Path("/{id}/pro")
+	@Path("/{id}/review/{reviewId}/pro")
 	public Response addComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam String componentId,
-			@RequiredParam ComponentReviewPro pro)
+			@RequiredParam
+			String componentId,
+			@PathParam("reviewId")
+			@RequiredParam
+			String reviewId,
+			@RequiredParam String text)
 	{
+		ComponentReviewPro pro = new ComponentReviewPro();
+		ComponentReviewProPk pk = new ComponentReviewProPk();
+		pk.setComponentReviewId(reviewId);
+		pk.setReviewPro(text);
+		pro.setComponentReviewProPk(pk);
+		pro.setText(text);
 		pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 		pro.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(pro);
@@ -1300,7 +1326,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
-		return Response.created(URI.create(pro.getComponentReviewProPk().getComponentReviewId())).build();
+		return Response.created(URI.create(pro.getComponentReviewProPk().getComponentReviewId())).entity(pro).build();
 	}
 
 	// ComponentRESTResource TAG section
@@ -1355,7 +1381,7 @@ public class ComponentRESTResource
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		return Response.created(URI.create(tag.getTagId())).build();
+		return Response.created(URI.create(tag.getTagId())).entity(tag).build();
 	}
 
 	// ComponentRESTResource TRACKING section
@@ -1398,7 +1424,6 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentTracking tracking)
 	{
-		tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 		tracking.setComponentId(componentId);
 		return saveTracking(tracking, true);
 	}
@@ -1429,6 +1454,7 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+			tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 			tracking.setCreateUser(ServiceUtil.getCurrentUserName());
 			tracking.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(tracking);
@@ -1437,7 +1463,7 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(tracking.getComponentTrackingId())).build();
+			return Response.created(URI.create(tracking.getComponentTrackingId())).entity(tracking).build();
 		} else {
 			return Response.ok().build();
 		}

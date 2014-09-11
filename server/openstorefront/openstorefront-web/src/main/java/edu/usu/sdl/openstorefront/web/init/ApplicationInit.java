@@ -42,6 +42,7 @@ public class ApplicationInit
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
+
 		//Order is important
 		startupManager(new DBManager());
 		startupManager(new OSFCacheManager());

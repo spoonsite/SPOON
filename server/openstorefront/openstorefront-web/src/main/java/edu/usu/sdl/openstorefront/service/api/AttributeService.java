@@ -57,7 +57,6 @@ public interface AttributeService
 	 * Saves code
 	 *
 	 * @param attributeCode
-	 * @param AttributeCode
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveAttributeCode(AttributeCode attributeCode);
@@ -84,7 +83,6 @@ public interface AttributeService
 	 * internal file.
 	 *
 	 * @param attributeCodePk
-	 * @param article
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteArticle(AttributeCodePk attributeCodePk);
@@ -92,7 +90,7 @@ public interface AttributeService
 	/**
 	 * Remove Type
 	 *
-	 * @param attributeType
+	 * @param type
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeAttributeType(String type);
@@ -100,7 +98,7 @@ public interface AttributeService
 	/**
 	 * Remove Code
 	 *
-	 * @param AttributeCode
+	 * @param attributeCodePk
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeAttributeCode(AttributeCodePk attributeCodePk);

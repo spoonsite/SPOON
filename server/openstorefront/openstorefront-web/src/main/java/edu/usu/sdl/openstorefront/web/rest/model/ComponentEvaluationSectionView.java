@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,6 +30,7 @@ public class ComponentEvaluationSectionView
 {
 	private String name;	
 	private Integer score;
+	private Date updateDts;
 
 	public ComponentEvaluationSectionView()
 	{
@@ -39,6 +41,7 @@ public class ComponentEvaluationSectionView
 		ComponentEvaluationSectionView view = new ComponentEvaluationSectionView();
 		view.setName(section.getComponentEvaluationSectionPk().getEvaulationSection());
 		view.setScore(section.getScore());
+		view.setUpdateDts(section.getUpdateDts());
 		return view;
 	}
 		
@@ -69,6 +72,22 @@ public class ComponentEvaluationSectionView
 	public void setScore(Integer score)
 	{
 		this.score = score;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

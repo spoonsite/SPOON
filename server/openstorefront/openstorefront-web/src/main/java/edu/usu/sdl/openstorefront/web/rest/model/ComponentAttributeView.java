@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import java.util.Date;
 
 /**
  *
@@ -29,6 +30,7 @@ public class ComponentAttributeView
 	private String codeLongDescription;
 	private ComponentAttribute componentAttribute;
 	private boolean importantFlg;
+	private Date updateDts;
 
 	public ComponentAttributeView()
 	{
@@ -82,6 +84,22 @@ public class ComponentAttributeView
 	public void setComponentAttribute(ComponentAttribute componentAttribute)
 	{
 		this.componentAttribute = componentAttribute;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

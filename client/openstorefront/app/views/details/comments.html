@@ -1,8 +1,8 @@
 <div class="container component2-div">
   <div class="col-sm-12">
     <br>
-    <div ng-if="details.details.questions[0] !== undefined"  data-ng-repeat="item in details.details.questions">
-      <div class="questionsHeader"><span class="qaLabel">Q.</span> <strong>{{item.question}}</strong> <small>{{item.username}}&nbsp;({{item.userType}})&nbsp;&mdash;&nbsp;{{getDate(item.createDts)}}</small><button class="btn btn-sm btn-default flipme collapsed" style="margin-left: 10px;" data-toggle="collapse" data-parent="#accordion" href="#questionCollapse{{$index}}"><i class="fa fa-arrow-down"></i></button></div><br>
+    <div id="questions{{$index}}Update" ng-if="details.details.questions[0] !== undefined"  data-ng-repeat="item in details.details.questions">
+      <div ng-class="getIsUpdated('questions'+$index)? 'updatedForUser': ''" class="questionsHeader"><span class="qaLabel">Q.</span> <strong>{{item.question}}</strong> <small>{{item.username}}&nbsp;({{item.userType}})&nbsp;&mdash;&nbsp;{{getDate(item.createDts)}}</small><button class="btn btn-sm btn-default flipme collapsed" style="margin-left: 10px;" data-toggle="collapse" data-parent="#accordion" href="#questionCollapse{{$index}}"><i class="fa fa-arrow-down"></i></button></div><br>
       <div id="questionCollapse{{$index}}" class="panel-collapse collapse" style="margin-left: 20px;">
         <div ng-repeat="answer in item.responses" style="width: 100%; display: inline-block">
           <div style="width: 20px; margin-right: -20px; clear: both; float: left;" class="qaLabel">A.</div> 

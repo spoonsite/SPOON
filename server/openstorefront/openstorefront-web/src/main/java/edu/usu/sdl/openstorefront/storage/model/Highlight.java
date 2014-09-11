@@ -15,6 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
@@ -23,11 +30,33 @@ public class Highlight
 		extends BaseEntity
 {
 
+	@PK
+	@NotNull
 	private String highlightId;
+
+	@NotNull
+	@ConsumeField
+	@ValidValueType(value = {Highlight.TYPE_ARTICLE, Highlight.TYPE_COMPONENT, Highlight.TYPE_EXTERNAL_LINK}, lookupClass = HighlightType.class)
 	private String highlightType;
+
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String title;
+
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
 	private String description;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	private String link;
+
+	public static final String FIELD_TITLE = "title";
+	public static final String TYPE_COMPONENT = "C";
+	public static final String TYPE_ARTICLE = "A";
+	public static final String TYPE_EXTERNAL_LINK = "EL";
 
 	public Highlight()
 	{

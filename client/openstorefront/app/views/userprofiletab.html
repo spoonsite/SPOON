@@ -44,47 +44,47 @@ limitations under the License.
 									</div>
 								</div>	
 									<!-- show-errors	 -->
-									<!-- ng-class="{'has-error': userForm.firstname.$dirty && userForm.firstname.$invalid}"	 -->
+									<!-- ng-class="{'has-error': userForm.firstName.$dirty && userForm.firstName.$invalid}"	 -->
 								<div class="form-group" show-errors >
 									<label class="col-sm-3 control-label">First Name:</label>
 									<div class="col-sm-8">
-									<!-- 	<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="60" id="firstname" ng-model="userProfileForm.firstname" required /> -->
+									<!-- 	<input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="60" id="firstName" ng-model="userProfileForm.firstName" required /> -->
 										<input  type="text" 
-												id="firstname"
-												name="firstname"
+												id="firstName"
+												name="firstName"
 									            placeholder="First Name"
 									            ng-disabled="!userForm.mySwitch"
 									            class="form-control" 
-									            ng-model="userProfileForm.firstname" 
+									            ng-model="userProfileForm.firstName" 
 									            ng-minlength=2 
 									            ng-maxlength=60 
 									            required 
 									            ng-focus />
-											<p ng-show="userForm.firstname.$error.minlength && !userForm.firstname.$focused" class="help-block">First Name must be longer than 1 character in length.</p>
-											<p ng-show="userForm.firstname.$error.required && !userForm.firstname.$focused" class="help-block">First Name is required.</p>
+											<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">First Name must be longer than 1 character in length.</p>
+											<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">First Name is required.</p>
 									</div>
 								</div>
 
 								<div class="form-group" show-errors >
-																	            <!-- ng-class="{'has-error': userForm.lastname.$dirty && userForm.lastname.$invalid}" -->
-								<!-- <div class="form-group" ng-class="{'has-error': userForm.lastname.$dirty && userForm.lastname.$invalid && !userForm.lastname.$focused}"> -->
+																	            <!-- ng-class="{'has-error': userForm.lastName.$dirty && userForm.lastName.$invalid}" -->
+								<!-- <div class="form-group" ng-class="{'has-error': userForm.lastName.$dirty && userForm.lastName.$invalid && !userForm.lastName.$focused}"> -->
 									<label class="col-sm-3 control-label">Last Name:</label>
 									<div class="col-sm-8">
-										<!-- <input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="80" id="lastname" ng-model="userProfileForm.lastname"> -->
+										<!-- <input type="text" ng-disabled="!mySwitch" class="form-control" ngMaxlength="80" id="lastName" ng-model="userProfileForm.lastName"> -->
 										<input  type="text" 
-												id="lastname"
-												name="lastname"
+												id="lastName"
+												name="lastName"
 									            placeholder="Last Name"
 									            ng-disabled="!userForm.mySwitch"
 									            class="form-control" 
-									            ng-model="userProfileForm.lastname" 
+									            ng-model="userProfileForm.lastName" 
 									            ng-minlength=2 
 									            ng-maxlength=60 
 									            required 
 									            ng-focus />
 
-										<p ng-show="userForm.lastname.$error.minlength && !userForm.lastname.$focused" class="help-block">Last Name must longer than 1 character in length.</p>
-										<p ng-show="userForm.lastname.$error.required && !userForm.lastname.$focused" class="help-block">Last Name is required.</p>
+										<p ng-show="userForm.lastName.$error.minlength && !userForm.lastName.$focused" class="help-block">Last Name must longer than 1 character in length.</p>
+										<p ng-show="userForm.lastName.$error.required && !userForm.lastName.$focused" class="help-block">Last Name is required.</p>
 									</div>
 								</div>								
 								<div class="form-group" show-errors >

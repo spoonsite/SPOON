@@ -263,7 +263,8 @@ public class AttributeResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).build();
+			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
+			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).entity(attributeTypeCreated).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -333,10 +334,11 @@ public class AttributeResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
+			AttributeCode attributeCodeCreated = service.getPersistenceService().findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
 					+ attributeCode.getAttributeCodePk().getAttributeType()
 					+ "/attributecodes/"
-					+ attributeCode.getAttributeCodePk().getAttributeCode())).build();
+					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
 		} else {
 			return Response.ok().build();
 		}

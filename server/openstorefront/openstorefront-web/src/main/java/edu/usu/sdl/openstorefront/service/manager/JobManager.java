@@ -18,7 +18,9 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.io.ArticleImporter;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
+import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quartz.JobBuilder;
@@ -30,6 +32,7 @@ import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.newTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.jobs.DirectoryScanJob;
+import org.quartz.jobs.DirectoryScanListener;
 
 /**
  * Handles Automation jobs
@@ -50,10 +53,7 @@ public class JobManager
 		try {
 			StdSchedulerFactory factory = new StdSchedulerFactory(FileSystemManager.getConfig("quartz.properties").getPath());
 			scheduler = factory.getScheduler();
-
-			//Init system Jobs
 			initSystemJobs();
-
 			scheduler.start();
 
 		} catch (SchedulerException ex) {
@@ -63,77 +63,36 @@ public class JobManager
 
 	private static void initSystemJobs() throws SchedulerException
 	{
-		log.log(Level.FINEST, "Setting up Lookup Import Job...");
-		setupLookupCodeJob();
-		setupAttributeJob();
-		setupArticleJob();
+		log.log(Level.FINEST, "Setting up Import Jobs...");
+		addImportJob(new LookupImporter(), FileSystemManager.IMPORT_LOOKUP_DIR);
+		addImportJob(new AttributeImporter(), FileSystemManager.IMPORT_ATTRIBUTE_DIR);
+		addImportJob(new ArticleImporter(), FileSystemManager.IMPORT_ARTICLE_DIR);
+		addImportJob(new HighlightImporter(), FileSystemManager.IMPORT_HIGHLIGHT_DIR);
 	}
 
-	private static void setupLookupCodeJob() throws SchedulerException
+	private static void addImportJob(DirectoryScanListener directoryScanListener, String dirToWatch) throws SchedulerException
 	{
+		String jobName = directoryScanListener.getClass().getName();
+		log.log(Level.INFO, MessageFormat.format("Adding DIRWatch Job: {0}", directoryScanListener.getClass().getName()));
+
 		JobDetail job = JobBuilder.newJob(DirectoryScanJob.class)
-				.withIdentity("LookupImport", JOB_GROUP_SYSTEM)
+				.withIdentity(jobName, JOB_GROUP_SYSTEM)
 				.build();
 
-		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_NAME, FileSystemManager.IMPORT_LOOKUP_DIR);
-		LookupImporter lookupImportListener = new LookupImporter();
-		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_SCAN_LISTENER_NAME, lookupImportListener.getClass().getName());
-		scheduler.getContext().put(lookupImportListener.getClass().getName(), lookupImportListener);
+		FileSystemManager.getDir(dirToWatch);
+		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_NAME, dirToWatch);
+		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_SCAN_LISTENER_NAME, directoryScanListener.getClass().getName());
+		scheduler.getContext().put(directoryScanListener.getClass().getName(), directoryScanListener);
 		Trigger trigger = newTrigger()
-				.withIdentity("lookupTrigger", JOB_GROUP_SYSTEM)
+				.withIdentity(jobName + "Trigger", JOB_GROUP_SYSTEM)
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInSeconds(30)
 						.repeatForever())
 				.build();
 
-		// Tell quartz to schedule the job using our trigger
 		scheduler.scheduleJob(job, trigger);
-	}
 
-	private static void setupAttributeJob() throws SchedulerException
-	{
-		JobDetail job = JobBuilder.newJob(DirectoryScanJob.class)
-				.withIdentity("AttruibuteImport", JOB_GROUP_SYSTEM)
-				.build();
-
-		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_NAME, FileSystemManager.IMPORT_ATTRIBUTE_DIR);
-		AttributeImporter attributeImporter = new AttributeImporter();
-		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_SCAN_LISTENER_NAME, attributeImporter.getClass().getName());
-		scheduler.getContext().put(attributeImporter.getClass().getName(), attributeImporter);
-		Trigger trigger = newTrigger()
-				.withIdentity("AttruibuteTrigger", JOB_GROUP_SYSTEM)
-				.startNow()
-				.withSchedule(simpleSchedule()
-						.withIntervalInSeconds(30)
-						.repeatForever())
-				.build();
-
-		// Tell quartz to schedule the job using our trigger
-		scheduler.scheduleJob(job, trigger);
-	}
-
-	private static void setupArticleJob() throws SchedulerException
-	{
-		JobDetail job = JobBuilder.newJob(DirectoryScanJob.class)
-				.withIdentity("ArticleImport", JOB_GROUP_SYSTEM)
-				.build();
-
-		FileSystemManager.getDir(FileSystemManager.IMPORT_ARTICLE_DIR);
-		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_NAME, FileSystemManager.IMPORT_ARTICLE_DIR);
-		ArticleImporter articleImporter = new ArticleImporter();
-		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_SCAN_LISTENER_NAME, articleImporter.getClass().getName());
-		scheduler.getContext().put(articleImporter.getClass().getName(), articleImporter);
-		Trigger trigger = newTrigger()
-				.withIdentity("ArticleTrigger", JOB_GROUP_SYSTEM)
-				.startNow()
-				.withSchedule(simpleSchedule()
-						.withIntervalInSeconds(30)
-						.repeatForever())
-				.build();
-
-		// Tell quartz to schedule the job using our trigger
-		scheduler.scheduleJob(job, trigger);
 	}
 
 	public static void cleanup()

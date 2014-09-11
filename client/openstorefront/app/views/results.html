@@ -171,7 +171,7 @@ limitations under the License.
             <div class="searchDescription">
               <!-- fa fa-file-text, fa fa-book, fa fa-info-circle-->
               <!-- glyphicon glyphicon-info-sign -->
-              <span ng-click="setupModal(modal, ''); openModal('descModal'); " class="imitateLink" > {{searchDescription}} <i class="glyphicon glyphicon-info-sign"></i></span>
+              <span ng-click="setupModal(modal, ''); openModal('descModal'); " class="imitateLink" > <span ng-bind-html="searchDescription"></span> <i class="glyphicon glyphicon-info-sign"></i></span>
               <div>
                 <button class="btn btn-default" ng-click="goToCompare()">Compare All</button>
               </div>

@@ -31,6 +31,7 @@ public class ComponentQuestionResponseView
 	private String username;
 	private String userType;
 	private Date answeredDate;
+	private Date updateDts;
 
 	public ComponentQuestionResponseView()
 	{
@@ -45,6 +46,7 @@ public class ComponentQuestionResponseView
 			tempView.setResponse(response.getResponse());
 			tempView.setUserType(response.getUserTypeCode());
 			tempView.setUsername(response.getUpdateUser());
+			tempView.setUpdateDts(response.getUpdateDts());
 			viewList.add(tempView);
 		});
 		return viewList;
@@ -88,6 +90,22 @@ public class ComponentQuestionResponseView
 	public void setUserType(String userType)
 	{
 		this.userType = userType;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

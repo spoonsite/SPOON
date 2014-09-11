@@ -17,6 +17,7 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
+import java.util.Date;
 
 /**
  *
@@ -29,6 +30,7 @@ public class ComponentContactView
 	private String email;
 	private String phone;
 	private String organization;
+	private Date updateDts;
 
 	public ComponentContactView()
 	{
@@ -41,6 +43,7 @@ public class ComponentContactView
 		view.setPostionDescription(contact.getContactType());
 		view.setOrganization(contact.getOrganization());
 		view.setPhone(contact.getPhone());
+		view.setUpdateDts(contact.getUpdateDts());
 		if (contact.getLastName() == null || "".equals(contact.getLastName()))
 		{
 			view.setName(contact.getFirstName());
@@ -99,6 +102,22 @@ public class ComponentContactView
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }
