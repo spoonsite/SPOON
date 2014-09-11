@@ -18,6 +18,9 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -39,7 +42,6 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
@@ -91,7 +93,8 @@ public class ComponentServiceImpl
 				baseComponentExample.setActiveStatus(BaseComponent.ACTIVE_STATUS);
 			}
 			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
-		} catch (InstantiationException | IllegalAccessException ex) {
+		}
+		catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
@@ -112,7 +115,7 @@ public class ComponentServiceImpl
 		}
 		return found;
 	}
-	
+
 	@Override
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId)
 	{
@@ -147,8 +150,7 @@ public class ComponentServiceImpl
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
 		Component tempParentComponent;
-		if (tempComponent != null && tempComponent.getParentComponentId() != null)
-		{
+		if (tempComponent != null && tempComponent.getParentComponentId() != null) {
 			tempParentComponent = persistenceService.findById(Component.class, tempComponent.getParentComponentId());
 		}
 		else {
@@ -162,16 +164,14 @@ public class ComponentServiceImpl
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
 		UserWatch tempUserWatch = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(tempWatch));
-		if (tempUserWatch != null)
-		{
+		if (tempUserWatch != null) {
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
 		}
+		List<ComponentAttribute> attributes = this.getAttributeService().getAttributesByComponentId(componentId);
+		result.setAttributes(ComponentAttributeView.toViewList(attributes));
 
 		result.setLastActivityDts(tempComponent.getLastActivityDts());
 
-		
-		// TODO: Make the ComponentDetailView extend the storage Component so we can handle
-		// all of that stuff there...
 		result.setComponentId(componentId);
 		result.setTags(getBaseComponent(ComponentTag.class, componentId));
 
@@ -207,17 +207,17 @@ public class ComponentServiceImpl
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
-			
+
 			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
 			tempProPk.setComponentReviewId(review.getComponentReviewId());
 			tempPro.setComponentReviewProPk(tempProPk);
-			
+
 			ComponentReviewCon tempCon = new ComponentReviewCon();
-			
+
 			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
 			tempConPk.setComponentReviewId(review.getComponentReviewId());
 			tempCon.setComponentReviewConPk(tempConPk);
-			
+
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
 			tempView.setPros(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro)));
 			tempView.setCons(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempPro)));
@@ -241,47 +241,40 @@ public class ComponentServiceImpl
 		List<ComponentEvaluationSection> evaluationSections = getBaseComponent(ComponentEvaluationSection.class, componentId);
 		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSchedules, evaluationSections));
 
-		//FIXME:
-		// This might change also.
-		// Here we grab the descriptions for each type and code per attribute
-//		List<ComponentAttributeView> attributes = (List<ComponentAttributeView>) (List<?>) getBaseComponent(ComponentAttribute.class, componentId);
-//		attributes.stream().forEach((attribute) -> {
-//			AttributeType tempType = new AttributeType();
-//			AttributeCode tempCode = new AttributeCode();
-//			tempType.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-//			AttributeCodePk codePk = new AttributeCodePk();
-//			codePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
-//			codePk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-//			tempCode.setAttributeCodePk(codePk);
-//			tempType = persistenceService.queryByExample(AttributeType.class, new QueryByExample(tempType)).get(0);
-//			tempCode = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(tempCode)).get(0);
-//			attribute.setCodeDescription(tempCode.getDescription());
-//			attribute.setCodeLongDescription(tempCode.getFullDescription());
-//			attribute.setTypeDescription(tempType.getDescription());
-//		});
-//		result.setAttributes(attributes);
-		List<ComponentAttributeView> attributes = new ArrayList();
-		result.setAttributes(attributes);
-
 		result.setToday(new Date());
-		
+
 		return result;
 	}
 
 	@Override
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
-		// How are we doing a 'find by ID' with a composite PK?
-		ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
-		if (oldAttribute != null) {
-			oldAttribute.setActiveStatus(attribute.getActiveStatus());
-			oldAttribute.setUpdateDts(TimeUtil.currentDate());
-			persistenceService.persist(oldAttribute);
-		} else {
-			attribute.setCreateDts(TimeUtil.currentDate());
-			attribute.setUpdateDts(TimeUtil.currentDate());
-			persistenceService.persist(attribute);
+		AttributeType type = persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
+		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+		AttributeCode code = persistenceService.findById(AttributeCode.class, pk);
+		if (type != null && code != null) {
+			ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
+			if (oldAttribute != null) {
+				oldAttribute.setActiveStatus(attribute.getActiveStatus());
+				oldAttribute.setComponentAttributePk(attribute.getComponentAttributePk());
+				oldAttribute.setUpdateDts(TimeUtil.currentDate());
+				persistenceService.persist(oldAttribute);
+			}
+			else {
+				ComponentAttribute example = new ComponentAttribute();
+				example.setComponentAttributePk(new ComponentAttributePk());
+				example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+				ComponentAttribute test = persistenceService.queryByOneExample(ComponentAttribute.class, new QueryByExample(example));
+				if ((test == null) || (type.getAllowMutlipleFlg() && !code.getAttributeCodePk().getAttributeCode().equals(attribute.getComponentAttributePk().getAttributeCode()))) {
+					attribute.setCreateDts(TimeUtil.currentDate());
+					attribute.setUpdateDts(TimeUtil.currentDate());
+					persistenceService.persist(attribute);
+				}
+			}
 		}
+
 	}
 
 	@Override
@@ -299,7 +292,8 @@ public class ComponentServiceImpl
 			oldContact.setUpdateDts(TimeUtil.currentDate());
 			oldContact.setUpdateUser(contact.getUpdateUser());
 			persistenceService.persist(oldContact);
-		} else {
+		}
+		else {
 			contact.setContactId(persistenceService.generateId());
 			contact.setCreateDts(TimeUtil.currentDate());
 			contact.setUpdateDts(TimeUtil.currentDate());
@@ -320,7 +314,8 @@ public class ComponentServiceImpl
 			oldDependency.setUpdateDts(TimeUtil.currentDate());
 			oldDependency.setUpdateUser(dependency.getUpdateUser());
 			persistenceService.persist(oldDependency);
-		} else {
+		}
+		else {
 			dependency.setDependencyId(persistenceService.generateId());
 			dependency.setCreateDts(TimeUtil.currentDate());
 			dependency.setUpdateDts(TimeUtil.currentDate());
@@ -338,7 +333,8 @@ public class ComponentServiceImpl
 			oldSection.setUpdateDts(TimeUtil.currentDate());
 			oldSection.setUpdateUser(section.getUpdateUser());
 			persistenceService.persist(oldSection);
-		} else {
+		}
+		else {
 			section.setCreateDts(TimeUtil.currentDate());
 			section.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(section);
@@ -356,7 +352,8 @@ public class ComponentServiceImpl
 			oldSchedule.setUpdateDts(TimeUtil.currentDate());
 			oldSchedule.setUpdateUser(schedule.getUpdateUser());
 			persistenceService.persist(oldSchedule);
-		} else {
+		}
+		else {
 			schedule.getComponentEvaluationSchedulePk().setComponentId(schedule.getComponentId());
 			schedule.setCreateDts(TimeUtil.currentDate());
 			schedule.setUpdateDts(TimeUtil.currentDate());
@@ -379,7 +376,8 @@ public class ComponentServiceImpl
 			oldMedia.setUpdateDts(TimeUtil.currentDate());
 			oldMedia.setUpdateUser(media.getUpdateUser());
 			persistenceService.persist(oldMedia);
-		} else {
+		}
+		else {
 			media.setComponentMediaId(persistenceService.generateId());
 			media.setCreateDts(TimeUtil.currentDate());
 			media.setUpdateDts(TimeUtil.currentDate());
@@ -398,7 +396,8 @@ public class ComponentServiceImpl
 			oldMetadata.setUpdateDts(TimeUtil.currentDate());
 			oldMetadata.setUpdateUser(metadata.getUpdateUser());
 			persistenceService.persist(oldMetadata);
-		} else {
+		}
+		else {
 			metadata.setMetadataId(persistenceService.generateId());
 			metadata.setCreateDts(TimeUtil.currentDate());
 			metadata.setUpdateDts(TimeUtil.currentDate());
@@ -418,7 +417,8 @@ public class ComponentServiceImpl
 			oldQuestion.setUpdateDts(TimeUtil.currentDate());
 			oldQuestion.setUpdateUser(question.getUpdateUser());
 			persistenceService.persist(oldQuestion);
-		} else {
+		}
+		else {
 			question.setQuestionId(persistenceService.generateId());
 			question.setCreateDts(TimeUtil.currentDate());
 			question.setUpdateDts(TimeUtil.currentDate());
@@ -439,7 +439,8 @@ public class ComponentServiceImpl
 			oldResponse.setUpdateDts(TimeUtil.currentDate());
 			oldResponse.setUpdateUser(response.getUpdateUser());
 			persistenceService.persist(oldResponse);
-		} else {
+		}
+		else {
 			response.setResponseId(persistenceService.generateId());
 			response.setCreateDts(TimeUtil.currentDate());
 			response.setUpdateDts(TimeUtil.currentDate());
@@ -462,7 +463,8 @@ public class ComponentServiceImpl
 			oldResource.setUpdateDts(TimeUtil.currentDate());
 			oldResource.setUpdateUser(resource.getUpdateUser());
 			persistenceService.persist(oldResource);
-		} else {
+		}
+		else {
 			resource.setResourceId(persistenceService.generateId());
 			resource.setCreateDts(TimeUtil.currentDate());
 			resource.setUpdateDts(TimeUtil.currentDate());
@@ -487,7 +489,8 @@ public class ComponentServiceImpl
 			oldReview.setUpdateDts(TimeUtil.currentDate());
 			oldReview.setUpdateUser(review.getUpdateUser());
 			persistenceService.persist(oldReview);
-		} else {
+		}
+		else {
 			review.setComponentReviewId(persistenceService.generateId());
 			review.setCreateDts(TimeUtil.currentDate());
 			review.setUpdateDts(TimeUtil.currentDate());
@@ -506,7 +509,8 @@ public class ComponentServiceImpl
 			oldCon.setUpdateDts(TimeUtil.currentDate());
 			oldCon.setUpdateUser(con.getUpdateUser());
 			persistenceService.persist(oldCon);
-		} else {
+		}
+		else {
 			con.setCreateDts(TimeUtil.currentDate());
 			con.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(con);
@@ -524,7 +528,8 @@ public class ComponentServiceImpl
 			oldPro.setUpdateDts(TimeUtil.currentDate());
 			oldPro.setUpdateUser(pro.getUpdateUser());
 			persistenceService.persist(oldPro);
-		} else {
+		}
+		else {
 			pro.setCreateDts(TimeUtil.currentDate());
 			pro.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(pro);
@@ -541,7 +546,8 @@ public class ComponentServiceImpl
 			oldTag.setUpdateDts(TimeUtil.currentDate());
 			oldTag.setUpdateUser(tag.getUpdateUser());
 			persistenceService.persist(oldTag);
-		} else {
+		}
+		else {
 			tag.setTagId(persistenceService.generateId());
 			tag.setCreateDts(TimeUtil.currentDate());
 			tag.setUpdateDts(TimeUtil.currentDate());
@@ -561,7 +567,8 @@ public class ComponentServiceImpl
 			oldTracking.setUpdateDts(TimeUtil.currentDate());
 			oldTracking.setUpdateUser(tracking.getUpdateUser());
 			persistenceService.persist(oldTracking);
-		} else {
+		}
+		else {
 			tracking.setComponentTrackingId(persistenceService.generateId());
 			tracking.setCreateDts(TimeUtil.currentDate());
 			tracking.setUpdateDts(TimeUtil.currentDate());
@@ -606,7 +613,8 @@ public class ComponentServiceImpl
 				persistenceService.persist(attribute);
 			});
 			return component;
-		} else if (component.checkForComplete()) {
+		}
+		else if (component.checkForComplete()) {
 			//FIXME: Finish the Update 
 			oldComponent.setName(component.getComponent().getName());
 			oldComponent.setApprovalState(component.getComponent().getApprovalState());
@@ -624,6 +632,21 @@ public class ComponentServiceImpl
 			return component;
 		}
 		return null;
+	}
+
+	@Override
+	public Boolean checkComponentAttribute(ComponentAttribute attribute)
+	{
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
+		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+		if (persistenceService.findById(AttributeCode.class, pk) == null) {
+			return Boolean.FALSE;
+		}
+		if (persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType()) == null) {
+			return Boolean.FALSE;
+		}
+		return Boolean.TRUE;
 	}
 
 }
