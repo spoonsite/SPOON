@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
 
@@ -33,6 +34,7 @@ public class ComponentContact
 
 	@NotNull
 	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = ContactType.class)
 	private String contactType;
 
 	@NotNull

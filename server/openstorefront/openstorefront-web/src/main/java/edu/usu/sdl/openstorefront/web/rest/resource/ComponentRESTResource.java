@@ -232,6 +232,27 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Remove an attribute from the entity")
 	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/attribute")
+	public void deleteComponentAttributes(
+			@PathParam("id")
+			@RequiredParam 
+			String componentId,
+			@PathParam("attributeType")
+			@RequiredParam
+			String attributeType,
+			@PathParam("attributeCode")
+			@RequiredParam
+			String attributeCode)
+	{
+		ComponentAttribute attribute = new ComponentAttribute();
+		attribute.setComponentId(componentId);
+		service.getPersistenceService().deleteByExample(attribute);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Remove an attribute from the entity")
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/attribute/{attributeType}/{attributeCode}")
 	public void deleteComponentAttribute(
 			@PathParam("id")
@@ -255,19 +276,23 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Add an attribute to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentAttribute.class)
+	@DataType(ComponentContact.class)
 	@Path("/{id}/attribute")
 	public Response addComponentAttribute(
 			@PathParam("id")
-			@RequiredParam String componentId,
-			@RequiredParam ComponentAttribute attribute)
+			@RequiredParam 
+			String componentId,
+			@RequiredParam
+			ComponentAttribute attribute)
 	{
 		attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		attribute.setComponentId(componentId);
+		attribute.getComponentAttributePk().setComponentId(componentId);
 		
 		ValidationModel validationModel = new ValidationModel(attribute);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
+		if (validationResult.valid() && service.getComponentService().checkComponentAttribute(attribute)) {
 			attribute.setCreateUser(ServiceUtil.getCurrentUserName());
 			attribute.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentAttribute(attribute);

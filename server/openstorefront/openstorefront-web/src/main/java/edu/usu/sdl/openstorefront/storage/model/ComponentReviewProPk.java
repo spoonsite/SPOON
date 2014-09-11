@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
@@ -33,6 +34,7 @@ public class ComponentReviewProPk
 
 	@NotNull
 	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = ReviewPro.class)
 	private String reviewPro;
 
 	public ComponentReviewProPk()

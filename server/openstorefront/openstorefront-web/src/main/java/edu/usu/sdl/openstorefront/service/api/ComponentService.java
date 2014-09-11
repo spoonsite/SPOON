@@ -131,6 +131,13 @@ public interface ComponentService
 
 	/**
 	 *
+	 * @param attribute
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Boolean checkComponentAttribute(ComponentAttribute attribute);
+
+	/**
+	 *
 	 * @param contact
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)

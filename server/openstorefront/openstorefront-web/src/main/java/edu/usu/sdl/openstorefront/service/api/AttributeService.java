@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +62,13 @@ public interface AttributeService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveAttributeCode(AttributeCode attributeCode);
 
+	/**
+	 * 
+	 * @param componentId
+	 * @return 
+	 */
+	public List<ComponentAttribute> getAttributesByComponentId(String componentId);
+	
 	/**
 	 * Grabs the article for a give code or type
 	 *
