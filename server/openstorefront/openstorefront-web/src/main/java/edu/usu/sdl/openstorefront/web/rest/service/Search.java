@@ -53,7 +53,8 @@ public class Search
 	{
 		List<SearchResult> searchResults = new ArrayList<>();
 		long totalResults = 0;
-		
+		// call method of interface here
+                // service.getSearchService().
 		
 		return sendListResponse(searchResults, totalResults);
 	}
