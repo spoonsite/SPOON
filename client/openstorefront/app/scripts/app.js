@@ -253,6 +253,13 @@ var app = angular
       });
 
       /***************************************************************
+      * This function is what is called when the modal event is fired
+      ***************************************************************/
+      $rootScope.$on('$hideModal', function(event, id) {
+        $('#' + id).modal('hide');
+      });
+
+      /***************************************************************
       * These functions trigger and untrigger loading masks
       ***************************************************************/
       $rootScope.$on('$TRIGGERLOAD', function(event, value){
@@ -298,6 +305,17 @@ var app = angular
         $rootScope.$broadcast('updateBody');
         $rootScope.$broadcast('$viewModal', id);
         $rootScope.sendPageView('Modal-'+id+'-'+current);
+      }; 
+
+      $rootScope.setComponentId = function(id) {
+        console.log('We set the id');
+        
+        $rootScope.refId = id;
+      };
+
+      $rootScope.getComponentId = function() {
+        console.log('We got the id');
+        return $rootScope.refId;
       };
 
       $rootScope.scrollTo = function(id) {
@@ -395,87 +413,94 @@ var app = angular
       //////////////////////////////////////////////////////////////////////////////
       // HttpBackend
       //////////////////////////////////////////////////////////////////////////////
-      //Mock Back End  (use passthough to route to server)
+      //Mock Back End  (use passThrough to route to server)
       $httpBackend.whenGET(/views.*/).passThrough();
       
-      $httpBackend.whenGET('/api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
-      $httpBackend.whenGET('/api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
-      $httpBackend.whenGET(/\/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
-        var query = getParams(url);
-        var result = null;
-        // console.log('query Parameters', query);
-        // console.log('Key', query.key);
-        if (query.type === 'search' && (query.key === 'all' || query.key === 'All'))
-        {
-          query.key = '';
-        }
-        if (query.key !== '' && query.type === 'search') {
-          result = _.filter(MOCKDATA2.resultsList, function(item) {
-            return _.contains(item.name, query.key) || _.contains(item.description, query.key) /*|| _.contains(item.owner, query.key)*/;
-          });
-        } else if (query.type && query.type === 'search'){
-          result = MOCKDATA2.resultsList;
-        } else if (query.type){
-          result = _.filter(MOCKDATA2.resultsList, function(item){
-            return _.some(item.attributes, function(code) {
-              if (code.type === query.type) {
-                return code.code === query.key;
-              } else {
-                return false;
-              }
-            });
-          });
-        }
+      $httpBackend.whenGET('api/v1/resource/userprofiles/JONLAW').passThrough();
+      $httpBackend.whenPUT('api/v1/resource/userprofiles/JONLAW').passThrough();
+      $httpBackend.whenGET('api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
+      $httpBackend.whenGET('api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
+      $httpBackend.whenGET(/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
+        // var query = getParams(url);
+        // var result = null;
+        // // console.log('query Parameters', query);
+        // // console.log('Key', query.key);
+        // if (query.type === 'search' && (query.key === 'all' || query.key === 'All'))
+        // {
+        //   query.key = '';
+        // }
+        // if (query.key !== '' && query.type === 'search') {
+        //   result = _.filter(MOCKDATA2.resultsList, function(item) {
+        //     return _.contains(item.name, query.key) || _.contains(item.description, query.key) || _.contains(item.owner, query.key);
+        //   });
+        // } else if (query.type && query.type === 'search'){
+        //   result = MOCKDATA2.resultsList;
+        // } else if (query.type){
+        //   result = _.filter(MOCKDATA2.resultsList, function(item){
+        //     return _.some(item.attributes, function(code) {
+        //       if (code.type === query.type) {
+        //         return code.code === query.key;
+        //       } else {
+        //         return false;
+        //       }
+        //     });
+        //   });
+        // }
         return [200, result, {}];
       });
       //
-      $httpBackend.whenGET(/\/api\/v1\/resource\/component\/\d*\/?/).respond(function(method, url, data) {
-        // grab the url (needed for what the backend will simulate)
-        // parse it into an array
-        var urlSplit = url.split('/');
-        var i = 0;
-        // go until we find our resource
-        while (urlSplit[i++] !== 'component'){}
-          // if there is an id, grab it for our use.
-        var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
+      $httpBackend.whenGET('api/v1/resource/components').passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?con/).passThrough();
+      // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
+      //   // grab the url (needed for what the backend will simulate)
+      //   // parse it into an array
+      //   var urlSplit = url.split('/');
+      //   var i = 0;
+      //   // go until we find our resource
+      //   while (urlSplit[i++] !== 'component'){}
+      //     // if there is an id, grab it for our use.
+      //   var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
 
-        var result = $q.defer();
-        $timeout(function() {
-          if (id && id !== '') {
-            var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
-            result.resolve(temp);
-          } else {
-            result.resolve(MOCKDATA2.componentList);
-          }
-        }, 1000);
-        return [200, result.promise, {}];
-      });
+      //   var result = $q.defer();
+      //   $timeout(function() {
+      //     if (id && id !== '') {
+      //       var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
+      //       result.resolve(temp);
+      //     } else {
+      //       result.resolve(MOCKDATA2.componentList);
+      //     }
+      //   }, 1000);
+      //   return [200, result.promise, {}];
+      // });
 
-      $httpBackend.whenGET(/api\/v1\/resource\/attributes\/DI2E-SVCV4-A\/attributeCode\/1.2.1\/article/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/attributes/DI2E-SVCV4-A/attributeCode/1.2.1/article').respond(function(method, url, data) {
         var request = new XMLHttpRequest();
         request.open('GET', 'views/temp/landingpage.html', false);
         request.send(null);
         return [request.status, request.response, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/attributes\//).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/attributes').respond(function(method, url, data) {
         return [200, MOCKDATA.filters, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/tags\//).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/tags').respond(function(method, url, data) {
         return [200, MOCKDATA.tagsList, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/pros\//).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
         return [200, MOCKDATA.prosConsList, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/evalLevels/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/lookup/evalLevels').respond(function(method, url, data) {
         var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
         return [200, result, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/expertise/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/lookup/expertise').respond(function(method, url, data) {
         var result = [
           //
           {'value':'1', 'label': 'Less than 1 month'},
@@ -489,11 +514,11 @@ var app = angular
         return [200, result, {}];
       });
 
-      $httpBackend.whenGET(/\/api\/v1\/resource\/lookup\/watches/).respond(function(method, url, data) {
+      $httpBackend.whenGET('api/v1/resource/lookup/watches').respond(function(method, url, data) {
         return [200, MOCKDATA.watches, {}];
       });
 
-      $httpBackend.whenPOST(/\/api\/v1\/resource\/lookup\/watches/).respond(function(method, url, data) {
+      $httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method, url, data) {
         MOCKDATA.watches = data;
         return [200, angular.fromJson(data), {}];
       });

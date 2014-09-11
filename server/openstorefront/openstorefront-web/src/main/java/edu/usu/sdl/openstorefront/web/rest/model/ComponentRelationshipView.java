@@ -16,25 +16,28 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import java.util.Date;
+
 /**
  *
  * @author dshurtleff
  */
 public class ComponentRelationshipView
 {
-	private Long componentId;
+	private String componentId;
 	private String name;
+	private Date updateDts;
 
 	public ComponentRelationshipView()
 	{
 	}
 
-	public Long getComponentId()
+	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	public void setComponentId(Long componentId)
+	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}
@@ -47,6 +50,22 @@ public class ComponentRelationshipView
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

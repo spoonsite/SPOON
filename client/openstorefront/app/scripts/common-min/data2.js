@@ -21,7 +21,7 @@
 
 var MOCKDATA2 = {};
 MOCKDATA2.componentList = [ {
-  "componentId" : 67,
+  "componentId" : 'ce453c31-679f-4061-b1b3-2ef2d15a9925',
   "guid" : "3a57b4c2-a90b-4098-8c56-916618afd8ee",
   "name" : "Central Authentication Service (CAS)",
   "description" : "The Central Authentication Service (CAS) is a single sign-on protocol for the web. Its purpose is to permit a user to access multiple applications while providing their credentials (such as userid and password) only once. It also allows web applications to authenticate users without gaining access to a user's security credentials, such as a password. The name CAS also refers to a software package that implements this protocol. <br> <br>CAS provides enterprise single sign-on service: <br>-An open and well-documented protocol <br>-An open-source Java server component <br>-A library of clients for Java, .Net, PHP, Perl, Apache, uPortal, and others <br>-Integrates with uPortal, Sakai, BlueSocket, TikiWiki, Mule, Liferay, Moodle and others <br>-Community documentation and implementation support <br>-An extensive community of adopters",
@@ -8913,7 +8913,7 @@ MOCKDATA2.componentList = [ {
 
 MOCKDATA2.resultsList = [ {
   "listingType" : "Component",
-  "componentId" : 67,
+  "componentId" : 'ce453c31-679f-4061-b1b3-2ef2d15a9925',
   "articleAttributeType" : null,
   "articleAttributeCode" : null,
   "name" : "Central Authentication Service (CAS)",

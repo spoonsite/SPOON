@@ -71,7 +71,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   * @param  success function
   */
   var loadLookupTable = function(entityName, successFunc) {
-    $http.get('/api/v1/resource/lookup/' + entityName).success(successFunc).error(function(data, status, headers, config) { /*jshint unused:false*/
+    $http.get('api/v1/resource/lookup/' + entityName).success(successFunc).error(function(data, status, headers, config) { /*jshint unused:false*/
       /*There was an error with the get*/
     });
   };

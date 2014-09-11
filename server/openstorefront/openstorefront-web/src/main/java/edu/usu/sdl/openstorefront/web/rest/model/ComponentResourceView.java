@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ResourceType;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +35,7 @@ public class ComponentResourceView
 	private String description;
 	private String link;
 	private Boolean restricted;
+	private Date updateDts;
 
 	public ComponentResourceView()
 	{
@@ -56,7 +58,7 @@ public class ComponentResourceView
 		componentResourceView.setResourceType(componentResource.getResourceType());
 		componentResourceView.setResourceTypeDesc(TranslateUtil.translate(ResourceType.class, componentResource.getResourceType()));
 		componentResourceView.setRestricted(componentResource.getRestricted());
-
+		componentResourceView.setUpdateDts(componentResource.getUpdateDts());
 		String link = componentResource.getLink();
 		if (componentResource.getResourceFileId() != null) {
 			link = ComponentResource.LOCAL_RESOURCE_URL + componentResource.getResourceId();
@@ -123,6 +125,22 @@ public class ComponentResourceView
 	public void setResourceTypeDesc(String resourceTypeDesc)
 	{
 		this.resourceTypeDesc = resourceTypeDesc;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

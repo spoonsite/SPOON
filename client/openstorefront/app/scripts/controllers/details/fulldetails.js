@@ -17,7 +17,7 @@
 
 /*global MOCKDATA2*/
 
-app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', function ($rootScope, $scope, Business, $location, Lightbox, $timeout) { /*jshint unused:false*/
+app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
 
   $scope.scoreCard                     = Business.componentservice.getScoreCard();
   $scope.externalDepend                = Business.componentservice.getExternalDepend();
@@ -29,6 +29,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
   $scope.componentState                = Business.componentservice.getComponentState();
   $scope.resultsComments               = Business.componentservice.getResultsComments();
+
+  $scope.setComponentId = function(id) {
+    var deferred = $q.defer();
+    $rootScope.refId = id;
+    deferred.resolve();
+    return deferred.promise;
+  }
 
   Business.userservice.getWatches().then(function(result) {
     if (result) {
@@ -367,7 +374,134 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       }
     }
   });
-  
+
+  var updateList = [];
+
+
+  $scope.getIsUpdated = function(item)
+  {
+    
+    return _.contains(updateList, item);
+  }
+
+  /***************************************************************
+  * This function sets up the 'show updated flags' and creates the tooltips.
+  ***************************************************************/  
+  var setupUpdateFlags = function(){
+    // remove old tooltips so that when we setup the update flags, they'll be fresh
+    _.each(updateList, function(list){
+      $('#'+list+'Update').tooltip('destroy');
+    });
+    // reset the update list
+    updateList = [];
+
+    if ($scope.details.details.lastViewedDts !== undefined)
+    {
+      var component = $scope.details.details;
+      var lastViewedDts = sqlToJsDate(component.lastViewedDts);
+      var shown = false;
+      _.each(component.componentMedia, function(media){
+        if (!shown && sqlToJsDate(media.updateDts) > lastViewedDts)
+        {
+          //media.updateDts is more recent. We should show it as updated
+          updateList.push('media');
+          shown = true;
+        }
+      });
+      shown = false;
+      _.each(component.tags, function(tag){
+        if (!shown && sqlToJsDate(tag.updateDts) > lastViewedDts)
+        {
+          if (!$('#tagsUpdate').hasClass('in'))
+          {
+            $scope.toggleTags('#tagsUpdate');
+          }
+          updateList.push('tags');
+          shown = true;
+        }
+      });
+      shown = false;
+      _.each(component.reviews, function(review, index){
+        if (!shown && sqlToJsDate(review.updateDate) > lastViewedDts)
+        {
+          updateList.push('reviews'+index);
+          shown = true;
+        }
+      });
+      _.each(component.resources, function(resource, index){
+        if (sqlToJsDate(resource.updateDts) > lastViewedDts)
+        {
+          updateList.push('resources'+index);
+        }
+      });
+      _.each(component.questions, function(question, index){
+        if (sqlToJsDate(question.updateDts) > lastViewedDts)
+        {
+          updateList.push('questions'+index);
+        }
+      });
+      shown = false;
+      _.each(component.metadata, function(data){
+        if (!shown && sqlToJsDate(data.updateDts) > lastViewedDts)
+        {
+          updateList.push('metadata');
+          shown = true;
+        }
+      });
+      if (sqlToJsDate(component.evaluation.updateDts) > lastViewedDts)
+      {
+        _.each(component.evaluation.evaluationSections, function(section, index){
+          if (sqlToJsDate(section.updateDts) > lastViewedDts)
+          {
+            updateList.push('evaluationSections');
+          }
+        });
+        shown = false;
+        _.each(component.evaluation.evaluationSchedule, function(schedule, index){
+          if (!shown && sqlToJsDate(schedule.updateDts) > lastViewedDts)
+          {
+            updateList.push('evaluationSchedule');
+            shown = true;
+          }
+        });
+        updateList.push('evaluation');
+      }
+      _.each(component.dependencies, function(dependency, index){
+        if (sqlToJsDate(dependency.updateDts) > lastViewedDts)
+        {
+          updateList.push('dependencies'+index);
+        }
+      });
+      _.each(component.contacts, function(contact, index){
+        if (sqlToJsDate(contact.updateDts) > lastViewedDts)
+        {
+          updateList.push('contacts'+index);
+        }
+      });
+
+      $timeout(function() {
+        var settings={
+          trigger: 'hover',
+          toggle: 'tooltip',
+          placement: 'left',
+          container: 'body',
+          title:'Updated!',
+          template: '<div class="tooltip removeOnChange" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+        }
+        _.each(updateList, function(updateId){
+          if (updateId === 'evaluationSections')
+          {
+            settings.placement = 'top';
+            $('#'+updateId+'Update').tooltip(settings);
+            settings.placement = 'left';
+          } else {
+            $('#'+updateId+'Update').tooltip(settings);
+          }
+        })
+      });
+    }
+  }
+
   /***************************************************************
   * This function watches the details object for changes
   ***************************************************************/
@@ -385,6 +519,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
             $scope.reviewSummary = null;
           }
         }
+        // setup the update list.
+        setupUpdateFlags();
       }
     }
   }, true);

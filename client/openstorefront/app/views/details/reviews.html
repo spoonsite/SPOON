@@ -14,7 +14,7 @@
           <span class="pull-left" style="margin-bottom: 10px;"><strong>{{reviewSummary.total.recommend}} out of {{reviewSummary.total.count}} ({{reviewSummary.total.recommendPercent}}%)</strong> reviewers would recommend this component.</span>
         </div>
         <div class="row">
-          <button class="btn btn-primary" ng-click="setupModal(modal, 'fullWidthModal').then(openModal('descModal', 'Write a Review')); ">Write a Review <i style="font-size: 16px; position: relative; bottom: -2px; left: 4px;" class="star-half-png"></i></button>
+          <button class="btn btn-primary" ng-click="setComponentId(details.details.componentId).then(setupModal(modal, 'fullWidthModal').then(openModal('descModal', 'Write a Review')));">Write a Review <i style="font-size: 16px; position: relative; bottom: -2px; left: 4px;" class="star-half-png"></i></button>
         </div>
       </div>
       <div ng-if="reviewSummary.pros" class="col-sm-3">
@@ -40,7 +40,7 @@
 
   <div class="section-headers addBorders"><h4>Component Reviews</h4></div>
   <!-- <div class="component-div-title">Component Reviews</div> -->
-  <div class="container component2-div" ng-repeat="review in details.details.reviews">
+  <div ng-class="getIsUpdated('reviews'+$index)? 'updatedForUser': ''" id="reviews{{$index}}Update" class="container component2-div" ng-repeat="review in details.details.reviews">
     <div class="col-sm-12">
       <H3 style="margin-top: 0px"><strong>{{review.title}} &mdash;</strong>
         <raty class="large-raty" read-only id="star{{$index}}" style="min-width:110px; height: 100%; " score="{{review.rating}}" number="5" path="images/raty/" data-container="star{{$index}}">
@@ -84,5 +84,5 @@
 <div ng-if="!reviewSummary">
   <div>There are currently no Reviews for this component.</div>
   <br>
-  <button class="btn btn-primary" ng-click="setupModal(modal, 'fullWidthModal').then(openModal('descModal', 'Write a Review')); ">Write a Review <i style="font-size: 16px; position: relative; bottom: -2px; left: 4px;" class="star-half-png"></i></button>
+  <button class="btn btn-primary" ng-click="setComponentId(details.details.componentId).then(setupModal(modal, 'fullWidthModal').then(openModal('descModal', 'Write a Review'))); ">Write a Review <i style="font-size: 16px; position: relative; bottom: -2px; left: 4px;" class="star-half-png"></i></button>
 </div>

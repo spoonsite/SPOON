@@ -80,7 +80,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     } else {
       $http({
         'method': 'GET',
-        'url': '/api/v1/resource/attributes/'
+        'url': 'api/v1/resource/attributes'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('filters', data);
@@ -105,7 +105,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     } else {
       $http({
         'method': 'GET',
-        'url': '/api/v1/resource/tags/'
+        'url': 'api/v1/resource/tags'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('tagsList', data);
@@ -129,7 +129,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     } else {
       $http({
         'method': 'GET',
-        'url': '/api/v1/resource/pros/'
+        'url': 'api/v1/resource/pros'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
           save('prosConsList', data);

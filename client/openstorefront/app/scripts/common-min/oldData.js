@@ -22,8 +22,8 @@ var MOCKDATA = {};
 
 MOCKDATA.userProfile = {
   'username' : 'sample.user',
-  'firstname' : 'Sample',
-  'lastname' : 'User',
+  'firstName' : 'Sample',
+  'lastName' : 'User',
   'email' : 'sample.user@test.net',
   'userTypeCode' :  'USER',
   'createDts' : 1405096596000,

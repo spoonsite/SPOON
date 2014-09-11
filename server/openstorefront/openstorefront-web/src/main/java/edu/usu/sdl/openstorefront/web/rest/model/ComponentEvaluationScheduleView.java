@@ -30,6 +30,7 @@ public class ComponentEvaluationScheduleView
 	private String evaluationLevelCode;
 	private Date completionDate;
 	private String levelStatus;
+	private Date updateDts;
 
 	public ComponentEvaluationScheduleView()
 	{
@@ -41,6 +42,7 @@ public class ComponentEvaluationScheduleView
 		view.setCompletionDate(schedule.getCompletionDate());
 		view.setEvaluationLevelCode(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode());
 		view.setLevelStatus(schedule.getLevelStatus());
+		view.setUpdateDts(schedule.getUpdateDts());
 		return view;
 	}
 	
@@ -81,6 +83,22 @@ public class ComponentEvaluationScheduleView
 	public void setCompletionDate(Date completionDate)
 	{
 		this.completionDate = completionDate;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

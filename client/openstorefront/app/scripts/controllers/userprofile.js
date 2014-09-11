@@ -161,7 +161,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
-   $scope.cancelUserProfile = function() {
+  $scope.cancelUserProfile = function() {
 
     Business.userservice.getCurrentUserProfile().then(function(profile) {
       $scope.userProfile = profile;
@@ -202,28 +202,21 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $scope.$emit('$TRIGGERLOAD', 'userLoad');
 
     $scope.mySwitch = false;
-  
+
     //validate form
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
     // Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
     Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
       function(data, status, headers, config){ /* jshint unused:false */
-      //SUCCESS:: data = return value
-        $timeout(function(){
-          $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
-        }, 1000);
-        loadUserProfile();
-        console.log(data);
+        //SUCCESS:: data = return value
+        $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+        $scope.$emit('$triggerEvent', '$RESETUSER');
       },
       function(value){ //FAILURE:: value = reason why it failed
-        $timeout(function(){
-          triggerError(value);
-              $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
-        }, 1000);
-        console.log(value);
-      }
-    );
+        triggerError(value);
+        $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+      });
   };
 
 
@@ -236,16 +229,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $scope.userBackup = jQuery.extend(true, {}, $scope.user);
   };
 
-  /***************************************************************
-  * This function saves the profile changes in the scope by copying them from
-  * the user variable into the backup variable (this function would be where
-  * you send the saved data to the database to store it)
-  ***************************************************************/ //
-  $scope.submitReview = function(review, revs) {
-    console.log('review', review);
-    console.log('revs', revs);
-    
-  };
 
   /***************************************************************
   * This function reverts the changes in the profile form by just copying back
@@ -281,8 +264,8 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
 
 
   $scope.saveNotifyChange = function(id) {
-      Business.userservice.setWatches($scope.watches);
-      Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
+    Business.userservice.setWatches($scope.watches);
+    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
 
 

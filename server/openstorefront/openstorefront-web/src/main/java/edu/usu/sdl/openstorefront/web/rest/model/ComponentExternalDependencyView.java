@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+import java.util.Date;
 
 /**
  *
@@ -28,6 +29,7 @@ public class ComponentExternalDependencyView
 	private String version;
 	private String dependancyReferenceLink;
 	private String comment;
+	private Date updateDts;
 
 	public ComponentExternalDependencyView()
 	{
@@ -40,6 +42,7 @@ public class ComponentExternalDependencyView
 		view.setVersion(dependency.getVersion());
 		view.setDependancyReferenceLink(dependency.getDependancyReferenceLink());
 		view.setDependency(dependency.getDependencyName());
+		view.setUpdateDts(dependency.getUpdateDts());
 		return view;
 	}
 
@@ -81,6 +84,22 @@ public class ComponentExternalDependencyView
 	public void setDependency(String dependency)
 	{
 		this.dependency = dependency;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }

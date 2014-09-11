@@ -456,6 +456,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         buttonOpen();
       }
       $scope.showDetails = false;
+      console.log('id', id);
+      
       Business.componentservice.getComponentDetails(id).then( function (result){
         if (result)
         {

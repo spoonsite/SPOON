@@ -28,6 +28,9 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.goToLand   = false;
   $scope.searchKey  = $rootScope.searchKey;
 
+  // Business.componentservice.getComponentDetails('ce453c31-679f-4061-b1b3-2ef2d15a9925');
+
+
   Business.getFilters().then(function(result){
     if (result) {
       $scope.filters = result;
@@ -39,7 +42,9 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     }
   });
 
-  Business.componentservice.getComponentDetails().then(function(result) {
+  Business.componentservice.getComponentList().then(function(result) {
+    console.log('result', result);
+    
     Business.typeahead(result, null).then(function(value){
       if (value) {
         $scope.typeahead = value;

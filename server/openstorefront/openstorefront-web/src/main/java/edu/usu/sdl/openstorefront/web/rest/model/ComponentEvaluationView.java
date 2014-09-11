@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class ComponentEvaluationView
 	private Date endDate;
 	private String currentLevelCode = "N/A";
 	private String reviewedVersion;
+	private Date updateDts;
 	
 	@DataType(ComponentEvaluationScheduleView.class)
 	private List<ComponentEvaluationScheduleView> evaluationSchedule = new ArrayList<>();
@@ -66,6 +68,21 @@ public class ComponentEvaluationView
 		
 		// where do we get this from?
 		view.setReviewedVersion(null);
+		Date max;
+		max = (schedules.size() > 0 && schedules.get(0) != null)? schedules.get(0).getUpdateDts(): null;
+		for (ComponentEvaluationScheduleView schedule : schedules) {
+			if (schedule.getUpdateDts().compareTo(max) > 0)
+			{
+				max = schedule.getUpdateDts();
+			}
+		}
+		for (ComponentEvaluationSectionView section : sections) {
+			if (section.getUpdateDts().compareTo(max) > 0)
+			{
+				max = section.getUpdateDts();
+			}
+		}
+		view.setUpdateDts(max);
 		return view;
 	}
 
@@ -127,6 +144,22 @@ public class ComponentEvaluationView
 	public void setEvaluationSections(List<ComponentEvaluationSectionView> evaluationSections)
 	{
 		this.evaluationSections = evaluationSections;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 	
 }

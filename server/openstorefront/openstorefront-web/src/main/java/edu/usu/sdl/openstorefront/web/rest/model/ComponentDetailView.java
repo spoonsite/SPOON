@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +61,10 @@ public class ComponentDetailView
 
 	@NotNull
 	private Date lastActivityDts;
+
+	private Date lastViewedDts;
+
+	private Date today;
 
 	@NotNull
 	private String createUser;
@@ -115,6 +120,25 @@ public class ComponentDetailView
 	{
 	}
 
+	public void setComponentDetails(Component component, Component parentComponent)
+	{
+		name = component.getName();
+		guid = component.getGuid();
+		description = component.getDescription();
+		approvedDate = component.getApprovedDts();
+		approvedUser = component.getApprovedUser();
+		createUser = component.getCreateUser();
+		createDts = component.getCreateDts();
+		version = component.getVersion();
+		activeStatus = component.getActiveStatus();
+		releaseDate = component.getReleaseDate();
+		organization = component.getOrganization();
+		parentComponent.setComponentId(parentComponent.getComponentId());
+		parentComponent.setName(parentComponent.getName());
+		parentComponent.setUpdateDts(parentComponent.getUpdateDts());
+		lastActivityDts = component.getLastActivityDts();	
+	}
+	
 	public String getComponentId()
 	{
 		return componentId;
@@ -403,6 +427,38 @@ public class ComponentDetailView
 	public void setComponentViews(Integer componentViews)
 	{
 		this.componentViews = componentViews;
+	}
+
+	/**
+	 * @return the lastViewedDts
+	 */
+	public Date getLastViewedDts()
+	{
+		return lastViewedDts;
+	}
+
+	/**
+	 * @param lastViewedDts the lastViewedDts to set
+	 */
+	public void setLastViewedDts(Date lastViewedDts)
+	{
+		this.lastViewedDts = lastViewedDts;
+	}
+
+	/**
+	 * @return the today
+	 */
+	public Date getToday()
+	{
+		return today;
+	}
+
+	/**
+	 * @param today the today to set
+	 */
+	public void setToday(Date today)
+	{
+		this.today = today;
 	}
 
 }

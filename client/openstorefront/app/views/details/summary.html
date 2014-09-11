@@ -1,7 +1,7 @@
 
 <div class="leftCol hideTheExtra">
   <div ng-if="details.details.evaluation.startDate !== null" class="rightCol">
-    <table class="table table-bordered table-hover" style="table-layout: fixed;">
+    <table class="table table-bordered table-hover" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
       <tbody>
         <tr>
           <th ng-if="details.details.evaluation.evaluationSections[0] !== undefined" class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>
@@ -18,7 +18,7 @@
               </i>
               <span ng-if="col.score <= 0">&nbsp;</span>
             </div>
-            <div class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;"  popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>{{getEvalDescription(col.name)}}" >
+            <div  ng-class="getIsUpdated('evaluationSections')? 'updatedForUser': ''" class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>{{getEvalDescription(col.name)}}" >
               <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
             </div>
           </td>
@@ -26,16 +26,16 @@
       </tbody>
     </table>
   </div>
-  <div>
+  <div id="updatedStuff">
     <div class="section-headers"><h4>Component Description</h4></div>
-    <p class="results-content-description" style="margin-left: 0px" ng-bind-html="details.details.description">
+    <p class="results-content-description" ng-class="getIsUpdated('description')? 'updatedForUser': ''" style="margin-left: 0px; height: 100px;" ng-bind-html="details.details.description">
     </p>
     <br>
   </div>
-  <div ng-if="details.details.componentMedia[0]" class="leftCol hideTheExtra">
+  <div ng-if="details.details.componentMedia[0]" class="leftCol hideTheExtra" id="mediaUpdate">
     <div class="section-headers"><h4>Screenshots / Media</h4></div>
     <br>
-    <div class="containers">
+    <div class="containers" ng-class="getIsUpdated('media')? 'updatedForUser': ''" >
       <ul style="list-style-type: none;">
         <li ng-repeat="image in getImages(details.details.componentMedia) | limitTo:3" style="display:inline; padding:5px 10px 10px 0;" style="display:inline">
           <a ng-click="openLightboxModal($index, details.details.componentMedia)" style="text-decoration:none; cursor:pointer; width: 100px; height: 100px; overflow: hidden;">
@@ -55,7 +55,7 @@
           <th class="valign" colspan="16"><h4>Important Component Vitals</h4></th>
         </tr>	 						
         <tr ng-repeat="row in details.details.attributes">
-          <td ng-if="row.important === true" colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
+          <td ng-if="row.important === true" colspan="5" class="text-left-bold"><span ng-class="getIsUpdated('row.codeDescription')? 'updatedForUser': ''">{{row.typeDescription}}</span></td>
           <td ng-if="row.codeLongDescription && row.important === true" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>
           <td ng-if="!row.codeLongDescription && row.important === true" colspan="11" class="text-left">{{row.codeDescription}}</td>
         </tr>
