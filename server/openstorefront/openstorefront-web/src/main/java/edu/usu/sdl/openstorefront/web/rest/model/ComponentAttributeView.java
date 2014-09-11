@@ -33,6 +33,8 @@ public class ComponentAttributeView
 {
 
 	private String typeDescription;
+	private String type;
+	private String code;
 	private String codeDescription;
 	private String typeLongDescription;
 	private String codeLongDescription;
@@ -57,9 +59,11 @@ public class ComponentAttributeView
 		AttributeCode code = service.getPersistenceService().findById(AttributeCode.class, pk);
 		AttributeType type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 		
-		view.setCodeDescription(code.getLabel());
+		view.setCodeDescription(code.getDescription());
 		view.setCodeLongDescription(code.getDescription());
 		view.setTypeDescription(type.getDescription());
+		view.setType(type.getAttributeType());
+		view.setCode(code.getAttributeCodePk().getAttributeCode());
 		view.setImportantFlg(type.getImportantFlg());
 		view.setRequiredFlg(type.getRequiredFlg());
 		view.setAllowMultipleFlg(type.getAllowMutlipleFlg());
@@ -213,6 +217,38 @@ public class ComponentAttributeView
 	public void setTypeLongDescription(String typeLongDescription)
 	{
 		this.typeLongDescription = typeLongDescription;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public String getType()
+	{
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
+	/**
+	 * @return the code
+	 */
+	public String getCode()
+	{
+		return code;
+	}
+
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code)
+	{
+		this.code = code;
 	}
 
 }
