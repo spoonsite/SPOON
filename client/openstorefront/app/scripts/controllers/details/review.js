@@ -41,7 +41,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     body.lastUsed = new Date(review.lastUsed).toISOString();
     body.recommend = review.recommend;
     body.organization = review.organization;
-    body.userTimeCode = review.usedTimeCode.label;
+    body.userTimeCode = review.usedTimeCode.code;
     console.log('body', body);
     console.log('review', review);
     console.log('revs', revs);

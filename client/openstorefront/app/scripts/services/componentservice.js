@@ -65,8 +65,8 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   };
 
   componentservice.saveReview = function(id, review) {
-    console.log('id', id);
-    console.log('review', review);
+    // console.log('id', id);
+    // console.log('review', review);
         
     var result = $q.defer();
     if (id && review)

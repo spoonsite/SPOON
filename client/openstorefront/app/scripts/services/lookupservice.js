@@ -91,8 +91,8 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     } else {
       loadLookupTable('UserTypeCode', function(data, status, headers, config) { /*jshint unused:false*/
         if (data) {
-          save('UserTypeCode', data.data);
-          deferred.resolve(data.data);
+          save('UserTypeCode', data);
+          deferred.resolve(data);
         } else {
           deferred.reject('There was an error grabbing the eval levels');
         }

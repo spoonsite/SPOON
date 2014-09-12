@@ -283,7 +283,7 @@ var app = angular
       // Functions
       //////////////////////////////////////////////////////////////////////////////
       $rootScope.sendPageView = function(view) {
-        console.log('we got a page view', view);
+        // console.log('we got a page view', view);
         
         $analytics.pageTrack($location.url()+'/'+view);
       };
@@ -294,7 +294,7 @@ var app = angular
           label = label? 'checked': 'unChecked';
         }
         
-        console.log('we got an event', name, category, label);
+        // console.log('we got an event', name, category, label);
         $analytics.eventTrack(name,{'category': category, 'label': label});
       };
   
@@ -308,13 +308,13 @@ var app = angular
       }; 
 
       $rootScope.setComponentId = function(id) {
-        console.log('We set the id');
+        // console.log('We set the id');
         
         $rootScope.refId = id;
       };
 
       $rootScope.getComponentId = function() {
-        console.log('We got the id');
+        // console.log('We got the id');
         return $rootScope.refId;
       };
 
