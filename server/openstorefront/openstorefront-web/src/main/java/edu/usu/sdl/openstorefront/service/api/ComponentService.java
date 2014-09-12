@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -89,23 +90,22 @@ public interface ComponentService
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
-	 * @param componentId 
+	 * @param componentId
 	 */
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param componentId
-	 * @param all 
+	 * @param all
 	 */
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId, Boolean all);
 
-	
 	/**
 	 * Return the whole list of components. (the short view)
 	 *
@@ -132,7 +132,7 @@ public interface ComponentService
 	/**
 	 *
 	 * @param attribute
-	 * @return 
+	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Boolean checkComponentAttribute(ComponentAttribute attribute);
@@ -244,5 +244,17 @@ public interface ComponentService
 	public RequiredForComponent saveComponent(RequiredForComponent component);
 	// Todo: Make an object that we can pass in to this function, or figure out which
 	// combination we'll need...
+
+	/**
+	 * This save the full component; this meant for use in the importer. It will
+	 * generate id and fill in missing file where possible. This is complete
+	 * sync. Meaning it will remove all subcomponents and then add the one's in
+	 * the model so the DB matches.
+	 *
+	 * @param componentAll
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public ComponentAll saveFullComponent(ComponentAll componentAll);
 
 }

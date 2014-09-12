@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
@@ -27,23 +26,23 @@ import org.apache.commons.beanutils.BeanUtils;
  * @author dshurtleff
  */
 public class PatternRule
-	extends BaseRule
+		extends BaseRule
 {
 
 	@Override
 	protected boolean validate(Field field, Object dataObject)
 	{
 		boolean valid = true;
-		
-		Pattern pattern = field.getAnnotation(Pattern.class);	
-		if (pattern != null)
-		{
-			try
-			{
+
+		Pattern pattern = field.getAnnotation(Pattern.class);
+		if (pattern != null) {
+			try {
 				String value = BeanUtils.getProperty(dataObject, field.getName());
-				valid = value.matches(pattern.regexp());				
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-			{
+				//null values are concerned a match that way optional field should work.
+				if (value != null) {
+					valid = value.matches(pattern.regexp());
+				}
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 				throw new OpenStorefrontRuntimeException("Unexpected error occur trying to get value from object.", ex);
 			}
 		}
@@ -59,10 +58,10 @@ public class PatternRule
 	@Override
 	protected String getValidationRule(Field field)
 	{
-		StringBuilder sb = new StringBuilder();		
-		Pattern pattern = field.getAnnotation(Pattern.class);		
-		sb.append("Pattern allowed: ").append(pattern.regexp());		
+		StringBuilder sb = new StringBuilder();
+		Pattern pattern = field.getAnnotation(Pattern.class);
+		sb.append("Pattern allowed: ").append(pattern.regexp());
 		return sb.toString();
 	}
-	
+
 }
