@@ -450,6 +450,7 @@ var app = angular
       });
       //
       $httpBackend.whenGET('api/v1/resource/components').passThrough();
+      $httpBackend.whenGET('api/v1/resource/highlights').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
@@ -483,9 +484,10 @@ var app = angular
         return [request.status, request.response, {}];
       });
 
-      $httpBackend.whenGET('api/v1/resource/attributes').respond(function(method, url, data) {
-        return [200, MOCKDATA.filters, {}];
-      });
+      $httpBackend.whenGET('api/v1/resource/attributes').passThrough();
+      // .respond(function(method, url, data) {
+      //   return [200, MOCKDATA.filters, {}];
+      // });
 
       $httpBackend.whenGET('api/v1/resource/tags').respond(function(method, url, data) {
         return [200, MOCKDATA.tagsList, {}];

@@ -75,24 +75,19 @@ limitations under the License.
       </div>
       <div class="content">
         <div class="row">
-          <div  style="text-align: left">
+          <div  style="text-align: left" ng-if="highlights.length > 0">
             <ul style="list-style-type:square;">
-              <li class="imitateLink" style="padding-bottom: 20px;">      
-                <a href="http://www.afei.org/events/4A07/Pages/default.aspx">
-                  <span class="listing_short_title_text">DI2E Plugfest May 22, 2014 George Mason University</span>     
+              <li class="imitateLink" style="padding-bottom: 20px;" ng-repeat="highlight in highlights">      
+                <a href="{{highlight.link}}">
+                  <span class="listing_short_title_text">{{highlight.title}}</span>     
                 </a>
-                <div style="font-size: 12px; color: #555555;">DI2E Plugfest is a part of DI2E Teams Week.This year Teams Week participants will be at the Plugfest looking for innovation and new capabilities. Stop by the Army Tactical Cloud Integration Lab and DIA Open Innovation Gateway booths to see what they are looking to add to their offerings and capabilities.
+                <div style="font-size: 12px; color: #555555;">{{highlight.description}}
                 </div>    
               </li>
-              <li class="imitateLink" ng-click="goTo('single', {id: 12})">
-                <a>
-                  <span class="listing_short_title_text">Content Discovery and Retrieval Engine - Brokered Search Component</span>     
-                </a>
-                <div style="font-size: 12px; color: #555555;">Content Discovery and Retrieval functionality is based on the architecture, standards, and specifications being developed and maintained by the joint IC/DoD Content Discovery and Retrieval (CDR) Integrated Product Team (IPT)....
-                </div>
-              </li>   
-
             </ul>
+          </div>
+          <div ng-if="highlights.length == 0">
+            There are no highlights at this time.
           </div>
         </div>
       </div>
