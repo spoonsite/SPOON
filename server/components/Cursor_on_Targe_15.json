@@ -1,0 +1,227 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "name" : "Cursor on Target Toolkit",
+    "description" : "(U) Cursor on Target is a set of components focused on driving interoperability in message exchanges. Components include: <br>*An XML message schema <br> &nbsp;&nbsp;Basic (mandatory): what, when, where <br>&nbsp;&nbsp; Extensible (optional): add subschema to add details  <br>\u0001*A standard <br>&nbsp;&nbsp; Established as USAF standard by SECAF memo April 2007 <br>&nbsp;&nbsp; Incorporated in USAF (SAF/XC) Enterprise Architecture <br>&nbsp;&nbsp; Registered by SAF/XC in DISROnline as a USAF Organizationally Unique Standard (OUS) <br>&nbsp;&nbsp; Foundation for UCore data model <br>&nbsp;&nbsp; On the way to becoming a MIL-STD <br>\u0001*A set of software plug-ins to enable systems, including VMF and Link 16, to input and output CoT messages <br>*A CoT message router (software) to facilitate publish/subscribe message routing <br>*A simple developer's tool kit",
+    "parentComponentId" : null,
+    "guid" : "f8a744b0-39b1-4ee9-8dd4-daf5a6f931a2",
+    "organization" : "Air Force",
+    "releaseDate" : 1230534000000,
+    "version" : "1.0",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491411,
+    "lastActivityDts" : 1410477491411
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentAttributePk" : {
+      "componentId" : "15",
+      "attributeType" : "TYPE",
+      "attributeCode" : "APP"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentAttributePk" : {
+      "componentId" : "15",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "15",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.4"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentAttributePk" : {
+      "componentId" : "15",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentAttributePk" : {
+      "componentId" : "15",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "CROSS.PATRICK.I.1126309879",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "15",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491411,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "15",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491411,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "15",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "15",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "15",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentMediaId" : null,
+    "fileName" : "CoTSS.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "componentMediaId" : null,
+    "fileName" : "CoTIcon.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "15",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://software.forge.mil/sf/projects/cot' title='https://software.forge.mil/sf/projects/cot' target='_blank'> https://software.forge.mil/sf/projects/cot</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

@@ -1,0 +1,199 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "name" : "DCGS-E Domain Name System (DNS) Technical Profile",
+    "description" : "(U) This CDP provides guidance for DNS for use by the DCGS Enterprise Community at large. DCGS Service Providers will use this guidance to make their services visibility and accessibility in the DCGS Enterprise SOA (DES). Several Intelligence Community/Department of Defense (IC/DoD) documents were incorporated to support the guidance provided. DNS is important to the DCGS Community because it supports visibility and accessibility of services hosted on their servers. <br> <br>(U//FOUO) This CDP provides a technical design description for the Domain Name System of the Distributed Common Ground/Surface System (DCGS) Enterprise Service Dial Tone (SDT).  It includes the service architecture design details, conformance requirements, and implementation guidance. <br> <br>(U//FOUO) Domain names are meaningful identification labels for Internet addresses. The Domain Name System capability translates domain names into the numerical identifiers associated with networking equipment for the purpose of locating and addressing these devices across the globe. The Domain Name System capability makes it possible to assign domain names to groups of Internet users in a meaningful way, independent of each user's physical location. Because of this, World Wide Web (WWW) hyperlinks and Internet contact information can remain consistent and constant even if the current Internet routing arrangements change or the participant uses a mobile device.  The Domain Name System (DNS) is the industry standard for domain name translation and will be utilized across the DCGS Enterprise as the DCGS Enterprise Domain Name System solution.   <br> <br>(U//FOUO) In support of enterprise behavior within the DCGS Family of Systems (FoS), this technical design document was created by the DCGS Enterprise Focus Team (EFT) to provide guidance for the use of the Domain Name System capability by the DCGS Enterprise Community at large. DCGS service providers will use this guidance to make their services visible and accessible in the DCGS Enterprise SOA (DES).  <br> <br>Content of Domain Name System (DNS) CDP: <br> - Technical Design Document (TDD) <br> - Service Specification Package (SSP)  <br> - Conformance Test Kit (CTK)  <br>    - Conformance Traceability Matrix (CTM) <br>    - Test Procedure Document <br>    - Test Request Messages - N/A (DNS is a network infrastructure service) <br>    - Gold Data Set - N/A (DNS is a network infrastructure service)  <br>    - Conformance Checks Scripts - N/A (DNS is a network infrastructure service)",
+    "parentComponentId" : null,
+    "guid" : "74f8c854-d70d-45f7-ab74-f63c27abdf8f",
+    "organization" : "DCGS EFT",
+    "releaseDate" : 1287640800000,
+    "version" : "see site",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491416,
+    "lastActivityDts" : 1410477491416
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentAttributePk" : {
+      "componentId" : "21",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SPEC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentAttributePk" : {
+      "componentId" : "21",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "NA"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "21",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "1.1"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentAttributePk" : {
+      "componentId" : "21",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentAttributePk" : {
+      "componentId" : "21",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Mark Popivchak; 571-334-7282; mpopivchak@integrity-apps.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "21",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491416,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "21",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "21",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "21",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "21",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "21",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://www.intelink.gov/go/J9qBGN9' title='https://www.intelink.gov/go/J9qBGN9' target='_blank'> https://www.intelink.gov/go/J9qBGN9</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

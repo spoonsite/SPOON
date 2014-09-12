@@ -1,0 +1,253 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "name" : "GVS",
+    "description" : "The National Geospatial-Intelligence Agency's (NGA) GEOINT Visualization Services is a suite of web-based capabilities that delivers geospatial visualization services to the Department of Defense (DoD) and Intelligence Community (IC) via classified and unclassified computer networks to provide visualization and data access services to the war fighter, intelligence officer, and the policy-maker. More information can be found on  <br>Intelink-U: Wiki: <a href='https://www.intelink.gov/wiki/GVS' title='https://www.intelink.gov/wiki/GVS' target='_blank'> GVS</a>  <br>Blog: <a href='https://www.intelink.gov/blogs/geoweb/' title='https://www.intelink.gov/blogs/geoweb/' target='_blank'> </a> Forge.mil  <br>Dashboard GVS: <a href='https://community.forge.mil/content/geoint-visualization-services-gvs-program' title='https://community.forge.mil/content/geoint-visualization-services-gvs-program' target='_blank'> geoint-visualization-services-gv...</a>  <br>Forge.mil Dashboard GVS/PalX3: <a href='https://community.forge.mil/content/geoint-visualization-services-gvs-palanterrax3' title='https://community.forge.mil/content/geoint-visualization-services-gvs-palanterrax3' target='_blank'> geoint-visualization-services-gv...</a>",
+    "parentComponentId" : null,
+    "guid" : "871e8252-1a22-4677-9a3d-fdd647d5d500",
+    "organization" : "unknown",
+    "releaseDate" : 1361084400000,
+    "version" : "1",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491427,
+    "lastActivityDts" : 1410477491427
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentAttributePk" : {
+      "componentId" : "35",
+      "attributeType" : "TYPE",
+      "attributeCode" : "APP"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentAttributePk" : {
+      "componentId" : "35",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "35",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentAttributePk" : {
+      "componentId" : "35",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentAttributePk" : {
+      "componentId" : "35",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentAttributePk" : {
+      "componentId" : "35",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "TREAT.DAVID.W.JR.1177060352",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "35",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491427,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "35",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491427,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "35",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "35",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "35",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentMediaId" : null,
+    "fileName" : "800px-GVS-4ShotMerge.jpg",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/jpg",
+    "link" : null,
+    "caption" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "componentMediaId" : null,
+    "fileName" : "gvs.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://software.forge.mil/sf/docman/do/listDocuments/projects.gvs' title='https://software.forge.mil/sf/docman/do/listDocuments/projects.gvs' target='_blank'> https://software.forge.mil/sf/docman/do/listDocuments/projects.gvs</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405612927000,
+    "updateUser" : "chris.bashioum",
+    "updateDts" : 1405612927000,
+    "componentId" : "35",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='https://intellipedia.intelink.gov/wiki/Gvs' title='https://intellipedia.intelink.gov/wiki/Gvs' target='_blank'> https://intellipedia.intelink.gov/wiki/Gvs</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}
