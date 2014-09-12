@@ -46,6 +46,7 @@ public class ComponentMedia
 	private String mediaTypeCode;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ValidValueType(value = {}, lookupClass = MediaType.class)
 	private String mimeType;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)

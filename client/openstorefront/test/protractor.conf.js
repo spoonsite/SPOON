@@ -22,7 +22,7 @@ exports.config = {
       jasmine.getEnv().addReporter(new HtmlReporter({
           baseDirectory: 'automation_logs', pathBuilder: function pathbuilder (spec, descriptions, results, capabilities)
           {
-            // Build this format:  YYYY-MMM-DD_HH-MM-SS;  2014-Aug-28_16-35-56 GMT -0600 (Mountain Daylight Time)
+            // Build this format:  YYYY-MMM-DD_HH-MM-SS;  2014-Aug-28
             var dt = new Date().toDateString().split(' ');
             var tm = new Date().toTimeString().split(':');
             myDateFormat = dt[3] + '-' + dt[1] + '-' + dt[2];
@@ -46,7 +46,7 @@ exports.config = {
     multiCapabilities: [
         // Will run up to 3 or 4 at a time on my machine
         // Options:  'chrome', 'firefox', 'internet explorer', 'opera', 'safari'
-        //{browserName: 'internet explorer'},
+        //{browserName: 'firefox'},
         {browserName: 'chrome'}
 
     ]
