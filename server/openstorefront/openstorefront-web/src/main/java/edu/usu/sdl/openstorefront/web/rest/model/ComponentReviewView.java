@@ -16,9 +16,12 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.ExperienceTimeType;
+import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,13 +57,24 @@ public class ComponentReviewView
 	
 	public static ComponentReviewView toView(ComponentReview review)
 	{
+		ServiceProxy service = new ServiceProxy();
 		ComponentReviewView view = new ComponentReviewView();
 		view.setUsername(review.getCreateUser());
-		view.setUserType(review.getUserTypeCode());
+		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, review.getUserTypeCode());
+		if (typeCode == null) {
+			view.setUserType(null);
+		} else {
+			view.setUserType(typeCode.getDescription());
+		}
 		view.setComment(review.getComment());
 		view.setRating(review.getRating());
 		view.setTitle(review.getTitle());
-		view.setUsedTimeCode(review.getUserTimeCode());
+		ExperienceTimeType timeCode = service.getLookupService().getLookupEnity(ExperienceTimeType.class, review.getUserTimeCode());
+		if (timeCode == null){
+			view.setUsedTimeCode(null);
+		} else {
+			view.setUsedTimeCode(timeCode.getDescription());			
+		}
 		view.setLastUsed(review.getLastUsed());
 		view.setUpdateDate(review.getUpdateDts());
 		view.setOrganization(review.getOrganization());
