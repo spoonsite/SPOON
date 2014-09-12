@@ -1,15 +1,6 @@
 describe('homepageLinksClicked Click Highlights and Footer Links on Storefront Homepage', function() {
 
-    it('click on the Highlights links', function() {
-        for (var i=0; i < 5; i++) {
-            browser.get(theSite, 25000);
-            element.all(by.css('.imitateLink')).get(i).click();
-            browser.driver.sleep(250);
-            expect(true).toBe(true);   //Some links now go off of the di2e website.
-        }
-    });
-
-    it('click on the FOOTER links, columns 1-4, all links below them', function() {
+     it('click on the FOOTER links, columns 1-4, all links below them', function() {
         // Footer has columns 1, 2, 3, 4.  Column li's are zero-based.
         browser.get(theSite, 25000);
         element.all(by.css('.column li')).get(0).click();
@@ -34,7 +25,18 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
         // Bottom copyright "Consent to Monitoring" link
         element.all(by.css('.copyright')).get(0).click();
         browser.driver.navigate().back();
-        expect(true).toBe(true);  // No page load failures, links exist
         browser.driver.sleep(750);
+        expect(true).toBe(true);  // No page load failures, links exist
+    });
+
+    it('click on the Highlights links', function() {
+        browser.get(theSite, 25000);
+        for (var i=0; i < 5; i++) {
+            element.all(by.css('.imitateLink')).get(i).click();
+            browser.driver.sleep(250);
+            browser.driver.navigate().back();
+            browser.driver.sleep(250);
+        }
+        expect(true).toBe(true);   //Some links now go off of the di2e website.
     });
  });
