@@ -53,7 +53,6 @@ public class UserProfile
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	@ConsumeField
-	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	private String userTypeCode;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
