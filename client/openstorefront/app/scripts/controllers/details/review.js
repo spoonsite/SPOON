@@ -2,6 +2,24 @@
 
 app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', function ($scope, Business, $rootScope) {
 
+  $scope.rating = 0;
+  if ($scope.review && $scope.review.rating) {
+    $scope.rating = $scope.review.rating;
+  }
+
+  $scope.$watch('review', function() {
+    if ($scope.review) {
+      $scope.rating = $scope.review.rating;
+    }
+  }, true);
+
+  $scope.$watch('rating', function() {
+    if ($scope.review) {
+      $scope.review.rating = $scope.rating;
+    }
+  });
+
+
   Business.lookupservice.getExpertise().then(function(result){
     if (result) {
       $scope.expertise = result;
@@ -25,7 +43,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     }
   });
 
-  console.log('$scope.getComponentId', $rootScope.getComponentId());
+  // console.log('$scope.getComponentId', $rootScope.getComponentId());
 
   /***************************************************************
   * This function saves the profile changes in the scope by copying them from
@@ -42,26 +60,26 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     body.recommend = review.recommend;
     body.organization = review.organization;
     body.userTimeCode = review.usedTimeCode.code;
-    console.log('body', body);
-    console.log('review', review);
-    console.log('revs', revs);
+    // console.log('body', body);
+    // console.log('review', review);
+    // console.log('revs', revs);
     event.preventDefault();
     
     var componentId = $rootScope.getComponentId();
     if (!revs) {
       Business.componentservice.saveReview(componentId, body).then(function(result){
-        console.log('result', result);
+        // console.log('result', result);
         if (result && result.componentReviewId)
         {
           var reviewId = result.componentReviewId;
           _.each(review.pros, function(pro){
             Business.componentservice.saveReviewPros(componentId, reviewId, pro.text).then(function(result){
-              console.log('result', result);
+              // console.log('result', result);
             })
           });
           _.each(review.cons, function(con){
             Business.componentservice.saveReviewCons(componentId, reviewId, con.text).then(function(result){
-              console.log('result', result);
+              // console.log('result', result);
             })
           });
           $scope.$emit('$hideModal', 'descModal');
