@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.service.io;
 
 import au.com.bytecode.opencsv.CSVReader;
-import cern.colt.Arrays;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
@@ -29,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;

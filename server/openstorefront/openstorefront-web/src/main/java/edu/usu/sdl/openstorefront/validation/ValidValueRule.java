@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.validation;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +25,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
@@ -48,16 +46,10 @@ public class ValidValueRule
 				String value = BeanUtils.getProperty(dataObject, field.getName());
 
 				Set<String> validValueSet = new HashSet<>();
-				if (validValueType.lookupClass().length > 1) {
+				ServiceProxy serviceProxy = new ServiceProxy();
+				if (validValueType.lookupClass().length > 0) {
 					for (Class lookupClass : validValueType.lookupClass()) {
-						Element cachedLookup = OSFCacheManager.getLookupCache().get(lookupClass.getName());
-						List<LookupEntity> lookups;
-						if (cachedLookup == null) {
-							ServiceProxy serviceProxy = new ServiceProxy();
-							lookups = serviceProxy.getLookupService().findLookup(lookupClass);
-						} else {
-							lookups = (List<LookupEntity>) cachedLookup.getObjectValue();
-						}
+						List<LookupEntity> lookups = serviceProxy.getLookupService().findLookup(lookupClass);
 						lookups.forEach(item -> {
 							validValueSet.add(item.getCode());
 						});

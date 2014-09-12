@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,7 @@ public class ComponentEvaluationSchedule
 
 	@NotNull
 	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = LevelStatus.class)
 	private String levelStatus;
 
 	public ComponentEvaluationSchedule()

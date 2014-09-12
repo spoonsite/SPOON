@@ -26,6 +26,13 @@ public class MediaType
 		extends LookupEntity
 {
 
+	public static final String IMAGE = "IMG";
+	public static final String VIDEO = "VID";
+	public static final String TEXT = "TEX";
+	public static final String AUDIO = "AUD";
+	public static final String ARCHIVE = "ARC";
+	public static final String OTHER = "OTH";
+
 	public MediaType()
 	{
 	}

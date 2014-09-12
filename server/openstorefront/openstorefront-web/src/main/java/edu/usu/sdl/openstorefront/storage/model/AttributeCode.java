@@ -55,6 +55,12 @@ public class AttributeCode
 	@ConsumeField
 	private String detailUrl;
 
+	public static final String DI2ELEVEL_NA = "NA";
+	public static final String DI2ELEVEL_LEVEL0 = "LEVEL0";
+	public static final String DI2ELEVEL_LEVEL1 = "LEVEL1";
+	public static final String DI2ELEVEL_LEVEL2 = "LEVEL2";
+	public static final String DI2ELEVEL_LEVEL3 = "LEVEL3";
+
 	public AttributeCode()
 	{
 	}
