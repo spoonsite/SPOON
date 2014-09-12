@@ -15,8 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.service.io;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.File;
+import java.text.MessageFormat;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -32,13 +38,23 @@ public class ComponentImporter
 	@Override
 	protected String getSyncProperty()
 	{
-		return ApplicationProperty.HIGHLIGHT_IMPORTER_LAST_SYNC_DTS;
+		return ApplicationProperty.COMPONENT_IMPORTER_LAST_SYNC_DTS;
 	}
 
 	@Override
 	protected void processFile(File file)
 	{
-		//TODO: Import component
+		log.log(Level.INFO, MessageFormat.format("Processing Components: ", file));
+
+		try {
+			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+			ComponentAll componentAll = objectMapper.readValue(file, new TypeReference<ComponentAll>()
+			{
+			});
+
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Unable to process component file.  File should conform to JSON format for a component type.", e);
+		}
 	}
 
 }

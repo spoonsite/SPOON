@@ -19,8 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<shiro.verison>1.2.3</shiro.verison>	
 		<jackson.verison>2.3.2</jackson.verison>	
-		<orientdb.verison>1.7.7</orientdb.verison>	
-		<lucence.verison>4.9.0</lucence.verison>	
+		<orientdb.verison>1.7.8</orientdb.verison>	
 	</properties>
     
 	<dependencies>
@@ -89,42 +88,6 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-server</artifactId>
 			<version>${orientdb.verison}</version>
-		</dependency>	
-		  
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>${lucence.verison}</version>
-		</dependency>	
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers-common</artifactId>
-			<version>${lucence.verison}</version>
-		</dependency>			  
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-queryparser</artifactId>
-			<version>${lucence.verison}</version>
-		</dependency>			  
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-queries</artifactId>
-			<version>${lucence.verison}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-highlighter</artifactId>
-			<version>${lucence.verison}</version>
-		</dependency>			  			  													  		
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-grouping</artifactId>
-			<version>${lucence.verison}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-suggest</artifactId>
-			<version>${lucence.verison}</version>
 		</dependency>	
 		  
 		<dependency>
@@ -218,7 +181,7 @@
 		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>			 
-			<version>4.9.0</version>
+			<version>4.3.1</version>
 			<type>jar</type>			  
 		</dependency>
 		<dependency>

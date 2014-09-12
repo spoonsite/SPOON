@@ -26,6 +26,11 @@ public class LevelStatus
 		extends LookupEntity
 {
 
+	public static final String COMPLETE = "C";
+	public static final String IN_PROGRESS = "P";
+	public static final String HALTED = "H";
+	public static final String NOT_STARTED = "N";
+
 	public LevelStatus()
 	{
 	}

@@ -1,0 +1,251 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "name" : "Military Symbology Renderer",
+    "description" : "The Mil Symbology Renderer is both a developer's toolkit as well as a ready to use deployable web application. <br>The goal of this project is to provide a single distributable solution that can support as many use cases as possible <br>for military symbology rendering. The current features available are: <br>* Use in web applications using the JavaScript library and SECRenderer applet <br>* Use with thin Ozone Widget Framework with the Rendering widget and API <br>* Use as a REST web service (Currently supports icon based symbols only) <br>* Use of underlying rendering jar files in an application or service",
+    "parentComponentId" : null,
+    "guid" : "20dd2ed3-491f-4b8c-99a9-33029c308182",
+    "organization" : "unknown",
+    "releaseDate" : 1358924400000,
+    "version" : "1.0",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491434,
+    "lastActivityDts" : 1410477491434
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentAttributePk" : {
+      "componentId" : "43",
+      "attributeType" : "TYPE",
+      "attributeCode" : "WIDGET"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentAttributePk" : {
+      "componentId" : "43",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "43",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentAttributePk" : {
+      "componentId" : "43",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentAttributePk" : {
+      "componentId" : "43",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentAttributePk" : {
+      "componentId" : "43",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentAttributePk" : {
+      "componentId" : "43",
+      "attributeType" : "OWFCOMP",
+      "attributeCode" : "Y"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "patrick.cross",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "43",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491434,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "43",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491434,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "43",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "43",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "43",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "componentMediaId" : null,
+    "fileName" : "maps-icon.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://github.com/missioncommand/mil-sym-java/blob/master/documentation/Mil%20Symbology%20Web%20Service%20Developer's%20Guide.docx' title='https://github.com/missioncommand/mil-sym-java/blob/master/documentation/Mil%20Symbology%20Web%20Service%20Developer's%20Guide.docx' target='_blank'> https://github.com/missioncommand/mil-sym-java/blob/master/documentation/Mil%20Symbology%20Web%20Service%20Developer's%20Guide.docx</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485084000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485084000,
+    "componentId" : "43",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='https://github.com/missioncommand' title='https://github.com/missioncommand' target='_blank'> https://github.com/missioncommand</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

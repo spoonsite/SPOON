@@ -28,6 +28,7 @@ public class OpenStorefrontConstant
 	public static final String SYSTEM_USER = "SYSTEM";
 	public static final String SYSTEM_ADMIN_USER = "SYSTEM-ADMIN";
 	public static final String ANONYMOUS_USER = "ANONYMOUS";
+	public static final String NOT_AVAILABLE = "NA";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_USERNAME = 80;

@@ -1,12 +1,14 @@
 describe('homepageLinksClicked Click Highlights and Footer Links on Storefront Homepage', function() {
 
     it('click on the Highlights links', function() {
+        browser.get(theSite, 25000);
         for (var i=0; i < 5; i++) {
-            browser.get(theSite, 25000);
-            element.all(by.css('.imitateLink')).get(i).click();
+            element.all(by.css('.listing_short_title_text')).get(i).click();
             browser.driver.sleep(250);
-            expect(true).toBe(true);   //Some links now go off of the di2e website.
+            browser.driver.navigate().back();
+            browser.driver.sleep(250);
         }
+        expect(true).toBe(true);   //Some links now go off of the di2e website.
     });
 
     it('click on the FOOTER links, columns 1-4, all links below them', function() {
@@ -28,9 +30,14 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
         browser.driver.navigate().back();
         element.all(by.css('.column:nth-child(4) li')).get(0).click();
         browser.driver.navigate().back();
+        // Skip column 4, no. 1, General Questions as it is an email link
         element.all(by.css('.column:nth-child(4) li')).get(2).click();
         browser.driver.navigate().back();
-        expect(true).toBe(true);  // No page load failures, links exist
+        // Bottom copyright "Consent to Monitoring" link
+        element.all(by.css('.copyright')).get(0).click();
+        browser.driver.navigate().back();
         browser.driver.sleep(750);
+        expect(true).toBe(true);  // No page load failures, links exist
     });
+
  });

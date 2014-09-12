@@ -1,0 +1,199 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "name" : "DCGS-E Audit Log Management and Reporting Technical Profile",
+    "description" : "This CDP provides the technical design description for the Audit and Accountability capability of the Distributed Common Ground/Surface System (DCGS) Enterprise Service Dial Tone (SDT) layer. It includes the capability architecture design details, conformance requirements, and implementation guidance. <br> <br>Certain user actions, performed within a limited time period and in certain patterns, can be signs of preparation or attempts to exploit system vulnerabilities that involve privileged access.  Certain actions taken by the application server, in response to a perceived threat, are also potential signs of an attack.  Taken individually, these events are not absolute indicators and any response to them could be premature.  However, if the execution of the actions is not recorded, it becomes impossible to recognize later the pattern that confirms the occurrence of an attack.  In a Service Oriented Architecture (SOA), Web services dynamically bind to one another, making it even more difficult to recognize these patterns across Web services and determine accountability in a service chain.  Audit and Accountability is the capability that logs these events at each Web service so that these patterns can be identified, after the fact, and accountability enforced. <br> <br>In support of enterprise behavior within the DCGS Family of Systems (FoS), this technical design document was created by the DCGS Enterprise Focus Team (EFT) to provide guidance for audit and accountability of the DCGS Enterprise Service Dial Tone (SDT) layer for use by the DCGS Enterprise Community at large.  It includes the capability architecture design details, conformance requirements, and implementation guidance.  DCGS service providers will use this guidance to generate security audit logs to enforce accountability in a service chain. <br> <br>Content of Audit Logging (SOAP) CDP: <br> - Technical Design Document (TDD) <br> - Service Specification Package (SSP) for each service - Not applicable <br> - Conformance Test Kit (CTK) - Currently under development",
+    "parentComponentId" : null,
+    "guid" : "4cd37f95-c98e-4a83-800b-887cd972c714",
+    "organization" : "unknown",
+    "releaseDate" : 1330412400000,
+    "version" : "Draft",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491415,
+    "lastActivityDts" : 1410477491415
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentAttributePk" : {
+      "componentId" : "20",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SPEC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentAttributePk" : {
+      "componentId" : "20",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "NA"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "20",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "1.1"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentAttributePk" : {
+      "componentId" : "20",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentAttributePk" : {
+      "componentId" : "20",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Mark Popivchak; 571-334-7282; mpopivchak@integrity-apps.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "20",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491415,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "20",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "20",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "20",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "20",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485064000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485064000,
+    "componentId" : "20",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://www.intelink.gov/go/zsxM4al' title='https://www.intelink.gov/go/zsxM4al' target='_blank'> https://www.intelink.gov/go/zsxM4al</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

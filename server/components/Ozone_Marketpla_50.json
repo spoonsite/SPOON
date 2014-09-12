@@ -1,0 +1,227 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "name" : "Ozone Marketplace",
+    "description" : "The Ozone marketplace is a storefront to store widgets, services, and web applications. It can be linked to the Ozone Widget Framework.",
+    "parentComponentId" : null,
+    "guid" : "0a1931ac-611d-4d82-a83e-4a48ae51ec7a",
+    "organization" : "OWF Goss",
+    "releaseDate" : 1349935200000,
+    "version" : "5.0.1",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491436,
+    "lastActivityDts" : 1410477491436
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentAttributePk" : {
+      "componentId" : "50",
+      "attributeType" : "TYPE",
+      "attributeCode" : "APP"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentAttributePk" : {
+      "componentId" : "50",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "50",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "1.3"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentAttributePk" : {
+      "componentId" : "50",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentAttributePk" : {
+      "componentId" : "50",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Patrick Cross (CAC)",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "50",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491436,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "50",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491436,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "50",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "50",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "50",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentMediaId" : null,
+    "fileName" : "OMP.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "componentMediaId" : null,
+    "fileName" : "OMPIcon.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485089000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485089000,
+    "componentId" : "50",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://www.owfgoss.org/downloads/Marketplace/5.0/Marketplace-5.0.1-GA/' title='https://www.owfgoss.org/downloads/Marketplace/5.0/Marketplace-5.0.1-GA/' target='_blank'> https://www.owfgoss.org/downloads/Marketplace/5.0/Marketplace-5.0.1-GA/</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

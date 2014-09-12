@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class Component
-		extends BaseComponent
+		extends BaseEntity
 {
 
 	@PK
@@ -68,7 +68,7 @@ public class Component
 	@NotNull
 	@ValidValueType(
 			{
-				"A", "P"
+				Component.APPROVAL_STATE_APPROVED, Component.APPROVAL_STATE_PENDING
 			})
 	@ConsumeField
 	private String approvalState;
@@ -79,6 +79,9 @@ public class Component
 
 	@NotNull
 	private Date lastActivityDts;
+
+	public static final String APPROVAL_STATE_APPROVED = "A";
+	public static final String APPROVAL_STATE_PENDING = "P";
 
 	public Component()
 	{
@@ -192,6 +195,16 @@ public class Component
 	public void setReleaseDate(Date releaseDate)
 	{
 		this.releaseDate = releaseDate;
+	}
+
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
 	}
 
 }

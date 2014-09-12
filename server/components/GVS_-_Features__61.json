@@ -1,0 +1,239 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "name" : "GVS - Features - GE Shared Products",
+    "description" : "GVS Shared Product Query provides you with the ability to display geospatial information layers in a Google Earth client depicting data previously created and stored in the GVS Shared Product Buffer by other users. <br> <br>Home page: <a href='https://home.gvs.nga.mil/UPS/RSS' title='https://home.gvs.nga.mil/UPS/RSS' target='_blank'> RSS</a> for the manual query <a href='https://home.gvs.nga.mil/home/capabilities/queries/shared_products' title='https://home.gvs.nga.mil/home/capabilities/queries/shared_products' target='_blank'> shared_products</a> for the query tool <br>Wiki: A general GVS Wiki can be found here <a href='https://intellipedia.intelink.gov/wiki/GVS' title='https://intellipedia.intelink.gov/wiki/GVS' target='_blank'> GVS</a> no specialized shared product wiki pages exist <br> <br>GVS Overview:  GVS has several core categories for developers of Geospatial products.  These categories are reflected in the evaluation structure and content itself. <br>* Base Maps - Google Globe Google Maps, ArcGIS <br>* Features - MIDB, Intelink, CIDNE SIGACTS, GE shared products, WARP, NES <br>* Imagery - Commercial, WARP, NES <br>* Overlays - Streets, transportation, boundaries <br>* Discovery/Search - GeoQuery, Proximity Query, Google Earth, Globe Catalog, MapProxy, OMAR WCS <br>* Converters - GeoRSS to XML, XLS to KML, Shapefile to KML, KML to Shapefile, Coordinates <br>* Analytic Tools - Viewshed, Best Road Route <br>* Drawing Tools - Ellipse Generator, KML Styles, Custom Icons, Custom Placemarks, Mil Std 2525 Symbols <br>* Other - RSS Viewer, Network Link Generator, KML Report Creator",
+    "parentComponentId" : null,
+    "guid" : "f1fa43e1-b2bd-4636-bc86-0b050549c26f",
+    "organization" : "NGA",
+    "releaseDate" : 1401861600000,
+    "version" : "see site",
+    "approvalState" : "A",
+    "approvedUser" : "patrick.cross",
+    "approvedDts" : 1410477491428,
+    "lastActivityDts" : 1410477491428
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentAttributePk" : {
+      "componentId" : "61",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SERVICE"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentAttributePk" : {
+      "componentId" : "61",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "61",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentAttributePk" : {
+      "componentId" : "61",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentAttributePk" : {
+      "componentId" : "61",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentAttributePk" : {
+      "componentId" : "61",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Jennifer Chavarro, 703.456.3666",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "61",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491429,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "61",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491429,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "61",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "61",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "61",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "componentMediaId" : null,
+    "fileName" : "gvs.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://home.gvs.nga.mil/home/documentation' title='https://home.gvs.nga.mil/home/documentation' target='_blank'> https://home.gvs.nga.mil/home/documentation</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200719000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200719000,
+    "componentId" : "61",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='https://home.gvs.nga.mil/home/capabilities/queries/shared_products' title='https://home.gvs.nga.mil/home/capabilities/queries/shared_products' target='_blank'> https://home.gvs.nga.mil/home/capabilities/queries/shared_products</a> or  <a href='https://intellipedia.intelink.gov/wiki/GVS' title='https://intellipedia.intelink.gov/wiki/GVS' target='_blank'> https://intellipedia.intelink.gov/wiki/GVS</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

@@ -1,0 +1,199 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "name" : "DCGS-E Service Registration and Discovery (SRD) Technical Profile",
+    "description" : "(U//FOUO) Service discovery provides DCGS Enterprise consumers the ability to locate and invoke services to support a given task or requirement in a trusted and secure operational environment. By leveraging service discovery, existing DCGS Enterprise services will be published to a root service registry, which is searchable via keyword or taxonomy. This capability provides users and machines the ability to search and discover services or business offerings. The Service Discovery capability is a foundational building block allowing the DCGS programs of record to publish and discover service offerings allowing the DCGS Enterprise Community to share and reuse information in a common, proven, and standards-based manner. <br> <br>(U//FOUO) In support of enterprise behavior within the DCGS Family of Systems (FoS), this technical design document was created by the DCGS Enterprise Focus Team (EFT) to provide guidance for service discovery for use by the DCGS Enterprise Community at large. DCGS service providers will use this guidance to make their services discoverable within the DCGS Enterprise. <br> <br>Content of Service Registration and Discovery (SRD) CDP: <br> - Technical Design Document (TDD) <br> - Service Specification Package (SSP)  <br> - Conformance Test Kit (CTK)  <br>    - Conformance Traceability Matrix (CTM) <br>    - Test Procedure Document <br>    - Test Request Messages <br>    - Gold Data Set <br>    - Conformance Checks Scripts",
+    "parentComponentId" : null,
+    "guid" : "8f915029-78bb-4df2-944f-f6fc4a84eeec",
+    "organization" : "DCGS EFT",
+    "releaseDate" : 1278309600000,
+    "version" : "see site",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491418,
+    "lastActivityDts" : 1410477491418
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentAttributePk" : {
+      "componentId" : "24",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SPEC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentAttributePk" : {
+      "componentId" : "24",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "NA"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "24",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "1.3"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentAttributePk" : {
+      "componentId" : "24",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentAttributePk" : {
+      "componentId" : "24",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Mark Popivchak; 571-334-7282; mpopivchak@integrity-apps.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "24",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491418,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "24",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "24",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "24",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "24",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485067000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485067000,
+    "componentId" : "24",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://www.intelink.gov/go/bujBaGB' title='https://www.intelink.gov/go/bujBaGB' target='_blank'> https://www.intelink.gov/go/bujBaGB</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

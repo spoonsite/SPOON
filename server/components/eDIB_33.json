@@ -1,0 +1,211 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "name" : "eDIB",
+    "description" : "(U) eDIB contains the eDIB 4.0 services (management VM and worker VM). eDIB 4.0 is a scalable, virtualized webservice architecture based on the DMO's DIB 4.0. eDIB provides GUIs for an administrator to manage/configure eDIB. An end-user interface is not provided. Different data stores are supported including Oracle and SOLR. <br> <br>(U) The eDIB provides an easily managed and scalable DIB deployment. The administration console allows for additional worker VMs to scale up to support additional ingest activities or additional query activities. This provides the ability to manage a dynamic workload with a minimum of resources. <br> <br>(U) The software and documentation are currently available on JWICS at GForge, or you can email the DI2E Framework team for access on unclass.",
+    "parentComponentId" : null,
+    "guid" : "ef0eaf61-05e2-405e-934a-7c377cc61269",
+    "organization" : "DI2E Framework",
+    "releaseDate" : 1355036400000,
+    "version" : "4.0",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491424,
+    "lastActivityDts" : 1410477491424
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentAttributePk" : {
+      "componentId" : "33",
+      "attributeType" : "TYPE",
+      "attributeCode" : "APP"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentAttributePk" : {
+      "componentId" : "33",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "33",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.3"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "33",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.4"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentAttributePk" : {
+      "componentId" : "33",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentAttributePk" : {
+      "componentId" : "33",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Patrick Cross (CAC)",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "33",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491424,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "33",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491424,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "33",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "33",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "33",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405102845000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1405102845000,
+    "componentId" : "33",
+    "componentMediaId" : null,
+    "fileName" : "eDibIcon.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

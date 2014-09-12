@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.MediaType;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.Date;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -26,20 +27,28 @@ import java.util.Date;
  */
 public class ComponentMediaView
 {
+
 	private String link;
 	private String contentType;
+	private String mimeType;
 	private String caption;
 	private Date updateDts;
 
 	public ComponentMediaView()
 	{
 	}
-	
+
 	public static ComponentMediaView toView(ComponentMedia media)
 	{
 		ComponentMediaView mediaView = new ComponentMediaView();
-		mediaView.setLink(media.getLink());
-		mediaView.setContentType(TranslateUtil.translate(MediaType.class, media.getMimeType()));
+
+		if (StringUtils.isNotBlank(media.getFileName())) {
+			mediaView.setLink("Image.action?mediaId=" + media.getComponentMediaId());
+		} else {
+			mediaView.setLink(media.getLink());
+		}
+		mediaView.setContentType(TranslateUtil.translate(MediaType.class, media.getMediaTypeCode()));
+		mediaView.setMimeType(media.getMimeType());
 		mediaView.setCaption(media.getCaption());
 		mediaView.setUpdateDts(media.getUpdateDts());
 		return mediaView;
@@ -75,20 +84,24 @@ public class ComponentMediaView
 		this.caption = caption;
 	}
 
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getMimeType()
+	{
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType)
+	{
+		this.mimeType = mimeType;
 	}
 
 }

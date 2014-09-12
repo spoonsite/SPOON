@@ -1,0 +1,199 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "name" : "DCGS Discovery Metadata Guide",
+    "description" : "This document provides information on DCGS metadata artifacts and guidance for populating DDMS and the DIB Metacard, using DDMS Schema Extensions, and creating new DDMS extension schemas. These guidelines should be used by developers and System Integrators building resource adapters and schemas to work with DIB v2.0 or later. <br> <br>DISTRIBUTION STATEMENT C - Distribution authorized to U.S. Government Agencies and their contractors (Critical Technology)   Not ITAR restricted",
+    "parentComponentId" : null,
+    "guid" : "8bfc523a-591c-4fb9-a3ff-6bf96ed02c99",
+    "organization" : "AFLCMC/HBBG",
+    "releaseDate" : 1393830000000,
+    "version" : "See site for latest",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491412,
+    "lastActivityDts" : 1410477491412
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "componentAttributePk" : {
+      "componentId" : "16",
+      "attributeType" : "TYPE",
+      "attributeCode" : "DOC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "componentAttributePk" : {
+      "componentId" : "16",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "16",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.3"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "16",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.6"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "16",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.4"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Susan Jackson (sjackson@integrity-apps.com)",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "16",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491412,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "16",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491412,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "16",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "16",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "16",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485060000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485060000,
+    "componentId" : "16",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://wiki.macefusion.com/display/MMT/DCGS+Discovery+Metadata+Guide' title='https://wiki.macefusion.com/display/MMT/DCGS+Discovery+Metadata+Guide' target='_blank'> https://wiki.macefusion.com/display/MMT/DCGS+Discovery+Metadata+Guide</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

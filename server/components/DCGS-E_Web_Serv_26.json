@@ -1,0 +1,211 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "name" : "DCGS-E Web Service Access Control Technical Profile",
+    "description" : "Access Control incorporates an open framework and industry best practices/standards that leverage Web Services Security (WSS) [17] standards, also referred to as WS-Security, to create a common framework using Attribute Based Access Control (ABAC). The DCGS Enterprise advocates an ABAC model as the desired vision to provide policy compliance and accountability throughout the entire enterprise. To enforce ABAC, identification and authentication is executed on the service consumer and access control is enforced by the service provider.  <br> <br>Identification is the process in which the identity of either a user or system is established. Authentication is the process by which an entity proves a claim regarding its identity to one or more other entities. Together, identification and authentication allows a system to securely communicate a service consumer's identity and related security attributes to a service provider. With increased sharing across programs of record and external partners, identification and authentication is crucial to ensure that services and data are secured. The successful authentication of a subject and the attributes assigned to that subject assist in the determination of whether or not a user will be allowed to access a particular service.  <br> <br>Identification and authentication joined with access control enforcement provide for the Access Control capability, which is critical for meeting Information Assurance (IA) requirements for those services targeted for the Global Information Grid (GIG). Access control is the process that allows a system to control access to resources in an information system including services and data. Services, supporting the DCGS Enterprise, will be made available to users within and between nodes. It is important that these services and their resources are adequately protected in a consistent manner across the DCGS Enterprise. Services are intended to be accessible only to authorized requesters, thus requiring mechanisms to determine the rights of an authenticated user based on their attributes and enforce access based on its security policy.",
+    "parentComponentId" : null,
+    "guid" : "b2866715-764f-4266-868f-64cac88556fe",
+    "organization" : null,
+    "releaseDate" : 1393311600000,
+    "version" : "draft",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491420,
+    "lastActivityDts" : 1410477491420
+  },
+  "attributes" : [ {
+    "activeStatus" : null,
+    "createUser" : null,
+    "createDts" : null,
+    "updateUser" : null,
+    "updateDts" : null,
+    "componentId" : "44",
+    "componentAttributePk" : {
+      "componentId" : "44",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "1.2.1"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentAttributePk" : {
+      "componentId" : "26",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SPEC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentAttributePk" : {
+      "componentId" : "26",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "NA"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "26",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "1.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentAttributePk" : {
+      "componentId" : "26",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentAttributePk" : {
+      "componentId" : "26",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Mark Popivchak; 571-334-7282; mpopivchak@integrity-apps.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "26",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491420,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "26",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "26",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "26",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "26",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485068000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485068000,
+    "componentId" : "26",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://www.intelink.gov/go/kcN4VyS' title='https://www.intelink.gov/go/kcN4VyS' target='_blank'> https://www.intelink.gov/go/kcN4VyS</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}
