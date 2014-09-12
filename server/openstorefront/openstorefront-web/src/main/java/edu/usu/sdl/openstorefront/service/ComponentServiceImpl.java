@@ -638,4 +638,11 @@ public class ComponentServiceImpl
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	@Override
+	public List<ComponentTag> getTagCloud()
+	{
+		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
+		return persistenceService.query(query, null);
+	}
+
 }

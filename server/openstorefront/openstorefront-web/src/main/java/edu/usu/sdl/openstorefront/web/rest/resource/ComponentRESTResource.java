@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -52,8 +53,12 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -1380,7 +1385,18 @@ public class ComponentRESTResource
 		return Response.created(URI.create(pro.getComponentReviewProPk().getComponentReviewId())).entity(pro).build();
 	}
 
+	
 	// ComponentRESTResource TAG section
+	@GET
+	@APIDescription("Get the entire tag list (Tag Cloud)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/tags")
+	public List<ComponentTag> getComponentTags()
+	{
+		return service.getComponentService().getTagCloud();
+	}
+	
 	@GET
 	@APIDescription("Get the tag list for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})

@@ -123,6 +123,12 @@ public interface ComponentService
 	public ComponentDetailView getComponentDetails(String componentId);
 
 	/**
+	 * 
+	 * @return 
+	 */
+	public List<ComponentTag> getTagCloud();
+
+	/**
 	 *
 	 * @param attribute
 	 */
