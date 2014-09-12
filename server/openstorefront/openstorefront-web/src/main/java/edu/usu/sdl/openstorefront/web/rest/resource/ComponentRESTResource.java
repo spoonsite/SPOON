@@ -48,6 +48,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.net.URI;
 import java.util.ArrayList;
@@ -82,10 +83,9 @@ public class ComponentRESTResource
 	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
-	public List<Component> getComponents()
+	public List<ComponentSearchView> getComponents()
 	{
-		List<Component> componentViews = service.getComponentService().getComponents();
-		return componentViews;
+		return service.getComponentService().getComponents();
 	}
 
 	@GET
