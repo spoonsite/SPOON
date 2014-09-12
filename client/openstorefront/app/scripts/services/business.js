@@ -122,10 +122,10 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   business.getProsConsList = function() {
     var deferred = $q.defer();
+    var result = {};
 
     business.lookupservice.getReviewConList().then(function(cons){
       business.lookupservice.getReviewProList().then(function(pros){
-        result = {};
         result.pros = [];
         result.cons = [];
         _.each(pros, function(pro){
