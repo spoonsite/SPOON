@@ -489,9 +489,10 @@ var app = angular
       //   return [200, MOCKDATA.filters, {}];
       // });
 
-      $httpBackend.whenGET('api/v1/resource/tags').respond(function(method, url, data) {
-        return [200, MOCKDATA.tagsList, {}];
-      });
+      $httpBackend.whenGET('api/v1/resource/components/tags').passThrough();
+      // respond(function(method, url, data) {
+      //   return [200, MOCKDATA.tagsList, {}];
+      // });
 
       $httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
         return [200, MOCKDATA.prosConsList, {}];

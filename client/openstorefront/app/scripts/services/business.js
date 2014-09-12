@@ -96,6 +96,15 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   };
 
 
+  var convertComponentTagsToTags = function(tags){
+    var result = [];
+    _.each(tags, function(tag){
+      result.push(tag.text);
+    })
+    return result;
+  }
+
+
   business.getTagsList = function() {
     var deferred = $q.defer();
     var tagsList = checkExpire('tagsList', minute * 0.5);
@@ -104,11 +113,13 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     } else {
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/tags'
+        'url': 'api/v1/resource/components/tags'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
-          save('tagsList', data);
-          deferred.resolve(data);
+          var tags = convertComponentTagsToTags(data);
+          console.log('tags', tags);
+          save('tagsList', tags);
+          deferred.resolve(tags);
         } else {
           deferred.reject('There was an error grabbing the tags list');
         }
