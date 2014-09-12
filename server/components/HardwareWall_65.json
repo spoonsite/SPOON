@@ -1,0 +1,239 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "name" : "HardwareWall",
+    "description" : "The Boeing eXMeritus HardwareWall* is a highly configurable, commercial-off-the-shelf cross domain solution that enables rapid, automated, and secure data transfer between security domains: <br> <br>eXMeritus has designed HardwareWall* as a secure data transfer system and an off-the-shelf Controlled Interface that meets and exceeds all mission and information assurance requirements for the world's highest-level security directives.  Our systems have been deployed and certified in PL-3, PL-4 and PL-5 environments and continue to operate and evolve to meet ever changing requirements and threats. <br> <br>Links: <br> <a href='http://www.exmeritus.com/hardware_wall.html' title='http://www.exmeritus.com/hardware_wall.html' target='_blank'> hardware_wall.html</a>  <br> <a href='http://www.boeing.com/advertising/c4isr/isr/exmeritus_harware_wall.html' title='http://www.boeing.com/advertising/c4isr/isr/exmeritus_harware_wall.html' target='_blank'> exmeritus_harware_wall.html</a>  <br> <br>HardwareWall* Applications <br>*Files <br>     **High to low or low to high <br>     **Automated format and content review <br>     **Digital signatures <br>     **External utilities (e.g. virus scanning) <br> <br>*Streaming data <br>     **High to low or low to high <br>     **Automated format and content review <br>     **Signed records or messages <br> <br>HardwareWall* Capacity <br>     **Current installation moving large files at over 85MB/s           <br>     **Multiple methods to achieve multi-Gigabyte per second throughput: <br>     **Scales by replication <br>     **Scales by CPUs and interfaces <br>     **Demonstrated ability to stripe across multiple Gigabit Ethernet fibers",
+    "parentComponentId" : null,
+    "guid" : "fe3041eb-1e40-4203-987b-e6622695f55b",
+    "organization" : "Boeing",
+    "releaseDate" : 1402812000000,
+    "version" : "See Site",
+    "approvalState" : "A",
+    "approvedUser" : "patrick.cross",
+    "approvedDts" : 1410477491431,
+    "lastActivityDts" : 1410477491431
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentAttributePk" : {
+      "componentId" : "65",
+      "attributeType" : "TYPE",
+      "attributeCode" : "APP"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentAttributePk" : {
+      "componentId" : "65",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "65",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "1.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentAttributePk" : {
+      "componentId" : "65",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "Y"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentAttributePk" : {
+      "componentId" : "65",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentAttributePk" : {
+      "componentId" : "65",
+      "attributeType" : "LICCLASS",
+      "attributeCode" : "COTS"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "John Livingston - 703-764-0925 - John.A.Livingston@boeing.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "65",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491431,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "65",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491431,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "65",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "65",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "65",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "componentMediaId" : null,
+    "fileName" : "eXMeritus.jpg",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/jpg",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='http://www.exmeritus.com/hardware_wall.html' title='http://www.exmeritus.com/hardware_wall.html' target='_blank'> http://www.exmeritus.com/hardware_wall.html</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "patrick.cross",
+    "createDts" : 1403200725000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200725000,
+    "componentId" : "65",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='http://www.exmeritus.com/hardware_wall.html' title='http://www.exmeritus.com/hardware_wall.html' target='_blank'> http://www.exmeritus.com/hardware_wall.html</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

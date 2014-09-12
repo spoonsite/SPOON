@@ -1,0 +1,241 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "name" : "DI2E Framework Reference Architecture",
+    "description" : "The DI2E Framework reference Architecture provides a structural foundation for the DI2E requirements assessment.  The DI2E Framework is specified using a level of abstraction that is not dependent on a specific technical solution, but can leverage the benefits of the latest technology advancements and make them readily accessible across the enterprise. <br> <br>The DI2E Framework architecture is modeled using DoD Architecture Framework (DoDAF) version 2.02.  Below is a list of artifacts that are currently available for the DI2E Framework Reference Architecture. <br> <br>Artifact\tName / Purpose <br>OV-5a\tOperational Activity Model Node Tree.   A breakdown of the fundamental activities performed by various actors within the DI2E Framework community.   Built from both DCGS and JIOC operational models and includes related text descriptions for each activity. <br> <br>SV-1\tComponent (System) Interfaces.   Diagrams that show the fundamental interface relationships among DI2E Framework components. <br> <br>SV-2\tComponent Resource Flows.   Extends the SV-1 diagrams by highlighting the 'data-in-motion' that passes between components along their interfaces. <br> <br>SV-4\tComponent Functionality.  A breakdown of DI2E Framework components, including a short description of their expected functionality. <br> <br>SV-5a\tActivity : Component Matrix.   A mapping showing the alignment between DI2E Framework components and activities (and vice versa). <br> <br>SV-10c\tComponent Event Tract Diagrams.   Example threads through the component architecture showcasing the interaction of various components relative to example operational scenarios. <br> <br>SvcV-3a\tComponents-Services Matrix.   A mapping showing the alignment between DI2E Framework components and services <br> <br>SvcV-4\tServices.   A breakdown of the architectures services, including service definitions, descriptions, and other relevant service metadata. <br> <br>StdV-1\tStandards Profile.   Lists the various standards and specifications that will be applicable to DI2E Framework. <br> <br>SWDS\tSoftware Description Specification.   Documents the basic structure for DI2E Framework component and service specification, then points to an EXCEL worksheet documenting the specifications & related metadata for DI2E Framework components and services. <br> <br>DIV-3\tData Model.   A list of 'data-in-motion' Data Object Types (DOTs) that are applicable to the component architecture. <br> <br>DBDS\tDatabase Design Specification.  A description of the approach and various data repository lists used to define the data model (DIV-3), along with a link to the defined data model. <br> <br>RVTM\tRequirements Verification Traceability Matrix.   A list of DI2E Framework requirements including requirement ID #s, names, descriptions, alignment with the component and service architecture, and other related metadata. <br> <br>PDS\tProject Development Specification.   A high level overview of the e DI2E Framework Reference Implementation (RI), and how the components of this RI relate with the overall component architecture and related DI2E Framework requirements. <br> <br>ICD\tInterface Control Document.  A further breakdown of the PDS (see row above), showing how RI components relate with overall component specifications as documented in the SWDS.",
+    "parentComponentId" : null,
+    "guid" : "3a7e6bf2-bcc4-4c1e-bc33-296cc945e733",
+    "organization" : "NRO // DI2E Framework PMO",
+    "releaseDate" : 1390028400000,
+    "version" : "1.0",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491421,
+    "lastActivityDts" : 1410477491421
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentAttributePk" : {
+      "componentId" : "30",
+      "attributeType" : "TYPE",
+      "attributeCode" : "DOC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentAttributePk" : {
+      "componentId" : "30",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "NA"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "30",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : null
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentAttributePk" : {
+      "componentId" : "30",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentAttributePk" : {
+      "componentId" : "30",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "David Treat - david.treat@volant-associates.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "30",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491422,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "30",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "30",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "30",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "30",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "componentMediaId" : null,
+    "fileName" : "DI2E Framework RA.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://confluence.di2e.net/display/DI2E/DI2E+Framework+Reference+Architecture+files' title='https://confluence.di2e.net/display/DI2E/DI2E+Framework+Reference+Architecture+files' target='_blank'> https://confluence.di2e.net/display/DI2E/DI2E+Framework+Reference+Architecture+files</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://inteldocs.intelink.gov/inteldocs/page/repository#filter=path|/Group%20Folders/D/DI2E%20Framework/DI2E%20Framework%20Architecture&page=1' title='https://inteldocs.intelink.gov/inteldocs/page/repository#filter=path|/Group%20Folders/D/DI2E%20Framework/DI2E%20Framework%20Architecture&page=1' target='_blank'> https://inteldocs.intelink.gov/inteldocs/page/repository#filter=path|/Group%20Folders/D/DI2E%20Framework/DI2E%20Framework%20Architecture&page=1</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200710000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200710000,
+    "componentId" : "30",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='https://confluence.di2e.net/display/DI2E/DI2E+Reference+Architecture' title='https://confluence.di2e.net/display/DI2E/DI2E+Reference+Architecture' target='_blank'> https://confluence.di2e.net/display/DI2E/DI2E+Reference+Architecture</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

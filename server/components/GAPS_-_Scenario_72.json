@@ -1,0 +1,199 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "name" : "GAPS - Scenario Service",
+    "description" : "The GAPS Scenario Service is a SOAP based interface into the GAPS UDOP creation, execution and publishing mechanism.  The Scenario Service allows an external entity to perform Machine to Machine (M2M) calls in order to create and execute UDOPs.  This interface can be used to integrate with other systems in order to provide geospatial visualization to give contextual SA to end users. <br> <br>GAPS Scenarios are defined as data packages which are stored within the GAPS Repository. The GAPS Repository Service is a SOAP based interface into the GAPS Repository which stores and maintains UDOP scenarios and geospatial products from GAPS data sources.  The Repository Service additionally creates a series of DDMS metacards to describe all of the UDOPs and artifacts stored within the GAPS Repository.  These metacards can be further published to other metadata catalogs to facilitate discovery of GAPS UDOPs and aggregated data products. <br> <br>A Scenario consists of a UDOP template document, products generated from a UDOP template and metadata gathered from data sources during the execution of a UDOP template.   For example, a SKIWeb scenario would consist of a UDOP template that captures information about an event (location, time, description) and other data overlays to give it a spatio-temporal context, JPEG screenshots taken automatically at different view scales for the event on a globe, a movie file with animation for temporal data, a VDF file, a KML file to execute the UDOP in Google Earth, a timeline view and all of the metadata captured during the UDOP execution. <br> <br>The following are the Service Endpoints on SIPR and JWICS.  GAPS does not have an UNCLASS instance: <br>SIPR: <br>       scenario service: <a href='https://gapsprod1.stratcom.smil.mil/ScenarioService/ScenarioService.asmx' title='https://gapsprod1.stratcom.smil.mil/ScenarioService/ScenarioService.asmx' target='_blank'> ScenarioService.asmx</a> <br>       repository service: <a href='https://gapsprod1.stratcom.smil.mil/VsaPortal/RespositoryService.asmx' title='https://gapsprod1.stratcom.smil.mil/VsaPortal/RespositoryService.asmx' target='_blank'> RespositoryService.asmx</a> <br>JWICS: <br>      scenario service: <a href='http://jwicsgaps.usstratcom.ic.gov:8000/ScenarioService/ScenarioService.asmx' title='http://jwicsgaps.usstratcom.ic.gov:8000/ScenarioService/ScenarioService.asmx' target='_blank'> ScenarioService.asmx</a> <br>      repository service: <a href='http://jwicsgaps.usstratcom.ic.gov:8000/VsaPortal/RepositoryService.asmx' title='http://jwicsgaps.usstratcom.ic.gov:8000/VsaPortal/RepositoryService.asmx' target='_blank'> RepositoryService.asmx</a> <br> <br>GAPS Overview <br>Global Awareness Presentation Services (GAPS) is a web-based command-wide service created to provide analysts and other decision makers the capability to generate Net-Centric Situational Awareness (SA) visualization products from disparate and dispersed data services.  GAPS is interoperable with ongoing Department of Defense (DoD) wide C4ISR infrastructure efforts such as FSR and SKIWEB.  GAPS attempts to share this data/information of an event in a real-time basis on SIPRNET and JWICS.  GAPS allows users at all organizational levels to define, customize, and refine their specific User Defined Operational Picture (UDOP) based on mission and task. GAPS middleware capabilities serve as the \"facilitator\" of authoritative data source information by hosting over 3,000 dynamic and static data feeds and provides metrics and status on those feeds.  GAPS provides several Ozone Widget Framework (OWF) based components that offer UDOP service functionality inside of an OWF dashboard.   <br> <br>GAPS exposes a number of core UDOP Services through SOAP/RESTful services.   <br>-GAPS Gazetteer Services <br>-GAPS Data Catalog Services <br>-GAPS Scenario Services",
+    "parentComponentId" : null,
+    "guid" : "6fcf0dc4-091d-4431-a066-d074b4fd63ea",
+    "organization" : "STRATCOM J8",
+    "releaseDate" : null,
+    "version" : "2.5",
+    "approvalState" : "A",
+    "approvedUser" : "david.treat",
+    "approvedDts" : 1410477491426,
+    "lastActivityDts" : 1410477491426
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentAttributePk" : {
+      "componentId" : "72",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SERVICE"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentAttributePk" : {
+      "componentId" : "72",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentAttributePk" : {
+      "componentId" : "72",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentAttributePk" : {
+      "componentId" : "72",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentAttributePk" : {
+      "componentId" : "72",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Curt Foerster,  402-232-2015, curt.foerster.ctr@stratcom.mil",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "72",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491426,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "72",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491426,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "72",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "72",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "72",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691317000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691317000,
+    "componentId" : "72",
+    "componentMediaId" : null,
+    "fileName" : "GAPS.jpg",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/jpg",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

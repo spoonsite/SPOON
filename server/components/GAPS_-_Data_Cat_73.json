@@ -1,0 +1,199 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "name" : "GAPS - Data Catalog Service",
+    "description" : "The GAPS Data Catalog Service provides a set of RESTful services to manage data sources accessible to GAPS applications.  The catalog service offers RESTful interfaces for querying sources as XML or JSON structures. The service is a combination of two web services; the root service, and the metric service.  This root service allows users to add, remove and update metadata about information sources.  The metrics service offers the ability to capture and view metrics information associated with information sources.    <br> <br> <br> <br>The Data Catalog Service provides integration with the GAPS KML Feeds to expose all of the KML sources that are registered with GAPS. Documentation states it provides the ability to integrate with OGC CSW catalog services to provide search capabilities that federate across one or more CSW catalogs.  The services are also available via a number of OWF widgets that implement the Data Catalog Service API. <br> <br>Root Service <br>SIPR: <a href='https://gapsprod1.stratcom.smil.mil/datacatalogservice/datacatalogservice.ashx' title='https://gapsprod1.stratcom.smil.mil/datacatalogservice/datacatalogservice.ashx' target='_blank'> datacatalogservice.ashx</a>  <br>JWICS:  <a href='http://jwicsgaps.usstratcom.ic.gov/datacatalogservice/datacatalogservice.ashx' title='http://jwicsgaps.usstratcom.ic.gov/datacatalogservice/datacatalogservice.ashx' target='_blank'> datacatalogservice.ashx</a>  <br> <br>Metrics Service <br>SIPR: <a href='https://gapsprod1.stratcom.smil.mil/datacatalogservice/datasourcemetrics.ashx' title='https://gapsprod1.stratcom.smil.mil/datacatalogservice/datasourcemetrics.ashx' target='_blank'> datasourcemetrics.ashx</a>  <br>JWICS:  <a href='http://jwicsgaps.usstratcom.ic.gov/datacatalogservice/datasourcemetrics.ashx' title='http://jwicsgaps.usstratcom.ic.gov/datacatalogservice/datasourcemetrics.ashx' target='_blank'> datasourcemetrics.ashx</a>  <br> <br>Overview <br>Global Awareness Presentation Services (GAPS) is a web-based command-wide service created to provide analysts and other decision makers the capability to generate Net-Centric Situational Awareness (SA) visualization products from disparate and dispersed data services.  GAPS is interoperable with ongoing Department of Defense (DoD) wide C4ISR infrastructure efforts such as FSR and SKIWEB.  GAPS attempts to share this data/information of an event in a real-time basis on SIPRNET and JWICS.  GAPS allows users at all organizational levels to define, customize, and refine their specific User Defined Operational Picture (UDOP) based on mission and task. GAPS middleware capabilities serve as the \"facilitator\" of authoritative data source information by hosting over 3,000 dynamic and static data feeds and provides metrics and status on those feeds.  GAPS provides several Ozone Widget Framework (OWF) based components that offer UDOP service functionality inside of an OWF dashboard.   <br> <br>GAPS exposes a number of core UDOP Services through SOAP/RESTful services.   <br>-GAPS Gazetteer Services <br>-GAPS Data Catalog Services <br>-GAPS Scenario Services",
+    "parentComponentId" : null,
+    "guid" : "9d61a682-3b5f-4756-96cd-41df323fb371",
+    "organization" : "STRATCOM J8",
+    "releaseDate" : null,
+    "version" : "2.5",
+    "approvalState" : "A",
+    "approvedUser" : "david.treat",
+    "approvedDts" : 1410477491425,
+    "lastActivityDts" : 1410477491425
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentAttributePk" : {
+      "componentId" : "73",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SERVICE"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentAttributePk" : {
+      "componentId" : "73",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentAttributePk" : {
+      "componentId" : "73",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentAttributePk" : {
+      "componentId" : "73",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentAttributePk" : {
+      "componentId" : "73",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "david.treat",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "73",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491425,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "73",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491425,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "73",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "73",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "73",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "david.treat",
+    "createDts" : 1405691893000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405691893000,
+    "componentId" : "73",
+    "componentMediaId" : null,
+    "fileName" : "GAPS.jpg",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/jpg",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

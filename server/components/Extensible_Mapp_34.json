@@ -1,0 +1,291 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "name" : "Extensible Mapping Platform (EMP)",
+    "description" : "The Extensible Mapping Platform (EMP) is a US Government Open Source project providing a framework for building robust OWF map widgets and map centric web applications. The EMP project is currently managed by US Army Tactical Mission Command (TMC) in partnership with DI2E, and developed by CECOM Software Engineering Center Tactical Solutions Directorate (SEC) . EMP is intended to be used and contributed to by any US Government organization that falls within the ITAR restrictions placed on the software hosted at this location. Current contributors include National Geospatial-Intelligence Agency (NGA), and ICITE-Cloud INSCOM/DCGS-A with growing interest across the defense and Intelligence communities. EMP evolved from the US Army Command Post Computing Environment (CPCE) initiative. The term CPCE is still used in many areas and there is a CPCE targeted build that is produced from EMP to meet the CPCE map widget and API requirements. The great news about EMP is that it is not limited to the CPCE specific build and feature set. EMP is designed to be customized and extended to meet the needs and schedule of any organization. <br> <br>Map Core: <br>The map core is pure HTML, CSS, and JavaScript that can be embedded in any web application. The primary target for this currently is an Ozone Widget Framework (OWF) map widget, however the core code will function outside of OWF and can be used in custom web applications. When running in OWF the map core can handle all CMWA 1.0 and 1.1 messages as well as the capabilities included in the EMP JavaScript API library. <br> <br>Additional Links <br> <a href='http://cmapi.org/' title='http://cmapi.org/' target='_blank'> </a>  <br> <a href='https://project.forge.mil/sf/frs/do/viewRelease/projects.dcgsaozone/frs.cpce_mapping_components.sprint_18_cpce_infrastructure_er' title='https://project.forge.mil/sf/frs/do/viewRelease/projects.dcgsaozone/frs.cpce_mapping_components.sprint_18_cpce_infrastructure_er' target='_blank'> frs.cpce_mapping_components.spri...</a> ",
+    "parentComponentId" : null,
+    "guid" : "b52b36b8-b556-4d24-a9fe-2597402c32f7",
+    "organization" : "unknown",
+    "releaseDate" : 1393830000000,
+    "version" : "See site for latest",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491424,
+    "lastActivityDts" : 1410477491424
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentAttributePk" : {
+      "componentId" : "34",
+      "attributeType" : "TYPE",
+      "attributeCode" : "WIDGET"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentAttributePk" : {
+      "componentId" : "34",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL1"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "34",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentAttributePk" : {
+      "componentId" : "34",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentAttributePk" : {
+      "componentId" : "34",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentAttributePk" : {
+      "componentId" : "34",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "DEV"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentAttributePk" : {
+      "componentId" : "34",
+      "attributeType" : "OWFCOMP",
+      "attributeCode" : "Y"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentAttributePk" : {
+      "componentId" : "34",
+      "attributeType" : "LICCLASS",
+      "attributeCode" : "GOSS"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Eric Briscoe  eric.briscoe@shonborn-becker.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "34",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : 1410477491425,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "34",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491425,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "34",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491425,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "34",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "34",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "componentMediaId" : null,
+    "fileName" : "core-map-api.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://stash.di2e.net/projects/EMP/repos/map-docs/browse' title='https://stash.di2e.net/projects/EMP/repos/map-docs/browse' target='_blank'> https://stash.di2e.net/projects/EMP/repos/map-docs/browse</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Code",
+    "link" : "<a href='https://stash.di2e.net/projects/EMP' title='https://stash.di2e.net/projects/EMP' target='_blank'> https://stash.di2e.net/projects/EMP</a>",
+    "name" : "Code Location URL",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DI2EEVAL",
+    "link" : "<a href='https://storefront.di2e.net/marketplace/public/Extensible_Mapping_Platform_Evaluation_Report.docx' title='https://storefront.di2e.net/marketplace/public/Extensible_Mapping_Platform_Evaluation_Report.docx' target='_blank'> https://storefront.di2e.net/marketplace/public/Extensible_Mapping_Platform_Evaluation_Report.docx</a>",
+    "name" : "DI2E Framework Evaluation Report URL",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200714000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200714000,
+    "componentId" : "34",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='https://confluence.di2e.net/display/EMP/Extensible+Mapping+Platform+Home' title='https://confluence.di2e.net/display/EMP/Extensible+Mapping+Platform+Home' target='_blank'> https://confluence.di2e.net/display/EMP/Extensible+Mapping+Platform+Home</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

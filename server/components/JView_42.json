@@ -1,0 +1,307 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "name" : "JView",
+    "description" : "JView is a Java-based API (application programmer's interface) that was developed to reduce the time, cost, & effort associated with the creation of computer visualization applications. <br> <br> <br> <br>JView provides the programmer with the ability to quickly develop 2-dimensional and 3-dimensional visualization applications that are tailored to address a specific problem. <br> <br>The JView API is government-owned and available free of charge to government agencies and their contractors. <br> <br>JView License information:  Full release of JView is currently being made available to government agencies and their contractors. This release includes, source code, sample JView-based applications, sample models and terrain, and documentation. A limited release that does not include source code is available to universities and foreign governments. All releases are subject to the approval of the JView program office. One can request a copy of JView by visiting <a href='https://extranet.rl.af.mil/jview/.' title='https://extranet.rl.af.mil/jview/.' target='_blank'> .</a> Formal configuration management and distribution of JView is performed through the Information Management Services program.",
+    "parentComponentId" : null,
+    "guid" : "a2a4488f-a139-41a2-b455-a1b9ea87f7c8",
+    "organization" : "AFRL",
+    "releaseDate" : 1310796000000,
+    "version" : "1.7.1",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491434,
+    "lastActivityDts" : 1410477491434
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentAttributePk" : {
+      "componentId" : "42",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SOFTWARE"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentAttributePk" : {
+      "componentId" : "42",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL1"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "42",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentAttributePk" : {
+      "componentId" : "42",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentAttributePk" : {
+      "componentId" : "42",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentAttributePk" : {
+      "componentId" : "42",
+      "attributeType" : "LICCLASS",
+      "attributeCode" : "GOTS"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentAttributePk" : {
+      "componentId" : "42",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Jason Moore - jason.moore.29@us.af.mil",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "42",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : 1410477491434,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "42",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491434,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "42",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491434,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "42",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "42",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentMediaId" : null,
+    "fileName" : "JView+Screen+Shot+Shader+Demo.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentMediaId" : null,
+    "fileName" : "JView+Screen+Shot+screencap_large_f22.jpg",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/jpg",
+    "link" : null,
+    "caption" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "componentMediaId" : null,
+    "fileName" : "JView_Logo_133_81[1].png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://software.forge.mil/sf/scm/do/listRepositories/projects.jview/scm' title='https://software.forge.mil/sf/scm/do/listRepositories/projects.jview/scm' target='_blank'> https://software.forge.mil/sf/scm/do/listRepositories/projects.jview/scm</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DI2EEVAL",
+    "link" : "<a href='https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx' title='https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx' target='_blank'> https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx</a>",
+    "name" : "DI2E Framework Evaluation Report URL",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='https://extranet.rl.af.mil/jview/' title='https://extranet.rl.af.mil/jview/' target='_blank'> https://extranet.rl.af.mil/jview/</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405370213000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405370213000,
+    "componentId" : "42",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Code",
+    "link" : "<a href='https://software.forge.mil/sf/go/proj1195' title='https://software.forge.mil/sf/go/proj1195' target='_blank'> https://software.forge.mil/sf/go/proj1195</a>",
+    "name" : "Code Location URL",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}
