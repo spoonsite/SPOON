@@ -55,10 +55,14 @@ public class LookupServiceImpl
 	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass)
 	{
 		Element element = OSFCacheManager.getLookupCache().get(lookTableClass.getName());
-		Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
-		if (lookupCacheMap != null) {
-			List<T> lookupList = new ArrayList<>(lookupCacheMap.values());
-			return lookupList;
+		if (element != null) {
+			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
+			if (lookupCacheMap != null) {
+				List<T> lookupList = new ArrayList<>(lookupCacheMap.values());
+				return lookupList;
+			} else {
+				return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
+			}
 		} else {
 			return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
 		}
