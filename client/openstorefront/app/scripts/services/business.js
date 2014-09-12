@@ -97,8 +97,6 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   business.getTagsList = function() {
     var deferred = $q.defer();
-
-
     var tagsList = checkExpire('tagsList', minute * 0.5);
     if (tagsList) {
       deferred.resolve(tagsList);
@@ -119,6 +117,8 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
     return deferred.promise;
   };
+
+
 
   business.getProsConsList = function() {
     var deferred = $q.defer();
