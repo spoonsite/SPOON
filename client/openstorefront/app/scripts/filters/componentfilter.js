@@ -33,6 +33,8 @@ app.filter('componentFilter', function()  {
         var collection = filter.codes;
         var key = filter.type;
 
+        
+
         // if the filter isn't being used, or all are checked, we know its true
         if (!allChecked(collection)) {
           // otherwise we return true if it passes some portion of the filter

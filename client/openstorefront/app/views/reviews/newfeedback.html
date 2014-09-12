@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-sm-12">
             <h3> How many stars:&nbsp; 
-              <raty class="large-raty" id="star{{$index}}" style="min-width:110px; height: 100%; margin: -6px 10px -4px 0px;" score="{{review.rating}}" number="5" path="../../images/raty/">
+              <raty class="large-raty" id="star{{$index}}" style="min-width:110px; height: 100%; margin: -6px 10px -4px 0px;" ng-model="rating" score="{{rating}}" number="5" path="../../images/raty/">
               </raty>
             </h3>
           </div>
@@ -26,7 +26,7 @@
             <div class="row" style="margin:0px;">
               <label>How long have you used it:&nbsp;</label>
             </div>
-            <button type="button" class="btn btn-default" style="width: 325px;" ng-model="review.usedTimeCode" data-html="1" ng-options="level.label for level in expertise" data-animation="am-flip-x" bs-select>
+            <button type="button" class="btn btn-default" style="width: 325px;" ng-model="review.usedTimeCode" data-html="1" ng-options="level.description for level in expertise" data-animation="am-flip-x" bs-select>
               Action <span class="caret"></span>
             </button>
           </div>

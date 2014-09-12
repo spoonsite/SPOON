@@ -55,10 +55,14 @@ public class LookupServiceImpl
 	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass)
 	{
 		Element element = OSFCacheManager.getLookupCache().get(lookTableClass.getName());
-		Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
-		if (lookupCacheMap != null) {
-			List<T> lookupList = new ArrayList<>(lookupCacheMap.values());
-			return lookupList;
+		if (element != null) {
+			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
+			if (lookupCacheMap != null) {
+				List<T> lookupList = new ArrayList<>(lookupCacheMap.values());
+				return lookupList;
+			} else {
+				return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
+			}
 		} else {
 			return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
 		}
@@ -215,5 +219,43 @@ public class LookupServiceImpl
 		Element cachedLookup = new Element(lookupClass.getName(), lookupCacheMap);
 		OSFCacheManager.getLookupCache().put(cachedLookup);
 	}
+
+	@Override
+	public <T extends LookupEntity> T getLookupEnityByDesc(Class<T> lookupClass, String description)
+	{
+		T lookupEntity = null;
+		if (StringUtils.isNotBlank(description)) {
+			Element element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
+			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
+			lookupEntity = lookupCacheMap.get(description);
+			if (lookupEntity == null) {
+				//cache miss
+				try {
+					T example = lookupClass.newInstance();
+					example.setDescription(description);
+					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+					lookupEntity = persistenceService.queryByOneExample(lookupClass, new QueryByExample(example));
+				} catch (InstantiationException | IllegalAccessException e) {
+					throw new OpenStorefrontRuntimeException(e);
+				}
+			}
+		}
+		return lookupEntity;
+	}
+	
+	@Override
+	public LookupEntity getLookupEnityByDesc(String lookClassName, String description)
+	{
+		LookupEntity lookupEntity = null;
+		try {
+			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + lookClassName);
+			lookupEntity = getLookupEnityByDesc(lookupClass, description);
+		} catch (ClassNotFoundException ex) {
+			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");
+		}
+		return lookupEntity;
+	}
+
+
 
 }

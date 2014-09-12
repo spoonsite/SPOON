@@ -41,11 +41,14 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
+import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.net.URI;
 import java.util.ArrayList;
@@ -80,10 +83,9 @@ public class ComponentRESTResource
 	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
-	public List<Component> getComponents()
+	public List<ComponentSearchView> getComponents()
 	{
-		List<Component> componentViews = service.getComponentService().getComponents();
-		return componentViews;
+		return service.getComponentService().getComponents();
 	}
 
 	@GET
@@ -1260,9 +1262,21 @@ public class ComponentRESTResource
 		ComponentReviewCon con = new ComponentReviewCon();
 		ComponentReviewConPk pk = new ComponentReviewConPk();
 		pk.setComponentReviewId(reviewId);
-		pk.setReviewCon(text);
+		ReviewCon conCode = service.getLookupService().getLookupEnity(ReviewCon.class, text);
+		if (conCode == null){
+			conCode = service.getLookupService().getLookupEnityByDesc(ReviewCon.class, text);
+			if (conCode == null)
+			{
+				pk.setReviewCon(null);
+			} else {
+				pk.setReviewCon(conCode.getCode());
+				con.setText(conCode.getDescription());
+			}
+		} else{
+			pk.setReviewCon(conCode.getCode());
+			con.setText(conCode.getDescription());
+		}
 		con.setComponentReviewConPk(pk);
-		con.setText(text);
 		con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 		con.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(con);
@@ -1335,9 +1349,21 @@ public class ComponentRESTResource
 		ComponentReviewPro pro = new ComponentReviewPro();
 		ComponentReviewProPk pk = new ComponentReviewProPk();
 		pk.setComponentReviewId(reviewId);
-		pk.setReviewPro(text);
+		ReviewPro proCode = service.getLookupService().getLookupEnity(ReviewPro.class, text);
+		if (proCode == null){
+			proCode = service.getLookupService().getLookupEnityByDesc(ReviewPro.class, text);
+			if (proCode == null)
+			{
+				pk.setReviewPro(null);
+			} else {
+				pk.setReviewPro(proCode.getCode());
+				pro.setText(proCode.getDescription());
+			}
+		} else{
+			pk.setReviewPro(proCode.getCode());
+			pro.setText(proCode.getDescription());
+		}
 		pro.setComponentReviewProPk(pk);
-		pro.setText(text);
 		pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 		pro.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(pro);

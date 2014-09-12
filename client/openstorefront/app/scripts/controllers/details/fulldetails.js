@@ -45,6 +45,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
   Business.lookupservice.getEvalLevels().then(function(result){
+    // console.log('Evaluation Levels', result);
+    
     if (result) {
       $scope.evalLevels = result;
     } else {
@@ -289,7 +291,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function saves a component's tags
   ***************************************************************/
   $scope.getEval = function(levelCode){
-    var level = _.find($scope.evalLevels.codes, {'code': levelCode});
+    var level;
+    for(var i = 0; i < $scope.evalLevels.length; i++) {
+      if ($scope.evalLevels[i].attributeCodePk && $scope.evalLevels[i].attributeCodePk.attributeCode === levelCode) {
+        level = $scope.evalLevels[i];
+        break;
+      }
+    }    
     return level;
   };
 
@@ -420,12 +428,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           shown = true;
         }
       });
-      shown = false;
       _.each(component.reviews, function(review, index){
-        if (!shown && sqlToJsDate(review.updateDate) > lastViewedDts)
+        if (sqlToJsDate(review.updateDate) > lastViewedDts)
         {
           updateList.push('reviews'+index);
-          shown = true;
         }
       });
       _.each(component.resources, function(resource, index){
