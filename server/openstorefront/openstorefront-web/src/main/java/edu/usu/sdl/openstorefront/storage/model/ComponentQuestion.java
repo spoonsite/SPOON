@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
@@ -43,6 +44,7 @@ public class ComponentQuestion
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	private String userType;
 
 	@NotNull

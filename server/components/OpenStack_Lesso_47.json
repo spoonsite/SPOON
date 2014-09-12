@@ -1,0 +1,213 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "name" : "OpenStack Lessons Learned Document",
+    "description" : "Lessons learned in the Openstack Folsom deployment by USC/ISI in the DI2E Framework environment.  This document is meant to be very specific to one deployment experience with the intention that it will be useful to others deploying in a similar environment. <br> <br>Note this document is stored on the DI2E Framework Wiki which requires a DI2E Framework Devtools account ( <a href='https://devtools.di2e.net/' title='https://devtools.di2e.net/' target='_blank'> </a> )",
+    "parentComponentId" : null,
+    "guid" : "638e11e6-39c5-44b3-8168-af7cc1469f15",
+    "organization" : "unknown",
+    "releaseDate" : 1386226800000,
+    "version" : "1.0",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491436,
+    "lastActivityDts" : 1410477491436
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentAttributePk" : {
+      "componentId" : "47",
+      "attributeType" : "TYPE",
+      "attributeCode" : "DOC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentAttributePk" : {
+      "componentId" : "47",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "NA"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "47",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : null
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentAttributePk" : {
+      "componentId" : "47",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentAttributePk" : {
+      "componentId" : "47",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "steve.crago",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "47",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491436,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "47",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "47",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "47",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "47",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "componentMediaId" : null,
+    "fileName" : "OpenStack.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485087000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485087000,
+    "componentId" : "47",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://confluence.di2e.net/download/attachments/8847504/OpenStack-LessonsLearned.pdf?api=v2' title='https://confluence.di2e.net/download/attachments/8847504/OpenStack-LessonsLearned.pdf?api=v2' target='_blank'> https://confluence.di2e.net/download/attachments/8847504/OpenStack-LessonsLearned.pdf?api=v2</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

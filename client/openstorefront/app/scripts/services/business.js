@@ -123,25 +123,20 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.getProsConsList = function() {
     var deferred = $q.defer();
 
-    var prosConsList = checkExpire('prosConsList', minute * 0.5);
-    if (prosConsList) {
-      deferred.resolve(prosConsList);
-    } else {
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/pros'
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
-          save('prosConsList', data);
-          deferred.resolve(data);
-        } else {
-          deferred.reject('There was an error grabbing the pros and cons list');
-        }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-      });
-    }
-
-    deferred.resolve(MOCKDATA.prosConsList);
+    business.lookupservice.getReviewConList().then(function(cons){
+      business.lookupservice.getReviewProList().then(function(pros){
+        result = {};
+        result.pros = [];
+        result.cons = [];
+        _.each(pros, function(pro){
+          result.pros.push(pro.description);
+        })
+        _.each(cons, function(con){
+          result.cons.push(con.description);
+        })
+        deferred.resolve(result);
+      })
+    })
     return deferred.promise;
   };
 

@@ -1,0 +1,199 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "name" : "DCGS-E Metrics Management Technical Profile",
+    "description" : "**Previously titled Service Level Agreement/Quality of Service CDP** <br> <br>(U) This CDP provides guidance for Metrics Management for use by the DCGS Enterprise Community at large. DCGS Service Providers will use this guidance to make their services visibility and accessibility in the DCGS Enterprise SOA. Several Intelligence Community/Department of Defense (IC/DoD) documents were incorporated to support the guidance provided. <br> <br>(U//FOUO) Enterprise Management refers to the management techniques, metrics and related tools that DCGS programs of record can use to support their nodes and make strategic decisions to maintain the overall health of their services. The Metrics Management service family is a key capability that supports Enterprise Management. It is used to monitor the performance and operational status of services.  <br> <br>(U//FOUO) Metrics Management measures what is actually delivered to the service consumer via a set of metrics (e.g. service performance and availability). As the number of service offerings deployed across an enterprise increases, the ability to effectively manage and monitor them becomes critical to ensure a successful implementation. Clearly defined metrics need to be collected and reported to determine if the service offerings are meeting their users? needs.   <br> <br>(U//FOUO) In support of enterprise behavior within the DCGS Family of Systems (FoS), this technical design document was created by the DCGS Enterprise Focus Team (EFT) to provide guidance on metrics, service events, and service interfaces needed by the DCGS Enterprise Community at large to support Metrics Management.  DCGS service providers will use this guidance to collect metrics measurements, calculate associated metrics, and report those metrics to interested parties. <br> <br>Content of Metrics Management (formerly known as QoS Management) CDP: <br> - Technical Design Document (TDD) <br> - Service Specification Package (SSP)  <br> - Conformance Test Kit (CTK)  <br>    - Conformance Traceability Matrix (CTM) <br>    - Test Procedure Document <br>    - Test Request Messages <br>    - Gold Data Set <br>    - Conformance Checks Scripts",
+    "parentComponentId" : null,
+    "guid" : "50ababb2-08e3-4f2a-98a5-068b261d9424",
+    "organization" : "DCGS EFT",
+    "releaseDate" : 1278396000000,
+    "version" : "see site",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491417,
+    "lastActivityDts" : 1410477491417
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentAttributePk" : {
+      "componentId" : "22",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SPEC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentAttributePk" : {
+      "componentId" : "22",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "NA"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "22",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "1.3"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentAttributePk" : {
+      "componentId" : "22",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentAttributePk" : {
+      "componentId" : "22",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Mark Popivchak; 571-334-7282; mpopivchak@integrity-apps.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "22",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491417,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "22",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "22",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "22",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "22",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485065000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485065000,
+    "componentId" : "22",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://www.intelink.gov/go/CMpInl8' title='https://www.intelink.gov/go/CMpInl8' target='_blank'> https://www.intelink.gov/go/CMpInl8</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
@@ -35,7 +36,9 @@ public class ComponentTracking
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	private String trackEventTypeCode;
+	@ValidValueType(value = {}, lookupClass = TrackEventCode.class)
+	private String trackEventTypeCode;	
+
 
 	@NotNull
 	private Date eventDts;

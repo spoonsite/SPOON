@@ -1,0 +1,263 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "name" : "VANTAGE WESS OZONE Widget",
+    "description" : "The Vantage Web Enabled Sensor Service (WESS) is an optional service that provides access to Vantage databases from other applications. WESS The Web Enabled Sensor Service (WESS) is a server that runs on the Vantage server and exposes the Vantage database of imagery and metadata to the outside via SOAP. WESS uses an open protocol to communicate data and is not bound to a browser or programming language. The WESS client is an application that allows users to display imagery from the Vantage database in a web browser, over a network. retrieves imagery, video files, MTI files, and related products from a Vantage database over a network connection, and displays it in a web browser. If you are using Internet Explorer (IE) 9 or Firefox 3, you can also use WESS to manipulate and enhance imagery. <br> <br> <br>There are two widgets provided by the WESS application, called the VANTAGE WESS Search widget and the VANTAGE WESS Viewer widget.  Together the WESS OZONE Widgets are a lightweight web application that, after installation into the Ozone Widget Framework and configuration, allows the user to view the contents of a VANTAGE database or a CDR compliant data source; it also interfaces with the JC2CUI map widget.  Google Maps is one of the view capabilities provided by the Widget.  The Widget provides a search capability.   <br> <br>Links: <br>SDL Vantage Link:  <a href='http://www.spacedynamics.org/products/vantage' title='http://www.spacedynamics.org/products/vantage' target='_blank'> vantage</a>",
+    "parentComponentId" : null,
+    "guid" : "9a540308-86e4-406a-8923-97496fb9a215",
+    "organization" : "NRL",
+    "releaseDate" : 1378101600000,
+    "version" : "0",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491437,
+    "lastActivityDts" : 1410477491437
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentAttributePk" : {
+      "componentId" : "54",
+      "attributeType" : "TYPE",
+      "attributeCode" : "WIDGET"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentAttributePk" : {
+      "componentId" : "54",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "54",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentAttributePk" : {
+      "componentId" : "54",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentAttributePk" : {
+      "componentId" : "54",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentAttributePk" : {
+      "componentId" : "54",
+      "attributeType" : "LICCLASS",
+      "attributeCode" : "GOTS"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentAttributePk" : {
+      "componentId" : "54",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "DEV"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentAttributePk" : {
+      "componentId" : "54",
+      "attributeType" : "OWFCOMP",
+      "attributeCode" : "Y"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Seth Putnam, USU/SDL, (435) 713-3375, Seth.Putnam@sdl.usu.edu",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "54",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491437,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "54",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491437,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "54",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "54",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "54",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "componentMediaId" : null,
+    "fileName" : "wess_logo.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://confluence.di2e.net/display/DI2E/WESS+Documentation' title='https://confluence.di2e.net/display/DI2E/WESS+Documentation' target='_blank'> https://confluence.di2e.net/display/DI2E/WESS+Documentation</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1405452122000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1405452122000,
+    "componentId" : "54",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Code",
+    "link" : "<a href='https://stash.di2e.net/projects/USU/repos/wess-widget/browse' title='https://stash.di2e.net/projects/USU/repos/wess-widget/browse' target='_blank'> https://stash.di2e.net/projects/USU/repos/wess-widget/browse</a>",
+    "name" : "Code Location URL",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

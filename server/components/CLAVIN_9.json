@@ -1,0 +1,243 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "name" : "CLAVIN",
+    "description" : "CLAVIN (Cartographic Location And Vicinity Indexer) is an open source software package for document geotagging and geoparsing that employs context-based geographic entity resolution. It extracts location names from unstructured text and resolves them against a gazetteer to produce data-rich geographic entities.  CLAVIN uses heuristics to identify exactly which \"Portland\" (for example) was intended by the author, based on the context of the document. CLAVIN also employs fuzzy search to handle incorrectly-spelled location names, and it recognizes alternative names (e.g., \"Ivory Coast\" and \"Cete d'Ivoire\") as referring to the same geographic entity.",
+    "parentComponentId" : null,
+    "guid" : "75718e9b-f650-4600-b949-cdebc5c179ec",
+    "organization" : "unknown",
+    "releaseDate" : 1398578400000,
+    "version" : "see site for latest",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491407,
+    "lastActivityDts" : 1410477491407
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentAttributePk" : {
+      "componentId" : "9",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SOFTWARE"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentAttributePk" : {
+      "componentId" : "9",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL1"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "9",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.5"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentAttributePk" : {
+      "componentId" : "9",
+      "attributeType" : "LICCLASS",
+      "attributeCode" : "FOSS"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Contact Bericho Technologies",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "9",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : 1410477491408,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "9",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491408,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "9",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491408,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "9",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "9",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "componentMediaId" : null,
+    "fileName" : "clavin_logo.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='http://clavin.bericotechnologies.com' title='http://clavin.bericotechnologies.com' target='_blank'> http://clavin.bericotechnologies.com</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DI2EEVAL",
+    "link" : "<a href='https://storefront.di2e.net/marketplace/public/Clavin_ChecklistReport_v1.0.docx' title='https://storefront.di2e.net/marketplace/public/Clavin_ChecklistReport_v1.0.docx' target='_blank'> https://storefront.di2e.net/marketplace/public/Clavin_ChecklistReport_v1.0.docx</a>",
+    "name" : "DI2E Framework Evaluation Report URL",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='http://clavin.bericotechnologies.com/' title='http://clavin.bericotechnologies.com/' target='_blank'> http://clavin.bericotechnologies.com/</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1400005248000,
+    "updateUser" : "david.treat",
+    "updateDts" : 1400005248000,
+    "componentId" : "9",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Code",
+    "link" : "<a href='https://github.com/Berico-Technologies/CLAVIN' title='https://github.com/Berico-Technologies/CLAVIN' target='_blank'> https://github.com/Berico-Technologies/CLAVIN</a>",
+    "name" : "Code Location URL",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

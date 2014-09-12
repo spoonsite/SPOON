@@ -1,0 +1,251 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "name" : "Vega 3D Map Widget",
+    "description" : "Vega is a 3D map widget with support for high-resolution imagery in various formats including WMS, WFS, and ArcGIS.  Vega also supports 3-dimensional terrain, and time-based data and has tools for drawing shapes and points and importing/exporting data.",
+    "parentComponentId" : null,
+    "guid" : "3e3b21d6-2374-4417-ba9c-ec56a9e0a314",
+    "organization" : "unknown",
+    "releaseDate" : 1377669600000,
+    "version" : "0.1-ALPHA2",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491437,
+    "lastActivityDts" : 1410477491437
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentAttributePk" : {
+      "componentId" : "55",
+      "attributeType" : "TYPE",
+      "attributeCode" : "WIDGET"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentAttributePk" : {
+      "componentId" : "55",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "55",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentAttributePk" : {
+      "componentId" : "55",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentAttributePk" : {
+      "componentId" : "55",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentAttributePk" : {
+      "componentId" : "55",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentAttributePk" : {
+      "componentId" : "55",
+      "attributeType" : "OWFCOMP",
+      "attributeCode" : "Y"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Amit Vij  - avij@gisfederal.com",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "55",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491437,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "55",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491437,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "55",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "55",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "55",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "componentMediaId" : null,
+    "fileName" : "maps-icon.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://wiki.macefusion.com/display/Widgets/Installing+Vega+%283D+Map+Widget%29+into+OWF' title='https://wiki.macefusion.com/display/Widgets/Installing+Vega+%283D+Map+Widget%29+into+OWF' target='_blank'> https://wiki.macefusion.com/display/Widgets/Installing+Vega+%283D+Map+Widget%29+into+OWF</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200733000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200733000,
+    "componentId" : "55",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Code",
+    "link" : "<a href='https://git.macefusion.com/git/dcgs-widgets' title='https://git.macefusion.com/git/dcgs-widgets' target='_blank'> https://git.macefusion.com/git/dcgs-widgets</a>",
+    "name" : "Code Location URL",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

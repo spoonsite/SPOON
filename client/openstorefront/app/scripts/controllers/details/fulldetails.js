@@ -298,7 +298,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ***************************************************************/
   $scope.checkForImportants = function(array){
     return _.some(array, function(item){
-      return item.important;
+      return item.importantFlg;
     });
   };
   

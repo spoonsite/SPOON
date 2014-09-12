@@ -15,7 +15,7 @@ describe('searchAll_Search entire database', function() {
         expect(element.all(by.repeater('item in data')).count()).toEqual(totalResults);
     });
 
-    it('for a LONG string with special characters, pseudo search returns zero results', function() {
+/*    it('for a LONG string with special characters, pseudo search returns zero results', function() {
         // Open the main site
         browser.get(theSite);
 
@@ -27,6 +27,6 @@ describe('searchAll_Search entire database', function() {
         expect(element.all(by.repeater('item in data')).count()).toEqual(0);
 
     });
-
+*/
 
 });

@@ -1,0 +1,279 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "name" : "JC2CUI Common 2D Map API Widget",
+    "description" : "This is a map widget developed by JC2CUI that conforms to the Common Map API - see below for more information on the API. <br> <br>Using this API allows developers to focus on the problem domain rather than implementing a map widget themselves. It also allows the actual map implementation used to be chosen dynamically by the user at runtime rather than being chosen by the developer. Any map implementation that applies this API can be used. Currently, implementations using Google Earth, Google Maps V2, Google Maps V3, and OpenLayers APIs are available, and others can be written as needed. <br> Another benefit of this API is that it allows multiple widgets to collaboratively display data on a single map widget rather than forcing the user to have a separate map for each widget, so the user does not have to struggle with a different map user interface for each widget. The API uses the OZONE Widget Framework (OWF) inter-widget communication mechanism to allow client widgets to interact with the map. Messages are sent to the appropriate channels (defined below), and the map updates its state accordingly. Other widgets interested in knowing the current map state can subscribe to these messages as well. It is worth noting that the map itself may publish data to these channels on occasion. For example, a map.feature.selected message may originate from a widget asking that a particular feature be selected or because a user has selected the feature on the map. While in most instances the map will not echo back another message to confirm that it has performed an operation, the map will send a view status message whenever the map view (zoom/pan) has been changed, either directly by the user or due to a view change message sent by another widget. This allows non-map widgets that wish to be aware of the current viewport to have that information without having to process all the various messages that can change its state.",
+    "parentComponentId" : null,
+    "guid" : "96c32c04-852d-4795-b659-235cfd0fdb05",
+    "organization" : "JC2CUI",
+    "releaseDate" : 1342850400000,
+    "version" : "1.3",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491434,
+    "lastActivityDts" : 1410477491434
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentAttributePk" : {
+      "componentId" : "41",
+      "attributeType" : "TYPE",
+      "attributeCode" : "WIDGET"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentAttributePk" : {
+      "componentId" : "41",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "41",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.2"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentAttributePk" : {
+      "componentId" : "41",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentAttributePk" : {
+      "componentId" : "41",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentAttributePk" : {
+      "componentId" : "41",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "OPR"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentAttributePk" : {
+      "componentId" : "41",
+      "attributeType" : "OWFCOMP",
+      "attributeCode" : "Y"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Eric Hollander (jhallander9591@gmail.com)",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "41",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491434,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "41",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491434,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "41",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "41",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "41",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentMediaId" : null,
+    "fileName" : "EntMapWidget.PNG",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/PNG",
+    "link" : null,
+    "caption" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentMediaId" : null,
+    "fileName" : "EntMapWidgetNoDraw.PNG",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/PNG",
+    "link" : null,
+    "caption" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "componentMediaId" : null,
+    "fileName" : "maps-icon.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://www.intelink.gov/inteldocs/browse.php?fFolderId=431871' title='https://www.intelink.gov/inteldocs/browse.php?fFolderId=431871' target='_blank'> https://www.intelink.gov/inteldocs/browse.php?fFolderId=431871</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485082000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485082000,
+    "componentId" : "41",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "Product Homepage",
+    "link" : "<a href='https://software.forge.mil/sf/frs/do/listReleases/projects.jc2cui/frs.common_map_widget' title='https://software.forge.mil/sf/frs/do/listReleases/projects.jc2cui/frs.common_map_widget' target='_blank'> https://software.forge.mil/sf/frs/do/listReleases/projects.jc2cui/frs.common_map_widget</a>",
+    "name" : "Product Homepage",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

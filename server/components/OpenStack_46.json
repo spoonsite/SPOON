@@ -1,0 +1,225 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "name" : "OpenStack",
+    "description" : "OpenStack is open source software for building public and private clouds ( <a href='http://www.openstack.org' title='http://www.openstack.org' target='_blank'> www.openstack.org</a> ). The release here has been developed by USC/ISI and has two distinctions from the mainstream open source release.  First, we've focused on support for high-performance, heterogeneous hardware.  Second, we've packaged a release for deployment in secure environments.  The release has been developed for RHEL and related host operating systems, includes an SELinux policy, and includes all of the dependent packages, so the release can be deployed stand-alone in environments not connected to the internet.  The release uses a modified version of the open source Rackspace Private Cloud software for easy installation.",
+    "parentComponentId" : null,
+    "guid" : "66bca318-5cca-45e4-a207-688ad923ede8",
+    "organization" : "USC/ISI",
+    "releaseDate" : 1386831600000,
+    "version" : "NA, see listing for latest",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491435,
+    "lastActivityDts" : 1410477491435
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentAttributePk" : {
+      "componentId" : "46",
+      "attributeType" : "TYPE",
+      "attributeCode" : "APP"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentAttributePk" : {
+      "componentId" : "46",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "LEVEL0"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "46",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : null
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentAttributePk" : {
+      "componentId" : "46",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentAttributePk" : {
+      "componentId" : "46",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentAttributePk" : {
+      "componentId" : "46",
+      "attributeType" : "LIFECYCSTG",
+      "attributeCode" : "PILOT"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "steve.crago",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : null,
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "46",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : 1410477491435,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "46",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491435,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "46",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "46",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "46",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "componentMediaId" : null,
+    "fileName" : "OpenStack.png",
+    "originalName" : null,
+    "mediaTypeCode" : "IMG",
+    "mimeType" : "image/png",
+    "link" : null,
+    "caption" : null
+  } ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485086000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485086000,
+    "componentId" : "46",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://confluence.di2e.net/display/DI2E/Heterogeneous+OpenStack+Grizzly+Release' title='https://confluence.di2e.net/display/DI2E/Heterogeneous+OpenStack+Grizzly+Release' target='_blank'> https://confluence.di2e.net/display/DI2E/Heterogeneous+OpenStack+Grizzly+Release</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

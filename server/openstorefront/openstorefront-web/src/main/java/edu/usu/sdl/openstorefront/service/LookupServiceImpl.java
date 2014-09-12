@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +54,14 @@ public class LookupServiceImpl
 	@Override
 	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass)
 	{
-		return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
+		Element element = OSFCacheManager.getLookupCache().get(lookTableClass.getName());
+		Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
+		if (lookupCacheMap != null) {
+			List<T> lookupList = new ArrayList<>(lookupCacheMap.values());
+			return lookupList;
+		} else {
+			return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
+		}
 	}
 
 	@Override

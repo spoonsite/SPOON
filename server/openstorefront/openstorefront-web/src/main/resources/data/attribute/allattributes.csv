@@ -1173,7 +1173,7 @@
 "LICTYPE","License Type","false","false","false","false","PERTRAN","Per Transaction","",
 "LICTYPE","License Type","false","false","false","false","FEE","Fee for Service","",
 "LICTYPE","License Type","false","false","false","false","UNKN","Unknown","",
-"LIFECYCSTG","Lifecycle Stage","false","false","false","false","CNPTDEF","Concept�Definition","",
+"LIFECYCSTG","Lifecycle Stage","false","false","false","false","CNPTDEF","Concept Definition","",
 "LIFECYCSTG","Lifecycle Stage","false","false","false","false","DEV","Development","",
 "LIFECYCSTG","Lifecycle Stage","false","false","false","false","PILOT","Deployment Pilot","",
 "LIFECYCSTG","Lifecycle Stage","false","false","false","false","OPR","Operations","",

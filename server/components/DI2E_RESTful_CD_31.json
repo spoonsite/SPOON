@@ -1,0 +1,199 @@
+{
+  "component" : {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "name" : "DI2E RESTful CDR Search Technical Profile",
+    "description" : "This profile provides the technical design description for the RESTful Search web service of Defense Intelligence Information Enterprise (DI2E). The profile includes capability architecture design details, implementation requirements and additional implementation guidance.  DI2E Enterprise service providers and clients will use this design to support enterprise standards while creating search services within their nodes.  <br> <br>This document extends the IC/DoD REST interface encoding specification for Content Discovery and Retrieval (CDR) Search [CDR-RS] . It defines an interface to which a search service implementation and a subsequent deployment must conform. <br> <br>The search service provides the ability to search for contents within the DI2E Enterprise with two primary functions: search and results paging. Analysts require the flexibility to search data stores in a myriad of combinations. For example, a user may perform a search for records with the keyword 'Paris' occurring between January 16, 2009 and January 21, 2009; a user may perform a search for records with the keyword 'airport' and a geo location. The previous examples highlight the three different types of queries that MUST be supported by a search service implementation:  <br>- Keyword query with results containing the specified keyword or keyword combination <br>- Temporal query with results within the specified temporal range <br>- Geographic query with results within the specified geographic area <br> <br>The search service provides a standard interface for discovering information and returns a 'hit list' of items. A search service's results are generally resource discovery metadata rather than actual content resources. In the context of search, resource discovery metadata generally refers to a subset of a resource's available metadata, not the entire underlying record. Some of the information contained within each search result may provide the information necessary for a client to retrieve or otherwise use the referenced resource. Retrieval of the product resources associated with each entry in the 'hit list' is discussed in the DI2E RESTful Retrieve profile. <br> <br>Content of DI2E RESTful CDR Search Profile: <br> - Technical Design Document (TDD) <br> - Service Specification Package (SSP) for each service - Not applicable.  Since this CDP only contains one service, contents of SSP are rolled into the TDD. <br> - Conformance Test Kit (CTK) <br>    - Conformance Traceability Matrix  <br>    - Test Procedure Document <br>    - Test Request Messages  <br>    - Gold Data Set  <br>    - Conformance Checks Scripts",
+    "parentComponentId" : null,
+    "guid" : "2f8ca98a-a935-4ebf-8504-82756b8ef81b",
+    "organization" : "unknown",
+    "releaseDate" : 1392966000000,
+    "version" : "see site",
+    "approvalState" : "A",
+    "approvedUser" : "CROSS.PATRICK.I.1126309879",
+    "approvedDts" : 1410477491422,
+    "lastActivityDts" : 1410477491423
+  },
+  "attributes" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentAttributePk" : {
+      "componentId" : "31",
+      "attributeType" : "TYPE",
+      "attributeCode" : "SPEC"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentAttributePk" : {
+      "componentId" : "31",
+      "attributeType" : "DI2ELEVEL",
+      "attributeCode" : "NA"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : null,
+    "componentAttributePk" : {
+      "componentId" : "31",
+      "attributeType" : "DI2E-SVCV4-A",
+      "attributeCode" : "2.3"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentAttributePk" : {
+      "componentId" : "31",
+      "attributeType" : "CEEAR",
+      "attributeCode" : "N"
+    }
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentAttributePk" : {
+      "componentId" : "31",
+      "attributeType" : "ITAR",
+      "attributeCode" : "N"
+    }
+  } ],
+  "contacts" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "contactId" : null,
+    "contactType" : "TEC",
+    "firstName" : "Kim Holladay",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  }, {
+    "activeStatus" : null,
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : null,
+    "contactId" : null,
+    "contactType" : "GOV",
+    "firstName" : "NA",
+    "lastName" : null,
+    "email" : null,
+    "phone" : null,
+    "organization" : "NA"
+  } ],
+  "evaluationSchedules" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "31",
+      "evaluationLevelCode" : "NA"
+    },
+    "completionDate" : 1410477491423,
+    "levelStatus" : "C"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "31",
+      "evaluationLevelCode" : "LEVEL0"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "31",
+      "evaluationLevelCode" : "LEVEL1"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "31",
+      "evaluationLevelCode" : "LEVEL2"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  }, {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "componentEvaluationSchedulePk" : {
+      "componentId" : "31",
+      "evaluationLevelCode" : "LEVEL3"
+    },
+    "completionDate" : null,
+    "levelStatus" : "N"
+  } ],
+  "evaluationSections" : [ ],
+  "externalDependencies" : [ ],
+  "media" : [ ],
+  "metadata" : [ ],
+  "questions" : [ ],
+  "resources" : [ {
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1399485073000,
+    "updateUser" : "CROSS.PATRICK.I.1126309879",
+    "updateDts" : 1399485073000,
+    "componentId" : "31",
+    "resourceId" : null,
+    "resourceFileId" : null,
+    "resourceType" : "DOC",
+    "link" : "<a href='https://www.intelink.gov/go/zankYmq' title='https://www.intelink.gov/go/zankYmq' target='_blank'> https://www.intelink.gov/go/zankYmq</a>",
+    "name" : "Documentation",
+    "description" : null,
+    "restricted" : null
+  } ],
+  "reviews" : [ ],
+  "tags" : [ ]
+}

@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
@@ -350,6 +352,16 @@ public class AttributeServiceImpl
 
 		refreshCache();
 
+	}
+
+	@Override
+	public List<ComponentAttribute> getAttributesByComponentId(String componentId)
+	{
+		ComponentAttribute example = new ComponentAttribute();
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setComponentId(componentId);
+		example.setComponentAttributePk(pk);
+		return persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(example));
 	}
 
 }

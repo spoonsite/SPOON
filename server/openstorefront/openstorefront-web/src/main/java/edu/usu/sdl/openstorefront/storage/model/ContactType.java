@@ -26,6 +26,9 @@ public class ContactType
 		extends LookupEntity
 {
 
+	public static final String TECHINCAL = "TEC";
+	public static final String GOVERNMENT = "GOV";
+
 	public ContactType()
 	{
 	}
