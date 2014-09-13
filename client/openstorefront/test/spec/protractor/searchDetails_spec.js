@@ -1,5 +1,5 @@
 describe('searchDetails_Search for VANTAGE', function() {
-  it('returns 2 results', function() {
+  it('keyword search for VANTAGE returns 2 results', function() {
     // Open the main site
     browser.get(theSite);
     
@@ -13,7 +13,7 @@ describe('searchDetails_Search for VANTAGE', function() {
 
 
 describe('searchDetails_Click on the results', function() {
-  it('click on the Details Reviews and Q&A tabs -- content loads from those tabs', function() {
+  it('click on Tabs from search details page', function() {
     // Click on the second or OZONE results
     element.all(by.css('.results-content-title-content')).get(1).click();
 
@@ -31,7 +31,7 @@ describe('searchDetails_Click on the results', function() {
 
   });
 
-  it('click page tabs to hide parts of page  click tabs again', function() {
+  it('click arrows to hide parts of the page ', function() {
     element(by.id('showPageLeft')).click();
     browser.driver.sleep(500);
     element(by.id('showPageRight')).click();
@@ -49,13 +49,34 @@ describe('searchDetails_Click on the results', function() {
     expect(element.all(by.binding('results-content-description')));
   });
 
- it('click on view edit tags and full page', function() {
-    // Click on "View/Edit Tags"
-    element(by.id('data-collapse-tags')).click();
-    // Can't get id (class) of wach button (2 different states)
-    element(by.id('permenantLink')).click();
-    // Check for popped up window, then close
-    expect(true).toBe(true);
- });
+
+  it('click tags watches view unwatch full page buttons', function() {
+      // Click on the TAGS button
+      // TODO: Add logic for if tags button is already depressed
+      element.all(by.css('.fa.fa-tags')).get(0).click();
+
+      // Click on binoculars to watch or not watch
+      element.all(by.css('.ic.ic-binoculars')).get(0).click();
+
+      // Click on View Watches
+      element.all(by.css('.fa.fa-eye')).get(0).click();
+      browser.driver.sleep(500);
+      browser.refresh(); // close the window
+
+      element(by.id('globalSearch')).sendKeys('VANTAGE', protractor.Key.ENTER);
+      expect(element.all(by.repeater('item in data')).count()).toEqual(2);
+      element.all(by.css('.results-content-title-content')).get(1).click();
+
+      // Set back to original state
+      element.all(by.css('.ic.ic-blocked')).get(0).click();
+
+      // Click on Go to Full Screen
+      element.all(by.css('.fa.fa-copy')).get(0).click();
+      expect(true).toBe(true);
+
+
+
+  });
+
 
 });
