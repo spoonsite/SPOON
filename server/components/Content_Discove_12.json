@@ -15,8 +15,8 @@
     "version" : "n/a",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491409,
-    "lastActivityDts" : 1410477491409
+    "approvedDts" : 1410821461454,
+    "lastActivityDts" : 1410821461454
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1399485057000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485057000,
-    "componentId" : null,
+    "componentId" : "12",
     "componentAttributePk" : {
       "componentId" : "12",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "12",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491409,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485057000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485057000,
-    "componentId" : "12",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "12",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491409,
+    "completionDate" : 1410821461455,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -213,10 +200,11 @@
     "updateDts" : 1399485057000,
     "componentId" : "12",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://software.forge.mil/sf/frs/do/listReleases/projects.di2e-f/frs.agency_data_layer_content_discov' title='https://software.forge.mil/sf/frs/do/listReleases/projects.di2e-f/frs.agency_data_layer_content_discov' target='_blank'> https://software.forge.mil/sf/frs/do/listReleases/projects.di2e-f/frs.agency_data_layer_content_discov</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -227,10 +215,11 @@
     "updateDts" : 1399485057000,
     "componentId" : "12",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='https://intellipedia.intelink.gov/wiki/Content_Discovery_and_Retrieval_Brokered_Search_Service' title='https://intellipedia.intelink.gov/wiki/Content_Discovery_and_Retrieval_Brokered_Search_Service' target='_blank'> https://intellipedia.intelink.gov/wiki/Content_Discovery_and_Retrieval_Brokered_Search_Service</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],

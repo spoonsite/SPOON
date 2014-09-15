@@ -15,8 +15,8 @@
     "version" : "See site for latest",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491412,
-    "lastActivityDts" : 1410477491412
+    "approvedDts" : 1410821461458,
+    "lastActivityDts" : 1410821461458
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1399485060000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485060000,
-    "componentId" : null,
+    "componentId" : "16",
     "componentAttributePk" : {
       "componentId" : "16",
       "attributeType" : "DI2E-SVCV4-A",
@@ -60,7 +60,7 @@
     "createDts" : 1399485060000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485060000,
-    "componentId" : null,
+    "componentId" : "16",
     "componentAttributePk" : {
       "componentId" : "16",
       "attributeType" : "DI2E-SVCV4-A",
@@ -72,7 +72,7 @@
     "createDts" : 1399485060000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485060000,
-    "componentId" : null,
+    "componentId" : "16",
     "componentAttributePk" : {
       "componentId" : "16",
       "attributeType" : "DI2E-SVCV4-A",
@@ -102,7 +102,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "William Cashman",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -119,20 +119,7 @@
       "componentId" : "16",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491412,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485060000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485060000,
-    "componentId" : "16",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "16",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491412,
+    "completionDate" : 1410821461458,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -187,10 +174,11 @@
     "updateDts" : 1399485060000,
     "componentId" : "16",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://wiki.macefusion.com/display/MMT/DCGS+Discovery+Metadata+Guide' title='https://wiki.macefusion.com/display/MMT/DCGS+Discovery+Metadata+Guide' target='_blank'> https://wiki.macefusion.com/display/MMT/DCGS+Discovery+Metadata+Guide</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   } ],

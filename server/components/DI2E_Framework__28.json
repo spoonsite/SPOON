@@ -15,8 +15,8 @@
     "version" : "2.0",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491420,
-    "lastActivityDts" : 1410477491420
+    "approvedDts" : 1410821461467,
+    "lastActivityDts" : 1410821461467
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1405308845000,
     "updateUser" : "dan.stroud",
     "updateDts" : 1405308845000,
-    "componentId" : null,
+    "componentId" : "28",
     "componentAttributePk" : {
       "componentId" : "28",
       "attributeType" : "DI2E-SVCV4-A",
@@ -102,7 +102,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Noel Vivaldi",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -119,20 +119,7 @@
       "componentId" : "28",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491421,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1405308845000,
-    "updateUser" : "dan.stroud",
-    "updateDts" : 1405308845000,
-    "componentId" : "28",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "28",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491421,
+    "completionDate" : 1410821461467,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -201,10 +188,11 @@
     "updateDts" : 1405308845000,
     "componentId" : "28",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://confluence.di2e.net/display/DI2E/DI2E+Framework+IdAM+Software+Download' title='https://confluence.di2e.net/display/DI2E/DI2E+Framework+IdAM+Software+Download' target='_blank'> https://confluence.di2e.net/display/DI2E/DI2E+Framework+IdAM+Software+Download</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -215,10 +203,11 @@
     "updateDts" : 1405308845000,
     "componentId" : "28",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://confluence.di2e.net/display/DI2E/DI2E+Framework+IdAM+Software+Download' title='https://confluence.di2e.net/display/DI2E/DI2E+Framework+IdAM+Software+Download' target='_blank'> https://confluence.di2e.net/display/DI2E/DI2E+Framework+IdAM+Software+Download</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   } ],

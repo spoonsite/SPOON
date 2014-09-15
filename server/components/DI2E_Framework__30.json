@@ -15,8 +15,8 @@
     "version" : "1.0",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491421,
-    "lastActivityDts" : 1410477491421
+    "approvedDts" : 1410821461468,
+    "lastActivityDts" : 1410821461468
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -41,18 +41,6 @@
       "componentId" : "30",
       "attributeType" : "DI2ELEVEL",
       "attributeCode" : "NA"
-    }
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200710000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200710000,
-    "componentId" : null,
-    "componentAttributePk" : {
-      "componentId" : "30",
-      "attributeType" : "DI2E-SVCV4-A",
-      "attributeCode" : null
     }
   }, {
     "activeStatus" : "A",
@@ -102,7 +90,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Noel Vivaldi",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -119,60 +107,8 @@
       "componentId" : "30",
       "evaluationLevelCode" : "NA"
     },
-    "completionDate" : 1410477491422,
+    "completionDate" : 1410821461468,
     "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200710000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200710000,
-    "componentId" : "30",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "30",
-      "evaluationLevelCode" : "LEVEL0"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200710000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200710000,
-    "componentId" : "30",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "30",
-      "evaluationLevelCode" : "LEVEL1"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200710000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200710000,
-    "componentId" : "30",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "30",
-      "evaluationLevelCode" : "LEVEL2"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200710000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200710000,
-    "componentId" : "30",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "30",
-      "evaluationLevelCode" : "LEVEL3"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
   } ],
   "evaluationSections" : [ ],
   "externalDependencies" : [ ],
@@ -201,10 +137,11 @@
     "updateDts" : 1403200710000,
     "componentId" : "30",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://confluence.di2e.net/display/DI2E/DI2E+Framework+Reference+Architecture+files' title='https://confluence.di2e.net/display/DI2E/DI2E+Framework+Reference+Architecture+files' target='_blank'> https://confluence.di2e.net/display/DI2E/DI2E+Framework+Reference+Architecture+files</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -215,10 +152,11 @@
     "updateDts" : 1403200710000,
     "componentId" : "30",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://inteldocs.intelink.gov/inteldocs/page/repository#filter=path|/Group%20Folders/D/DI2E%20Framework/DI2E%20Framework%20Architecture&page=1' title='https://inteldocs.intelink.gov/inteldocs/page/repository#filter=path|/Group%20Folders/D/DI2E%20Framework/DI2E%20Framework%20Architecture&page=1' target='_blank'> https://inteldocs.intelink.gov/inteldocs/page/repository#filter=path|/Group%20Folders/D/DI2E%20Framework/DI2E%20Framework%20Architecture&page=1</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -229,10 +167,11 @@
     "updateDts" : 1403200710000,
     "componentId" : "30",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='https://confluence.di2e.net/display/DI2E/DI2E+Reference+Architecture' title='https://confluence.di2e.net/display/DI2E/DI2E+Reference+Architecture' target='_blank'> https://confluence.di2e.net/display/DI2E/DI2E+Reference+Architecture</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],

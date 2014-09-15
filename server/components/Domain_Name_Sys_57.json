@@ -15,8 +15,8 @@
     "version" : "2.1.1",
     "approvalState" : "A",
     "approvedUser" : "patrick.cross",
-    "approvedDts" : 1410477491424,
-    "lastActivityDts" : 1410477491424
+    "approvedDts" : 1410821461471,
+    "lastActivityDts" : 1410821461471
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1403200713000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200713000,
-    "componentId" : null,
+    "componentId" : "57",
     "componentAttributePk" : {
       "componentId" : "57",
       "attributeType" : "DI2E-SVCV4-A",
@@ -102,7 +102,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Noel Vivaldi",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -119,60 +119,8 @@
       "componentId" : "57",
       "evaluationLevelCode" : "NA"
     },
-    "completionDate" : 1410477491424,
+    "completionDate" : 1410821461471,
     "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "patrick.cross",
-    "createDts" : 1403200713000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200713000,
-    "componentId" : "57",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "57",
-      "evaluationLevelCode" : "LEVEL0"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "patrick.cross",
-    "createDts" : 1403200713000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200713000,
-    "componentId" : "57",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "57",
-      "evaluationLevelCode" : "LEVEL1"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "patrick.cross",
-    "createDts" : 1403200713000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200713000,
-    "componentId" : "57",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "57",
-      "evaluationLevelCode" : "LEVEL2"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "patrick.cross",
-    "createDts" : 1403200713000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200713000,
-    "componentId" : "57",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "57",
-      "evaluationLevelCode" : "LEVEL3"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
   } ],
   "evaluationSections" : [ ],
   "externalDependencies" : [ ],
@@ -187,10 +135,11 @@
     "updateDts" : 1403200713000,
     "componentId" : "57",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://storefront.di2e.net/marketplace/public/DNS_Guidebook_for' title='https://storefront.di2e.net/marketplace/public/DNS_Guidebook_for' target='_blank'> https://storefront.di2e.net/marketplace/public/DNS_Guidebook_for</a> Linux-BIND V2.1.1.doc",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   } ],

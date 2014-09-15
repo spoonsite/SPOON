@@ -15,8 +15,8 @@
     "version" : "0",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491437,
-    "lastActivityDts" : 1410477491437
+    "approvedDts" : 1410821461497,
+    "lastActivityDts" : 1410821461497
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1405452122000,
     "updateUser" : "david.treat",
     "updateDts" : 1405452122000,
-    "componentId" : null,
+    "componentId" : "54",
     "componentAttributePk" : {
       "componentId" : "54",
       "attributeType" : "DI2E-SVCV4-A",
@@ -138,7 +138,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Dale Linne Von Berg",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -155,20 +155,7 @@
       "componentId" : "54",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491437,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1405452122000,
-    "updateUser" : "david.treat",
-    "updateDts" : 1405452122000,
-    "componentId" : "54",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "54",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491437,
+    "completionDate" : 1410821461498,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -237,10 +224,11 @@
     "updateDts" : 1405452122000,
     "componentId" : "54",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://confluence.di2e.net/display/DI2E/WESS+Documentation' title='https://confluence.di2e.net/display/DI2E/WESS+Documentation' target='_blank'> https://confluence.di2e.net/display/DI2E/WESS+Documentation</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -251,10 +239,11 @@
     "updateDts" : 1405452122000,
     "componentId" : "54",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://stash.di2e.net/projects/USU/repos/wess-widget/browse' title='https://stash.di2e.net/projects/USU/repos/wess-widget/browse' target='_blank'> https://stash.di2e.net/projects/USU/repos/wess-widget/browse</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   } ],

@@ -15,8 +15,8 @@
     "version" : "4.0.2",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491414,
-    "lastActivityDts" : 1410477491414
+    "approvedDts" : 1410821461460,
+    "lastActivityDts" : 1410821461460
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1399485063000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485063000,
-    "componentId" : null,
+    "componentId" : "19",
     "componentAttributePk" : {
       "componentId" : "19",
       "attributeType" : "DI2E-SVCV4-A",
@@ -60,7 +60,7 @@
     "createDts" : 1399485063000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485063000,
-    "componentId" : null,
+    "componentId" : "19",
     "componentAttributePk" : {
       "componentId" : "19",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "19",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491414,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485063000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485063000,
-    "componentId" : "19",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "19",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491414,
+    "completionDate" : 1410821461460,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -213,10 +200,11 @@
     "updateDts" : 1399485063000,
     "componentId" : "19",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://software.forge.mil/sf/go/proj1145' title='https://software.forge.mil/sf/go/proj1145' target='_blank'> https://software.forge.mil/sf/go/proj1145</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   } ],

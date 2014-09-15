@@ -15,8 +15,8 @@
     "version" : "See site for latest",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491424,
-    "lastActivityDts" : 1410477491424
+    "approvedDts" : 1410821461472,
+    "lastActivityDts" : 1410821461472
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1403200714000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200714000,
-    "componentId" : null,
+    "componentId" : "34",
     "componentAttributePk" : {
       "componentId" : "34",
       "attributeType" : "DI2E-SVCV4-A",
@@ -138,7 +138,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Gerald \"Todd\" Wyngaard",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -155,20 +155,7 @@
       "componentId" : "34",
       "evaluationLevelCode" : "LEVEL1"
     },
-    "completionDate" : 1410477491425,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200714000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200714000,
-    "componentId" : "34",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "34",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491425,
+    "completionDate" : 1410821461472,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -181,7 +168,7 @@
       "componentId" : "34",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491425,
+    "completionDate" : 1410821461472,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -237,10 +224,11 @@
     "updateDts" : 1403200714000,
     "componentId" : "34",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://stash.di2e.net/projects/EMP/repos/map-docs/browse' title='https://stash.di2e.net/projects/EMP/repos/map-docs/browse' target='_blank'> https://stash.di2e.net/projects/EMP/repos/map-docs/browse</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -251,10 +239,11 @@
     "updateDts" : 1403200714000,
     "componentId" : "34",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://stash.di2e.net/projects/EMP' title='https://stash.di2e.net/projects/EMP' target='_blank'> https://stash.di2e.net/projects/EMP</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   }, {
@@ -265,10 +254,11 @@
     "updateDts" : 1403200714000,
     "componentId" : "34",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DI2EEVAL",
     "link" : "<a href='https://storefront.di2e.net/marketplace/public/Extensible_Mapping_Platform_Evaluation_Report.docx' title='https://storefront.di2e.net/marketplace/public/Extensible_Mapping_Platform_Evaluation_Report.docx' target='_blank'> https://storefront.di2e.net/marketplace/public/Extensible_Mapping_Platform_Evaluation_Report.docx</a>",
-    "name" : "DI2E Framework Evaluation Report URL",
     "description" : null,
     "restricted" : null
   }, {
@@ -279,10 +269,11 @@
     "updateDts" : 1403200714000,
     "componentId" : "34",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='https://confluence.di2e.net/display/EMP/Extensible+Mapping+Platform+Home' title='https://confluence.di2e.net/display/EMP/Extensible+Mapping+Platform+Home' target='_blank'> https://confluence.di2e.net/display/EMP/Extensible+Mapping+Platform+Home</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],

@@ -15,8 +15,8 @@
     "version" : "1.7.1",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491434,
-    "lastActivityDts" : 1410477491434
+    "approvedDts" : 1410821461493,
+    "lastActivityDts" : 1410821461493
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1405370213000,
     "updateUser" : "david.treat",
     "updateDts" : 1405370213000,
-    "componentId" : null,
+    "componentId" : "42",
     "componentAttributePk" : {
       "componentId" : "42",
       "attributeType" : "DI2E-SVCV4-A",
@@ -126,7 +126,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Jason Moore",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -143,20 +143,7 @@
       "componentId" : "42",
       "evaluationLevelCode" : "LEVEL1"
     },
-    "completionDate" : 1410477491434,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1405370213000,
-    "updateUser" : "david.treat",
-    "updateDts" : 1405370213000,
-    "componentId" : "42",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "42",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491434,
+    "completionDate" : 1410821461493,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -169,7 +156,7 @@
       "componentId" : "42",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491434,
+    "completionDate" : 1410821461493,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -253,10 +240,11 @@
     "updateDts" : 1405370213000,
     "componentId" : "42",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://software.forge.mil/sf/scm/do/listRepositories/projects.jview/scm' title='https://software.forge.mil/sf/scm/do/listRepositories/projects.jview/scm' target='_blank'> https://software.forge.mil/sf/scm/do/listRepositories/projects.jview/scm</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -267,10 +255,11 @@
     "updateDts" : 1405370213000,
     "componentId" : "42",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DI2EEVAL",
     "link" : "<a href='https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx' title='https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx' target='_blank'> https://storefront.di2e.net/marketplace/public/JViewAPI_ChecklistReport_v1.0.docx</a>",
-    "name" : "DI2E Framework Evaluation Report URL",
     "description" : null,
     "restricted" : null
   }, {
@@ -281,10 +270,11 @@
     "updateDts" : 1405370213000,
     "componentId" : "42",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='https://extranet.rl.af.mil/jview/' title='https://extranet.rl.af.mil/jview/' target='_blank'> https://extranet.rl.af.mil/jview/</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   }, {
@@ -295,10 +285,11 @@
     "updateDts" : 1405370213000,
     "componentId" : "42",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://software.forge.mil/sf/go/proj1195' title='https://software.forge.mil/sf/go/proj1195' target='_blank'> https://software.forge.mil/sf/go/proj1195</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   } ],

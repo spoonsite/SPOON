@@ -15,8 +15,8 @@
     "version" : "See Site",
     "approvalState" : "A",
     "approvedUser" : "patrick.cross",
-    "approvedDts" : 1410477491431,
-    "lastActivityDts" : 1410477491431
+    "approvedDts" : 1410821461483,
+    "lastActivityDts" : 1410821461483
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1403200725000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200725000,
-    "componentId" : null,
+    "componentId" : "65",
     "componentAttributePk" : {
       "componentId" : "65",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "65",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491431,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "patrick.cross",
-    "createDts" : 1403200725000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200725000,
-    "componentId" : "65",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "65",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491431,
+    "completionDate" : 1410821461483,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -213,10 +200,11 @@
     "updateDts" : 1403200725000,
     "componentId" : "65",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='http://www.exmeritus.com/hardware_wall.html' title='http://www.exmeritus.com/hardware_wall.html' target='_blank'> http://www.exmeritus.com/hardware_wall.html</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -227,10 +215,11 @@
     "updateDts" : 1403200725000,
     "componentId" : "65",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='http://www.exmeritus.com/hardware_wall.html' title='http://www.exmeritus.com/hardware_wall.html' target='_blank'> http://www.exmeritus.com/hardware_wall.html</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],
