@@ -862,8 +862,6 @@ public class ComponentRESTResource
 			@PathParam("questionId")
 			@RequiredParam String questionId)
 	{
-		//TODO:  Validate that the question belongs to the component that htey are try to delete
-
 		service.getComponentService().deactivateBaseComponent(ComponentQuestion.class, questionId);
 	}
 

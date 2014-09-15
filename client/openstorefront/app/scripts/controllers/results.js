@@ -466,7 +466,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.showDetails = false;
       // console.log('id', id);
       
-      Business.componentservice.getComponentDetails(id).then( function (result){
+      Business.componentservice.getComponentDetails(id, true).then( function (result){
         if (result)
         {
           $scope.sendPageView(result.name);
@@ -641,7 +641,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
     }, 1000);
   });
-
 
 
   //////////////////////////////////////////////////////////////////////////////

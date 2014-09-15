@@ -160,7 +160,6 @@ public class UserServiceImpl
 				/*TODO: Here we need to create a new profile if it doesn't exist...*/
 				profile = new UserProfile();
 				profile.setActiveStatus(TestEntity.ACTIVE_STATUS);
-				profile.setAdmin(Boolean.FALSE);
 				profile.setCreateDts(new Date());
 				profile.setCreateUser(userId);
 				profile.setUpdateDts(new Date());

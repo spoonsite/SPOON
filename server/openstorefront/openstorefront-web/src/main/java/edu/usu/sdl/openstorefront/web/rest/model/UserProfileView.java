@@ -67,7 +67,8 @@ public class UserProfileView
 	public static UserProfileView toView(UserProfile profile)
 	{
 		UserProfileView view = new UserProfileView();
-		view.setAdmin(profile.getAdmin());
+		// FIGURE OUT HOW TO TELL IF THEY'RE ADMIN...
+		view.setAdmin(true);
 		view.setEmail(profile.getEmail());
 		view.setFirstName(profile.getFirstName());
 		view.setLastName(profile.getLastName());
