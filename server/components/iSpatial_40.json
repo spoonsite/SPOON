@@ -15,8 +15,8 @@
     "version" : "3.2.4",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491433,
-    "lastActivityDts" : 1410477491433
+    "approvedDts" : 1410821461491,
+    "lastActivityDts" : 1410821461492
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1403200726000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200726000,
-    "componentId" : null,
+    "componentId" : "40",
     "componentAttributePk" : {
       "componentId" : "40",
       "attributeType" : "DI2E-SVCV4-A",
@@ -60,7 +60,7 @@
     "createDts" : 1403200726000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200726000,
-    "componentId" : null,
+    "componentId" : "40",
     "componentAttributePk" : {
       "componentId" : "40",
       "attributeType" : "DI2E-SVCV4-A",
@@ -72,7 +72,7 @@
     "createDts" : 1403200726000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200726000,
-    "componentId" : null,
+    "componentId" : "40",
     "componentAttributePk" : {
       "componentId" : "40",
       "attributeType" : "DI2E-SVCV4-A",
@@ -84,7 +84,7 @@
     "createDts" : 1403200726000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200726000,
-    "componentId" : null,
+    "componentId" : "40",
     "componentAttributePk" : {
       "componentId" : "40",
       "attributeType" : "DI2E-SVCV4-A",
@@ -126,7 +126,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -143,20 +143,7 @@
       "componentId" : "40",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491433,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200726000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200726000,
-    "componentId" : "40",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "40",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491433,
+    "completionDate" : 1410821461492,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -225,10 +212,11 @@
     "updateDts" : 1403200726000,
     "componentId" : "40",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='http://www.t-sciences.com/product/ispatial' title='http://www.t-sciences.com/product/ispatial' target='_blank'> http://www.t-sciences.com/product/ispatial</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -239,10 +227,11 @@
     "updateDts" : 1403200726000,
     "componentId" : "40",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='http://therml-pf-app02.pf.cee-w.net/static/docs/iSpatial_v3_User_Guide.pdf' title='http://therml-pf-app02.pf.cee-w.net/static/docs/iSpatial_v3_User_Guide.pdf' target='_blank'> http://therml-pf-app02.pf.cee-w.net/static/docs/iSpatial_v3_User_Guide.pdf</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -253,10 +242,11 @@
     "updateDts" : 1403200726000,
     "componentId" : "40",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='http://www.t-sciences.com/product/ispatial' title='http://www.t-sciences.com/product/ispatial' target='_blank'> http://www.t-sciences.com/product/ispatial</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],

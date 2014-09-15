@@ -48,6 +48,8 @@ public class FileSystemManager
 	public static final String IMPORT_HIGHLIGHT_DIR = "/var/openstorefront/import/highlight";
 	public static final String IMPORT_COMPONENT_DIR = "/var/openstorefront/import/component";
 	public static final String ARTICLE_DIR = MAIN_PERM_DIR + "/article";
+	public static final String MEDIA_DIR = MAIN_PERM_DIR + "/media";
+	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
 	public static final String DB_DIR = "/var/openstorefront/db";
 
 	public static File getDir(String directory)

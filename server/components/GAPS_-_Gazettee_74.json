@@ -15,8 +15,8 @@
     "version" : "2.5",
     "approvalState" : "A",
     "approvedUser" : "david.treat",
-    "approvedDts" : 1410477491426,
-    "lastActivityDts" : 1410477491426
+    "approvedDts" : 1410821461474,
+    "lastActivityDts" : 1410821461474
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -102,7 +102,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Johnnie NeSmith",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -119,20 +119,7 @@
       "componentId" : "74",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491426,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "david.treat",
-    "createDts" : 1405691776000,
-    "updateUser" : "david.treat",
-    "updateDts" : 1405691776000,
-    "componentId" : "74",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "74",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491426,
+    "completionDate" : 1410821461474,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",

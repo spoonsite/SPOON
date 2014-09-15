@@ -45,7 +45,7 @@ public class ComponentQuestion
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
-	private String userType;
+	private String userTypeCode;
 
 	@NotNull
 	@ConsumeField
@@ -66,14 +66,14 @@ public class ComponentQuestion
 		this.question = question;
 	}
 
-	public String getUserType()
+	public String getUserTypeCode()
 	{
-		return userType;
+		return userTypeCode;
 	}
 
-	public void setUserType(String userType)
+	public void setUserTypeCode(String userType)
 	{
-		this.userType = userType;
+		this.userTypeCode = userType;
 	}
 
 	public String getOrganization()

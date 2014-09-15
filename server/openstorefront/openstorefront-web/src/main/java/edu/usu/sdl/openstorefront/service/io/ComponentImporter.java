@@ -44,17 +44,22 @@ public class ComponentImporter
 	@Override
 	protected void processFile(File file)
 	{
-		log.log(Level.INFO, MessageFormat.format("Processing Components: ", file));
+		log.log(Level.INFO, "Processing Component: " + file);
 
 		try {
 			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
 			ComponentAll componentAll = objectMapper.readValue(file, new TypeReference<ComponentAll>()
 			{
 			});
+			componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
+			objectMapper.writeValue(file, componentAll);
+			//set it to the pass so we don't keep picking it up.
+			file.setLastModified(file.lastModified() - 10000);
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Unable to process component file.  File should conform to JSON format for a component type.", e);
 		}
+		log.log(Level.INFO, MessageFormat.format("Saved: ", file));
 	}
 
 }

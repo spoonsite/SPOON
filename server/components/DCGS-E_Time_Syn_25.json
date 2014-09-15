@@ -15,8 +15,8 @@
     "version" : "see site",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491419,
-    "lastActivityDts" : 1410477491419
+    "approvedDts" : 1410821461465,
+    "lastActivityDts" : 1410821461465
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1399485068000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485068000,
-    "componentId" : null,
+    "componentId" : "25",
     "componentAttributePk" : {
       "componentId" : "25",
       "attributeType" : "DI2E-SVCV4-A",
@@ -102,7 +102,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Spencer Brown",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -119,60 +119,8 @@
       "componentId" : "25",
       "evaluationLevelCode" : "NA"
     },
-    "completionDate" : 1410477491419,
+    "completionDate" : 1410821461466,
     "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485068000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485068000,
-    "componentId" : "25",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "25",
-      "evaluationLevelCode" : "LEVEL0"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485068000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485068000,
-    "componentId" : "25",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "25",
-      "evaluationLevelCode" : "LEVEL1"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485068000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485068000,
-    "componentId" : "25",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "25",
-      "evaluationLevelCode" : "LEVEL2"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485068000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485068000,
-    "componentId" : "25",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "25",
-      "evaluationLevelCode" : "LEVEL3"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
   } ],
   "evaluationSections" : [ ],
   "externalDependencies" : [ ],
@@ -187,10 +135,11 @@
     "updateDts" : 1399485068000,
     "componentId" : "25",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://www.intelink.gov/go/x5UIJnv' title='https://www.intelink.gov/go/x5UIJnv' target='_blank'> https://www.intelink.gov/go/x5UIJnv</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   } ],

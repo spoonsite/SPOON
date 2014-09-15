@@ -15,8 +15,8 @@
     "version" : "1.3",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491434,
-    "lastActivityDts" : 1410477491434
+    "approvedDts" : 1410821461492,
+    "lastActivityDts" : 1410821461492
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1399485082000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485082000,
-    "componentId" : null,
+    "componentId" : "41",
     "componentAttributePk" : {
       "componentId" : "41",
       "attributeType" : "DI2E-SVCV4-A",
@@ -126,7 +126,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -143,20 +143,7 @@
       "componentId" : "41",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491434,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485082000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485082000,
-    "componentId" : "41",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "41",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491434,
+    "completionDate" : 1410821461493,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -253,10 +240,11 @@
     "updateDts" : 1399485082000,
     "componentId" : "41",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://www.intelink.gov/inteldocs/browse.php?fFolderId=431871' title='https://www.intelink.gov/inteldocs/browse.php?fFolderId=431871' target='_blank'> https://www.intelink.gov/inteldocs/browse.php?fFolderId=431871</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -267,10 +255,11 @@
     "updateDts" : 1399485082000,
     "componentId" : "41",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='https://software.forge.mil/sf/frs/do/listReleases/projects.jc2cui/frs.common_map_widget' title='https://software.forge.mil/sf/frs/do/listReleases/projects.jc2cui/frs.common_map_widget' target='_blank'> https://software.forge.mil/sf/frs/do/listReleases/projects.jc2cui/frs.common_map_widget</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],

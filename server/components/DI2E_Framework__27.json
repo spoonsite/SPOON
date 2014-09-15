@@ -15,8 +15,8 @@
     "version" : "1.0",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491420,
-    "lastActivityDts" : 1410477491420
+    "approvedDts" : 1410821461467,
+    "lastActivityDts" : 1410821461467
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1403200707000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200707000,
-    "componentId" : null,
+    "componentId" : "27",
     "componentAttributePk" : {
       "componentId" : "27",
       "attributeType" : "DI2E-SVCV4-A",
@@ -126,7 +126,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Noel Vivaldi",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -143,20 +143,7 @@
       "componentId" : "27",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491420,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200707000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200707000,
-    "componentId" : "27",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "27",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491420,
+    "completionDate" : 1410821461467,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -225,10 +212,11 @@
     "updateDts" : 1403200707000,
     "componentId" : "27",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://confluence.di2e.net/display/DI2E/DIAS+Simulation' title='https://confluence.di2e.net/display/DI2E/DIAS+Simulation' target='_blank'> https://confluence.di2e.net/display/DI2E/DIAS+Simulation</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -239,10 +227,11 @@
     "updateDts" : 1403200707000,
     "componentId" : "27",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://confluence.di2e.net/display/DI2E/DIAS+Simulation' title='https://confluence.di2e.net/display/DI2E/DIAS+Simulation' target='_blank'> https://confluence.di2e.net/display/DI2E/DIAS+Simulation</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   } ],

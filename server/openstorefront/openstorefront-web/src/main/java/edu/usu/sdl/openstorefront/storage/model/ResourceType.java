@@ -29,8 +29,8 @@ public class ResourceType
 	public static final String DOCUMENT = "DOC";
 	public static final String INSTALL = "INSTALL";
 	public static final String DI2E_EVAL_REPORT = "DI2EEVAL";
-	public static final String HOME_PAGE = "Product Homepage";
-	public static final String CODE = "Code";
+	public static final String HOME_PAGE = "HOME";
+	public static final String CODE = "CODE";
 	public static final String BINARY = "BINARIES";
 	public static final String SERVICE = "SERVICE";
 

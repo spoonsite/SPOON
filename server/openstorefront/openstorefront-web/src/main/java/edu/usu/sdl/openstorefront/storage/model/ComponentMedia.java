@@ -17,10 +17,15 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -45,20 +50,35 @@ public class ComponentMedia
 	@ValidValueType(value = {}, lookupClass = MediaType.class)
 	private String mediaTypeCode;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@ValidValueType(value = {}, lookupClass = MediaType.class)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String mimeType;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@ConsumeField
 	private String link;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String caption;
 
 	public ComponentMedia()
 	{
+	}
+
+	/**
+	 * Get the path to the media on disk. Note: this may be ran from a proxy so
+	 * don't use variable directly
+	 *
+	 * @return Path or null if this doesn't represent a disk resource
+	 */
+	public Path pathToMedia()
+	{
+		Path path = null;
+		if (StringUtils.isNotBlank(getFileName())) {
+			File mediaDir = FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
+			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
+		}
+		return path;
 	}
 
 	public String getComponentMediaId()

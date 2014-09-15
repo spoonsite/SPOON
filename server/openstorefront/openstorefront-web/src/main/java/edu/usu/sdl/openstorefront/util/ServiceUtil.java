@@ -40,6 +40,7 @@ public class ServiceUtil
 	private static final Logger log = Logger.getLogger(ServiceUtil.class.getName());
 
 	public static final String LOOKUP_ENTITY = "LookupEntity";
+	public static final String BASECOMPONENT_ENTITY = "BaseComponent";
 
 	public static boolean isComplexClass(Class fieldClass)
 	{
@@ -107,14 +108,19 @@ public class ServiceUtil
 
 	public static boolean isSubLookupEntity(Class entityClass)
 	{
+		return isSubClass(LOOKUP_ENTITY, entityClass);
+	}
+
+	public static boolean isSubClass(String className, Class entityClass)
+	{
 		if (entityClass == null) {
 			return false;
 		}
 
-		if ("LookupEntity".equals(entityClass.getSimpleName())) {
+		if (className.equals(entityClass.getSimpleName())) {
 			return true;
 		} else {
-			return isSubLookupEntity(entityClass.getSuperclass());
+			return isSubClass(className, entityClass.getSuperclass());
 		}
 	}
 }

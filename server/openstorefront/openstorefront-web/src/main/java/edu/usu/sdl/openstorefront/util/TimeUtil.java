@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 public class TimeUtil
 {
 
-	private static final String OMP_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'";
+	private static final String OMP_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
 	public static Date fromString(String value)
 	{

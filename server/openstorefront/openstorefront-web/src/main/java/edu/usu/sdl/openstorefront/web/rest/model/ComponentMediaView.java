@@ -43,7 +43,7 @@ public class ComponentMediaView
 		ComponentMediaView mediaView = new ComponentMediaView();
 
 		if (StringUtils.isNotBlank(media.getFileName())) {
-			mediaView.setLink("Image.action?mediaId=" + media.getComponentMediaId());
+			mediaView.setLink("Media.action?LoadMedia&mediaId=" + media.getComponentMediaId());
 		} else {
 			mediaView.setLink(media.getLink());
 		}

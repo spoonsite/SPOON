@@ -15,8 +15,8 @@
     "version" : "2.01",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491436,
-    "lastActivityDts" : 1410477491436
+    "approvedDts" : 1410821461496,
+    "lastActivityDts" : 1410821461496
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -42,18 +42,6 @@
       "attributeType" : "DI2ELEVEL",
       "attributeCode" : "NA"
     }
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485088000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485088000,
-    "componentId" : null,
-    "componentAttributePk" : {
-      "componentId" : "49",
-      "attributeType" : "DI2E-SVCV4-A",
-      "attributeCode" : null
-    }
   } ],
   "contacts" : [ {
     "activeStatus" : "A",
@@ -78,7 +66,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "N/A",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -95,60 +83,8 @@
       "componentId" : "49",
       "evaluationLevelCode" : "NA"
     },
-    "completionDate" : 1410477491436,
+    "completionDate" : 1410821461496,
     "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485088000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485088000,
-    "componentId" : "49",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "49",
-      "evaluationLevelCode" : "LEVEL0"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485088000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485088000,
-    "componentId" : "49",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "49",
-      "evaluationLevelCode" : "LEVEL1"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485088000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485088000,
-    "componentId" : "49",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "49",
-      "evaluationLevelCode" : "LEVEL2"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485088000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485088000,
-    "componentId" : "49",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "49",
-      "evaluationLevelCode" : "LEVEL3"
-    },
-    "completionDate" : null,
-    "levelStatus" : "N"
   } ],
   "evaluationSections" : [ ],
   "externalDependencies" : [ ],
@@ -191,10 +127,11 @@
     "updateDts" : 1399485088000,
     "componentId" : "49",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://www.owasp.org/index.php/Category:OWASP_Guide_Project' title='https://www.owasp.org/index.php/Category:OWASP_Guide_Project' target='_blank'> https://www.owasp.org/index.php/Category:OWASP_Guide_Project</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   } ],

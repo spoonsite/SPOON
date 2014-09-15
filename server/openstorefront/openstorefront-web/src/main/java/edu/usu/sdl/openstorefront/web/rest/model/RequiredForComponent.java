@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
@@ -36,17 +38,16 @@ public class RequiredForComponent
 	@NotNull
 	@ConsumeField
 	@DataType(ComponentAttribute.class)
-	private List<ComponentAttribute> attributes;
+	private List<ComponentAttribute> attributes = new ArrayList<>();
 
 	public RequiredForComponent()
 	{
 	}
 
-	public Boolean checkForComplete()
+	public ValidationResult checkForComplete()
 	{
-		if (component == null || component.getClass() != Component.class) {
-			return Boolean.FALSE;
-		}
+		ValidationResult validationResult = new ValidationResult();
+
 //		AttributeServiceImpl attributeService = new AttributeServiceImpl();
 //		List<AttributeType> requireds = attributeService.getRequiredAttributes();
 //		boolean found = false;
@@ -62,38 +63,27 @@ public class RequiredForComponent
 //			}
 //			found = false;
 //		}
-		return Boolean.TRUE;
+		return validationResult;
 	}
 
-	/**
-	 * @return the component
-	 */
 	public Component getComponent()
 	{
 		return component;
 	}
 
-	/**
-	 * @param component the component to set
-	 */
 	public void setComponent(Component component)
 	{
 		this.component = component;
 	}
 
-	/**
-	 * @return the attributes
-	 */
 	public List<ComponentAttribute> getAttributes()
 	{
 		return attributes;
 	}
 
-	/**
-	 * @param attributes the attributes to set
-	 */
 	public void setAttributes(List<ComponentAttribute> attributes)
 	{
 		this.attributes = attributes;
 	}
+
 }

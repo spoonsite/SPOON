@@ -15,8 +15,8 @@
     "version" : "1.0",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491411,
-    "lastActivityDts" : 1410477491411
+    "approvedDts" : 1410821461457,
+    "lastActivityDts" : 1410821461457
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1399485060000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485060000,
-    "componentId" : null,
+    "componentId" : "15",
     "componentAttributePk" : {
       "componentId" : "15",
       "attributeType" : "DI2E-SVCV4-A",
@@ -102,7 +102,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -119,20 +119,7 @@
       "componentId" : "15",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491411,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485060000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485060000,
-    "componentId" : "15",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "15",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491411,
+    "completionDate" : 1410821461457,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -215,10 +202,11 @@
     "updateDts" : 1399485060000,
     "componentId" : "15",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://software.forge.mil/sf/projects/cot' title='https://software.forge.mil/sf/projects/cot' target='_blank'> https://software.forge.mil/sf/projects/cot</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   } ],

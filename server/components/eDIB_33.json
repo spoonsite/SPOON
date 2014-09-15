@@ -15,8 +15,8 @@
     "version" : "4.0",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491424,
-    "lastActivityDts" : 1410477491424
+    "approvedDts" : 1410821461471,
+    "lastActivityDts" : 1410821461471
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1405102845000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1405102845000,
-    "componentId" : null,
+    "componentId" : "33",
     "componentAttributePk" : {
       "componentId" : "33",
       "attributeType" : "DI2E-SVCV4-A",
@@ -60,7 +60,7 @@
     "createDts" : 1405102845000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1405102845000,
-    "componentId" : null,
+    "componentId" : "33",
     "componentAttributePk" : {
       "componentId" : "33",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "33",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491424,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1405102845000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1405102845000,
-    "componentId" : "33",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "33",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491424,
+    "completionDate" : 1410821461471,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",

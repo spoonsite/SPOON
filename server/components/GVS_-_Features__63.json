@@ -15,8 +15,8 @@
     "version" : "see site for latest",
     "approvalState" : "A",
     "approvedUser" : "patrick.cross",
-    "approvedDts" : 1410477491429,
-    "lastActivityDts" : 1410477491429
+    "approvedDts" : 1410821461481,
+    "lastActivityDts" : 1410821461481
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1403200722000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200722000,
-    "componentId" : null,
+    "componentId" : "63",
     "componentAttributePk" : {
       "componentId" : "63",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Mary Schwoerer, GVS Program Manager",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "63",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491430,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "patrick.cross",
-    "createDts" : 1403200722000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200722000,
-    "componentId" : "63",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "63",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491430,
+    "completionDate" : 1410821461481,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -213,10 +200,11 @@
     "updateDts" : 1403200722000,
     "componentId" : "63",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://home.gvs.nga.mil/home/documentation' title='https://home.gvs.nga.mil/home/documentation' target='_blank'> https://home.gvs.nga.mil/home/documentation</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -227,10 +215,11 @@
     "updateDts" : 1403200722000,
     "componentId" : "63",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://software.forge.mil/sf/go/proj1769' title='https://software.forge.mil/sf/go/proj1769' target='_blank'> https://software.forge.mil/sf/go/proj1769</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   }, {
@@ -241,10 +230,11 @@
     "updateDts" : 1403200722000,
     "componentId" : "63",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='https://intellipedia.intelink.gov/wiki/GVS' title='https://intellipedia.intelink.gov/wiki/GVS' target='_blank'> https://intellipedia.intelink.gov/wiki/GVS</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],

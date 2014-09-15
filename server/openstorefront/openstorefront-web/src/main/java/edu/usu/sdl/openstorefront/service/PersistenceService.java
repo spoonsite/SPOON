@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -165,33 +166,72 @@ public class PersistenceService
 
 	public <T> T findById(Class<T> entity, Object id)
 	{
+		if (id == null) {
+			log.log(Level.FINEST, "Id is null so return null");
+			return null;
+		}
+
 		OObjectDatabaseTx db = getConnection();
 		T returnEntity = null;
 		try {
-			Map<String, Object> pkFields = findIdField(entity, id);
+			if (checkPkObject(entity, id)) {
+				Map<String, Object> pkFields = findIdField(entity, id);
 
-			if (pkFields.isEmpty()) {
-				throw new OpenStorefrontRuntimeException("Unable to find PK field", "Mark the Primary Key field (@PK) on the entity: " + entity.getName());
-			}
+				if (pkFields.isEmpty()) {
+					throw new OpenStorefrontRuntimeException("Unable to find PK field", "Mark the Primary Key field (@PK) on the entity: " + entity.getName());
+				}
 
-			StringBuilder whereClause = new StringBuilder();
-			Map<String, Object> parameters = new HashMap<>();
-			for (String fieldName : pkFields.keySet()) {
-				parameters.put(fieldName.replace(".", PARAM_NAME_SEPARATOR) + "Param", pkFields.get(fieldName));
-				whereClause.append(" ").append(fieldName).append(" = :").append(fieldName.replace(".", PARAM_NAME_SEPARATOR)).append("Param").append(" AND");
-			}
-			String whereClauseString = whereClause.substring(0, whereClause.length() - 3);
+				StringBuilder whereClause = new StringBuilder();
+				Map<String, Object> parameters = new HashMap<>();
+				for (String fieldName : pkFields.keySet()) {
+					parameters.put(fieldName.replace(".", PARAM_NAME_SEPARATOR) + "Param", pkFields.get(fieldName));
+					whereClause.append(" ").append(fieldName).append(" = :").append(fieldName.replace(".", PARAM_NAME_SEPARATOR)).append("Param").append(" AND");
+				}
+				String whereClauseString = whereClause.substring(0, whereClause.length() - 3);
 
-			List<T> results = db.query(new OSQLSynchQuery<>("select * from " + entity.getSimpleName() + " where " + whereClauseString), parameters);
+				List<T> results = db.query(new OSQLSynchQuery<>("select * from " + entity.getSimpleName() + " where " + whereClauseString), parameters);
 
-			if (!results.isEmpty()) {
-				returnEntity = results.get(0);
+				if (!results.isEmpty()) {
+					returnEntity = results.get(0);
+				}
+			} else {
+				throw new OpenStorefrontRuntimeException("Id passed in doesn't match the PK type of the entity", "Make sure you are passing the right PK");
 			}
 		} finally {
 			closeConnection(db);
 		}
 
 		return returnEntity;
+	}
+
+	/**
+	 * Check to make sure the id is the same type as the pk. If not it's a
+	 * programming error.
+	 *
+	 * @param entityClass
+	 * @param id required
+	 * @return
+	 */
+	private boolean checkPkObject(Class entityClass, Object id)
+	{
+		boolean pkValid = true;
+		Objects.requireNonNull(id, "Id must not be null");
+
+		if (entityClass.getSuperclass() != null) {
+			pkValid = checkPkObject(entityClass.getSuperclass(), id);
+		}
+		if (pkValid) {
+			for (Field field : entityClass.getDeclaredFields()) {
+				PK idAnnotation = field.getAnnotation(PK.class);
+				if (idAnnotation != null) {
+					if (id.getClass().getName().equals(field.getType().getName()) == false) {
+						pkValid = false;
+					}
+				}
+			}
+		}
+
+		return pkValid;
 	}
 
 	private Map<String, Object> findIdField(Class entityClass, Object id)

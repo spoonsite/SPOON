@@ -29,7 +29,6 @@ public class ComponentReviewCon
 	@PK
 	@NotNull
 	private ComponentReviewConPk componentReviewConPk;
-	private String text;
 
 	public ComponentReviewCon()
 	{
@@ -43,22 +42,6 @@ public class ComponentReviewCon
 	public void setComponentReviewConPk(ComponentReviewConPk componentReviewConPk)
 	{
 		this.componentReviewConPk = componentReviewConPk;
-	}
-
-	/**
-	 * @return the text
-	 */
-	public String getText()
-	{
-		return text;
-	}
-
-	/**
-	 * @param text the text to set
-	 */
-	public void setText(String text)
-	{
-		this.text = text;
 	}
 
 }

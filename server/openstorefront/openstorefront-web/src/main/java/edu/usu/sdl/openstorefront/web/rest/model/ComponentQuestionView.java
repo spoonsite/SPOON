@@ -51,18 +51,17 @@ public class ComponentQuestionView
 		view.setResponses(responses);
 		view.setQuestion(question.getQuestion());
 		view.setUsername(question.getCreateUser());
-		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, question.getUserType());
+		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, question.getUserTypeCode());
 		if (typeCode == null) {
 			view.setUserType(null);
 		} else {
 			view.setUserType(typeCode.getDescription());
 		}
-		view.setUserType(question.getUserType());
 		view.setQuestionId(question.getQuestionId());
 		Date max;
 		if (responses.size() > 0) {
 			max = responses.get(0).getUpdateDts();
-			for(ComponentQuestionResponseView response: responses){
+			for (ComponentQuestionResponseView response : responses) {
 				if (response.getUpdateDts().compareTo(max) > 0) {
 					max = response.getUpdateDts();
 				}

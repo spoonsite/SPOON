@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.io.ArticleImporter;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
+import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import java.text.MessageFormat;
@@ -68,6 +69,7 @@ public class JobManager
 		addImportJob(new AttributeImporter(), FileSystemManager.IMPORT_ATTRIBUTE_DIR);
 		addImportJob(new ArticleImporter(), FileSystemManager.IMPORT_ARTICLE_DIR);
 		addImportJob(new HighlightImporter(), FileSystemManager.IMPORT_HIGHLIGHT_DIR);
+		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 	}
 
 	private static void addImportJob(DirectoryScanListener directoryScanListener, String dirToWatch) throws SchedulerException

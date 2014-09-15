@@ -43,6 +43,7 @@ import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.tool.OldAsset;
+import edu.usu.sdl.openstorefront.web.tool.OldAssetCategory;
 import edu.usu.sdl.openstorefront.web.tool.OldDataWrapper;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -304,6 +305,10 @@ public class DataConvertTest
 			componentDetail.setCreateUser(createUser);
 			componentDetail.setUpdateUser(updateUser);
 			componentDetail.setOrganization(oldAsset.getOrganization());
+			if (StringUtils.isBlank(oldAsset.getOrganization())) {
+				componentDetail.setOrganization(OpenStorefrontConstant.NOT_AVAILABLE);
+			}
+
 			componentDetail.setName(oldAsset.getTitle());
 
 			if (idamComponents.contains(componentDetail.getName())) {
@@ -343,7 +348,7 @@ public class DataConvertTest
 					ComponentContact contact = new ComponentContact();
 					contact.setContactType(ContactType.GOVERNMENT);
 					contact.setFirstName(field.getValue());
-					if (StringUtils.isNotBlank(contact.getFirstName())) {
+					if (StringUtils.isBlank(contact.getFirstName())) {
 						contact.setFirstName(OpenStorefrontConstant.NOT_AVAILABLE);
 					}
 //					contact.setEmail("sample_email@tt.com");
@@ -369,7 +374,6 @@ public class DataConvertTest
 			//resources
 			oldAsset.getDocUrls().forEach(doc -> {
 				ComponentResource componentResource = new ComponentResource();
-				componentResource.setName("Documentation");
 				componentResource.setLink(StringProcessor.createHrefUrls(doc.getUrl(), true));
 				componentResource.setResourceType(ResourceType.DOCUMENT);
 				componentResource.setComponentId(componentDetail.getComponentId());
@@ -401,7 +405,6 @@ public class DataConvertTest
 					}
 					if (type != null) {
 						ComponentResource componentResource = new ComponentResource();
-						componentResource.setName(field.getName());
 						componentResource.setLink(StringProcessor.createHrefUrls(field.getValue(), true));
 						componentResource.setResourceType(type);
 						componentResource.setComponentId(componentDetail.getComponentId());
@@ -445,12 +448,18 @@ public class DataConvertTest
 			if ("NA - No Eval Planned".equals(oldStateLabel)) {
 				stateLabel = AttributeCode.DI2ELEVEL_NA;
 				stateCodeSet.remove(AttributeCode.DI2ELEVEL_NA);
+				stateCodeSet.remove(AttributeCode.DI2ELEVEL_LEVEL0);
+				stateCodeSet.remove(AttributeCode.DI2ELEVEL_LEVEL1);
+				stateCodeSet.remove(AttributeCode.DI2ELEVEL_LEVEL2);
+				stateCodeSet.remove(AttributeCode.DI2ELEVEL_LEVEL3);
 			} else if ("Level 0 - Not assessed".equals(oldStateLabel)) {
 				stateLabel = AttributeCode.DI2ELEVEL_LEVEL0;
 				stateCodeSet.remove(AttributeCode.DI2ELEVEL_LEVEL0);
+				stateCodeSet.remove(AttributeCode.DI2ELEVEL_NA);
 			} else if ("Level 1 - Checklist Complete".equals(oldStateLabel)) {
 				stateLabel = AttributeCode.DI2ELEVEL_LEVEL1;
 				stateCodeSet.remove(AttributeCode.DI2ELEVEL_LEVEL1);
+				stateCodeSet.remove(AttributeCode.DI2ELEVEL_NA);
 			}
 
 			attribute = mapAttribute(componentDetail, AttributeType.DI2ELEVEL, stateLabel);
@@ -500,8 +509,7 @@ public class DataConvertTest
 				componentAll.getEvaluationSchedules().add(componentEvaluationSchedule);
 			}
 
-			oldAsset.getCategories().forEach(category -> {
-
+			for (OldAssetCategory category : oldAsset.getCategories()) {
 				ComponentAttribute catAttribute = new ComponentAttribute();
 				ComponentAttributePk attributePk = new ComponentAttributePk();
 				attributePk.setAttributeType(AttributeType.DI2E_SVCV4);
@@ -512,6 +520,7 @@ public class DataConvertTest
 				catAttribute.setUpdateUser(componentDetail.getUpdateUser());
 				catAttribute.setCreateDts(componentDetail.getCreateDts());
 				catAttribute.setUpdateDts(componentDetail.getUpdateDts());
+				catAttribute.setComponentId(componentDetail.getComponentId());
 
 				AttributeTypeView attributeTypeView = attributeMap.get(AttributeType.DI2E_SVCV4);
 
@@ -523,8 +532,10 @@ public class DataConvertTest
 						break;
 					}
 				}
-				componentAll.getAttributes().add(catAttribute);
-			});
+				if (StringUtils.isNotBlank(catAttribute.getComponentAttributePk().getAttributeCode())) {
+					componentAll.getAttributes().add(catAttribute);
+				}
+			}
 
 			oldAsset.getCustomFields().forEach(field -> {
 				if (StringUtils.isNotBlank(field.getValue())
