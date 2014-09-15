@@ -66,7 +66,6 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     }
   });
 
-
   //////////////////////////////////////////////////////////////////////////////
   // Functions
   //////////////////////////////////////////////////////////////////////////////
@@ -76,7 +75,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   $scope.updateDetails = function(id){
     $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     $scope.showDetails = false;
-    Business.componentservice.getComponentDetails(id).then(function(result){
+    Business.componentservice.getComponentDetails(id, true).then(function(result){
       if (result)
       {
         $scope.sendPageView(result.name);

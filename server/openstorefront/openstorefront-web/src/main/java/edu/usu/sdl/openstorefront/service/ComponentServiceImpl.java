@@ -242,6 +242,7 @@ public class ComponentServiceImpl
 			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
 			List<ComponentQuestionResponseView> responseViews;
 			tempResponse.setQuestionId(question.getQuestionId());
+			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			responseViews = ComponentQuestionResponseView.toViewList(persistenceService.queryByExample(ComponentQuestionResponse.class, new QueryByExample(tempResponse)));
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
 		});
