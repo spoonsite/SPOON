@@ -41,12 +41,16 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
+import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,8 +64,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import jersey.repackaged.com.google.common.collect.Lists;
 
 /**
  * ComponentRESTResource Resource
@@ -80,10 +86,9 @@ public class ComponentRESTResource
 	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
-	public List<Component> getComponents()
+	public List<ComponentSearchView> getComponents()
 	{
-		List<Component> componentViews = service.getComponentService().getComponents();
-		return componentViews;
+		return service.getComponentService().getComponents();
 	}
 
 	@GET
@@ -364,7 +369,7 @@ public class ComponentRESTResource
 		if (post) {
 			return Response.created(URI.create(dependency.getDependencyId())).entity(dependency).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(dependency).build();
 		}
 	}
 
@@ -445,7 +450,7 @@ public class ComponentRESTResource
 		if (post) {
 			return Response.created(URI.create(contact.getContactId())).entity(contact).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(contact).build();
 		}
 	}
 
@@ -542,7 +547,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(section).build();
 		}
 	}
 
@@ -627,7 +632,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).entity(schedule).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(schedule).build();
 		}
 	}
 
@@ -662,7 +667,7 @@ public class ComponentRESTResource
 	// TODO: Figure out how to recieve the actual media object?
 	@POST
 	@RequireAdmin
-	@APIDescription("Add media to the specified entity")
+	@APIDescription("Add media to the specified entity (leave the fileName blank if you want your supplied link to be it's location)")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentMedia.class)
 	@Path("/{id}/media")
@@ -677,7 +682,7 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Update media associated to the specified entity")
+	@APIDescription("Update media associated to the specified entity (leave the fileName blank if you want your supplied link to be it's location)")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/media/{mediaId}")
 	public Response updateComponentMedia(
@@ -709,7 +714,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(media.getComponentMediaId())).entity(media).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(media).build();
 		}
 	}
 
@@ -789,7 +794,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(metadata.getMetadataId())).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(metadata).build();
 		}
 	}
 
@@ -893,7 +898,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(question.getQuestionId())).entity(question).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(question).build();
 		}
 	}
 
@@ -977,7 +982,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(response.getResponseId())).entity(response).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(response).build();
 		}
 	}
 
@@ -1057,7 +1062,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(resource.getResourceId())).entity(resource).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(resource).build();
 		}
 	}
 
@@ -1137,7 +1142,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(review.getComponentReviewId())).entity(review).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(review).build();
 		}
 	}
 
@@ -1191,7 +1196,17 @@ public class ComponentRESTResource
 		ComponentReviewCon con = new ComponentReviewCon();
 		ComponentReviewConPk pk = new ComponentReviewConPk();
 		pk.setComponentReviewId(reviewId);
-		pk.setReviewCon(text);
+		ReviewCon conCode = service.getLookupService().getLookupEnity(ReviewCon.class, text);
+		if (conCode == null) {
+			conCode = service.getLookupService().getLookupEnityByDesc(ReviewCon.class, text);
+			if (conCode == null) {
+				pk.setReviewCon(null);
+			} else {
+				pk.setReviewCon(conCode.getCode());
+			}
+		} else {
+			pk.setReviewCon(conCode.getCode());
+		}
 		con.setComponentReviewConPk(pk);
 		con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 		con.setComponentId(componentId);
@@ -1259,7 +1274,17 @@ public class ComponentRESTResource
 		ComponentReviewPro pro = new ComponentReviewPro();
 		ComponentReviewProPk pk = new ComponentReviewProPk();
 		pk.setComponentReviewId(reviewId);
-		pk.setReviewPro(text);
+		ReviewPro proCode = service.getLookupService().getLookupEnity(ReviewPro.class, text);
+		if (proCode == null) {
+			proCode = service.getLookupService().getLookupEnityByDesc(ReviewPro.class, text);
+			if (proCode == null) {
+				pk.setReviewPro(null);
+			} else {
+				pk.setReviewPro(proCode.getCode());
+			}
+		} else {
+			pk.setReviewPro(proCode.getCode());
+		}
 		pro.setComponentReviewProPk(pk);
 		pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 		pro.setComponentId(componentId);
@@ -1279,15 +1304,40 @@ public class ComponentRESTResource
 
 	// ComponentRESTResource TAG section
 	@GET
+	@APIDescription("Get the entire tag list (Tag Cloud)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/tags")
+	public List<ComponentTag> getComponentTags()
+	{
+		return service.getComponentService().getTagCloud();
+	}
+
+	@GET
 	@APIDescription("Get the tag list for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
-	@Path("/{id}/tag")
+	@Path("/{id}/tags")
 	public List<ComponentTag> getComponentTag(
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentTag.class, componentId);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Remove a tag from the specified entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tags")
+	public void deleteComponentTags(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		ComponentTag example = new ComponentTag();
+		example.setComponentId(componentId);
+		service.getPersistenceService().deleteByExample(example);
 	}
 
 	@DELETE
@@ -1302,6 +1352,59 @@ public class ComponentRESTResource
 			@RequiredParam String tagId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentTag.class, tagId);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Add tags to the specified entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tags")
+	public Response addComponentTags(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam List<ComponentTag> tags)
+	{
+		Boolean valid = Boolean.TRUE;
+		List<ComponentTag> verified = new ArrayList<>();
+		List<RestErrorModel> unVerified = new ArrayList<>();
+		if (tags.size() > 0) {
+			for (ComponentTag tag : tags) {
+				tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+				tag.setComponentId(componentId);
+				ValidationModel validationModel = new ValidationModel(tag);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid()) {
+					tag.setCreateUser(ServiceUtil.getCurrentUserName());
+					tag.setUpdateUser(ServiceUtil.getCurrentUserName());
+					verified.add(tag);
+				} else {
+					valid = Boolean.FALSE;
+					unVerified.add(validationResult.toRestError());
+				}
+			}
+			if (valid) {
+				if (verified.size() > 0) {
+					verified.stream().forEach((tag) -> {
+						service.getComponentService().saveComponentTag(tag);
+					});
+					GenericEntity<List<ComponentTag>> entity = new GenericEntity<List<ComponentTag>>(Lists.newArrayList(verified))
+					{
+					};
+					return Response.created(URI.create(verified.get(0).getTagId())).entity(entity).build();
+				} else {
+					return Response.notAcceptable(null).build();
+				}
+			} else {
+				GenericEntity<List<RestErrorModel>> entity = new GenericEntity<List<RestErrorModel>>(Lists.newArrayList(unVerified))
+				{
+				};
+				return Response.ok(entity).build();
+			}
+		} else {
+			return Response.notAcceptable(null).build();
+		}
 	}
 
 	@POST
@@ -1406,7 +1509,7 @@ public class ComponentRESTResource
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(tracking.getComponentTrackingId())).entity(tracking).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(tracking).build();
 		}
 	}
 

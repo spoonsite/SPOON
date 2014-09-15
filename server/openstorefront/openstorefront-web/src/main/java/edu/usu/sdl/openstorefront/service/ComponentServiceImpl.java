@@ -63,6 +63,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -147,11 +148,11 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public List<Component> getComponents()
+	public List<ComponentSearchView> getComponents()
 	{
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		return persistenceService.queryByExample(Component.class, new QueryByExample(componentExample));
+		return ComponentSearchView.toViewList(persistenceService.queryByExample(Component.class, new QueryByExample(componentExample)));
 	}
 
 	@Override
@@ -828,6 +829,13 @@ public class ComponentServiceImpl
 	{
 		example.setComponentId(componentId);
 		persistenceService.deleteByExample(example);
+	}
+
+	@Override
+	public List<ComponentTag> getTagCloud()
+	{
+		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
+		return persistenceService.query(query, null);
 	}
 
 }

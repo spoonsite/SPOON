@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
-import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
@@ -36,6 +35,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.util.List;
 
@@ -111,7 +111,7 @@ public interface ComponentService
 	 *
 	 * @return
 	 */
-	public List<Component> getComponents();
+	public List<ComponentSearchView> getComponents();
 
 	/**
 	 * Return the details object of the component attached to the given id. (the
@@ -121,6 +121,12 @@ public interface ComponentService
 	 * @return
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public List<ComponentTag> getTagCloud();
 
 	/**
 	 *

@@ -15,7 +15,7 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -64,6 +64,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.userservice = userservice;
   business.lookupservice = lookupservice;
   business.componentservice = componentservice;
+  business.highlightservice = highlightservice;
 
   business.updateCache = function(name, value) {
     var deferred = $q.defer();
@@ -95,21 +96,30 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   };
 
 
-  business.getTagsList = function() {
+  var convertComponentTagsToTags = function(tags){
+    var result = [];
+    _.each(tags, function(tag){
+      result.push(tag.text);
+    })
+    return result;
+  }
+
+
+  business.getTagsList = function(override) {
     var deferred = $q.defer();
-
-
     var tagsList = checkExpire('tagsList', minute * 0.5);
-    if (tagsList) {
+    if (tagsList && !override) {
       deferred.resolve(tagsList);
     } else {
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/tags'
+        'url': 'api/v1/resource/components/tags'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false') {
-          save('tagsList', data);
-          deferred.resolve(data);
+          var tags = convertComponentTagsToTags(data);
+          console.log('tags', tags);
+          save('tagsList', tags);
+          deferred.resolve(tags);
         } else {
           deferred.reject('There was an error grabbing the tags list');
         }
@@ -119,6 +129,8 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
     return deferred.promise;
   };
+
+
 
   business.getProsConsList = function() {
     var deferred = $q.defer();

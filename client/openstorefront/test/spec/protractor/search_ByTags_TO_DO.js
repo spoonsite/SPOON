@@ -2,7 +2,7 @@ describe('Search by TAGS', function() {
     it('Search for iSpatial and clear out any tags', function() {
         // Open the main site
 
-        theSite = 'http://di2e.github.io';
+        theSite='http://di2e.github.io/openstorefront';
 
         browser.get(theSite);
 
@@ -12,10 +12,9 @@ describe('Search by TAGS', function() {
         // Click on the result
         element.all(by.css('.results-content-title-content')).get(0).click();
 
-        // Click on the TAGS button
         element.all(by.css('.fa-tags')).get(0).click();
         browser.driver.sleep(1000);
-/*
+
        // Clear out any existing tags
             var theInput = element.all(by.css('.tags')).get(1);
             theInput.click();   // Gets focus but won't HOLD it!
@@ -23,7 +22,7 @@ describe('Search by TAGS', function() {
             browser.driver.sleep(2000);
             theInput.clear();
             browser.driver.sleep(2000);
-*/
+
 
         // EXPECT 'Search for "iSpatial" and clear out any tags associated with this search result'
         //expect(element.all(by.repeater('tag-list')).count().toEqual(0));

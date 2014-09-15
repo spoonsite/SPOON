@@ -42,6 +42,14 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     }
   });
 
+  Business.highlightservice.getHighlights().then(function(result){
+    if (result) {
+      $scope.highlights = result;
+    } else {
+      $scope.highlights = null;
+    }
+  });
+
   Business.componentservice.getComponentList().then(function(result) {
     console.log('result', result);
     

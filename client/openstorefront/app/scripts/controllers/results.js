@@ -66,14 +66,22 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
   // grab what we need from the server.
-  Business.getTagsList().then(function(result) {
-    if (result) {
-      $scope.tagsList       = result;
-      $scope.tagsList.sort();
-    } else {
-      $scope.tagsList       = null;
-    }
-  });
+
+  $scope.setupTagList = function() {
+    Business.getTagsList(true).then(function(result) {
+      if (result) {
+        $scope.tagsList       = result;
+        $scope.tagsList.sort();
+      } else {
+        $scope.tagsList       = null;
+      }
+    });
+  }
+  $scope.setupTagList();
+  $scope.$on('$REFRESHTAGLIST', function(event) {
+    $scope.setupTagList();
+  })
+
   Business.getProsConsList().then(function(result) {
     if (result) {
       $scope.prosConsList   = result;
@@ -456,7 +464,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         buttonOpen();
       }
       $scope.showDetails = false;
-      console.log('id', id);
+      // console.log('id', id);
       
       Business.componentservice.getComponentDetails(id).then( function (result){
         if (result)

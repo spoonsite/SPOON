@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
@@ -33,6 +34,7 @@ public class ComponentTag
 	private String tagId;
 
 	@NotNull
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_TAG)
 	private String text;
 
