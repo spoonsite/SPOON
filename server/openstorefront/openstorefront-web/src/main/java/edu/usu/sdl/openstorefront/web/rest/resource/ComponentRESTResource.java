@@ -69,6 +69,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import jersey.repackaged.com.google.common.collect.Lists;
+import org.jsoup.helper.StringUtil;
 
 /**
  * ComponentRESTResource Resource
@@ -376,7 +377,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(dependency.getDependencyId())).entity(dependency).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(dependency).build();
 		}
 	}
 
@@ -459,7 +460,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(contact.getContactId())).entity(contact).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(contact).build();
 		}
 	}
 
@@ -558,7 +559,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(section).build();
 		}
 	}
 
@@ -645,7 +646,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).entity(schedule).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(schedule).build();
 		}
 	}
 
@@ -680,7 +681,7 @@ public class ComponentRESTResource
 	// TODO: Figure out how to recieve the actual media object?
 	@POST
 	@RequireAdmin
-	@APIDescription("Add media to the specified entity")
+	@APIDescription("Add media to the specified entity (leave the fileName blank if you want your supplied link to be it's location)")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentMedia.class)
 	@Path("/{id}/media")
@@ -695,7 +696,7 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Update media associated to the specified entity")
+	@APIDescription("Update media associated to the specified entity (leave the fileName blank if you want your supplied link to be it's location)")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/media/{mediaId}")
 	public Response updateComponentMedia(
@@ -729,7 +730,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(media.getComponentMediaId())).entity(media).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(media).build();
 		}
 	}
 
@@ -811,7 +812,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(metadata.getMetadataId())).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(metadata).build();
 		}
 	}
 
@@ -917,7 +918,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(question.getQuestionId())).entity(question).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(question).build();
 		}
 	}
 
@@ -1003,7 +1004,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(response.getResponseId())).entity(response).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(response).build();
 		}
 	}
 
@@ -1085,7 +1086,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(resource.getResourceId())).entity(resource).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(resource).build();
 		}
 	}
 
@@ -1167,7 +1168,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(review.getComponentReviewId())).entity(review).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(review).build();
 		}
 	}
 
@@ -1545,7 +1546,7 @@ public class ComponentRESTResource
 			return Response.created(URI.create(tracking.getComponentTrackingId())).entity(tracking).build();
 		}
 		else {
-			return Response.ok().build();
+			return Response.ok(tracking).build();
 		}
 	}
 
