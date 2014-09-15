@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.init;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
@@ -42,6 +43,9 @@ public class ApplicationInit
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
+		//set Dirs
+		FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
+		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
 
 		//Order is important
 		startupManager(new DBManager());

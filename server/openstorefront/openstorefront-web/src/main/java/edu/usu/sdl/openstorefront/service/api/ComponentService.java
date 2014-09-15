@@ -257,4 +257,12 @@ public interface ComponentService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentAll saveFullComponent(ComponentAll componentAll);
 
+	/**
+	 * Deletes the component and all related entities
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void cascadeDeleteOfComponent(String componentId);
+
 }

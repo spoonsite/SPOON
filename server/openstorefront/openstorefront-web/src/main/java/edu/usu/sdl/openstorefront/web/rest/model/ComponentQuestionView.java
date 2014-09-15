@@ -47,7 +47,7 @@ public class ComponentQuestionView
 		view.setResponses(responses);
 		view.setQuestion(question.getQuestion());
 		view.setUsername(question.getCreateUser());
-		view.setUserType(question.getUserType());
+		view.setUserType(question.getUserTypeCode());
 		Date max;
 		if (responses.size() > 0) {
 			max = responses.get(0).getUpdateDts();

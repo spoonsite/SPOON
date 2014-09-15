@@ -127,9 +127,7 @@ public class ComponentRESTResource
 	@APIDescription("Create a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createComponent(
-			@RequiredParam 
-			RequiredForComponent
-			component)
+			@RequiredParam RequiredForComponent component)
 	{
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
@@ -205,21 +203,17 @@ public class ComponentRESTResource
 	@Path("/{id}/attribute/{attributeType}")
 	public List<AttributeCode> getComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("attributeType")
-			@RequiredParam
-			String attributeType)
+			@RequiredParam String attributeType)
 	{
 		List<ComponentAttribute> attributes = service.getComponentService().getBaseComponent(ComponentAttribute.class, componentId);
 		List<AttributeCode> attributeCodes = new ArrayList<>();
-		for (Iterator<ComponentAttribute> iter = attributes.listIterator(); iter.hasNext(); ) {
-		    ComponentAttribute a = iter.next();
+		for (Iterator<ComponentAttribute> iter = attributes.listIterator(); iter.hasNext();) {
+			ComponentAttribute a = iter.next();
 			if (!a.getComponentAttributePk().getAttributeType().equals(attributeType)) {
 				iter.remove();
-			} 
-			else
-			{
+			} else {
 				attributeCodes.add(new AttributeCode());
 				// TODO: Implement getAttributeCode
 				//attributeCodes.add(service.getAttributeService().getAttributeCode(a.getComponentAttributePk().getAttributeCode()));
@@ -235,14 +229,11 @@ public class ComponentRESTResource
 	@Path("/{id}/attribute")
 	public void deleteComponentAttributes(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("attributeType")
-			@RequiredParam
-			String attributeType,
+			@RequiredParam String attributeType,
 			@PathParam("attributeCode")
-			@RequiredParam
-			String attributeCode)
+			@RequiredParam String attributeCode)
 	{
 		ComponentAttribute attribute = new ComponentAttribute();
 		attribute.setComponentId(componentId);
@@ -256,14 +247,11 @@ public class ComponentRESTResource
 	@Path("/{id}/attribute/{attributeType}/{attributeCode}")
 	public void deleteComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("attributeType")
-			@RequiredParam
-			String attributeType,
+			@RequiredParam String attributeType,
 			@PathParam("attributeCode")
-			@RequiredParam
-			String attributeCode)
+			@RequiredParam String attributeCode)
 	{
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setAttributeCode(attributeCode);
@@ -280,15 +268,13 @@ public class ComponentRESTResource
 	@Path("/{id}/attribute")
 	public Response addComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
-			@RequiredParam
-			ComponentAttribute attribute)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentAttribute attribute)
 	{
 		attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 		attribute.setComponentId(componentId);
 		attribute.getComponentAttributePk().setComponentId(componentId);
-		
+
 		ValidationModel validationModel = new ValidationModel(attribute);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -322,11 +308,9 @@ public class ComponentRESTResource
 	@Path("/{id}/dependency/{dependencyId}")
 	public void deleteComponentDependency(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("dependencyId")
-			@RequiredParam
-			String dependencyId)
+			@RequiredParam String dependencyId)
 	{
 		//TODO:  Validate that the contact belongs to the component that the are try to delete
 		service.getComponentService().deactivateBaseComponent(ComponentExternalDependency.class, dependencyId);
@@ -354,11 +338,9 @@ public class ComponentRESTResource
 	@Path("/{id}/dependency/{dependencyId}")
 	public Response updateComponentDependency(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("dependencyId")
-			@RequiredParam
-			String dependencyId,
+			@RequiredParam String dependencyId,
 			ComponentExternalDependency dependency)
 	{
 		dependency.setComponentId(componentId);
@@ -406,11 +388,9 @@ public class ComponentRESTResource
 	@Path("/{id}/contact/{contactId}")
 	public void deleteComponentContact(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("contactId")
-			@RequiredParam
-			String contactId)
+			@RequiredParam String contactId)
 	{
 		//TODO:  Validate that the contact belongs to the component that the are try to delete
 
@@ -439,11 +419,9 @@ public class ComponentRESTResource
 	@Path("/{id}/contact/{contactId}")
 	public Response updateComponentContact(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("contactId")
-			@RequiredParam
-			String contactId,
+			@RequiredParam String contactId,
 			ComponentContact contact)
 	{
 		contact.setComponentId(componentId);
@@ -491,19 +469,16 @@ public class ComponentRESTResource
 	@Path("/{id}/section/{evalSection}")
 	public void deleteComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("evalSection")
-			@RequiredParam
-			String evalSection)
+			@RequiredParam String evalSection)
 	{
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
 		pk.setEvaulationSection(evalSection);
-		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object)pk);
+		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object) pk);
 	}
 
-	
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Removes an evaluation section from the entity")
@@ -511,12 +486,11 @@ public class ComponentRESTResource
 	@Path("/{id}/section/all")
 	public void deleteAllComponentEvaluationSections(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		service.getComponentService().deleteBaseComponent(ComponentEvaluationSection.class, componentId);
 	}
-	
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Add an evaluation section to the entity")
@@ -540,13 +514,10 @@ public class ComponentRESTResource
 	@Path("/{id}/section/{evalSection}")
 	public Response updateComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("evalSection")
-			@RequiredParam
-			String evalSection,
-			@RequiredParam
-			ComponentEvaluationSection section)
+			@RequiredParam String evalSection,
+			@RequiredParam ComponentEvaluationSection section)
 	{
 		section.setComponentId(componentId);
 		section.getComponentEvaluationSectionPk().setComponentId(componentId);
@@ -595,11 +566,9 @@ public class ComponentRESTResource
 	@Path("/{id}/schedule/{evalLevel}")
 	public void deleteComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("evalLevel")
-			@RequiredParam
-			String evalLevel)
+			@RequiredParam String evalLevel)
 	{
 		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
 		pk.setComponentId(componentId);
@@ -630,13 +599,10 @@ public class ComponentRESTResource
 	@Path("/{id}/schedule/{evalLevel}")
 	public Response updateComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("evalLevel")
-			@RequiredParam
-			String evalLevel,
-			@RequiredParam
-			ComponentEvaluationSchedule schedule)
+			@RequiredParam String evalLevel,
+			@RequiredParam ComponentEvaluationSchedule schedule)
 	{
 		schedule.setComponentId(componentId);
 		schedule.getComponentEvaluationSchedulePk().setComponentId(componentId);
@@ -686,11 +652,9 @@ public class ComponentRESTResource
 	@Path("/{id}/media/{mediaId}")
 	public void deleteComponentMedia(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("mediaId")
-			@RequiredParam
-			String mediaId)
+			@RequiredParam String mediaId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentMedia.class, mediaId);
 	}
@@ -718,13 +682,10 @@ public class ComponentRESTResource
 	@Path("/{id}/media/{mediaId}")
 	public Response updateComponentMedia(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("mediaId")
-			@RequiredParam
-			String mediaId,
-			@RequiredParam
-			ComponentMedia media)
+			@RequiredParam String mediaId,
+			@RequiredParam ComponentMedia media)
 	{
 		media.setComponentId(componentId);
 		media.setComponentMediaId(mediaId);
@@ -772,11 +733,9 @@ public class ComponentRESTResource
 	@Path("/{id}/metadata/{metadataId}")
 	public void deleteComponentMetadata(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("metadataId")
-			@RequiredParam
-			String metadataId)
+			@RequiredParam String metadataId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentMetadata.class, metadataId);
 	}
@@ -803,13 +762,10 @@ public class ComponentRESTResource
 	@Path("/{id}/metadata/{metadataId}")
 	public Response updateComponentMetadata(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("metadataId")
-			@RequiredParam
-			String metadataId,
-			@RequiredParam
-			ComponentMetadata metadata)
+			@RequiredParam String metadataId,
+			@RequiredParam ComponentMetadata metadata)
 	{
 		metadata.setMetadataId(metadataId);
 		metadata.setComponentId(componentId);
@@ -863,11 +819,11 @@ public class ComponentRESTResource
 			@RequiredParam String questionId)
 	{
 		List<ComponentQuestionResponse> responses = service.getComponentService().getBaseComponent(ComponentQuestionResponse.class, componentId);
-		for (Iterator<ComponentQuestionResponse> iter = responses.listIterator(); iter.hasNext(); ) {
-		    ComponentQuestionResponse a = iter.next();
+		for (Iterator<ComponentQuestionResponse> iter = responses.listIterator(); iter.hasNext();) {
+			ComponentQuestionResponse a = iter.next();
 			if (!a.getQuestionId().equals(questionId)) {
 				iter.remove();
-			} 
+			}
 		}
 		return responses;
 	}
@@ -879,11 +835,9 @@ public class ComponentRESTResource
 	@Path("/{id}/question/{questionId}")
 	public void deleteComponentQuestion(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("questionId")
-			@RequiredParam
-			String questionId)
+			@RequiredParam String questionId)
 	{
 		//TODO:  Validate that the question belongs to the component that htey are try to delete
 
@@ -912,13 +866,10 @@ public class ComponentRESTResource
 	@Path("/{id}/question/{questionId}")
 	public Response updateComponentQuestion(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("questionId")
-			@RequiredParam
-			String questionId,
-			@RequiredParam
-			ComponentQuestion question)
+			@RequiredParam String questionId,
+			@RequiredParam ComponentQuestion question)
 	{
 		question.setComponentId(componentId);
 		question.setQuestionId(questionId);
@@ -967,11 +918,9 @@ public class ComponentRESTResource
 	@Path("/{id}/response/{responseId}")
 	public void deleteComponentQuestionResponse(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("responseId")
-			@RequiredParam
-			String responseId)
+			@RequiredParam String responseId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, responseId);
 	}
@@ -1001,13 +950,10 @@ public class ComponentRESTResource
 	@Path("/{id}/response/{responseId}")
 	public Response updateComponentQuestionResponse(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("responseId")
-			@RequiredParam
-			String responseId,
-			@RequiredParam
-			ComponentQuestionResponse response)
+			@RequiredParam String responseId,
+			@RequiredParam ComponentQuestionResponse response)
 	{
 		response.setComponentId(componentId);
 		response.setResponseId(responseId);
@@ -1055,11 +1001,9 @@ public class ComponentRESTResource
 	@Path("/{id}/resource/{resourceId}")
 	public void deleteComponentResource(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("resourceId")
-			@RequiredParam
-			String resourceId)
+			@RequiredParam String resourceId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
 	}
@@ -1086,13 +1030,10 @@ public class ComponentRESTResource
 	@Path("/{id}/resource/{resourceId}")
 	public Response updateComponentResource(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("resourceId")
-			@RequiredParam
-			String resourceId,
-			@RequiredParam
-			ComponentResource resource)
+			@RequiredParam String resourceId,
+			@RequiredParam ComponentResource resource)
 	{
 		resource.setComponentId(componentId);
 		resource.setResourceId(resourceId);
@@ -1140,11 +1081,9 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}")
 	public void deleteComponentReview(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId)
+			@RequiredParam String reviewId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentReview.class, reviewId);
 	}
@@ -1171,13 +1110,10 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}")
 	public Response updateComponentReview(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
-			@RequiredParam
-			ComponentReview review)
+			@RequiredParam String reviewId,
+			@RequiredParam ComponentReview review)
 	{
 		review.setComponentId(componentId);
 		review.setComponentReviewId(reviewId);
@@ -1225,13 +1161,10 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}/con")
 	public void deleteComponentReviewCon(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
-			@RequiredParam
-			String con)
+			@RequiredParam String reviewId,
+			@RequiredParam String con)
 	{
 		ComponentReviewCon example = new ComponentReviewCon();
 		ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -1250,11 +1183,9 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}/con")
 	public Response addComponentReviewCon(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
+			@RequiredParam String reviewId,
 			@RequiredParam String text)
 	{
 		ComponentReviewCon con = new ComponentReviewCon();
@@ -1262,7 +1193,6 @@ public class ComponentRESTResource
 		pk.setComponentReviewId(reviewId);
 		pk.setReviewCon(text);
 		con.setComponentReviewConPk(pk);
-		con.setText(text);
 		con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 		con.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(con);
@@ -1287,8 +1217,7 @@ public class ComponentRESTResource
 	@Path("/{id}/pro")
 	public List<ComponentReviewPro> getComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentReviewPro.class, componentId);
 	}
@@ -1300,13 +1229,10 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}/pro")
 	public void deleteComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
-			@RequiredParam
-			String pro)
+			@RequiredParam String reviewId,
+			@RequiredParam String pro)
 	{
 		ComponentReviewPro example = new ComponentReviewPro();
 		ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -1325,11 +1251,9 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}/pro")
 	public Response addComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
+			@RequiredParam String reviewId,
 			@RequiredParam String text)
 	{
 		ComponentReviewPro pro = new ComponentReviewPro();
@@ -1337,7 +1261,6 @@ public class ComponentRESTResource
 		pk.setComponentReviewId(reviewId);
 		pk.setReviewPro(text);
 		pro.setComponentReviewProPk(pk);
-		pro.setText(text);
 		pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 		pro.setComponentId(componentId);
 		ValidationModel validationModel = new ValidationModel(pro);
@@ -1374,11 +1297,9 @@ public class ComponentRESTResource
 	@Path("/{id}/tag/{tagId}")
 	public void deleteComponentTag(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("tagId")
-			@RequiredParam
-			String tagId)
+			@RequiredParam String tagId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentTag.class, tagId);
 	}
@@ -1430,11 +1351,9 @@ public class ComponentRESTResource
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("id")
-			@RequiredParam
-			String trackingId)
+			@RequiredParam String trackingId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentTracking.class, trackingId);
 	}
@@ -1460,13 +1379,10 @@ public class ComponentRESTResource
 	@Path("/{id}/tracking/{trackingId}")
 	public Response updateComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("trackingId")
-			@RequiredParam
-			String trackingId,
-			@RequiredParam
-			ComponentTracking tracking)
+			@RequiredParam String trackingId,
+			@RequiredParam ComponentTracking tracking)
 	{
 		tracking.setComponentTrackingId(trackingId);
 		tracking.setComponentId(componentId);
@@ -1494,4 +1410,14 @@ public class ComponentRESTResource
 		}
 	}
 
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete component and all related entities")
+	@Path("/{id}/cascade")
+	public void deleteComponentTag(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		service.getComponentService().cascadeDeleteOfComponent(componentId);
+	}
 }

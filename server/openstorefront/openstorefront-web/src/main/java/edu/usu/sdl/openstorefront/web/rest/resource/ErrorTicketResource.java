@@ -16,7 +16,16 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
+import java.util.List;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -27,5 +36,18 @@ import javax.ws.rs.Path;
 public class ErrorTicketResource
 		extends BaseResource
 {
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all error tickets")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ErrorTicket.class)
+	public List<ErrorTicket> getErrorTickets()
+	{
+		ErrorTicket errorTicketExample = new ErrorTicket();
+		errorTicketExample.setActiveStatus(ApplicationProperty.ACTIVE_STATUS);
+		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(ErrorTicket.class, new QueryByExample(errorTicketExample));
+		return errorTickets;
+	}
 
 }
