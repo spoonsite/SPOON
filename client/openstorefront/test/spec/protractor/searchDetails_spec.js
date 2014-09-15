@@ -61,6 +61,7 @@ describe('searchDetails_Click on the results', function() {
       // Click on View Watches
       element.all(by.css('.fa.fa-eye')).get(0).click();
       browser.driver.sleep(500);
+      //element(by.css('.close')).click();  // Element is not visible.
       browser.refresh(); // close the window
 
       element(by.id('globalSearch')).sendKeys('VANTAGE', protractor.Key.ENTER);
@@ -73,8 +74,6 @@ describe('searchDetails_Click on the results', function() {
       // Click on Go to Full Screen
       element.all(by.css('.fa.fa-copy')).get(0).click();
       expect(true).toBe(true);
-
-
 
   });
 
