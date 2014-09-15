@@ -234,7 +234,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function saves a component's tags
   ***************************************************************/
   $scope.saveTags = function(id, tags){
-    Business.componentservice.saveTags(id, tags);
+    Business.componentservice.saveTags(id, tags).then(function(result){
+      // console.log('result', result);
+      $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
+    });
     $scope.applyFilters();
   };
 
@@ -508,6 +511,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   }
 
+
+  var onlyOnce = null;
+
   /***************************************************************
   * This function watches the details object for changes
   ***************************************************************/
@@ -526,7 +532,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           }
         }
         // setup the update list.
-        setupUpdateFlags();
+        if (onlyOnce !== $scope.details.details.componentId) {
+          setupUpdateFlags();
+          onlyOnce = $scope.details.details.componentId;
+        }
       }
     }
   }, true);

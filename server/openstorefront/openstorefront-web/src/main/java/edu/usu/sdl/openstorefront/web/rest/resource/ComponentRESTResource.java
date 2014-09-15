@@ -51,14 +51,11 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -68,8 +65,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import jersey.repackaged.com.google.common.collect.Lists;
 
 /**
  * ComponentRESTResource Resource
@@ -134,9 +133,7 @@ public class ComponentRESTResource
 	@APIDescription("Create a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createComponent(
-			@RequiredParam 
-			RequiredForComponent
-			component)
+			@RequiredParam RequiredForComponent component)
 	{
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
@@ -146,7 +143,8 @@ public class ComponentRESTResource
 			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
 			return Response.created(URI.create("v1/resource/components/" + service.getComponentService().saveComponent(component).getComponent().getComponentId())).entity(component).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -174,7 +172,8 @@ public class ComponentRESTResource
 			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
 			return Response.ok(service.getComponentService().saveComponent(component)).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -212,21 +211,18 @@ public class ComponentRESTResource
 	@Path("/{id}/attribute/{attributeType}")
 	public List<AttributeCode> getComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("attributeType")
-			@RequiredParam
-			String attributeType)
+			@RequiredParam String attributeType)
 	{
 		List<ComponentAttribute> attributes = service.getComponentService().getBaseComponent(ComponentAttribute.class, componentId);
 		List<AttributeCode> attributeCodes = new ArrayList<>();
-		for (Iterator<ComponentAttribute> iter = attributes.listIterator(); iter.hasNext(); ) {
-		    ComponentAttribute a = iter.next();
+		for (Iterator<ComponentAttribute> iter = attributes.listIterator(); iter.hasNext();) {
+			ComponentAttribute a = iter.next();
 			if (!a.getComponentAttributePk().getAttributeType().equals(attributeType)) {
 				iter.remove();
-			} 
-			else
-			{
+			}
+			else {
 				attributeCodes.add(new AttributeCode());
 				// TODO: Implement getAttributeCode
 				//attributeCodes.add(service.getAttributeService().getAttributeCode(a.getComponentAttributePk().getAttributeCode()));
@@ -242,14 +238,11 @@ public class ComponentRESTResource
 	@Path("/{id}/attribute")
 	public void deleteComponentAttributes(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("attributeType")
-			@RequiredParam
-			String attributeType,
+			@RequiredParam String attributeType,
 			@PathParam("attributeCode")
-			@RequiredParam
-			String attributeCode)
+			@RequiredParam String attributeCode)
 	{
 		ComponentAttribute attribute = new ComponentAttribute();
 		attribute.setComponentId(componentId);
@@ -263,14 +256,11 @@ public class ComponentRESTResource
 	@Path("/{id}/attribute/{attributeType}/{attributeCode}")
 	public void deleteComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("attributeType")
-			@RequiredParam
-			String attributeType,
+			@RequiredParam String attributeType,
 			@PathParam("attributeCode")
-			@RequiredParam
-			String attributeCode)
+			@RequiredParam String attributeCode)
 	{
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setAttributeCode(attributeCode);
@@ -287,15 +277,13 @@ public class ComponentRESTResource
 	@Path("/{id}/attribute")
 	public Response addComponentAttribute(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
-			@RequiredParam
-			ComponentAttribute attribute)
+			@RequiredParam String componentId,
+			@RequiredParam ComponentAttribute attribute)
 	{
 		attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 		attribute.setComponentId(componentId);
 		attribute.getComponentAttributePk().setComponentId(componentId);
-		
+
 		ValidationModel validationModel = new ValidationModel(attribute);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -303,7 +291,8 @@ public class ComponentRESTResource
 			attribute.setCreateUser(ServiceUtil.getCurrentUserName());
 			attribute.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentAttribute(attribute);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create(attribute.getComponentAttributePk().getAttributeType() + attribute.getComponentAttributePk().getAttributeCode())).entity(attribute).build();
@@ -329,11 +318,9 @@ public class ComponentRESTResource
 	@Path("/{id}/dependency/{dependencyId}")
 	public void deleteComponentDependency(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("dependencyId")
-			@RequiredParam
-			String dependencyId)
+			@RequiredParam String dependencyId)
 	{
 		//TODO:  Validate that the contact belongs to the component that the are try to delete
 		service.getComponentService().deactivateBaseComponent(ComponentExternalDependency.class, dependencyId);
@@ -361,11 +348,9 @@ public class ComponentRESTResource
 	@Path("/{id}/dependency/{dependencyId}")
 	public Response updateComponentDependency(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("dependencyId")
-			@RequiredParam
-			String dependencyId,
+			@RequiredParam String dependencyId,
 			ComponentExternalDependency dependency)
 	{
 		dependency.setComponentId(componentId);
@@ -383,12 +368,14 @@ public class ComponentRESTResource
 			dependency.setCreateUser(ServiceUtil.getCurrentUserName());
 			dependency.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentDependency(dependency);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create(dependency.getDependencyId())).entity(dependency).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -413,11 +400,9 @@ public class ComponentRESTResource
 	@Path("/{id}/contact/{contactId}")
 	public void deleteComponentContact(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("contactId")
-			@RequiredParam
-			String contactId)
+			@RequiredParam String contactId)
 	{
 		//TODO:  Validate that the contact belongs to the component that the are try to delete
 
@@ -446,11 +431,9 @@ public class ComponentRESTResource
 	@Path("/{id}/contact/{contactId}")
 	public Response updateComponentContact(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("contactId")
-			@RequiredParam
-			String contactId,
+			@RequiredParam String contactId,
 			ComponentContact contact)
 	{
 		contact.setComponentId(componentId);
@@ -468,12 +451,14 @@ public class ComponentRESTResource
 			contact.setCreateUser(ServiceUtil.getCurrentUserName());
 			contact.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentContact(contact);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create(contact.getContactId())).entity(contact).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -498,19 +483,16 @@ public class ComponentRESTResource
 	@Path("/{id}/section/{evalSection}")
 	public void deleteComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("evalSection")
-			@RequiredParam
-			String evalSection)
+			@RequiredParam String evalSection)
 	{
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
 		pk.setEvaulationSection(evalSection);
-		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object)pk);
+		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, (Object) pk);
 	}
 
-	
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Removes an evaluation section from the entity")
@@ -518,12 +500,11 @@ public class ComponentRESTResource
 	@Path("/{id}/section/all")
 	public void deleteAllComponentEvaluationSections(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		service.getComponentService().deleteBaseComponent(ComponentEvaluationSection.class, componentId);
 	}
-	
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Add an evaluation section to the entity")
@@ -547,13 +528,10 @@ public class ComponentRESTResource
 	@Path("/{id}/section/{evalSection}")
 	public Response updateComponentEvaluationSection(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("evalSection")
-			@RequiredParam
-			String evalSection,
-			@RequiredParam
-			ComponentEvaluationSection section)
+			@RequiredParam String evalSection,
+			@RequiredParam ComponentEvaluationSection section)
 	{
 		section.setComponentId(componentId);
 		section.getComponentEvaluationSectionPk().setComponentId(componentId);
@@ -571,13 +549,15 @@ public class ComponentRESTResource
 			section.setCreateUser(ServiceUtil.getCurrentUserName());
 			section.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSection(section);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -602,11 +582,9 @@ public class ComponentRESTResource
 	@Path("/{id}/schedule/{evalLevel}")
 	public void deleteComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("evalLevel")
-			@RequiredParam
-			String evalLevel)
+			@RequiredParam String evalLevel)
 	{
 		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
 		pk.setComponentId(componentId);
@@ -637,13 +615,10 @@ public class ComponentRESTResource
 	@Path("/{id}/schedule/{evalLevel}")
 	public Response updateComponentEvaluationSchedule(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("evalLevel")
-			@RequiredParam
-			String evalLevel,
-			@RequiredParam
-			ComponentEvaluationSchedule schedule)
+			@RequiredParam String evalLevel,
+			@RequiredParam ComponentEvaluationSchedule schedule)
 	{
 		schedule.setComponentId(componentId);
 		schedule.getComponentEvaluationSchedulePk().setComponentId(componentId);
@@ -661,13 +636,15 @@ public class ComponentRESTResource
 			schedule.setCreateUser(ServiceUtil.getCurrentUserName());
 			schedule.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSchedule(schedule);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).entity(schedule).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -693,11 +670,9 @@ public class ComponentRESTResource
 	@Path("/{id}/media/{mediaId}")
 	public void deleteComponentMedia(
 			@PathParam("id")
-			@RequiredParam 
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("mediaId")
-			@RequiredParam
-			String mediaId)
+			@RequiredParam String mediaId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentMedia.class, mediaId);
 	}
@@ -725,13 +700,10 @@ public class ComponentRESTResource
 	@Path("/{id}/media/{mediaId}")
 	public Response updateComponentMedia(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("mediaId")
-			@RequiredParam
-			String mediaId,
-			@RequiredParam
-			ComponentMedia media)
+			@RequiredParam String mediaId,
+			@RequiredParam ComponentMedia media)
 	{
 		media.setComponentId(componentId);
 		media.setComponentMediaId(mediaId);
@@ -748,13 +720,15 @@ public class ComponentRESTResource
 			media.setCreateUser(ServiceUtil.getCurrentUserName());
 			media.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMedia(media);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(media.getComponentMediaId())).entity(media).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -779,11 +753,9 @@ public class ComponentRESTResource
 	@Path("/{id}/metadata/{metadataId}")
 	public void deleteComponentMetadata(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("metadataId")
-			@RequiredParam
-			String metadataId)
+			@RequiredParam String metadataId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentMetadata.class, metadataId);
 	}
@@ -810,13 +782,10 @@ public class ComponentRESTResource
 	@Path("/{id}/metadata/{metadataId}")
 	public Response updateComponentMetadata(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("metadataId")
-			@RequiredParam
-			String metadataId,
-			@RequiredParam
-			ComponentMetadata metadata)
+			@RequiredParam String metadataId,
+			@RequiredParam ComponentMetadata metadata)
 	{
 		metadata.setMetadataId(metadataId);
 		metadata.setComponentId(componentId);
@@ -833,13 +802,15 @@ public class ComponentRESTResource
 			metadata.setCreateUser(ServiceUtil.getCurrentUserName());
 			metadata.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMetadata(metadata);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(metadata.getMetadataId())).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -870,11 +841,11 @@ public class ComponentRESTResource
 			@RequiredParam String questionId)
 	{
 		List<ComponentQuestionResponse> responses = service.getComponentService().getBaseComponent(ComponentQuestionResponse.class, componentId);
-		for (Iterator<ComponentQuestionResponse> iter = responses.listIterator(); iter.hasNext(); ) {
-		    ComponentQuestionResponse a = iter.next();
+		for (Iterator<ComponentQuestionResponse> iter = responses.listIterator(); iter.hasNext();) {
+			ComponentQuestionResponse a = iter.next();
 			if (!a.getQuestionId().equals(questionId)) {
 				iter.remove();
-			} 
+			}
 		}
 		return responses;
 	}
@@ -886,11 +857,9 @@ public class ComponentRESTResource
 	@Path("/{id}/question/{questionId}")
 	public void deleteComponentQuestion(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("questionId")
-			@RequiredParam
-			String questionId)
+			@RequiredParam String questionId)
 	{
 		//TODO:  Validate that the question belongs to the component that htey are try to delete
 
@@ -919,13 +888,10 @@ public class ComponentRESTResource
 	@Path("/{id}/question/{questionId}")
 	public Response updateComponentQuestion(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("questionId")
-			@RequiredParam
-			String questionId,
-			@RequiredParam
-			ComponentQuestion question)
+			@RequiredParam String questionId,
+			@RequiredParam ComponentQuestion question)
 	{
 		question.setComponentId(componentId);
 		question.setQuestionId(questionId);
@@ -942,13 +908,15 @@ public class ComponentRESTResource
 			question.setCreateUser(ServiceUtil.getCurrentUserName());
 			question.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(question.getQuestionId())).entity(question).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -974,11 +942,9 @@ public class ComponentRESTResource
 	@Path("/{id}/response/{responseId}")
 	public void deleteComponentQuestionResponse(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("responseId")
-			@RequiredParam
-			String responseId)
+			@RequiredParam String responseId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, responseId);
 	}
@@ -1008,13 +974,10 @@ public class ComponentRESTResource
 	@Path("/{id}/response/{responseId}")
 	public Response updateComponentQuestionResponse(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("responseId")
-			@RequiredParam
-			String responseId,
-			@RequiredParam
-			ComponentQuestionResponse response)
+			@RequiredParam String responseId,
+			@RequiredParam ComponentQuestionResponse response)
 	{
 		response.setComponentId(componentId);
 		response.setResponseId(responseId);
@@ -1031,13 +994,15 @@ public class ComponentRESTResource
 			response.setCreateUser(ServiceUtil.getCurrentUserName());
 			response.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(response.getResponseId())).entity(response).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -1062,11 +1027,9 @@ public class ComponentRESTResource
 	@Path("/{id}/resource/{resourceId}")
 	public void deleteComponentResource(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("resourceId")
-			@RequiredParam
-			String resourceId)
+			@RequiredParam String resourceId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
 	}
@@ -1093,13 +1056,10 @@ public class ComponentRESTResource
 	@Path("/{id}/resource/{resourceId}")
 	public Response updateComponentResource(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("resourceId")
-			@RequiredParam
-			String resourceId,
-			@RequiredParam
-			ComponentResource resource)
+			@RequiredParam String resourceId,
+			@RequiredParam ComponentResource resource)
 	{
 		resource.setComponentId(componentId);
 		resource.setResourceId(resourceId);
@@ -1116,13 +1076,15 @@ public class ComponentRESTResource
 			resource.setCreateUser(ServiceUtil.getCurrentUserName());
 			resource.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentResource(resource);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(resource.getResourceId())).entity(resource).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -1147,11 +1109,9 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}")
 	public void deleteComponentReview(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId)
+			@RequiredParam String reviewId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentReview.class, reviewId);
 	}
@@ -1178,13 +1138,10 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}")
 	public Response updateComponentReview(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
-			@RequiredParam
-			ComponentReview review)
+			@RequiredParam String reviewId,
+			@RequiredParam ComponentReview review)
 	{
 		review.setComponentId(componentId);
 		review.setComponentReviewId(reviewId);
@@ -1201,13 +1158,15 @@ public class ComponentRESTResource
 			review.setCreateUser(ServiceUtil.getCurrentUserName());
 			review.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReview(review);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(review.getComponentReviewId())).entity(review).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -1232,13 +1191,10 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}/con")
 	public void deleteComponentReviewCon(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
-			@RequiredParam
-			String con)
+			@RequiredParam String reviewId,
+			@RequiredParam String con)
 	{
 		ComponentReviewCon example = new ComponentReviewCon();
 		ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -1257,27 +1213,26 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}/con")
 	public Response addComponentReviewCon(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
+			@RequiredParam String reviewId,
 			@RequiredParam String text)
 	{
 		ComponentReviewCon con = new ComponentReviewCon();
 		ComponentReviewConPk pk = new ComponentReviewConPk();
 		pk.setComponentReviewId(reviewId);
 		ReviewCon conCode = service.getLookupService().getLookupEnity(ReviewCon.class, text);
-		if (conCode == null){
+		if (conCode == null) {
 			conCode = service.getLookupService().getLookupEnityByDesc(ReviewCon.class, text);
-			if (conCode == null)
-			{
+			if (conCode == null) {
 				pk.setReviewCon(null);
-			} else {
+			}
+			else {
 				pk.setReviewCon(conCode.getCode());
 				con.setText(conCode.getDescription());
 			}
-		} else{
+		}
+		else {
 			pk.setReviewCon(conCode.getCode());
 			con.setText(conCode.getDescription());
 		}
@@ -1291,7 +1246,8 @@ public class ComponentRESTResource
 			con.setCreateUser(ServiceUtil.getCurrentUserName());
 			con.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReviewCon(con);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
@@ -1306,8 +1262,7 @@ public class ComponentRESTResource
 	@Path("/{id}/pro")
 	public List<ComponentReviewPro> getComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId)
+			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentReviewPro.class, componentId);
 	}
@@ -1319,13 +1274,10 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}/pro")
 	public void deleteComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
-			@RequiredParam
-			String pro)
+			@RequiredParam String reviewId,
+			@RequiredParam String pro)
 	{
 		ComponentReviewPro example = new ComponentReviewPro();
 		ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -1344,27 +1296,26 @@ public class ComponentRESTResource
 	@Path("/{id}/review/{reviewId}/pro")
 	public Response addComponentReviewPro(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam
-			String reviewId,
+			@RequiredParam String reviewId,
 			@RequiredParam String text)
 	{
 		ComponentReviewPro pro = new ComponentReviewPro();
 		ComponentReviewProPk pk = new ComponentReviewProPk();
 		pk.setComponentReviewId(reviewId);
 		ReviewPro proCode = service.getLookupService().getLookupEnity(ReviewPro.class, text);
-		if (proCode == null){
+		if (proCode == null) {
 			proCode = service.getLookupService().getLookupEnityByDesc(ReviewPro.class, text);
-			if (proCode == null)
-			{
+			if (proCode == null) {
 				pk.setReviewPro(null);
-			} else {
+			}
+			else {
 				pk.setReviewPro(proCode.getCode());
 				pro.setText(proCode.getDescription());
 			}
-		} else{
+		}
+		else {
 			pk.setReviewPro(proCode.getCode());
 			pro.setText(proCode.getDescription());
 		}
@@ -1378,14 +1329,14 @@ public class ComponentRESTResource
 			pro.setCreateUser(ServiceUtil.getCurrentUserName());
 			pro.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReviewPro(pro);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
 		return Response.created(URI.create(pro.getComponentReviewProPk().getComponentReviewId())).entity(pro).build();
 	}
 
-	
 	// ComponentRESTResource TAG section
 	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")
@@ -1396,12 +1347,12 @@ public class ComponentRESTResource
 	{
 		return service.getComponentService().getTagCloud();
 	}
-	
+
 	@GET
 	@APIDescription("Get the tag list for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
-	@Path("/{id}/tag")
+	@Path("/{id}/tags")
 	public List<ComponentTag> getComponentTag(
 			@PathParam("id")
 			@RequiredParam String componentId)
@@ -1413,16 +1364,80 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Remove a tag from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tags")
+	public void deleteComponentTags(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		ComponentTag example = new ComponentTag();
+		example.setComponentId(componentId);
+		service.getPersistenceService().deleteByExample(example);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Remove a tag from the specified entity")
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tag/{tagId}")
 	public void deleteComponentTag(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("tagId")
-			@RequiredParam
-			String tagId)
+			@RequiredParam String tagId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentTag.class, tagId);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Add tags to the specified entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentTag.class)
+	@Path("/{id}/tags")
+	public Response addComponentTags(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam List<ComponentTag> tags)
+	{
+		Boolean valid = Boolean.TRUE;
+		List<ComponentTag> verified = new ArrayList<>();
+		List<RestErrorModel> unVerified = new ArrayList<>();
+		if (tags.size() > 0) {
+			for (ComponentTag tag : tags) {
+				tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+				tag.setComponentId(componentId);
+				ValidationModel validationModel = new ValidationModel(tag);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid()) {
+					tag.setCreateUser(ServiceUtil.getCurrentUserName());
+					tag.setUpdateUser(ServiceUtil.getCurrentUserName());
+					verified.add(tag);
+				}
+				else {
+					valid = Boolean.FALSE;
+					unVerified.add(validationResult.toRestError());
+				}
+			}
+			if (valid) {
+				if (verified.size() > 0) {
+					verified.stream().forEach((tag) -> {
+						service.getComponentService().saveComponentTag(tag);
+					});
+					GenericEntity<List<ComponentTag>> entity = new GenericEntity<List<ComponentTag>>(Lists.newArrayList(verified)) {};
+					return Response.created(URI.create(verified.get(0).getTagId())).entity(entity).build();
+				} else {
+					return Response.notAcceptable(null).build();
+				}
+			} else {
+				GenericEntity<List<RestErrorModel>> entity = new GenericEntity<List<RestErrorModel>>(Lists.newArrayList(unVerified)) {};
+				return Response.ok(entity).build();
+			}
+		}
+		else {
+			return Response.notAcceptable(null).build();
+		}
 	}
 
 	@POST
@@ -1445,7 +1460,8 @@ public class ComponentRESTResource
 			tag.setCreateUser(ServiceUtil.getCurrentUserName());
 			tag.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTag(tag);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create(tag.getTagId())).entity(tag).build();
@@ -1472,11 +1488,9 @@ public class ComponentRESTResource
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("id")
-			@RequiredParam
-			String trackingId)
+			@RequiredParam String trackingId)
 	{
 		service.getComponentService().deactivateBaseComponent(ComponentTracking.class, trackingId);
 	}
@@ -1502,13 +1516,10 @@ public class ComponentRESTResource
 	@Path("/{id}/tracking/{trackingId}")
 	public Response updateComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("trackingId")
-			@RequiredParam
-			String trackingId,
-			@RequiredParam
-			ComponentTracking tracking)
+			@RequiredParam String trackingId,
+			@RequiredParam ComponentTracking tracking)
 	{
 		tracking.setComponentTrackingId(trackingId);
 		tracking.setComponentId(componentId);
@@ -1525,13 +1536,15 @@ public class ComponentRESTResource
 			tracking.setCreateUser(ServiceUtil.getCurrentUserName());
 			tracking.setUpdateUser(ServiceUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(tracking);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(tracking.getComponentTrackingId())).entity(tracking).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}

@@ -105,10 +105,10 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   }
 
 
-  business.getTagsList = function() {
+  business.getTagsList = function(override) {
     var deferred = $q.defer();
     var tagsList = checkExpire('tagsList', minute * 0.5);
-    if (tagsList) {
+    if (tagsList && !override) {
       deferred.resolve(tagsList);
     } else {
       $http({
