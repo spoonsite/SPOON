@@ -289,26 +289,24 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     componentservice.getResultsComments = function() {
       return MOCKDATA.resultsComments;
     };
+
+
     componentservice.saveTags = function(id, tags) {
-      var a = _.find(MOCKDATA2.componentList, {'componentId': id});
-      componentservice.updateTagCloud(tags);
-      if (a) {
-        a.tags = tags;
-      }
-      return true;
-    };
-    componentservice.updateTagCloud = function(tags) {
-      _.each(tags, function(tag) {
-        if (!_.contains(MOCKDATA.tagsList, tag.text)) {
-          MOCKDATA.tagsList.push(tag.text);
+      var deferred = $q.defer();
+      $http.delete('api/v1/resource/components/'+id+'/tags');
+      $http({
+        method: 'POST',
+        url: 'api/v1/resource/components/'+id+'/tags',
+        data: tags
+      }).success(function(data, status, headers, config){
+        if (data && data !== 'false') {
+          deferred.resolve(data);
         }
+      }).error(function(data, status, headers, config){
+        deferred.resolve('There was an error saving the tags');
       });
-      MOCKDATA.tagsList.sort();
+      return deferred.promise;
     };
-
-
-
-
 
     return componentservice;
   }]);
