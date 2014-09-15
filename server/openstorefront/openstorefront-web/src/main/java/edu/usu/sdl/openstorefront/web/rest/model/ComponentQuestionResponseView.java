@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +30,7 @@ public class ComponentQuestionResponseView
 {
 
 	private String response;
+	private String responseId;
 	private String username;
 	private String userType;
 	private Date answeredDate;
@@ -39,14 +42,21 @@ public class ComponentQuestionResponseView
 	
 	public static List<ComponentQuestionResponseView> toViewList(List<ComponentQuestionResponse> responses)
 	{
+		ServiceProxy service = new ServiceProxy();
 		List<ComponentQuestionResponseView> viewList = new ArrayList();
 		responses.forEach(response->{
 			ComponentQuestionResponseView tempView = new ComponentQuestionResponseView();
 			tempView.setAnsweredDate(response.getCreateDts());
 			tempView.setResponse(response.getResponse());
-			tempView.setUserType(response.getUserTypeCode());
+			UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, response.getUserTypeCode());
+			if (typeCode == null) {
+				tempView.setUserType(null);
+			} else {
+				tempView.setUserType(typeCode.getDescription());
+			}
 			tempView.setUsername(response.getUpdateUser());
 			tempView.setUpdateDts(response.getUpdateDts());
+			tempView.setResponseId(response.getResponseId());
 			viewList.add(tempView);
 		});
 		return viewList;
@@ -106,6 +116,22 @@ public class ComponentQuestionResponseView
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	/**
+	 * @return the responseId
+	 */
+	public String getResponseId()
+	{
+		return responseId;
+	}
+
+	/**
+	 * @param responseId the responseId to set
+	 */
+	public void setResponseId(String responseId)
+	{
+		this.responseId = responseId;
 	}
 
 }
