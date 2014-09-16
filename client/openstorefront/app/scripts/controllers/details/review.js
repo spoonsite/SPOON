@@ -33,7 +33,6 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     } else {
       $scope.userTypeCodes = [];
     }
-    loadUserProfile();
   });
   Business.getProsConsList().then(function(result) {
     if (result) {
@@ -82,6 +81,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
               // console.log('result', result);
             })
           });
+          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
           $scope.$emit('$hideModal', 'descModal');
         }
       });

@@ -141,7 +141,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         data: post
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(questionId);
+        result.resolve(data.questionId);
       });
     } else{
       result.reject('Either a unique ID or question object were missing, and the question was not saved');
@@ -160,7 +160,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         url: url,
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(responseId);
+        result.resolve(data.responseId);
       });
     } else{
       result.reject('Either a unique ID or question object were missing, and the question was not saved');
