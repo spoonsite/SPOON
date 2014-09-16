@@ -222,23 +222,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         }
       });
       /*This is simulating the wait time for building the data so that we get a loader*/
-      $timeout(function(){
-        $scope.data.data = $scope.total;
-        _.each($scope.data.data, function(item){
-          if (item.description !== null && item.description !== undefined && item.description !== '') {
-            var desc = item.description.match(/^(.*?)[.?!]\s/);
-            item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
-          } else {
-            item.shortdescription = 'This is a temporary short description';
-          }
-        });
-        // $scope.$emit('$TRIGGERUNLOAD', 'resultsLoad');
-        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-        $scope.initializeData(key);
-        adjustFilters();
-      }, 500);
-    }); //
+      $scope.data.data = $scope.total;
+      _.each($scope.data.data, function(item){
+        if (item.description !== null && item.description !== undefined && item.description !== '') {
+          var desc = item.description.match(/^(.*?)[.?!]\s/);
+          item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
+        } else {
+          item.shortdescription = 'This is a temporary short description';
+        }
+      });
+      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      $scope.initializeData(key);
+      adjustFilters();
+    });
   }; //
 
 

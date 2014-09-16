@@ -36,7 +36,7 @@ app.directive('question', ['business', function (Business) {
         if (scope.user.info) {
           var post = {};
           post.question = scope.content;
-          post.userType = scope.user.info.userTypeCode;
+          post.userTypeCode = scope.user.info.userTypeCode;
           post.organization = scope.user.info.organization;
           Business.componentservice.postQuestion(scope.componentId, post).then(function(result){
             if (result) {
