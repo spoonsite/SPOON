@@ -5,22 +5,30 @@
 // GLOBAL Variable for the tests
 theSite = 'http://di2e.github.io';
 
+/* Trying to find you a better page, for now you can go to
+    https://ri1-openam-01.di2e.net/openam 
+   login/logout and it will kill your storefront session
+   On the dev server the URL will be
+    http://store-dev.usu.di2e.net/openam
+*/
 
-/*
-describe('OpenAM Login page, if needed', function() {
-
-    // browser.getTitle() is a function or object
-    it('Log in on the OpenAM page', function() {
+// VPN access NOT working, it blocks access to starting the Selenium Server on Localhost
+/* describe('OpenAM Login page, if needed', function() {
+    // Log on to OpenAM DEV store page (different GUI than prod page)
+    it('Log in on the DEV OpenAM page', function() {
         // Navigate to the site
-        browser.get(theSite, 3500);
+        browser.get('http://store-dev.usu.di2e.net/openam', 2500);
 
-        if(browser.getTitle() != 'DI24E Storefront') {
-            // Log on to the OpenAM Server
+        browser.driver.sleep(9000);
+
+        if(element(by.css('group-field-block')).isPresent()){
             console.log('You need to log on to the OpenAM server!');
         }
+        else console.log('logged on');
     });
 });
 */
+
 
 describe('SvcV-4_button from the home page', function() {
     it('Expand the buttons in the categories', function () {
