@@ -64,27 +64,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     save(name, value);
   };
 
-  componentservice.saveReview = function(id, review) {
-    // console.log('id', id);
-    // console.log('review', review);
-        
-    var result = $q.defer();
-    if (id && review)
-    {
-      var url = 'api/v1/resource/components/'+id+'/review';
-      $http({
-        method: 'POST',
-        url: url,
-        data: review
-      })
-      .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data);
-      });
-    } else{
-      result.reject('A unique ID and review object is required to save a component review');
-    }
-    return result.promise;
-  }
+
 
   componentservice.deleteProsandCons = function(id, reviewId) {
     var result = $q.defer();
@@ -187,6 +167,35 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   }
 
+  componentservice.saveReview = function(id, review, reviewId) {
+    // console.log('id', id);
+    // console.log('review', review);
+        
+    var result = $q.defer();
+    if (id && review)
+    {
+      var url;
+      var method;
+      if (reviewId) {
+        url = 'api/v1/resource/components/'+id+'/review';
+        method = 'POST';
+      } else {
+        url = 'api/v1/resource/components/'+id+'/review' + reviewId;
+        method = 'PUT';
+      }
+      $http({
+        method: method,
+        url: url,
+        data: review
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data);
+      });
+    } else{
+      result.reject('A unique ID and review object is required to save a component review');
+    }
+    return result.promise;
+  }
 
   componentservice.saveReviewPros = function(id, reviewId, pro) {
     var result = $q.defer();

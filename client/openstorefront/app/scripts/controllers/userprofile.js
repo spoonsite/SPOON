@@ -26,6 +26,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
+  $scope.review           = null;
   $scope.nav              = {
     'current': null,
     'bars': [
@@ -53,9 +54,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     }
     resetData();
   });
-  Business.userservice.getReviews('Dawson TEST').then(function(result){
+
+  // TODO: Set this up so it is actually calling with the user's username. 
+  Business.userservice.getReviews('ANONYMOUS').then(function(result){
     if (result) {
-      $scope.username = 'Dawson TEST';
+      console.log('result', result);
+      
+      $scope.username = 'ANONYMOUS';
       $scope.reviews = result;
     } else {
       $scope.reviews = null;
@@ -173,6 +178,21 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         }
       });
     });
+  };
+
+
+  $scope.setReviewDropDowns = function(review) {
+    $scope.review = review;
+    console.log('review', review);
+    console.log('$scope.review', $scope.review.usedTimeCode);
+    console.log('$scope.review', $scope.review.userType);
+    console.log('expertise codes', $scope.expertise);
+    console.log('user codes', $scope.userTypeCodes);
+    
+    console.log(_.find($scope.expertise, {'description': $scope.review.usedTimeCode}));
+    
+    $scope.review.usedTimeCode = _.find($scope.expertise, {'description': $scope.review.usedTimeCode});
+    $scope.review.userType = _.find($scope.userTypeCodes, {'description': $scope.review.userType});
   };
 
   /***************************************************************

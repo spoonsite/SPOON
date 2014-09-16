@@ -460,6 +460,7 @@ var app = angular
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
+      $httpBackend.whenPOST('api/v1/resource/components/reviews/ANONYMOUS').passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?con/).passThrough();
       // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
