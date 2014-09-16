@@ -17,6 +17,8 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.storage.model.EvaluationSection;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +41,7 @@ public class ComponentEvaluationSectionView
 	public static ComponentEvaluationSectionView toView(ComponentEvaluationSection section)
 	{
 		ComponentEvaluationSectionView view = new ComponentEvaluationSectionView();
-		view.setName(section.getComponentEvaluationSectionPk().getEvaulationSection());
+		view.setName(TranslateUtil.translate(EvaluationSection.class, section.getComponentEvaluationSectionPk().getEvaulationSection()));
 		view.setScore(section.getScore());
 		view.setUpdateDts(section.getUpdateDts());
 		return view;

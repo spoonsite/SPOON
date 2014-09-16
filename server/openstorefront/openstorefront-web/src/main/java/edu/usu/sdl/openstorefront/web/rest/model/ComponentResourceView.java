@@ -29,7 +29,6 @@ import java.util.List;
 public class ComponentResourceView
 {
 
-	private String name;
 	private String resourceType;
 	private String resourceTypeDesc;
 	private String description;
@@ -66,16 +65,6 @@ public class ComponentResourceView
 		}
 		componentResourceView.setLink(link);
 		return componentResourceView;
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
 	}
 
 	public String getDescription()
