@@ -46,10 +46,10 @@ public class ComponentReviewView
 
 	
 	@DataType(ComponentReviewPro.class)
-	private List<ComponentReviewPro> pros = new ArrayList<>();
+	private List<ComponentReviewProCon> pros = new ArrayList<>();
 
 	@DataType(ComponentReviewCon.class)
-	private List<ComponentReviewCon> cons = new ArrayList<>();
+	private List<ComponentReviewProCon> cons = new ArrayList<>();
 
 	public ComponentReviewView()
 	{
@@ -82,22 +82,22 @@ public class ComponentReviewView
 		return view;
 	}
 
-	public List<ComponentReviewPro> getPros()
+	public List<ComponentReviewProCon> getPros()
 	{
 		return pros;
 	}
 
-	public void setPros(List<ComponentReviewPro> pros)
+	public void setPros(List<ComponentReviewProCon> pros)
 	{
 		this.pros = pros;
 	}
 
-	public List<ComponentReviewCon> getCons()
+	public List<ComponentReviewProCon> getCons()
 	{
 		return cons;
 	}
 
-	public void setCons(List<ComponentReviewCon> cons)
+	public void setCons(List<ComponentReviewProCon> cons)
 	{
 		this.cons = cons;
 	}
