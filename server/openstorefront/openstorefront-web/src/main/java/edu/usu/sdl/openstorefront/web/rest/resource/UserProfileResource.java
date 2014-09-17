@@ -202,7 +202,19 @@ public class UserProfileResource
 		userWatch.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userWatch.setUsername(userId);
 		//TODO: return the location of the created watch
-		return saveWatch(userWatch, Boolean.TRUE);
+		Boolean check = Boolean.TRUE;
+		List<UserWatch> watches = service.getUserService().getWatches(userId);
+		for(int i = 0; i < watches.size() && check; i++){
+			check = !watches.get(i).getComponentId().equals(userWatch.getComponentId());
+			if (!check){
+				userWatch = watches.get(i);
+			}
+		}
+		if (check) {
+			return saveWatch(userWatch, Boolean.TRUE);
+		} else {
+			return Response.created(URI.create(userWatch.getUserWatchId())).entity(userWatch).build();
+		}
 	}
 
 	@PUT

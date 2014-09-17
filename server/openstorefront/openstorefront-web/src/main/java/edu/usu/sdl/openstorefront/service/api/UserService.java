@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
-import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
