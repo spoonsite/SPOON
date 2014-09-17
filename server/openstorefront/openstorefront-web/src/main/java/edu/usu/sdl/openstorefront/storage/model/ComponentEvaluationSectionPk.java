@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
-import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -25,7 +24,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class ComponentEvaluationSectionPk
-		implements Serializable
+		extends BasePK
 {
 
 	@NotNull

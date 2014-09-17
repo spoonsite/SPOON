@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -50,6 +51,9 @@ public abstract class BaseEntity
 
 	@NotNull
 	private Date updateDts;
+
+	@Version
+	private String storageVersion;
 
 	public BaseEntity()
 	{
@@ -103,6 +107,16 @@ public abstract class BaseEntity
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

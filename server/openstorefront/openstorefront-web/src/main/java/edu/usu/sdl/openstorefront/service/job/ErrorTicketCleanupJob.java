@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.openstorefront.service.job;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 /**
+ * Reaps the errors
  *
  * @author dshurtleff
  */
-@APIDescription("Type of Error")
-public class ErrorTypeCode
-		extends LookupEntity
+public class ErrorTicketCleanupJob
+		extends BaseJob
 {
 
-	public static final String SYSTEM = "SYS";
-	public static final String REST_API = "API";
-	public static final String USER_ERROR = "USER";
-	public static final String AUTO_SYSTEM = "AUTO";
-	public static final String IMPORT = "IMP";
-
-	public ErrorTypeCode()
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException
 	{
+		ServiceProxy serviceProxy = new ServiceProxy();
+		serviceProxy.getSystemService().cleanupOldErrors();
 	}
 
 }

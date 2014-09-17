@@ -342,6 +342,10 @@ var app = angular
         initiateClick(id);
       };
 
+      $rootScope.log = function(message, item) {
+        console.log(message, item);
+      }
+
       /***************************************************************
       * This function assists the modal setup when content is changed.
       ***************************************************************/
@@ -456,10 +460,14 @@ var app = angular
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST('api/v1/resource/components/reviews/ANONYMOUS').passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?con/).passThrough();

@@ -85,8 +85,8 @@ public class PersistenceService
 	public void begin()
 	{
 		if (transaction == null) {
-			transaction = getConnection();
-			transaction.getTransaction().begin();
+			transaction = DBManager.getConnection();
+			transaction.begin();
 		} else {
 			throw new OpenStorefrontRuntimeException("Already in a Transaction", "Commit or rollback transaction action before beginning a new one.");
 		}
@@ -97,7 +97,7 @@ public class PersistenceService
 		if (transaction == null) {
 			throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
 		} else {
-			transaction.getTransaction().commit();
+			transaction.commit();
 		}
 	}
 
@@ -106,14 +106,13 @@ public class PersistenceService
 		if (transaction == null) {
 			throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
 		} else {
-			transaction.getTransaction().rollback();
+			transaction.rollback();
 		}
 	}
 
 	public void endTransaction()
 	{
 		if (transaction != null) {
-			transaction.getTransaction().close();
 			transaction.close();
 			transaction = null;
 		}

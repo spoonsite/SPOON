@@ -18,14 +18,17 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -50,4 +53,33 @@ public class ErrorTicketResource
 		return errorTickets;
 	}
 
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets an error ticket entity")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/{id}")
+	public Response getErrorTicket(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		ErrorTicket errorTicket = service.getPersistenceService().findById(ErrorTicket.class, id);
+		return sendSingleEnityResponse(errorTicket);
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets an error ticket info")
+	@Produces({MediaType.WILDCARD})
+	@Path("/{id}/ticket")
+	public Response getErrorTicketInfo(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		String ticketData = service.getSystemService().errorTicketInfo(id);
+		if (ticketData != null) {
+			ticketData = ticketData.replace("\n", "<br>");
+			ticketData = ticketData.replace("edu.usu.sdl.openstorefront", "<span style='background: yellow;'>edu.usu.sdl.openstorefront</span>");
+		}
+		return sendSingleEnityResponse(ticketData);
+	}
 }

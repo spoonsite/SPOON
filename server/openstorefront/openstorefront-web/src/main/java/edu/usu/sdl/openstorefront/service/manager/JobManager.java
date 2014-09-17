@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
+import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,6 +71,28 @@ public class JobManager
 		addImportJob(new ArticleImporter(), FileSystemManager.IMPORT_ARTICLE_DIR);
 		addImportJob(new HighlightImporter(), FileSystemManager.IMPORT_HIGHLIGHT_DIR);
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
+
+		addCleanUpErrorsJob();
+
+	}
+
+	private static void addCleanUpErrorsJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Error Clean up Job");
+
+		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+				.withIdentity("CleanUpErrorsJob", JOB_GROUP_SYSTEM)
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("CleanUpErrorsJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInMinutes(5)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
 	}
 
 	private static void addImportJob(DirectoryScanListener directoryScanListener, String dirToWatch) throws SchedulerException
@@ -94,7 +117,6 @@ public class JobManager
 				.build();
 
 		scheduler.scheduleJob(job, trigger);
-
 	}
 
 	public static void cleanup()
