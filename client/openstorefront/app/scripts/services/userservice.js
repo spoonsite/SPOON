@@ -17,7 +17,7 @@
 /*global MOCKDATA2*/
 
 'use strict';
-app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function($rootScope, localCache, $http, $q) {
+app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $http, $q) {
 
   //Constants
   var CURRENT_USER = 'JONLAW';
@@ -147,25 +147,32 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   };
 
 
-  var getWatches = function() {
+  var getWatches = function(userId, override) {
     var deferred = $q.defer();
-
-    var watches = checkExpire('watches', minute * 0.5);
-    if (watches) {
-      deferred.resolve(watches);
-    } else {
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/lookup/watches'
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
-          save('watches', data);
+    if (userId) {
+      console.log('userId', userId);
+      
+      var watches = checkExpire('watches', minute * 0.5);
+      if (watches && !override) {
+        deferred.resolve(watches);
+      } else {
+        var url = 'api/v1/resource/userprofiles/'+userId+'/watches';
+        $http({
+          'method': 'GET',
+          'url': url
+        }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          if (data && data !== 'false') {
+            save('watches', data);
+            deferred.resolve(data);
+          } else {
+            deferred.reject('There was an error grabbing the watches');
+          }
+        }).error(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);
-        } else {
-          deferred.reject('There was an error grabbing the watches');
-        }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-      });
+        });
+      }
+    } else {
+      deferred.reject('You didn\'t provide a username');
     }
 
     return deferred.promise;
@@ -181,8 +188,7 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
     }).success(function(data, status, headers, config) { /*jshint unused:false*/
       if (data && data !== 'false') {
         updateCache('watches', data);
-        $rootScope.$broadcast('$updatedWatches');
-        deferred.resolve(true);
+        deferred.resolve(data);
       } else {
         // deferred.reject('There was an error grabbing the watches');
       }
@@ -192,6 +198,63 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
     return deferred.promise;
   };
 
+  var saveWatch = function(userId, watch, watchId) {
+    console.log('userId', userId);
+    console.log('watch', watch);
+    console.log('watchId', watchId);
+    
+    var deferred = $q.defer();
+    if (userId && watch) {
+      var url;
+      var methodString;
+      if (!watchId) {
+        url = 'api/v1/resource/userprofiles/'+userId+'/watches';
+        methodString = 'POST';
+      } else {
+        url = 'api/v1/resource/userprofiles/'+userId+'/watches/'+watchId;
+        methodString = 'PUT';
+      }
+      $http({
+        'method': methodString,
+        'url': url,
+        'data': watch
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false') {
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error saving the watch');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      });
+    } else {
+      deferred.reject('You did not save the watch');
+    }
+
+    return deferred.promise;
+  };
+
+
+  var removeWatch = function(userId, watchId) {
+    var deferred = $q.defer();
+    if (userId && watchId) {
+      var url = 'api/v1/resource/userprofiles/'+userId+'/watches/'+watchId;
+      $http({
+        'method': 'DELETE',
+        'url': url,
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false') {
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the watches');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      });
+    } else {
+      deferred.reject('You must include a username and watch id to remove a watch');
+    }
+
+    return deferred.promise;
+  }
 
   /**
   *
@@ -225,7 +288,9 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
     saveCurrentUserProfile: saveCurrentUserProfile,
     getReviews: getReviews,
     getWatches: getWatches,
-    setWatches: setWatches
+    setWatches: setWatches,
+    saveWatch: saveWatch,
+    removeWatch: removeWatch
   };
 
 }]);

@@ -47,8 +47,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
   Business.lookupservice.getEvalLevels().then(function(result){
-    // console.log('Evaluation Levels', result);
-    
     if (result) {
       $scope.evalLevels = result;
     } else {
@@ -59,9 +57,43 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   Business.userservice.getCurrentUserProfile().then(function(result){
     if (result) {
       $scope.user.info = result;
-      // console.log('result', result);
-      
     }
+  });
+
+  $scope.resetWatches = function(hard) {
+    if ($scope.user.info) {
+      Business.userservice.getWatches($scope.user.info.username, hard).then(function(result){
+        if (result) {
+          console.log('Watches', result);
+
+          $scope.watches = result;
+        }
+      });
+    } else {
+      Business.userservice.getCurrentUserProfile().then(function(result){
+        if (result) {
+         Business.userservice.getWatches(result.username, hard).then(function(result){
+          if (result) {
+            if (!$scope.user) {
+              $scope.user = {};
+            }
+            if (!$scope.user.info) {
+              $scope.user.info = result;
+            }
+            console.log('Watches', result);
+
+            $scope.watches = result;
+          }
+        }); 
+       } else {
+        $scope.watches = {};
+      }
+    })
+    }
+  }
+  $scope.resetWatches(false);
+  $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
+    $scope.resetWatches(true);
   });
 
 
@@ -218,27 +250,38 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.addToWatches = function(id){
-    var a = _.find($scope.watches, {'componentId': id});
-    var component = _.find(MOCKDATA2.componentList, {'componentId': id});
-    
-    if (!a) {
-      $scope.watches.push(
-      {
-          'watchId' : $scope.watches[$scope.watches.length - 1].watchId + 1,
-          'lastUpdateDts' : new Date().getTime(),
-          'lastViewDts' : new Date().getTime(),
-          'createDts' : new Date().getTime(),
-          'componentName' : component.name,
-          'componentId' : id,
-          'notifyFlag' : true
+    var watch = {};
+    watch.lastViewDts = new Date().toISOString();
+    watch.notifyFlg = false;
+    watch.componentId = id;
+    if ($scope.user.info) {
+      Business.userservice.saveWatch($scope.user.info.username, watch).then(function(result){
+        if (result) {
+          $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', id);
+        }
       });
     }
-
-    Business.userservice.setWatches($scope.watches);
-    $scope.details.details.watched = true;
-    _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = true;
-    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
+
+
+  $scope.updateWatch = function(watch){
+    var watchId = watch.watchId;
+    delete watch.componentName;
+    delete watch.lastUpdateDts;
+    delete watch.watchId;
+    delete watch.createDts;
+    delete watch.$$hashKey;
+    console.log('watch', watch);
+    if ($scope.user.info) {
+      Business.userservice.saveWatch($scope.user.info.username, watch, watchId).then(function(result){
+        if (result) {
+          $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', watch.componentId);
+        }
+      });
+    }
+  }
   
   /***************************************************************
   * This function saves a component's tags
@@ -367,16 +410,15 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function removes a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.removeFromWatches = function(id){
-    var a = _.find($scope.watches, {'componentId': id});
-
-    if (a) {
-      $scope.watches.splice(_.indexOf($scope.watches, a), 1);
+    if ($scope.watches && $scope.watches.length > 0) {
+      var watch = _.find($scope.watches, {componentId: id});
+      if ($scope.user.info && watch.watchId) {
+        Business.userservice.removeWatch($scope.user.info.username, watch.watchId).then(null, function(result){
+          $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', id);
+        });
+      }
     }
-
-    Business.userservice.setWatches($scope.watches);
-    $scope.details.details.watched = false;
-    _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
-    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
 
   $scope.getTimes = function(n){
