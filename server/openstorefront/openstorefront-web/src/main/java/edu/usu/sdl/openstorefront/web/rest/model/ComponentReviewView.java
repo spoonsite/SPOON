@@ -47,6 +47,7 @@ public class ComponentReviewView
     private String organization;
     private boolean recommend;
 	private String componentId;
+	private String reviewId;
 	private String name;
 	private Component component;
 
@@ -76,6 +77,7 @@ public class ComponentReviewView
 		view.setRating(review.getRating());
 		view.setTitle(review.getTitle());
 		view.setComponentId(review.getComponentId());
+		view.setReviewId(review.getComponentReviewId());
 		view.setName(service.getPersistenceService().findById(Component.class, review.getComponentId()).getName());
 		ExperienceTimeType timeCode = service.getLookupService().getLookupEnity(ExperienceTimeType.class, review.getUserTimeCode());
 		if (timeCode == null){
@@ -316,6 +318,22 @@ public class ComponentReviewView
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	/**
+	 * @return the reviewId
+	 */
+	public String getReviewId()
+	{
+		return reviewId;
+	}
+
+	/**
+	 * @param reviewId the reviewId to set
+	 */
+	public void setReviewId(String reviewId)
+	{
+		this.reviewId = reviewId;
 	}
 
 }

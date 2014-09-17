@@ -27,6 +27,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
   $scope.review           = null;
+  $scope.user             = {};
   $scope.nav              = {
     'current': null,
     'bars': [
@@ -37,6 +38,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     //
     ]
   };
+
+
+  Business.userservice.getCurrentUserProfile().then(function(result){
+    if (result) {
+      $scope.user.info = result;
+      // console.log('result', result);
+      
+    }
+  });
+
+  $scope.log = $rootScope.log;
 
   $scope.old = $scope.nav.current;
   $scope.$watch('nav', function(){
@@ -56,6 +68,23 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   });
 
   // TODO: Set this up so it is actually calling with the user's username. 
+  $scope.getReviews = function() {
+    Business.userservice.getReviews('ANONYMOUS').then(function(result){
+      if (result) {
+        console.log('result', result);
+        
+        $scope.username = 'ANONYMOUS';
+        $scope.reviews = result;
+      } else {
+        $scope.reviews = null;
+      }
+    });  
+  }
+  $scope.getReviews();
+  $scope.$on('$newReview', function(){
+    $scope.getReviews();
+  })
+
   Business.userservice.getReviews('ANONYMOUS').then(function(result){
     if (result) {
       console.log('result', result);
@@ -180,21 +209,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
-
-  $scope.setReviewDropDowns = function(review) {
-    $scope.review = review;
-    console.log('review', review);
-    console.log('$scope.review', $scope.review.usedTimeCode);
-    console.log('$scope.review', $scope.review.userType);
-    console.log('expertise codes', $scope.expertise);
-    console.log('user codes', $scope.userTypeCodes);
-    
-    console.log(_.find($scope.expertise, {'description': $scope.review.usedTimeCode}));
-    
-    $scope.review.usedTimeCode = _.find($scope.expertise, {'description': $scope.review.usedTimeCode});
-    $scope.review.userType = _.find($scope.userTypeCodes, {'description': $scope.review.userType});
-  };
-
   /***************************************************************
   * Load the User profile 
   ***************************************************************/
@@ -259,6 +273,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $scope.user = jQuery.extend(true, {}, $scope.userBackup);
   };
 
+  $scope.deleteReview = function(reviewId, componentId) {
+    console.log('reviewId', reviewId);
+    Business.componentservice.deleteReview(componentId, reviewId).then(function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
+      $scope.$emit('$TRIGGEREVENT', '$newReview');
+    });
+  };
 
   /***************************************************************
   * This function removes a watch from the watch list. It probably won't change
@@ -287,7 +308,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     Business.userservice.setWatches($scope.watches);
     Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
   };
-
 
   $scope.$on('$includeContentLoaded', function(){
     $timeout(function() {

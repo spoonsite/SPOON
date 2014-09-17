@@ -167,28 +167,54 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   }
 
+  componentservice.deleteReview = function(id, reviewId) {
+    var result = $q.defer();
+    if (id && reviewId)
+    {
+      var url = 'api/v1/resource/components/'+id+'/review/'+reviewId;
+      $http({
+        method: 'DELETE',
+        url: url,
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data);
+      });
+    } else{
+      result.reject('Either a unique ID or question object were missing, and the question was not saved');
+    }
+    return result.promise;
+  }
+
   componentservice.saveReview = function(id, review, reviewId) {
     // console.log('id', id);
     // console.log('review', review);
+    // console.log('review', reviewId);
         
     var result = $q.defer();
     if (id && review)
     {
       var url;
-      var method;
-      if (reviewId) {
+      var methodString;
+      if (!reviewId) {
         url = 'api/v1/resource/components/'+id+'/review';
-        method = 'POST';
+        methodString = 'POST';
       } else {
-        url = 'api/v1/resource/components/'+id+'/review' + reviewId;
-        method = 'PUT';
+        url = 'api/v1/resource/components/'+id+'/review/' + reviewId;
+        methodString = 'PUT';
       }
+      console.log('url', url);
+      console.log('method', methodString);
       $http({
-        method: method,
+        method: methodString,
         url: url,
         data: review
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
+        console.log('Success data', data);
+        result.resolve(data);
+      }).error(function(data, status, headers, config){
+        console.log('Failure headers', headers);
+        console.log('data', data);
         result.resolve(data);
       });
     } else{
