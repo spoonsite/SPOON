@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.util.List;
@@ -121,6 +122,15 @@ public interface ComponentService
 	 * @return
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
+
+	/**
+	 * Return the details object of the component attached to the given id. (the
+	 * full view)
+	 *
+	 * @param username
+	 * @return
+	 */
+	public List<ComponentReviewView> getReviewByUser(String username);
 
 	/**
 	 * 

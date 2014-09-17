@@ -843,4 +843,34 @@ public class ComponentServiceImpl
 		return persistenceService.query(query, null);
 	}
 
+	@Override
+	public List<ComponentReviewView> getReviewByUser(String username)
+	{
+		ComponentReview example = new ComponentReview();
+		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+		example.setCreateUser(username);
+		List<ComponentReview> tempReviews = persistenceService.queryByExample(ComponentReview.class, new QueryByExample(example));
+		List<ComponentReviewView> reviews = new ArrayList();
+		tempReviews.forEach(review -> {
+			ComponentReviewPro tempPro = new ComponentReviewPro();
+			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
+			ComponentReviewCon tempCon = new ComponentReviewCon();
+			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
+
+			tempProPk.setComponentReviewId(review.getComponentReviewId());
+			tempConPk.setComponentReviewId(review.getComponentReviewId());
+
+			tempPro.setComponentReviewProPk(tempProPk);
+			tempCon.setComponentReviewConPk(tempConPk);
+
+			ComponentReviewView tempView = ComponentReviewView.toView(review);
+			
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon))));
+
+			reviews.add(tempView);
+		});
+		return reviews;
+	}
+
 }

@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -48,6 +49,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
@@ -1075,6 +1077,18 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentReview.class, componentId);
+	}
+
+	@GET
+	@APIDescription("Get the reviews for a specified entity")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReview.class)
+	@Path("/reviews/{username}")
+	public List<ComponentReviewView> getComponentReviewsByUsername(
+			@PathParam("username")
+			@RequiredParam String username)
+	{
+		return service.getComponentService().getReviewByUser(username);
 	}
 
 	@DELETE
