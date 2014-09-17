@@ -22,5 +22,11 @@ package edu.usu.sdl.openstorefront.service.api;
  */
 public interface SearchService
 {
-	
+		/**
+	 * Finds all Required Attributes
+	 *
+	 * @return
+	 */
+//	public List<AttributeType> getSearchItems();
+
 }
