@@ -15,49 +15,33 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.doc.ConsumeField;
-import edu.usu.sdl.openstorefront.doc.ValidValueType;
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import javax.persistence.Version;
 
 /**
+ * This base class for PKs Version is needed for the transaction
  *
  * @author dshurtleff
  */
-public class ComponentReviewConPk
-		extends BasePK
+public class BasePK
+		implements Serializable
 {
 
-	@NotNull
-	@ConsumeField
-	private String componentReviewId;
+	@Version
+	private String storageVersion;
 
-	@NotNull
-	@ConsumeField
-	@ValidValueType(value = {}, lookupClass = ReviewCon.class)
-	private String reviewCon;
-
-	public ComponentReviewConPk()
+	public BasePK()
 	{
 	}
 
-	public String getComponentReviewId()
+	public String getStorageVersion()
 	{
-		return componentReviewId;
+		return storageVersion;
 	}
 
-	public void setComponentReviewId(String componentReviewId)
+	public void setStorageVersion(String storageVersion)
 	{
-		this.componentReviewId = componentReviewId;
-	}
-
-	public String getReviewCon()
-	{
-		return reviewCon;
-	}
-
-	public void setReviewCon(String reviewCon)
-	{
-		this.reviewCon = reviewCon;
+		this.storageVersion = storageVersion;
 	}
 
 }

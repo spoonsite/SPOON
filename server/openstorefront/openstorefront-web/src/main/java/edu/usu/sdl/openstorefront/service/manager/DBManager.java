@@ -102,7 +102,7 @@ public class DBManager
 
 	public static OObjectDatabaseTx getConnection()
 	{
-		return globalInstance.acquire("remote:localhost/openstorefront", PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_PASSWORD));
+		return globalInstance.acquire("remote:localhost/openstorefront", PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 	}
 
 }

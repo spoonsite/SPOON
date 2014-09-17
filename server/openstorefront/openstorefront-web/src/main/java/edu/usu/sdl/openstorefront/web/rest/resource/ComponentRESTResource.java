@@ -43,7 +43,9 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -55,6 +57,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -64,6 +67,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -80,6 +84,9 @@ import jersey.repackaged.com.google.common.collect.Lists;
 public class ComponentRESTResource
 		extends BaseResource
 {
+
+	@Context
+	HttpServletRequest request;
 
 	// COMPONENT GENERAL FUNCTIONS
 	@GET
@@ -139,8 +146,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
-			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
-			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
+			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
+			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.created(URI.create("v1/resource/components/" + service.getComponentService().saveComponent(component).getComponent().getComponentId())).entity(component).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -167,8 +174,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
-			component.getComponent().setCreateUser(ServiceUtil.getCurrentUserName());
-			component.getComponent().setUpdateUser(ServiceUtil.getCurrentUserName());
+			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
+			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.ok(service.getComponentService().saveComponent(component)).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -185,6 +192,20 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+
+		//Track Views
+		if (componentDetail != null) {
+			ComponentTracking componentTracking = new ComponentTracking();
+			componentTracking.setClientIp(request.getRemoteAddr());
+			componentTracking.setComponentId(componentId);
+			componentTracking.setEventDts(TimeUtil.currentDate());
+			componentTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
+			componentTracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
+			componentTracking.setCreateUser(SecurityUtil.getCurrentUserName());
+			componentTracking.setUpdateUser(SecurityUtil.getCurrentUserName());
+			service.getComponentService().saveComponentTracking(componentTracking);
+		}
+
 		return componentDetail;
 	}
 
@@ -284,8 +305,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid() && service.getComponentService().checkComponentAttribute(attribute)) {
-			attribute.setCreateUser(ServiceUtil.getCurrentUserName());
-			attribute.setUpdateUser(ServiceUtil.getCurrentUserName());
+			attribute.setCreateUser(SecurityUtil.getCurrentUserName());
+			attribute.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentAttribute(attribute);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -360,8 +381,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
-			dependency.setCreateUser(ServiceUtil.getCurrentUserName());
-			dependency.setUpdateUser(ServiceUtil.getCurrentUserName());
+			dependency.setCreateUser(SecurityUtil.getCurrentUserName());
+			dependency.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentDependency(dependency);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -441,8 +462,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
-			contact.setCreateUser(ServiceUtil.getCurrentUserName());
-			contact.setUpdateUser(ServiceUtil.getCurrentUserName());
+			contact.setCreateUser(SecurityUtil.getCurrentUserName());
+			contact.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentContact(contact);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -537,8 +558,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
-			section.setCreateUser(ServiceUtil.getCurrentUserName());
-			section.setUpdateUser(ServiceUtil.getCurrentUserName());
+			section.setCreateUser(SecurityUtil.getCurrentUserName());
+			section.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSection(section);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -622,8 +643,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
-			schedule.setCreateUser(ServiceUtil.getCurrentUserName());
-			schedule.setUpdateUser(ServiceUtil.getCurrentUserName());
+			schedule.setCreateUser(SecurityUtil.getCurrentUserName());
+			schedule.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSchedule(schedule);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -704,8 +725,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
-			media.setCreateUser(ServiceUtil.getCurrentUserName());
-			media.setUpdateUser(ServiceUtil.getCurrentUserName());
+			media.setCreateUser(SecurityUtil.getCurrentUserName());
+			media.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMedia(media);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -784,8 +805,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
-			metadata.setCreateUser(ServiceUtil.getCurrentUserName());
-			metadata.setUpdateUser(ServiceUtil.getCurrentUserName());
+			metadata.setCreateUser(SecurityUtil.getCurrentUserName());
+			metadata.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMetadata(metadata);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -886,8 +907,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
-			question.setCreateUser(ServiceUtil.getCurrentUserName());
-			question.setUpdateUser(ServiceUtil.getCurrentUserName());
+			question.setCreateUser(SecurityUtil.getCurrentUserName());
+			question.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -970,8 +991,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
-			response.setCreateUser(ServiceUtil.getCurrentUserName());
-			response.setUpdateUser(ServiceUtil.getCurrentUserName());
+			response.setCreateUser(SecurityUtil.getCurrentUserName());
+			response.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -1050,8 +1071,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
-			resource.setCreateUser(ServiceUtil.getCurrentUserName());
-			resource.setUpdateUser(ServiceUtil.getCurrentUserName());
+			resource.setCreateUser(SecurityUtil.getCurrentUserName());
+			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentResource(resource);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -1130,8 +1151,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
-			review.setCreateUser(ServiceUtil.getCurrentUserName());
-			review.setUpdateUser(ServiceUtil.getCurrentUserName());
+			review.setCreateUser(SecurityUtil.getCurrentUserName());
+			review.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReview(review);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -1212,8 +1233,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			con.setCreateUser(ServiceUtil.getCurrentUserName());
-			con.setUpdateUser(ServiceUtil.getCurrentUserName());
+			con.setCreateUser(SecurityUtil.getCurrentUserName());
+			con.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReviewCon(con);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -1290,8 +1311,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			pro.setCreateUser(ServiceUtil.getCurrentUserName());
-			pro.setUpdateUser(ServiceUtil.getCurrentUserName());
+			pro.setCreateUser(SecurityUtil.getCurrentUserName());
+			pro.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReviewPro(pro);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -1374,8 +1395,8 @@ public class ComponentRESTResource
 				validationModel.setConsumeFieldsOnly(true);
 				ValidationResult validationResult = ValidationUtil.validate(validationModel);
 				if (validationResult.valid()) {
-					tag.setCreateUser(ServiceUtil.getCurrentUserName());
-					tag.setUpdateUser(ServiceUtil.getCurrentUserName());
+					tag.setCreateUser(SecurityUtil.getCurrentUserName());
+					tag.setUpdateUser(SecurityUtil.getCurrentUserName());
 					verified.add(tag);
 				} else {
 					valid = Boolean.FALSE;
@@ -1422,8 +1443,8 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			tag.setCreateUser(ServiceUtil.getCurrentUserName());
-			tag.setUpdateUser(ServiceUtil.getCurrentUserName());
+			tag.setCreateUser(SecurityUtil.getCurrentUserName());
+			tag.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTag(tag);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -1497,8 +1518,8 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
-			tracking.setCreateUser(ServiceUtil.getCurrentUserName());
-			tracking.setUpdateUser(ServiceUtil.getCurrentUserName());
+			tracking.setCreateUser(SecurityUtil.getCurrentUserName());
+			tracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(tracking);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();

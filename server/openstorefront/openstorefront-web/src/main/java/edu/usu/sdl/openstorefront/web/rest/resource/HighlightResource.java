@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -117,8 +117,8 @@ public class HighlightResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
-			highlight.setCreateUser(ServiceUtil.getCurrentUserName());
-			highlight.setUpdateUser(ServiceUtil.getCurrentUserName());
+			highlight.setCreateUser(SecurityUtil.getCurrentUserName());
+			highlight.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getSystemService().saveHightlight(highlight);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();

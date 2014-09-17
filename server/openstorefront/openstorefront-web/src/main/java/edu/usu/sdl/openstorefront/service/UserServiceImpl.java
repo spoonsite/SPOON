@@ -24,7 +24,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +62,7 @@ public class UserServiceImpl
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
-	
+
 	@Override
 	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId)
 	{
@@ -83,7 +83,7 @@ public class UserServiceImpl
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
-	
+
 	@Override
 	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk)
 	{
@@ -100,8 +100,7 @@ public class UserServiceImpl
 		}
 		return found;
 	}
-	
-	
+
 	@Override
 	public List<UserWatch> getWatches(String userId)
 	{
@@ -128,8 +127,7 @@ public class UserServiceImpl
 	public UserWatch saveWatch(UserWatch watch)
 	{
 		UserWatch oldWatch = persistenceService.findById(UserWatch.class, watch.getUserWatchId());
-		if (oldWatch != null)
-		{
+		if (oldWatch != null) {
 			oldWatch.setActiveStatus(watch.getActiveStatus());
 			oldWatch.setLastViewDts(watch.getLastViewDts());
 			oldWatch.setNotifyFlg(watch.getNotifyFlg());
@@ -186,36 +184,31 @@ public class UserServiceImpl
 	public UserProfile saveUserProfile(UserProfile user)
 	{
 		UserProfile temp = persistenceService.findById(UserProfile.class, user.getUsername());
-		if (temp != null)
-		{
+		if (temp != null) {
 			temp.setActiveStatus(user.getActiveStatus());
 			temp.setEmail(user.getEmail());
 			temp.setFirstName(user.getFirstName());
 			temp.setLastName(user.getLastName());
 			temp.setOrganization(user.getOrganization());
 			temp.setUserTypeCode(user.getUserTypeCode());
-			temp.setUpdateUser(ServiceUtil.getCurrentUserName());
+			temp.setUpdateUser(SecurityUtil.getCurrentUserName());
 			return persistenceService.persist(temp);
-		}
-		else
-		{
+		} else {
 			user.setCreateDts(TimeUtil.currentDate());
 			user.setUpdateDts(TimeUtil.currentDate());
-			user.setCreateUser(ServiceUtil.getCurrentUserName());
-			user.setUpdateUser(ServiceUtil.getCurrentUserName());
+			user.setCreateUser(SecurityUtil.getCurrentUserName());
+			user.setUpdateUser(SecurityUtil.getCurrentUserName());
 			return persistenceService.persist(user);
 		}
 	}
-	
+
 	@Override
 	public Boolean deleteProfile(String userId)
 	{
 		UserProfile profile = persistenceService.findById(UserProfile.class, userId);
-		if (profile != null)
-		{
+		if (profile != null) {
 			profile.setActiveStatus(UserProfile.INACTIVE_STATUS);
-			if (persistenceService.persist(profile) != null)
-			{
+			if (persistenceService.persist(profile) != null) {
 				return Boolean.TRUE;
 			}
 			return Boolean.FALSE;
@@ -227,8 +220,7 @@ public class UserServiceImpl
 	public UserTracking saveUserTracking(UserTracking tracking)
 	{
 		UserTracking oldTracking = persistenceService.findById(UserTracking.class, tracking.getTrackingId());
-		if (oldTracking != null)
-		{
+		if (oldTracking != null) {
 			oldTracking.setActiveStatus(tracking.getActiveStatus());
 			oldTracking.setBrowser(tracking.getBrowser());
 			oldTracking.setBrowserVersion(tracking.getBrowserVersion());
@@ -250,7 +242,6 @@ public class UserServiceImpl
 		return persistenceService.persist(tracking);
 	}
 
-	
 //  This will be fleshed out more later
 //	@Override
 //	public List<Component> getRecentlyViewed(String userId)

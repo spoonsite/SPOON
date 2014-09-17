@@ -16,9 +16,7 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
-import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,7 +25,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ComponentEvaluationSchedulePk
-		implements Serializable
+		extends BasePK
 {
 
 	@NotNull

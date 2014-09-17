@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -45,6 +44,7 @@ public class ComponentAttributeView
 	private boolean architectureFlg;
 	private boolean importantFlg;
 	private Date updateDts;
+
 	public ComponentAttributeView()
 	{
 	}
@@ -56,9 +56,9 @@ public class ComponentAttributeView
 		AttributeCodePk pk = new AttributeCodePk();
 		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-		AttributeCode code = service.getPersistenceService().findById(AttributeCode.class, pk);
-		AttributeType type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
-		
+		AttributeCode code = service.getAttributeService().findCodeForType(pk);
+		AttributeType type = service.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+
 		view.setExternalLink(code.getDetailUrl());
 		view.setCodeDescription(code.getLabel());
 		view.setCodeLongDescription(code.getDescription());
@@ -72,7 +72,7 @@ public class ComponentAttributeView
 		view.setArchitectureFlg(type.getArchitectureFlg());
 		view.setVisibleFlg(type.getVisibleFlg());
 		view.setUpdateDts(attribute.getUpdateDts());
-		
+
 		return view;
 	}
 
@@ -84,7 +84,7 @@ public class ComponentAttributeView
 		});
 		return views;
 	}
-	
+
 	public String getCodeDescription()
 	{
 		return codeDescription;

@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.openstorefront.web.action;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import net.sourceforge.stripes.action.DefaultHandler;
+import net.sourceforge.stripes.action.Resolution;
 
 /**
  *
  * @author dshurtleff
  */
-@APIDescription("Type of Error")
-public class ErrorTypeCode
-		extends LookupEntity
+public class ErrorAction
+		extends BaseAction
 {
 
-	public static final String SYSTEM = "SYS";
-	public static final String REST_API = "API";
-	public static final String USER_ERROR = "USER";
-	public static final String AUTO_SYSTEM = "AUTO";
-	public static final String IMPORT = "IMP";
-
-	public ErrorTypeCode()
+	@DefaultHandler
+	public Resolution errorTrap()
 	{
+		throw new OpenStorefrontRuntimeException("This is just a stub", "Expection is already handled.");
 	}
 
 }

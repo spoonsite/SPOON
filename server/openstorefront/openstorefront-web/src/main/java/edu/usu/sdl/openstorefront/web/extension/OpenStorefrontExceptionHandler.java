@@ -13,68 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.extension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
-import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
-import net.sourceforge.stripes.controller.StripesConstants;
 import net.sourceforge.stripes.exception.DefaultExceptionHandler;
 
 /**
- *  Translate Errors into something the front-end can handle
+ * Translate Errors into something the front-end can handle
+ *
  * @author dshurtleff
  */
 public class OpenStorefrontExceptionHandler
-	extends DefaultExceptionHandler
+		extends DefaultExceptionHandler
 {
-	private static final Logger log = Logger.getLogger(OpenStorefrontExceptionHandler.class.getName());
-	
-	private final SystemErrorModel systemErrorModel = new SystemErrorModel();
-	
-	public Resolution handleopenstorefrontException(OpenStorefrontRuntimeException error, HttpServletRequest request, HttpServletResponse response) 
+
+	public Resolution handleAll(Throwable error, HttpServletRequest request, HttpServletResponse response)
 	{
-		systemErrorModel.setPotentialResolution(error.getPotentialResolution());
-		return handleAll(error, request, response);
-	}
-	
-	public Resolution handleAll(Throwable error, HttpServletRequest request, HttpServletResponse response) 
-	{
-		 ActionBean action = (ActionBean) request.getAttribute(StripesConstants.REQ_ATTR_ACTION_BEAN);
-		log.log(Level.FINE, "System Error Occured", error);
-		error.printStackTrace();
-		
-		  //TODO: Generate Error Ticket
-		 // Capture all request information, stacktraces, user info
-		 if (action != null) 
-		 {
-			 
-		 }
-		 		
-		
+		//ActionBean action = (ActionBean) request.getAttribute(StripesConstants.REQ_ATTR_ACTION_BEAN);
+
+		ErrorInfo errorInfo = new ErrorInfo(error, request);
+
 		//Strip and senstive info (See Checklist Q: 410)
-		
-		systemErrorModel.setMessage(error.getMessage());			
-		
-		final ObjectMapper objectMapper =  StringProcessor.defaultObjectMapper();
-		return new StreamingResolution(MediaType.APPLICATION_JSON) {
+		ServiceProxy serviceProxy = new ServiceProxy();
+		SystemErrorModel systemErrorModel = serviceProxy.getSystemService().generateErrorTicket(errorInfo);
+
+		final ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+		return new StreamingResolution(MediaType.APPLICATION_JSON)
+		{
 
 			@Override
 			protected void stream(HttpServletResponse response) throws Exception
 			{
-				objectMapper.writeValue(response.getOutputStream(), systemErrorModel);				
-			}			
+				objectMapper.writeValue(response.getOutputStream(), systemErrorModel);
+			}
+
 		};
 	}
-	
+
 }

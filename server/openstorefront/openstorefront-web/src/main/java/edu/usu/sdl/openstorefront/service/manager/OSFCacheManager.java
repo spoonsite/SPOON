@@ -33,6 +33,7 @@ public class OSFCacheManager
 
 	private static Cache lookupCache;
 	private static Cache attributeCache;
+	private static Cache attributeTypeCache;
 
 	public static void init()
 	{
@@ -48,6 +49,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("attributeCache", 500, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeCache = singletonManager.getCache("attributeCache");
+
+			memoryOnlyCache = new Cache("attributeTypeCache", 500, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			attributeTypeCache = singletonManager.getCache("attributeTypeCache");
 
 		} finally {
 			lock.unlock();
@@ -68,6 +73,11 @@ public class OSFCacheManager
 	public static Cache getAttributeCache()
 	{
 		return attributeCache;
+	}
+
+	public static Cache getAttributeTypeCache()
+	{
+		return attributeTypeCache;
 	}
 
 	@Override
