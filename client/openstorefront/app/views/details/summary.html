@@ -2,12 +2,13 @@
 <div class="leftCol hideTheExtra">
   <div ng-if="details.details.evaluation.startDate !== null" class="rightCol">
     <table class="table table-bordered table-hover" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
-      <tbody>
+      <tbody ng-if="details.details.evaluation.startDate">
+        <!-- Currently this table only shows if there is a start date -->
         <tr>
-          <th ng-if="details.details.evaluation.evaluationSections[0] !== undefined" class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>
-          <th ng-if="details.details.evaluation.evaluationSections[0] === undefined" class="valign" colspan="2"><h4>Component Evaluation Information</h4></th>
+          <th ng-if="details.details.evaluation.evaluationSections.length" class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>
+          <th ng-if="!details.details.evaluation.evaluationSections.length" class="valign" colspan="2"><h4>Component Evaluation Information</h4></th>
         </tr>
-        <tr ng-if="details.details.evaluation.endDate !== null">
+        <tr ng-if="details.details.evaluation.endDate">
           <th class="valign" style="vertical-align:middle"><h5>Evaluation Date</h5></th>
           <th class="valign"><h5>{{getDate(details.details.evaluation.endDate)}}</h5></th>
         </tr>
@@ -28,7 +29,7 @@
   </div>
   <div id="updatedStuff">
     <div class="section-headers"><h4>Component Description</h4></div>
-    <p class="results-content-description" ng-class="getIsUpdated('description')? 'updatedForUser': ''" style="margin-left: 0px; height: 100px;" ng-bind-html="details.details.description">
+    <p class="results-content-description" ng-class="getIsUpdated('description')? 'updatedForUser': ''" style="margin-left: 0px;" ng-bind-html="details.details.description">
     </p>
     <br>
   </div>

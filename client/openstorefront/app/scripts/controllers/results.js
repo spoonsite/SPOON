@@ -66,14 +66,22 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
   // grab what we need from the server.
-  Business.getTagsList().then(function(result) {
-    if (result) {
-      $scope.tagsList       = result;
-      $scope.tagsList.sort();
-    } else {
-      $scope.tagsList       = null;
-    }
-  });
+
+  $scope.setupTagList = function() {
+    Business.getTagsList(true).then(function(result) {
+      if (result) {
+        $scope.tagsList       = result;
+        $scope.tagsList.sort();
+      } else {
+        $scope.tagsList       = null;
+      }
+    });
+  }
+  $scope.setupTagList();
+  $scope.$on('$REFRESHTAGLIST', function(event) {
+    $scope.setupTagList();
+  })
+
   Business.getProsConsList().then(function(result) {
     if (result) {
       $scope.prosConsList   = result;
@@ -214,23 +222,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         }
       });
       /*This is simulating the wait time for building the data so that we get a loader*/
-      $timeout(function(){
-        $scope.data.data = $scope.total;
-        _.each($scope.data.data, function(item){
-          if (item.description !== null && item.description !== undefined && item.description !== '') {
-            var desc = item.description.match(/^(.*?)[.?!]\s/);
-            item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
-          } else {
-            item.shortdescription = 'This is a temporary short description';
-          }
-        });
-        // $scope.$emit('$TRIGGERUNLOAD', 'resultsLoad');
-        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-        $scope.initializeData(key);
-        adjustFilters();
-      }, 500);
-    }); //
+      $scope.data.data = $scope.total;
+      _.each($scope.data.data, function(item){
+        if (item.description !== null && item.description !== undefined && item.description !== '') {
+          var desc = item.description.match(/^(.*?)[.?!]\s/);
+          item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
+        } else {
+          item.shortdescription = 'This is a temporary short description';
+        }
+      });
+      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      $scope.initializeData(key);
+      adjustFilters();
+    });
   }; //
 
 
@@ -458,7 +463,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.showDetails = false;
       // console.log('id', id);
       
-      Business.componentservice.getComponentDetails(id).then( function (result){
+      Business.componentservice.getComponentDetails(id, true).then( function (result){
         if (result)
         {
           $scope.sendPageView(result.name);
@@ -633,7 +638,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
     }, 1000);
   });
-
 
 
   //////////////////////////////////////////////////////////////////////////////

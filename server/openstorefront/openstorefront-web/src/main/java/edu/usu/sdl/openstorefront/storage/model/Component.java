@@ -61,7 +61,7 @@ public class Component
 	@ConsumeField
 	private Date releaseDate;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String version;
 
@@ -73,7 +73,7 @@ public class Component
 	@ConsumeField
 	private String approvalState;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	private String approvedUser;
 	private Date approvedDts;
 

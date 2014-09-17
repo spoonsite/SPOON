@@ -223,7 +223,6 @@ var app = angular
         }
       });
 
-
       /***************************************************************
       * This function is what is called when the view has finally been loaded
       ***************************************************************/
@@ -452,7 +451,16 @@ var app = angular
       $httpBackend.whenGET('api/v1/resource/components').passThrough();
       $httpBackend.whenGET('api/v1/resource/highlights').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
+      $httpBackend.whenGET('api/v1/resource/components/tags').passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
+      $httpBackend.whenPOST('api/v1/resource/components/reviews/ANONYMOUS').passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?con/).passThrough();
       // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
@@ -489,9 +497,9 @@ var app = angular
       //   return [200, MOCKDATA.filters, {}];
       // });
 
-      $httpBackend.whenGET('api/v1/resource/tags').respond(function(method, url, data) {
-        return [200, MOCKDATA.tagsList, {}];
-      });
+      // respond(function(method, url, data) {
+      //   return [200, MOCKDATA.tagsList, {}];
+      // });
 
       $httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
         return [200, MOCKDATA.prosConsList, {}];

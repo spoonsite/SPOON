@@ -15,8 +15,8 @@
     "version" : "see site for latest",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491407,
-    "lastActivityDts" : 1410477491407
+    "approvedDts" : 1410821461451,
+    "lastActivityDts" : 1410821461451
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1400005248000,
     "updateUser" : "david.treat",
     "updateDts" : 1400005248000,
-    "componentId" : null,
+    "componentId" : "9",
     "componentAttributePk" : {
       "componentId" : "9",
       "attributeType" : "DI2E-SVCV4-A",
@@ -90,7 +90,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -107,20 +107,7 @@
       "componentId" : "9",
       "evaluationLevelCode" : "LEVEL1"
     },
-    "completionDate" : 1410477491408,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1400005248000,
-    "updateUser" : "david.treat",
-    "updateDts" : 1400005248000,
-    "componentId" : "9",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "9",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491408,
+    "completionDate" : 1410821461451,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -133,7 +120,7 @@
       "componentId" : "9",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491408,
+    "completionDate" : 1410821461451,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -189,10 +176,11 @@
     "updateDts" : 1400005248000,
     "componentId" : "9",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='http://clavin.bericotechnologies.com' title='http://clavin.bericotechnologies.com' target='_blank'> http://clavin.bericotechnologies.com</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -203,10 +191,11 @@
     "updateDts" : 1400005248000,
     "componentId" : "9",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DI2EEVAL",
     "link" : "<a href='https://storefront.di2e.net/marketplace/public/Clavin_ChecklistReport_v1.0.docx' title='https://storefront.di2e.net/marketplace/public/Clavin_ChecklistReport_v1.0.docx' target='_blank'> https://storefront.di2e.net/marketplace/public/Clavin_ChecklistReport_v1.0.docx</a>",
-    "name" : "DI2E Framework Evaluation Report URL",
     "description" : null,
     "restricted" : null
   }, {
@@ -217,10 +206,11 @@
     "updateDts" : 1400005248000,
     "componentId" : "9",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='http://clavin.bericotechnologies.com/' title='http://clavin.bericotechnologies.com/' target='_blank'> http://clavin.bericotechnologies.com/</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   }, {
@@ -231,10 +221,11 @@
     "updateDts" : 1400005248000,
     "componentId" : "9",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://github.com/Berico-Technologies/CLAVIN' title='https://github.com/Berico-Technologies/CLAVIN' target='_blank'> https://github.com/Berico-Technologies/CLAVIN</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   } ],

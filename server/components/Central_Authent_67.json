@@ -15,8 +15,8 @@
     "version" : null,
     "approvalState" : "A",
     "approvedUser" : "david.treat",
-    "approvedDts" : 1410477491399,
-    "lastActivityDts" : 1410477491399
+    "approvedDts" : 1410821461440,
+    "lastActivityDts" : 1410821461440
   },
   "attributes" : [ {
     "activeStatus" : null,
@@ -60,7 +60,7 @@
     "createDts" : 1405698045000,
     "updateUser" : "david.treat",
     "updateDts" : 1405698045000,
-    "componentId" : null,
+    "componentId" : "67",
     "componentAttributePk" : {
       "componentId" : "67",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "67",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491405,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "david.treat",
-    "createDts" : 1405698045000,
-    "updateUser" : "david.treat",
-    "updateDts" : 1405698045000,
-    "componentId" : "67",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "67",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491405,
+    "completionDate" : 1410821461448,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -213,10 +200,11 @@
     "updateDts" : 1405698045000,
     "componentId" : "67",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='http://www.jasig.org/cas' title='http://www.jasig.org/cas' target='_blank'> http://www.jasig.org/cas</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   }, {
@@ -227,10 +215,11 @@
     "updateDts" : 1405698045000,
     "componentId" : "67",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='http://www.jasig.org/cas/download' title='http://www.jasig.org/cas/download' target='_blank'> http://www.jasig.org/cas/download</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   } ],

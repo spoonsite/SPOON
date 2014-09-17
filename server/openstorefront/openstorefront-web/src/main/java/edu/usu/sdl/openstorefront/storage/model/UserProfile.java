@@ -59,9 +59,6 @@ public class UserProfile
 	@ConsumeField
 	private String organization;
 
-	@NotNull
-	private Boolean admin;
-
 	public UserProfile()
 	{
 	}
@@ -124,16 +121,6 @@ public class UserProfile
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
-	}
-
-	public Boolean getAdmin()
-	{
-		return admin;
-	}
-
-	public void setAdmin(Boolean admin)
-	{
-		this.admin = admin;
 	}
 
 }

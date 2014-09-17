@@ -29,13 +29,14 @@ import java.util.List;
 public class ComponentResourceView
 {
 
-	private String name;
 	private String resourceType;
 	private String resourceTypeDesc;
 	private String description;
 	private String link;
 	private Boolean restricted;
 	private Date updateDts;
+
+	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
 
 	public ComponentResourceView()
 	{
@@ -44,37 +45,26 @@ public class ComponentResourceView
 	public static List<ComponentResourceView> toViewList(List<ComponentResource> resources)
 	{
 		List<ComponentResourceView> viewList = new ArrayList();
-		resources.forEach(resource->{
+		resources.forEach(resource -> {
 			viewList.add(toView(resource));
 		});
 		return viewList;
 	}
-	
+
 	public static ComponentResourceView toView(ComponentResource componentResource)
 	{
 		ComponentResourceView componentResourceView = new ComponentResourceView();
 		componentResourceView.setDescription(componentResource.getDescription());
-		componentResourceView.setName(componentResource.getName());
 		componentResourceView.setResourceType(componentResource.getResourceType());
 		componentResourceView.setResourceTypeDesc(TranslateUtil.translate(ResourceType.class, componentResource.getResourceType()));
 		componentResourceView.setRestricted(componentResource.getRestricted());
 		componentResourceView.setUpdateDts(componentResource.getUpdateDts());
 		String link = componentResource.getLink();
-		if (componentResource.getResourceFileId() != null) {
-			link = ComponentResource.LOCAL_RESOURCE_URL + componentResource.getResourceId();
+		if (componentResource.getFileName() != null) {
+			link = LOCAL_RESOURCE_URL + componentResource.getResourceId();
 		}
 		componentResourceView.setLink(link);
 		return componentResourceView;
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
 	}
 
 	public String getDescription()

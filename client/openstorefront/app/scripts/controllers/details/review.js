@@ -33,7 +33,6 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     } else {
       $scope.userTypeCodes = [];
     }
-    loadUserProfile();
   });
   Business.getProsConsList().then(function(result) {
     if (result) {
@@ -53,11 +52,11 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
   $scope.submitReview = function(event, review, revs) {
     var body = {};
     body.userTypeCode = review.userRole.code;
-    body.comment = review.comment;
+    body.comment = review.comment? review.comment : '';
     body.title = review.title;
     body.rating = review.rating? review.rating: 0;
     body.lastUsed = new Date(review.lastUsed).toISOString();
-    body.recommend = review.recommend;
+    body.recommend = review.recommend? true: false;
     body.organization = review.organization;
     body.userTimeCode = review.usedTimeCode.code;
     // console.log('body', body);
@@ -82,10 +81,14 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
               // console.log('result', result);
             })
           });
+          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
           $scope.$emit('$hideModal', 'descModal');
         }
       });
     } else {
+      console.log('revs', revs);
+      console.log('review', review);
+      
       // Business.componentservice.updateReview(componentId, body).then(function(result){
       //   console.log('result', result);
       //   if (result && result.componentReviewId)

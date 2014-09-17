@@ -15,8 +15,8 @@
     "version" : "1",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491427,
-    "lastActivityDts" : 1410477491427
+    "approvedDts" : 1410821461476,
+    "lastActivityDts" : 1410821461476
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1405612927000,
     "updateUser" : "chris.bashioum",
     "updateDts" : 1405612927000,
-    "componentId" : null,
+    "componentId" : "35",
     "componentAttributePk" : {
       "componentId" : "35",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "35",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491427,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1405612927000,
-    "updateUser" : "chris.bashioum",
-    "updateDts" : 1405612927000,
-    "componentId" : "35",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "35",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491427,
+    "completionDate" : 1410821461476,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -227,10 +214,11 @@
     "updateDts" : 1405612927000,
     "componentId" : "35",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://software.forge.mil/sf/docman/do/listDocuments/projects.gvs' title='https://software.forge.mil/sf/docman/do/listDocuments/projects.gvs' target='_blank'> https://software.forge.mil/sf/docman/do/listDocuments/projects.gvs</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -241,10 +229,11 @@
     "updateDts" : 1405612927000,
     "componentId" : "35",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='https://intellipedia.intelink.gov/wiki/Gvs' title='https://intellipedia.intelink.gov/wiki/Gvs' target='_blank'> https://intellipedia.intelink.gov/wiki/Gvs</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],

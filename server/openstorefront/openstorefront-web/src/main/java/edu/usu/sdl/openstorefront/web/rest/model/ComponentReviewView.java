@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
@@ -24,7 +25,9 @@ import edu.usu.sdl.openstorefront.storage.model.ExperienceTimeType;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -43,13 +46,16 @@ public class ComponentReviewView
     private Date updateDate;
     private String organization;
     private boolean recommend;
+	private String componentId;
+	private String name;
+	private Component component;
 
 	
 	@DataType(ComponentReviewPro.class)
-	private List<ComponentReviewPro> pros = new ArrayList<>();
+	private List<ComponentReviewProCon> pros = new ArrayList<>();
 
 	@DataType(ComponentReviewCon.class)
-	private List<ComponentReviewCon> cons = new ArrayList<>();
+	private List<ComponentReviewProCon> cons = new ArrayList<>();
 
 	public ComponentReviewView()
 	{
@@ -69,6 +75,8 @@ public class ComponentReviewView
 		view.setComment(review.getComment());
 		view.setRating(review.getRating());
 		view.setTitle(review.getTitle());
+		view.setComponentId(review.getComponentId());
+		view.setName(service.getPersistenceService().findById(Component.class, review.getComponentId()).getName());
 		ExperienceTimeType timeCode = service.getLookupService().getLookupEnity(ExperienceTimeType.class, review.getUserTimeCode());
 		if (timeCode == null){
 			view.setUsedTimeCode(null);
@@ -82,22 +90,22 @@ public class ComponentReviewView
 		return view;
 	}
 
-	public List<ComponentReviewPro> getPros()
+	public List<ComponentReviewProCon> getPros()
 	{
 		return pros;
 	}
 
-	public void setPros(List<ComponentReviewPro> pros)
+	public void setPros(List<ComponentReviewProCon> pros)
 	{
 		this.pros = pros;
 	}
 
-	public List<ComponentReviewCon> getCons()
+	public List<ComponentReviewProCon> getCons()
 	{
 		return cons;
 	}
 
-	public void setCons(List<ComponentReviewCon> cons)
+	public void setCons(List<ComponentReviewProCon> cons)
 	{
 		this.cons = cons;
 	}
@@ -260,6 +268,54 @@ public class ComponentReviewView
 	public void setRecommend(boolean recommend)
 	{
 		this.recommend = recommend;
+	}
+
+	/**
+	 * @return the component
+	 */
+	public Component getComponent()
+	{
+		return component;
+	}
+
+	/**
+	 * @param component the component to set
+	 */
+	public void setComponent(Component component)
+	{
+		this.component = component;
+	}
+
+	/**
+	 * @return the componentId
+	 */
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	/**
+	 * @param componentId the componentId to set
+	 */
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 
 }

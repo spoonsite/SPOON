@@ -15,15 +15,15 @@
     "version" : "See site for latest versions",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491435,
-    "lastActivityDts" : 1410477491435
+    "approvedDts" : 1410821461494,
+    "lastActivityDts" : 1410821461494
   },
   "attributes" : [ {
-    "activeStatus" : null,
-    "createUser" : null,
-    "createDts" : null,
-    "updateUser" : null,
-    "updateDts" : null,
+    "activeStatus" : "A",
+    "createUser" : "CROSS.PATRICK.I.1126309879",
+    "createDts" : 1403200729000,
+    "updateUser" : "patrick.cross",
+    "updateDts" : 1403200729000,
     "componentId" : "44",
     "componentAttributePk" : {
       "componentId" : "44",
@@ -60,7 +60,7 @@
     "createDts" : 1403200729000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200729000,
-    "componentId" : null,
+    "componentId" : "44",
     "componentAttributePk" : {
       "componentId" : "44",
       "attributeType" : "DI2E-SVCV4-A",
@@ -90,7 +90,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -107,20 +107,7 @@
       "componentId" : "44",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491435,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1403200729000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200729000,
-    "componentId" : "44",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "44",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491435,
+    "completionDate" : 1410821461494,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -189,10 +176,11 @@
     "updateDts" : 1403200729000,
     "componentId" : "44",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='http://forgerock.com/products/open-identity-stack/openam/' title='http://forgerock.com/products/open-identity-stack/openam/' target='_blank'> http://forgerock.com/products/open-identity-stack/openam/</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   } ],

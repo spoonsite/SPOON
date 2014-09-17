@@ -17,8 +17,11 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.service.transfermodel.QuestionAll;
+import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -43,7 +46,13 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
@@ -54,14 +63,18 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles all component related entities
@@ -206,20 +219,21 @@ public class ComponentServiceImpl
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
-
 			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
-			tempProPk.setComponentReviewId(review.getComponentReviewId());
-			tempPro.setComponentReviewProPk(tempProPk);
-
 			ComponentReviewCon tempCon = new ComponentReviewCon();
-
 			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
+
+			tempProPk.setComponentReviewId(review.getComponentReviewId());
 			tempConPk.setComponentReviewId(review.getComponentReviewId());
+
+			tempPro.setComponentReviewProPk(tempProPk);
 			tempCon.setComponentReviewConPk(tempConPk);
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
-			tempView.setPros(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro)));
-			tempView.setCons(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon)));
+			
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon))));
+
 			reviews.add(tempView);
 		});
 		result.setReviews(reviews);
@@ -231,6 +245,7 @@ public class ComponentServiceImpl
 			ComponentQuestionResponse tempResponse = new ComponentQuestionResponse();
 			List<ComponentQuestionResponseView> responseViews;
 			tempResponse.setQuestionId(question.getQuestionId());
+			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			responseViews = ComponentQuestionResponseView.toViewList(persistenceService.queryByExample(ComponentQuestionResponse.class, new QueryByExample(tempResponse)));
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
 		});
@@ -249,30 +264,47 @@ public class ComponentServiceImpl
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
 		AttributeType type = persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
+
 		AttributeCodePk pk = new AttributeCodePk();
 		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 		AttributeCode code = persistenceService.findById(AttributeCode.class, pk);
+
 		if (type != null && code != null) {
 			ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
 			if (oldAttribute != null) {
-				oldAttribute.setActiveStatus(attribute.getActiveStatus());
-				oldAttribute.setComponentAttributePk(attribute.getComponentAttributePk());
+				oldAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				oldAttribute.setUpdateUser(attribute.getUpdateUser());
 				oldAttribute.setUpdateDts(TimeUtil.currentDate());
 				persistenceService.persist(oldAttribute);
 			} else {
-				ComponentAttribute example = new ComponentAttribute();
-				example.setComponentAttributePk(new ComponentAttributePk());
-				example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-				ComponentAttribute test = persistenceService.queryByOneExample(ComponentAttribute.class, new QueryByExample(example));
-				if ((test == null) || (type.getAllowMutlipleFlg() && !code.getAttributeCodePk().getAttributeCode().equals(attribute.getComponentAttributePk().getAttributeCode()))) {
-					attribute.setCreateDts(TimeUtil.currentDate());
-					attribute.setUpdateDts(TimeUtil.currentDate());
-					persistenceService.persist(attribute);
-				}
-			}
-		}
+				if (type.getAllowMutlipleFlg() == false) {
+					ComponentAttribute example = new ComponentAttribute();
+					example.setComponentAttributePk(new ComponentAttributePk());
+					example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 
+					ComponentAttribute test = persistenceService.queryByOneExample(ComponentAttribute.class, new QueryByExample(example));
+					if (test != null) {
+						throw new OpenStorefrontRuntimeException("Attribute Type doesn't allow multiple codes.  Type: " + type.getAttributeType(), "Check data passed in.");
+					}
+				}
+				attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				attribute.setCreateDts(TimeUtil.currentDate());
+				attribute.setUpdateDts(TimeUtil.currentDate());
+				persistenceService.persist(attribute);
+			}
+		} else {
+			StringBuilder error = new StringBuilder();
+			if (type == null) {
+				error.append("Attribute type not found.  Type: ").append(attribute.getComponentAttributePk().getAttributeType());
+			}
+
+			if (code == null) {
+				error.append("Attribute Code not found. Code: ").append(attribute.getComponentAttributePk());
+			}
+
+			throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
+		}
 	}
 
 	@Override
@@ -291,6 +323,7 @@ public class ComponentServiceImpl
 			oldContact.setUpdateUser(contact.getUpdateUser());
 			persistenceService.persist(oldContact);
 		} else {
+			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 			contact.setContactId(persistenceService.generateId());
 			contact.setCreateDts(TimeUtil.currentDate());
 			contact.setUpdateDts(TimeUtil.currentDate());
@@ -312,6 +345,7 @@ public class ComponentServiceImpl
 			oldDependency.setUpdateUser(dependency.getUpdateUser());
 			persistenceService.persist(oldDependency);
 		} else {
+			dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
 			dependency.setDependencyId(persistenceService.generateId());
 			dependency.setCreateDts(TimeUtil.currentDate());
 			dependency.setUpdateDts(TimeUtil.currentDate());
@@ -330,6 +364,7 @@ public class ComponentServiceImpl
 			oldSection.setUpdateUser(section.getUpdateUser());
 			persistenceService.persist(oldSection);
 		} else {
+			section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
 			section.setCreateDts(TimeUtil.currentDate());
 			section.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(section);
@@ -348,6 +383,7 @@ public class ComponentServiceImpl
 			oldSchedule.setUpdateUser(schedule.getUpdateUser());
 			persistenceService.persist(oldSchedule);
 		} else {
+			schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
 			schedule.getComponentEvaluationSchedulePk().setComponentId(schedule.getComponentId());
 			schedule.setCreateDts(TimeUtil.currentDate());
 			schedule.setUpdateDts(TimeUtil.currentDate());
@@ -371,6 +407,7 @@ public class ComponentServiceImpl
 			oldMedia.setUpdateUser(media.getUpdateUser());
 			persistenceService.persist(oldMedia);
 		} else {
+			media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			media.setComponentMediaId(persistenceService.generateId());
 			media.setCreateDts(TimeUtil.currentDate());
 			media.setUpdateDts(TimeUtil.currentDate());
@@ -390,6 +427,7 @@ public class ComponentServiceImpl
 			oldMetadata.setUpdateUser(metadata.getUpdateUser());
 			persistenceService.persist(oldMetadata);
 		} else {
+			metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 			metadata.setMetadataId(persistenceService.generateId());
 			metadata.setCreateDts(TimeUtil.currentDate());
 			metadata.setUpdateDts(TimeUtil.currentDate());
@@ -404,12 +442,14 @@ public class ComponentServiceImpl
 		if (oldQuestion != null) {
 			oldQuestion.setOrganization(question.getOrganization());
 			oldQuestion.setQuestion(question.getQuestion());
-			oldQuestion.setUserType(question.getUserType());
+			oldQuestion.setUserTypeCode(question.getUserTypeCode());
 			oldQuestion.setActiveStatus(question.getActiveStatus());
 			oldQuestion.setUpdateDts(TimeUtil.currentDate());
 			oldQuestion.setUpdateUser(question.getUpdateUser());
 			persistenceService.persist(oldQuestion);
 		} else {
+			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+			question.setQuestion(question.getQuestion());
 			question.setQuestionId(persistenceService.generateId());
 			question.setCreateDts(TimeUtil.currentDate());
 			question.setUpdateDts(TimeUtil.currentDate());
@@ -431,6 +471,7 @@ public class ComponentServiceImpl
 			oldResponse.setUpdateUser(response.getUpdateUser());
 			persistenceService.persist(oldResponse);
 		} else {
+			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			response.setResponseId(persistenceService.generateId());
 			response.setCreateDts(TimeUtil.currentDate());
 			response.setUpdateDts(TimeUtil.currentDate());
@@ -445,8 +486,9 @@ public class ComponentServiceImpl
 		if (oldResource != null) {
 			oldResource.setDescription(resource.getDescription());
 			oldResource.setLink(resource.getLink());
-			oldResource.setName(resource.getName());
-			oldResource.setResourceFileId(resource.getResourceFileId());
+			oldResource.setFileName(resource.getFileName());
+			oldResource.setOriginalName(resource.getOriginalName());
+			oldResource.setMimeType(resource.getMimeType());
 			oldResource.setResourceType(resource.getResourceType());
 			oldResource.setRestricted(resource.getRestricted());
 			oldResource.setActiveStatus(resource.getActiveStatus());
@@ -454,6 +496,7 @@ public class ComponentServiceImpl
 			oldResource.setUpdateUser(resource.getUpdateUser());
 			persistenceService.persist(oldResource);
 		} else {
+			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 			resource.setResourceId(persistenceService.generateId());
 			resource.setCreateDts(TimeUtil.currentDate());
 			resource.setUpdateDts(TimeUtil.currentDate());
@@ -479,6 +522,7 @@ public class ComponentServiceImpl
 			oldReview.setUpdateUser(review.getUpdateUser());
 			persistenceService.persist(oldReview);
 		} else {
+			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			review.setComponentReviewId(persistenceService.generateId());
 			review.setCreateDts(TimeUtil.currentDate());
 			review.setUpdateDts(TimeUtil.currentDate());
@@ -491,13 +535,12 @@ public class ComponentServiceImpl
 	{
 		ComponentReviewCon oldCon = persistenceService.findById(ComponentReviewCon.class, con.getComponentReviewConPk());
 		if (oldCon != null) {
-			oldCon.setText(con.getText());
-			oldCon.getComponentReviewConPk().setReviewCon(con.getText());
 			oldCon.setActiveStatus(con.getActiveStatus());
 			oldCon.setUpdateDts(TimeUtil.currentDate());
 			oldCon.setUpdateUser(con.getUpdateUser());
 			persistenceService.persist(oldCon);
 		} else {
+			con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 			con.setCreateDts(TimeUtil.currentDate());
 			con.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(con);
@@ -509,8 +552,6 @@ public class ComponentServiceImpl
 	{
 		ComponentReviewPro oldPro = persistenceService.findById(ComponentReviewPro.class, pro.getComponentReviewProPk());
 		if (oldPro != null) {
-			oldPro.setText(pro.getText());
-			oldPro.getComponentReviewProPk().setReviewPro(pro.getText());
 			oldPro.setActiveStatus(pro.getActiveStatus());
 			oldPro.setUpdateDts(TimeUtil.currentDate());
 			oldPro.setUpdateUser(pro.getUpdateUser());
@@ -533,6 +574,7 @@ public class ComponentServiceImpl
 			oldTag.setUpdateUser(tag.getUpdateUser());
 			persistenceService.persist(oldTag);
 		} else {
+			tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 			tag.setTagId(persistenceService.generateId());
 			tag.setCreateDts(TimeUtil.currentDate());
 			tag.setUpdateDts(TimeUtil.currentDate());
@@ -553,6 +595,7 @@ public class ComponentServiceImpl
 			oldTracking.setUpdateUser(tracking.getUpdateUser());
 			persistenceService.persist(oldTracking);
 		} else {
+			tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 			tracking.setComponentTrackingId(persistenceService.generateId());
 			tracking.setCreateDts(TimeUtil.currentDate());
 			tracking.setUpdateDts(TimeUtil.currentDate());
@@ -563,58 +606,59 @@ public class ComponentServiceImpl
 	@Override
 	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
-		//uncomment this to remove all of the components to start clean
-		// Component temp = new Component();
-		// temp.setActiveStatus(Component.ACTIVE_STATUS);
-		// persistenceService.deleteByExample(temp);
-		// return component;
-		Component oldComponent = new Component();
-		oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
+		Component oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 
-		//TODO: Validate attribute (type, codes)
-		if (oldComponent == null && component.checkForComplete()) {
+		ValidationResult validationResult = component.checkForComplete();
+		if (validationResult.valid()) {
+			if (oldComponent != null) {
 
-			//new
-			component.getComponent().setComponentId(persistenceService.generateId());
-			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
-			component.getComponent().setCreateDts(TimeUtil.currentDate());
-			component.getComponent().setUpdateDts(TimeUtil.currentDate());
-			component.getComponent().setLastActivityDts(TimeUtil.currentDate());
-			persistenceService.persist(component.getComponent());
+				oldComponent.setName(component.getComponent().getName());
+				oldComponent.setApprovalState(component.getComponent().getApprovalState());
+				oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
+				oldComponent.setDescription(component.getComponent().getDescription());
+				oldComponent.setGuid(component.getComponent().getGuid());
+				oldComponent.setLastActivityDts(TimeUtil.currentDate());
+				oldComponent.setOrganization(component.getComponent().getOrganization());
+				oldComponent.setParentComponentId(component.getComponent().getParentComponentId());
+				oldComponent.setReleaseDate(component.getComponent().getReleaseDate());
+				oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
+				oldComponent.setUpdateDts(TimeUtil.currentDate());
+				oldComponent.setUpdateUser(component.getComponent().getUpdateUser());
+				persistenceService.persist(oldComponent);
 
-			component.getAttributes().forEach(attribute -> {
-				attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-				ComponentAttributePk pk = new ComponentAttributePk();
-				pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
-				pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-				pk.setComponentId(component.getComponent().getComponentId());
-				attribute.setComponentAttributePk(pk);
-				attribute.setComponentId(component.getComponent().getComponentId());
-				attribute.setCreateUser(component.getComponent().getCreateUser());
-				attribute.setUpdateUser(component.getComponent().getUpdateUser());
-				attribute.setCreateDts(TimeUtil.currentDate());
-				attribute.setUpdateDts(TimeUtil.currentDate());
-				persistenceService.persist(attribute);
-			});
-			return component;
-		} else if (component.checkForComplete()) {
-			//FIXME: Finish the Update
-			oldComponent.setName(component.getComponent().getName());
-			oldComponent.setApprovalState(component.getComponent().getApprovalState());
-			oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
-			oldComponent.setDescription(component.getComponent().getDescription());
-			oldComponent.setGuid(component.getComponent().getGuid());
-			oldComponent.setComponentId(component.getComponent().getComponentId());
-			oldComponent.setLastActivityDts(TimeUtil.currentDate());
-			oldComponent.setOrganization(component.getComponent().getOrganization());
-			oldComponent.setParentComponentId(component.getComponent().getParentComponentId());
-			oldComponent.setReleaseDate(component.getComponent().getReleaseDate());
-			oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
-			oldComponent.setUpdateDts(TimeUtil.currentDate());
-			persistenceService.persist(oldComponent);
-			return component;
+				//remove all old attributes
+				ComponentAttribute componentAttributeExample = new ComponentAttribute();
+				componentAttributeExample.setComponentId(oldComponent.getComponentId());
+				persistenceService.deleteByExample(componentAttributeExample);
+
+				//add new attributes; Note: add all attributes at once....other call the other single attribute save
+				component.getAttributes().forEach(attribute -> {
+					attribute.setComponentId(oldComponent.getComponentId());
+					attribute.getComponentAttributePk().setComponentId(oldComponent.getComponentId());
+					saveComponentAttribute(attribute);
+				});
+
+			} else {
+
+				if (StringUtils.isBlank(component.getComponent().getComponentId())) {
+					component.getComponent().setComponentId(persistenceService.generateId());
+				}
+				component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
+				component.getComponent().setCreateDts(TimeUtil.currentDate());
+				component.getComponent().setUpdateDts(TimeUtil.currentDate());
+				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
+				persistenceService.persist(component.getComponent());
+
+				component.getAttributes().forEach(attribute -> {
+					attribute.setComponentId(component.getComponent().getComponentId());
+					attribute.getComponentAttributePk().setComponentId(component.getComponent().getComponentId());
+					attribute.setCreateUser(component.getComponent().getCreateUser());
+					attribute.setUpdateUser(component.getComponent().getUpdateUser());
+					saveComponentAttribute(attribute);
+				});
+			}
 		}
-		return null;
+		return component;
 	}
 
 	@Override
@@ -635,7 +679,198 @@ public class ComponentServiceImpl
 	@Override
 	public ComponentAll saveFullComponent(ComponentAll componentAll)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		//check component
+		Component component = componentAll.getComponent();
+		if (StringUtils.isBlank(component.getCreateUser())) {
+			component.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+		}
+
+		if (StringUtils.isBlank(component.getUpdateUser())) {
+			component.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+		}
+
+		if (StringUtils.isBlank(component.getApprovalState())) {
+			component.setApprovalState(Component.APPROVAL_STATE_PENDING);
+		}
+
+		if (component.getLastActivityDts() != null) {
+			component.setLastActivityDts(TimeUtil.currentDate());
+		}
+
+		if (StringUtils.isBlank(component.getGuid())) {
+			component.setGuid(persistenceService.generateId());
+		}
+
+		//Check Attributes
+		ValidationModel validationModel = new ValidationModel(component);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			RequiredForComponent requiredForComponent = new RequiredForComponent();
+			requiredForComponent.setComponent(component);
+			requiredForComponent.getAttributes().addAll(componentAll.getAttributes());
+
+			//validate attributes
+			for (ComponentAttribute componentAttribute : componentAll.getAttributes()) {
+				validationModel = new ValidationModel(componentAttribute);
+				validationModel.setConsumeFieldsOnly(true);
+				validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid() == false) {
+					throw new OpenStorefrontRuntimeException(validationResult.toString());
+				}
+			}
+			saveComponent(requiredForComponent);
+		} else {
+			throw new OpenStorefrontRuntimeException(validationResult.toString());
+		}
+
+		handleBaseComponetSave(ComponentContact.class, componentAll.getContacts(), component.getComponentId());
+		handleBaseComponetSave(ComponentEvaluationSchedule.class, componentAll.getEvaluationSchedules(), component.getComponentId());
+		handleBaseComponetSave(ComponentEvaluationSection.class, componentAll.getEvaluationSections(), component.getComponentId());
+		handleBaseComponetSave(ComponentExternalDependency.class, componentAll.getExternalDependencies(), component.getComponentId());
+		handleBaseComponetSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId());
+		handleBaseComponetSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId());
+		handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId());
+		handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId());
+
+		for (QuestionAll question : componentAll.getQuestions()) {
+			List<ComponentQuestion> questions = new ArrayList<>(1);
+			questions.add(question.getQuestion());
+			handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId());
+			handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId());
+		}
+
+		for (ReviewAll reviewAll : componentAll.getReviews()) {
+			List<ComponentReview> reviews = new ArrayList<>(1);
+			reviews.add(reviewAll.getComponentReview());
+			handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId());
+			handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId());
+			handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId());
+		}
+
+		//validate
+		return componentAll;
+	}
+
+	private <T extends BaseComponent> void handleBaseComponetSave(Class<T> baseComponentClass, List<T> baseComponents, String componentId)
+	{
+		for (BaseComponent baseComponent : baseComponents) {
+			baseComponent.setComponentId(componentId);
+
+			//validate
+			ValidationModel validationModel = new ValidationModel(baseComponent);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid() == false) {
+				throw new OpenStorefrontRuntimeException(validationResult.toString());
+			}
+		}
+		//remove old ones
+		try {
+			T baseComponentExample = baseComponentClass.newInstance();
+			baseComponentExample.setComponentId(componentId);
+			persistenceService.deleteByExample(baseComponentExample);
+		} catch (InstantiationException | IllegalAccessException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+
+		//save new ones
+		for (T baseComponent : baseComponents) {
+			if (baseComponent instanceof ComponentContact) {
+				saveComponentContact((ComponentContact) baseComponent);
+			} else if (baseComponent instanceof ComponentEvaluationSchedule) {
+				saveComponentEvaluationSchedule((ComponentEvaluationSchedule) baseComponent);
+			} else if (baseComponent instanceof ComponentEvaluationSection) {
+				saveComponentEvaluationSection((ComponentEvaluationSection) baseComponent);
+			} else if (baseComponent instanceof ComponentExternalDependency) {
+				saveComponentDependency((ComponentExternalDependency) baseComponent);
+			} else if (baseComponent instanceof ComponentMedia) {
+				saveComponentMedia((ComponentMedia) baseComponent);
+			} else if (baseComponent instanceof ComponentMetadata) {
+				saveComponentMetadata((ComponentMetadata) baseComponent);
+			} else if (baseComponent instanceof ComponentResource) {
+				saveComponentResource((ComponentResource) baseComponent);
+			} else if (baseComponent instanceof ComponentTag) {
+				saveComponentTag((ComponentTag) baseComponent);
+			} else if (baseComponent instanceof ComponentQuestion) {
+				saveComponentQuestion((ComponentQuestion) baseComponent);
+			} else if (baseComponent instanceof ComponentQuestionResponse) {
+				saveComponentQuestionResponse((ComponentQuestionResponse) baseComponent);
+			} else if (baseComponent instanceof ComponentReview) {
+				saveComponentReview((ComponentReview) baseComponent);
+			} else if (baseComponent instanceof ComponentReviewPro) {
+				saveComponentReviewPro((ComponentReviewPro) baseComponent);
+			} else if (baseComponent instanceof ComponentReviewCon) {
+				saveComponentReviewCon((ComponentReviewCon) baseComponent);
+			} else {
+				throw new OpenStorefrontRuntimeException("Save not supported for this base component: " + baseComponent.getClass().getName(), "Add support (Developement task)");
+			}
+		}
+	}
+
+	@Override
+	public void cascadeDeleteOfComponent(String componentId)
+	{
+		Objects.requireNonNull(componentId, "Component Id is required.");
+		log.log(Level.INFO, "Attempting to Removing component: " + componentId);
+
+		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
+		for (Class entityClass : entityClasses) {
+			if (ServiceUtil.BASECOMPONENT_ENTITY.equals(entityClass.getSimpleName()) == false) {
+				if (ServiceUtil.isSubClass(ServiceUtil.BASECOMPONENT_ENTITY, entityClass)) {
+					try {
+						deleteBaseComponent((BaseComponent) entityClass.newInstance(), componentId);
+					} catch (InstantiationException | IllegalAccessException ex) {
+						throw new OpenStorefrontRuntimeException("Class is not a base component class: " + entityClass.getName(), "Check class");
+					}
+				}
+			}
+		}
+		Component component = persistenceService.findById(Component.class, componentId);
+		persistenceService.delete(component);
+	}
+
+	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId)
+	{
+		example.setComponentId(componentId);
+		persistenceService.deleteByExample(example);
+	}
+
+	@Override
+	public List<ComponentTag> getTagCloud()
+	{
+		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
+		return persistenceService.query(query, null);
+	}
+
+	@Override
+	public List<ComponentReviewView> getReviewByUser(String username)
+	{
+		ComponentReview example = new ComponentReview();
+		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+		example.setCreateUser(username);
+		List<ComponentReview> tempReviews = persistenceService.queryByExample(ComponentReview.class, new QueryByExample(example));
+		List<ComponentReviewView> reviews = new ArrayList();
+		tempReviews.forEach(review -> {
+			ComponentReviewPro tempPro = new ComponentReviewPro();
+			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
+			ComponentReviewCon tempCon = new ComponentReviewCon();
+			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
+
+			tempProPk.setComponentReviewId(review.getComponentReviewId());
+			tempConPk.setComponentReviewId(review.getComponentReviewId());
+
+			tempPro.setComponentReviewProPk(tempProPk);
+			tempCon.setComponentReviewConPk(tempConPk);
+
+			ComponentReviewView tempView = ComponentReviewView.toView(review);
+			
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon))));
+
+			reviews.add(tempView);
+		});
+		return reviews;
 	}
 
 }

@@ -51,7 +51,9 @@ public abstract class BaseDirImporter
 				lastSyncDate = TimeUtil.fromString(lastSyncDts);
 			}
 			if (lastSyncDate != null) {
-				if (file.lastModified() <= lastSyncDate.getTime()) {
+				long fileTime = file.lastModified();
+				long syncTime = lastSyncDate.getTime();
+				if (fileTime <= syncTime) {
 					process = false;
 				}
 			}

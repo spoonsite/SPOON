@@ -46,6 +46,12 @@ public class ComponentAttributePk
 	{
 	}
 
+	@Override
+	public String toString()
+	{
+		return attributeType + "-" + attributeCode;
+	}
+
 	public String getComponentId()
 	{
 		return componentId;

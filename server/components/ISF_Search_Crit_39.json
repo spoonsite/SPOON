@@ -15,8 +15,8 @@
     "version" : "See links for latest",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491433,
-    "lastActivityDts" : 1410477491433
+    "approvedDts" : 1410821461485,
+    "lastActivityDts" : 1410821461485
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1399485080000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485080000,
-    "componentId" : null,
+    "componentId" : "39",
     "componentAttributePk" : {
       "componentId" : "39",
       "attributeType" : "DI2E-SVCV4-A",
@@ -138,7 +138,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Maj Greg Black",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -155,20 +155,7 @@
       "componentId" : "39",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491433,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485080000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485080000,
-    "componentId" : "39",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "39",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491433,
+    "completionDate" : 1410821461485,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -265,10 +252,11 @@
     "updateDts" : 1399485080000,
     "componentId" : "39",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://stash.di2e.net/projects/ISF/repos/search-criteria/browse' title='https://stash.di2e.net/projects/ISF/repos/search-criteria/browse' target='_blank'> https://stash.di2e.net/projects/ISF/repos/search-criteria/browse</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -279,10 +267,11 @@
     "updateDts" : 1399485080000,
     "componentId" : "39",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://stash.di2e.net/projects/ISF/repos/search-criteria/browse' title='https://stash.di2e.net/projects/ISF/repos/search-criteria/browse' target='_blank'> https://stash.di2e.net/projects/ISF/repos/search-criteria/browse</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   } ],

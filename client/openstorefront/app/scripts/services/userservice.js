@@ -196,28 +196,26 @@ app.factory('userservice', ['$rootScope', 'localCache', '$http', '$q', function(
   /**
   *
   */
-  var getReviews = function(userName) {
+  var getReviews = function(username) {
     var deferred = $q.defer();
-    var reviews = [];
-    _.each(MOCKDATA2.componentList, function(component) {
-      if (component.reviews[0] !== undefined) {
-        var review = {
-          'componentId': component.componentId,
-          'name': component.name,
-          'reviews': [],
-        };
-        _.each(component.reviews, function(item){
-          if (item.username === userName) {
-            review.reviews.push(item);
-          }
-        });
-        if (review.reviews[0] !== undefined) {
-          reviews.push(review);
+    var reviews = checkExpire('reviews', minute * 0.5);
+    if (reviews) {
+      deferred.resolve(reviews);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/components/reviews/'+username
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false') {
+          save('reviews', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject('There was an error grabbing the reviews');
         }
-      }
-    });
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      });
+    }
 
-    deferred.resolve(reviews);
     return deferred.promise;
   };
 

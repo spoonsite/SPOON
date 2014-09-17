@@ -29,6 +29,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
   $scope.componentState                = Business.componentservice.getComponentState();
   $scope.resultsComments               = Business.componentservice.getResultsComments();
+  $scope.user                          = {};
+  $scope.editQuestion                  = [];
 
   $scope.setComponentId = function(id) {
     var deferred = $q.defer();
@@ -51,6 +53,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       $scope.evalLevels = result;
     } else {
       $scope.evalLevels = null;
+    }
+  });
+
+  Business.userservice.getCurrentUserProfile().then(function(result){
+    if (result) {
+      $scope.user.info = result;
+      // console.log('result', result);
+      
     }
   });
 
@@ -234,9 +244,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function saves a component's tags
   ***************************************************************/
   $scope.saveTags = function(id, tags){
-    Business.componentservice.saveTags(id, tags);
+    Business.componentservice.saveTags(id, tags).then(function(result){
+      // console.log('result', result);
+      $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
+    });
     $scope.applyFilters();
   };
+
+
 
 
   /***************************************************************
@@ -383,14 +398,24 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
 
-  var updateList = [];
+  $scope.deleteQuestion = function(questionId) {
+    Business.componentservice.deleteQuestion($scope.details.details.componentId, questionId).then(function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
+    });
+  };
 
+  $scope.deleteResponse = function(responseId) {
+    Business.componentservice.deleteResponse($scope.details.details.componentId, responseId).then(function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
+    });
+  };
+
+  var updateList = [];
 
   $scope.getIsUpdated = function(item)
   {
-    
     return _.contains(updateList, item);
-  }
+  };
 
   /***************************************************************
   * This function sets up the 'show updated flags' and creates the tooltips.
@@ -508,6 +533,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   }
 
+
+  var onlyOnce = null;
+
   /***************************************************************
   * This function watches the details object for changes
   ***************************************************************/
@@ -526,7 +554,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           }
         }
         // setup the update list.
-        setupUpdateFlags();
+        if (onlyOnce !== $scope.details.details.componentId) {
+          setupUpdateFlags();
+          onlyOnce = $scope.details.details.componentId;
+        }
       }
     }
   }, true);

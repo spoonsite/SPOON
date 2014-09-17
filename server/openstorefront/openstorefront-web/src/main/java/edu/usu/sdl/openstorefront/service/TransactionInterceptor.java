@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service;
 
 import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *  This handles transaction transparently to the service
+ * This handles transaction transparently to the service
+ *
  * @author dshurtleff
  */
 public class TransactionInterceptor
-	implements ProxyInterceptor
+		implements ProxyInterceptor
 {
+
+	private static final Logger log = Logger.getLogger(TransactionInterceptor.class.getName());
 
 	@Override
 	public boolean before(Object proxy, Method m, Object[] args, ProxyContext context)
 	{
+		log.log(Level.FINER, "Beginning transaction");
 		context.getPersistenceService().begin();
 		return false;
 	}
@@ -36,18 +41,21 @@ public class TransactionInterceptor
 	@Override
 	public void after(Object proxy, Method m, Object[] args, ProxyContext context)
 	{
+		log.log(Level.FINER, "Commiting transaction");
 		context.getPersistenceService().commit();
 	}
 
 	@Override
 	public void handleException(Object proxy, Method m, Object[] args, ProxyContext context)
 	{
+		log.log(Level.WARNING, "Rolling back transaction");
 		context.getPersistenceService().rollback();
 	}
 
 	@Override
 	public void requiredAfterRun(Object proxy, Method m, Object[] args, ProxyContext context)
 	{
+		log.log(Level.FINER, "Ending transaction");
 		context.getPersistenceService().endTransaction();
 	}
 }

@@ -64,27 +64,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     save(name, value);
   };
 
-  componentservice.saveReview = function(id, review) {
-    // console.log('id', id);
-    // console.log('review', review);
-        
-    var result = $q.defer();
-    if (id && review)
-    {
-      var url = 'api/v1/resource/components/'+id+'/review';
-      $http({
-        method: 'POST',
-        url: url,
-        data: review
-      })
-      .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data);
-      });
-    } else{
-      result.reject('A unique ID and review object is required to save a component review');
-    }
-    return result.promise;
-  }
+
 
   componentservice.deleteProsandCons = function(id, reviewId) {
     var result = $q.defer();
@@ -108,6 +88,111 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       });
     } else{
       result.reject('A unique ID and pro object is required to save a component pro');
+    }
+    return result.promise;
+  }
+
+  componentservice.deleteQuestion = function(id, questionId) {
+    var result = $q.defer();
+    if (id && questionId)
+    {
+      var url = 'api/v1/resource/components/'+id+'/question/'+questionId;
+      $http({
+        method: 'DELETE',
+        url: url,
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data);
+      });
+    } else{
+      result.reject('Either a unique ID or question object were missing, and the question was not saved');
+    }
+    return result.promise;
+  }
+
+  componentservice.postQuestion = function(id, post) {
+    var result = $q.defer();
+    if (id && post)
+    {
+      var url = 'api/v1/resource/components/'+id+'/question';
+      $http({
+        method: 'POST',
+        url: url,
+        data: post
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data.questionId);
+      });
+    } else{
+      result.reject('Either a unique ID or question object were missing, and the question was not saved');
+    }
+    return result.promise;
+  }
+
+
+  componentservice.deleteResponse = function(id, responseId) {
+    var result = $q.defer();
+    if (id && responseId)
+    {
+      var url = 'api/v1/resource/components/'+id+'/response/'+responseId;
+      $http({
+        method: 'DELETE',
+        url: url,
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data.responseId);
+      });
+    } else{
+      result.reject('Either a unique ID or question object were missing, and the question was not saved');
+    }
+    return result.promise;
+  }
+
+  componentservice.postResponse = function(id, questionId, post) {
+    var result = $q.defer();
+    if (id && questionId && post)
+    {
+      var url = 'api/v1/resource/components/'+id+'/response/'+questionId;
+      $http({
+        method: 'POST',
+        url: url,
+        data: post
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data);
+      });
+    } else{
+      result.reject('Either a unique ID, a quesitonID or a response object were missing, and the question was not saved');
+    }
+    return result.promise;
+  }
+
+  componentservice.saveReview = function(id, review, reviewId) {
+    // console.log('id', id);
+    // console.log('review', review);
+        
+    var result = $q.defer();
+    if (id && review)
+    {
+      var url;
+      var method;
+      if (reviewId) {
+        url = 'api/v1/resource/components/'+id+'/review';
+        method = 'POST';
+      } else {
+        url = 'api/v1/resource/components/'+id+'/review' + reviewId;
+        method = 'PUT';
+      }
+      $http({
+        method: method,
+        url: url,
+        data: review
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        result.resolve(data);
+      });
+    } else{
+      result.reject('A unique ID and review object is required to save a component review');
     }
     return result.promise;
   }
@@ -151,7 +236,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   }
 
 
-  componentservice.getComponentDetails = function(id) {
+  componentservice.getComponentDetails = function(id, override) {
     var result = $q.defer();
     if (id)
     {
@@ -159,7 +244,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       var value = null;
       // if they don't give me an ID I send them back the whole list.
       value = checkExpire('component_'+id, minute * 2);
-      if (value) {
+      if (value && !override) {
         result.resolve(value);
       } else {
         $http({
@@ -289,26 +374,24 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     componentservice.getResultsComments = function() {
       return MOCKDATA.resultsComments;
     };
+
+
     componentservice.saveTags = function(id, tags) {
-      var a = _.find(MOCKDATA2.componentList, {'componentId': id});
-      componentservice.updateTagCloud(tags);
-      if (a) {
-        a.tags = tags;
-      }
-      return true;
-    };
-    componentservice.updateTagCloud = function(tags) {
-      _.each(tags, function(tag) {
-        if (!_.contains(MOCKDATA.tagsList, tag.text)) {
-          MOCKDATA.tagsList.push(tag.text);
+      var deferred = $q.defer();
+      $http.delete('api/v1/resource/components/'+id+'/tags');
+      $http({
+        method: 'POST',
+        url: 'api/v1/resource/components/'+id+'/tags',
+        data: tags
+      }).success(function(data, status, headers, config){
+        if (data && data !== 'false') {
+          deferred.resolve(data);
         }
+      }).error(function(data, status, headers, config){
+        deferred.resolve('There was an error saving the tags');
       });
-      MOCKDATA.tagsList.sort();
+      return deferred.promise;
     };
-
-
-
-
 
     return componentservice;
   }]);

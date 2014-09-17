@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
@@ -21,7 +20,6 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,55 +28,56 @@ import java.util.List;
  */
 public class ComponentEvaluationView
 {
+
 	private Date startDate;
 	private Date endDate;
 	private String currentLevelCode = "N/A";
 	private String reviewedVersion;
 	private Date updateDts;
-	
+
 	@DataType(ComponentEvaluationScheduleView.class)
 	private List<ComponentEvaluationScheduleView> evaluationSchedule = new ArrayList<>();
-	
+
 	@DataType(ComponentEvaluationSectionView.class)
 	private List<ComponentEvaluationSectionView> evaluationSections = new ArrayList<>();
 
 	public ComponentEvaluationView()
 	{
 	}
-	
+
 	public static ComponentEvaluationView toViewFromStorage(List<ComponentEvaluationSchedule> schedules, List<ComponentEvaluationSection> sections)
 	{
 		List<ComponentEvaluationScheduleView> newSchedules = ComponentEvaluationScheduleView.toViewList(schedules);
 		List<ComponentEvaluationSectionView> newSections = ComponentEvaluationSectionView.toViewList(sections);
 		return ComponentEvaluationView.toView(newSchedules, newSections);
 	}
-	
+
 	public static ComponentEvaluationView toView(List<ComponentEvaluationScheduleView> schedules, List<ComponentEvaluationSectionView> sections)
 	{
 		ComponentEvaluationView view = new ComponentEvaluationView();
 		view.setEvaluationSchedule(schedules);
 		view.setEvaluationSections(sections);
-		
+
 		//FIXME: TODO: Change this to the correct start date. (where do we get it from?)
-		view.setStartDate(new Date());
-		view.setEndDate(new Date());
-		
+		if (view.getEvaluationSections().size() > 0) {
+			view.setStartDate(new Date());
+			view.setEndDate(new Date());
+		}
+
 		//FIND THE CORRECT LEVEL CODE SOMEHOW
 		view.setCurrentLevelCode("");
-		
+
 		// where do we get this from?
 		view.setReviewedVersion(null);
 		Date max;
-		max = (schedules.size() > 0 && schedules.get(0) != null)? schedules.get(0).getUpdateDts(): null;
+		max = (schedules.size() > 0 && schedules.get(0) != null) ? schedules.get(0).getUpdateDts() : null;
 		for (ComponentEvaluationScheduleView schedule : schedules) {
-			if (schedule.getUpdateDts().compareTo(max) > 0)
-			{
+			if (schedule.getUpdateDts().compareTo(max) > 0) {
 				max = schedule.getUpdateDts();
 			}
 		}
 		for (ComponentEvaluationSectionView section : sections) {
-			if (section.getUpdateDts().compareTo(max) > 0)
-			{
+			if (section.getUpdateDts().compareTo(max) > 0) {
 				max = section.getUpdateDts();
 			}
 		}
@@ -161,5 +160,5 @@ public class ComponentEvaluationView
 	{
 		this.updateDts = updateDts;
 	}
-	
+
 }

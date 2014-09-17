@@ -15,8 +15,8 @@
     "version" : "See site",
     "approvalState" : "A",
     "approvedUser" : "patrick.cross",
-    "approvedDts" : 1410477491428,
-    "lastActivityDts" : 1410477491428
+    "approvedDts" : 1410821461478,
+    "lastActivityDts" : 1410821461478
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1403200718000,
     "updateUser" : "patrick.cross",
     "updateDts" : 1403200718000,
-    "componentId" : null,
+    "componentId" : "60",
     "componentAttributePk" : {
       "componentId" : "60",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : "NA",
+    "firstName" : "Mary Schwoerer, GVS Program Manager",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "60",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491428,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "patrick.cross",
-    "createDts" : 1403200718000,
-    "updateUser" : "patrick.cross",
-    "updateDts" : 1403200718000,
-    "componentId" : "60",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "60",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491428,
+    "completionDate" : 1410821461479,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -213,10 +200,11 @@
     "updateDts" : 1403200718000,
     "componentId" : "60",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://home.gvs.nga.mil/home/documentation' title='https://home.gvs.nga.mil/home/documentation' target='_blank'> https://home.gvs.nga.mil/home/documentation</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -227,10 +215,11 @@
     "updateDts" : 1403200718000,
     "componentId" : "60",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Product Homepage",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "HOME",
     "link" : "<a href='https://intellipedia.intelink.gov/wiki/GVS' title='https://intellipedia.intelink.gov/wiki/GVS' target='_blank'> https://intellipedia.intelink.gov/wiki/GVS</a>",
-    "name" : "Product Homepage",
     "description" : null,
     "restricted" : null
   } ],

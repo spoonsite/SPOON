@@ -15,8 +15,8 @@
     "version" : "1.0",
     "approvalState" : "A",
     "approvedUser" : "CROSS.PATRICK.I.1126309879",
-    "approvedDts" : 1410477491408,
-    "lastActivityDts" : 1410477491408
+    "approvedDts" : 1410821461452,
+    "lastActivityDts" : 1410821461452
   },
   "attributes" : [ {
     "activeStatus" : "A",
@@ -48,7 +48,7 @@
     "createDts" : 1399485055000,
     "updateUser" : "CROSS.PATRICK.I.1126309879",
     "updateDts" : 1399485055000,
-    "componentId" : null,
+    "componentId" : "10",
     "componentAttributePk" : {
       "componentId" : "10",
       "attributeType" : "DI2E-SVCV4-A",
@@ -114,7 +114,7 @@
     "componentId" : null,
     "contactId" : null,
     "contactType" : "GOV",
-    "firstName" : null,
+    "firstName" : "NA",
     "lastName" : null,
     "email" : null,
     "phone" : null,
@@ -131,20 +131,7 @@
       "componentId" : "10",
       "evaluationLevelCode" : "LEVEL1"
     },
-    "completionDate" : 1410477491408,
-    "levelStatus" : "C"
-  }, {
-    "activeStatus" : "A",
-    "createUser" : "CROSS.PATRICK.I.1126309879",
-    "createDts" : 1399485055000,
-    "updateUser" : "CROSS.PATRICK.I.1126309879",
-    "updateDts" : 1399485055000,
-    "componentId" : "10",
-    "componentEvaluationSchedulePk" : {
-      "componentId" : "10",
-      "evaluationLevelCode" : "NA"
-    },
-    "completionDate" : 1410477491408,
+    "completionDate" : 1410821461452,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -157,7 +144,7 @@
       "componentId" : "10",
       "evaluationLevelCode" : "LEVEL0"
     },
-    "completionDate" : 1410477491408,
+    "completionDate" : 1410821461452,
     "levelStatus" : "C"
   }, {
     "activeStatus" : "A",
@@ -199,10 +186,11 @@
     "updateDts" : 1399485055000,
     "componentId" : "10",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DOC",
     "link" : "<a href='https://confluence.di2e.net/download/attachments/14518881/CP-CE%20COE%20v2%20Map%20API%20Developer%20Guide.pdf?api=v2' title='https://confluence.di2e.net/download/attachments/14518881/CP-CE%20COE%20v2%20Map%20API%20Developer%20Guide.pdf?api=v2' target='_blank'> https://confluence.di2e.net/download/attachments/14518881/CP-CE%20COE%20v2%20Map%20API%20Developer%20Guide.pdf?api=v2</a>",
-    "name" : "Documentation",
     "description" : null,
     "restricted" : null
   }, {
@@ -213,10 +201,11 @@
     "updateDts" : 1399485055000,
     "componentId" : "10",
     "resourceId" : null,
-    "resourceFileId" : null,
-    "resourceType" : "Code",
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
+    "resourceType" : "CODE",
     "link" : "<a href='https://stash.di2e.net/projects/EMP/repos/map-api/browse/js' title='https://stash.di2e.net/projects/EMP/repos/map-api/browse/js' target='_blank'> https://stash.di2e.net/projects/EMP/repos/map-api/browse/js</a>",
-    "name" : "Code Location URL",
     "description" : null,
     "restricted" : null
   }, {
@@ -227,10 +216,11 @@
     "updateDts" : 1399485055000,
     "componentId" : "10",
     "resourceId" : null,
-    "resourceFileId" : null,
+    "fileName" : null,
+    "originalName" : null,
+    "mimeType" : null,
     "resourceType" : "DI2EEVAL",
     "link" : "<a href='https://storefront.di2e.net/marketplace/public/CMAPI-JavascriptLibrary_ChecklistReport_v1.0.docx' title='https://storefront.di2e.net/marketplace/public/CMAPI-JavascriptLibrary_ChecklistReport_v1.0.docx' target='_blank'> https://storefront.di2e.net/marketplace/public/CMAPI-JavascriptLibrary_ChecklistReport_v1.0.docx</a>",
-    "name" : "DI2E Framework Evaluation Report URL",
     "description" : null,
     "restricted" : null
   } ],
