@@ -70,7 +70,9 @@ import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -152,9 +154,35 @@ public class ComponentServiceImpl
 	@Override
 	public List<ComponentSearchView> getComponents()
 	{
+		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
+
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		return ComponentSearchView.toViewList(persistenceService.queryByExample(Component.class, new QueryByExample(componentExample)));
+		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(componentExample));
+
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		Map<String, List<ComponentAttribute>> attributeMaps = new HashMap<>();
+		for (ComponentAttribute attribute : componentAttributes) {
+			if (attributeMaps.containsKey(attribute.getComponentAttributePk().getComponentId())) {
+				List<ComponentAttribute> attributes = attributeMaps.get(attribute.getComponentAttributePk().getComponentId());
+				attributes.add(attribute);
+			} else {
+				List<ComponentAttribute> attributes = new ArrayList<>();
+				attributes.add(attribute);
+				attributeMaps.put(attribute.getComponentAttributePk().getComponentId(), attributes);
+			}
+		}
+
+		for (Component component : components) {
+			ComponentSearchView componentSearchView = ComponentSearchView.toView(component);
+			List<ComponentAttribute> attributes = attributeMaps.get(component.getComponentId());
+			componentSearchView.setAttributes(ComponentAttributeView.toViewList(attributes));
+			componentSearchViews.add(componentSearchView);
+		}
+
+		return componentSearchViews;
 	}
 
 	@Override
@@ -173,7 +201,7 @@ public class ComponentServiceImpl
 
 		UserWatch tempWatch = new UserWatch();
 		// TODO: take this out of the comments once we're in production.
-		//tempWatch.setUsername(ServiceUtil.getCurrentUserName());
+		//tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
 		UserWatch tempUserWatch = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(tempWatch));

@@ -26,6 +26,11 @@ public class TrackEventCode
 		extends LookupEntity
 {
 
+	public static final String LOGIN = "L";
+	public static final String VIEW = "V";
+	public static final String EXTERNAL_LINK_CLICK = "ELC";
+	public static final String COMPONENT_SYNC = "SYNC";
+
 	public TrackEventCode()
 	{
 	}

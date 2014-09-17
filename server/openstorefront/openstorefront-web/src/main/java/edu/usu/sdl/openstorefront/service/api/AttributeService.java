@@ -47,6 +47,22 @@ public interface AttributeService
 	public List<AttributeCode> findCodesForType(String type);
 
 	/**
+	 * This will lookup code in an efficient matter
+	 *
+	 * @param pk
+	 * @return code or null if not found
+	 */
+	public AttributeCode findCodeForType(AttributeCodePk pk);
+
+	/**
+	 * This will lookup type in an efficient matter
+	 *
+	 * @param type
+	 * @return
+	 */
+	public AttributeType findType(String type);
+
+	/**
 	 * Saves type
 	 *
 	 * @param attributeType
@@ -63,12 +79,12 @@ public interface AttributeService
 	public void saveAttributeCode(AttributeCode attributeCode);
 
 	/**
-	 * 
+	 *
 	 * @param componentId
-	 * @return 
+	 * @return
 	 */
 	public List<ComponentAttribute> getAttributesByComponentId(String componentId);
-	
+
 	/**
 	 * Grabs the article for a give code or type
 	 *

@@ -17,8 +17,10 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
+import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.util.List;
 
 /**
@@ -87,5 +89,26 @@ public interface SystemService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void syncHighlights(List<Highlight> highlights);
+
+	/**
+	 * This handle the error and generate an error ticket
+	 *
+	 * @param errorInfo
+	 * @return SystemErrorModel
+	 */
+	public SystemErrorModel generateErrorTicket(ErrorInfo errorInfo);
+
+	/**
+	 * Retrieves the error ticket from the file system
+	 *
+	 * @param errorTicketId
+	 * @return
+	 */
+	public String errorTicketInfo(String errorTicketId);
+
+	/**
+	 * Removes excess errors beyond max....deleting oldest first
+	 */
+	public void cleanupOldErrors();
 
 }

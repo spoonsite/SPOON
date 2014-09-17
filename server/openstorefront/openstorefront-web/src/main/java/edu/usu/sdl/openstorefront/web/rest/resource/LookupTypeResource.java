@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.service.PersistenceService;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -168,8 +169,8 @@ public class LookupTypeResource
 				newLookupEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
 
 				newLookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-				newLookupEntity.setCreateUser(ServiceUtil.getCurrentUserName());
-				newLookupEntity.setUpdateUser(ServiceUtil.getCurrentUserName());
+				newLookupEntity.setCreateUser(SecurityUtil.getCurrentUserName());
+				newLookupEntity.setUpdateUser(SecurityUtil.getCurrentUserName());
 				service.getLookupService().saveLookupValue(newLookupEntity);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				throw new OpenStorefrontRuntimeException(" (System Issue) Unable to process entity. " + entityName, "System error...contact support.", e);

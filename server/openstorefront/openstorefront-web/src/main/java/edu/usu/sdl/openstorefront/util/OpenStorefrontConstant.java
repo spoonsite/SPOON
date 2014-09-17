@@ -29,6 +29,7 @@ public class OpenStorefrontConstant
 	public static final String SYSTEM_ADMIN_USER = "SYSTEM-ADMIN";
 	public static final String ANONYMOUS_USER = "ANONYMOUS";
 	public static final String NOT_AVAILABLE = "NA";
+	public static final String ERROR_LOGGER = "edu.usu.sdl.openstorefront.SYSTEM-ERROR-LOGGER";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_USERNAME = 80;
@@ -50,5 +51,7 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_TAG = 60;
 
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+	public static final String ERRORS_MAX_COUNT_DEFAULT = "5000";
 
 }

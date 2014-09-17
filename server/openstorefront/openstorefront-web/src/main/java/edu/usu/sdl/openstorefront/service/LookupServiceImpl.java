@@ -22,7 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -159,7 +159,7 @@ public class LookupServiceImpl
 		if (lookupEntity != null) {
 			lookupEntity.setActiveStatus(LookupEntity.INACTIVE_STATUS);
 			lookupEntity.setUpdateDts(TimeUtil.currentDate());
-			lookupEntity.setUpdateUser(ServiceUtil.getCurrentUserName());
+			lookupEntity.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(lookupEntity);
 		}
 	}
@@ -242,7 +242,7 @@ public class LookupServiceImpl
 		}
 		return lookupEntity;
 	}
-	
+
 	@Override
 	public LookupEntity getLookupEnityByDesc(String lookClassName, String description)
 	{
@@ -255,7 +255,5 @@ public class LookupServiceImpl
 		}
 		return lookupEntity;
 	}
-
-
 
 }

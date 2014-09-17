@@ -27,7 +27,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -192,7 +192,7 @@ public class AttributeServiceImpl
 				//save attribute
 				attributeCode.setArticleFilename(filename);
 				attributeCode.setUpdateDts(TimeUtil.currentDate());
-				attributeCode.setUpdateUser(ServiceUtil.getCurrentUserName());
+				attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 				persistenceService.persist(attributeCode);
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException("Unable to save article.", "Contact system admin.  Check permissions on the directory and make sure device has enough space.");
@@ -216,7 +216,7 @@ public class AttributeServiceImpl
 				}
 				attributeCode.setArticleFilename(null);
 			}
-			attributeCode.setUpdateUser(ServiceUtil.getCurrentUserName());
+			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveAttributeCode(attributeCode);
 		}
 	}
@@ -230,7 +230,7 @@ public class AttributeServiceImpl
 		if (attributeType != null) {
 			attributeType.setActiveStatus(AttributeCode.INACTIVE_STATUS);
 			attributeType.setUpdateDts(TimeUtil.currentDate());
-			attributeType.setUpdateUser(ServiceUtil.getCurrentUserName());
+			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
 		}
 	}
@@ -244,7 +244,7 @@ public class AttributeServiceImpl
 		if (attributeCode != null) {
 			attributeCode.setActiveStatus(AttributeCode.INACTIVE_STATUS);
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
-			attributeCode.setUpdateUser(ServiceUtil.getCurrentUserName());
+			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeCode);
 		}
 	}
@@ -362,6 +362,44 @@ public class AttributeServiceImpl
 		pk.setComponentId(componentId);
 		example.setComponentAttributePk(pk);
 		return persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(example));
+	}
+
+	@Override
+	public AttributeCode findCodeForType(AttributeCodePk pk)
+	{
+		AttributeCode attributeCode = null;
+		List<AttributeCode> attributeCodes = findCodesForType(pk.getAttributeType());
+		for (AttributeCode attributeCodeCheck : attributeCodes) {
+			if (attributeCodeCheck.getAttributeCodePk().getAttributeCode().equals(pk.getAttributeCode())) {
+				attributeCode = attributeCodeCheck;
+				break;
+			}
+		}
+		return attributeCode;
+	}
+
+	@Override
+	public AttributeType findType(String type)
+	{
+		AttributeType attributeType = null;
+
+		Element element = OSFCacheManager.getAttributeTypeCache().get(type);
+		if (element != null) {
+			attributeType = (AttributeType) element.getObjectValue();
+		} else {
+			AttributeType attributeTypeExample = new AttributeType();
+			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+			List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
+			for (AttributeType attributeTypeCheck : attributeTypes) {
+				if (attributeTypeCheck.getAttributeType().equals(type)) {
+					attributeType = attributeTypeCheck;
+				}
+				element = new Element(attributeTypeCheck.getAttributeType(), attributeTypeCheck);
+				OSFCacheManager.getAttributeTypeCache().put(element);
+			}
+		}
+
+		return attributeType;
 	}
 
 }
