@@ -410,6 +410,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     });
   };
 
+  $scope.deleteReview = function(reviewId) {
+    console.log('reviewId', reviewId);
+    Business.componentservice.deleteReview($scope.details.details.componentId, reviewId).then(function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
+      $scope.$emit('$TRIGGEREVENT', '$newReview');
+    });
+  };
+
   var updateList = [];
 
   $scope.getIsUpdated = function(item)

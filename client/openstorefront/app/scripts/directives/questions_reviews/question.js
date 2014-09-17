@@ -17,13 +17,14 @@
 
 app.directive('question', ['business', function (Business) {
   return {
-    template: '<div><br><b>Ask a Question</b><br><form ng-submit="submitQuestion($event)"><textarea cols="100" ng-model="content"></textarea><br><br><button class="btn btn-primary" type="submit">Post</button></form></div>',
+    template: '<div><br ng-if="!questionId"><b ng-if="!questionId">Ask a Question</b><br ng-if="!questionId"><form ng-submit="submitQuestion($event)"><textarea cols="100" ng-model="content"></textarea><br><br><button class="btn btn-primary" type="submit"><span ng-if="!questionId">Post</span><span ng-if="questionId">Save</span></button></form></div>',
     restrict: 'E',
     scope: {
-      componentId: '='
+      componentId: '=',
+      questionId: '=',
+      content: '&'
     },
     link: function postLink(scope, element, attrs) {
-      scope.content = '';
       scope.user = {};
       Business.userservice.getCurrentUserProfile().then(function(result){
         if (result) {
@@ -36,9 +37,9 @@ app.directive('question', ['business', function (Business) {
         if (scope.user.info) {
           var post = {};
           post.question = scope.content;
-          post.userType = scope.user.info.userTypeCode;
+          post.userTypeCode = scope.user.info.userTypeCode;
           post.organization = scope.user.info.organization;
-          Business.componentservice.postQuestion(scope.componentId, post).then(function(result){
+          Business.componentservice.saveQuestion(scope.componentId, post, scope.questionId).then(function(result){
             if (result) {
               // console.log('result', result);
               scope.$emit('$TRIGGEREVENT', '$detailsUpdated', scope.componentId);
