@@ -9,7 +9,7 @@ theSite = 'http://di2e.github.io';
     https://ri1-openam-01.di2e.net/openam 
    login/logout and it will kill your storefront session
    On the dev server the URL will be
-    http://store-dev.usu.di2e.net/openam
+    http://store-prod.usu.di2e.net/openam
 */
 
 // VPN access NOT working, it blocks access to starting the Selenium Server on Localhost
