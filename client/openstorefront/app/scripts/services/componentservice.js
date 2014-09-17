@@ -110,13 +110,21 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   }
 
-  componentservice.postQuestion = function(id, post) {
+  componentservice.saveQuestion = function(id, post, questionId) {
     var result = $q.defer();
     if (id && post)
     {
-      var url = 'api/v1/resource/components/'+id+'/question';
+      var url;
+      var methodString; 
+      if (questionId){
+        methodString = 'PUT';
+        url = 'api/v1/resource/components/'+id+'/question/'+questionId;
+      } else {
+        methodString = 'POST';
+        url = 'api/v1/resource/components/'+id+'/question';
+      }
       $http({
-        method: 'POST',
+        method: methodString,
         url: url,
         data: post
       })
@@ -148,18 +156,29 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   }
 
-  componentservice.postResponse = function(id, questionId, post) {
+  componentservice.saveResponse = function(id, questionId, post, responseId) {
     var result = $q.defer();
     if (id && questionId && post)
     {
-      var url = 'api/v1/resource/components/'+id+'/response/'+questionId;
+      var url;
+      var methodString;
+      if (!responseId) {
+        url = 'api/v1/resource/components/'+id+'/response/'+questionId;
+        methodString = 'POST';
+      } else {
+        url = 'api/v1/resource/components/'+id+'/response/'+responseId;
+        methodString = 'PUT';
+      }
       $http({
-        method: 'POST',
+        method: methodString,
         url: url,
         data: post
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
         result.resolve(data);
+      }).error(function(data, status, headers, config){
+        console.log('data', data);
+        console.log('headers', headers);
       });
     } else{
       result.reject('Either a unique ID, a quesitonID or a response object were missing, and the question was not saved');
@@ -189,7 +208,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     // console.log('id', id);
     // console.log('review', review);
     // console.log('review', reviewId);
-        
+
     var result = $q.defer();
     if (id && review)
     {

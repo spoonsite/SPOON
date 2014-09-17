@@ -2,16 +2,46 @@
   <div class="col-sm-12">
     <br>
     <div id="questions{{$index}}Update" ng-if="details.details.questions[0] !== undefined"  data-ng-repeat="item in details.details.questions">
-      <div ng-class="getIsUpdated('questions'+$index)? 'updatedForUser': ''" class="questionsHeader"><span class="qaLabel">Q.</span> <strong>{{item.question}}</strong> <small>{{item.username}}&nbsp;({{item.userType}})&nbsp;&mdash;&nbsp;{{getDate(item.updateDts)}}</small><button class="btn btn-sm btn-default flipme collapsed" style="margin-left: 10px;" data-toggle="collapse" data-parent="#accordion" href="#questionCollapse{{$index}}"><i class="fa fa-arrow-down"></i></button><button class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" title="Edit"><i class="fa fa-edit"></i></button><button title="Delete" class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" ng-click="deleteQuestion(item.questionId)"><i class="fa fa-trash"></i></button></div><br>
+      <div ng-class="getIsUpdated('questions'+$index)? 'updatedForUser': ''" class="questionsHeader">
+        <div ng-if="!item.edit">
+          <span class="qaLabel">Q.</span>
+          <strong>{{item.question}}</strong>
+          <small>{{item.username}}&nbsp;({{item.userType}})&nbsp;&mdash;&nbsp;{{getDate(item.updateDts)}}</small>
+          <button class="btn btn-sm btn-default flipme collapsed" style="margin-left: 10px;" data-toggle="collapse" data-parent="#accordion" href="#questionCollapse{{$index}}">
+            <i class="fa fa-arrow-down"></i>
+          </button>
+          <button class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" title="Edit" ng-click="item.edit = true">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button title="Delete" class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" ng-click="deleteQuestion(item.questionId)">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+        <div ng-if="item.edit" style="position: relative">
+          <question component-id="details.details.componentId" question-id="item.questionId" content="item.question"></question>
+          <button class="btn btn-sm btn-default" ng-click="item.edit = false" style="position: absolute; top:5px; right: 5px;">
+            <i class="fa fa-remove"></i>
+          </button>
+        </div>
+      </div>
+      <br />
       <div id="questionCollapse{{$index}}" class="panel-collapse collapse" style="margin-left: 20px;">
         <div ng-repeat="answer in item.responses" style="width: 100%; display: inline-block">
-          <div style="width: 20px; margin-right: -20px; clear: both; float: left;" class="qaLabel">A.</div> 
-          <div style="display:block; margin-left: 10px; padding: 6px 10px 10px 14px; float: left;">
-            <strong>{{answer.response}}</strong>&nbsp;<small>{{answer.username}}&nbsp;({{answer.userType}})&nbsp;&mdash;&nbsp;{{getDate(answer.answeredDate)}}</small>&nbsp;&nbsp;<button class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" title="Edit"><i class="fa fa-edit"></i></button><button title="Delete" class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" ng-click="deleteResponse(answer.responseId)"><i class="fa fa-trash"></i></button>
+          <div ng-if="!answer.edit">
+            <div style="width: 20px; margin-right: -20px; clear: both; float: left;" class="qaLabel">A.</div> 
+            <div style="display:block; margin-left: 10px; padding: 6px 10px 10px 14px; float: left;">
+              <strong>{{answer.response}}</strong>&nbsp;<small>{{answer.username}}&nbsp;({{answer.userType}})&nbsp;&mdash;&nbsp;{{getDate(answer.answeredDate)}}</small>&nbsp;&nbsp;<button class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" title="Edit" ng-click="answer.edit = true"><i class="fa fa-edit"></i></button><button title="Delete" class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" ng-click="deleteResponse(answer.responseId)"><i class="fa fa-trash"></i></button>
+            </div>
+          </div>
+          <div ng-if="answer.edit" style="position: relative">
+            <response component-id="details.details.componentId" question-id="item.questionId" content="answer.response" response-id="answer.responseId"></response>
+            <button class="btn btn-sm btn-default" ng-click="answer.edit = false" style="position: absolute; top:0px; right: 0px">
+              <i class="fa fa-remove"></i>
+            </button>
           </div>
         </div>
         <div style="width: 100%;">
-          <response component-id="details.details.componentId" question-id="item.questionId"></response>
+          <response component-id="details.details.componentId" question-id="item.questionId" response-id="null"></response>
         </div>
       </div>
       <p style="border-bottom: 1px lightgray solid;padding: 5px; margin-top: -15px;">
@@ -20,6 +50,6 @@
     <div ng-if="details.details.questions[0] === undefined">
       There are no previously asked questions for this component.
     </div>
-    <question component-id="details.details.componentId"></question>
+    <question component-id="details.details.componentId" question-id="null"></question>
   </div>
 </div>
