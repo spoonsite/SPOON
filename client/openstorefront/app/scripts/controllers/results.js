@@ -446,9 +446,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     if (article && article.type === 'Article') {
       $scope.sendPageView('article' + article.route);
       $scope.isArticle = true;
-      localCache.save('landingRoute', article.route);
+      localCache.save('type', article.type);
+      localCache.save('code', article.code);
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', false);
       $scope.showDetails = true;
       if (!openClick) {
         buttonOpen();

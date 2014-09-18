@@ -384,41 +384,41 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     };
 
 
-    componentservice.getComponentDetailsByType = function(input) {
-      return _.filter(MOCKDATA.assets.assets, function(item) {
-        return item.type === input;
-      });
-    };
-    componentservice.getScoreCard = function() {
-      return MOCKDATA.scoreTable;
-    };
-    componentservice.getExternalDepend = function() {
-      return MOCKDATA.externalDepend;
-    };
-    componentservice.getLocalAssetArtifacts = function() {
-      return MOCKDATA.localAssetArtifacts;
-    };
-    componentservice.getComponentVitals = function() {
-      return MOCKDATA.componentVitals;
-    };
-    componentservice.getPointsContact = function() {
-      return MOCKDATA.pointsContact;
-    };
-    componentservice.getComponentSummary = function() {
-      return MOCKDATA.componentSummary;
-    };
-    componentservice.getComponentEvalProgressBar = function() {
-      return MOCKDATA.componentEvalProgressBar;
-    };
-    componentservice.getComponentState = function() {
-      return MOCKDATA.componentState;
-    };
-    componentservice.getComponentEvalProgressBarDates = function() {
-      return MOCKDATA.componentEvalProgressBarDates;
-    };
-    componentservice.getResultsComments = function() {
-      return MOCKDATA.resultsComments;
-    };
+    // componentservice.getComponentDetailsByType = function(input) {
+    //   return _.filter(MOCKDATA.assets.assets, function(item) {
+    //     return item.type === input;
+    //   });
+    // };
+    // componentservice.getScoreCard = function() {
+    //   return MOCKDATA.scoreTable;
+    // };
+    // componentservice.getExternalDepend = function() {
+    //   return MOCKDATA.externalDepend;
+    // };
+    // componentservice.getLocalAssetArtifacts = function() {
+    //   return MOCKDATA.localAssetArtifacts;
+    // };
+    // componentservice.getComponentVitals = function() {
+    //   return MOCKDATA.componentVitals;
+    // };
+    // componentservice.getPointsContact = function() {
+    //   return MOCKDATA.pointsContact;
+    // };
+    // componentservice.getComponentSummary = function() {
+    //   return MOCKDATA.componentSummary;
+    // };
+    // componentservice.getComponentEvalProgressBar = function() {
+    //   return MOCKDATA.componentEvalProgressBar;
+    // };
+    // componentservice.getComponentState = function() {
+    //   return MOCKDATA.componentState;
+    // };
+    // componentservice.getComponentEvalProgressBarDates = function() {
+    //   return MOCKDATA.componentEvalProgressBarDates;
+    // };
+    // componentservice.getResultsComments = function() {
+    //   return MOCKDATA.resultsComments;
+    // };
 
 
     componentservice.saveTags = function(id, tags) {

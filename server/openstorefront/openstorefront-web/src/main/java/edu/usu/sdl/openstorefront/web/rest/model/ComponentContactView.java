@@ -17,6 +17,8 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
+import edu.usu.sdl.openstorefront.storage.model.ContactType;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.Date;
 
 /**
@@ -25,7 +27,7 @@ import java.util.Date;
  */
 public class ComponentContactView
 {	
-	private String postionDescription;
+	private String positionDescription;
 	private String name;
 	private String email;
 	private String phone;
@@ -40,7 +42,7 @@ public class ComponentContactView
 	{
 		ComponentContactView view = new ComponentContactView();
 		view.setEmail(contact.getEmail());
-		view.setPostionDescription(contact.getContactType());
+		view.setPositionDescription(TranslateUtil.translate(ContactType.class, contact.getContactType()));
 		view.setOrganization(contact.getOrganization());
 		view.setPhone(contact.getPhone());
 		view.setUpdateDts(contact.getUpdateDts());
@@ -54,14 +56,14 @@ public class ComponentContactView
 		}
 		return view;
 	}
-	public String getPostionDescription()
+	public String getPositionDescription()
 	{
-		return postionDescription;
+		return positionDescription;
 	}
 
-	public void setPostionDescription(String postionDescription)
+	public void setPositionDescription(String positionDescription)
 	{
-		this.postionDescription = postionDescription;
+		this.positionDescription = positionDescription;
 	}
 
 	public String getPhone()
