@@ -464,6 +464,10 @@ var app = angular
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
       $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
       $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?/).passThrough();

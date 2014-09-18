@@ -38,15 +38,15 @@ limitations under the License.
               </div>
               <div>
                 <label style="text-decoration: none; font-weight: 100;">
-                  <input ng-change="saveNotifyChange(item)" type="checkbox" ng-model="item.notifyFlag" ng-checked="item.notifyFlag">&nbsp;Notify Me of Changes.
+                  <input ng-change="updateWatch(item)" type="checkbox" ng-model="item.notifyFlg" ng-checked="item.notifyFlg">&nbsp;Notify Me of Changes.
                 </label>
               </div>
               <div style="">
                 <button class='btn btn-default detailsTitleButton pull-left' ng-click="goToFullPage(item.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="View Component" data-trigger="hover"><i class="fa fa-copy imitateLink"></i>
                 </button>
-                <!-- <button class='btn btn-default detailsTitleButton pull-left' ng-show="item.notifyFlag !== true" ng-click="setNotify(item.componentId, true)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component To Notifications" data-trigger="hover"><i class="fa fa-envelope-o"></i>
+                <!-- <button class='btn btn-default detailsTitleButton pull-left' ng-show="item.notifyFlg !== true" ng-click="setNotify(item.componentId, true)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component To Notifications" data-trigger="hover"><i class="fa fa-envelope-o"></i>
                 </button>
-                <button class='btn btn-default detailsTitleButton pull-left' ng-show="item.notifyFlag === true" ng-click="setNotify(item.componentId, false)" data-toggle="tooltip" data-placement="bottom" data-title="Remove Component From Notifications" data-trigger="hover"><i class="fa fa-envelope-o"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
+                <button class='btn btn-default detailsTitleButton pull-left' ng-show="item.notifyFlg === true" ng-click="setNotify(item.componentId, false)" data-toggle="tooltip" data-placement="bottom" data-title="Remove Component From Notifications" data-trigger="hover"><i class="fa fa-envelope-o"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
                 </button> -->
                 <button class='btn btn-default detailsTitleButton pull-right' ng-click="removeFromWatches(item.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
                 </button>
