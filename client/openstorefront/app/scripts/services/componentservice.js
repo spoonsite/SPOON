@@ -85,6 +85,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         data: "test"
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          result.resolve(data);
+          removeError();
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        result.reject('There was an error');
       });
     } else{
       result.reject('A unique ID and pro object is required to save a component pro');
@@ -102,7 +111,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         url: url,
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data);
+        if (data && isNotRequestError(data)){
+          result.resolve(data);
+          removeError();
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
+      }).error(function(data, status, headers, config) {
+        result.reject('There was an error');
       });
     } else{
       result.reject('Either a unique ID or question object were missing, and the question was not saved');
@@ -129,7 +146,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         data: post
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data.questionId);
+        if (data) {
+          result.resolve(data.questionId);
+          removeError();
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        result.reject('There was an error');
       });
     } else{
       result.reject('Either a unique ID or question object were missing, and the question was not saved');
@@ -148,7 +173,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         url: url,
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data.responseId);
+        if (data && isNotRequestError(data)) {
+          removeError();
+          result.resolve(data.responseId);
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        result.reject('There was an error');
       });
     } else{
       result.reject('Either a unique ID or question object were missing, and the question was not saved');
@@ -175,10 +208,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         data: post
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data);
+        if (data && isNotRequestError(data)) {
+          removeError();
+          result.resolve(data);
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
       }).error(function(data, status, headers, config){
-        console.log('data', data);
-        console.log('headers', headers);
+        result.reject('There was an error');
       });
     } else{
       result.reject('Either a unique ID, a quesitonID or a response object were missing, and the question was not saved');
@@ -196,7 +234,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         url: url,
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data);
+        if (data && isNotRequestError(data)) {
+          removeError();
+          result.resolve(data);
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        result.reject('There was an error');
       });
     } else{
       result.reject('Either a unique ID or question object were missing, and the question was not saved');
@@ -221,20 +267,21 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         url = 'api/v1/resource/components/'+id+'/review/' + reviewId;
         methodString = 'PUT';
       }
-      console.log('url', url);
-      console.log('method', methodString);
       $http({
         method: methodString,
         url: url,
         data: review
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        console.log('Success data', data);
-        result.resolve(data);
+        if (data && isNotRequestError(data)){
+          removeError();
+          result.resolve(data);
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
       }).error(function(data, status, headers, config){
-        console.log('Failure headers', headers);
-        console.log('data', data);
-        result.resolve(data);
+        result.reject('There was an error');
       });
     } else{
       result.reject('A unique ID and review object is required to save a component review');
@@ -253,7 +300,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         data: pro
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data);
+        if (data && isNotRequestError(data)) {
+          removeError();
+          result.resolve(data);
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        result.reject('There was an error');
       });
     } else{
       result.reject('A unique ID and pro object is required to save a component pro');
@@ -272,7 +327,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         data: con
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        result.resolve(data);
+        if (data && isNotRequestError(data)){
+          removeError();
+          result.resolve(data);
+        } else {
+          triggerError(data);
+          result.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        result.reject('There was an error');
       });
     } else{
       result.reject('A unique ID and con object is required to save a component con');
@@ -296,13 +359,18 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           method: 'GET',
           url: url
         })
-        .success(function(data, status, headers, config) { /*jshint unused:false*/
-          console.log('data', data);
-          
-          if (data && !isEmpty(data)) {
+        .success(function(data, status, headers, config) { /*jshint unused:false*/          
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            console.log('data', data);
             save('component_'+id, data);
+            result.resolve(data);
+          } else {
+            triggerError(data);
+            result.reject(false);
           }
-          result.resolve(data);
+        }).error(function(data, status, headers, config){
+          result.reject('There was an error');
         });
       }
     } else{
@@ -325,10 +393,17 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         url: url
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && !isEmpty(data)) {
+        if (data && !isEmpty(data) && isNotRequestError(data)) {
+          removeError();
           save('componentList', data);
+          result.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
-        result.resolve(data);
+      }).error(function(data, status, headers, config){
+        deferred.reject('There was a server error');
       });
     }
     return result.promise;
@@ -351,7 +426,14 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     if (type && key) {
       // $http.get('api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
         $http.get('api/v1/resource/components').success(function(data, status, headers, config) { /*jshint unused:false*/
-          deferred.resolve(data);
+          if (data && data !== 'false' && isNotRequestError(data)){
+            removeError();
+            deferred.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            deferred.reject(false);
+          }
         });
       }
       return deferred.promise;
@@ -383,44 +465,6 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       return searchKey;
     };
 
-
-    // componentservice.getComponentDetailsByType = function(input) {
-    //   return _.filter(MOCKDATA.assets.assets, function(item) {
-    //     return item.type === input;
-    //   });
-    // };
-    // componentservice.getScoreCard = function() {
-    //   return MOCKDATA.scoreTable;
-    // };
-    // componentservice.getExternalDepend = function() {
-    //   return MOCKDATA.externalDepend;
-    // };
-    // componentservice.getLocalAssetArtifacts = function() {
-    //   return MOCKDATA.localAssetArtifacts;
-    // };
-    // componentservice.getComponentVitals = function() {
-    //   return MOCKDATA.componentVitals;
-    // };
-    // componentservice.getPointsContact = function() {
-    //   return MOCKDATA.pointsContact;
-    // };
-    // componentservice.getComponentSummary = function() {
-    //   return MOCKDATA.componentSummary;
-    // };
-    // componentservice.getComponentEvalProgressBar = function() {
-    //   return MOCKDATA.componentEvalProgressBar;
-    // };
-    // componentservice.getComponentState = function() {
-    //   return MOCKDATA.componentState;
-    // };
-    // componentservice.getComponentEvalProgressBarDates = function() {
-    //   return MOCKDATA.componentEvalProgressBarDates;
-    // };
-    // componentservice.getResultsComments = function() {
-    //   return MOCKDATA.resultsComments;
-    // };
-
-
     componentservice.saveTags = function(id, tags) {
       var deferred = $q.defer();
       $http.delete('api/v1/resource/components/'+id+'/tags');
@@ -429,8 +473,13 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         url: 'api/v1/resource/components/'+id+'/tags',
         data: tags
       }).success(function(data, status, headers, config){
-        if (data && data !== 'false') {
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
           deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
       }).error(function(data, status, headers, config){
         deferred.resolve('There was an error saving the tags');

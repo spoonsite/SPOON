@@ -77,12 +77,16 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       deferred.resolve(currentUser);
     } else {
       loadProfile(CURRENT_USER, function(data, status, headers, config) { /*jshint unused:false*/
-        if (data) {
-          // console.log('data', data);
-          
+        if (data && isNotRequestError(data)) {
+          removeError();
           save('currentUserProfile', data);
           deferred.resolve(data);
+        } else {
+          triggerError(data);
+          deferred.reject(false);
         }
+      }, function(data, status, headers, config){
+        deferred.reject('There was an error');
       });
     }
 
@@ -94,8 +98,8 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   * @param string username
   * @returns {undefined}
   */
-  var loadProfile = function(username, successFunc) {
-    $http.get('api/v1/resource/userprofiles/'+username).success(successFunc);
+  var loadProfile = function(username, successFunc, errorFunc) {
+    $http.get('api/v1/resource/userprofiles/'+username).success(successFunc).error(errorFunc);
   };
 
   var saveCurrentUserProfile = function(userProfile) { /*jshint unused:false*/
@@ -116,31 +120,18 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'data': userProfile
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         // console.log('data', data);
-        if (data && data !== 'false') {
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
           updateCache('currentUserProfile', data);
           deferred.resolve(data);
         } else {
-          deferred.reject('There was an saving the user profile.');
+          triggerError(data);
+          deferred.reject(false);
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('It didn\'t work...');
+        deferred.reject('There was an error');
       });
     } else {
-      // if the save fails, give them a reason why... with an error object like this
-      //?fix
-      /*
-      *  {
-      *    'success': false,
-      *    'errors': [
-      *      {
-      *        'mainSearchBar' : 'Your input was invalid. Please try again.'
-      *      },ok
-      *      {
-      *        'element_id' : 'Error message to be displayed in the tooltip'
-      *      }
-      *    ]
-      *  };
-      */
       deferred.reject('It Failed');
     }
     return deferred.promise;
@@ -161,14 +152,16 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           'method': 'GET',
           'url': url
         }).success(function(data, status, headers, config) { /*jshint unused:false*/
-          if (data && data !== 'false') {
+          if (data && data !== 'false' && isNotRequestError(data)) {
+            removeError();
             save('watches', data);
             deferred.resolve(data);
           } else {
-            deferred.reject('There was an error grabbing the watches');
+            triggerError(data);
+            deferred.reject(false);
           }
         }).error(function(data, status, headers, config) { /*jshint unused:false*/
-          deferred.resolve(data);
+          deferred.reject('There was an error');
         });
       }
     } else {
@@ -186,13 +179,16 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       'url': 'api/v1/resource/lookup/watches',
       'data': watches
     }).success(function(data, status, headers, config) { /*jshint unused:false*/
-      if (data && data !== 'false') {
+      if (data && data !== 'false' && isNotRequestError(data)) {
+        removeError();
         updateCache('watches', data);
         deferred.resolve(data);
       } else {
-        // deferred.reject('There was an error grabbing the watches');
+        triggerError(data);
+        deferred.result(false);
       }
     }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
     });
 
     return deferred.promise;
@@ -219,12 +215,15 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'url': url,
         'data': watch
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
           deferred.resolve(data);
         } else {
+          triggerError(data);
           deferred.reject('There was an error saving the watch');
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
       });
     } else {
       deferred.reject('You did not save the watch');
@@ -242,12 +241,15 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'method': 'DELETE',
         'url': url,
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
           deferred.resolve(data);
         } else {
+          triggerError(data);
           deferred.reject('There was an error grabbing the watches');
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
       });
     } else {
       deferred.reject('You must include a username and watch id to remove a watch');
@@ -269,13 +271,16 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'method': 'GET',
         'url': 'api/v1/resource/components/reviews/'+username
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
           save('reviews', data);
           deferred.resolve(data);
         } else {
+          triggerError(data);
           deferred.reject('There was an error grabbing the reviews');
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
       });
     }
 

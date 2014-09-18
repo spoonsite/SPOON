@@ -110,7 +110,8 @@ public class ComponentServiceImpl
 				baseComponentExample.setActiveStatus(BaseComponent.ACTIVE_STATUS);
 			}
 			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
-		} catch (InstantiationException | IllegalAccessException ex) {
+		}
+		catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
@@ -145,7 +146,8 @@ public class ComponentServiceImpl
 			T example = subComponentClass.newInstance();
 			example.setComponentId(componentId);
 			persistenceService.deleteByExample(example);
-		} catch (InstantiationException | IllegalAccessException ex) {
+		}
+		catch (InstantiationException | IllegalAccessException ex) {
 			Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
@@ -167,7 +169,8 @@ public class ComponentServiceImpl
 			if (attributeMaps.containsKey(attribute.getComponentAttributePk().getComponentId())) {
 				List<ComponentAttribute> attributes = attributeMaps.get(attribute.getComponentAttributePk().getComponentId());
 				attributes.add(attribute);
-			} else {
+			}
+			else {
 				List<ComponentAttribute> attributes = new ArrayList<>();
 				attributes.add(attribute);
 				attributeMaps.put(attribute.getComponentAttributePk().getComponentId(), attributes);
@@ -193,7 +196,8 @@ public class ComponentServiceImpl
 		Component tempParentComponent;
 		if (tempComponent != null && tempComponent.getParentComponentId() != null) {
 			tempParentComponent = persistenceService.findById(Component.class, tempComponent.getParentComponentId());
-		} else {
+		}
+		else {
 			tempParentComponent = new Component();
 		}
 		result.setComponentDetails(tempComponent, tempParentComponent);
@@ -257,7 +261,7 @@ public class ComponentServiceImpl
 			tempCon.setComponentReviewConPk(tempConPk);
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
-			
+
 			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro))));
 			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon))));
 
@@ -304,7 +308,8 @@ public class ComponentServiceImpl
 				oldAttribute.setUpdateUser(attribute.getUpdateUser());
 				oldAttribute.setUpdateDts(TimeUtil.currentDate());
 				persistenceService.persist(oldAttribute);
-			} else {
+			}
+			else {
 				if (type.getAllowMutlipleFlg() == false) {
 					ComponentAttribute example = new ComponentAttribute();
 					example.setComponentAttributePk(new ComponentAttributePk());
@@ -320,7 +325,8 @@ public class ComponentServiceImpl
 				attribute.setUpdateDts(TimeUtil.currentDate());
 				persistenceService.persist(attribute);
 			}
-		} else {
+		}
+		else {
 			StringBuilder error = new StringBuilder();
 			if (type == null) {
 				error.append("Attribute type not found.  Type: ").append(attribute.getComponentAttributePk().getAttributeType());
@@ -349,7 +355,8 @@ public class ComponentServiceImpl
 			oldContact.setUpdateDts(TimeUtil.currentDate());
 			oldContact.setUpdateUser(contact.getUpdateUser());
 			persistenceService.persist(oldContact);
-		} else {
+		}
+		else {
 			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 			contact.setContactId(persistenceService.generateId());
 			contact.setCreateDts(TimeUtil.currentDate());
@@ -371,7 +378,8 @@ public class ComponentServiceImpl
 			oldDependency.setUpdateDts(TimeUtil.currentDate());
 			oldDependency.setUpdateUser(dependency.getUpdateUser());
 			persistenceService.persist(oldDependency);
-		} else {
+		}
+		else {
 			dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
 			dependency.setDependencyId(persistenceService.generateId());
 			dependency.setCreateDts(TimeUtil.currentDate());
@@ -390,7 +398,8 @@ public class ComponentServiceImpl
 			oldSection.setUpdateDts(TimeUtil.currentDate());
 			oldSection.setUpdateUser(section.getUpdateUser());
 			persistenceService.persist(oldSection);
-		} else {
+		}
+		else {
 			section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
 			section.setCreateDts(TimeUtil.currentDate());
 			section.setUpdateDts(TimeUtil.currentDate());
@@ -409,7 +418,8 @@ public class ComponentServiceImpl
 			oldSchedule.setUpdateDts(TimeUtil.currentDate());
 			oldSchedule.setUpdateUser(schedule.getUpdateUser());
 			persistenceService.persist(oldSchedule);
-		} else {
+		}
+		else {
 			schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
 			schedule.getComponentEvaluationSchedulePk().setComponentId(schedule.getComponentId());
 			schedule.setCreateDts(TimeUtil.currentDate());
@@ -433,7 +443,8 @@ public class ComponentServiceImpl
 			oldMedia.setUpdateDts(TimeUtil.currentDate());
 			oldMedia.setUpdateUser(media.getUpdateUser());
 			persistenceService.persist(oldMedia);
-		} else {
+		}
+		else {
 			media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			media.setComponentMediaId(persistenceService.generateId());
 			media.setCreateDts(TimeUtil.currentDate());
@@ -453,7 +464,8 @@ public class ComponentServiceImpl
 			oldMetadata.setUpdateDts(TimeUtil.currentDate());
 			oldMetadata.setUpdateUser(metadata.getUpdateUser());
 			persistenceService.persist(oldMetadata);
-		} else {
+		}
+		else {
 			metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 			metadata.setMetadataId(persistenceService.generateId());
 			metadata.setCreateDts(TimeUtil.currentDate());
@@ -474,7 +486,8 @@ public class ComponentServiceImpl
 			oldQuestion.setUpdateDts(TimeUtil.currentDate());
 			oldQuestion.setUpdateUser(question.getUpdateUser());
 			persistenceService.persist(oldQuestion);
-		} else {
+		}
+		else {
 			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 			question.setQuestion(question.getQuestion());
 			question.setQuestionId(persistenceService.generateId());
@@ -497,7 +510,8 @@ public class ComponentServiceImpl
 			oldResponse.setUpdateDts(TimeUtil.currentDate());
 			oldResponse.setUpdateUser(response.getUpdateUser());
 			persistenceService.persist(oldResponse);
-		} else {
+		}
+		else {
 			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			response.setResponseId(persistenceService.generateId());
 			response.setCreateDts(TimeUtil.currentDate());
@@ -522,7 +536,8 @@ public class ComponentServiceImpl
 			oldResource.setUpdateDts(TimeUtil.currentDate());
 			oldResource.setUpdateUser(resource.getUpdateUser());
 			persistenceService.persist(oldResource);
-		} else {
+		}
+		else {
 			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 			resource.setResourceId(persistenceService.generateId());
 			resource.setCreateDts(TimeUtil.currentDate());
@@ -548,7 +563,8 @@ public class ComponentServiceImpl
 			oldReview.setUpdateDts(TimeUtil.currentDate());
 			oldReview.setUpdateUser(review.getUpdateUser());
 			persistenceService.persist(oldReview);
-		} else {
+		}
+		else {
 			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			review.setComponentReviewId(persistenceService.generateId());
 			review.setCreateDts(TimeUtil.currentDate());
@@ -566,7 +582,8 @@ public class ComponentServiceImpl
 			oldCon.setUpdateDts(TimeUtil.currentDate());
 			oldCon.setUpdateUser(con.getUpdateUser());
 			persistenceService.persist(oldCon);
-		} else {
+		}
+		else {
 			con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 			con.setCreateDts(TimeUtil.currentDate());
 			con.setUpdateDts(TimeUtil.currentDate());
@@ -583,7 +600,8 @@ public class ComponentServiceImpl
 			oldPro.setUpdateDts(TimeUtil.currentDate());
 			oldPro.setUpdateUser(pro.getUpdateUser());
 			persistenceService.persist(oldPro);
-		} else {
+		}
+		else {
 			pro.setCreateDts(TimeUtil.currentDate());
 			pro.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(pro);
@@ -600,7 +618,8 @@ public class ComponentServiceImpl
 			oldTag.setUpdateDts(TimeUtil.currentDate());
 			oldTag.setUpdateUser(tag.getUpdateUser());
 			persistenceService.persist(oldTag);
-		} else {
+		}
+		else {
 			tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 			tag.setTagId(persistenceService.generateId());
 			tag.setCreateDts(TimeUtil.currentDate());
@@ -621,7 +640,8 @@ public class ComponentServiceImpl
 			oldTracking.setUpdateDts(TimeUtil.currentDate());
 			oldTracking.setUpdateUser(tracking.getUpdateUser());
 			persistenceService.persist(oldTracking);
-		} else {
+		}
+		else {
 			tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 			tracking.setComponentTrackingId(persistenceService.generateId());
 			tracking.setCreateDts(TimeUtil.currentDate());
@@ -665,7 +685,8 @@ public class ComponentServiceImpl
 					saveComponentAttribute(attribute);
 				});
 
-			} else {
+			}
+			else {
 
 				if (StringUtils.isBlank(component.getComponent().getComponentId())) {
 					component.getComponent().setComponentId(persistenceService.generateId());
@@ -747,7 +768,8 @@ public class ComponentServiceImpl
 				}
 			}
 			saveComponent(requiredForComponent);
-		} else {
+		}
+		else {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
 
@@ -797,7 +819,8 @@ public class ComponentServiceImpl
 			T baseComponentExample = baseComponentClass.newInstance();
 			baseComponentExample.setComponentId(componentId);
 			persistenceService.deleteByExample(baseComponentExample);
-		} catch (InstantiationException | IllegalAccessException ex) {
+		}
+		catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 
@@ -805,31 +828,44 @@ public class ComponentServiceImpl
 		for (T baseComponent : baseComponents) {
 			if (baseComponent instanceof ComponentContact) {
 				saveComponentContact((ComponentContact) baseComponent);
-			} else if (baseComponent instanceof ComponentEvaluationSchedule) {
+			}
+			else if (baseComponent instanceof ComponentEvaluationSchedule) {
 				saveComponentEvaluationSchedule((ComponentEvaluationSchedule) baseComponent);
-			} else if (baseComponent instanceof ComponentEvaluationSection) {
+			}
+			else if (baseComponent instanceof ComponentEvaluationSection) {
 				saveComponentEvaluationSection((ComponentEvaluationSection) baseComponent);
-			} else if (baseComponent instanceof ComponentExternalDependency) {
+			}
+			else if (baseComponent instanceof ComponentExternalDependency) {
 				saveComponentDependency((ComponentExternalDependency) baseComponent);
-			} else if (baseComponent instanceof ComponentMedia) {
+			}
+			else if (baseComponent instanceof ComponentMedia) {
 				saveComponentMedia((ComponentMedia) baseComponent);
-			} else if (baseComponent instanceof ComponentMetadata) {
+			}
+			else if (baseComponent instanceof ComponentMetadata) {
 				saveComponentMetadata((ComponentMetadata) baseComponent);
-			} else if (baseComponent instanceof ComponentResource) {
+			}
+			else if (baseComponent instanceof ComponentResource) {
 				saveComponentResource((ComponentResource) baseComponent);
-			} else if (baseComponent instanceof ComponentTag) {
+			}
+			else if (baseComponent instanceof ComponentTag) {
 				saveComponentTag((ComponentTag) baseComponent);
-			} else if (baseComponent instanceof ComponentQuestion) {
+			}
+			else if (baseComponent instanceof ComponentQuestion) {
 				saveComponentQuestion((ComponentQuestion) baseComponent);
-			} else if (baseComponent instanceof ComponentQuestionResponse) {
+			}
+			else if (baseComponent instanceof ComponentQuestionResponse) {
 				saveComponentQuestionResponse((ComponentQuestionResponse) baseComponent);
-			} else if (baseComponent instanceof ComponentReview) {
+			}
+			else if (baseComponent instanceof ComponentReview) {
 				saveComponentReview((ComponentReview) baseComponent);
-			} else if (baseComponent instanceof ComponentReviewPro) {
+			}
+			else if (baseComponent instanceof ComponentReviewPro) {
 				saveComponentReviewPro((ComponentReviewPro) baseComponent);
-			} else if (baseComponent instanceof ComponentReviewCon) {
+			}
+			else if (baseComponent instanceof ComponentReviewCon) {
 				saveComponentReviewCon((ComponentReviewCon) baseComponent);
-			} else {
+			}
+			else {
 				throw new OpenStorefrontRuntimeException("Save not supported for this base component: " + baseComponent.getClass().getName(), "Add support (Developement task)");
 			}
 		}
@@ -847,7 +883,8 @@ public class ComponentServiceImpl
 				if (ServiceUtil.isSubClass(ServiceUtil.BASECOMPONENT_ENTITY, entityClass)) {
 					try {
 						deleteBaseComponent((BaseComponent) entityClass.newInstance(), componentId);
-					} catch (InstantiationException | IllegalAccessException ex) {
+					}
+					catch (InstantiationException | IllegalAccessException ex) {
 						throw new OpenStorefrontRuntimeException("Class is not a base component class: " + entityClass.getName(), "Check class");
 					}
 				}
@@ -891,13 +928,30 @@ public class ComponentServiceImpl
 			tempCon.setComponentReviewConPk(tempConPk);
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
-			
+
 			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(ComponentReviewPro.class, new QueryByExample(tempPro))));
 			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(ComponentReviewCon.class, new QueryByExample(tempCon))));
 
 			reviews.add(tempView);
 		});
 		return reviews;
+	}
+
+	@Override
+	public Boolean setLastViewDts(String componentId, String userId)
+	{
+		UserWatch example = new UserWatch();
+		example.setComponentId(componentId);
+		example.setUsername(userId);
+		example = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(example));
+		if (example != null) {
+			UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
+			watch.setLastViewDts(TimeUtil.currentDate());
+			persistenceService.persist(watch);
+			return Boolean.TRUE;
+		} else{
+			return Boolean.FALSE;
+		}
 	}
 
 }

@@ -71,8 +71,13 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
         method: 'GET',
         url: 'api/v1/resource//attributetypes/'+type+'/attributecodes/'+code+'/article'
       }).succes(function(data, status, headers, config){
-        if (data && data !== 'false'){
+        if (data && data !== 'false' && isNotRequestError(data)){
+          removeError();
           deferred.resolve(data)
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
       }).error(function(data, status, headers, config){
         deferred.reject(data);
