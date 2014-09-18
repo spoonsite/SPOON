@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -266,6 +267,7 @@ public class AttributeServiceImpl
 				validationModel.setConsumeFieldsOnly(true);
 				ValidationResult validationResult = ValidationUtil.validate(validationModel);
 				if (validationResult.valid()) {
+					attributeType.setAttributeType(attributeType.getAttributeType().replace(ServiceUtil.COMPOSITE_KEY_SEPERATOR, ServiceUtil.COMPOSITE_KEY_REPLACER));
 
 					AttributeType existing = existingAttributeMap.get(attributeType.getAttributeType());
 					if (existing != null) {
@@ -301,6 +303,8 @@ public class AttributeServiceImpl
 							validationModelCode.setConsumeFieldsOnly(true);
 							ValidationResult validationResultCode = ValidationUtil.validate(validationModelCode);
 							if (validationResultCode.valid()) {
+								attributeCode.getAttributeCodePk().setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode().replace(ServiceUtil.COMPOSITE_KEY_SEPERATOR, ServiceUtil.COMPOSITE_KEY_REPLACER));
+
 								AttributeCode existingCode = existingCodeMap.get(attributeCode.getAttributeCodePk().toKey());
 								if (existingCode != null) {
 									existingCode.setDescription(attributeCode.getDescription());

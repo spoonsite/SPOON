@@ -13,48 +13,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.exception;
 
+import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
+
 /**
- *  This the base class for runtime exception
+ * This the base class for runtime exception
+ *
  * @author dshurtleff
  */
 public class OpenStorefrontRuntimeException
-	extends RuntimeException
+		extends RuntimeException
 {
-	private String potentialResolution;	
-	
+
+	private String potentialResolution;
+	private String errorTypeCode = ErrorTypeCode.SYSTEM;
+
 	public OpenStorefrontRuntimeException()
 	{
 	}
 
 	public OpenStorefrontRuntimeException(String message)
 	{
-		super(message);		
+		super(message);
 	}
-	
+
 	public OpenStorefrontRuntimeException(String message, String potentialResolution)
 	{
-		super(message);		
+		super(message);
 		this.potentialResolution = potentialResolution;
-	}	
+	}
+
+	public OpenStorefrontRuntimeException(String message, String potentialResolution, String errorTypeCode)
+	{
+		super(message);
+		this.potentialResolution = potentialResolution;
+		this.errorTypeCode = errorTypeCode;
+	}
 
 	public OpenStorefrontRuntimeException(String message, Throwable thrwbl)
-	{	
+	{
 		super(message, thrwbl);
 	}
-	
+
 	public OpenStorefrontRuntimeException(String message, String potentialResolution, Throwable thrwbl)
-	{	
+	{
 		super(message, thrwbl);
 		this.potentialResolution = potentialResolution;
-	}	
+	}
 
 	public OpenStorefrontRuntimeException(Throwable thrwbl)
-	{	
-		super(thrwbl);		
-	}	
+	{
+		super(thrwbl);
+	}
 
 	public String getPotentialResolution()
 	{
@@ -64,6 +75,16 @@ public class OpenStorefrontRuntimeException
 	public void setPotentialResolution(String potentialResolution)
 	{
 		this.potentialResolution = potentialResolution;
-	}	
-	
+	}
+
+	public String getErrorTypeCode()
+	{
+		return errorTypeCode;
+	}
+
+	public void setErrorTypeCode(String errorTypeCode)
+	{
+		this.errorTypeCode = errorTypeCode;
+	}
+
 }

@@ -30,6 +30,11 @@ public class SecurityUtil
 
 	private static final Logger log = Logger.getLogger(SecurityUtil.class.getName());
 
+	/**
+	 * Gets the current user logged in.
+	 *
+	 * @return the username
+	 */
 	public static String getCurrentUserName()
 	{
 		String username = OpenStorefrontConstant.ANONYMOUS_USER;

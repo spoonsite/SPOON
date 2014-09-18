@@ -48,6 +48,7 @@ public class ComponentMedia
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = MediaType.class)
+	@ConsumeField
 	private String mediaTypeCode;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
