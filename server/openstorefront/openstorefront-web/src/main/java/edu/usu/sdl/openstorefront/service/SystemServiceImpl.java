@@ -176,7 +176,9 @@ public class SystemServiceImpl
 		SystemErrorModel systemErrorModel = new SystemErrorModel();
 		systemErrorModel.setMessage(errorInfo.getError().getMessage());
 		if (errorInfo.getError() instanceof OpenStorefrontRuntimeException) {
-			systemErrorModel.setPotentialResolution(((OpenStorefrontRuntimeException) errorInfo.getError()).getPotentialResolution());
+			OpenStorefrontRuntimeException openStorefrontRuntimeException = (OpenStorefrontRuntimeException) errorInfo.getError();
+			systemErrorModel.setPotentialResolution(openStorefrontRuntimeException.getPotentialResolution());
+			errorInfo.setErrorTypeCode(openStorefrontRuntimeException.getErrorTypeCode());
 		}
 		try {
 

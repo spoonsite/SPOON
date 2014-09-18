@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,218 +32,206 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * String processing methods and JSON handling.
  *
  * @author dshurtleff
  */
 public class StringProcessor
 {
+
 	private static final ObjectMapper objectMapper = new ObjectMapper();
-	
+
 	private static final int MAX_RESOURCE_NAME = 35;
-	
+
+	/**
+	 * Use this to get the GLOBAL ObjectMapper for manual JSON Handling
+	 *
+	 * @return
+	 */
 	public static ObjectMapper defaultObjectMapper()
 	{
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		return objectMapper;
 	}
-	
+
 	public static String getResourceNameFromUrl(String url)
 	{
 		String resource = url;
-		if (StringUtils.isNotBlank(url))
-		{
+		if (StringUtils.isNotBlank(url)) {
 			resource = url.substring(url.lastIndexOf("/") + 1, url.length());
 		}
 		return resource;
 	}
-	
+
 	public static List<String> extractUrls(String text)
 	{
 		List<String> urls = new ArrayList<>();
-		
+
 		String tokens[] = text.split(" ");
-		for (String token : tokens)
-		{
-			if (token.trim().toLowerCase().startsWith("http://") ||
-			    token.trim().toLowerCase().startsWith("https://"))
-			{
+		for (String token : tokens) {
+			if (token.trim().toLowerCase().startsWith("http://")
+					|| token.trim().toLowerCase().startsWith("https://")) {
 				urls.add(token.trim());
 			}
 		}
-		
+
 		return urls;
 	}
-	
+
 	public static String stripeExtendedChars(String data)
 	{
 		StringBuilder sb = new StringBuilder();
-		for (char c : data.toCharArray())
-		{
-			if (c <= 127)
-			{
-				sb.append(c);				
-			}
-			else
-			{
-				sb.append(' ');				
+		for (char c : data.toCharArray()) {
+			if (c <= 127) {
+				sb.append(c);
+			} else {
+				sb.append(' ');
 			}
 		}
 		return sb.toString();
 	}
-	
+
 	public static String createHrefUrls(String text)
 	{
 		return createHrefUrls(text, false);
-	}	
-	
+	}
+
 	public static String createHrefUrls(String text, boolean showFullURL)
 	{
 		String replacedText = text;
-		List<String> urls = extractUrls(text);		
-		for (String url : urls)
-		{
+		List<String> urls = extractUrls(text);
+		for (String url : urls) {
 			String resoureName = url;
-			if (showFullURL == false)
-			{
+			if (showFullURL == false) {
 				resoureName = StringUtils.abbreviate(getResourceNameFromUrl(url), MAX_RESOURCE_NAME);
 			}
 			String link = "<a href='" + url + "' title='" + url + "' target='_blank'> " + resoureName + "</a>";
-			 replacedText = replacedText.replace(url, link);
-		}		
+			replacedText = replacedText.replace(url, link);
+		}
 		return replacedText;
 	}
-	
+
+	/**
+	 * Remove all json fields not in the list to keep.
+	 *
+	 * @param json
+	 * @param fieldsToKeep
+	 * @return
+	 */
 	public static String stripeFieldJSON(String json, Set<String> fieldsToKeep)
 	{
 		ObjectMapper mapper = defaultObjectMapper();
-		
-		try
-		{
-			JsonNode rootNode = mapper.readTree(json);			
+
+		try {
+			JsonNode rootNode = mapper.readTree(json);
 			processNode(rootNode, fieldsToKeep);
-			
-			 Object jsonString = mapper.readValue(rootNode.toString(), Object.class);			 
+
+			Object jsonString = mapper.readValue(rootNode.toString(), Object.class);
 			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonString);
-		} catch (IOException ex)
-		{
+		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
-		}		
+		}
 	}
-	
+
 	/**
 	 * This only goes down one level
+	 *
 	 * @param rootNode
-	 * @param fieldsToKeep 
+	 * @param fieldsToKeep
 	 */
 	private static void processNode(JsonNode rootNode, Set<String> fieldsToKeep)
 	{
-		if (rootNode instanceof ObjectNode)
-		{
+		if (rootNode instanceof ObjectNode) {
 			ObjectNode object = (ObjectNode) rootNode;
 			object.retain(fieldsToKeep);
-		}
-		else
-		{
-			for (JsonNode childNode : rootNode) 
-			{
+		} else {
+			for (JsonNode childNode : rootNode) {
 				processNode(childNode, fieldsToKeep);
 			}
-		}		
+		}
 	}
-	
+
+	/**
+	 * This will print an object to a string
+	 *
+	 * @param o
+	 * @return
+	 */
 	public static String printObject(Object o)
 	{
 		StringBuilder sb = new StringBuilder();
-		
-		if (o != null)
-		{
-			try
-			{
+
+		if (o != null) {
+			try {
 				Map fieldMap = BeanUtils.describe(o);
-				fieldMap.keySet().stream().forEach((key) ->
-				{
-					sb.append(key).append(" = ").append(fieldMap.get(key)).append("\n");										
+				fieldMap.keySet().stream().forEach((key) -> {
+					sb.append(key).append(" = ").append(fieldMap.get(key)).append("\n");
 				});
-			}
-			catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-			{
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 				Logger.getLogger(StringProcessor.class.getName()).log(Level.SEVERE, null, ex);
 			}
-		}
-		else
-		{
+		} else {
 			sb.append(o);
 		}
-		
+
 		return sb.toString();
 	}
-	
+
 	/**
-	 *  This breaks on word is and so it's a bit loose when it comes to the max length.  As the break wins out.
-	 *  It also looks for broken links and tries to preserve them.
-	 * 
+	 * This breaks on word is and so it's a bit loose when it comes to the max
+	 * length. As the break wins out. It also looks for broken links and tries
+	 * to preserve them.
+	 *
 	 * @param data
 	 * @param max_length
-	 * @return 
+	 * @return
 	 */
 	public static String eclipseString(String data, int max_length)
 	{
-		if (data == null)
-		{
+		if (data == null) {
 			return data;
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
-		if (StringUtils.isNotBlank(data))
-		{
+		if (StringUtils.isNotBlank(data)) {
 			String tokens[] = data.split(" ");
 			boolean forceProcess = false;
-			for (String token : tokens)
-			{
-				if ("<a".equalsIgnoreCase(token))
-				{
+			for (String token : tokens) {
+				if ("<a".equalsIgnoreCase(token)) {
 					forceProcess = true;
 				}
-				if (forceProcess &&
-				   "</a>".contains(token))
-				{
+				if (forceProcess
+						&& "</a>".contains(token)) {
 					forceProcess = false;
 				}
-				
-				if (forceProcess || 
-				    sb.length() <= max_length)
-				{
-					sb.append(token).append(" ");					
+
+				if (forceProcess
+						|| sb.length() <= max_length) {
+					sb.append(token).append(" ");
 				}
 			}
 			sb.append("...");
 		}
-		
+
 		return sb.toString();
 	}
-	
+
 	public static String blankIfNull(String text)
 	{
-		if (text == null)
-		{
+		if (text == null) {
 			return "";
-		}
-		else
-		{
+		} else {
 			return text;
 		}
-	}	
-	
+	}
+
 	public static String blankIfNull(Object text)
 	{
-		if (text == null)
-		{
+		if (text == null) {
 			return "";
-		}
-		else
-		{
+		} else {
 			return text.toString();
 		}
-	}	
-	
+	}
+
 }

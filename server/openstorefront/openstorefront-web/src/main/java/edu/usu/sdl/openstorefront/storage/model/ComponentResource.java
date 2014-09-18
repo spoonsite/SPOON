@@ -75,12 +75,12 @@ public class ComponentResource
 	 *
 	 * @return Resource or null if this doesn't represent a disk resource
 	 */
-	public Path pathToMedia()
+	public Path pathToResource()
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
-			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
+			File resourceDir = FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
+			path = Paths.get(resourceDir.getPath() + "/" + getFileName());
 		}
 		return path;
 	}

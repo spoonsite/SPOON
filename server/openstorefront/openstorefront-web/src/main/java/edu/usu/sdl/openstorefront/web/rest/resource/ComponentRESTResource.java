@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -688,10 +687,10 @@ public class ComponentRESTResource
 		service.getComponentService().deactivateBaseComponent(ComponentMedia.class, mediaId);
 	}
 
-	// TODO: Figure out how to recieve the actual media object?
 	@POST
 	@RequireAdmin
-	@APIDescription("Add media to the specified entity (leave the fileName blank if you want your supplied link to be it's location)")
+	@APIDescription("Add media to the specified entity (leave the fileName blank if you want your supplied link to be it's location) "
+			+ " Use a form to POST Media.action?UploadMedia to upload file.  To upload: pass the componentMedia.mediaTypeCode...etc and 'file'.")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentMedia.class)
 	@Path("/{id}/media")
@@ -706,7 +705,8 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Update media associated to the specified entity (leave the fileName blank if you want your supplied link to be it's location)")
+	@APIDescription("Update media associated to the specified entity (leave the fileName blank if you want your supplied link to be it's location) "
+			+ " Use a form to POST Media.action?UploadMedia to upload file.  To upload: pass the componentMedia.mediaTypeCode...etc and 'file'.")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/media/{mediaId}")
 	public Response updateComponentMedia(
@@ -735,8 +735,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			// TODO: How does this work with composite keys?
-			return Response.created(URI.create(media.getComponentMediaId())).entity(media).build();
+			return Response.created(URI.create("v1/resource/components/{id}/media/" + media.getComponentMediaId())).entity(media).build();
 		} else {
 			return Response.ok(media).build();
 		}
@@ -1037,7 +1036,8 @@ public class ComponentRESTResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Add a resource to the given entity")
+	@APIDescription("Add a resource to the given entity.  Use a form to POST Resource.action?UploadResource to upload file.  "
+			+ "To upload: pass the componentResource.resourceType...etc and 'file'.")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentRESTResource.class)
 	@Path("/{id}/resource")
@@ -1052,7 +1052,8 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Update a resource associated with a given entity")
+	@APIDescription("Update a resource associated with a given entity. Use a form to POST Resource.action?UploadResource to upload file. "
+			+ " To upload: pass the componentResource.resourceType...etc and 'file'.")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/resource/{resourceId}")
 	public Response updateComponentResource(

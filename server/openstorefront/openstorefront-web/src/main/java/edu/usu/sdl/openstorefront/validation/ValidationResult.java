@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
@@ -21,17 +20,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Hold the validation results
  *
  * @author dshurtleff
  */
 public class ValidationResult
 {
+
 	private List<RuleResult> ruleResults = new ArrayList<>();
 
 	public ValidationResult()
 	{
 	}
-	
+
 	public boolean valid()
 	{
 		return ruleResults.isEmpty();
@@ -41,32 +42,33 @@ public class ValidationResult
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
-		ruleResults.forEach(result ->{
+		ruleResults.forEach(result -> {
 			sb.append(result.toString()).append("\n");
 		});
 		return sb.toString();
 	}
 
+	public String toHtmlString()
+	{
+		return toString().replace("\n", "<br>");
+	}
+
 	public RestErrorModel toRestError()
 	{
 		RestErrorModel restErrorModel = new RestErrorModel();
-		for (RuleResult ruleResult : ruleResults)
-		{
-			if (restErrorModel.getErrors().containsKey(ruleResult.getFieldName()))
-			{
-				String message = restErrorModel.getErrors().get(ruleResult.getFieldName());				
-				message = ", " +  ruleResult.getMessage();
+		for (RuleResult ruleResult : ruleResults) {
+			if (restErrorModel.getErrors().containsKey(ruleResult.getFieldName())) {
+				String message = restErrorModel.getErrors().get(ruleResult.getFieldName());
+				message = ", " + ruleResult.getMessage();
 				restErrorModel.getErrors().put(ruleResult.getFieldName(), message);
-			}
-			else
-			{
+			} else {
 				restErrorModel.getErrors().put(ruleResult.getFieldName(), ruleResult.getMessage());
-			}				
+			}
 		}
-		
+
 		return restErrorModel;
 	}
-	
+
 	public List<RuleResult> getRuleResults()
 	{
 		return ruleResults;
@@ -76,5 +78,5 @@ public class ValidationResult
 	{
 		this.ruleResults = ruleResults;
 	}
-	
+
 }

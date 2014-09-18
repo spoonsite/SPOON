@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -83,8 +84,8 @@ public class FileSystemManager
 
 			URL resourceUrl = new DBManager().getClass().getResource(resourceDir + configFilename);
 			if (resourceUrl != null) {
-				try {
-					Files.copy(new DBManager().getClass().getResourceAsStream(resourceDir + configFilename), Paths.get(directory + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
+				try (InputStream in = new DBManager().getClass().getResourceAsStream(resourceDir + configFilename)) {
+					Files.copy(in, Paths.get(directory + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException(ex);
 				}

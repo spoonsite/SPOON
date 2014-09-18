@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
+ * Reflection and Service related methods
  *
  * @author dshurtleff
  */
@@ -38,7 +39,15 @@ public class ServiceUtil
 
 	public static final String LOOKUP_ENTITY = "LookupEntity";
 	public static final String BASECOMPONENT_ENTITY = "BaseComponent";
+	public static final String COMPOSITE_KEY_SEPERATOR = "#";
+	public static final String COMPOSITE_KEY_REPLACER = "~";
 
+	/**
+	 * This check for Value Model Objects
+	 *
+	 * @param fieldClass
+	 * @return
+	 */
 	public static boolean isComplexClass(Class fieldClass)
 	{
 		boolean complex = false;
@@ -62,6 +71,12 @@ public class ServiceUtil
 		return complex;
 	}
 
+	/**
+	 * Check for class to see if it's a collection class
+	 *
+	 * @param checkClass
+	 * @return
+	 */
 	public static boolean isCollectionClass(Class checkClass)
 	{
 		boolean collection = false;
@@ -74,6 +89,12 @@ public class ServiceUtil
 		return collection;
 	}
 
+	/**
+	 * This gets all declared field of the whole object hierarchy
+	 *
+	 * @param typeClass
+	 * @return
+	 */
 	public static List<Field> getAllFields(Class typeClass)
 	{
 		List<Field> fields = new ArrayList<>();
@@ -89,11 +110,25 @@ public class ServiceUtil
 		return fields;
 	}
 
+	/**
+	 * This checks that an entity is a lookup entity
+	 *
+	 * @param entityClass
+	 * @return
+	 */
 	public static boolean isSubLookupEntity(Class entityClass)
 	{
 		return isSubClass(LOOKUP_ENTITY, entityClass);
 	}
 
+	/**
+	 * This checks class name to determine if a given class is subtype of the
+	 * class name;
+	 *
+	 * @param className
+	 * @param entityClass
+	 * @return
+	 */
 	public static boolean isSubClass(String className, Class entityClass)
 	{
 		if (entityClass == null) {

@@ -17,9 +17,12 @@ package edu.usu.sdl.openstorefront.web.rest;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
+import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -39,11 +42,18 @@ public class GeneralExceptionHandler
 	@Override
 	public Response toResponse(Throwable exception)
 	{
-		ErrorInfo errorInfo = new ErrorInfo(exception, httpServletRequest);
-		ServiceProxy serviceProxy = new ServiceProxy();
-		SystemErrorModel systemErrorModel = serviceProxy.getSystemService().generateErrorTicket(errorInfo);
+		if (exception instanceof WebApplicationException) {
+			WebApplicationException webApplicationException = (WebApplicationException) exception;
+			return webApplicationException.getResponse();
+		} else {
+			ErrorInfo errorInfo = new ErrorInfo(exception, httpServletRequest);
+			errorInfo.setErrorTypeCode(ErrorTypeCode.REST_API);
 
-		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(systemErrorModel).build();
+			ServiceProxy serviceProxy = new ServiceProxy();
+			SystemErrorModel systemErrorModel = serviceProxy.getSystemService().generateErrorTicket(errorInfo);
+
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(systemErrorModel).type(MediaType.APPLICATION_JSON).build();
+		}
 	}
 
 }
