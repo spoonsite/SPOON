@@ -29,7 +29,6 @@ import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
@@ -156,7 +155,7 @@ public class AttributeResource
 
 	@GET
 	@APIDescription("Gets article if it existing for the given type and code.")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.WILDCARD})
 	@Path("/attributetypes/{type}/attributecodes/{code}/article")
 	public Response getAttributeArticle(
 			@PathParam("type")
@@ -171,12 +170,7 @@ public class AttributeResource
 		attributeCodePk.setAttributeType(type);
 		String articleData = service.getAttributeService().getArticle(attributeCodePk);
 		if (StringUtils.isNotBlank(articleData)) {
-			Article article = new Article();
-			article.setHtml(articleData);
-			article.setAttributeCode(code);
-			article.setAttributeType(type);
-
-			return Response.ok(article).build();
+			return Response.ok(articleData).build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
