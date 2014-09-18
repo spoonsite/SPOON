@@ -71,13 +71,16 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
         'method': 'GET',
         'url': 'api/v1/resource/highlights'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
           save('highlights', data);
           deferred.resolve(data);
         } else {
-          deferred.reject('There was an error grabbing the highlights');
+          triggerError(data);
+          deferred.reject(false);
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
       });
     }
     return deferred.promise;

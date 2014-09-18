@@ -19,16 +19,6 @@
 
 app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
 
-  $scope.scoreCard                     = Business.componentservice.getScoreCard();
-  $scope.externalDepend                = Business.componentservice.getExternalDepend();
-  $scope.localAssetArtifacts           = Business.componentservice.getLocalAssetArtifacts();
-  $scope.componentVitals               = Business.componentservice.getComponentVitals();
-  $scope.pointsContact                 = Business.componentservice.getPointsContact();
-  $scope.componentSummary              = Business.componentservice.getComponentSummary();
-  $scope.componentEvalProgressBar      = Business.componentservice.getComponentEvalProgressBar();
-  $scope.componentEvalProgressBarDates = Business.componentservice.getComponentEvalProgressBarDates();
-  $scope.componentState                = Business.componentservice.getComponentState();
-  $scope.resultsComments               = Business.componentservice.getResultsComments();
   $scope.user                          = {};
   $scope.editQuestion                  = [];
 

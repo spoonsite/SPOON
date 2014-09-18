@@ -147,10 +147,16 @@ var triggerAlert = function(text, uid, id, delay) {
 * This funciton gets rid of input error styling
 * params: id -- the id of the element that should be cleaned up
 ***************************************************************/
-var removeError = function(id) {
-  $('#'+id).tooltip('destroy');
-  $('#'+id).removeClass('errorOnInput');
+var removeError = function() {
+  $('.errorOnInput').tooltip('destroy');
+  $('.errorOnInput').removeClass('errorOnInput');
 };
+
+var wasServerError = function(errorObj, id){
+  //message, potential resolution, ticketNumber, contact;
+  var message = '';
+  triggerAlert(message, 'serverError', id, 6000);
+}
 
 /***************************************************************
 * This function adds a tooltip and styling to an input element
@@ -169,20 +175,22 @@ var removeError = function(id) {
 *  };
 ***************************************************************/
 var triggerError = function(errorObj) {
-  var errors = errorObj.errors;
-
-  _.each(errors, function(item) {
-    for (var i in item) {
+  console.log('errorObject', errorObj);
+  
+  if (isRequestError(errorObj)) {
+    var errors = errorObj.errors;
+    _.each(errors.entry, function(item) {
+      var i = item.key;
       $('#'+i).addClass('errorOnInput');
       $('#'+i).tooltip({
         // container: 'body',
         html: 'true',
         placement: 'top',
         trigger: 'focus',
-        title: item[i]
+        title: item.value
       });
-    }
-  });
+    });
+  }
 };
 
 
@@ -248,6 +256,23 @@ var sqlToJsDate = function(sqlDate){
     return new Date(sYear,sMonth,sDay,sHour,sMinute,sSecond,sMillisecond);
   } else {
     return null;
+  }
+}
+
+var isRequestError = function(response) {
+  return !isNotRequestError(response);
+}
+
+var isNotRequestError = function(response){
+  if (response && response !== 'false'){
+    console.log('response', response);
+    if (typeof response === 'object' && (response.success === false || response.success === 'false')) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    return true;
   }
 }
 

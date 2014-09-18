@@ -125,6 +125,15 @@ public interface ComponentService
 	public ComponentDetailView getComponentDetails(String componentId);
 
 	/**
+	 * Set the last view date for the component associated with the supplied id.
+	 *
+	 * @param componentId
+	 * @param userId
+	 * @return
+	 */
+	public Boolean setLastViewDts(String componentId, String userId);
+
+	/**
 	 * Return the details object of the component attached to the given id. (the
 	 * full view)
 	 *

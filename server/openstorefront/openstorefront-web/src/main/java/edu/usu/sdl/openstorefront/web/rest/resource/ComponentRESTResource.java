@@ -127,12 +127,12 @@ public class ComponentRESTResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
 	@Path("/{id}")
-	public Component getComponentSingle(
+	public Response getComponentSingle(
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
-		return view;
+		return sendSingleEnityResponse(view);
 	}
 
 	@POST
@@ -188,12 +188,11 @@ public class ComponentRESTResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentDetailView.class)
 	@Path("/{id}/detail")
-	public ComponentDetailView getComponentDetails(
+	public Response getComponentDetails(
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
 		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
-
 		//Track Views
 		if (componentDetail != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
@@ -206,8 +205,9 @@ public class ComponentRESTResource
 			componentTracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
+		service.getComponentService().setLastViewDts(componentId, "JONLAW");
 
-		return componentDetail;
+		return sendSingleEnityResponse(componentDetail);
 	}
 
 	// ComponentRESTResource ATTRIBUTE Section
