@@ -17,15 +17,25 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.Validate;
+import net.sourceforge.stripes.validation.ValidateNestedProperties;
 
 /**
+ * Handles Resources Interaction
  *
  * @author dshurtleff
  */
@@ -36,7 +46,13 @@ public class ResourceAction
 	@Validate(required = true, on = "LoadResource")
 	private String resourceId;
 
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "resourceType", on = "UploadResource")
+	})
 	private ComponentResource componentResource;
+
+	@Validate(required = true, on = "UploadResource")
+	private FileBean file;
 
 	@HandlesEvent("LoadResource")
 	public Resolution loadResource()
@@ -52,7 +68,7 @@ public class ResourceAction
 			@Override
 			protected void stream(HttpServletResponse response) throws Exception
 			{
-				Path path = componentResource.pathToMedia();
+				Path path = componentResource.pathToResource();
 				if (path != null) {
 					Files.copy(path, response.getOutputStream());
 				} else {
@@ -61,6 +77,33 @@ public class ResourceAction
 			}
 
 		};
+	}
+
+	@HandlesEvent("UploadResource")
+	public Resolution uploadResource()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (componentResource != null) {
+			componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
+			componentResource.setUpdateUser(SecurityUtil.getCurrentUserName());
+			componentResource.setCreateUser(SecurityUtil.getCurrentUserName());
+			componentResource.setOriginalName(file.getFileName());
+			componentResource.setMimeType(file.getContentType());
+
+			ValidationModel validationModel = new ValidationModel(componentResource);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				try {
+					service.getComponentService().saveResourceFile(componentResource, file.getInputStream());
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to able to save resource.", "Contact System Admin. Check disk space and permissions.", ex);
+				}
+			} else {
+				errors.put("file", validationResult.toHtmlString());
+			}
+		}
+		return streamUploadResponse(errors);
 	}
 
 	public String getResourceId()

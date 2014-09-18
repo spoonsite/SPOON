@@ -12,24 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-package edu.usu.sdl.openstorefront.util;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/**
- * Used to denote a Primary Key Field (Pseudo key)
  *
- * @author dshurtleff
+ * This package handles the Automatic documentation JAXRS API
  */
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface PK
-{
-
-}
+package edu.usu.sdl.openstorefront.doc;

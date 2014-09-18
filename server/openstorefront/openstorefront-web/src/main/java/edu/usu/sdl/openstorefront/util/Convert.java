@@ -13,50 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.util;
 
 /**
+ * Methods for Converting Values. Typically from External Input.
  *
  * @author dshurtleff
  */
 public class Convert
 {
+
 	/**
-	 *  
+	 * Converts an object to a boolean It's meant for handling different string
+	 * representation
+	 *
 	 * @param data
-	 * @return 
+	 * @return
 	 */
 	public static boolean toBoolean(Object data)
 	{
-		if (data != null)
-		{
-			if (data instanceof Boolean)
-			{
-				return (Boolean)data;
-			}
-			else if (data instanceof String)
-			{	
-				if ("T".equalsIgnoreCase(data.toString().trim()))
-				{
+		if (data != null) {
+			if (data instanceof Boolean) {
+				return (Boolean) data;
+			} else if (data instanceof String) {
+				if ("T".equalsIgnoreCase(data.toString().trim())) {
 					return Boolean.TRUE;
-				} 
-				else if ("1".equalsIgnoreCase(data.toString().trim()))
-				{
+				} else if ("1".equalsIgnoreCase(data.toString().trim())) {
 					return Boolean.TRUE;
+				} else {
+					return Boolean.parseBoolean(data.toString().trim());
 				}
-				else
-				{
-					return Boolean.parseBoolean(data.toString().trim());					
-				}
-			}
-			else
-			{
+			} else {
 				return Boolean.TRUE;
 			}
-					
+
 		}
 		return Boolean.FALSE;
 	}
-	
+
 }

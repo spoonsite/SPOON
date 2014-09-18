@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.io;
 
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -53,12 +54,12 @@ public class ArticleImporter
 					key = file.getName().substring(0, file.getName().indexOf("."));
 				}
 
-				if (key.contains("-")) {
+				if (key.contains(ServiceUtil.COMPOSITE_KEY_SEPERATOR)) {
 					AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(key);
 					String articleText = new String(Files.readAllBytes(Paths.get(file.getPath())));
 					serviceProxy.getAttributeService().saveArticle(attributeCodePk, articleText);
 				} else {
-					log.log(Level.WARNING, MessageFormat.format("Invalid filename: {0} make sure to follow this format.  <TYPE>-<CODE>.htm", file.getName()));
+					log.log(Level.WARNING, MessageFormat.format("Invalid filename: {0} make sure to follow this format.  <TYPE>" + ServiceUtil.COMPOSITE_KEY_SEPERATOR + "<CODE>.htm", file.getName()));
 				}
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to process article: " + file.getPath(), e);

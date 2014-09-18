@@ -15,7 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
+ * Global Constants used in the Application
  *
  * @author dshurtleff
  */
@@ -53,5 +57,53 @@ public class OpenStorefrontConstant
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 	public static final String ERRORS_MAX_COUNT_DEFAULT = "5000";
+
+	private static final Map<String, String> mimeXref = loadMimeXref();
+
+	private static Map<String, String> loadMimeXref()
+	{
+		Map<String, String> mimeXref = new HashMap<>();
+		mimeXref.put("text/html", ".html");
+		mimeXref.put("text/plain", ".txt");
+		mimeXref.put("text/json", ".json");
+		mimeXref.put("text/csv", ".csv");
+		mimeXref.put("text/tsv", ".tsv");
+		mimeXref.put("application/json", ".json");
+		mimeXref.put("text/xml", ".xml");
+		mimeXref.put("application/xml", ".xml");
+		mimeXref.put("image/jpeg", ".jpg");
+		mimeXref.put("image/jpg", ".jpg");
+		mimeXref.put("image/png", ".png");
+		mimeXref.put("image/gif", ".gif");
+		mimeXref.put("image/bmp", ".bmp");
+		mimeXref.put("video/mpg", ".mpg");
+		mimeXref.put("video/mpeg", ".mpg");
+		mimeXref.put("video/mp4", ".mp4");
+		mimeXref.put("video/avi", ".avi");
+		mimeXref.put("audio/mpg", ".mpg");
+		mimeXref.put("audio/mpeg", ".mpg");
+		mimeXref.put("audio/ogg", ".ogg");
+		mimeXref.put("audio/mp4", ".mp4");
+		mimeXref.put("application/doc", ".doc");
+		mimeXref.put("application/docx", ".docx");
+		mimeXref.put("application/xls", ".xls");
+		mimeXref.put("application/xlsx", ".xlsx");
+		mimeXref.put("application/pdf", ".pdf");
+		mimeXref.put("application/zip", ".zip");
+		mimeXref.put("application/gzip", ".gzip");
+		return mimeXref;
+	}
+
+	public static String getFileExtensionForMime(String mimeType)
+	{
+		String ext = "NA";
+		if (mimeType != null) {
+			String found = mimeXref.get(mimeType);
+			if (found != null) {
+				ext = found;
+			}
+		}
+		return ext;
+	}
 
 }

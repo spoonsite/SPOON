@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -133,8 +134,8 @@ public interface ComponentService
 	public List<ComponentReviewView> getReviewByUser(String username);
 
 	/**
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 */
 	public List<ComponentTag> getTagCloud();
 
@@ -280,5 +281,21 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void cascadeDeleteOfComponent(String componentId);
+
+	/**
+	 * Saves component media to disk and sets the filename
+	 *
+	 * @param media
+	 * @param fileInput
+	 */
+	public void saveMediaFile(ComponentMedia media, InputStream fileInput);
+
+	/**
+	 * Saves component resource to disk sets the filename
+	 *
+	 * @param resource
+	 * @param fileInput
+	 */
+	public void saveResourceFile(ComponentResource resource, InputStream fileInput);
 
 }
