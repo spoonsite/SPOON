@@ -1077,5 +1077,25 @@ public class ComponentServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 	}
+	
+	
+    @Override
+    public Boolean setLastViewDts(String componentId, String userId)
+    {
+        UserWatch example = new UserWatch();
+        example.setComponentId(componentId);
+        example.setUsername(userId);
+        example = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(example));
+        if (example != null) {
+            UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
+            watch.setLastViewDts(TimeUtil.currentDate());
+            persistenceService.persist(watch);
+            return Boolean.TRUE;
+        } else{
+            return Boolean.FALSE;
+        }
+    }
+
+
 
 }

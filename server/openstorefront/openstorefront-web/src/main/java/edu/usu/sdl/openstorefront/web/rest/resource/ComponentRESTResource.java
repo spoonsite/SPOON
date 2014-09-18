@@ -192,10 +192,7 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
-
 		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
-
 		//Track Views
 		if (componentDetail != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
@@ -208,6 +205,8 @@ public class ComponentRESTResource
 			componentTracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
+		service.getComponentService().setLastViewDts(componentId, "JONLAW");
+
 		return sendSingleEnityResponse(componentDetail);
 	}
 
