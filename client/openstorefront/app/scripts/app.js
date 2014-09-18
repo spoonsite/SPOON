@@ -464,6 +464,10 @@ var app = angular
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
       $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
       $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?/).passThrough();
@@ -471,6 +475,7 @@ var app = angular
       $httpBackend.whenPOST('api/v1/resource/components/reviews/ANONYMOUS').passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?con/).passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?attributecodes\/[^\/][^\/]*\/?article/).passThrough();
       // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
       //   // grab the url (needed for what the backend will simulate)
       //   // parse it into an array

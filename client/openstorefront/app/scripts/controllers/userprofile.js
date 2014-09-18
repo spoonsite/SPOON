@@ -95,16 +95,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
       $scope.reviews = null;
     }
   });
-  Business.userservice.getWatches().then(function(result) {
-    if (result) {
-      $scope.watches = result;
-      $scope.watches = _.sortBy($scope.watches, function(item) {
-        return item.componentName;
-      });
-    } else {
-      $scope.watches = null;
-    }
-  });
   Business.lookupservice.getExpertise().then(function(result){
     if (result) {
       $scope.expertise = result;
@@ -172,7 +162,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * This function converts a timestamp to a displayable date
   ***************************************************************/
   $scope.setNotify = function(id, value){
-    _.find($scope.watches, {'componentId': id}).notifyFlag = value;
+    _.find($scope.watches, {'componentId': id}).notifyFlg = value;
   };
 
   $scope.toggleCollapse = function(id){
@@ -289,25 +279,36 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.removeFromWatches = function(id){
     var answer = confirm ('You are about to remove a component from your watch list. Are you sure you want to do this?');
     if (answer) {
-
-      var a = _.find($scope.watches, {'componentId': id});
-
-      if (a) {
-        $scope.watches.splice(_.indexOf($scope.watches, a), 1);
+      if ($scope.watches && $scope.watches.length > 0) {
+        var watch = _.find($scope.watches, {componentId: id});
+        if ($scope.user.info && watch.watchId) {
+          Business.userservice.removeWatch($scope.user.info.username, watch.watchId).then(null, function(result){
+            $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+            $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', id);
+          });
+        }
       }
-
-      Business.userservice.setWatches($scope.watches);
-      $scope.$emit('$triggerEvent', '$detailsUpdated', id);
-      _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
-      Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
     }
   };
 
 
-  $scope.saveNotifyChange = function(id) {
-    Business.userservice.setWatches($scope.watches);
-    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
-  };
+  $scope.updateWatch = function(watch){
+    var watchId = watch.watchId;
+    delete watch.componentName;
+    delete watch.lastUpdateDts;
+    delete watch.watchId;
+    delete watch.createDts;
+    delete watch.$$hashKey;
+    console.log('watch', watch);
+    if ($scope.user.info) {
+      Business.userservice.saveWatch($scope.user.info.username, watch, watchId).then(function(result){
+        if (result) {
+          $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', watch.componentId);
+        }
+      });
+    }
+  }
 
   $scope.$on('$includeContentLoaded', function(){
     $timeout(function() {
@@ -315,13 +316,46 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     }, 300);
   });
 
-  
+  $scope.resetWatches = function(hard) {
+    if ($scope.user.info) {
+      Business.userservice.getWatches($scope.user.info.username, hard).then(function(result){
+        if (result) {
+          $scope.watches = result;
+          $scope.watches = _.sortBy($scope.watches, function(item) {
+            return item.componentName;
+          });
+        } else {
+          $scope.watches = null;
+        }
+      });
+    } else {
+      Business.userservice.getCurrentUserProfile().then(function(result){
+        if (result) {
+          Business.userservice.getWatches(result.username, hard).then(function(result){
+            if (result) {
+              if (!$scope.user) {
+                $scope.user = {};
+              }
+              if (!$scope.user.info) {
+                $scope.user.info = result;
+              }
+              $scope.watches = result;
+              $scope.watches = _.sortBy($scope.watches, function(item) {
+                return item.componentName;
+              });
+            } else {
+              $scope.watches = null;
+            }
+          }); 
+        } else {
+          $scope.watches = null;
+        }
+      })
+    }
+  };
+  $scope.resetWatches(false);
   $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
-    Business.userservice.getWatches().then(function(result){
-      if (result) {
-        $scope.watches = result;
-      }
-    });
+    $scope.resetWatches(true);
     resetData();
   });
 

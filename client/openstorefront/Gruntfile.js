@@ -349,11 +349,11 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>',
           dest: '<%= yeoman.dist %>',
           src: [
-          '*.{ico,png,txt}',
+          '*.{ico,txt}',
+          'images/idamCapabilityFunctionality.png',
           '.htaccess',
           '*.html',
           'views/**/*.html',
-          'images/**/*.{PNG,png,jpg,jpeg,gif,webp,svg}',
           'bower_components/fontawesome/css/font-awesome.css',
           'bower_components/fontawesome/fonts/*',
           'bower_components/bootstrap/dist/fonts/*',

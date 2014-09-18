@@ -1,5 +1,4 @@
 describe('user-tools_User logged in drop-down', function() {
-
     it('Click on UserName then User Profile', function () {
         browser.get(theSite);
         // Click on User Name
@@ -30,6 +29,15 @@ describe('user-tools_User logged in drop-down', function() {
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(1000);
     });
+
+    /* // DOWN ARROW in Component Reviews
+    it('Click buttons in Component Reviews', function() {
+        // Click to expand
+        element.all(by.css(.fa.fa-arrow-down')).get(0).click();
+        // Click EDIT
+
+    });
+    */
 
 /*  CURRENTLY YOU CANNOT SAVE AN UPDATED USER PROFILE, WAIT UNTIL SERVER SIDE IS WORKING?
    it('Update User Info and Save', function() {

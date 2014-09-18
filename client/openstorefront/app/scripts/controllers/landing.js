@@ -39,24 +39,18 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
 
   $scope.$emit('$TRIGGERLOAD', 'landingLoader');
   $timeout(function() {
-    // Business.landingPage(false, false, true).then(function (result) {
-      var result = localCache.get('landingRoute');
-      if ($location.search() && $location.search().route) {
-        $scope.landingRoute = $location.search().route;
-        $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
-        $scope.loaded = true;
-      } else if (result) {
-        $scope.landingRoute = result;
-        $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
-        $scope.loaded = true;
-      }
-    // });
+    var type = localCache.get('type');
+    var code = localCache.get('code');
+    $scope.landingRoute = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article';
+    $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+    $scope.loaded = true;
   }, 1000); //
 
   $scope.$on('$TRIGGERLANDING', function(event, data) {
-    if ($location.search() && $location.search().route) {
-      $scope.landingRoute = $location.search().route;
-      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+    if (!data) {
+      var type = localCache.get('type');
+      var code = localCache.get('code');
+      $scope.landingRoute = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article';      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
       $scope.loaded = true;
     } else {
       $scope.landingRoute = data;

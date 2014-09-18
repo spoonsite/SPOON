@@ -49,7 +49,7 @@ public class UserWatchView
 
 	@NotNull
 	@ConsumeField
-	private boolean notifyFlag;
+	private Boolean notifyFlg;
 	
 	public UserWatchView()
 	{
@@ -63,7 +63,7 @@ public class UserWatchView
 		view.setCreateDts(watch.getCreateDts());
 		view.setLastUpdateDts(component.getLastActivityDts());
 		view.setLastViewDts(watch.getLastViewDts());
-		view.setNotifyFlag(watch.getNotifyFlg());
+		view.setNotifyFlg(watch.getNotifyFlg());
 		view.setWatchId(watch.getUserWatchId());
 		return view;
 	}
@@ -128,14 +128,20 @@ public class UserWatchView
 		this.componentId = componentId;
 	}
 
-	public boolean getNotifyFlag()
+	/**
+	 * @return the notifyFlg
+	 */
+	public Boolean getNotifyFlg()
 	{
-		return notifyFlag;
+		return notifyFlg;
 	}
 
-	public void setNotifyFlag(boolean notifyFlag)
+	/**
+	 * @param notifyFlg the notifyFlg to set
+	 */
+	public void setNotifyFlg(Boolean notifyFlg)
 	{
-		this.notifyFlag = notifyFlag;
+		this.notifyFlg = notifyFlg;
 	}
 	
 }
