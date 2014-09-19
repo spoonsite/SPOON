@@ -51,7 +51,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   });
 
   Business.componentservice.getComponentList().then(function(result) {
-    console.log('result', result);
+    // console.log('result', result);
     
     Business.typeahead(result, null).then(function(value){
       if (value) {
