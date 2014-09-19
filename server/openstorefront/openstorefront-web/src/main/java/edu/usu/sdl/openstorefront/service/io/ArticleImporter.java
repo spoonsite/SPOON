@@ -51,7 +51,8 @@ public class ArticleImporter
 			try {
 				String key = file.getName();
 				if (file.getName().contains(".")) {
-					key = file.getName().substring(0, file.getName().indexOf("."));
+					int index = file.getName().lastIndexOf(".");
+					key = file.getName().substring(0, index);
 				}
 
 				if (key.contains(ServiceUtil.COMPOSITE_KEY_SEPERATOR)) {

@@ -804,7 +804,7 @@ public class ComponentServiceImpl
 				component.getAttributes().forEach(attribute -> {
 					attribute.setComponentId(oldComponent.getComponentId());
 					attribute.getComponentAttributePk().setComponentId(oldComponent.getComponentId());
-					saveComponentAttribute(attribute);
+					saveComponentAttribute(attribute, false);
 				});
 
 			} else {
@@ -823,7 +823,7 @@ public class ComponentServiceImpl
 					attribute.getComponentAttributePk().setComponentId(component.getComponent().getComponentId());
 					attribute.setCreateUser(component.getComponent().getCreateUser());
 					attribute.setUpdateUser(component.getComponent().getUpdateUser());
-					saveComponentAttribute(attribute);
+					saveComponentAttribute(attribute, false);
 				});
 			}
 		}
