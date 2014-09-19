@@ -395,6 +395,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     //
   };
 
+  $scope.$on('$CHANGESEARCHRESULTTAGS', function(event, id, tags){
+    $timeout(function() {
+      var temp = _.find($scope.data.data, {'componentId': id});
+      temp.tags = tags;
+    })
+  }); //
+
   /***************************************************************
   * This function is used by the reviews section in the details to remove
   * and add the ellipsis

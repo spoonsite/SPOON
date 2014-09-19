@@ -26,12 +26,11 @@ app.filter('tagFilter', function () {
       var out = null;
       // and add everything that makes it through the filter
       out = _.filter(input, function(entry) {
-        var temp = _.find(MOCKDATA2.componentList, {'componentId': entry.componentId});
         // it passes the filter if for every tag
-        if (temp) {
+        if (entry) {
           return _.every(filters, function(tagListItem) {
             // one of the tags in its tag list is the same as the one form the filter
-            return _.some(temp.tags, function(tag) {
+            return _.some(entry.tags, function(tag) {
               return tagListItem.text  === tag.text;
             });
           });

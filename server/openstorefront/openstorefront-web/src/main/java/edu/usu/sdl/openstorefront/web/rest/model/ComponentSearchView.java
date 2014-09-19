@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class ComponentSearchView
 	private String approvedUser;
 	private Date approvedDts;
 	private Date lastActivityDts;
+	private List<ComponentTag> tags;
 
 	private String activeStatus;
 	private String createUser;
@@ -53,6 +56,7 @@ public class ComponentSearchView
 
 	public static ComponentSearchView toView(Component component)
 	{
+		ServiceProxy service = new ServiceProxy();
 		ComponentSearchView view = new ComponentSearchView();
 		view.setComponentId(component.getComponentId());
 		view.setName(component.getName());
@@ -66,6 +70,7 @@ public class ComponentSearchView
 		view.setOrganization(component.getOrganization());
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
+		view.setTags(service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId()));
 
 		view.setActiveStatus(component.getActiveStatus());
 		view.setCreateUser(component.getCreateUser());
@@ -290,6 +295,22 @@ public class ComponentSearchView
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<ComponentTag> getTags()
+	{
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<ComponentTag> tags)
+	{
+		this.tags = tags;
 	}
 
 }
