@@ -160,7 +160,7 @@ var triggerAlert = function(text, uid, id, delay) {
       hideAlert(uid, 1000);
     }, delay);
   }
-  console.log($('#alert_holder_'+uid));
+  // console.log($('#alert_holder_'+uid));
   
 };
 
@@ -175,7 +175,7 @@ var removeError = function() {
 };
 
 var showServerError = function(errorObj, id){
-  console.log('errorO', errorObj);
+  // console.log('errorO', errorObj);
   
   var message = 'There was a server error. Contact a System Admin or try again';
   //message, potential resolution, ticketNumber, contact;
@@ -208,7 +208,7 @@ var showServerError = function(errorObj, id){
 *  };
 ***************************************************************/
 var triggerError = function(errorObj) {
-  console.log('errorObject', errorObj);
+  // console.log('errorObject', errorObj);
   
   if (isRequestError(errorObj)) {
     var errors = errorObj.errors;
@@ -298,7 +298,7 @@ var isRequestError = function(response) {
 
 var isNotRequestError = function(response){
   if (response && response !== 'false'){
-    console.log('response', response);
+    // console.log('response', response);
     if (typeof response === 'object' && (response.success === false || response.success === 'false')) {
       return false;
     } else {

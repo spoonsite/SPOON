@@ -154,7 +154,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
   $scope.deleteSubComponent = function(id) {
     var index = _.find($scope.item.subComponents, {'componentId': id});
     var delIndex = $scope.item.subComponents.indexOf(index);
-    console.log('delindex', delIndex);
+    // console.log('delindex', delIndex);
     
     if (delIndex > -1) {
       $scope.item.subComponents.splice(delIndex, 1);
@@ -164,7 +164,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
   $scope.deleteRelatedComponent = function(id) {
     var index = _.find($scope.item.relatedComponents, {'componentId': id});
     var delIndex = $scope.item.relatedComponents.indexOf(index);
-    console.log('delindex', delIndex);
+    // console.log('delindex', delIndex);
     
     if (delIndex > -1) {
       $scope.item.relatedComponents.splice(delIndex, 1);
@@ -172,7 +172,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
   };
 
   $scope.savebase = function() {
-    console.log('scope.item', $scope.item);
+    // console.log('scope.item', $scope.item);
   };
 
   $scope.$watch('subComponent', function(value) {
@@ -206,7 +206,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
     return $scope.item? $scope.item.parentComponent: null;
   }, function(value){
     if (value) {
-      console.log('changes', $scope.item.parentComponent);
+      // console.log('changes', $scope.item.parentComponent);
       if (value && value.componentId && value.name) {
         $scope.parentSuccess = 'good';
       } else {

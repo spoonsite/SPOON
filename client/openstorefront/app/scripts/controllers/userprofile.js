@@ -254,7 +254,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   };
 
   $scope.deleteReview = function(reviewId, componentId) {
-    console.log('reviewId', reviewId);
+    // console.log('reviewId', reviewId);
     Business.componentservice.deleteReview(componentId, reviewId).then(function(result) {
       $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
       $scope.$emit('$TRIGGEREVENT', '$newReview');
@@ -289,7 +289,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     delete watch.watchId;
     delete watch.createDts;
     delete watch.$$hashKey;
-    console.log('watch', watch);
+    // console.log('watch', watch);
     if ($scope.user.info) {
       Business.userservice.saveWatch($scope.user.info.username, watch, watchId).then(function(result){
         if (result) {

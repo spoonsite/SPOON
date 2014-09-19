@@ -40,7 +40,7 @@ app.directive('abnTree', ['$timeout', function($timeout) {
       
       var error, expandAllParents, expandLevel, forAllAncestors, forEachBranch, getParent, n, onTreeChange, selectBranch, selectedBranch, tree;
       error = function(s) {
-        console.log('ERROR:' + s);
+        console.error('ERROR:' + s);
         // debugger;
         return void 0;
       };

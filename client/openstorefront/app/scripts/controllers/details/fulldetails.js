@@ -56,7 +56,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     if ($scope.user.info) {
       Business.userservice.getWatches($scope.user.info.username, hard).then(function(result){
         if (result) {
-          console.log('Watches', result);
+          // console.log('Watches', result);
 
           $scope.watches = result;
         }
@@ -72,7 +72,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
             if (!$scope.user.info) {
               $scope.user.info = result;
             }
-            console.log('Watches', result);
+            // console.log('Watches', result);
 
             $scope.watches = result;
           }
@@ -264,7 +264,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     delete watch.watchId;
     delete watch.createDts;
     delete watch.$$hashKey;
-    console.log('watch', watch);
+    // console.log('watch', watch);
     if ($scope.user.info) {
       Business.userservice.saveWatch($scope.user.info.username, watch, watchId).then(function(result){
         if (result) {
@@ -445,7 +445,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   };
 
   $scope.deleteReview = function(reviewId) {
-    console.log('reviewId', reviewId);
+    // console.log('reviewId', reviewId);
     Business.componentservice.deleteReview($scope.details.details.componentId, reviewId).then(function(result) {
       $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
       $scope.$emit('$TRIGGEREVENT', '$newReview');
