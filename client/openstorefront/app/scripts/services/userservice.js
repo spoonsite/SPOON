@@ -125,6 +125,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           updateCache('currentUserProfile', data);
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject(false);
         }
@@ -157,6 +158,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
             save('watches', data);
             deferred.resolve(data);
           } else {
+            removeError();
             triggerError(data);
             deferred.reject(false);
           }
@@ -184,6 +186,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         updateCache('watches', data);
         deferred.resolve(data);
       } else {
+        removeError();
         triggerError(data);
         deferred.result(false);
       }
@@ -219,6 +222,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           removeError();
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject('There was an error saving the watch');
         }
@@ -245,6 +249,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           removeError();
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject('There was an error grabbing the watches');
         }
@@ -276,6 +281,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           save('reviews', data);
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject('There was an error grabbing the reviews');
         }

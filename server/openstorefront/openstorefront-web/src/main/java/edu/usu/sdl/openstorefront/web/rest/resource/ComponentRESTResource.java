@@ -205,7 +205,7 @@ public class ComponentRESTResource
 			componentTracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
-		service.getComponentService().setLastViewDts(componentId, "JONLAW");
+		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
 
 		return sendSingleEnityResponse(componentDetail);
 	}

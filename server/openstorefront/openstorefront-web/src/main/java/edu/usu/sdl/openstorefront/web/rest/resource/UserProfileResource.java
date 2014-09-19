@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -201,6 +202,7 @@ public class UserProfileResource
 	{
 		userWatch.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userWatch.setUsername(userId);
+		userWatch.setLastViewDts(TimeUtil.currentDate());
 		//TODO: return the location of the created watch
 		Boolean check = Boolean.TRUE;
 		List<UserWatch> watches = service.getUserService().getWatches(userId);

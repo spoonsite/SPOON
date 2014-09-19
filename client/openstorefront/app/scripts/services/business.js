@@ -94,6 +94,8 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
           deferred.reject('There was an error grabbing the filters');
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error grabbing the filters');
       });
     }
     return deferred.promise;
@@ -131,6 +133,8 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
           deferred.reject('There was an error grabbing the tags list');
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error grabbing the tags list');
       });
     }
 
