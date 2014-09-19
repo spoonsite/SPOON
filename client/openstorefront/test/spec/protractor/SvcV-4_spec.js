@@ -1,30 +1,29 @@
 // theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront';
-// theSite = 'http://store-dev.usu.di2e.net:8080/openstorefront';
 // theSite = 'http://di2e.github.io';
 
 // GLOBAL Variable for the tests
-theSite = 'http://di2e.github.io';
+theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
 
-/* Trying to find you a better page, for now you can go to
-    https://ri1-openam-01.di2e.net/openam 
-   login/logout and it will kill your storefront session
-   On the dev server the URL will be
-    http://store-prod.usu.di2e.net/openam
-*/
+// TODO:  Get the signon working
+// Manual signon for now; 31 seconds
+browser.driver.sleep(31000);
+// Page unloads (so it thinks) as it logs in, need to figure this out
 
-// VPN access NOT working, it blocks access to starting the Selenium Server on Localhost
 /* describe('OpenAM Login page, if needed', function() {
     // Log on to OpenAM DEV store page (different GUI than prod page)
     it('Log in on the DEV OpenAM page', function() {
         // Navigate to the site
-        browser.get('http://store-dev.usu.di2e.net/openam', 2500);
+        browser.get(theSite, 2500);
 
         browser.driver.sleep(9000);
 
+        // ***** NO ANGULAR ON THE PAGE, DO IT BY HTML? *****
         if(element(by.css('group-field-block')).isPresent()){
             console.log('You need to log on to the OpenAM server!');
         }
         else console.log('logged on');
+
+        browser.driver.sleep(15000);
     });
 });
 */
