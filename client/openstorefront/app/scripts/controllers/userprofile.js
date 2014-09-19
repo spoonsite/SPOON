@@ -155,7 +155,9 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * This function converts a timestamp to a displayable date
   ***************************************************************/
   $scope.isNewer = function(updateDate, viewDate){
-    return parseInt(updateDate) > parseInt(viewDate);
+    var update = new Date(updateDate);
+    var view = new Date(viewDate);
+    return view < update;
   };
 
   /***************************************************************
