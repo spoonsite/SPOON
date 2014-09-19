@@ -139,4 +139,12 @@ public interface AttributeService
 	 */
 	public void refreshCache();
 
+	/**
+	 * Find the recently posted (created date) articles
+	 *
+	 * @param maxResults
+	 * @return
+	 */
+	public List<AttributeCode> findRecentlyAddedArticles(int maxResults);
+
 }

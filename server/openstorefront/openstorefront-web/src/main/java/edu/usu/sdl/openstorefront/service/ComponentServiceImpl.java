@@ -1098,4 +1098,18 @@ public class ComponentServiceImpl
 
 
 
+	@Override
+	public List<Component> findRecentlyAdded(int maxResults)
+	{
+		String query = "select from Component where activeStatus = :activeStatusParam "
+				+ " and approvalState = :approvedStateParam "
+				+ " order by approvedDts DESC LIMIT " + maxResults;
+
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
+		parameters.put("approvedStateParam", Component.APPROVAL_STATE_APPROVED);
+
+		return persistenceService.query(query, parameters);
+	}
+
 }

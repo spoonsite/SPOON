@@ -106,4 +106,11 @@ public class OpenStorefrontConstant
 		return ext;
 	}
 
+	public static enum ListingType
+	{
+
+		ARTICLE,
+		COMPONENT;
+	}
+
 }
