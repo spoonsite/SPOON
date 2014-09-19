@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
@@ -404,6 +405,19 @@ public class AttributeServiceImpl
 		}
 
 		return attributeType;
+	}
+
+	@Override
+	public List<AttributeCode> findRecentlyAddedArticles(int maxResults)
+	{
+		String query = "select from AttributeCode where activeStatus = :activeStatusParam "
+				+ " and articleFilename is not null "
+				+ " order by updateDts DESC LIMIT " + maxResults;
+
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
+
+		return persistenceService.query(query, parameters);
 	}
 
 }

@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
@@ -297,5 +298,13 @@ public interface ComponentService
 	 * @param fileInput
 	 */
 	public void saveResourceFile(ComponentResource resource, InputStream fileInput);
+
+	/**
+	 * Find Recently Added
+	 *
+	 * @param maxResults
+	 * @return
+	 */
+	public List<Component> findRecentlyAdded(int maxResults);
 
 }
