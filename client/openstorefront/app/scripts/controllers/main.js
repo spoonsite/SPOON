@@ -52,7 +52,6 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
 
   Business.highlightservice.getRecentlyAdded().then(function(result){
     if (result) {
-      console.log('result', result);
       var recents = [];
       _.each(result, function(item){
         var temp = item;

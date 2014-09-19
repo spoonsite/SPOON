@@ -142,7 +142,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   var getWatches = function(userId, override) {
     var deferred = $q.defer();
     if (userId) {
-      console.log('userId', userId);
+      // console.log('userId', userId);
       
       var watches = checkExpire('watches', minute * 0.5);
       if (watches && !override) {
@@ -198,9 +198,9 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   };
 
   var saveWatch = function(userId, watch, watchId) {
-    console.log('userId', userId);
-    console.log('watch', watch);
-    console.log('watchId', watchId);
+    // console.log('userId', userId);
+    // console.log('watch', watch);
+    // console.log('watchId', watchId);
     
     var deferred = $q.defer();
     if (userId && watch) {

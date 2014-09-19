@@ -201,7 +201,6 @@ var getShortDescription = function(str){
       log.push($(el)[0].outerHTML);
     }
   };
-  console.log('log', log);
   return log.join(' ');
 }
 
