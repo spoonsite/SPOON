@@ -7,6 +7,7 @@ theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
 // TODO:  Get the signon working
 // Manual signon for now; 31 seconds
 browser.driver.sleep(31000);
+// Page unloads (so it thinks) as it logs in, need to figure this out
 
 /* describe('OpenAM Login page, if needed', function() {
     // Log on to OpenAM DEV store page (different GUI than prod page)
