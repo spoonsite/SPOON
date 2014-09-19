@@ -93,10 +93,12 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
           save('UserTypeCode', data);
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject(false);
         }
       }, function(data, status, headers, config){
+        showServerError(data, 'body');
         deferred.reject('There was an error');
       });
     }
@@ -119,10 +121,12 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
           save('evalLevels', data);
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject(false);
         }
       }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
         deferred.reject('There was an error');
       });
     }
@@ -142,6 +146,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
           save('ExperienceTimeType', data);
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject(false);
         }
@@ -164,10 +169,12 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
           save('ReviewCon', data);
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject(false);
         }
       }, function(data, status, headers, config){
+        showServerError(data, 'body');
         deferred.reject('There was an error');
       });
     }
@@ -186,10 +193,12 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
           save('ReviewPro', data);
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject(false);
         }
       }, function(data, status, headers, config){
+        showServerError(data, 'body');
         deferred.reject('There was an error');
       });
     }

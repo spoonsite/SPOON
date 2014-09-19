@@ -22,6 +22,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.user                          = {};
   $scope.editQuestion                  = [];
 
+  resetUpdateNotify();
+
   $scope.setComponentId = function(id) {
     var deferred = $q.defer();
     $rootScope.refId = id;

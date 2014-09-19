@@ -89,6 +89,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           result.resolve(data);
           removeError();
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -115,6 +116,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           result.resolve(data);
           removeError();
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -150,6 +152,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           result.resolve(data.questionId);
           removeError();
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -177,6 +180,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           removeError();
           result.resolve(data.responseId);
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -212,6 +216,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           removeError();
           result.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -238,6 +243,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           removeError();
           result.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -277,6 +283,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           removeError();
           result.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -304,6 +311,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           removeError();
           result.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -331,6 +339,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           removeError();
           result.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           result.reject(false);
         }
@@ -366,6 +375,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
             save('component_'+id, data);
             result.resolve(data);
           } else {
+            removeError();
             triggerError(data);
             result.reject(false);
           }

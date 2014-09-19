@@ -76,10 +76,12 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
           save('highlights', data);
           deferred.resolve(data);
         } else {
+          removeError();
           triggerError(data);
           deferred.reject(false);
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
         deferred.reject('There was an error');
       });
     }

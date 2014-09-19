@@ -5,3 +5,23 @@
 .container.component2-div.updatedForUser{
   margin-left: -5px;
 }
+
+
+#updateNotify{
+  height: 0px;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(85, 85, 85, .8);
+  border-color: #000000;
+  color: #F2D42E;
+  font-size: 20px;
+  line-height: 50px;
+  position: relative;
+}
+
+#updateNotify div{
+  width:100%;
+  text-align: center;
+  position: absolute;
+  bottom: 0px;
+}

@@ -71,8 +71,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.getReviews = function() {
     Business.userservice.getReviews('ANONYMOUS').then(function(result){
       if (result) {
-        console.log('result', result);
-        
+        // console.log('result', result);
         $scope.username = 'ANONYMOUS';
         $scope.reviews = result;
       } else {
@@ -84,17 +83,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.$on('$newReview', function(){
     $scope.getReviews();
   })
-
-  Business.userservice.getReviews('ANONYMOUS').then(function(result){
-    if (result) {
-      console.log('result', result);
-      
-      $scope.username = 'ANONYMOUS';
-      $scope.reviews = result;
-    } else {
-      $scope.reviews = null;
-    }
-  });
   Business.lookupservice.getExpertise().then(function(result){
     if (result) {
       $scope.expertise = result;

@@ -491,6 +491,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
               }
             });
           }
+          if ($scope.details.details.lastActivityDts && $scope.details.details.lastViewedDts)
+          {
+            var update = new Date($scope.details.details.lastActivityDts);
+            var view = new Date($scope.details.details.lastViewedDts);
+            if (view < update) {
+              showUpdateNotify();
+            }
+          }
 
           /* jshint ignore:end */
 
