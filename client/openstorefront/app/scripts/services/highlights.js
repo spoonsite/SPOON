@@ -88,5 +88,32 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     return deferred.promise;
   }
 
+  highlights.getRecentlyAdded = function() {
+    var deferred = $q.defer();
+    var recentlyAdded = checkExpire('recentlyAdded', minute * 1440);
+    if (recentlyAdded) {
+      deferred.resolve(recentlyAdded);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/search/recent'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          save('recentlyAdded', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    }
+    return deferred.promise;
+  }
+
   return highlights;
 }]);

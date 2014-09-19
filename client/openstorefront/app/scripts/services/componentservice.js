@@ -405,8 +405,14 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       .success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && !isEmpty(data) && isNotRequestError(data)) {
           removeError();
-          save('componentList', data);
-          result.resolve(data);
+          var resultList = [];
+          _.each(data, function(item){
+            var temp = item;
+            temp.description = getShortDescription(item.description);
+            resultList.push(temp);
+          })
+          save('componentList', resultList);
+          result.resolve(resultList);
         } else {
           removeError();
           triggerError(data);
@@ -432,70 +438,56 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   };
 
   componentservice.doSearch = function(type, key) {
+    return componentservice.getComponentList();
+  };
+
+
+  componentservice.search = function(type, key, wait) {
     var deferred = $q.defer();
-    if (type && key) {
-      // $http.get('api/v1/resource/component/search/?type=' + type + '&key=' + key ).success(function(data, status, headers, config) { /*jshint unused:false*/
-        $http.get('api/v1/resource/components').success(function(data, status, headers, config) { /*jshint unused:false*/
-          if (data && data !== 'false' && isNotRequestError(data)){
-            removeError();
-            deferred.resolve(data);
-          } else {
-            removeError();
-            triggerError(data);
-            deferred.reject(false);
-          }
-        });
-      }
-      return deferred.promise;
-    };
-
-
-    componentservice.search = function(type, key, wait) {
-      var deferred = $q.defer();
-      var searchKey = checkExpire('searchKey', minute * 1440);
-      if (searchKey) {
+    var searchKey = checkExpire('searchKey', minute * 1440);
+    if (searchKey) {
+      deferred.resolve(searchKey);
+    } else {
+      if (!type && key) {
+        save('searchKey', [{'key': 'search', 'code': key}]);
+        searchKey = key;
+        deferred.resolve(searchKey);
+      } else if (type && key) {
+        save('searchKey', [{'key': type, 'code': key}]);
+        searchKey = key;
         deferred.resolve(searchKey);
       } else {
-        if (!type && key) {
-          save('searchKey', [{'key': 'search', 'code': key}]);
-          searchKey = key;
-          deferred.resolve(searchKey);
-        } else if (type && key) {
-          save('searchKey', [{'key': type, 'code': key}]);
-          searchKey = key;
-          deferred.resolve(searchKey);
-        } else {
-          deferred.reject('A key is required for a search!');
-          searchKey = null;
-        }
+        deferred.reject('A key is required for a search!');
+        searchKey = null;
       }
-      if (wait) {
-        return deferred.promise;
-      }
-      return searchKey;
-    };
-
-    componentservice.saveTags = function(id, tags) {
-      var deferred = $q.defer();
-      $http.delete('api/v1/resource/components/'+id+'/tags');
-      $http({
-        method: 'POST',
-        url: 'api/v1/resource/components/'+id+'/tags',
-        data: tags
-      }).success(function(data, status, headers, config){
-        if (data && data !== 'false' && isNotRequestError(data)) {
-          removeError();
-          deferred.resolve(data);
-        } else {
-          removeError();
-          triggerError(data);
-          deferred.reject(false);
-        }
-      }).error(function(data, status, headers, config){
-        deferred.resolve('There was an error saving the tags');
-      });
+    }
+    if (wait) {
       return deferred.promise;
-    };
+    }
+    return searchKey;
+  };
 
-    return componentservice;
-  }]);
+  componentservice.saveTags = function(id, tags) {
+    var deferred = $q.defer();
+    $http.delete('api/v1/resource/components/'+id+'/tags');
+    $http({
+      method: 'POST',
+      url: 'api/v1/resource/components/'+id+'/tags',
+      data: tags
+    }).success(function(data, status, headers, config){
+      if (data && data !== 'false' && isNotRequestError(data)) {
+        removeError();
+        deferred.resolve(data);
+      } else {
+        removeError();
+        triggerError(data);
+        deferred.reject(false);
+      }
+    }).error(function(data, status, headers, config){
+      deferred.resolve('There was an error saving the tags');
+    });
+    return deferred.promise;
+  };
+
+  return componentservice;
+}]);
