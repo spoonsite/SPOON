@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-sm-12">
             <h3> How many stars:&nbsp; 
-              <raty class="large-raty" id="star{{$index}}" style="min-width:110px; height: 100%; margin: -6px 10px -4px 0px;" ng-model="rating" score="{{rating}}" number="5" path="../../images/raty/">
+              <raty class="large-raty" id="star{{$index}}" style="min-width:110px; height: 100%; margin: -6px 10px -4px 0px;" ng-model="rating" score="{{rating}}" number="5" id="rating" path="../../images/raty/">
               </raty>
             </h3>
           </div>
@@ -15,7 +15,7 @@
             <div class="row" style="margin:0px;">
               <strong>Title:&nbsp;</strong>
             </div>
-            <input type="text" class="form-control" style="width: 325px; display:inline-block;" placeholder="Enter Review Title Here" ng-model="review.title">
+            <input type="text" class="form-control" style="width: 325px; display:inline-block;" placeholder="Enter Review Title Here" ng-model="review.title" id="title">
           </div>
         </div>
         <div class="col-sm-12">
@@ -26,7 +26,7 @@
             <div class="row" style="margin:0px;">
               <label>How long have you used it:&nbsp;</label>
             </div>
-            <button type="button" class="btn btn-default" style="width: 325px;" ng-model="timeCode" data-html="1" ng-options="level.description for level in expertise" data-animation="am-flip-x" bs-select>
+            <button id="userTimeCode" type="button" class="btn btn-default" style="width: 325px;" ng-model="timeCode" data-html="1" ng-options="level.description for level in expertise" data-animation="am-flip-x" bs-select>
               Action <span class="caret"></span>
             </button>
           </div>
@@ -41,7 +41,7 @@
                 <label class="control-label">Last Used:&nbsp;</label>
               </div>
               <div class="form-group" >
-                <input type="text" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM-yyyy" data-start-view="2" data-min-view="1" autoclose="true" ng-model="review.lastUsed" data-max-date="{{untilDate}}" placeholder="Last Used" data-date-type="number" bs-datepicker> 
+                <input type="text" id="lastUsed" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM-yyyy" data-start-view="2" data-min-view="1" autoclose="true" ng-model="review.lastUsed" data-max-date="{{untilDate}}" placeholder="Last Used" data-date-type="number" bs-datepicker> 
                 &nbsp;<i class="fa fa-calendar"></i> <span><small>Defaults to "The Present"</small></span>
               </div>
             </div>
@@ -52,7 +52,7 @@
             <div class="row" style="margin:0px;">
               <label>Describe Yourself:&nbsp;</label>
             </div>
-            <button type="button" class="btn btn-default" style="width: 325px;" ng-model="role" data-html="1" ng-options="usertype.description for usertype in userTypeCodes"  data-animation="am-flip-x" bs-select>
+            <button type="button" id="userTypeCode" class="btn btn-default" style="width: 325px;" ng-model="role" data-html="1" ng-options="usertype.description for usertype in userTypeCodes"  data-animation="am-flip-x" bs-select>
               Action <span class="caret"></span>
             </button>
           </div>
@@ -61,7 +61,7 @@
           <div class="col-sm-12">
             <div class="row" style="margin:0px;">
               <label>Organization:&nbsp;</label>
-              <input type="text" class="form-control" ng-model="review.organization">
+              <input type="text" class="form-control" id="organization" ng-model="review.organization">
             </div>
           </div>
         </div>    
@@ -69,13 +69,13 @@
           <div class="row">
             <div class="col-sm-12">
               <strong>Pros: </strong>
-              <tags-input class="bootstrap" min-length="1" ng-model="review.pros" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="" on-tag-removed=""><auto-complete min-length="1" source="checkTagsList($query, review.pros, prosConsList.pros)"></auto-complete></tags-input>
+              <tags-input  id="pros" class="bootstrap" min-length="1" ng-model="review.pros" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="" on-tag-removed=""><auto-complete min-length="1" source="checkTagsList($query, review.pros, prosConsList.pros)"></auto-complete></tags-input>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-12">
               <strong>Cons: </strong>
-              <tags-input class="bootstrap" min-length="1" ng-model="review.cons" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="" on-tag-removed=""><auto-complete min-length="1" source="checkTagsList($query, review.cons, prosConsList.cons)"></auto-complete></tags-input>
+              <tags-input id="cons" class="bootstrap" min-length="1" ng-model="review.cons" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="" on-tag-removed=""><auto-complete min-length="1" source="checkTagsList($query, review.cons, prosConsList.cons)"></auto-complete></tags-input>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@
         </div>
         <div>
           <strong>Comments:</strong>      
-          <div><textarea rows="10" class="boxsizingBorder" ng-model="review.comment"></textarea></div>    
+          <div><textarea rows="10" class="boxsizingBorder" ng-model="review.comment" id="comment"></textarea></div>    
         </div>    
         <div class="text-center" style="padding-top: 20px;">
           <button type="submit" class="btn btn-primary"><span ng-show="!revs">Save</span><span ng-show="revs && revs.edit">Update</span>&nbsp;Review</button>                  

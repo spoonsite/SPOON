@@ -69,12 +69,18 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     } else if (type && code){
       $http({
         method: 'GET',
-        url: 'api/v1/resource//attributetypes/'+type+'/attributecodes/'+code+'/article'
+        url: 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article'
       }).succes(function(data, status, headers, config){
-        if (data && data !== 'false'){
+        if (data && data !== 'false' && isNotRequestError(data)){
+          removeError();
           deferred.resolve(data)
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
       }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
         deferred.reject(data);
       });
     } else {

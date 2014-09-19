@@ -51,6 +51,26 @@ var setUpDropdown= function(id) {
   });
 };
 
+
+var resetUpdateNotify = function() {
+  $('#updateNotify').css('height', '0px');
+}
+
+var showUpdateNotify = function() {
+  resetUpdateNotify();
+  $('#updateNotify').stop(true, true).animate({
+    height: '50px'
+  }, 300, function() {
+    setTimeout(function() {
+      $('#updateNotify').stop(true, true).animate({
+        height: '0px'
+      }, 300, function(){
+        // both animations complete.
+      })
+    }, 12000);
+  })
+}
+
 /***************************************************************
 * Speed up calls to hasOwnProperty (somewhat of an hasOwnPropert override)
 ***************************************************************/
@@ -120,7 +140,7 @@ var triggerAlert = function(text, uid, id, delay) {
       id = 'body';
     }
     $('#alert_holder_'+uid).remove();
-    $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+    $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
     
     // this will hide the alert on any action outside the alert box.
     // $(document).on('click keypress', function(event) {
@@ -140,6 +160,8 @@ var triggerAlert = function(text, uid, id, delay) {
       hideAlert(uid, 1000);
     }, delay);
   }
+  // console.log($('#alert_holder_'+uid));
+  
 };
 
 
@@ -147,10 +169,27 @@ var triggerAlert = function(text, uid, id, delay) {
 * This funciton gets rid of input error styling
 * params: id -- the id of the element that should be cleaned up
 ***************************************************************/
-var removeError = function(id) {
-  $('#'+id).tooltip('destroy');
-  $('#'+id).removeClass('errorOnInput');
+var removeError = function() {
+  $('.errorOnInput').tooltip('destroy');
+  $('.errorOnInput').removeClass('errorOnInput');
 };
+
+var showServerError = function(errorObj, id){
+  // console.log('errorO', errorObj);
+  
+  var message = 'There was a server error. Contact a System Admin or try again';
+  //message, potential resolution, ticketNumber, contact;
+  if (errorObj) {
+    if (errorObj.message) {
+      message = message + ': <div class="leftIndent">Message:&nbsp;<span>' + errorObj.message + '</span></div>';
+    }if (errorObj.errorTicketNumber) {
+      message = message + '<div class="leftIndent">Error Ticket Number:&nbsp;<span>' + errorObj.errorTicketNumber + '</span></div>';
+    }if (errorObj.potentialResolution) {
+      message = message + '<div class="leftIndent">Potential resolution:&nbsp;<span>' + errorObj.potentialResolution + '</span></div>';
+    }
+  }
+  triggerAlert(message, 'serverError', id, 6000);
+}
 
 /***************************************************************
 * This function adds a tooltip and styling to an input element
@@ -169,20 +208,22 @@ var removeError = function(id) {
 *  };
 ***************************************************************/
 var triggerError = function(errorObj) {
-  var errors = errorObj.errors;
-
-  _.each(errors, function(item) {
-    for (var i in item) {
+  // console.log('errorObject', errorObj);
+  
+  if (isRequestError(errorObj)) {
+    var errors = errorObj.errors;
+    _.each(errors.entry, function(item) {
+      var i = item.key;
       $('#'+i).addClass('errorOnInput');
       $('#'+i).tooltip({
         // container: 'body',
         html: 'true',
         placement: 'top',
         trigger: 'focus',
-        title: item[i]
+        title: item.value
       });
-    }
-  });
+    });
+  }
 };
 
 
@@ -248,6 +289,23 @@ var sqlToJsDate = function(sqlDate){
     return new Date(sYear,sMonth,sDay,sHour,sMinute,sSecond,sMillisecond);
   } else {
     return null;
+  }
+}
+
+var isRequestError = function(response) {
+  return !isNotRequestError(response);
+}
+
+var isNotRequestError = function(response){
+  if (response && response !== 'false'){
+    // console.log('response', response);
+    if (typeof response === 'object' && (response.success === false || response.success === 'false')) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    return true;
   }
 }
 
