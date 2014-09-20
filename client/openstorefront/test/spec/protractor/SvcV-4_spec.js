@@ -4,34 +4,23 @@
 // GLOBAL Variable for the tests
 theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
 
-// TODO:  Get the signon working
-// Manual signon for now; 31 seconds
-browser.driver.sleep(31000);
-// Page unloads (so it thinks) as it logs in, need to figure this out
+// For non-Angular page turn OFF synchronization
+browser.ignoreSynchronization = true;
+browser.get(theSite, 3500);
+browser.driver.sleep(3000);
 
-/* describe('OpenAM Login page, if needed', function() {
-    // Log on to OpenAM DEV store page (different GUI than prod page)
-    it('Log in on the DEV OpenAM page', function() {
-        // Navigate to the site
-        browser.get(theSite, 2500);
-
-        browser.driver.sleep(9000);
-
-        // ***** NO ANGULAR ON THE PAGE, DO IT BY HTML? *****
-        if(element(by.css('group-field-block')).isPresent()){
-            console.log('You need to log on to the OpenAM server!');
-        }
-        else console.log('logged on');
-
-        browser.driver.sleep(15000);
-    });
-});
-*/
-
+// Log in to the OpenAM page if text box is found (username/ IDToken1)
+if(browser.driver.findElement(by.id('IDToken1'))){
+console.log('attempting to Log in on OpenAM page');
+browser.driver.findElement(by.id('IDToken1')).sendKeys('amadmin');
+browser.driver.findElement(by.id('IDToken2')).sendKeys('password', protractor.Key.ENTER);
+browser.driver.sleep(3000);
+}
 
 describe('SvcV-4_button from the home page', function() {
     it('Expand the buttons in the categories', function () {
         // Navigate to the site
+        browser.ignoreSyncronization = false;
         browser.get(theSite, 3500);
 
         // Click the SvcV-4 button
@@ -48,7 +37,4 @@ describe('SvcV-4_button from the home page', function() {
         // Brittle
         expect(element.all(by.css('.btn')).count()).toEqual(7);
     });
-
-
-
 });
