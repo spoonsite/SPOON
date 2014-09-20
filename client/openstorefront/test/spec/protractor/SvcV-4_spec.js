@@ -1,17 +1,17 @@
-// theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront';
-// theSite = 'http://di2e.github.io';
-
 // GLOBAL Variable for the tests
-theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
+theSite = 'http://di2e.github.io/openstorefront';
+openAM = false;
 
+// theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront';
+// openAM = true;
+
+
+// Log in to the OpenAM page if needed
+if(openAM){
 // For non-Angular page turn OFF synchronization
 browser.ignoreSynchronization = true;
 browser.get(theSite, 3500);
 browser.driver.sleep(3000);
-
-// Log in to the OpenAM page if text box is found (username/ IDToken1)
-if(browser.driver.findElement(by.id('IDToken1'))){
-console.log('attempting to Log in on OpenAM page');
 browser.driver.findElement(by.id('IDToken1')).sendKeys('amadmin');
 browser.driver.findElement(by.id('IDToken2')).sendKeys('password', protractor.Key.ENTER);
 browser.driver.sleep(3000);
