@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -146,5 +147,14 @@ public interface AttributeService
 	 * @return
 	 */
 	public List<AttributeCode> findRecentlyAddedArticles(int maxResults);
+
+	/**
+	 * Builds and Architecture given a attribute type NOTE: AttributeType must
+	 * an architecture with codes in the following format: 1.1.1
+	 *
+	 * @param attributeType
+	 * @return
+	 */
+	public Architecture generateArchitecture(String attributeType);
 
 }

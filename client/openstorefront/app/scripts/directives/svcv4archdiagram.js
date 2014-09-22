@@ -18,12 +18,15 @@
 
 /*global MOCKDATA2*/
 
-app.controller('Svc4ArchDiagramController', ['$scope', function($scope) {
+app.controller('Svc4ArchDiagramController', ['$scope', 'business', function($scope, Business) {
 
-  $scope.svcv4Mode  = false;
+  $scope.svcv4Mode = false;
   $scope.diagramToggleAllState = true;
   $scope.diagramToggleAllText = 'Expand All';
-  $scope.svcv4data = MOCKDATA2.parsedSvcv4;
+  
+  Business.articleservice.getArchitecture('DI2E-SVCV4-A').then(function(result) {  
+    $scope.svcv4data=result;
+  });
 
   $scope.diagramToggleAll = function(diagramData){
     _.each(diagramData.children, function(level1){

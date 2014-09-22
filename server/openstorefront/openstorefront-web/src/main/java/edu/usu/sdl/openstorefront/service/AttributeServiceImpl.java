@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.service.api.AttributeService;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.sort.ArchitectureComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -48,6 +50,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
@@ -420,4 +423,87 @@ public class AttributeServiceImpl
 		return persistenceService.query(query, parameters);
 	}
 
+	@Override
+	public Architecture generateArchitecture(String attributeType)
+	{
+		Architecture architecture = new Architecture();
+
+		AttributeType attributeTypeFull = persistenceService.findById(AttributeType.class, attributeType);
+		if (attributeTypeFull != null) {
+			if (attributeTypeFull.getArchitectureFlg()) {
+				architecture.setName(attributeTypeFull.getDescription());
+				architecture.setAttributeType(attributeType);
+
+				String rootCode = "0";
+				List<AttributeCode> attributeCodes = findCodesForType(attributeType);
+				for (AttributeCode attributeCode : attributeCodes) {
+					if (rootCode.equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
+						architecture.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+						architecture.setDescription(attributeCode.getDescription());
+					} else {
+						String codeTokens[] = attributeCode.getAttributeCodePk().getAttributeCode().split(Pattern.quote("."));
+						Architecture rootArchtecture = architecture;
+						StringBuilder codeKey = new StringBuilder();
+						for (int i = 0; i < codeTokens.length - 1; i++) {
+							codeKey.append(codeTokens[i]);
+
+							//put in stubs as needed
+							boolean found = false;
+							for (Architecture child : rootArchtecture.getChildren()) {
+								if (child.getAttributeCode().equals(codeKey.toString())) {
+									found = true;
+									rootArchtecture = child;
+									break;
+								}
+							}
+							if (!found) {
+								Architecture newChild = new Architecture();
+								newChild.setAttributeCode(codeKey.toString());
+								newChild.setAttributeType(attributeType);
+								rootArchtecture.getChildren().add(newChild);
+								rootArchtecture = newChild;
+							}
+							codeKey.append(".");
+						}
+						//now find the correct postion and add/update
+						boolean found = false;
+						for (Architecture child : rootArchtecture.getChildren()) {
+							if (child.getAttributeCode().equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
+								child.setName(attributeCode.getLabel());
+								child.setDescription(attributeCode.getDescription());
+								found = true;
+							}
+						}
+						if (!found) {
+							Architecture newChild = new Architecture();
+							newChild.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+							newChild.setAttributeType(attributeType);
+							newChild.setName(attributeCode.getLabel());
+							newChild.setDescription(attributeCode.getDescription());
+							rootArchtecture.getChildren().add(newChild);
+						}
+					}
+				}
+
+			} else {
+				throw new OpenStorefrontRuntimeException("Attribute Type is not an architecture: " + attributeType, "Make sure type is an architecture.");
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find attribute type: " + attributeType, "Check type code.");
+		}
+		sortArchitecture(architecture.getChildren());
+		return architecture;
+	}
+
+	private void sortArchitecture(List<Architecture> architectures)
+	{
+		if (architectures.isEmpty()) {
+			return;
+		}
+
+		for (Architecture architecture : architectures) {
+			sortArchitecture(architecture.getChildren());
+		}
+		architectures.sort(new ArchitectureComparator<>());
+	}
 }
