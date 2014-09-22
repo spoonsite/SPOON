@@ -21,15 +21,18 @@ describe('adminTools', function() {
 
         // Manage Lookups (highest level no sub-trees)
         element.all(by.css('.indented')).get(5).click();
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(26);
+                                                      // was 26 on github.io
+        expect(element.all(by.css('.ng-scope')).count()).toEqual(434);
 
         // Manage Components
         element.all(by.css('.indented')).get(7).click();
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(30);
+                                                     // was 30 on github.io
+        expect(element.all(by.css('.ng-scope')).count()).toEqual(26);
 
         // Manage Branding
         element.all(by.css('.indented')).get(8).click();
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(23);
+                                                    // was 23 on github.io
+        expect(element.all(by.css('.ng-scope')).count()).toEqual(26);
 
     });
 

@@ -10,6 +10,8 @@ describe('searchAll_Search entire database', function() {
         // Search on ALL entries (null search term)
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
 
+        // Wait for it to sync, a bit slower on the VPN
+        browser.driver.sleep(10000);
 
         // Should return 58 results
         expect(element.all(by.repeater('item in data')).count()).toEqual(totalResults);
