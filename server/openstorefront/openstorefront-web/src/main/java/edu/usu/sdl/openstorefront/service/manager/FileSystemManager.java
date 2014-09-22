@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -49,6 +50,7 @@ public class FileSystemManager
 	public static final String IMPORT_COMPONENT_DIR = "/var/openstorefront/import/component";
 	public static final String ARTICLE_DIR = MAIN_PERM_DIR + "/article";
 	public static final String MEDIA_DIR = MAIN_PERM_DIR + "/media";
+	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
 	public static final String DB_DIR = "/var/openstorefront/db";
 
@@ -82,8 +84,8 @@ public class FileSystemManager
 
 			URL resourceUrl = new DBManager().getClass().getResource(resourceDir + configFilename);
 			if (resourceUrl != null) {
-				try {
-					Files.copy(new DBManager().getClass().getResourceAsStream(resourceDir + configFilename), Paths.get(directory + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
+				try (InputStream in = new DBManager().getClass().getResourceAsStream(resourceDir + configFilename)) {
+					Files.copy(in, Paths.get(directory + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException(ex);
 				}

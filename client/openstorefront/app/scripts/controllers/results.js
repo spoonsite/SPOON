@@ -395,6 +395,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     //
   };
 
+  $scope.$on('$CHANGESEARCHRESULTTAGS', function(event, id, tags){
+    $timeout(function() {
+      var temp = _.find($scope.data.data, {'componentId': id});
+      temp.tags = tags;
+    })
+  }); //
+
   /***************************************************************
   * This function is used by the reviews section in the details to remove
   * and add the ellipsis
@@ -446,9 +453,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     if (article && article.type === 'Article') {
       $scope.sendPageView('article' + article.route);
       $scope.isArticle = true;
-      localCache.save('landingRoute', article.route);
+      localCache.save('type', article.type);
+      localCache.save('code', article.code);
       $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', article.route);
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', false);
       $scope.showDetails = true;
       if (!openClick) {
         buttonOpen();
@@ -489,6 +497,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
                 }
               }
             });
+          }
+          if ($scope.details.details.lastActivityDts && $scope.details.details.lastViewedDts)
+          {
+            var update = new Date($scope.details.details.lastActivityDts);
+            var view = new Date($scope.details.details.lastViewedDts);
+            if (view < update) {
+              showUpdateNotify();
+            }
           }
 
           /* jshint ignore:end */

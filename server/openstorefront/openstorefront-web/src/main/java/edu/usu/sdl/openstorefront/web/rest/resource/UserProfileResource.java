@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
@@ -25,7 +24,8 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -48,17 +48,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *  User Profile Resource
+ * User Profile Resource
+ *
  * @author dshurtleff
  */
 @Path("v1/resource/userprofiles")
 @APIDescription("A user profile contain information about the user and user specific data. A user profile is created at the time the user logins in.<br>"
-		           + "Note: id can be set to \"CURRENTUSER\" to perform operations on the currently logged in user.")
+		+ "Note: id can be set to \"CURRENTUSER\" to perform operations on the currently logged in user.")
 public class UserProfileResource
-	extends BaseResource
+		extends BaseResource
 {
+
 	private static final String DEFAULT_USER = "CURRENTUSER";
-	
+
 	@GET
 	@APIDescription("Get a list of user profiles")
 	@RequireAdmin
@@ -73,7 +75,7 @@ public class UserProfileResource
 //		List<UserProfileView> userProfileViews = new ArrayList<>();
 //		return sendListResponse(userProfileViews);
 //	}
-	
+
 	@GET
 	@APIDescription("Gets user profile specified by id.")
 	@RequireAdmin
@@ -81,28 +83,25 @@ public class UserProfileResource
 	@DataType(UserProfileView.class)
 	@Path("/{id}")
 	public UserProfileView userProfile(
-			@PathParam("id") 
+			@PathParam("id")
 			@DefaultValue(DEFAULT_USER)
-			@RequiredParam		
-			String userId)
+			@RequiredParam String userId)
 	{
 		return UserProfileView.toView(service.getUserService().getUserProfile(userId));
 	}
-	
+
 	@POST
 	@APIDescription("Update user profile returns updated profile.")
 	@RequireAdmin
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateProile(
-			@RequiredParam
-			UserProfile inputProfile) 
+			@RequiredParam UserProfile inputProfile)
 	{
 		inputProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		ValidationModel validationModel = new ValidationModel(inputProfile);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (inputProfile.getUsername().isEmpty())
-		{
+		if (inputProfile.getUsername().isEmpty()) {
 			RuleResult result = new RuleResult();
 			result.setEntityClassName("User Profile");
 			result.setFieldName("username");
@@ -111,39 +110,34 @@ public class UserProfileResource
 			result.setValidationRule("username is a NotNull field");
 			validationResult.getRuleResults().add(result);
 			return Response.ok(validationResult.toRestError()).build();
-		}
-		else if (validationResult.valid())
-		{
+		} else if (validationResult.valid()) {
 			return Response.created(URI.create((service.getUserService().saveUserProfile(inputProfile)).getUsername())).entity(inputProfile).build();
 		}
 		return Response.ok(validationResult.toRestError()).build();
 	}
-	
+
 	@PUT
 	@APIDescription("Update user profile returns updated profile.")
 	@RequireAdmin
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateProile(
-			@PathParam("id") 
-			@DefaultValue(DEFAULT_USER) 
-			@RequiredParam		
-			String userId,
-			@RequiredParam
-			UserProfile inputProfile) 
+			@PathParam("id")
+			@DefaultValue(DEFAULT_USER)
+			@RequiredParam String userId,
+			@RequiredParam UserProfile inputProfile)
 	{
 		inputProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		inputProfile.setUsername(userId);
 		ValidationModel validationModel = new ValidationModel(inputProfile);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid())
-		{
+		if (validationResult.valid()) {
 			return Response.ok(service.getUserService().saveUserProfile(inputProfile)).build();
 		}
 		return Response.ok(validationResult.toRestError()).build();
 	}
-	
+
 	@DELETE
 	@APIDescription("Deactivate a profile")
 	@RequireAdmin
@@ -151,13 +145,12 @@ public class UserProfileResource
 	@Path("/{id}")
 	public Response deleteProfile(
 			@PathParam("id")
-			@RequiredParam
-			String userId)
+			@RequiredParam String userId)
 	{
 		service.getUserService().deleteProfile(userId);
 		return Response.noContent().build();
 	}
-	
+
 	@GET
 	@APIDescription("Retrieves Active User Watches.")
 	@RequireAdmin
@@ -165,20 +158,19 @@ public class UserProfileResource
 	@Path("/{id}/watches")
 	@DataType(UserWatchView.class)
 	public List<UserWatchView> getWatches(
-			@PathParam("id") 
-			@DefaultValue(DEFAULT_USER) 
-			@RequiredParam		
-			String userId)
+			@PathParam("id")
+			@DefaultValue(DEFAULT_USER)
+			@RequiredParam String userId)
 	{
 		List<UserWatch> watches = service.getUserService().getWatches(userId);
 		List<UserWatchView> views = new ArrayList<>();
-		watches.forEach(watch->{
+		watches.forEach(watch -> {
 			Component component = service.getPersistenceService().findById(Component.class, watch.getComponentId());
 			views.add(UserWatchView.toView(watch, component));
 		});
 		return views;
-	}	
-	
+	}
+
 	@GET
 	@APIDescription("Retrieves an user watch by id.")
 	@RequireAdmin
@@ -186,70 +178,75 @@ public class UserProfileResource
 	@DataType(UserWatchView.class)
 	@Path("/{id}/watches/{watchId}")
 	public UserWatchView getWatch(
-			@PathParam("id") 
-			@DefaultValue(DEFAULT_USER) 
-			@RequiredParam		
-			String userId,
-			@PathParam("watchId") 			
-			@RequiredParam		
-			String watchId)
+			@PathParam("id")
+			@DefaultValue(DEFAULT_USER)
+			@RequiredParam String userId,
+			@PathParam("watchId")
+			@RequiredParam String watchId)
 	{
 		UserWatch watch = service.getUserService().getWatch(watchId);
 		Component component = service.getPersistenceService().findById(Component.class, watch.getComponentId());
 		return UserWatchView.toView(watch, component);
-	}	
-	
+	}
+
 	@POST
 	@APIDescription("Add a new watch to an existing user.")
-	@RequireAdmin	
+	@RequireAdmin
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches")
 	public Response addWatch(
-			@PathParam("id") 
-			@DefaultValue(DEFAULT_USER) 
-			@RequiredParam		
-			String userId, 
-			@RequiredParam
-			UserWatch userWatch) 
+			@PathParam("id")
+			@DefaultValue(DEFAULT_USER)
+			@RequiredParam String userId,
+			@RequiredParam UserWatch userWatch)
 	{
 		userWatch.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userWatch.setUsername(userId);
+		userWatch.setLastViewDts(TimeUtil.currentDate());
 		//TODO: return the location of the created watch
-		return saveWatch(userWatch, Boolean.TRUE);
+		Boolean check = Boolean.TRUE;
+		List<UserWatch> watches = service.getUserService().getWatches(userId);
+		for(int i = 0; i < watches.size() && check; i++){
+			check = !watches.get(i).getComponentId().equals(userWatch.getComponentId());
+			if (!check){
+				userWatch = watches.get(i);
+			}
+		}
+		if (check) {
+			return saveWatch(userWatch, Boolean.TRUE);
+		} else {
+			return Response.created(URI.create(userWatch.getUserWatchId())).entity(userWatch).build();
+		}
 	}
-	
+
 	@PUT
 	@APIDescription("Update existing new watch. On update: it will update the last view date.")
 	@RequireAdmin
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
-	public Response updateWatch(			
-			@PathParam("id") 
-			@DefaultValue(DEFAULT_USER) 
-			@RequiredParam		
-			String userId, 
-			@PathParam("watchId") 			
-			@RequiredParam
-			String watchId,
-			@RequiredParam
-			UserWatch userWatch) 
+	public Response updateWatch(
+			@PathParam("id")
+			@DefaultValue(DEFAULT_USER)
+			@RequiredParam String userId,
+			@PathParam("watchId")
+			@RequiredParam String watchId,
+			@RequiredParam UserWatch userWatch)
 	{
 		userWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		userWatch.setUsername(userId);
 		userWatch.setUserWatchId(watchId);
 		return saveWatch(userWatch, Boolean.FALSE);
-	}	
-	
+	}
+
 	private Response saveWatch(UserWatch watch, Boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(watch);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			watch.setCreateUser(ServiceUtil.getCurrentUserName());
-			watch.setUpdateUser(ServiceUtil.getCurrentUserName());
-			if (post)
-			{
+			watch.setCreateUser(SecurityUtil.getCurrentUserName());
+			watch.setUpdateUser(SecurityUtil.getCurrentUserName());
+			if (post) {
 				return Response.created(URI.create("v1/resource/userProfile/" + service.getUserService().saveWatch(watch).getUserWatchId())).entity(watch).build();
 			}
 			return Response.ok(service.getUserService().saveWatch(watch)).build();
@@ -257,27 +254,23 @@ public class UserProfileResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
-	
+
 	@DELETE
 	@APIDescription("Removes a Users Watch.")
 	@RequireAdmin
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
-	public Response updateWatch(			
-			@PathParam("id") 
-			@DefaultValue(DEFAULT_USER) 
-			@RequiredParam
-			String userId,
-			@PathParam("watchId") 			
-			@RequiredParam		
-			String watchId) 
+	public Response updateWatch(
+			@PathParam("id")
+			@DefaultValue(DEFAULT_USER)
+			@RequiredParam String userId,
+			@PathParam("watchId")
+			@RequiredParam String watchId)
 	{
 		service.getUserService().deleteWatch(watchId);
 		return Response.noContent().build();
-	}	
-	
-	
-	
+	}
+
 	// ComponentRESTResource TRACKING section
 	@GET
 	@RequireAdmin
@@ -299,11 +292,9 @@ public class UserProfileResource
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String componentId,
+			@RequiredParam String componentId,
 			@PathParam("id")
-			@RequiredParam
-			String trackingId)
+			@RequiredParam String trackingId)
 	{
 		service.getUserService().deactivateBaseEntity(UserTracking.class, trackingId);
 	}
@@ -330,13 +321,10 @@ public class UserProfileResource
 	@Path("/{id}/tracking/{trackingId}")
 	public Response updateComponentTracking(
 			@PathParam("id")
-			@RequiredParam
-			String userId,
+			@RequiredParam String userId,
 			@PathParam("trackingId")
-			@RequiredParam
-			String trackingId,
-			@RequiredParam
-			UserTracking tracking)
+			@RequiredParam String trackingId,
+			@RequiredParam UserTracking tracking)
 	{
 		tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 		tracking.setTrackingId(trackingId);
@@ -350,7 +338,7 @@ public class UserProfileResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			tracking.setUpdateUser(ServiceUtil.getCurrentUserName());
+			tracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
 				// TODO: How does this work with composite keys?
 				return Response.created(URI.create(service.getUserService().saveUserTracking(tracking).getTrackingId())).entity(tracking).build();
@@ -360,12 +348,10 @@ public class UserProfileResource
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		
+
 	}
-	
-	
-	
-//  This can be fleshed out in the future when we start keeping better track of what the most recently viewed compnents are	
+
+//  This can be fleshed out in the future when we start keeping better track of what the most recently viewed compnents are
 //	@GET
 //	@APIDescription("Retrieves Recent Views.  The system keep the 5 most recent.  Sorted by most recent.")
 //	@RequireAdmin
@@ -373,14 +359,13 @@ public class UserProfileResource
 //	@Path("/{id}/recentviews")
 //	@DataType(UserRecentView.class)
 //	public RestListResponse getRecentviews(
-//			@PathParam("id") 
-//			@DefaultValue(DEFAULT_USER) 
-//			@RequiredParam		
+//			@PathParam("id")
+//			@DefaultValue(DEFAULT_USER)
+//			@RequiredParam
 //			String userId)
 //	{
 //		RestListResponse restListResponse = new RestListResponse();
-//		
+//
 //		return restListResponse;
-//	}	
-	
+//	}
 }

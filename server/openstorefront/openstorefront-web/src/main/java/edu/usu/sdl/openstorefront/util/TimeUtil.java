@@ -21,6 +21,7 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * Useful method dealing with time. Help keep the time handling centralized.
  *
  * @author dshurtleff
  */

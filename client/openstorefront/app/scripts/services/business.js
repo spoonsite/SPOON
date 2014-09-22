@@ -15,7 +15,7 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -65,6 +65,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.lookupservice = lookupservice;
   business.componentservice = componentservice;
   business.highlightservice = highlightservice;
+  business.articleservice = articleservice;
 
   business.updateCache = function(name, value) {
     var deferred = $q.defer();
@@ -83,13 +84,18 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
         'method': 'GET',
         'url': 'api/v1/resource/attributes'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
           save('filters', data);
           deferred.resolve(data);
         } else {
+          removeError();
+          triggerError(data);
           deferred.reject('There was an error grabbing the filters');
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error grabbing the filters');
       });
     }
     return deferred.promise;
@@ -115,15 +121,20 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
         'method': 'GET',
         'url': 'api/v1/resource/components/tags'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false') {
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
           var tags = convertComponentTagsToTags(data);
           // console.log('tags', tags);
           save('tagsList', tags);
           deferred.resolve(tags);
         } else {
+          removeError();
+          triggerError(data);
           deferred.reject('There was an error grabbing the tags list');
         }
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error grabbing the tags list');
       });
     }
 
@@ -191,13 +202,16 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       } else {
         if (pluckItem !== undefined && pluckItem !== null) {
           collection = _.pluck(collection, pluckItem);
-          if (collection) {
+          if (collection && isNotRequestError(collection)) {
+            removeError();
             save('typeahead', collection);
             deferred.resolve(collection);
           } else {
+            removeError();
+            triggerError(collection);
             deferred.reject('We need a new target in order to refresh the data');
           }
-        } else {
+        } else if (isNotRequestError(collection)) {
           save('typeahead', collection);
           deferred.resolve(collection);
         }

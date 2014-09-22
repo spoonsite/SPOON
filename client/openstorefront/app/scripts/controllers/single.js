@@ -105,7 +105,14 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
         }
 
         /* jshint ignore:end */
-
+        if ($scope.details.details.lastActivityDts && $scope.details.details.lastViewedDts)
+        {
+          var update = new Date($scope.details.details.lastActivityDts);
+          var view = new Date($scope.details.details.lastViewedDts);
+          if (view < update) {
+            showUpdateNotify();
+          }
+        }
 
         if (found) {
           $scope.details.details.watched = true;

@@ -26,6 +26,12 @@ public class ErrorTypeCode
 		extends LookupEntity
 {
 
+	public static final String SYSTEM = "SYS";
+	public static final String REST_API = "API";
+	public static final String USER_ERROR = "USER";
+	public static final String AUTO_SYSTEM = "AUTO";
+	public static final String IMPORT = "IMP";
+
 	public ErrorTypeCode()
 	{
 	}

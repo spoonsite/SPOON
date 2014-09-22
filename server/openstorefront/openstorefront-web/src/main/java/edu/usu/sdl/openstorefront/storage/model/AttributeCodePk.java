@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import java.io.Serializable;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class AttributeCodePk
-		implements Serializable
+		extends BasePK
 {
 
 	@NotNull
@@ -45,13 +45,13 @@ public class AttributeCodePk
 
 	public String toKey()
 	{
-		return getAttributeType() + "-" + getAttributeCode();
+		return getAttributeType() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getAttributeCode();
 	}
 
 	public static AttributeCodePk fromKey(String key)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		String keySplit[] = key.split("-");
+		String keySplit[] = key.split(ServiceUtil.COMPOSITE_KEY_SEPERATOR);
 		attributeCodePk.setAttributeType(keySplit[0]);
 		attributeCodePk.setAttributeCode(keySplit[1]);
 		return attributeCodePk;

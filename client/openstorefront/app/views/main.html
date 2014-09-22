@@ -86,7 +86,7 @@ limitations under the License.
               </li>
             </ul>
           </div>
-          <div ng-if="highlights.length == 0">
+          <div ng-if="highlights.length == 0" style="text-align: center">
             There are no highlights at this time.
           </div>
         </div>
@@ -97,23 +97,19 @@ limitations under the License.
       <div class="content">
         <div class="row">
           <ul style="list-style-type:square;">
-            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage2.html', 'DI2ELEVEL', 'LEVEL1')">
-              <a>
-                <span class="listing_short_title_text">Evaluation Level 1 Landing Page</span>  
-              </a>
-              <div style="font-size: 12px; color: #555555;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>    
-            </li>     
-            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goToLanding('views/temp/landingpage.html', 'DI2E-SVCV4-A', '1.2.1')">
-              <a>
-                <span class="listing_short_title_text">IdAM Landing Page</span>  
-              </a>
-              <div style="font-size: 12px; color: #555555;">Identity and Access Management (IdAM) technical capabilities and product performance with regards to management of user authorizations...</div>    
-            </li>
-            <li class="imitateLink" style="padding-bottom: 20px;" ng-click="goTo('single', {id: 67})">
-              <a>
-                <span class="listing_short_title_text">Central Authentication Service (CAS)</span>  
-              </a>
-              <div style="font-size: 12px; color: #555555;">Vehicula aliquet libero Integer in magna</div>    
+            <li ng-repeat="item in recentlyAdded">
+              <div ng-if="item.listingType === 'ARTICLE'" class="imitateLink" ng-click="goToLanding(item.articleAttributeType, item.articleAttributeCode)">
+                <a>
+                  <span class="listing_short_title_text">{{item.name}}</span>
+                </a>
+                <div  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
+              </div>
+              <div ng-if="item.listingType === 'COMPONENT'" class="imitateLink" ng-click="goTo('single', {id: item.componentId})">
+                <a>
+                  <span class="listing_short_title_text">{{item.name}}</span>
+                </a>
+                <div  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
+              </div>
             </li>
           </ul>
         </div>

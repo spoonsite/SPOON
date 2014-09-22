@@ -20,13 +20,17 @@ import edu.usu.sdl.openstorefront.service.api.AttributeService;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.sort.ArchitectureComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
@@ -46,6 +50,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
@@ -192,7 +197,7 @@ public class AttributeServiceImpl
 				//save attribute
 				attributeCode.setArticleFilename(filename);
 				attributeCode.setUpdateDts(TimeUtil.currentDate());
-				attributeCode.setUpdateUser(ServiceUtil.getCurrentUserName());
+				attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 				persistenceService.persist(attributeCode);
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException("Unable to save article.", "Contact system admin.  Check permissions on the directory and make sure device has enough space.");
@@ -216,7 +221,7 @@ public class AttributeServiceImpl
 				}
 				attributeCode.setArticleFilename(null);
 			}
-			attributeCode.setUpdateUser(ServiceUtil.getCurrentUserName());
+			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveAttributeCode(attributeCode);
 		}
 	}
@@ -230,7 +235,7 @@ public class AttributeServiceImpl
 		if (attributeType != null) {
 			attributeType.setActiveStatus(AttributeCode.INACTIVE_STATUS);
 			attributeType.setUpdateDts(TimeUtil.currentDate());
-			attributeType.setUpdateUser(ServiceUtil.getCurrentUserName());
+			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
 		}
 	}
@@ -244,7 +249,7 @@ public class AttributeServiceImpl
 		if (attributeCode != null) {
 			attributeCode.setActiveStatus(AttributeCode.INACTIVE_STATUS);
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
-			attributeCode.setUpdateUser(ServiceUtil.getCurrentUserName());
+			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeCode);
 		}
 	}
@@ -266,6 +271,7 @@ public class AttributeServiceImpl
 				validationModel.setConsumeFieldsOnly(true);
 				ValidationResult validationResult = ValidationUtil.validate(validationModel);
 				if (validationResult.valid()) {
+					attributeType.setAttributeType(attributeType.getAttributeType().replace(ServiceUtil.COMPOSITE_KEY_SEPERATOR, ServiceUtil.COMPOSITE_KEY_REPLACER));
 
 					AttributeType existing = existingAttributeMap.get(attributeType.getAttributeType());
 					if (existing != null) {
@@ -301,6 +307,8 @@ public class AttributeServiceImpl
 							validationModelCode.setConsumeFieldsOnly(true);
 							ValidationResult validationResultCode = ValidationUtil.validate(validationModelCode);
 							if (validationResultCode.valid()) {
+								attributeCode.getAttributeCodePk().setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode().replace(ServiceUtil.COMPOSITE_KEY_SEPERATOR, ServiceUtil.COMPOSITE_KEY_REPLACER));
+
 								AttributeCode existingCode = existingCodeMap.get(attributeCode.getAttributeCodePk().toKey());
 								if (existingCode != null) {
 									existingCode.setDescription(attributeCode.getDescription());
@@ -364,4 +372,138 @@ public class AttributeServiceImpl
 		return persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(example));
 	}
 
+	@Override
+	public AttributeCode findCodeForType(AttributeCodePk pk)
+	{
+		AttributeCode attributeCode = null;
+		List<AttributeCode> attributeCodes = findCodesForType(pk.getAttributeType());
+		for (AttributeCode attributeCodeCheck : attributeCodes) {
+			if (attributeCodeCheck.getAttributeCodePk().getAttributeCode().equals(pk.getAttributeCode())) {
+				attributeCode = attributeCodeCheck;
+				break;
+			}
+		}
+		return attributeCode;
+	}
+
+	@Override
+	public AttributeType findType(String type)
+	{
+		AttributeType attributeType = null;
+
+		Element element = OSFCacheManager.getAttributeTypeCache().get(type);
+		if (element != null) {
+			attributeType = (AttributeType) element.getObjectValue();
+		} else {
+			AttributeType attributeTypeExample = new AttributeType();
+			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+			List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
+			for (AttributeType attributeTypeCheck : attributeTypes) {
+				if (attributeTypeCheck.getAttributeType().equals(type)) {
+					attributeType = attributeTypeCheck;
+				}
+				element = new Element(attributeTypeCheck.getAttributeType(), attributeTypeCheck);
+				OSFCacheManager.getAttributeTypeCache().put(element);
+			}
+		}
+
+		return attributeType;
+	}
+
+	@Override
+	public List<AttributeCode> findRecentlyAddedArticles(int maxResults)
+	{
+		String query = "select from AttributeCode where activeStatus = :activeStatusParam "
+				+ " and articleFilename is not null "
+				+ " order by updateDts DESC LIMIT " + maxResults;
+
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
+
+		return persistenceService.query(query, parameters);
+	}
+
+	@Override
+	public Architecture generateArchitecture(String attributeType)
+	{
+		Architecture architecture = new Architecture();
+
+		AttributeType attributeTypeFull = persistenceService.findById(AttributeType.class, attributeType);
+		if (attributeTypeFull != null) {
+			if (attributeTypeFull.getArchitectureFlg()) {
+				architecture.setName(attributeTypeFull.getDescription());
+				architecture.setAttributeType(attributeType);
+
+				String rootCode = "0";
+				List<AttributeCode> attributeCodes = findCodesForType(attributeType);
+				for (AttributeCode attributeCode : attributeCodes) {
+					if (rootCode.equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
+						architecture.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+						architecture.setDescription(attributeCode.getDescription());
+					} else {
+						String codeTokens[] = attributeCode.getAttributeCodePk().getAttributeCode().split(Pattern.quote("."));
+						Architecture rootArchtecture = architecture;
+						StringBuilder codeKey = new StringBuilder();
+						for (int i = 0; i < codeTokens.length - 1; i++) {
+							codeKey.append(codeTokens[i]);
+
+							//put in stubs as needed
+							boolean found = false;
+							for (Architecture child : rootArchtecture.getChildren()) {
+								if (child.getAttributeCode().equals(codeKey.toString())) {
+									found = true;
+									rootArchtecture = child;
+									break;
+								}
+							}
+							if (!found) {
+								Architecture newChild = new Architecture();
+								newChild.setAttributeCode(codeKey.toString());
+								newChild.setAttributeType(attributeType);
+								rootArchtecture.getChildren().add(newChild);
+								rootArchtecture = newChild;
+							}
+							codeKey.append(".");
+						}
+						//now find the correct postion and add/update
+						boolean found = false;
+						for (Architecture child : rootArchtecture.getChildren()) {
+							if (child.getAttributeCode().equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
+								child.setName(attributeCode.getLabel());
+								child.setDescription(attributeCode.getDescription());
+								found = true;
+							}
+						}
+						if (!found) {
+							Architecture newChild = new Architecture();
+							newChild.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+							newChild.setAttributeType(attributeType);
+							newChild.setName(attributeCode.getLabel());
+							newChild.setDescription(attributeCode.getDescription());
+							rootArchtecture.getChildren().add(newChild);
+						}
+					}
+				}
+
+			} else {
+				throw new OpenStorefrontRuntimeException("Attribute Type is not an architecture: " + attributeType, "Make sure type is an architecture.");
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find attribute type: " + attributeType, "Check type code.");
+		}
+		sortArchitecture(architecture.getChildren());
+		return architecture;
+	}
+
+	private void sortArchitecture(List<Architecture> architectures)
+	{
+		if (architectures.isEmpty()) {
+			return;
+		}
+
+		for (Architecture architecture : architectures) {
+			sortArchitecture(architecture.getChildren());
+		}
+		architectures.sort(new ArchitectureComparator<>());
+	}
 }

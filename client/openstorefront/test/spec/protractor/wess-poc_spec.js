@@ -1,6 +1,6 @@
 describe('wess-poc_', function() {
     it('click default to clear searches', function() {
-        browser.get('http://localhost');
+        browser.get('http://wess.usurf.usu.edu');
         element(by.id('searchButton')).click();
         element(by.id('clearSearch')).click();
 

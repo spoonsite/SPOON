@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
 
@@ -37,6 +38,7 @@ public class ErrorTicket
 	private String clientIp;
 
 	@NotNull
+	@ValidValueType(value = {}, lookupClass = ErrorTypeCode.class)
 	private String errorTypeCode;
 
 	public ErrorTicket()

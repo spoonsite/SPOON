@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -47,6 +48,22 @@ public interface AttributeService
 	public List<AttributeCode> findCodesForType(String type);
 
 	/**
+	 * This will lookup code in an efficient matter
+	 *
+	 * @param pk
+	 * @return code or null if not found
+	 */
+	public AttributeCode findCodeForType(AttributeCodePk pk);
+
+	/**
+	 * This will lookup type in an efficient matter
+	 *
+	 * @param type
+	 * @return
+	 */
+	public AttributeType findType(String type);
+
+	/**
 	 * Saves type
 	 *
 	 * @param attributeType
@@ -63,12 +80,12 @@ public interface AttributeService
 	public void saveAttributeCode(AttributeCode attributeCode);
 
 	/**
-	 * 
+	 *
 	 * @param componentId
-	 * @return 
+	 * @return
 	 */
 	public List<ComponentAttribute> getAttributesByComponentId(String componentId);
-	
+
 	/**
 	 * Grabs the article for a give code or type
 	 *
@@ -122,5 +139,22 @@ public interface AttributeService
 	 * Refreshes the cache from the DB
 	 */
 	public void refreshCache();
+
+	/**
+	 * Find the recently posted (created date) articles
+	 *
+	 * @param maxResults
+	 * @return
+	 */
+	public List<AttributeCode> findRecentlyAddedArticles(int maxResults);
+
+	/**
+	 * Builds and Architecture given a attribute type NOTE: AttributeType must
+	 * an architecture with codes in the following format: 1.1.1
+	 *
+	 * @param attributeType
+	 * @return
+	 */
+	public Architecture generateArchitecture(String attributeType);
 
 }

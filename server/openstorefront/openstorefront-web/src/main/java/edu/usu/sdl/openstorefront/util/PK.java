@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.util;
 
 import java.lang.annotation.Documented;
@@ -23,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Used to denote a Primary Key Field (Pseudo key)
  *
  * @author dshurtleff
  */
@@ -31,5 +31,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface PK
 {
-	
+
 }

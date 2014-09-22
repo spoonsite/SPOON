@@ -70,10 +70,8 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   * @param  entityName to lookup
   * @param  success function
   */
-  var loadLookupTable = function(entityName, successFunc) {
-    $http.get('api/v1/resource/lookuptypes/' + entityName + '/view').success(successFunc).error(function(data, status, headers, config) { /*jshint unused:false*/
-      /*There was an error with the get*/
-    });
+  var loadLookupTable = function(entityName, successFunc, errorFunc) {
+    $http.get('api/v1/resource/lookuptypes/' + entityName + '/view').success(successFunc).error(errorFunc);
   };
 
 
@@ -90,12 +88,18 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
       deferred.resolve(userTypeCodes);
     } else {
       loadLookupTable('UserTypeCode', function(data, status, headers, config) { /*jshint unused:false*/
-        if (data) {
+        if (data && isNotRequestError(data)) {
+          removeError();
           save('UserTypeCode', data);
           deferred.resolve(data);
         } else {
-          deferred.reject('There was an error grabbing the eval levels');
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
+      }, function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
       });
     }
 
@@ -112,13 +116,18 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
       deferred.resolve(evalLevels);
     } else {
       $http.get('api/v1/resource/attributes/attributetypes/DI2ELEVEL/attributecodes').success(function(data, status, headers, config){
-        if (data && data != "false")
-        {
+        if (data && data != "false" && isNotRequestError(data)) {
+          removeError();
           save('evalLevels', data);
           deferred.resolve(data);
         } else {
-          deferred.reject('There was an error grabbing the evaluation levels');
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
       });
     }
 
@@ -132,12 +141,17 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
       deferred.resolve(expertise);
     } else {
       loadLookupTable('ExperienceTimeType', function(data, status, headers, config) { /*jshint unused:false*/
-        if (data) {
+        if (data && isNotRequestError(data)) {
+          removeError();
           save('ExperienceTimeType', data);
           deferred.resolve(data);
         } else {
-          deferred.reject('There was an error grabbing the expertise');
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
+      }, function(data, status, headers, config){
+        deferred.reject('There was an error');
       });
     }
     return deferred.promise;
@@ -150,12 +164,18 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
       deferred.resolve(reviewCon);
     } else {
       loadLookupTable('ReviewCon', function(data, status, headers, config) { /*jshint unused:false*/
-        if (data) {
+        if (data && isNotRequestError(data)) {
+          removeError();
           save('ReviewCon', data);
           deferred.resolve(data);
         } else {
-          deferred.reject('There was an error grabbing the review con list');
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
+      }, function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
       });
     }
     return deferred.promise;
@@ -168,12 +188,18 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
       deferred.resolve(reviewPro);
     } else {
       loadLookupTable('ReviewPro', function(data, status, headers, config) { /*jshint unused:false*/
-        if (data) {
+        if (data && isNotRequestError(data)) {
+          removeError();
           save('ReviewPro', data);
           deferred.resolve(data);
         } else {
-          deferred.reject('There was an error grabbing the review pro list');
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
         }
+      }, function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
       });
     }
     return deferred.promise;

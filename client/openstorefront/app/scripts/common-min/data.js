@@ -572,7 +572,7 @@ MOCKDATA.watches = [
   'createDts' : 1358769330000,
   'componentName' : 'Central Authentication Service (CAS)',
   'componentId' : 67,
-  'notifyFlag' : false
+  'notifyFlg' : false
 },{
   'watchId' : 1,
   'lastUpdateDts' : 1406323711169,
@@ -580,7 +580,7 @@ MOCKDATA.watches = [
   'createDts' : 1358769330000,
   'componentName' : 'Common Map Widget API',
   'componentId' : 11,
-  'notifyFlag' : false
+  'notifyFlg' : false
 },{
   'watchId' : 2,
   'lastUpdateDts' : 1388769330000,
@@ -588,7 +588,7 @@ MOCKDATA.watches = [
   'createDts' : 1358769330000,
   'componentName' : 'OpenSextant',
   'componentId' : 45,
-  'notifyFlag' : false
+  'notifyFlg' : false
 },{
   'watchId' : 3,
   'lastUpdateDts' : 1388769330000,
@@ -596,7 +596,7 @@ MOCKDATA.watches = [
   'createDts' : 1358769330000,
   'componentName' : 'Vega 3D Map Widget',
   'componentId' : 55,
-  'notifyFlag' : false
+  'notifyFlg' : false
 },{
   'watchId' : 4,
   'lastUpdateDts' : 1388769330000,
@@ -604,7 +604,7 @@ MOCKDATA.watches = [
   'createDts' : 1358769330000,
   'componentName' : 'DCGS-E Sensor Web Enablement (SWE) Technical Profile',
   'componentId' : 23,
-  'notifyFlag' : false
+  'notifyFlg' : false
 }
 ];
 

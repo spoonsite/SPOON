@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
-import java.util.ArrayList;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +27,7 @@ import java.util.List;
  */
 public class ComponentSearchView
 {
+
 	private String componentId;
 	private String name;
 	private String description;
@@ -41,7 +40,8 @@ public class ComponentSearchView
 	private String approvedUser;
 	private Date approvedDts;
 	private Date lastActivityDts;
-	
+	private List<ComponentTag> tags;
+
 	private String activeStatus;
 	private String createUser;
 	private Date createDts;
@@ -53,7 +53,7 @@ public class ComponentSearchView
 	public ComponentSearchView()
 	{
 	}
-	
+
 	public static ComponentSearchView toView(Component component)
 	{
 		ServiceProxy service = new ServiceProxy();
@@ -70,26 +70,15 @@ public class ComponentSearchView
 		view.setOrganization(component.getOrganization());
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
-		
+		view.setTags(service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId()));
+
 		view.setActiveStatus(component.getActiveStatus());
 		view.setCreateUser(component.getCreateUser());
 		view.setUpdateDts(component.getUpdateDts());
 		view.setCreateDts(component.getCreateDts());
 		view.setUpdateUser(component.getUpdateUser());
-		
-		List<ComponentAttribute> tempList = service.getComponentService().getBaseComponent(ComponentAttribute.class, component.getComponentId());
-		view.setAttributes(ComponentAttributeView.toViewList(tempList));
-		
+
 		return view;
-	}
-	
-	public static List<ComponentSearchView> toViewList(List<Component> components)
-	{
-		List<ComponentSearchView> views = new ArrayList<>();
-		components.stream().forEach((component) -> {
-			views.add(ComponentSearchView.toView(component));
-		});
-		return views;
 	}
 
 	public String getName()
@@ -306,6 +295,22 @@ public class ComponentSearchView
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<ComponentTag> getTags()
+	{
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<ComponentTag> tags)
+	{
+		this.tags = tags;
 	}
 
 }

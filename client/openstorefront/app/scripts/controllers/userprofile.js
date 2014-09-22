@@ -27,6 +27,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
   $scope.review           = null;
+  $scope.user             = {};
   $scope.nav              = {
     'current': null,
     'bars': [
@@ -37,6 +38,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     //
     ]
   };
+
+
+  Business.userservice.getCurrentUserProfile().then(function(result){
+    if (result) {
+      $scope.user.info = result;
+      // console.log('result', result);
+      
+    }
+  });
+
+  $scope.log = $rootScope.log;
 
   $scope.old = $scope.nav.current;
   $scope.$watch('nav', function(){
@@ -56,26 +68,21 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   });
 
   // TODO: Set this up so it is actually calling with the user's username. 
-  Business.userservice.getReviews('ANONYMOUS').then(function(result){
-    if (result) {
-      console.log('result', result);
-      
-      $scope.username = 'ANONYMOUS';
-      $scope.reviews = result;
-    } else {
-      $scope.reviews = null;
-    }
-  });
-  Business.userservice.getWatches().then(function(result) {
-    if (result) {
-      $scope.watches = result;
-      $scope.watches = _.sortBy($scope.watches, function(item) {
-        return item.componentName;
-      });
-    } else {
-      $scope.watches = null;
-    }
-  });
+  $scope.getReviews = function() {
+    Business.userservice.getReviews('ANONYMOUS').then(function(result){
+      if (result) {
+        // console.log('result', result);
+        $scope.username = 'ANONYMOUS';
+        $scope.reviews = result;
+      } else {
+        $scope.reviews = null;
+      }
+    });  
+  }
+  $scope.getReviews();
+  $scope.$on('$newReview', function(){
+    $scope.getReviews();
+  })
   Business.lookupservice.getExpertise().then(function(result){
     if (result) {
       $scope.expertise = result;
@@ -136,14 +143,16 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * This function converts a timestamp to a displayable date
   ***************************************************************/
   $scope.isNewer = function(updateDate, viewDate){
-    return parseInt(updateDate) > parseInt(viewDate);
+    var update = new Date(updateDate);
+    var view = new Date(viewDate);
+    return view < update;
   };
 
   /***************************************************************
   * This function converts a timestamp to a displayable date
   ***************************************************************/
   $scope.setNotify = function(id, value){
-    _.find($scope.watches, {'componentId': id}).notifyFlag = value;
+    _.find($scope.watches, {'componentId': id}).notifyFlg = value;
   };
 
   $scope.toggleCollapse = function(id){
@@ -178,21 +187,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         }
       });
     });
-  };
-
-
-  $scope.setReviewDropDowns = function(review) {
-    $scope.review = review;
-    console.log('review', review);
-    console.log('$scope.review', $scope.review.usedTimeCode);
-    console.log('$scope.review', $scope.review.userType);
-    console.log('expertise codes', $scope.expertise);
-    console.log('user codes', $scope.userTypeCodes);
-    
-    console.log(_.find($scope.expertise, {'description': $scope.review.usedTimeCode}));
-    
-    $scope.review.usedTimeCode = _.find($scope.expertise, {'description': $scope.review.usedTimeCode});
-    $scope.review.userType = _.find($scope.userTypeCodes, {'description': $scope.review.userType});
   };
 
   /***************************************************************
@@ -259,6 +253,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $scope.user = jQuery.extend(true, {}, $scope.userBackup);
   };
 
+  $scope.deleteReview = function(reviewId, componentId) {
+    // console.log('reviewId', reviewId);
+    Business.componentservice.deleteReview(componentId, reviewId).then(function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
+      $scope.$emit('$TRIGGEREVENT', '$newReview');
+    });
+  };
 
   /***************************************************************
   * This function removes a watch from the watch list. It probably won't change
@@ -268,26 +269,36 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.removeFromWatches = function(id){
     var answer = confirm ('You are about to remove a component from your watch list. Are you sure you want to do this?');
     if (answer) {
-
-      var a = _.find($scope.watches, {'componentId': id});
-
-      if (a) {
-        $scope.watches.splice(_.indexOf($scope.watches, a), 1);
+      if ($scope.watches && $scope.watches.length > 0) {
+        var watch = _.find($scope.watches, {componentId: id});
+        if ($scope.user.info && watch.watchId) {
+          Business.userservice.removeWatch($scope.user.info.username, watch.watchId).then(null, function(result){
+            $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+            $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', id);
+          });
+        }
       }
-
-      Business.userservice.setWatches($scope.watches);
-      $scope.$emit('$triggerEvent', '$detailsUpdated', id);
-      _.where(MOCKDATA2.componentList, {'componentId': id})[0].watched = false;
-      Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
     }
   };
 
 
-  $scope.saveNotifyChange = function(id) {
-    Business.userservice.setWatches($scope.watches);
-    Business.updateCache('component_'+id, _.where(MOCKDATA2.componentList, {'componentId': id})[0]);
-  };
-
+  $scope.updateWatch = function(watch){
+    var watchId = watch.watchId;
+    delete watch.componentName;
+    delete watch.lastUpdateDts;
+    delete watch.watchId;
+    delete watch.createDts;
+    delete watch.$$hashKey;
+    // console.log('watch', watch);
+    if ($scope.user.info) {
+      Business.userservice.saveWatch($scope.user.info.username, watch, watchId).then(function(result){
+        if (result) {
+          $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', watch.componentId);
+        }
+      });
+    }
+  }
 
   $scope.$on('$includeContentLoaded', function(){
     $timeout(function() {
@@ -295,13 +306,46 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     }, 300);
   });
 
-  
+  $scope.resetWatches = function(hard) {
+    if ($scope.user.info) {
+      Business.userservice.getWatches($scope.user.info.username, hard).then(function(result){
+        if (result) {
+          $scope.watches = result;
+          $scope.watches = _.sortBy($scope.watches, function(item) {
+            return item.componentName;
+          });
+        } else {
+          $scope.watches = null;
+        }
+      });
+    } else {
+      Business.userservice.getCurrentUserProfile().then(function(result){
+        if (result) {
+          Business.userservice.getWatches(result.username, hard).then(function(result){
+            if (result) {
+              if (!$scope.user) {
+                $scope.user = {};
+              }
+              if (!$scope.user.info) {
+                $scope.user.info = result;
+              }
+              $scope.watches = result;
+              $scope.watches = _.sortBy($scope.watches, function(item) {
+                return item.componentName;
+              });
+            } else {
+              $scope.watches = null;
+            }
+          }); 
+        } else {
+          $scope.watches = null;
+        }
+      })
+    }
+  };
+  $scope.resetWatches(false);
   $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
-    Business.userservice.getWatches().then(function(result){
-      if (result) {
-        $scope.watches = result;
-      }
-    });
+    $scope.resetWatches(true);
     resetData();
   });
 

@@ -71,10 +71,6 @@ var app = angular
     templateUrl: 'views/single.html',
     controller: 'SingleCtrl'
   })
-  .when('/login', {
-    templateUrl: 'views/login.html',
-    controller: 'LoginCtrl'
-  })
   .when('/compare', {
     templateUrl: 'views/compare.html',
     controller: 'CompareCtrl'
@@ -342,6 +338,10 @@ var app = angular
         initiateClick(id);
       };
 
+      $rootScope.log = function(message, item) {
+        console.log(message, item);
+      }
+
       /***************************************************************
       * This function assists the modal setup when content is changed.
       ***************************************************************/
@@ -450,19 +450,30 @@ var app = angular
       //
       $httpBackend.whenGET('api/v1/resource/components').passThrough();
       $httpBackend.whenGET('api/v1/resource/highlights').passThrough();
+      $httpBackend.whenGET('api/v1/service/search/recent').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
       $httpBackend.whenGET('api/v1/resource/components/tags').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST('api/v1/resource/components/reviews/ANONYMOUS').passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?con/).passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?attributecodes\/[^\/][^\/]*\/?article/).passThrough();
+      $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?architecture/).passThrough();
       // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
       //   // grab the url (needed for what the backend will simulate)
       //   // parse it into an array
@@ -484,13 +495,6 @@ var app = angular
       //   }, 1000);
       //   return [200, result.promise, {}];
       // });
-
-      $httpBackend.whenGET('api/v1/resource/attributes/DI2E-SVCV4-A/attributeCode/1.2.1/article').respond(function(method, url, data) {
-        var request = new XMLHttpRequest();
-        request.open('GET', 'views/temp/landingpage.html', false);
-        request.send(null);
-        return [request.status, request.response, {}];
-      });
 
       $httpBackend.whenGET('api/v1/resource/attributes').passThrough();
       // .respond(function(method, url, data) {

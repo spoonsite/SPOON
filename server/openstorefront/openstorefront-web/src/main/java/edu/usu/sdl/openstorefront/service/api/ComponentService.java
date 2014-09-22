@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
@@ -38,6 +39,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -124,6 +126,15 @@ public interface ComponentService
 	public ComponentDetailView getComponentDetails(String componentId);
 
 	/**
+	 * Set the last view date for the component associated with the supplied id.
+	 *
+	 * @param componentId
+	 * @param userId
+	 * @return
+	 */
+	public Boolean setLastViewDts(String componentId, String userId);
+
+	/**
 	 * Return the details object of the component attached to the given id. (the
 	 * full view)
 	 *
@@ -133,8 +144,8 @@ public interface ComponentService
 	public List<ComponentReviewView> getReviewByUser(String username);
 
 	/**
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 */
 	public List<ComponentTag> getTagCloud();
 
@@ -280,5 +291,29 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void cascadeDeleteOfComponent(String componentId);
+
+	/**
+	 * Saves component media to disk and sets the filename
+	 *
+	 * @param media
+	 * @param fileInput
+	 */
+	public void saveMediaFile(ComponentMedia media, InputStream fileInput);
+
+	/**
+	 * Saves component resource to disk sets the filename
+	 *
+	 * @param resource
+	 * @param fileInput
+	 */
+	public void saveResourceFile(ComponentResource resource, InputStream fileInput);
+
+	/**
+	 * Find Recently Added
+	 *
+	 * @param maxResults
+	 * @return
+	 */
+	public List<Component> findRecentlyAdded(int maxResults);
 
 }

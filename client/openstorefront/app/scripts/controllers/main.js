@@ -50,8 +50,22 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     }
   });
 
+  Business.highlightservice.getRecentlyAdded().then(function(result){
+    if (result) {
+      var recents = [];
+      _.each(result, function(item){
+        var temp = item;
+        temp.description = getShortDescription(item.description);
+        recents.push(temp);
+      })
+      $scope.recentlyAdded = recents;
+    } else {
+      $scope.recentlyAdded = null;
+    }
+  });
+
   Business.componentservice.getComponentList().then(function(result) {
-    console.log('result', result);
+    // console.log('result', result);
     
     Business.typeahead(result, null).then(function(value){
       if (value) {
@@ -124,15 +138,11 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   * data object with the search key 
   * params: type -- This is the code of the type that was clicked on
   *******************************************************************************/
-  $scope.goToLanding = function(route, searchType, searchKey){ /*jshint unused:false*/
+  $scope.goToLanding = function(searchType, searchKey){ /*jshint unused:false*/
     $(window).scrollTop(0);
-    localCache.save('landingRoute', route);
-    localCache.save('landingType', searchType);
-    localCache.save('landingCode', searchKey);
-    // Business.landingPage('landing', route, true).then(function() {
-      $location.search('route', route);
-      $location.path('/landing');
-    // });
+    localCache.save('type', searchType);
+    localCache.save('code', searchKey);
+    $location.path('/landing');
     return false; //
   };
 

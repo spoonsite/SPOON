@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import java.util.List;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -25,20 +25,30 @@ import java.util.List;
  */
 public abstract class BaseResource
 {
+
 	protected final edu.usu.sdl.openstorefront.service.ServiceProxy service = new edu.usu.sdl.openstorefront.service.ServiceProxy();
+
+	protected Response sendSingleEnityResponse(Object entity)
+	{
+		if (entity == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} else {
+			return Response.ok(entity).build();
+		}
+	}
 
 	protected <T> RestListResponse<T> sendListResponse(List<T> data)
 	{
 		return sendListResponse(data, data.size());
 	}
-	
+
 	protected <T> RestListResponse<T> sendListResponse(List<T> data, long totalResults)
 	{
 		RestListResponse<T> restListResponse = new RestListResponse<>();
 		restListResponse.setData(data);
 		restListResponse.setResults(data.size());
-		restListResponse.setTotalResults(totalResults);				
+		restListResponse.setTotalResults(totalResults);
 		return restListResponse;
 	}
-			
+
 }

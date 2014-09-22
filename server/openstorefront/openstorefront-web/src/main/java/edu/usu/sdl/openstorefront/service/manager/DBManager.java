@@ -19,6 +19,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.server.OServer;
 import com.orientechnologies.orient.server.OServerMain;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,6 +86,7 @@ public class DBManager
 			log.info("Finished.");
 		} catch (Exception ex) {
 			log.log(Level.SEVERE, "Error occuring starting orient", ex);
+			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
 
@@ -102,7 +104,7 @@ public class DBManager
 
 	public static OObjectDatabaseTx getConnection()
 	{
-		return globalInstance.acquire("remote:localhost/openstorefront", PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_PASSWORD));
+		return globalInstance.acquire("remote:localhost/openstorefront", PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 	}
 
 }

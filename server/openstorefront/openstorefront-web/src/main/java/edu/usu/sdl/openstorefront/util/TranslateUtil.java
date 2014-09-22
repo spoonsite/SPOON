@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * This class handles translating lookup code into descriptions
  *
  * @author dshurtleff
  */
