@@ -1,9 +1,9 @@
 // GLOBAL Variable for the tests
-theSite = 'http://di2e.github.io/openstorefront';
-openAM = false;
+//theSite = 'http://di2e.github.io/openstorefront/index.html';
+//openAM = false;
 
-// theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront';
-// openAM = true;
+theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
+openAM = true;
 
 
 // Log in to the OpenAM page if needed
