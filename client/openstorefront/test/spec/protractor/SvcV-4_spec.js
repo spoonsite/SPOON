@@ -1,38 +1,26 @@
-// theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront';
-// theSite = 'http://store-dev.usu.di2e.net:8080/openstorefront';
-// theSite = 'http://di2e.github.io';
-
 // GLOBAL Variable for the tests
-theSite = 'http://di2e.github.io';
+theSite = 'http://di2e.github.io/openstorefront';
+openAM = false;
 
-/* Trying to find you a better page, for now you can go to
-    https://ri1-openam-01.di2e.net/openam 
-   login/logout and it will kill your storefront session
-   On the dev server the URL will be
-    http://store-prod.usu.di2e.net/openam
-*/
+// theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront';
+// openAM = true;
 
-// VPN access NOT working, it blocks access to starting the Selenium Server on Localhost
-/* describe('OpenAM Login page, if needed', function() {
-    // Log on to OpenAM DEV store page (different GUI than prod page)
-    it('Log in on the DEV OpenAM page', function() {
-        // Navigate to the site
-        browser.get('http://store-dev.usu.di2e.net/openam', 2500);
 
-        browser.driver.sleep(9000);
-
-        if(element(by.css('group-field-block')).isPresent()){
-            console.log('You need to log on to the OpenAM server!');
-        }
-        else console.log('logged on');
-    });
-});
-*/
-
+// Log in to the OpenAM page if needed
+if(openAM){
+// For non-Angular page turn OFF synchronization
+browser.ignoreSynchronization = true;
+browser.get(theSite, 3500);
+browser.driver.sleep(3000);
+browser.driver.findElement(by.id('IDToken1')).sendKeys('amadmin');
+browser.driver.findElement(by.id('IDToken2')).sendKeys('password', protractor.Key.ENTER);
+browser.driver.sleep(3000);
+}
 
 describe('SvcV-4_button from the home page', function() {
     it('Expand the buttons in the categories', function () {
         // Navigate to the site
+        browser.ignoreSyncronization = false;
         browser.get(theSite, 3500);
 
         // Click the SvcV-4 button
@@ -49,7 +37,4 @@ describe('SvcV-4_button from the home page', function() {
         // Brittle
         expect(element.all(by.css('.btn')).count()).toEqual(7);
     });
-
-
-
 });

@@ -282,6 +282,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     Business.componentservice.saveTags(id, tags).then(function(result){
       // console.log('result', result);
       $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
+      $scope.$emit('$TRIGGEREVENT', '$CHANGESEARCHRESULTTAGS', id, tags);
     });
     $scope.applyFilters();
   };

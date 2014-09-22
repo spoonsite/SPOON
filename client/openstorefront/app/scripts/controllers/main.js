@@ -50,6 +50,20 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     }
   });
 
+  Business.highlightservice.getRecentlyAdded().then(function(result){
+    if (result) {
+      var recents = [];
+      _.each(result, function(item){
+        var temp = item;
+        temp.description = getShortDescription(item.description);
+        recents.push(temp);
+      })
+      $scope.recentlyAdded = recents;
+    } else {
+      $scope.recentlyAdded = null;
+    }
+  });
+
   Business.componentservice.getComponentList().then(function(result) {
     // console.log('result', result);
     

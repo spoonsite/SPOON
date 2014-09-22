@@ -165,6 +165,46 @@ var triggerAlert = function(text, uid, id, delay) {
 };
 
 
+var getShortDescription = function(str){
+  var html = $.parseHTML(str);
+  var log = [];
+  // Gather the parsed HTML's node names
+  var count = 300;
+  var total = 0;
+  for(var i = 0; i < html.length && total < count; i++) {
+    var el = html[i];
+    var length;
+    if (el.nodeName === 'A') {
+      length = $(el).html().length;
+      if (!((total + length) > count)) {
+        total = total + length;
+        log.push($(el)[0].outerHTML);
+      } else {
+        total = total + length;
+        log.push('...');
+      }
+    } else if (el.nodeName === '#text'){
+      if ((total+el.length) > count){
+        var temp = $(el)[0].textContent.split(' ');
+        var j = 0;
+        while(total < count){
+          total = total + temp[j].length + 1;
+          log.push(temp[j]+" ");
+          j++;
+        }
+        log.push('...');
+      } else {
+        total = total + el.length;
+        log.push($(el)[0].textContent);
+      }
+    } else if (el.nodeName != 'BR'){
+      log.push($(el)[0].outerHTML);
+    }
+  };
+  return log.join(' ');
+}
+
+
 /***************************************************************
 * This funciton gets rid of input error styling
 * params: id -- the id of the element that should be cleaned up
