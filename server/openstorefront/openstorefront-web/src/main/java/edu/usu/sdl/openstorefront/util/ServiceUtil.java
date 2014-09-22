@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -64,6 +65,7 @@ public class ServiceUtil
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Collection.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Queue.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(BigInteger.class.getSimpleName())) {
 			complex = true;
@@ -83,6 +85,7 @@ public class ServiceUtil
 		if (checkClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName())
 				|| checkClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
 				|| checkClass.getSimpleName().equalsIgnoreCase(Collection.class.getSimpleName())
+				|| checkClass.getSimpleName().equalsIgnoreCase(Queue.class.getSimpleName())
 				|| checkClass.getSimpleName().equalsIgnoreCase(Set.class.getSimpleName())) {
 			collection = true;
 		}

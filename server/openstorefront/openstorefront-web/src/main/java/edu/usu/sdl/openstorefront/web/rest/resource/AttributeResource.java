@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -132,6 +133,23 @@ public class AttributeResource
 		attributeCodes = filterQueryParams.filter(attributeCodes);
 
 		return attributeCodes;
+	}
+
+	@GET
+	@APIDescription("Gets architecture")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeCode.class)
+	@Path("/attributetypes/{type}/architecture")
+	public Response getArchitecture(
+			@PathParam("type")
+			@RequiredParam String type)
+	{
+		Architecture architecture = null;
+		AttributeType attributeType = service.getAttributeService().findType(type);
+		if (attributeType != null) {
+			architecture = service.getAttributeService().generateArchitecture(type);
+		}
+		return sendSingleEnityResponse(architecture);
 	}
 
 	@GET

@@ -70,10 +70,10 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
       $http({
         method: 'GET',
         url: 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article'
-      }).succes(function(data, status, headers, config){
+      }).success(function(data, status, headers, config){
         if (data && data !== 'false' && isNotRequestError(data)){
           removeError();
-          deferred.resolve(data)
+          deferred.resolve(data);
         } else {
           removeError();
           triggerError(data);
@@ -87,7 +87,30 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
       deferred.reject('You must include a type and a code to retreive it\'s article');
     }
     return deferred.promise;
-  }
+  };
+  
+   article.getArchitecture = function(type){
+     var deferred = $q.defer();
+     
+     $http({
+        method: 'GET',
+        url: 'api/v1/resource/attributes/attributetypes/'+type+'/architecture'
+      }).success(function(data, status, headers, config){        
+        if (data && data !== 'false' && isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+      
+     return deferred.promise;
+   };   
 
   return article;
 }]);
