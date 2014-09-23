@@ -349,6 +349,10 @@ var isNotRequestError = function(response){
   }
 }
 
+var notInCollection = function(collection, item){
+  return _.contains(collection, item)? false: true;
+}
+
 // Base.esapi.properties.logging.ApplicationLogger = {
 //   Level: org.owasp.esapi.Logger.ALL,
 //   Appenders: [ new Log4js.ConsoleAppender() ],
