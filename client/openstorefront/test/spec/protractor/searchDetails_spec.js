@@ -6,6 +6,9 @@ describe('searchDetails_Search for VANTAGE', function() {
     // Enter the search term (changed to enter after updates to search keys 7/28)
     element(by.id('mainSearchBar')).sendKeys('VANTAGE', protractor.Key.ENTER);
 
+    // Wait a bit on the VPN for it to finishe the search (slower)
+    browser.driver.sleep(7000);
+
     // Should only be two results
     expect(element.all(by.repeater('item in data')).count()).toEqual(2);
   });
@@ -16,6 +19,8 @@ describe('searchDetails_Click on the results', function() {
   it('click on Tabs from search details page', function() {
     // Click on the second or OZONE results
     element.all(by.css('.results-content-title-content')).get(1).click();
+
+
 
     // Verify tabs (Summary, Details, Reviews, Q&A) on the page
     var list = element.all(by.css('.nav-tabs li')); 
@@ -65,6 +70,8 @@ describe('searchDetails_Click on the results', function() {
       browser.refresh(); // close the window
 
       element(by.id('globalSearch')).sendKeys('VANTAGE', protractor.Key.ENTER);
+      // Wait for slow VPN search results
+      browser.driver.sleep(7000);
       expect(element.all(by.repeater('item in data')).count()).toEqual(2);
       element.all(by.css('.results-content-title-content')).get(1).click();
 
