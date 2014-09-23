@@ -278,13 +278,73 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   /***************************************************************
   * This function saves a component's tags
   ***************************************************************/
-  $scope.saveTags = function(id, tags){
+  $scope.saveTags = function(id, tags, tag){
     Business.componentservice.saveTags(id, tags).then(function(result){
-      // console.log('result', result);
+      console.log('result', result);
       $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
       $scope.$emit('$TRIGGEREVENT', '$CHANGESEARCHRESULTTAGS', id, tags);
+    }, function(result){
+      console.log('Error Result', result);
+
     });
     $scope.applyFilters();
+  };
+  
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.addTag = function(id, tag, tags){
+    console.log('AddTag');
+    console.log('componentId', id);
+    console.log('tag', tag);
+    var found = _.find($scope.details.details.tags, {'text': tag.text});
+    if (!found) {
+      Business.componentservice.addTag(id, tag).then(function(result){
+        console.log('result', result);
+        $scope.details.details.tags.push(tag);
+        $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
+        $scope.$emit('$TRIGGEREVENT', '$CHANGESEARCHRESULTTAGS', id, tags);
+        $scope.tempTags = [];
+        $scope.applyFilters();
+      }, function(result){
+        console.log('Error Result', result);
+        $scope.applyFilters();
+        $scope.tempTags = [];
+      });
+    } else {
+      $scope.tempTags = [];
+    }
+  };
+  
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.removeTag = function(id, tag, tags){
+    console.log('RemoveTag');
+    console.log('componentId', id);
+    console.log('tag', tag);
+    var found = _.find($scope.details.details.tags, {'text': tag.text});
+    if (found) {
+      Business.componentservice.removeTag(id, tag).then(function(result){
+        console.log('result', result);
+        $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
+        $scope.$emit('$TRIGGEREVENT', '$CHANGESEARCHRESULTTAGS', id, tags);
+        var index = _.indexOf($scope.details.details.tags, found);
+
+        if (index > -1) {
+          $scope.details.details.tags.splice(index, 1);
+        }
+        $scope.tempTags = [];
+
+        $scope.applyFilters();
+      }, function(result){
+        console.log('Error Result', result);
+        $scope.tempTags = [];
+        $scope.applyFilters();
+      });
+    } else {
+      $scope.tempTags = [];
+    }
   };
 
 

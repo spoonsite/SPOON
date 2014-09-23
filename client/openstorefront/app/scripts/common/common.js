@@ -53,7 +53,7 @@ var setUpDropdown= function(id) {
 
 
 var resetUpdateNotify = function() {
-  $('#updateNotify').css('height', '0px');
+  $('#updateNotify').stop(true, true).animate({height: '0px'}, 0, function(){});
 }
 
 var showUpdateNotify = function() {

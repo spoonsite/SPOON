@@ -20,7 +20,7 @@
 app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $http, $q) {
 
   //Constants
-  var CURRENT_USER = 'JONLAW';
+  var CURRENT_USER = 'ANONYMOUS';
   var minute = 60 * 1000;
   var day = minute * 1440; //1 day
   var MAX_USER_CACHE_TIME = day; /*jshint unused:false*/
