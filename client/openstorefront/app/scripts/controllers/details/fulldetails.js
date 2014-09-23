@@ -88,47 +88,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     $scope.resetWatches(true);
   });
 
-
-  $scope.tabs = {
-    'current': null,
-    'bars': [
-      //
-      {
-        'title': 'Summary',
-        'include': 'views/details/summary.html'
-      },
-      {
-        'title': 'Details',
-        'include': 'views/details/details.html'
-      },
-      {
-        'title': 'Reviews',
-        'include': 'views/details/reviews.html'
-      },
-      {
-        'title': 'Questions And Answers',
-        'include': 'views/details/comments.html'
-      }
-    //
-    ]
-  };
-
   var mNames = new Array('January', 'February', 'March',
     'April', 'May', 'June', 'July', 'August', 'September',
     'October', 'November', 'December');
 
-  $scope.detailResultsTabs = [
-    //
-    { title:'SUMMARY', content:'1', relpath:'views/details/summary.html', class:'' },
-    { title:'DETAILS', content:'2', relpath:'views/details/details.html', class:'' },
-    { title:'REVIEWS', content:'3', relpath:'views/details/reviews.html', class:'' },
-    { title:'Q&A', content:'4', relpath:'views/details/comments.html', class:'' }
-    // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
-  //
-  ];
-
-  $scope.tab = $scope.detailResultsTabs[0];
-  $scope.selectedTab = $scope.tabs[0];
 
   if ($scope.modal) {
     $scope.$watch('modal.modalBody', function() {
@@ -521,25 +484,35 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     // reset the update list
     updateList = [];
 
-    if ($scope.details.details.lastViewedDts !== undefined)
-    {
+
+    $scope.summaryUpdated = [];
+    $scope.detailsUpdated = [];
+    $scope.reviewsUpdated = [];
+    $scope.commentsUpdated = [];
+
+    if ($scope.details.details.lastViewedDts !== undefined) {
       var component = $scope.details.details;
-      var lastViewedDts = sqlToJsDate(component.lastViewedDts);
+      var lastViewedDts = sqlToJsDate('2013-01-12T12:12:12.000');
+      // TODO set this back to normal.
+      // var lastViewedDts = sqlToJsDate(component.lastViewedDts);
       var shown = false;
       _.each(component.componentMedia, function(media){
-        if (!shown && sqlToJsDate(media.updateDts) > lastViewedDts)
-        {
+        console.log('media date', sqlToJsDate(media.updateDts));
+        console.log('lastViewed', lastViewedDts);
+        
+        if (!shown && sqlToJsDate(media.updateDts) > lastViewedDts) {
           //media.updateDts is more recent. We should show it as updated
           updateList.push('media');
+          if(notInCollection($scope.summaryUpdated, 'Media')) {
+            $scope.summaryUpdated.push('Media');
+          }
           shown = true;
         }
       });
       shown = false;
       _.each(component.tags, function(tag){
-        if (!shown && sqlToJsDate(tag.updateDts) > lastViewedDts)
-        {
-          if (!$('#tagsUpdate').hasClass('in'))
-          {
+        if (!shown && sqlToJsDate(tag.updateDts) > lastViewedDts) {
+          if (!$('#tagsUpdate').hasClass('in')) {
             $scope.toggleTags('#tagsUpdate');
           }
           updateList.push('tags');
@@ -547,61 +520,85 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         }
       });
       _.each(component.reviews, function(review, index){
-        if (sqlToJsDate(review.updateDate) > lastViewedDts)
-        {
+        if (sqlToJsDate(review.updateDate) > lastViewedDts) {
           updateList.push('reviews'+index);
+          if(notInCollection($scope.reviewsUpdated, 'Review By: '+review.username)) {
+            $scope.reviewsUpdated.push('Review By: '+review.username);
+          }
         }
       });
       _.each(component.resources, function(resource, index){
-        if (sqlToJsDate(resource.updateDts) > lastViewedDts)
-        {
+        if (sqlToJsDate(resource.updateDts) > lastViewedDts) {
           updateList.push('resources'+index);
+          if(notInCollection($scope.detailsUpdated, 'Component Artifacts')) {
+            $scope.detailsUpdated.push('Component Artifacts');
+          }
         }
       });
       _.each(component.questions, function(question, index){
-        if (sqlToJsDate(question.updateDts) > lastViewedDts)
-        {
+        if (sqlToJsDate(question.updateDts) > lastViewedDts) {
           updateList.push('questions'+index);
+          if(notInCollection($scope.commentsUpdated, 'Question By: '+question.username)) {
+            $scope.commentsUpdated.push('Question By: '+question.username);
+          }
         }
       });
       shown = false;
       _.each(component.metadata, function(data){
-        if (!shown && sqlToJsDate(data.updateDts) > lastViewedDts)
-        {
+        if (!shown && sqlToJsDate(data.updateDts) > lastViewedDts) {
           updateList.push('metadata');
+          if(notInCollection($scope.detailsUpdated, 'Component Vitals')) {
+            $scope.detailsUpdated.push('Component Vitals');
+          }
           shown = true;
         }
       });
-      if (sqlToJsDate(component.evaluation.updateDts) > lastViewedDts)
-      {
+      if (sqlToJsDate(component.evaluation.updateDts) > lastViewedDts) {
         _.each(component.evaluation.evaluationSections, function(section, index){
-          if (sqlToJsDate(section.updateDts) > lastViewedDts)
-          {
+          if (sqlToJsDate(section.updateDts) > lastViewedDts) {
             updateList.push('evaluationSections');
+            if(notInCollection($scope.summaryUpdated, 'Evaluation Sections')) {
+              $scope.summaryUpdated.push('Evaluation Sections');
+            }
           }
         });
         shown = false;
         _.each(component.evaluation.evaluationSchedule, function(schedule, index){
-          if (!shown && sqlToJsDate(schedule.updateDts) > lastViewedDts)
-          {
+          if (!shown && sqlToJsDate(schedule.updateDts) > lastViewedDts) {
             updateList.push('evaluationSchedule');
+            if(notInCollection($scope.detailsUpdated, 'Evaluation Schedule')) {
+              $scope.detailsUpdated.push('Evaluation Schedule');
+            }
             shown = true;
           }
         });
         updateList.push('evaluation');
       }
       _.each(component.dependencies, function(dependency, index){
-        if (sqlToJsDate(dependency.updateDts) > lastViewedDts)
-        {
+        if (sqlToJsDate(dependency.updateDts) > lastViewedDts) {
           updateList.push('dependencies'+index);
         }
       });
       _.each(component.contacts, function(contact, index){
-        if (sqlToJsDate(contact.updateDts) > lastViewedDts)
-        {
+        if (sqlToJsDate(contact.updateDts) > lastViewedDts) {
           updateList.push('contacts'+index);
+          if(notInCollection($scope.detailsUpdated, 'Contacts')) {
+            $scope.detailsUpdated.push('Contacts');
+          }
         }
       });
+
+      _.each(component.attributes, function(attribute, index){
+        if (sqlToJsDate(attribute.updateDts) > lastViewedDts) {
+          updateList.push('attributes'+index);
+          if(notInCollection($scope.summaryUpdated, 'Attributes')) {
+            $scope.summaryUpdated.push('Attributes');
+          }
+          if(notInCollection($scope.detailsUpdated, 'Component Vitals')) {
+            $scope.detailsUpdated.push('Component Vitals');
+          }
+        }
+      })
 
       $timeout(function() {
         var settings={
@@ -622,7 +619,37 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
             $('#'+updateId+'Update').tooltip(settings);
           }
         })
+        settings.placement = 'bottom';
+        settings.html = true;
+        if ($scope.summaryUpdated.length > 0){
+          var title = 'The Summary Tab was updated: <br/>'+$scope.summaryUpdated.join('<br/>');
+          settings.title = title;
+          $('#summaryTab').tooltip(settings);
+        }
+        if ($scope.detailsUpdated.length > 0){
+          var title = 'The Details Tab was updated: <br/>'+$scope.detailsUpdated.join('<br/>');
+          settings.title = title;
+          $('#detailsTab').tooltip(settings);
+        }
+        if ($scope.reviewsUpdated.length > 0){
+          var title = 'The Reviews Tab was updated: <br/>'+$scope.reviewsUpdated.join('<br/>');
+          settings.title = title;
+          $('#reviewsTab').tooltip(settings);
+        }
+        if ($scope.commentsUpdated.length > 0){
+          var title = 'The Q&A Tab was updated: <br/>'+$scope.commentsUpdated.join('<br/>');
+          settings.title = title;
+          $('#qaTab').tooltip(settings);
+        }
       });
+      console.log('summaryUpdated', $scope.summaryUpdated);
+
+      console.log('detailsUpdated', $scope.detailsUpdated);
+
+      console.log('reviewsUpdated', $scope.reviewsUpdated);
+
+      console.log('commentsUpdated', $scope.commentsUpdated);
+
     }
   }
 
@@ -650,6 +677,19 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         if (onlyOnce !== $scope.details.details.componentId) {
           setupUpdateFlags();
           onlyOnce = $scope.details.details.componentId;
+          $scope.detailResultsTabs = [
+            //
+            { title:'SUMMARY', id:'summaryTab', content:'1', relpath:'views/details/summary.html', class:$scope.summaryUpdated.length > 0? 'updatedTab' : ''},
+            { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/details.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
+            { title:'REVIEWS', id:'reviewsTab', content:'3', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
+            { title:'Q&A', id:'qaTab', content:'4', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
+            // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
+          //
+          ];
+          
+          $scope.tab = $scope.detailResultsTabs[0];
+          $scope.selectedTab = $scope.detailResultsTabs[0];
+
         }
       }
     }
