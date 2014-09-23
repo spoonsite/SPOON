@@ -1450,10 +1450,11 @@ public class ComponentRESTResource
 		}
 		if (example != null && example.getComponentId() != null) {
 			tag = service.getPersistenceService().findById(ComponentTag.class, example.getTagId());
-		} else {
+		}
+		else {
 			tag = null;
 		}
-		
+
 		// TODO: Check for admin here to override if user isn't same
 		if (tag != null && tag.getCreateUser().equals(username)) {
 			service.getPersistenceService().delete(tag);
@@ -1537,13 +1538,26 @@ public class ComponentRESTResource
 	{
 		tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 		tag.setComponentId(componentId);
+
+		List<ComponentTag> currentTags = service.getComponentService().getBaseComponent(ComponentTag.class, componentId);
+		Boolean cont = Boolean.TRUE;
+		if (currentTags != null && currentTags.size() > 0) {
+			for (ComponentTag item : currentTags) {
+				if (item.getText().equals(tag.getText())) {
+					cont = Boolean.FALSE;
+				}
+			}
+		}
+
 		ValidationModel validationModel = new ValidationModel(tag);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			tag.setCreateUser(SecurityUtil.getCurrentUserName());
 			tag.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getComponentService().saveComponentTag(tag);
+			if (cont) {
+				service.getComponentService().saveComponentTag(tag);
+			}
 		}
 		else {
 			return Response.ok(validationResult.toRestError()).build();
