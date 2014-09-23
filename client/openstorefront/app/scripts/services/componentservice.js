@@ -489,5 +489,57 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return deferred.promise;
   };
 
+  componentservice.addTag = function(id, tag) {
+    var deferred = $q.defer();
+    if (id && tag) {
+      $http({
+        method: 'POST',
+        url: 'api/v1/resource/components/'+id+'/tag',
+        data: tag
+      }).success(function(data, status, headers, config){
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.resolve('There was an error saving the tags');
+      });
+    } else {
+      deferred.reject('You need a component Id and a tag to save.')
+    }
+    return deferred.promise;
+  };
+
+  componentservice.removeTag = function(id, tag) {
+    var deferred = $q.defer();
+    if (id && tag) {
+      $http({
+        method: 'DELETE',
+        url: 'api/v1/resource/components/'+id+'/tag',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: tag
+      }).success(function(data, status, headers, config){
+        if (data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
   return componentservice;
 }]);

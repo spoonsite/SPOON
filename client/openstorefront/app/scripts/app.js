@@ -415,9 +415,8 @@ var app = angular
       //Mock Back End  (use passThrough to route to server)
       $httpBackend.whenGET(/views.*/).passThrough();
       
-      $httpBackend.whenGET('api/v1/resource/userprofiles/JONLAW').passThrough();
-      $httpBackend.whenPUT('api/v1/resource/userprofiles/JONLAW').passThrough();
-      $httpBackend.whenGET('api/v1/resource/userprofiles/CURRENTUSER').respond(MOCKDATA.userProfile);
+      $httpBackend.whenGET(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenGET('api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
       $httpBackend.whenGET(/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
         // var query = getParams(url);
@@ -454,7 +453,9 @@ var app = angular
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
       $httpBackend.whenGET('api/v1/resource/components/tags').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tag/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tag/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question/).passThrough();
       $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();

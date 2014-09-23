@@ -504,7 +504,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             var view = new Date($scope.details.details.lastViewedDts);
             if (view < update) {
               showUpdateNotify();
+            } else {
+              resetUpdateNotify();
             }
+          } else {
+            resetUpdateNotify();
           }
 
           /* jshint ignore:end */

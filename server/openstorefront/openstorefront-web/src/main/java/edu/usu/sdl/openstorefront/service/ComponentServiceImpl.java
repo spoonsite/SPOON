@@ -203,8 +203,7 @@ public class ComponentServiceImpl
 		result.setComponentDetails(tempComponent, tempParentComponent);
 
 		UserWatch tempWatch = new UserWatch();
-		// TODO: take this out of the comments once we're in production.
-		//tempWatch.setUsername(SecurityUtil.getCurrentUserName());
+		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
 		UserWatch tempUserWatch = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(tempWatch));
@@ -213,8 +212,6 @@ public class ComponentServiceImpl
 		}
 		List<ComponentAttribute> attributes = this.getAttributeService().getAttributesByComponentId(componentId);
 		result.setAttributes(ComponentAttributeView.toViewList(attributes));
-
-		result.setLastActivityDts(tempComponent.getLastActivityDts());
 
 		result.setComponentId(componentId);
 		result.setTags(getBaseComponent(ComponentTag.class, componentId));

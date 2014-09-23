@@ -111,7 +111,11 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
           var view = new Date($scope.details.details.lastViewedDts);
           if (view < update) {
             showUpdateNotify();
+          }else {
+            resetUpdateNotify();
           }
+        } else {
+          resetUpdateNotify();
         }
 
         if (found) {
