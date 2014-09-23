@@ -492,9 +492,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
 
     if ($scope.details.details.lastViewedDts !== undefined) {
       var component = $scope.details.details;
-      var lastViewedDts = sqlToJsDate('2013-01-12T12:12:12.000');
-      // TODO set this back to normal.
-      // var lastViewedDts = sqlToJsDate(component.lastViewedDts);
+      // use this date if you want to test last viewed stuff
+      // var lastViewedDts = sqlToJsDate('2013-01-12T12:12:12.000');
+      var lastViewedDts = sqlToJsDate(component.lastViewedDts);
       var shown = false;
       _.each(component.componentMedia, function(media){
         console.log('media date', sqlToJsDate(media.updateDts));
@@ -642,13 +642,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           $('#qaTab').tooltip(settings);
         }
       });
-      console.log('summaryUpdated', $scope.summaryUpdated);
+      // console.log('summaryUpdated', $scope.summaryUpdated);
 
-      console.log('detailsUpdated', $scope.detailsUpdated);
+      // console.log('detailsUpdated', $scope.detailsUpdated);
 
-      console.log('reviewsUpdated', $scope.reviewsUpdated);
+      // console.log('reviewsUpdated', $scope.reviewsUpdated);
 
-      console.log('commentsUpdated', $scope.commentsUpdated);
+      // console.log('commentsUpdated', $scope.commentsUpdated);
 
     }
   }
