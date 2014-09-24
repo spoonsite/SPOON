@@ -2,8 +2,11 @@
 //theSite = 'http://di2e.github.io/openstorefront/index.html';
 //openAM = false;
 
-theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
-openAM = true;
+theSite = 'http://storefront1.di2e.net';
+openAM = false;
+
+//theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
+//openAM = true;
 
 
 // Log in to the OpenAM page if needed
