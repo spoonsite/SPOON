@@ -21,7 +21,7 @@
               <div class="row" style="margin-left: 0px; margin-right: 0px">
                 <div class="results-content">
                   <div class="results-content-title">
-                    <div ng-click="clickCallback(item.componentId, {type: item.listingType, route: item.resourceLocation})" id="{{item.componentId}}">
+                    <div ng-click="clickCallback(item.componentId, item)" id="{{item.componentId}}">
                       <div class="results-content-title-content" >{{item.name}}
                         <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
                       </div>

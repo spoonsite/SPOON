@@ -437,8 +437,40 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   };
 
-  componentservice.doSearch = function(type, key) {
-    return componentservice.getComponentList();
+  componentservice.doSearch = function(type, key) {    
+    var result = $q.defer();
+    var url = 'api/v1/service/search/all';
+    var value = null;
+    // if they don't give me an ID I send them back the whole list.
+    value = checkExpire('componentListAll', minute * 10);
+    if (value) {
+      result.resolve(value);
+    } else {
+      $http({
+        method: 'GET',
+        url: url
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && !isEmpty(data) && isNotRequestError(data)) {
+          removeError();
+          var resultList = [];
+          _.each(data, function(item){
+            var temp = item;
+            temp.description = getShortDescription(item.description);
+            resultList.push(temp);
+          })
+          save('componentListAll', resultList);
+          result.resolve(resultList);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject('There was a server error');
+      });
+    }
+    return result.promise;
   };
 
 

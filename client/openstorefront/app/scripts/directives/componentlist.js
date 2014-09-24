@@ -66,8 +66,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       if (scope.clickCallback === undefined) {
         scope.clickCallback =  function(id, article) {
           var url = $location.absUrl().replace($location.url(), '');
-          if (article && article.type === 'Article') {
-            localCache.save('landingRoute', article.route);
+          if (article && article.listingType === 'Article') {
+            localCache.save('type', article.articleAttributeType);
+            localCache.save('code', article.articleAttributeCode);
+            // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
             url = url + '/landing';
             window.open(url, 'Landing Page' + id, 'scrollbars');
           } else {
