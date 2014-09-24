@@ -449,13 +449,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function updates the details when a component title is clicked on
   ***************************************************************/
   $scope.updateDetails = function(id, article){
-    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
+    // $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
     if (article && article.type === 'Article') {
       $scope.sendPageView('article' + article.route);
       $scope.isArticle = true;
       localCache.save('type', article.type);
       localCache.save('code', article.code);
-      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+      // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', false);
       $scope.showDetails = true;
       if (!openClick) {
@@ -514,7 +514,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           /* jshint ignore:end */
 
         }
-        $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+        // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
         $scope.showDetails = true;
       });
     } //
