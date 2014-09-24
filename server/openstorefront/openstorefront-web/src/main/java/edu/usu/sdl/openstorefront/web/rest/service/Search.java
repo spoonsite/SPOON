@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
@@ -62,6 +63,16 @@ public class Search
 		return sendListResponse(searchResults, totalResults);
 	}
 
+	@GET
+	@APIDescription("Used to retrieve all possible search results.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Component.class)
+	@Path("/all")
+	public List<ComponentSearchView> getAllForSearch()
+	{
+		return service.getSearchService().getAll();
+	}
+	
 	@GET
 	@APIDescription("Gets the recently added items")
 	@Produces({MediaType.APPLICATION_JSON})

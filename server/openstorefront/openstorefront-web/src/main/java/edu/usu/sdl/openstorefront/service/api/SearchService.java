@@ -16,11 +16,20 @@
 
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
  */
 public interface SearchService
 {
-	
+	/**
+	 * Find Recently Added
+	 *
+	 * @return
+	 */
+	public List<ComponentSearchView> getAll();
+
 }

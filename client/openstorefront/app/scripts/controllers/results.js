@@ -450,11 +450,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.updateDetails = function(id, article){
     // $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    if (article && article.type === 'Article') {
-      $scope.sendPageView('article' + article.route);
+      console.log('article', article);
+    if (article && article.listingType === 'Article') {
       $scope.isArticle = true;
-      localCache.save('type', article.type);
-      localCache.save('code', article.code);
+      localCache.save('type', article.articleAttributeType);
+      localCache.save('code', article.articleAttributeCode);
       // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', false);
       $scope.showDetails = true;

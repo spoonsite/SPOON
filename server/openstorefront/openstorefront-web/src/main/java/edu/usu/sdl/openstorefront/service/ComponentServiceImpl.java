@@ -67,6 +67,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.web.rest.model.SearchResultAttribute;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -181,7 +182,7 @@ public class ComponentServiceImpl
 		for (Component component : components) {
 			ComponentSearchView componentSearchView = ComponentSearchView.toView(component);
 			List<ComponentAttribute> attributes = attributeMaps.get(component.getComponentId());
-			componentSearchView.setAttributes(ComponentAttributeView.toViewList(attributes));
+			componentSearchView.setAttributes(SearchResultAttribute.toViewList(attributes));
 			componentSearchViews.add(componentSearchView);
 		}
 
@@ -1108,5 +1109,7 @@ public class ComponentServiceImpl
 
 		return persistenceService.query(query, parameters);
 	}
+
+
 
 }

@@ -49,6 +49,31 @@ public class ComponentAttributeView
 	{
 	}
 
+	public static ComponentAttributeView toView(Article article)
+	{
+		ComponentAttributeView view = new ComponentAttributeView();
+		ServiceProxy service = new ServiceProxy();
+		AttributeType type = service.getPersistenceService().findById(AttributeType.class, article.getAttributeType());
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(article.getAttributeCode());
+		pk.setAttributeType(article.getAttributeType());
+		AttributeCode code = service.getPersistenceService().findById(AttributeCode.class, pk);
+		view.setExternalLink(code.getDetailUrl());
+		view.setCodeDescription(code.getLabel());
+		view.setCodeLongDescription(code.getDescription());
+		view.setTypeDescription(type.getDescription());
+		view.setTypeLongDescription(type.getDescription());
+		view.setType(type.getAttributeType());
+		view.setCode(code.getAttributeCodePk().getAttributeCode());
+		view.setImportantFlg(type.getImportantFlg());
+		view.setRequiredFlg(type.getRequiredFlg());
+		view.setAllowMultipleFlg(type.getAllowMutlipleFlg());
+		view.setArchitectureFlg(type.getArchitectureFlg());
+		view.setVisibleFlg(type.getVisibleFlg());
+		view.setUpdateDts(article.getUpdateDts());
+		return view;
+	}
+
 	public static ComponentAttributeView toView(ComponentAttribute attribute)
 	{
 		ServiceProxy service = new ServiceProxy();

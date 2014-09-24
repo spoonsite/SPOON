@@ -316,4 +316,5 @@ public interface ComponentService
 	 */
 	public List<Component> findRecentlyAdded(int maxResults);
 
+
 }

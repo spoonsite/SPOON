@@ -16,6 +16,10 @@
 
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
@@ -27,6 +31,21 @@ public class SearchResultAttribute
 
 	public SearchResultAttribute()
 	{
+	}
+	
+	public static SearchResultAttribute toView(ComponentAttribute attribute){
+		SearchResultAttribute view = new SearchResultAttribute();
+		view.setCode(attribute.getComponentAttributePk().getAttributeCode());
+		view.setType(attribute.getComponentAttributePk().getAttributeType());
+		return view;
+	}
+	
+	public static List<SearchResultAttribute> toViewList(List<ComponentAttribute> attributes){
+		List<SearchResultAttribute> list = new ArrayList<>();
+		attributes.stream().forEach((attribute) -> {
+			list.add(SearchResultAttribute.toView(attribute));
+		});
+		return list;
 	}
 
 	public String getType()

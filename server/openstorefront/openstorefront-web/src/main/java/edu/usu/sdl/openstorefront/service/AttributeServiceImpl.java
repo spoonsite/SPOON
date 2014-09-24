@@ -37,11 +37,14 @@ import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -411,11 +414,18 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<AttributeCode> findRecentlyAddedArticles(int maxResults)
+	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults)
 	{
-		String query = "select from AttributeCode where activeStatus = :activeStatusParam "
+		String query;
+		if (maxResults != null){
+		 query = "select from AttributeCode where activeStatus = :activeStatusParam "
 				+ " and articleFilename is not null "
 				+ " order by updateDts DESC LIMIT " + maxResults;
+		} else {
+			query = "select from AttributeCode where activeStatus = :activeStatusParam "
+				+ " and articleFilename is not null "
+				+ " order by updateDts DESC";
+		}
 
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
@@ -505,5 +515,16 @@ public class AttributeServiceImpl
 			sortArchitecture(architecture.getChildren());
 		}
 		architectures.sort(new ArchitectureComparator<>());
+	}
+
+	@Override
+	public List<ComponentSearchView> getAllArticles()
+	{
+		List<ComponentSearchView> list = new ArrayList<>();
+		List<AttributeCode> codes = this.getAttributeService().findRecentlyAddedArticles(null);
+		codes.stream().forEach((code) -> {
+			list.add(ComponentSearchView.toView(Article.toView(code)));
+		});
+		return list;
 	}
 }
