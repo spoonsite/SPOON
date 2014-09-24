@@ -30,7 +30,7 @@ var doAttributes = function() {
 var setupAttributes = function(type) {
     $.get("/openstorefront/api/v1/resource/attributes/attributetypes/" + type.attributeType + "/attributecodes", function(codes) {
         if (codes && codes.length > 0) {
-            $('#tableOfContents').append('<tr><td><span goTo="' + type.attributeType + '">' + type.description+ '</span></td></tr>');
+            $('#tableOfContents').append('<tr><td><span goTo="' + type.attributeType + '" class="imitateLink">' + type.description+ '</span></td></tr>');
             $('#content').append('<div id="' + type.attributeType + '" style="margin-top: 50px;"><h3>' + type.description + '</h3><div style="margin-left: 20px;"><table><tr><th>Label</th><th>Code</th><th>Description</th></tr></table></div></div>');
             $('span[goTo]').on('click', function(e) {
                 e.preventDefault();
@@ -65,7 +65,7 @@ var doLookups = function() {
 var setupLookups = function(type) {
     $.get("/openstorefront/api/v1/resource/lookuptypes/" + type.code, function(codes) {
         if (codes && codes.length > 0) {
-            $('#tableOfContents').append('<tr><td><span goTo="' + type.code + '">' + type.code + '</span></td></tr>');
+            $('#tableOfContents').append('<tr><td><span goTo="' + type.code + '" class="imitateLink">' + type.code + '</span></td></tr>');
             $('#content').append('<div id="' + type.code + '" style="margin-top: 50px;"><h3>' + type.code + '</h3><div style="margin-left: 20px;"><table><tr><th>Description</th><th>Code</th></tr></table></div></div>');
             $('span[goTo]').on('click', function(e) {
                 e.preventDefault();

@@ -27,3 +27,15 @@ limitations under the License.
 #content{
     margin-left:220px;
 }
+
+
+.imitateLink{
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-decoration: underline;
+}
