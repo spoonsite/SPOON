@@ -36,5 +36,7 @@ limitations under the License.
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+.imitateLink:hover{
     text-decoration: underline;
 }
