@@ -41,6 +41,12 @@ limitations under the License.
 				<li>
 					<a href="#../API.action?Page&page=errorhandling" >Error Handling</a>
 				</li>
+				<li>
+					<a href="#../API.action?Page&page=lookup" >Lookup Table Reference</a>
+				</li>
+				<li>
+					<a href="#../API.action?Page&page=attribute" >Attribute Table Reference</a>
+				</li>
 			</ul>
 			
 			<h4 title="(/api/v1/resource/) - Resources are entities that the server manages.  API provides CRUD support, querying and some resource specific behavior.">
