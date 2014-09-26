@@ -173,7 +173,7 @@ public class PersistenceService
 		OObjectDatabaseTx db = getConnection();
 		T returnEntity = null;
 		try {
-			if (checkPkObject(entity, id)) {
+			if (checkPkObject(db, entity, id)) {
 				Map<String, Object> pkFields = findIdField(entity, id);
 
 				if (pkFields.isEmpty()) {
@@ -211,20 +211,23 @@ public class PersistenceService
 	 * @param id required
 	 * @return
 	 */
-	private boolean checkPkObject(Class entityClass, Object id)
+	private boolean checkPkObject(OObjectDatabaseTx db, Class entityClass, Object id)
 	{
 		boolean pkValid = true;
 		Objects.requireNonNull(id, "Id must not be null");
 
 		if (entityClass.getSuperclass() != null) {
-			pkValid = checkPkObject(entityClass.getSuperclass(), id);
+			pkValid = checkPkObject(db, entityClass.getSuperclass(), id);
 		}
 		if (pkValid) {
 			for (Field field : entityClass.getDeclaredFields()) {
 				PK idAnnotation = field.getAnnotation(PK.class);
 				if (idAnnotation != null) {
 					if (id.getClass().getName().equals(field.getType().getName()) == false) {
-						pkValid = false;
+						//Manage PK is like been pull by the DB and passed back in ...let it through
+						if (db.isManaged(id) == false) {
+							pkValid = false;
+						}
 					}
 				}
 			}
@@ -566,7 +569,7 @@ public class PersistenceService
 				BeanUtils.copyProperties(nonProxy, dbproxy);
 				nonProxyList.add(nonProxy);
 			} catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-				log.log(Level.SEVERE, null, ex);
+				throw new OpenStorefrontRuntimeException("Unable to unwrap proxy object.", ex);
 			}
 		}
 		return nonProxyList;
@@ -580,7 +583,7 @@ public class PersistenceService
 			BeanUtils.copyProperties(nonProxy, data);
 
 		} catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-			log.log(Level.SEVERE, null, ex);
+			throw new OpenStorefrontRuntimeException("Unable to unwrap proxy object.", ex);
 		}
 		return nonProxy;
 	}

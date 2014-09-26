@@ -57,7 +57,9 @@ public class FileSystemManager
 	public static File getDir(String directory)
 	{
 		File dir = new File(directory);
-		dir.mkdirs();
+		if (dir.mkdirs()) {
+			log.log(Level.FINEST, "Not all directories were created. Highly likely directories already exist.  If not, Check permission and Disk Space");
+		}
 		return dir;
 	}
 

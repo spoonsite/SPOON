@@ -17,10 +17,7 @@ package edu.usu.sdl.openstorefront.service.transfermodel;
 
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -57,18 +54,6 @@ public class ErrorInfo
 				input.append("Query: ").append(request.getQueryString()).append("\n");
 			}
 
-			try (BufferedReader in = request.getReader()) {
-				input.append("Body: \n\n");
-				if (in != null) {
-					String line = in.readLine();
-					while (line != null) {
-						input.append(line).append("\n");
-						line = in.readLine();
-					}
-				}
-			} catch (IOException | IllegalStateException io) {
-				log.log(Level.FINEST, "Unable to read body of request. Likely it already read.", io);
-			}
 			inputData = input.toString();
 		}
 	}
