@@ -67,6 +67,9 @@ public class AttributeResource
 		extends BaseResource
 {
 
+	@Context
+	HttpServletRequest request;
+
 	@GET
 	@APIDescription("Gets all active attributes and codes for the attributes in view based model.")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -217,8 +220,7 @@ public class AttributeResource
 			@PathParam("type")
 			@RequiredParam String type,
 			@PathParam("code")
-			@RequiredParam String code,
-			@Context HttpServletRequest request)
+			@RequiredParam String code)
 	{
 		type = type.toUpperCase();
 		code = code.toUpperCase();

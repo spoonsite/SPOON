@@ -151,8 +151,7 @@ public class ComponentRESTResource
 			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.created(URI.create("v1/resource/components/" + service.getComponentService().saveComponent(component).getComponent().getComponentId())).entity(component).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -180,8 +179,7 @@ public class ComponentRESTResource
 			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.ok(service.getComponentService().saveComponent(component)).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -242,8 +240,7 @@ public class ComponentRESTResource
 			ComponentAttribute a = iter.next();
 			if (!a.getComponentAttributePk().getAttributeType().equals(attributeType)) {
 				iter.remove();
-			}
-			else {
+			} else {
 				attributeCodes.add(new AttributeCode());
 				// TODO: Implement getAttributeCode
 				//attributeCodes.add(service.getAttributeService().getAttributeCode(a.getComponentAttributePk().getAttributeCode()));
@@ -312,8 +309,7 @@ public class ComponentRESTResource
 			attribute.setCreateUser(SecurityUtil.getCurrentUserName());
 			attribute.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentAttribute(attribute);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create(attribute.getComponentAttributePk().getAttributeType() + attribute.getComponentAttributePk().getAttributeCode())).entity(attribute).build();
@@ -389,14 +385,12 @@ public class ComponentRESTResource
 			dependency.setCreateUser(SecurityUtil.getCurrentUserName());
 			dependency.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentDependency(dependency);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create(dependency.getDependencyId())).entity(dependency).build();
-		}
-		else {
+		} else {
 			return Response.ok(dependency).build();
 		}
 	}
@@ -472,14 +466,12 @@ public class ComponentRESTResource
 			contact.setCreateUser(SecurityUtil.getCurrentUserName());
 			contact.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentContact(contact);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create(contact.getContactId())).entity(contact).build();
-		}
-		else {
+		} else {
 			return Response.ok(contact).build();
 		}
 	}
@@ -570,15 +562,13 @@ public class ComponentRESTResource
 			section.setCreateUser(SecurityUtil.getCurrentUserName());
 			section.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSection(section);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
-		}
-		else {
+		} else {
 			return Response.ok(section).build();
 		}
 	}
@@ -657,15 +647,13 @@ public class ComponentRESTResource
 			schedule.setCreateUser(SecurityUtil.getCurrentUserName());
 			schedule.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSchedule(schedule);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).entity(schedule).build();
-		}
-		else {
+		} else {
 			return Response.ok(schedule).build();
 		}
 	}
@@ -742,14 +730,12 @@ public class ComponentRESTResource
 			media.setCreateUser(SecurityUtil.getCurrentUserName());
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMedia(media);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/{id}/media/" + media.getComponentMediaId())).entity(media).build();
-		}
-		else {
+		} else {
 			return Response.ok(media).build();
 		}
 	}
@@ -823,15 +809,13 @@ public class ComponentRESTResource
 			metadata.setCreateUser(SecurityUtil.getCurrentUserName());
 			metadata.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMetadata(metadata);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(metadata.getMetadataId())).build();
-		}
-		else {
+		} else {
 			return Response.ok(metadata).build();
 		}
 	}
@@ -927,15 +911,13 @@ public class ComponentRESTResource
 			question.setCreateUser(SecurityUtil.getCurrentUserName());
 			question.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(question.getQuestionId())).entity(question).build();
-		}
-		else {
+		} else {
 			return Response.ok(question).build();
 		}
 	}
@@ -945,10 +927,11 @@ public class ComponentRESTResource
 	@APIDescription("Gets the responses for a given question associated to the specified entity ")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentQuestionResponse.class)
-	@Path("/{id}/response")
+	@Path("/{id}/response/{questionId}")
 	public List<ComponentQuestionResponse> getComponentQuestionResponse(
 			@PathParam("id")
 			@RequiredParam String componentId,
+			@PathParam("questionId")
 			@RequiredParam String questionId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentQuestionResponse.class, questionId);
@@ -1013,15 +996,13 @@ public class ComponentRESTResource
 			response.setCreateUser(SecurityUtil.getCurrentUserName());
 			response.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(response.getResponseId())).entity(response).build();
-		}
-		else {
+		} else {
 			return Response.ok(response).build();
 		}
 	}
@@ -1097,15 +1078,13 @@ public class ComponentRESTResource
 			resource.setCreateUser(SecurityUtil.getCurrentUserName());
 			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentResource(resource);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(resource.getResourceId())).entity(resource).build();
-		}
-		else {
+		} else {
 			return Response.ok(resource).build();
 		}
 	}
@@ -1191,15 +1170,13 @@ public class ComponentRESTResource
 			review.setCreateUser(SecurityUtil.getCurrentUserName());
 			review.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReview(review);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(review.getComponentReviewId())).entity(review).build();
-		}
-		else {
+		} else {
 			return Response.ok(review).build();
 		}
 	}
@@ -1219,20 +1196,18 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a con from the given review accociated with the specified entity")
+	@APIDescription("Removes all cons from the given review accociated with the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/review/{reviewId}/con")
 	public void deleteComponentReviewCon(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam String reviewId,
-			@RequiredParam String con)
+			@RequiredParam String reviewId)
 	{
 		ComponentReviewCon example = new ComponentReviewCon();
 		ComponentReviewConPk pk = new ComponentReviewConPk();
 		pk.setComponentReviewId(reviewId);
-//		pk.setReviewCon(con);
 		example.setComponentReviewConPk(pk);
 		service.getPersistenceService().deleteByExample(example);
 		service.getComponentService().deactivateBaseComponent(ComponentReviewCon.class, pk);
@@ -1240,7 +1215,7 @@ public class ComponentRESTResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Add a con to the given review associated with the specified entity")
+	@APIDescription("Add a cons to the given review associated with the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewCon.class)
 	@Path("/{id}/review/{reviewId}/con")
@@ -1259,12 +1234,10 @@ public class ComponentRESTResource
 			conCode = service.getLookupService().getLookupEnityByDesc(ReviewCon.class, text);
 			if (conCode == null) {
 				pk.setReviewCon(null);
-			}
-			else {
+			} else {
 				pk.setReviewCon(conCode.getCode());
 			}
-		}
-		else {
+		} else {
 			pk.setReviewCon(conCode.getCode());
 		}
 		con.setComponentReviewConPk(pk);
@@ -1277,8 +1250,7 @@ public class ComponentRESTResource
 			con.setCreateUser(SecurityUtil.getCurrentUserName());
 			con.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReviewCon(con);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
@@ -1300,20 +1272,18 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a pro from the review associated with a specified entity")
+	@APIDescription("Removes all pros from the review associated with a specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/review/{reviewId}/pro")
 	public void deleteComponentReviewPro(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("reviewId")
-			@RequiredParam String reviewId,
-			@RequiredParam String pro)
+			@RequiredParam String reviewId)
 	{
 		ComponentReviewPro example = new ComponentReviewPro();
 		ComponentReviewProPk pk = new ComponentReviewProPk();
 		pk.setComponentReviewId(reviewId);
-//		pk.setReviewPro(pro);
 		example.setComponentReviewProPk(pk);
 		service.getPersistenceService().deleteByExample(example);
 		service.getComponentService().deactivateBaseComponent(ComponentReviewPro.class, pk);
@@ -1340,12 +1310,10 @@ public class ComponentRESTResource
 			proCode = service.getLookupService().getLookupEnityByDesc(ReviewPro.class, text);
 			if (proCode == null) {
 				pk.setReviewPro(null);
-			}
-			else {
+			} else {
 				pk.setReviewPro(proCode.getCode());
 			}
-		}
-		else {
+		} else {
 			pk.setReviewPro(proCode.getCode());
 		}
 		pro.setComponentReviewProPk(pk);
@@ -1358,8 +1326,7 @@ public class ComponentRESTResource
 			pro.setCreateUser(SecurityUtil.getCurrentUserName());
 			pro.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReviewPro(pro);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		// Again, how are we going to handle composite keys?
@@ -1423,8 +1390,7 @@ public class ComponentRESTResource
 		if (example != null && example.getCreateUser().equals(username)) {
 			service.getComponentService().deactivateBaseComponent(ComponentTag.class, tagId);
 			return Response.noContent().build();
-		}
-		else {
+		} else {
 			RestErrorModel restErrorModel = new RestErrorModel();
 			String message = "You are not allowed to delete this tag";
 			restErrorModel.getErrors().put("tagsUpdate", message);
@@ -1450,8 +1416,7 @@ public class ComponentRESTResource
 		}
 		if (example != null && example.getComponentId() != null) {
 			tag = service.getPersistenceService().findById(ComponentTag.class, example.getTagId());
-		}
-		else {
+		} else {
 			tag = null;
 		}
 
@@ -1459,8 +1424,7 @@ public class ComponentRESTResource
 		if (tag != null && tag.getCreateUser().equals(username)) {
 			service.getPersistenceService().delete(tag);
 			return Response.noContent().build();
-		}
-		else {
+		} else {
 			RestErrorModel restErrorModel = new RestErrorModel();
 			String message = "You are not allowed to delete this tag";
 			restErrorModel.getErrors().put("", message);
@@ -1477,7 +1441,7 @@ public class ComponentRESTResource
 	public Response addComponentTags(
 			@PathParam("id")
 			@RequiredParam String componentId,
-			@RequiredParam List<ComponentTag> tags)
+			@RequiredParam @DataType(ComponentTag.class) List<ComponentTag> tags)
 	{
 		Boolean valid = Boolean.TRUE;
 		List<ComponentTag> verified = new ArrayList<>();
@@ -1493,8 +1457,7 @@ public class ComponentRESTResource
 					tag.setCreateUser(SecurityUtil.getCurrentUserName());
 					tag.setUpdateUser(SecurityUtil.getCurrentUserName());
 					verified.add(tag);
-				}
-				else {
+				} else {
 					valid = Boolean.FALSE;
 					unVerified.add(validationResult.toRestError());
 				}
@@ -1508,19 +1471,16 @@ public class ComponentRESTResource
 					{
 					};
 					return Response.created(URI.create(verified.get(0).getTagId())).entity(entity).build();
-				}
-				else {
+				} else {
 					return Response.notAcceptable(null).build();
 				}
-			}
-			else {
+			} else {
 				GenericEntity<List<RestErrorModel>> entity = new GenericEntity<List<RestErrorModel>>(Lists.newArrayList(unVerified))
 				{
 				};
 				return Response.ok(entity).build();
 			}
-		}
-		else {
+		} else {
 			return Response.notAcceptable(null).build();
 		}
 	}
@@ -1558,8 +1518,7 @@ public class ComponentRESTResource
 			if (cont) {
 				service.getComponentService().saveComponentTag(tag);
 			}
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create(tag.getTagId())).entity(tag).build();
@@ -1634,15 +1593,13 @@ public class ComponentRESTResource
 			tracking.setCreateUser(SecurityUtil.getCurrentUserName());
 			tracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentTracking(tracking);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			// TODO: How does this work with composite keys?
 			return Response.created(URI.create(tracking.getComponentTrackingId())).entity(tracking).build();
-		}
-		else {
+		} else {
 			return Response.ok(tracking).build();
 		}
 	}

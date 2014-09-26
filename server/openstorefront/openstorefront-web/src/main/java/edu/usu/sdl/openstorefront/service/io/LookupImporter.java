@@ -105,7 +105,7 @@ public class LookupImporter
 		List<LookupEntity> lookupEntities = new ArrayList<>();
 		String className = file.getName().replace(".csv", "");
 		Class lookupClass = null;
-		try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(file)));) {
+		try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(file)))) {
 
 			lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + className);
 			List<String[]> allData = reader.readAll();
