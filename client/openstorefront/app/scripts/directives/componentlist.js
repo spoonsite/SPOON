@@ -42,9 +42,15 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       filters: '=',
       setFilters: '=',
       clickCallback: '=',
+      search: '&',
       hideMore: '@',
     },
     link: function postLink(scope, element, attrs) {
+      if (scope.search && (!scope.search.type || !scope.search.key)) {
+        scope.search = {};
+        scope.search.type = 'search';
+        scope.search.key = 'all';
+      }
       var list = [];
 
       /***************************************************************
@@ -102,11 +108,9 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       scope.$watch('data', function() {
         if (scope.data && scope.data.length) {
           element.find('.hideMore').attr('id', item);
-
           item = 'read_more' + uniqueId++;
           element.find('input.read_more').attr('id', item);
           element.find('label.read_more').attr('for', item);
-
           $timeout(function(){
             if (scope.filters && scope.setFilters) {
               if (scope.setFilters.length && scope.$parent.filters.length) {
@@ -121,9 +125,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                 });
               }
               scope.data = scope.$parent.applyFilters(scope.data);
-              if (scope.data && scope.data.data && scope.data.data.length) {
-                console.log('scope.data', scope.data.data);
-              }
               if (scope.data) {
                 if(scope.data.length > 3) {
                   scope.hasMoreThan3 = true;
@@ -162,16 +163,22 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       * override something else.
       ***************************************************************/
       if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
-        Business.componentservice.getComponentDetails().then(function(result){
-          scope.data = result;
-          _.each(scope.data, function(item){
-            if (item.description !== null && item.description !== undefined && item.description !== '') {
-              var desc = item.description.match(/^(.*?)[.?!]\s/);
-              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+        var key = (attrs.key !== null && attrs.key !== undefined && attrs.key !== '')? attrs.key: null;
+        scope.search = {'type': 'attribute', key:{'type': attrs.type, 'key': key}};
+        Business.componentservice.doSearch(scope.search.type, scope.search.key).then(function(result){
+          if (result)
+          {
+            if (result.data && result.data.length > 0) { 
+              scope.data = angular.copy(result.data);
+              scope.$apply();
             } else {
-              item.shortdescription = 'This is a temporary short description';
+              scope.data = [];
+              scope.$apply();
             }
-          });
+          } else {
+            scope.data = [];
+            scope.$apply();
+          }
         });
       }
       if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
