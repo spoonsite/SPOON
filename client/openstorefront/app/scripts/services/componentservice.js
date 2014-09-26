@@ -371,7 +371,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         .success(function(data, status, headers, config) { /*jshint unused:false*/          
           if (data && !isEmpty(data) && isNotRequestError(data)) {
             removeError();
-            console.log('data', data);
+            // console.log('data', data);
             save('component_'+id, data);
             result.resolve(data);
           } else {
@@ -442,8 +442,8 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var url     = 'api/v1/service/search/all';
     var value   = null;
     var name;
-    console.log('type', type);
-    console.log('key', key);
+    // console.log('type', type);
+    // console.log('key', key);
     
     if (type && key) {
       type  = type.toLowerCase();
