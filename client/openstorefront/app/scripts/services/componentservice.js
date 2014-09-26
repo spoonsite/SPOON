@@ -451,7 +451,11 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         key   = key.toLowerCase();
         name  = type + '-' + key;
       } else {
-        name = type + key.type.toLowerCase() + '-' + key.key.toLowerCase();
+        if (!key.key) {
+          name = type + key.type.toLowerCase() + '-ALL';
+        } else {
+          name = type + key.type.toLowerCase() + '-' + key.key.toLowerCase();
+        }
       }
       // if they don't give me an ID I send them back the whole list.
       value = checkExpire(name, minute * 10);
@@ -475,7 +479,6 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
                 response.data.push(thing);
               }
             })
-
             save(name, response);
             result.resolve(response);
           } else {
