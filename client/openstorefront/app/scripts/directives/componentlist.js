@@ -42,9 +42,15 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       filters: '=',
       setFilters: '=',
       clickCallback: '=',
+      search: '&',
       hideMore: '@',
     },
     link: function postLink(scope, element, attrs) {
+      if (scope.search && (!scope.search.type || !scope.search.key)) {
+        scope.search = {};
+        scope.search.type = 'search';
+        scope.search.key = 'all';
+      }
       var list = [];
 
       /***************************************************************
@@ -66,8 +72,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       if (scope.clickCallback === undefined) {
         scope.clickCallback =  function(id, article) {
           var url = $location.absUrl().replace($location.url(), '');
-          if (article && article.type === 'Article') {
-            localCache.save('landingRoute', article.route);
+          if (article && article.listingType === 'Article') {
+            localCache.save('type', article.articleAttributeType);
+            localCache.save('code', article.articleAttributeCode);
+            // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
             url = url + '/landing';
             window.open(url, 'Landing Page' + id, 'scrollbars');
           } else {
@@ -100,41 +108,36 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       scope.$watch('data', function() {
         if (scope.data && scope.data.length) {
           element.find('.hideMore').attr('id', item);
-
           item = 'read_more' + uniqueId++;
           element.find('input.read_more').attr('id', item);
           element.find('label.read_more').attr('for', item);
-
-          $timeout(function(){
-            if (scope.filters && scope.setFilters) {
-              if (scope.setFilters.length && scope.$parent.filters.length) {
-                _.each(scope.setFilters, function(set) {
-                  var filter = _.find(scope.$parent.filters, {'type': set.type});
-                  if (filter && filter.codes.length) {
-                    var code = _.find(filter.codes, {'code': set.code});
-                    if (code) {
-                      code.checked = true;
-                    }
-                  }
-                });
-              }
-              scope.data = scope.$parent.applyFilters(scope.data);
-              if (scope.data && scope.data.data && scope.data.data.length) {
-                console.log('scope.data', scope.data.data);
-              }
-              if (scope.data) {
-                if(scope.data.length > 3) {
-                  scope.hasMoreThan3 = true;
-                } else {
-                  scope.hasMoreThan3 = false;
-                }
-                scope.addMore();
-              }
-              scope.init();
-            }
-          }, 10);
+          // $timeout(function(){
+          //   // if (scope.filters && scope.setFilters) {
+          //   //   if (scope.setFilters.length && scope.$parent.filters.length) {
+          //   //     _.each(scope.setFilters, function(set) {
+          //   //       var filter = _.find(scope.$parent.filters, {'type': set.type});
+          //   //       if (filter && filter.codes.length) {
+          //   //         var code = _.find(filter.codes, {'code': set.code});
+          //   //         if (code) {
+          //   //           code.checked = true;
+          //   //         }
+          //   //       }
+          //   //     });
+          //   //   }
+          //   //   scope.data = scope.$parent.applyFilters(scope.data);
+          //   //   if (scope.data) {
+          //   //     if(scope.data.length > 3) {
+          //   //       scope.hasMoreThan3 = true;
+          //   //     } else {
+          //   //       scope.hasMoreThan3 = false;
+          //   //     }
+          //   //     scope.addMore();
+          //   //   }
+          //   //   scope.init();
+          //   // }
+          // }, 10);
         } //
-      });
+      }, true);
 
 
 
@@ -160,16 +163,22 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       * override something else.
       ***************************************************************/
       if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
-        Business.componentservice.getComponentDetails().then(function(result){
-          scope.data = result;
-          _.each(scope.data, function(item){
-            if (item.description !== null && item.description !== undefined && item.description !== '') {
-              var desc = item.description.match(/^(.*?)[.?!]\s/);
-              item.shortdescription = (desc && desc[1])? desc[1] + '.': 'This is a temporary short description';
+        var key = (attrs.key !== null && attrs.key !== undefined && attrs.key !== '')? attrs.key: null;
+        scope.search = {'type': 'attribute', key:{'type': attrs.type, 'key': key}};
+        Business.componentservice.doSearch(scope.search.type, scope.search.key).then(function(result){
+          if (result)
+          {
+            if (result.data && result.data.length > 0) { 
+              scope.data = angular.copy(result.data);
             } else {
-              item.shortdescription = 'This is a temporary short description';
+              scope.data = [];
             }
-          });
+          } else {
+            scope.data = [];
+          }
+          $timeout(function(){
+            scope.$apply();
+          })
         });
       }
       if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {

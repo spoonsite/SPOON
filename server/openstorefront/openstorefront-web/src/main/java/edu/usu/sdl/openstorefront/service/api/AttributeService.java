@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.util.List;
 import java.util.Map;
 
@@ -147,7 +148,7 @@ public interface AttributeService
 	 * @param maxResults
 	 * @return
 	 */
-	public List<AttributeCode> findRecentlyAddedArticles(int maxResults);
+	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults);
 
 	/**
 	 * Builds and Architecture given a attribute type NOTE: AttributeType must
@@ -164,5 +165,13 @@ public interface AttributeService
 	 * @param articleTracking
 	 */
 	public void addArticleTrackEvent(ArticleTracking articleTracking);
+
+	/**
+	 * Builds and Architecture given a attribute type NOTE: AttributeType must
+	 * an architecture with codes in the following format: 1.1.1
+	 *
+	 * @return
+	 */
+	public List<ComponentSearchView> getAllArticles();
 
 }

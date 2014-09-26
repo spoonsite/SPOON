@@ -21,9 +21,13 @@
 app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', '$timeout', '$filter', '$route', function ($scope, Business, localCache, $location, $timeout, $filter, $route)  {/*jshint unused:false*/
   // set up the landing page route so that we include the right landing page.
   Business.componentservice.doSearch('search', 'All').then(function(result) {
-    $scope.total = result || {};
+    if (result) {
+      $scope.total = result.data || [];
+    } else {
+      $scope.total = [];
+    }
   });
-  $scope.data = {};
+  $scope.data = [];
   $scope.landingRoute = null;
   
   Business.getFilters().then(function(result) {
@@ -64,17 +68,18 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
   * results.
   ***************************************************************/
   $scope.sendToResults = function() {
-    var landingType = localCache.get('landingType');
-    var landingCode = localCache.get('landingCode');
+    var landingType = localCache.get('type');
+    var landingCode = localCache.get('code');
     if (landingType && landingCode) {
       $location.search({
-        'type': landingType,
-        'code': landingCode
+        'type': 'attribute',
+        'keyType': landingType,
+        'keyKey': landingCode
       });
     } else {
       $location.search({
-        'type': 'categories',
-        'code': 'IDAM'
+        'type': 'search',
+        'code': 'all'
       });
     }
     $location.path('/results');

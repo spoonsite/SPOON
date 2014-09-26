@@ -371,7 +371,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         .success(function(data, status, headers, config) { /*jshint unused:false*/          
           if (data && !isEmpty(data) && isNotRequestError(data)) {
             removeError();
-            console.log('data', data);
+            // console.log('data', data);
             save('component_'+id, data);
             result.resolve(data);
           } else {
@@ -438,7 +438,62 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   };
 
   componentservice.doSearch = function(type, key) {
-    return componentservice.getComponentList();
+    var result  = $q.defer();
+    var url     = 'api/v1/service/search/all';
+    var value   = null;
+    var name;
+    // console.log('type', type);
+    // console.log('key', key);
+    
+    if (type && key) {
+      type  = type.toLowerCase();
+      if (type !== 'attribute'){
+        key   = key.toLowerCase();
+        name  = type + '-' + key;
+      } else {
+        if (!key.key) {
+          name = type + key.type.toLowerCase() + '-ALL';
+        } else {
+          name = type + key.type.toLowerCase() + '-' + key.key.toLowerCase();
+        }
+      }
+      // if they don't give me an ID I send them back the whole list.
+      value = checkExpire(name, minute * 10);
+      if (value) {
+        result.resolve(value);
+      } else {
+        $http({
+          method: 'GET',
+          url: url
+        })
+        .success(function(data, status, headers, config) { /*jshint unused:false*/
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            var temp = search({'type': type, 'key': key}, data);
+            var response = {};
+            response.data = [];
+            _.each(temp.data, function(item){
+              if (item && item.data) {
+                var thing = item.data;
+                thing.description = getShortDescription(item.data.description);
+                response.data.push(thing);
+              }
+            })
+            save(name, response);
+            result.resolve(response);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function(data, status, headers, config){
+          result.reject('There was a server error');
+        });
+      }
+    } else {
+      result.reject('You must provide a type and key for the search');
+    }
+    return result.promise;
   };
 
 
@@ -521,7 +576,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         method: 'DELETE',
         url: 'api/v1/resource/components/'+id+'/tag',
         headers: {
-            'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
         },
         data: tag
       }).success(function(data, status, headers, config){

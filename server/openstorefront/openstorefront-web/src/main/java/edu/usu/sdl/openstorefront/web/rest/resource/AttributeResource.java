@@ -130,6 +130,28 @@ public class AttributeResource
 	}
 
 	@GET
+	@APIDescription("Gets attribute type")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeType.class)
+	@Path("/attributetypes/{type}/{code}")
+	public Response getAttributeCodeById(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(code);
+		pk.setAttributeType(type);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, pk);
+		if (attributeCode == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} else {
+			return Response.ok(attributeCode).build();
+		}
+	}
+
+	@GET
 	@APIDescription("Gets attribute code base on filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)

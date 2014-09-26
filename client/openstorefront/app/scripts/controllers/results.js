@@ -206,7 +206,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
     setupResults();
     Business.componentservice.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
-      $scope.total = result || {};
+      if (result)
+      {
+        $scope.total = result.data || [];
+      } else {
+        $scope.total = [];
+      }
       $scope.filteredTotal = $scope.total;
 
       /*Simulate wait for the filters*/
@@ -345,50 +350,64 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     // TODO: CLEAN UP THIS FUNCTION!!!!
     function(key) {
 
-      var type = 'all';
-      var code = '';
+      var type = 'search';
+      var code = 'all';
       var query = null;
       if (key === null || key === undefined) {
         if (!isEmpty($location.search())) {
           query = $location.search();
-          if (query.type && query.code) {
+          if (query.type === 'attribute') {
+            if (query.keyType && query.keyKey) {
+              type = 'attribute';
+              code = {
+                'type': query.keyType,
+                'key': query.keyKey
+              };
+            } 
+          } else if (query.type && query.code) {
             type = query.type;
             code = query.code;
-          }
+          } 
         }
-        $scope.reAdjust([{ 'key': type, 'code': code }]);
       } else {
-        type = '';
-        code = '';
-        // console.log('search', $location.search());
-        
         if (!isEmpty($location.search())) {
           query = $location.search();
-          if (query.type && query.code) {
+          if (query.type === 'attribute') {
+            if (query.keyType && query.keyKey) {
+              type = 'attribute';
+              code = {
+                'type': query.keyType,
+                'key': query.keyKey
+              };
+            }
+          } else if (query.type && query.code) {
             type = query.type;
             code = query.code;
-          } else {
-            type = 'all';
           }
-          key = [{ 'key': type, 'code': code }];
         }
-        // console.log('key', key);
-        
-        $scope.reAdjust(key);
       }
+      $scope.reAdjust([{ 'key': type, 'code': code }]);
     },
     // This is the failure function that handles a returned error
     function(error) {
-      console.error('ERROR: ', error);
-      
-      var type = 'all';
-      var code = '';
+      var type = 'search';
+      var code = 'all';
       if (!isEmpty($location.search())) {
         var query = $location.search();
-        if (query.type && query.code) {
+        console.log('query', query);
+        
+        if (query.type === 'attribute') {
+          if (query.keyType && query.keyKey) {
+            type = 'attribute';
+            code = {
+              'type': query.keyType,
+              'key': query.keyKey
+            };
+          } 
+        } else if (query.type && query.code) {
           type = query.type;
           code = query.code;
-        }
+        } 
       }
       $scope.reAdjust([{ 'key': type, 'code': code }]);
     });
@@ -449,13 +468,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function updates the details when a component title is clicked on
   ***************************************************************/
   $scope.updateDetails = function(id, article){
-    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    if (article && article.type === 'Article') {
-      $scope.sendPageView('article' + article.route);
+    // $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
+    console.log('article', article);
+    if (article && article.listingType === 'Article') {
       $scope.isArticle = true;
-      localCache.save('type', article.type);
-      localCache.save('code', article.code);
-      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+      localCache.save('type', article.articleAttributeType);
+      localCache.save('code', article.articleAttributeCode);
+      // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', false);
       $scope.showDetails = true;
       if (!openClick) {
@@ -514,7 +533,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           /* jshint ignore:end */
 
         }
-        $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+        // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
         $scope.showDetails = true;
       });
     } //

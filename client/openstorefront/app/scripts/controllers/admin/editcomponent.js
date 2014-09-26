@@ -132,8 +132,10 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
 
     } else if ($scope.componentListKey){
       Business.componentservice.doSearch('search', $scope.componentListKey).then(function(result){
-        if (result) {
-          $scope.search = result;
+        if (result && result.data) {
+          $scope.search = result.data;
+        } else {
+          $scope.search = [];
         }
       });
     }
