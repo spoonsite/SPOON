@@ -455,6 +455,20 @@ public class ComponentServiceImpl
 
 	private void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule, boolean updateLastActivity)
 	{
+		//check schedule code vs level attribute
+		boolean levelMatches = false;
+		List<AttributeCode> levelCodes = getAttributeService().findCodesForType(AttributeType.DI2ELEVEL);
+		for (AttributeCode levelCode : levelCodes) {
+			if (levelCode.getAttributeCodePk().getAttributeCode().equals(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())) {
+				levelMatches = true;
+				break;
+			}
+		}
+
+		if (levelMatches == false) {
+			throw new OpenStorefrontRuntimeException("The evaluation level code doesn't match level in the attributes.", " Check data and the attribute code for type: " + AttributeType.DI2ELEVEL);
+		}
+
 		ComponentEvaluationSchedule oldSchedule = persistenceService.findById(ComponentEvaluationSchedule.class, schedule.getComponentEvaluationSchedulePk());
 		if (oldSchedule != null) {
 			oldSchedule.setCompletionDate(schedule.getCompletionDate());
@@ -1074,26 +1088,23 @@ public class ComponentServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 	}
-	
-	
-    @Override
-    public Boolean setLastViewDts(String componentId, String userId)
-    {
-        UserWatch example = new UserWatch();
-        example.setComponentId(componentId);
-        example.setUsername(userId);
-        example = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(example));
-        if (example != null) {
-            UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
-            watch.setLastViewDts(TimeUtil.currentDate());
-            persistenceService.persist(watch);
-            return Boolean.TRUE;
-        } else{
-            return Boolean.FALSE;
-        }
-    }
 
-
+	@Override
+	public Boolean setLastViewDts(String componentId, String userId)
+	{
+		UserWatch example = new UserWatch();
+		example.setComponentId(componentId);
+		example.setUsername(userId);
+		example = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(example));
+		if (example != null) {
+			UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
+			watch.setLastViewDts(TimeUtil.currentDate());
+			persistenceService.persist(watch);
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
 
 	@Override
 	public List<Component> findRecentlyAdded(int maxResults)

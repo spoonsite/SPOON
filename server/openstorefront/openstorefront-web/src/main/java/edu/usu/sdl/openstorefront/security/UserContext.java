@@ -13,25 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.security;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import javax.ws.rs.NameBinding;
+import edu.usu.sdl.openstorefront.storage.model.UserProfile;
+import java.io.Serializable;
 
 /**
- * Used to check for Admin rights
+ * Holds user info for a session
  *
  * @author dshurtleff
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@NameBinding
-@Documented
-public @interface RequireAdmin
+public class UserContext
+		implements Serializable
 {
+
+	private UserProfile userProfile;
+	private boolean admin;
+
+	public UserContext()
+	{
+	}
+
+	public UserProfile getUserProfile()
+	{
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile)
+	{
+		this.userProfile = userProfile;
+	}
+
+	public boolean isAdmin()
+	{
+		return admin;
+	}
+
+	public void setAdmin(boolean admin)
+	{
+		this.admin = admin;
+	}
 
 }

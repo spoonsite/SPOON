@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
@@ -52,6 +53,7 @@ public class AttributeCode
 	private String articleFilename;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@Sanitize(LinkSanitizer.class)
 	@ConsumeField
 	private String detailUrl;
 

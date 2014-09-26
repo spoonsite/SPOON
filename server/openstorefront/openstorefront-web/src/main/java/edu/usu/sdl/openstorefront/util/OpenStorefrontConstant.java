@@ -34,6 +34,7 @@ public class OpenStorefrontConstant
 	public static final String ANONYMOUS_USER = "ANONYMOUS";
 	public static final String NOT_AVAILABLE = "NA";
 	public static final String ERROR_LOGGER = "edu.usu.sdl.openstorefront.SYSTEM-ERROR-LOGGER";
+	public static final String HEADER_USER_AGENT = "User-Agent";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_USERNAME = 80;

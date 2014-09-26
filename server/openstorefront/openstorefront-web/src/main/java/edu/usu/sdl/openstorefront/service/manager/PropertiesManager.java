@@ -44,6 +44,17 @@ public class PropertiesManager
 	public static final String KEY_DB_AT = "db.pw";
 	public static final String KEY_MAX_ERROR_TICKETS = "errorticket.max";
 
+	public static final String KEY_OPENAM_URL = "openam.url";
+	public static final String KEY_LOGOUT_URL = "logout.url";
+	public static final String KEY_OPENAM_HEADER_USERNAME = "openam.header.username";
+	public static final String KEY_OPENAM_HEADER_FIRSTNAME = "openam.header.firstname";
+	public static final String KEY_OPENAM_HEADER_LASTNAME = "openam.header.lastname";
+	public static final String KEY_OPENAM_HEADER_EMAIL = "openam.header.email";
+	public static final String KEY_OPENAM_HEADER_GROUP = "openam.header.group";
+	public static final String KEY_OPENAM_HEADER_LDAPGUID = "openam.header.ldapguid";
+	public static final String KEY_OPENAM_HEADER_ORGANIZATION = "openam.header.organization";
+	public static final String KEY_OPENAM_HEADER_ADMIN_GROUP = "openam.header.admingroupname";
+
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 

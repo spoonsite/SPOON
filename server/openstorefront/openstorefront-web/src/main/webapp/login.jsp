@@ -24,9 +24,9 @@
 			  </p>
 			</div>		
 			<div style="width: 300px; margin: 0px auto;">
-			<input type="text" name="username" placeholder="Username" class="form-control" autofocus>
+			<input type="text" name="username" placeholder="Username" class="form-control" autofocus autocomplete="false">
 			<br>
-			<input type="password" name="password" placeholder="Password" class="form-control">
+			<input type="password" name="password" placeholder="Password" class="form-control" autocomplete="false">
 			<br>
 			<br>
 			<input type="submit" value="Log in" style="width: auto;" class="btn btn-primary" />

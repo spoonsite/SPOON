@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.security;
 
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
@@ -32,74 +31,72 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 /**
+ * This is used to when connect to open am directly...use HeaderRelam for
+ * indirect handling
  *
  * @author dshurtleff
  */
 public class OpenAmRealm
-	extends AuthorizingRealm
+		extends AuthorizingRealm
 {
 
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals)
 	{
-		OpenAmUser openAmUser = (OpenAmUser) principals.getPrimaryPrincipal();		
+		OpenAmUser openAmUser = (OpenAmUser) principals.getPrimaryPrincipal();
 		return populateAccount(openAmUser.getTokenId(), openAmUser.getUsername());
 	}
 
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException
-	{		
+	{
 		WebTarget target = restClient("json/authenticate");
 		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
 		Response response = target.request(MediaType.APPLICATION_JSON).header("X-OpenAM-Username", usernamePasswordToken.getUsername())
 				.header("X-OpenAM-Password", String.valueOf(usernamePasswordToken.getPassword())).post(null);
 
 		OpenAmResponse openAmResponse = response.readEntity(OpenAmResponse.class);
-		if (StringUtils.isNotBlank(openAmResponse.getTokenId()))
-		{
+		if (StringUtils.isNotBlank(openAmResponse.getTokenId())) {
 			OpenAmAccount account = populateAccount(openAmResponse.getTokenId(), token.getPrincipal().toString());
 			account.setCredentials(usernamePasswordToken.getPassword());
 			return account;
-		} else
-		{
+		} else {
 			throw new AuthenticationException(openAmResponse.getReason());
-		}	
+		}
 	}
-	
+
 	private OpenAmAccount populateAccount(String token, String username)
-	{		
-		//TODO: Check to see if this should be cached		
+	{
+		//TODO: Check to see if this should be cached
 		OpenAmAccount openAmAccount = new OpenAmAccount();
 		OpenAmUser openAmUser = new OpenAmUser();
 		openAmUser.setTokenId(token);
-		openAmUser.setUsername(username);		
+		openAmUser.setUsername(username);
 		openAmAccount.getSimplePrincipals().add(openAmUser, "Open AM");
-					
-		//Add Authorization info   We just need to know if the user is an admin or not.		
+
+		//Add Authorization info   We just need to know if the user is an admin or not.
 		WebTarget target = restClient("identity/authorize");
 		Response response = target.queryParam("uri", "/admin").queryParam("subjectid", token)
-						.request(MediaType.APPLICATION_JSON).get();
-		
+				.request(MediaType.APPLICATION_JSON).get();
+
 		String data = response.readEntity(String.class);
-		if (StringUtils.isNotBlank(data) && data.equalsIgnoreCase("boolean=true\n"))
-		{
+		if (StringUtils.isNotBlank(data) && data.equalsIgnoreCase("boolean=true\n")) {
 			openAmUser.setAdmin(true);
 			openAmAccount.getRoles().add("administrator");
 		}
-		
+
 		return openAmAccount;
 	}
-	
+
 	private WebTarget restClient(String operationURL)
 	{
 		Client client = ClientBuilder.newClient();
 		String server = PropertiesManager.getValue("openam.url", "http://openam.example.com:6800/openam/");
-		if (server.endsWith("/") == false)
-		{
-			server += "/"; 
+		if (server.endsWith("/") == false) {
+			server += "/";
 		}
 		WebTarget webTarget = client.target(server + operationURL);
 		return webTarget;
 	}
-	
+
 }

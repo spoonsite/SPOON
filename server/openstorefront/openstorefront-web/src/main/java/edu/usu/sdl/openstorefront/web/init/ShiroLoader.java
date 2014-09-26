@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.web.init;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import javax.ws.rs.NameBinding;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import javax.servlet.ServletContextEvent;
+import org.apache.shiro.web.env.EnvironmentLoaderListener;
 
 /**
- * Used to check for Admin rights
+ * Allows for the config to init before it's loaded.
  *
  * @author dshurtleff
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@NameBinding
-@Documented
-public @interface RequireAdmin
+public class ShiroLoader
+		extends EnvironmentLoaderListener
 {
 
+	@Override
+	public void contextInitialized(ServletContextEvent sce)
+	{
+		FileSystemManager.getConfig("shiro.ini");
+		super.contextInitialized(sce);
+	}
 }

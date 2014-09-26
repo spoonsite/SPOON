@@ -11,7 +11,6 @@
         <title>Unauthorized</title>
     </head>
     <body>
-        <h1>Unauthorized</h1>
-		Return to login <a href="${pageContext.request.contextPath}/login.jsp"> Login </a>		
+        <h1>Unauthorized</h1>		
     </body>
 </html>
