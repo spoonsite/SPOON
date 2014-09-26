@@ -23,16 +23,25 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
+ * Tracks article events
  *
- * @author jlaw
+ * @author dshurtleff
  */
-public class ComponentTracking
-		extends BaseComponent
+public class ArticleTracking
+		extends BaseEntity
 {
 
 	@PK
 	@NotNull
-	private String componentTrackingId;
+	private String articleTrackingId;
+
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String attributeType;
+
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String attributeCode;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
@@ -45,18 +54,8 @@ public class ComponentTracking
 	@NotNull
 	private String clientIp;
 
-	public ComponentTracking()
+	public ArticleTracking()
 	{
-	}
-
-	public String getComponentTrackingId()
-	{
-		return componentTrackingId;
-	}
-
-	public void setComponentTrackingId(String componentTrackingId)
-	{
-		this.componentTrackingId = componentTrackingId;
 	}
 
 	public String getTrackEventTypeCode()
@@ -87,6 +86,36 @@ public class ComponentTracking
 	public void setClientIp(String clientIp)
 	{
 		this.clientIp = clientIp;
+	}
+
+	public String getArticleTrackingId()
+	{
+		return articleTrackingId;
+	}
+
+	public void setArticleTrackingId(String articleTrackingId)
+	{
+		this.articleTrackingId = articleTrackingId;
+	}
+
+	public String getAttributeType()
+	{
+		return attributeType;
+	}
+
+	public void setAttributeType(String attributeType)
+	{
+		this.attributeType = attributeType;
+	}
+
+	public String getAttributeCode()
+	{
+		return attributeCode;
+	}
+
+	public void setAttributeCode(String attributeCode)
+	{
+		this.attributeCode = attributeCode;
 	}
 
 }

@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -54,12 +53,10 @@ import javax.ws.rs.core.Response;
  */
 @Path("v1/resource/userprofiles")
 @APIDescription("A user profile contain information about the user and user specific data. A user profile is created at the time the user logins in.<br>"
-		+ "Note: id can be set to \"CURRENTUSER\" to perform operations on the currently logged in user.")
+		+ "Note: id if set to the current user it will won't require admin rights.")
 public class UserProfileResource
 		extends BaseResource
 {
-
-	private static final String DEFAULT_USER = "CURRENTUSER";
 
 	@GET
 	@APIDescription("Get a list of user profiles")
@@ -84,10 +81,18 @@ public class UserProfileResource
 	@Path("/{id}")
 	public UserProfileView userProfile(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId)
 	{
-		return UserProfileView.toView(service.getUserService().getUserProfile(userId));
+		UserProfileView userProfileView = null;
+
+		UserProfile userProfile = service.getUserService().getUserProfile(userId);
+		if (userProfile != null) {
+			userProfileView = UserProfileView.toView(userProfile);
+			if (SecurityUtil.getCurrentUserName().equals(userId)) {
+				userProfileView.setAdmin(SecurityUtil.isAdminUser());
+			}
+		}
+		return userProfileView;
 	}
 
 	@POST
@@ -111,7 +116,7 @@ public class UserProfileResource
 			validationResult.getRuleResults().add(result);
 			return Response.ok(validationResult.toRestError()).build();
 		} else if (validationResult.valid()) {
-			return Response.created(URI.create((service.getUserService().saveUserProfile(inputProfile)).getUsername())).entity(inputProfile).build();
+			return Response.created(URI.create("v1/resource/userprofiles/" + (service.getUserService().saveUserProfile(inputProfile)).getUsername())).entity(inputProfile).build();
 		}
 		return Response.ok(validationResult.toRestError()).build();
 	}
@@ -123,7 +128,6 @@ public class UserProfileResource
 	@Path("/{id}")
 	public Response updateProile(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@RequiredParam UserProfile inputProfile)
 	{
@@ -138,19 +142,6 @@ public class UserProfileResource
 		return Response.ok(validationResult.toRestError()).build();
 	}
 
-	@DELETE
-	@APIDescription("Deactivate a profile")
-	@RequireAdmin
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}")
-	public Response deleteProfile(
-			@PathParam("id")
-			@RequiredParam String userId)
-	{
-		service.getUserService().deleteProfile(userId);
-		return Response.noContent().build();
-	}
-
 	@GET
 	@APIDescription("Retrieves Active User Watches.")
 	@RequireAdmin
@@ -159,7 +150,6 @@ public class UserProfileResource
 	@DataType(UserWatchView.class)
 	public List<UserWatchView> getWatches(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId)
 	{
 		List<UserWatch> watches = service.getUserService().getWatches(userId);
@@ -179,7 +169,6 @@ public class UserProfileResource
 	@Path("/{id}/watches/{watchId}")
 	public UserWatchView getWatch(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId)
@@ -196,26 +185,30 @@ public class UserProfileResource
 	@Path("/{id}/watches")
 	public Response addWatch(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@RequiredParam UserWatch userWatch)
 	{
 		userWatch.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userWatch.setUsername(userId);
 		userWatch.setLastViewDts(TimeUtil.currentDate());
-		//TODO: return the location of the created watch
+
 		Boolean check = Boolean.TRUE;
 		List<UserWatch> watches = service.getUserService().getWatches(userId);
-		for(int i = 0; i < watches.size() && check; i++){
+		for (int i = 0; i < watches.size() && check; i++) {
 			check = !watches.get(i).getComponentId().equals(userWatch.getComponentId());
-			if (!check){
+			if (!check) {
 				userWatch = watches.get(i);
 			}
 		}
 		if (check) {
 			return saveWatch(userWatch, Boolean.TRUE);
 		} else {
-			return Response.created(URI.create(userWatch.getUserWatchId())).entity(userWatch).build();
+			ValidationResult validationResult = new ValidationResult();
+			RuleResult result = new RuleResult();
+			result.setMessage("Component was already in watch list");
+			result.setValidationRule("Duplicate Check");
+			validationResult.getRuleResults().add(result);
+			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
 
@@ -226,7 +219,6 @@ public class UserProfileResource
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId,
@@ -247,7 +239,8 @@ public class UserProfileResource
 			watch.setCreateUser(SecurityUtil.getCurrentUserName());
 			watch.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
-				return Response.created(URI.create("v1/resource/userProfile/" + service.getUserService().saveWatch(watch).getUserWatchId())).entity(watch).build();
+				watch = service.getUserService().saveWatch(watch);
+				return Response.created(URI.create("v1/resource/userprofiles/" + watch.getUsername() + "/watches/" + watch.getUserWatchId())).entity(watch).build();
 			}
 			return Response.ok(service.getUserService().saveWatch(watch)).build();
 		} else {
@@ -262,7 +255,6 @@ public class UserProfileResource
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId)
@@ -292,7 +284,7 @@ public class UserProfileResource
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
 			@PathParam("id")
-			@RequiredParam String componentId,
+			@RequiredParam String userId,
 			@PathParam("id")
 			@RequiredParam String trackingId)
 	{

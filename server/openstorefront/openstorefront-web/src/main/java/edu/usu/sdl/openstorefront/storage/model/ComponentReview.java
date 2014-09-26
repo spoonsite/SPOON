@@ -19,6 +19,9 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -46,6 +49,7 @@ public class ComponentReview
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_REVIEW_COMMENT)
+	@Sanitize(BasicHTMLSanitizer.class)
 	private String comment;
 
 	@NotNull
@@ -57,11 +61,13 @@ public class ComponentReview
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	private String title;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = ExperienceTimeType.class)
 	private String userTimeCode;
 
 	@NotNull
@@ -75,6 +81,7 @@ public class ComponentReview
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	private String organization;
 
 	public ComponentReview()

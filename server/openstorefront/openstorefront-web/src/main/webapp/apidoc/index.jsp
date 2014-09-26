@@ -94,17 +94,17 @@ limitations under the License.
 		<script type="text/javascript">
 			$( document ).tooltip();
 			$(document).ready(function(){
-				var doctoLoad = window.location.href.split("#");
-				if (doctoLoad[1] !== undefined && doctoLoad[1] !== null){
-					$('#apidocId').load(doctoLoad[1]);
+				var docToLoad = window.location.href.split("#");
+				if (docToLoad[1] !== undefined && docToLoad[1] !== null){
+					$('#apidocId').load(docToLoad[1]);
 				} else {
 					$('#apidocId').load('../API.action?Page&page=intro');
 				}
 				
 				window.onhashchange = function(){
-					var doctoLoad = window.location.href.split("#");
-					if (doctoLoad[1] !== undefined && doctoLoad[1] !== null){
-						$('#apidocId').load(doctoLoad[1]);
+					var docToLoad = window.location.href.split("#");
+					if (docToLoad[1] !== undefined && docToLoad[1] !== null){
+						$('#apidocId').load(docToLoad[1]);
 					} else {
 						$('#apidocId').load('../API.action?Page&page=intro');
 					}					

@@ -1,6 +1,6 @@
 <%-- 
-    Document   : 404
-    Created on : Apr 25, 2014, 10:34:02 AM
+    Document   : 403-forbbiden
+    Created on : Sep 25, 2014, 4:51:09 PM
     Author     : dshurtleff
 --%>
 
@@ -9,10 +9,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Page Not Found</title>
+        <title>403 Forbidden</title>
     </head>
     <body>
-        <h1>Page Not Found</h1>
-		<%-- Return to login <a href="${pageContext.request.contextPath}/login.jsp"> Login </a> --%>		
+        <h1>Forbidden</h1>
+	${exception}		
     </body>
 </html>

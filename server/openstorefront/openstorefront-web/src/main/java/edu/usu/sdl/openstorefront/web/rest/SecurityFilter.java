@@ -15,28 +15,49 @@
  */
 package edu.usu.sdl.openstorefront.web.rest;
 
+import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.web.rest.resource.UserProfileResource;
 import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 /**
+ * Handles the Required Admin check
  *
  * @author dshurtleff
  */
 @Provider
+@RequireAdmin
 public class SecurityFilter
-		implements ContainerResponseFilter
+		implements ContainerRequestFilter
 {
 
 	@Override
-	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException
+	public void filter(ContainerRequestContext requestContext) throws IOException
 	{
-		//TODO:
-		
-		
+		boolean doAdminCheck = true;
+		for (Object resource : requestContext.getUriInfo().getMatchedResources()) {
+			if (resource instanceof UserProfileResource) {
+				String useridPassIn = requestContext.getUriInfo().getPathParameters().getFirst("id");
+				if (SecurityUtil.getCurrentUserName().equals(useridPassIn)) {
+					doAdminCheck = false;
+				}
+			}
+		}
 
+		if (doAdminCheck) {
+			if (SecurityUtil.isAdminUser() == false) {
+				requestContext.abortWith(Response
+						.status(Response.Status.UNAUTHORIZED)
+						.type(MediaType.TEXT_PLAIN)
+						.entity("User cannot access the resource.")
+						.build());
+			}
+		}
 	}
 
 }

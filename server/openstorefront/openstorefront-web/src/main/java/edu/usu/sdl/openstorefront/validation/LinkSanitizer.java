@@ -13,25 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.validation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import javax.ws.rs.NameBinding;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 /**
- * Used to check for Admin rights
+ * Allows html links only
  *
  * @author dshurtleff
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@NameBinding
-@Documented
-public @interface RequireAdmin
+public class LinkSanitizer
+		extends Sanitizer
 {
+
+	@Override
+	public Object santize(Object fieldData)
+	{
+		if (fieldData == null) {
+			return fieldData;
+		} else {
+			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().addTags("a")
+					.addAttributes("a", "href")
+					.addProtocols("a", "href", "ftp", "http", "https", "mailto")
+					.addEnforcedAttribute("a", "rel", "nofollow"));
+			return safe;
+		}
+	}
 
 }

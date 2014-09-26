@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -40,12 +42,15 @@ public class UserTracking
 	private String trackEventTypeCode;
 
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	private String browser;
 
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	private String userAgent;
-	
+
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	private String browserVersion;
 
 	@NotNull
@@ -59,13 +64,14 @@ public class UserTracking
 	private Integer screenHeight;
 
 	@ConsumeField
-	private Boolean mobileDevice;
+	@Sanitize(TextSanitizer.class)
+	private String deviceType;
 
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	private String osPlatform;
 
 	@NotNull
-	@ConsumeField
 	private String clientIp;
 
 	public UserTracking()
@@ -152,16 +158,6 @@ public class UserTracking
 		this.screenHeight = screenHeight;
 	}
 
-	public Boolean getMobileDevice()
-	{
-		return mobileDevice;
-	}
-
-	public void setMobileDevice(Boolean mobileDevice)
-	{
-		this.mobileDevice = mobileDevice;
-	}
-
 	public String getOsPlatform()
 	{
 		return osPlatform;
@@ -180,6 +176,16 @@ public class UserTracking
 	public void setClientIp(String clientIp)
 	{
 		this.clientIp = clientIp;
+	}
+
+	public String getDeviceType()
+	{
+		return deviceType;
+	}
+
+	public void setDeviceType(String deviceType)
+	{
+		this.deviceType = deviceType;
 	}
 
 }

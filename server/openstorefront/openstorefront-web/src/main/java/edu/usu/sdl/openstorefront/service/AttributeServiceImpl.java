@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.ArchitectureComparator;
+import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -417,14 +418,14 @@ public class AttributeServiceImpl
 	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults)
 	{
 		String query;
-		if (maxResults != null){
-		 query = "select from AttributeCode where activeStatus = :activeStatusParam "
-				+ " and articleFilename is not null "
-				+ " order by updateDts DESC LIMIT " + maxResults;
+		if (maxResults != null) {
+			query = "select from AttributeCode where activeStatus = :activeStatusParam "
+					+ " and articleFilename is not null "
+					+ " order by updateDts DESC LIMIT " + maxResults;
 		} else {
 			query = "select from AttributeCode where activeStatus = :activeStatusParam "
-				+ " and articleFilename is not null "
-				+ " order by updateDts DESC";
+					+ " and articleFilename is not null "
+					+ " order by updateDts DESC";
 		}
 
 		Map<String, Object> parameters = new HashMap<>();
@@ -515,6 +516,18 @@ public class AttributeServiceImpl
 			sortArchitecture(architecture.getChildren());
 		}
 		architectures.sort(new ArchitectureComparator<>());
+	}
+
+	@Override
+	public void addArticleTrackEvent(ArticleTracking articleTracking)
+	{
+		articleTracking.setArticleTrackingId(persistenceService.generateId());
+		articleTracking.setActiveStatus(ArticleTracking.ACTIVE_STATUS);
+		articleTracking.setCreateDts(TimeUtil.currentDate());
+		articleTracking.setCreateUser(SecurityUtil.getCurrentUserName());
+		articleTracking.setUpdateDts(TimeUtil.currentDate());
+		articleTracking.setUpdateUser(SecurityUtil.getCurrentUserName());
+		persistenceService.persist(articleTracking);
 	}
 
 	@Override

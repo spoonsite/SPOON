@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.sort;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import javax.ws.rs.NameBinding;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
+import java.util.Comparator;
 
 /**
- * Used to check for Admin rights
  *
  * @author dshurtleff
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@NameBinding
-@Documented
-public @interface RequireAdmin
+public class AttributeCodeViewComparator<T extends AttributeCodeView>
+		implements Comparator<T>
 {
+
+	@Override
+	public int compare(T o1, T o2)
+	{
+		return o1.getDescription().compareTo(o2.getDescription());
+	}
 
 }

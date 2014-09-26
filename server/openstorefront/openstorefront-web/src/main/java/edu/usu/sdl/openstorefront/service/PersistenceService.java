@@ -357,6 +357,18 @@ public class PersistenceService
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
 		}
+		if (queryByExample.getFirstResult() != null) {
+			queryString.append(" SKIP ").append(queryByExample.getFirstResult());
+		}
+		if (queryByExample.getMaxResults() != null) {
+			queryString.append(" LIMIT ").append(queryByExample.getMaxResults());
+		}
+		if (queryByExample.getTimeout() != null) {
+			queryString.append(" TIMEOUT ").append(queryByExample.getTimeout()).append(" ").append(queryByExample.getTimeoutStrategy());
+		}
+		if (queryByExample.isParallelQuery()) {
+			queryString.append(" PARALLEL ");
+		}
 
 		List<T> results = query(queryString.toString(), mapParameters(queryByExample.getExample()));
 		results = unwrapProxy(exampleClass, results);

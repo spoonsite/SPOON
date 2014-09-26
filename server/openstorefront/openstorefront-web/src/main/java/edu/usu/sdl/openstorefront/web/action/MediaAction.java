@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
@@ -69,7 +70,7 @@ public class MediaAction
 			protected void stream(HttpServletResponse response) throws Exception
 			{
 				Path path = componentMedia.pathToMedia();
-				if (path != null) {
+				if (path != null && path.toFile().exists()) {
 					Files.copy(path, response.getOutputStream());
 				} else {
 					throw new OpenStorefrontRuntimeException("Media not on disk", "Check media record: " + mediaId);
@@ -83,27 +84,30 @@ public class MediaAction
 	public Resolution uploadMedia()
 	{
 		Map<String, String> errors = new HashMap<>();
-		if (componentMedia != null) {
-			componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
-			componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
-			componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-			componentMedia.setOriginalName(file.getFileName());
-			componentMedia.setMimeType(file.getContentType());
+		if (SecurityUtil.isAdminUser()) {
+			if (componentMedia != null) {
+				componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+				componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+				componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+				componentMedia.setOriginalName(file.getFileName());
+				componentMedia.setMimeType(file.getContentType());
 
-			ValidationModel validationModel = new ValidationModel(componentMedia);
-			validationModel.setConsumeFieldsOnly(true);
-			ValidationResult validationResult = ValidationUtil.validate(validationModel);
-			if (validationResult.valid()) {
-				try {
-					service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
-				} catch (IOException ex) {
-					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+				ValidationModel validationModel = new ValidationModel(componentMedia);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid()) {
+					try {
+						service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
+					} catch (IOException ex) {
+						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+					}
+				} else {
+					errors.put("file", validationResult.toHtmlString());
 				}
-			} else {
-				errors.put("file", validationResult.toHtmlString());
 			}
+			return streamUploadResponse(errors);
 		}
-		return streamUploadResponse(errors);
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denyed");
 	}
 
 	public String getMediaId()

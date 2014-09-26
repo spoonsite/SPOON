@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -37,15 +39,18 @@ public class UserProfile
 	private String username;
 
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
 	private String firstName;
 
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_LASTNAME)
 	private String lastName;
 
 	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String email;
 
@@ -56,8 +61,21 @@ public class UserProfile
 	private String userTypeCode;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String organization;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@ConsumeField
+	private String externalGuid;
+
+	//If there no external guid use our guid.
+	@NotNull
+	private String internalGuid;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	@ConsumeField
+	private String externalUserId;
 
 	public UserProfile()
 	{
@@ -121,6 +139,36 @@ public class UserProfile
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
+	}
+
+	public String getExternalGuid()
+	{
+		return externalGuid;
+	}
+
+	public void setExternalGuid(String externalGuid)
+	{
+		this.externalGuid = externalGuid;
+	}
+
+	public String getExternalUserId()
+	{
+		return externalUserId;
+	}
+
+	public void setExternalUserId(String externalUserId)
+	{
+		this.externalUserId = externalUserId;
+	}
+
+	public String getInternalGuid()
+	{
+		return internalGuid;
+	}
+
+	public void setInternalGuid(String internalGuid)
+	{
+		this.internalGuid = internalGuid;
 	}
 
 }

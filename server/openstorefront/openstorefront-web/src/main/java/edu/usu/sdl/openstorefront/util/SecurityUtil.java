@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
+import edu.usu.sdl.openstorefront.security.UserContext;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -29,6 +30,9 @@ public class SecurityUtil
 {
 
 	private static final Logger log = Logger.getLogger(SecurityUtil.class.getName());
+
+	public static final String ADMIN_ROLE = "administrator";
+	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
 
 	/**
 	 * Gets the current user logged in.
@@ -47,6 +51,40 @@ public class SecurityUtil
 			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started.");
 		}
 		return username;
+	}
+
+	/**
+	 * Checks the current user to see if they are an admin
+	 *
+	 * @return true if the user is an admin
+	 */
+	public static boolean isAdminUser()
+	{
+		boolean admin = false;
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			admin = currentUser.hasRole(ADMIN_ROLE);
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started.");
+		}
+		return admin;
+	}
+
+	/**
+	 * Find the current user context in the session
+	 *
+	 * @return context or null if not found
+	 */
+	public static UserContext getUserContext()
+	{
+		UserContext userContext = null;
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			userContext = (UserContext) currentUser.getSession().getAttribute(USER_CONTEXT_KEY);
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started.");
+		}
+		return userContext;
 	}
 
 }

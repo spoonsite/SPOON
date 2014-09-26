@@ -20,6 +20,9 @@ import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,10 +59,12 @@ public class ComponentResource
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@Sanitize(LinkSanitizer.class)
 	private String link;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
+	@Sanitize(BasicHTMLSanitizer.class)
 	private String description;
 
 	@ConsumeField

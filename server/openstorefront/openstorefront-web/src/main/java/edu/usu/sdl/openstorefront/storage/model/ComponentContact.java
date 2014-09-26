@@ -17,8 +17,13 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -39,19 +44,30 @@ public class ComponentContact
 
 	@NotNull
 	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
+	@Sanitize(TextSanitizer.class)
 	private String firstName;
 
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_LASTNAME)
 	private String lastName;
 
 	@ConsumeField
+	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
+	@Sanitize(TextSanitizer.class)
 	private String email;
 
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String phone;
 
 	@NotNull
 	@ConsumeField
+	@Sanitize(TextSanitizer.class)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String organization;
 
 	public ComponentContact()
