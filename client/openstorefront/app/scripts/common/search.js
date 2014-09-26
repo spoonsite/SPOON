@@ -18,8 +18,6 @@
 
 var hasAttribute = function(list, attribute){
   var result = [];
-  console.log('attribute', attribute);
-  
   if (list && attribute) {
     _.each(list, function(item){
       if (attribute.key && attribute.type && (_.find(item.attributes, {'code': attribute.key, 'type': attribute.type}) !== undefined)){
@@ -35,8 +33,6 @@ var hasAttribute = function(list, attribute){
 }
 
 var search = function(searchKey, list) {
-  console.log('searchKey', searchKey);
-  
   var key;
   var type;
   var score       = {};
@@ -73,10 +69,6 @@ var search = function(searchKey, list) {
     score.description = 2;
     score.attribute = 1;
   }
-
-
-
-  console.log('keywords', keywords);
 
   // matching and storing the keywords in matched
   if (doStrict) {
@@ -149,7 +141,6 @@ var search = function(searchKey, list) {
         }
       } 
     }
-    console.log('matched', matched);
     // sort the matches  
     if (matched.length) {
       for (i = 0; i < matched.length - 1; i++) {
@@ -168,6 +159,5 @@ var search = function(searchKey, list) {
     result.data = matched;
   }
 
-  console.log('result', result);
   return result;
 }

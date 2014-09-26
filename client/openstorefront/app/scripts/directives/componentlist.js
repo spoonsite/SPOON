@@ -111,33 +111,33 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           item = 'read_more' + uniqueId++;
           element.find('input.read_more').attr('id', item);
           element.find('label.read_more').attr('for', item);
-          $timeout(function(){
-            if (scope.filters && scope.setFilters) {
-              if (scope.setFilters.length && scope.$parent.filters.length) {
-                _.each(scope.setFilters, function(set) {
-                  var filter = _.find(scope.$parent.filters, {'type': set.type});
-                  if (filter && filter.codes.length) {
-                    var code = _.find(filter.codes, {'code': set.code});
-                    if (code) {
-                      code.checked = true;
-                    }
-                  }
-                });
-              }
-              scope.data = scope.$parent.applyFilters(scope.data);
-              if (scope.data) {
-                if(scope.data.length > 3) {
-                  scope.hasMoreThan3 = true;
-                } else {
-                  scope.hasMoreThan3 = false;
-                }
-                scope.addMore();
-              }
-              scope.init();
-            }
-          }, 10);
+          // $timeout(function(){
+          //   // if (scope.filters && scope.setFilters) {
+          //   //   if (scope.setFilters.length && scope.$parent.filters.length) {
+          //   //     _.each(scope.setFilters, function(set) {
+          //   //       var filter = _.find(scope.$parent.filters, {'type': set.type});
+          //   //       if (filter && filter.codes.length) {
+          //   //         var code = _.find(filter.codes, {'code': set.code});
+          //   //         if (code) {
+          //   //           code.checked = true;
+          //   //         }
+          //   //       }
+          //   //     });
+          //   //   }
+          //   //   scope.data = scope.$parent.applyFilters(scope.data);
+          //   //   if (scope.data) {
+          //   //     if(scope.data.length > 3) {
+          //   //       scope.hasMoreThan3 = true;
+          //   //     } else {
+          //   //       scope.hasMoreThan3 = false;
+          //   //     }
+          //   //     scope.addMore();
+          //   //   }
+          //   //   scope.init();
+          //   // }
+          // }, 10);
         } //
-      });
+      }, true);
 
 
 
@@ -170,15 +170,15 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           {
             if (result.data && result.data.length > 0) { 
               scope.data = angular.copy(result.data);
-              scope.$apply();
             } else {
               scope.data = [];
-              scope.$apply();
             }
           } else {
             scope.data = [];
-            scope.$apply();
           }
+          $timeout(function(){
+            scope.$apply();
+          })
         });
       }
       if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
