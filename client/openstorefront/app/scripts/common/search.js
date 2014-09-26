@@ -128,7 +128,11 @@ var search = function(searchKey, list) {
           if (list[j])
           {
             if (list[j].name.toLowerCase().indexOf(keywords[i]) > -1 ) {
-              tempMatch.score = tempMatch.score + score.text;
+              if (list[j].name.toLowerCase().indexOf(keywords[i]) === 0) {
+                tempMatch.score = tempMatch.score + score.text;
+              } else {
+                tempMatch.score = tempMatch.score + (score.text * 0.2);
+              }
             }
             if (list[j].description.toLowerCase().indexOf(keywords[i]) > -1 ) {
               tempMatch.score = tempMatch.score + score.description;
