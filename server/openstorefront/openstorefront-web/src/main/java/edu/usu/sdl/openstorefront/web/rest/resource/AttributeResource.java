@@ -207,7 +207,7 @@ public class AttributeResource
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code);
 		attributeCodePk.setAttributeType(type);
-		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+		AttributeCode attributeCode = service.getPersistenceService().detach(service.getPersistenceService().findById(AttributeCode.class, attributeCodePk));
 
 		return sendSingleEnityResponse(attributeCode);
 	}

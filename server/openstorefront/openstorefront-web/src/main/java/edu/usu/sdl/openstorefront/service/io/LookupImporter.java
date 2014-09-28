@@ -71,16 +71,6 @@ public class LookupImporter
 			}
 
 			filesUpdatedOrAdded((File[]) lookupCodeFiles.toArray(new File[0]));
-		} else {
-			//load cache
-			Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
-			for (Class entityClass : entityClasses) {
-				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
-					if (ServiceUtil.isSubLookupEntity(entityClass)) {
-						serviceProxy.getLookupService().refreshCache(entityClass);
-					}
-				}
-			}
 		}
 	}
 

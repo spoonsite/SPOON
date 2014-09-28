@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javassist.util.proxy.Proxy;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -72,6 +73,7 @@ public class PersistenceService
 		} else {
 			db = transaction;
 		}
+		db.setLazyLoading(false);		
 		return db;
 	}
 
@@ -225,7 +227,7 @@ public class PersistenceService
 				if (idAnnotation != null) {
 					if (id.getClass().getName().equals(field.getType().getName()) == false) {
 						//Manage PK is like been pull by the DB and passed back in ...let it through
-						if (db.isManaged(id) == false) {
+						if ((id instanceof Proxy) == false)	{
 							pkValid = false;
 						}
 					}
@@ -373,8 +375,7 @@ public class PersistenceService
 			queryString.append(" PARALLEL ");
 		}
 
-		List<T> results = query(queryString.toString(), mapParameters(queryByExample.getExample()));
-		results = unwrapProxy(exampleClass, results);
+		List<T> results = query(queryString.toString(), mapParameters(queryByExample.getExample()), exampleClass, queryByExample.isReturnNonProxied());
 		return results;
 	}
 
@@ -483,13 +484,38 @@ public class PersistenceService
 		}
 		return null;
 	}
-
+	
+	/**
+	 * This will run the query but return the Proxy Objects
+	 * @param <T>
+	 * @param query
+	 * @param parameterMap
+	 * @return 
+	 */
 	public <T> List<T> query(String query, Map<String, Object> parameterMap)
+	{
+		return query(query, parameterMap, null, false);
+	}
+
+	/**
+	 * This will run the query and then unwrap if desired
+	 * @param <T>
+	 * @param query
+	 * @param parameterMap
+	 * @param dataClass
+	 * @param unwrap
+	 * @return 
+	 */
+	public <T> List<T> query(String query, Map<String, Object> parameterMap, Class<T> dataClass, boolean unwrap)
 	{
 		OObjectDatabaseTx db = getConnection();
 		List<T> results = new ArrayList<>();
 		try {
 			results = db.query(new OSQLSynchQuery<>(query), parameterMap);
+			if (unwrap)
+			{
+				results = unwrapProxy(db, dataClass, results);
+			}
 		} finally {
 			closeConnection(db);
 		}
@@ -533,15 +559,18 @@ public class PersistenceService
 	 *
 	 * @param <T>
 	 * @param entity
+	 * @return 
 	 */
-	public <T> void detach(T entity)
+	public <T> T detach(T entity)
 	{
 		OObjectDatabaseTx db = getConnection();
+		T nonProxy = null;
 		try {
-			db.detach(entity, true);
+			nonProxy = db.detach(entity, true);
 		} finally {
 			closeConnection(db);
 		}
+		return nonProxy;
 	}
 
 	/**
@@ -549,42 +578,57 @@ public class PersistenceService
 	 *
 	 * @param <T>
 	 * @param entity
+	 * @return 
 	 */
-	public <T> void deattachAll(T entity)
+	public <T> T deattachAll(T entity)
 	{
 		OObjectDatabaseTx db = getConnection();
+		T nonProxy = null;
 		try {
-			db.detachAll(entity, true);
+			nonProxy = db.detachAll(entity, true);
 		} finally {
 			closeConnection(db);
 		}
+		return nonProxy;
+	}
+	
+	public <T> List<T> unwrapProxy(Class<T> origClass, List<T> data)
+	{
+		OObjectDatabaseTx db = getConnection();
+		List<T> nonProxyData = null;
+		try {
+			nonProxyData = unwrapProxy(db, origClass, data);
+		} finally {
+			closeConnection(db);
+		}
+		return nonProxyData;
 	}
 
-	public <T> List<T> unwrapProxy(Class<T> origClass, List<T> data)
+	public <T> List<T> unwrapProxy(OObjectDatabaseTx db, Class<T> origClass, List<T> data)
 	{
 		List<T> nonProxyList = new ArrayList<>();
 		for (T dbproxy : data) {
-			try {
-				T nonProxy = origClass.newInstance();
-				BeanUtils.copyProperties(nonProxy, dbproxy);
-				nonProxyList.add(nonProxy);
-			} catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to unwrap proxy object.", ex);
-			}
+			T nonProxied = db.detachAll(dbproxy, true);
+			nonProxyList.add(nonProxied);
 		}
 		return nonProxyList;
 	}
-
+	
 	public <T> T unwrapProxyObject(Class<T> origClass, T data)
 	{
-		T nonProxy = data;
+		OObjectDatabaseTx db = getConnection();
+		T nonProxyData = null;
 		try {
-			nonProxy = origClass.newInstance();
-			BeanUtils.copyProperties(nonProxy, data);
-
-		} catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to unwrap proxy object.", ex);
+			nonProxyData = unwrapProxyObject(db, origClass, data);
+		} finally {
+			closeConnection(db);
 		}
+		return nonProxyData;		
+	}
+	
+	public <T> T unwrapProxyObject(OObjectDatabaseTx db, Class<T> origClass, T data)
+	{
+		T nonProxy = db.detachAll(data, true);
 		return nonProxy;
 	}
 

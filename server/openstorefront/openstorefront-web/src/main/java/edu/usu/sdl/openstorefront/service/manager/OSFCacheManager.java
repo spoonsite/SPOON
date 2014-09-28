@@ -43,11 +43,11 @@ public class OSFCacheManager
 		try {
 			CacheManager singletonManager = CacheManager.create();
 
-			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, true, 0, 0);
+			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, false, 600, 600);
 			singletonManager.addCache(memoryOnlyCache);
 			lookupCache = singletonManager.getCache("lookupCache");
 
-			memoryOnlyCache = new Cache("attributeCache", 500, false, true, 0, 0);
+			memoryOnlyCache = new Cache("attributeCache", 500, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeCache = singletonManager.getCache("attributeCache");
 
