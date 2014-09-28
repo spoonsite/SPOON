@@ -34,6 +34,7 @@ public class QueryByExample<T extends BaseEntity>
 	private Integer timeout;
 	private TimeoutStrategy timeoutStrategy = TimeoutStrategy.RETURN;
 	private boolean parallelQuery;
+	private boolean returnNonProxied = true;
 
 	public QueryByExample()
 	{
@@ -122,6 +123,16 @@ public class QueryByExample<T extends BaseEntity>
 	public void setParallelQuery(boolean parallelQuery)
 	{
 		this.parallelQuery = parallelQuery;
+	}
+
+	public boolean isReturnNonProxied()
+	{
+		return returnNonProxied;
+	}
+
+	public void setReturnNonProxied(boolean returnNonProxied)
+	{
+		this.returnNonProxied = returnNonProxied;
 	}
 
 }

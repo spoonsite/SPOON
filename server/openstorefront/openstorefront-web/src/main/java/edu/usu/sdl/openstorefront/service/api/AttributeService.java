@@ -138,11 +138,6 @@ public interface AttributeService
 	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
 
 	/**
-	 * Refreshes the cache from the DB
-	 */
-	public void refreshCache();
-
-	/**
 	 * Find the recently posted (created date) articles
 	 *
 	 * @param maxResults

@@ -56,10 +56,7 @@ public class AttributeImporter
 				attributeFiles.add(FileSystemManager.getImportAttribute(fileMap.getFilename()));
 			}
 			filesUpdatedOrAdded(attributeFiles.toArray(new File[0]));
-		} else {
-			//load cache
-			serviceProxy.getAttributeService().refreshCache();
-		}
+		} 
 	}
 
 	@Override
@@ -88,6 +85,7 @@ public class AttributeImporter
 				}
 			}
 		}
+		log.log(Level.INFO, MessageFormat.format("Finish Syncing Attributes:{0}", file));
 	}
 
 	private enum FileMap
