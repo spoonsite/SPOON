@@ -60,7 +60,7 @@ public class LookupServiceImpl
 		if (element != null) {
 			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
 			if (lookupCacheMap != null) {
-				lookupList = new ArrayList<>(lookupCacheMap.values());			
+				lookupList = new ArrayList<>(lookupCacheMap.values());
 			} else {
 				lookupList = findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
 				updateCache = true;
@@ -69,8 +69,7 @@ public class LookupServiceImpl
 			lookupList = findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
 			updateCache = true;
 		}
-		if (updateCache)
-		{
+		if (updateCache) {
 			Map<String, T> lookupCacheMap = new HashMap<>();
 			for (T lookup : lookupList) {
 				if (lookupCacheMap.containsKey(lookup.getCode())) {
@@ -80,10 +79,10 @@ public class LookupServiceImpl
 				} else {
 					lookupCacheMap.put(lookup.getCode(), lookup);
 				}
-			}			
+			}
 			Element cachedLookup = new Element(lookTableClass.getName(), lookupCacheMap);
 			OSFCacheManager.getLookupCache().put(cachedLookup);
-		}				
+		}
 		return lookupList;
 	}
 
@@ -187,6 +186,15 @@ public class LookupServiceImpl
 		T lookupEntity = null;
 		if (StringUtils.isNotBlank(code)) {
 			Element element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
+			if (element == null) {
+				Map<String, T> lookupCacheMap = new HashMap<>();
+				List<T> lookupList = findLookup(lookupClass, LookupEntity.ACTIVE_STATUS);
+				for (T lookup : lookupList) {
+					lookupCacheMap.put(lookup.getCode(), lookup);
+				}
+				element = new Element(lookupClass.getName(), lookupCacheMap);
+				OSFCacheManager.getLookupCache().put(element);
+			}
 			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
 			lookupEntity = lookupCacheMap.get(code);
 			if (lookupEntity == null) {

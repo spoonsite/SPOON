@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
@@ -67,11 +68,23 @@ public class UserProfileResource
 	{
 		return UserProfileView.toViewList(service.getUserService().getAllProfiles());
 	}
-//	public RestListResponse userProfiles()
-//	{
-//		List<UserProfileView> userProfileViews = new ArrayList<>();
-//		return sendListResponse(userProfileViews);
-//	}
+
+	@GET
+	@APIDescription("Gets the current user profile")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(UserProfileView.class)
+	@Path("/currentuser")
+	public Response getCurrentUser()
+	{
+		UserProfileView userProfileView = null;
+
+		UserContext userContext = SecurityUtil.getUserContext();
+		if (userContext != null) {
+			userProfileView = UserProfileView.toView(userContext.getUserProfile());
+			userProfileView.setAdmin(SecurityUtil.isAdminUser());
+		}
+		return sendSingleEnityResponse(userProfileView);
+	}
 
 	@GET
 	@APIDescription("Gets user profile specified by id.")
