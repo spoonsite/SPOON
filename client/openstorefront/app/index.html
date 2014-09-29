@@ -53,20 +53,26 @@ limitations under the License.
 <body ng-app="openstorefrontApp">
   <loader trigger="bodyLoad"></loader>
 
-  <!--[if lt IE 9]>
-  <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please switch to <strong><a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong><a href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong><a href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</p>
-  <![endif]-->
-
-  <!-- Bring in the navigation -->
-  <div ng-include="'views/nav.html'" style="position: relative; z-index: 1011"></div>
-
-  <!-- Add your site or application content here -->
-  <div class="container-fluid fullHeight" ng-view="">
-    <!-- Nothing goes here!!! -->
+  
+  <div ng-if="ieVersionCheck && loaded" class="chromeFrame">
+    <p>You are using an <strong>outdated</strong> browser. Please switch to <strong><a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong><a href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong><a href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</p>
+  </div>
+  <div ng-if="!ieVersionCheck && loaded">
+    <!--[if lt IE 9]>
+    <p class="chromeFrame">You are using an <strong>outdated</strong> browser. Please switch to <strong><a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong><a href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong><a href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</p>
+    <![endif]-->
   </div>
 
-  <!-- Open-Storefront Analytics -->
-  <script>
+<!-- Bring in the navigation -->
+<div ng-include="'views/nav.html'" style="position: relative; z-index: 1011"></div>
+
+<!-- Add your site or application content here -->
+<div class="container-fluid fullHeight" ng-view="">
+  <!-- Nothing goes here!!! -->
+</div>
+
+<!-- Open-Storefront Analytics -->
+<script>
     // Google Analytics Tracking Code
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
