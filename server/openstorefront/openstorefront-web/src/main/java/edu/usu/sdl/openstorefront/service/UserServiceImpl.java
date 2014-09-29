@@ -330,10 +330,12 @@ public class UserServiceImpl
 
 				String userAgent = request.getHeader(OpenStorefrontConstant.HEADER_USER_AGENT);
 				ReadableUserAgent readableUserAgent = UserAgentManager.parse(userAgent);
-				userTracking.setBrowser(readableUserAgent.getName());
-				userTracking.setBrowserVersion(readableUserAgent.getVersionNumber().toVersionString());
-				userTracking.setDeviceType(readableUserAgent.getTypeName());
-				userTracking.setOsPlatform(readableUserAgent.getOperatingSystem().getName() + "  version: " + readableUserAgent.getOperatingSystem().getVersionNumber().toVersionString());
+				if (readableUserAgent != null) {
+					userTracking.setBrowser(readableUserAgent.getName());
+					userTracking.setBrowserVersion(readableUserAgent.getVersionNumber().toVersionString());
+					userTracking.setDeviceType(readableUserAgent.getTypeName());
+					userTracking.setOsPlatform(readableUserAgent.getOperatingSystem().getName() + "  version: " + readableUserAgent.getOperatingSystem().getVersionNumber().toVersionString());
+				}
 				userTracking.setClientIp(request.getRemoteAddr());
 				userTracking.setUserAgent(userAgent);
 
