@@ -19,6 +19,9 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -37,11 +40,13 @@ public class Component
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_NAME)
+	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String name;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_DESCRIPTION)
+	@Sanitize(BasicHTMLSanitizer.class)
 	@ConsumeField
 	private String description;
 
@@ -55,6 +60,7 @@ public class Component
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String organization;
 
@@ -62,6 +68,7 @@ public class Component
 	private Date releaseDate;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String version;
 

@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.ArchitectureComparator;
+import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -80,22 +81,6 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void refreshCache()
-	{
-		log.log(Level.FINE, "Refresh Cache of Attributes");
-
-		AttributeType example = new AttributeType();
-		example.setActiveStatus(AttributeType.ACTIVE_STATUS);
-		List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(example));
-		for (AttributeType attributeType : attributeTypes) {
-			List<AttributeCode> attributeCodes = findCodesForType(attributeType.getAttributeType());
-
-			Element cacheElement = new Element(attributeType.getAttributeType(), attributeCodes);
-			OSFCacheManager.getAttributeCache().put(cacheElement);
-		}
-	}
-
-	@Override
 	public List<AttributeCode> findCodesForType(String type)
 	{
 		Element element = OSFCacheManager.getAttributeCache().get(type);
@@ -108,7 +93,10 @@ public class AttributeServiceImpl
 			attributeCodePk.setAttributeType(type);
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
 			attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-			return persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));			
+			element =  new Element(type, attributeCodes);
+			OSFCacheManager.getAttributeCache().put(element);
+			return attributeCodes;
 		}
 	}
 
@@ -117,6 +105,8 @@ public class AttributeServiceImpl
 	{
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
 		if (existing != null) {
+			//remove to inactivate
+			existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeType.getUpdateUser());
 			existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
@@ -138,7 +128,9 @@ public class AttributeServiceImpl
 	public void saveAttributeCode(AttributeCode attributeCode)
 	{
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
-		if (existing != null) {
+		if (existing != null) {			
+			//remove to inactivate
+			existing.setActiveStatus(AttributeCode.ACTIVE_STATUS);			
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeCode.getUpdateUser());
 			existing.setArticleFilename(attributeCode.getArticleFilename());
@@ -268,7 +260,8 @@ public class AttributeServiceImpl
 		});
 
 		Set<String> newTypeSet = new HashSet<>();
-		for (AttributeType attributeType : attributeMap.keySet()) {
+		attributeMap.keySet().stream().forEach(attributeType -> {
+		
 			try {
 				ValidationModel validationModel = new ValidationModel(attributeType);
 				validationModel.setConsumeFieldsOnly(true);
@@ -278,21 +271,24 @@ public class AttributeServiceImpl
 
 					AttributeType existing = existingAttributeMap.get(attributeType.getAttributeType());
 					if (existing != null) {
-						existing.setDescription(attributeType.getDescription());
-						existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
-						existing.setArchitectureFlg(attributeType.getArchitectureFlg());
-						existing.setImportantFlg(attributeType.getImportantFlg());
-						existing.setRequiredFlg(attributeType.getRequiredFlg());
-						existing.setVisibleFlg(attributeType.getVisibleFlg());
-						existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
-						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						getAttributeService().saveAttributeType(existing);
+						if (ServiceUtil.compareObjects(existing, attributeType, true))
+						{
+							existing.setDescription(attributeType.getDescription());
+							existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
+							existing.setArchitectureFlg(attributeType.getArchitectureFlg());
+							existing.setImportantFlg(attributeType.getImportantFlg());
+							existing.setRequiredFlg(attributeType.getRequiredFlg());
+							existing.setVisibleFlg(attributeType.getVisibleFlg());
+							existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
+							existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+							existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+							saveAttributeType(existing);
+						}
 					} else {
 						attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						attributeType.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						attributeType.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						getAttributeService().saveAttributeType(attributeType);
+						saveAttributeType(attributeType);
 					}
 					newTypeSet.add(attributeType.getAttributeType());
 
@@ -306,7 +302,7 @@ public class AttributeServiceImpl
 					List<AttributeCode> attributeCodes = attributeMap.get(attributeType);
 					for (AttributeCode attributeCode : attributeCodes) {
 						try {
-							ValidationModel validationModelCode = new ValidationModel(attributeType);
+							ValidationModel validationModelCode = new ValidationModel(attributeCode);
 							validationModelCode.setConsumeFieldsOnly(true);
 							ValidationResult validationResultCode = ValidationUtil.validate(validationModelCode);
 							if (validationResultCode.valid()) {
@@ -314,18 +310,21 @@ public class AttributeServiceImpl
 
 								AttributeCode existingCode = existingCodeMap.get(attributeCode.getAttributeCodePk().toKey());
 								if (existingCode != null) {
-									existingCode.setDescription(attributeCode.getDescription());
-									existingCode.setDetailUrl(attributeCode.getDetailUrl());
-									existingCode.setLabel(attributeCode.getLabel());
-									existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-									existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-									existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-									getAttributeService().saveAttributeCode(existingCode);
+									if (ServiceUtil.compareObjects(existingCode, attributeCode, true))
+									{
+										existingCode.setDescription(attributeCode.getDescription());
+										existingCode.setDetailUrl(attributeCode.getDetailUrl());
+										existingCode.setLabel(attributeCode.getLabel());
+										existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+										existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+										saveAttributeCode(existingCode);
+									}
 								} else {
 									attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 									attributeCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 									attributeCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-									getAttributeService().saveAttributeCode(attributeCode);
+									saveAttributeCode(attributeCode);
 								}
 								newCodeSet.add(attributeCode.getAttributeCodePk().toKey());
 							} else {
@@ -337,10 +336,10 @@ public class AttributeServiceImpl
 					}
 					//inactive missing codes
 					existingAttributeCodes.stream().forEach((attributeCode) -> {
-						if (newCodeSet.contains(attributeCode.getAttributeCodePk().toKey())) {
+						if (newCodeSet.contains(attributeCode.getAttributeCodePk().toKey()) == false) {
 							attributeCode.setActiveStatus(LookupEntity.INACTIVE_STATUS);
 							attributeCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-							getAttributeService().saveAttributeCode(attributeCode);
+							removeAttributeCode(attributeCode.getAttributeCodePk());
 						}
 					});
 				} else {
@@ -350,18 +349,16 @@ public class AttributeServiceImpl
 				log.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
 			}
 
-		}
+		});
 
 		//inactive missing type
 		attributeTypes.stream().forEach((attributeType) -> {
-			if (newTypeSet.contains(attributeType.getAttributeType())) {
+			if (newTypeSet.contains(attributeType.getAttributeType()) == false) {
 				attributeType.setActiveStatus(LookupEntity.INACTIVE_STATUS);
 				attributeType.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-				getAttributeService().saveAttributeType(attributeType);
+				removeAttributeType(attributeType.getAttributeType());
 			}
 		});
-
-		refreshCache();
 
 	}
 
@@ -417,14 +414,14 @@ public class AttributeServiceImpl
 	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults)
 	{
 		String query;
-		if (maxResults != null){
-		 query = "select from AttributeCode where activeStatus = :activeStatusParam "
-				+ " and articleFilename is not null "
-				+ " order by updateDts DESC LIMIT " + maxResults;
+		if (maxResults != null) {
+			query = "select from AttributeCode where activeStatus = :activeStatusParam "
+					+ " and articleFilename is not null "
+					+ " order by updateDts DESC LIMIT " + maxResults;
 		} else {
 			query = "select from AttributeCode where activeStatus = :activeStatusParam "
-				+ " and articleFilename is not null "
-				+ " order by updateDts DESC";
+					+ " and articleFilename is not null "
+					+ " order by updateDts DESC";
 		}
 
 		Map<String, Object> parameters = new HashMap<>();
@@ -515,6 +512,18 @@ public class AttributeServiceImpl
 			sortArchitecture(architecture.getChildren());
 		}
 		architectures.sort(new ArchitectureComparator<>());
+	}
+
+	@Override
+	public void addArticleTrackEvent(ArticleTracking articleTracking)
+	{
+		articleTracking.setArticleTrackingId(persistenceService.generateId());
+		articleTracking.setActiveStatus(ArticleTracking.ACTIVE_STATUS);
+		articleTracking.setCreateDts(TimeUtil.currentDate());
+		articleTracking.setCreateUser(SecurityUtil.getCurrentUserName());
+		articleTracking.setUpdateDts(TimeUtil.currentDate());
+		articleTracking.setUpdateUser(SecurityUtil.getCurrentUserName());
+		persistenceService.persist(articleTracking);
 	}
 
 	@Override

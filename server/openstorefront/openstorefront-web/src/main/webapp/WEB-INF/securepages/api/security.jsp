@@ -1,4 +1,4 @@
-<!--
+<%--
 Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
--->
+--%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -22,6 +22,6 @@ limitations under the License.
       
     </head>
     <body>
-        <b>Security: </b> Basic Auth, API Key<br>
+        <b>Security: </b> Currently required login.  Routed through a external auth system or though a login form.<br>
     </body>
 </html>

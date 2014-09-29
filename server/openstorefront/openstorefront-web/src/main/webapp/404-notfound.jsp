@@ -13,6 +13,6 @@
     </head>
     <body>
         <h1>Page Not Found</h1>
-		Return to login <a href="${pageContext.request.contextPath}/login.jsp"> Login </a>		
+		<%-- Return to login <a href="${pageContext.request.contextPath}/login.jsp"> Login </a> --%>		
     </body>
 </html>

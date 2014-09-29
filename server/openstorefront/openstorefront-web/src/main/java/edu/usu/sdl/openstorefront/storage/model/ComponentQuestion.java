@@ -19,6 +19,9 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -39,6 +42,7 @@ public class ComponentQuestion
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_QUESTION)
+	@Sanitize(BasicHTMLSanitizer.class)
 	private String question;
 
 	@NotNull
@@ -50,6 +54,7 @@ public class ComponentQuestion
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	@Sanitize(TextSanitizer.class)
 	private String organization;
 
 	public ComponentQuestion()

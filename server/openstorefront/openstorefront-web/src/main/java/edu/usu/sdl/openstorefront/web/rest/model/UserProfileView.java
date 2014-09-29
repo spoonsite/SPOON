@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -29,46 +29,46 @@ import javax.validation.constraints.NotNull;
  */
 public class UserProfileView
 {
-	@NotNull	
+
+	@NotNull
 	private String username;
-	
+
 	@ConsumeField
 	private String firstName;
-	
+
 	@ConsumeField
 	private String lastName;
-	
+
 	@ConsumeField
 	private String email;
 
 	@ConsumeField
 	private String organization;
-	
+
 	@NotNull
 	@ConsumeField
 	private String userTypeCode;
-	
+
 	@NotNull
 	private Date createDts;
-	
+
 	@NotNull
 	private Date updateDts;
-	
+
 	@NotNull
 	private String updateUser;
-	
+	private String guid;
+
 	@NotNull
 	private boolean admin;
 
 	public UserProfileView()
 	{
 	}
-	
+
 	public static UserProfileView toView(UserProfile profile)
 	{
 		UserProfileView view = new UserProfileView();
-		// FIGURE OUT HOW TO TELL IF THEY'RE ADMIN...
-		view.setAdmin(true);
 		view.setEmail(profile.getEmail());
 		view.setFirstName(profile.getFirstName());
 		view.setLastName(profile.getLastName());
@@ -78,14 +78,20 @@ public class UserProfileView
 		view.setCreateDts(profile.getCreateDts());
 		view.setUpdateDts(profile.getUpdateDts());
 		view.setUpdateUser(profile.getUpdateUser());
-		
+
+		if (StringUtils.isNotBlank(profile.getExternalGuid())) {
+			view.setGuid(profile.getExternalGuid());
+		} else {
+			view.setGuid(profile.getInternalGuid());
+		}
+
 		return view;
 	}
-	
+
 	public static List<UserProfileView> toViewList(List<UserProfile> profiles)
 	{
 		List<UserProfileView> views = new ArrayList<>();
-		profiles.forEach(profile->{
+		profiles.forEach(profile -> {
 			views.add(UserProfileView.toView(profile));
 		});
 		return views;
@@ -190,5 +196,15 @@ public class UserProfileView
 	{
 		this.organization = organization;
 	}
-	
+
+	public String getGuid()
+	{
+		return guid;
+	}
+
+	public void setGuid(String guid)
+	{
+		this.guid = guid;
+	}
+
 }

@@ -13,33 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service.query;
 
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 
 /**
- *  Query by Example model
+ * Query by Example model
+ *
  * @author dshurtleff
  * @param <T>
  */
 public class QueryByExample<T extends BaseEntity>
 {
-	private QueryType queryType = QueryType.SELECT;	
+
+	private QueryType queryType = QueryType.SELECT;
 	private T example;
 	private Integer firstResult;
-	private Integer maxResults;	
+	private Integer maxResults;
 	private String distinctField;
-		
+	private Integer timeout;
+	private TimeoutStrategy timeoutStrategy = TimeoutStrategy.RETURN;
+	private boolean parallelQuery;
+	private boolean returnNonProxied = true;
+
 	public QueryByExample()
 	{
 	}
-	
+
 	public QueryByExample(T example)
 	{
 		this.example = example;
 	}
-	
+
 	public QueryType getQueryType()
 	{
 		return queryType;
@@ -89,5 +94,45 @@ public class QueryByExample<T extends BaseEntity>
 	{
 		this.distinctField = distinctField;
 	}
-		
+
+	public Integer getTimeout()
+	{
+		return timeout;
+	}
+
+	public void setTimeout(Integer timeout)
+	{
+		this.timeout = timeout;
+	}
+
+	public TimeoutStrategy getTimeoutStrategy()
+	{
+		return timeoutStrategy;
+	}
+
+	public void setTimeoutStrategy(TimeoutStrategy timeoutStrategy)
+	{
+		this.timeoutStrategy = timeoutStrategy;
+	}
+
+	public boolean isParallelQuery()
+	{
+		return parallelQuery;
+	}
+
+	public void setParallelQuery(boolean parallelQuery)
+	{
+		this.parallelQuery = parallelQuery;
+	}
+
+	public boolean isReturnNonProxied()
+	{
+		return returnNonProxied;
+	}
+
+	public void setReturnNonProxied(boolean returnNonProxied)
+	{
+		this.returnNonProxied = returnNonProxied;
+	}
+
 }

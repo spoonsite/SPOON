@@ -38,7 +38,7 @@ public class DBManager
 
 	private static OServer server;
 	private static OObjectDatabasePool globalInstance;
-
+	
 	@Override
 	public void initialize()
 	{

@@ -19,19 +19,29 @@
 	</context-param>	
 
 	<listener>
-		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+		<listener-class>edu.usu.sdl.openstorefront.web.init.ShiroLoader</listener-class>		
 	</listener>
+	
+	<!--  Uncomment to test Header realm
+	<filter>
+		<filter-name>MockHeaderFilter</filter-name>
+		<filter-class>edu.usu.sdl.openstorefront.web.init.HeaderTestFilter</filter-class>
+	</filter>	
+	<filter-mapping>
+		<filter-name>MockHeaderFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>	
+	-->
 	
 	<filter>
 		<filter-name>ShiroFilter</filter-name>
-		<filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+		<filter-class>edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter</filter-class>
 	</filter>	
-	<!--
 	<context-param>
 		<param-name>shiroConfigLocations</param-name>
-		<param-value>YOUR_RESOURCE_LOCATION_HERE</param-value>
+		<param-value>file:/var/openstorefront/config/shiro.ini</param-value>
 	</context-param>
-	-->
 	
 	<filter-mapping>
 		<filter-name>ShiroFilter</filter-name>
@@ -41,6 +51,16 @@
 		<dispatcher>INCLUDE</dispatcher> 
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>	
+	
+	<filter>
+		<filter-name>noCache</filter-name>
+		<filter-class>com.samaxes.filter.NoCacheFilter</filter-class>
+	</filter>	
+	
+	<filter-mapping>
+		<filter-name>noCache</filter-name>
+		<url-pattern>/index.html</url-pattern>
+	</filter-mapping>
 	
 	<filter>
 		<display-name>Stripes Filter</display-name>
@@ -77,7 +97,11 @@
 		<servlet-class>net.sourceforge.stripes.controller.DispatcherServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-
+	<servlet-mapping>
+		<servlet-name>StripesDispatcher</servlet-name>
+		<url-pattern>*.action</url-pattern>		
+	</servlet-mapping>	
+<!--
 	<servlet>
 		<servlet-name>Jersey Web Application</servlet-name>
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
@@ -87,16 +111,14 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>	
-	
-	<servlet-mapping>
-		<servlet-name>StripesDispatcher</servlet-name>
-		<url-pattern>*.action</url-pattern>		
-	</servlet-mapping>	
+-->
+
+<!--	
 	<servlet-mapping>
 		<servlet-name>Jersey Web Application</servlet-name>
 		<url-pattern>/api/*</url-pattern>				
 	</servlet-mapping>
-	
+-->	
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
 		<location>/Error.action</location>
@@ -109,7 +131,9 @@
 		<error-code>401</error-code>
 		<location>/401-unauthorized.jsp</location>
 	</error-page>	
-	
-	
+	<error-page>
+		<error-code>403</error-code>
+		<location>/403-forbidden.jsp</location>
+	</error-page>
 	
 </web-app>

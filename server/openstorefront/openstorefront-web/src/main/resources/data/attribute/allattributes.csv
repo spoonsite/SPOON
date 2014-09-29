@@ -292,7 +292,7 @@
 "DI2ESTATE","DI2E State","false","true","true","true","NOTREUSE","Not DI2E Reusable","Component was evaluated and determined to not support reusability, is not interoperable, or does not conform to DI2E standards and specifications",
 "DI2ESTATE","DI2E State","false","true","true","true","OBSOLETE","Obsolete","Component has been retired, superseded, or is generally considered not reusable by DI2E",
 "FUNDED","Funded","false","false","false","false","Y","Yes","",
-"FUNDED","Funded","false","false","false","false","Y","No","",
+"FUNDED","Funded","false","false","false","false","N","No","",
 "ITAR","ITAR Exportable","false","false","false","false","Y","Yes","",
 "ITAR","ITAR Exportable","false","false","false","false","N","No","",
 "JARALIGNMENT","JARM ESL Alignment","true","false","true","false","1","1 Customer Services",,

@@ -25,7 +25,8 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +56,7 @@ public class AttributeImporter
 				attributeFiles.add(FileSystemManager.getImportAttribute(fileMap.getFilename()));
 			}
 			filesUpdatedOrAdded(attributeFiles.toArray(new File[0]));
-		} else {
-			//load cache
-			serviceProxy.getAttributeService().refreshCache();
-		}
+		} 
 	}
 
 	@Override
@@ -79,14 +77,15 @@ public class AttributeImporter
 		log.log(Level.INFO, MessageFormat.format("Syncing Attributes: {0}", file));
 		for (FileMap fileMap : FileMap.values()) {
 			if (fileMap.getFilename().equals(file.getName())) {
-				try {
-					Map<AttributeType, List<AttributeCode>> attributeMap = fileMap.getParser().parse(new FileInputStream(file));
+				try (InputStream in = new FileInputStream(file)) {
+					Map<AttributeType, List<AttributeCode>> attributeMap = fileMap.getParser().parse(in);
 					serviceProxy.getAttributeService().syncAttribute(attributeMap);
-				} catch (FileNotFoundException ex) {
+				} catch (IOException ex) {
 					log.log(Level.SEVERE, "Failed processing file: " + file, ex);
 				}
 			}
 		}
+		log.log(Level.INFO, MessageFormat.format("Finish Syncing Attributes:{0}", file));
 	}
 
 	private enum FileMap

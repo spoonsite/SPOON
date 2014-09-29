@@ -2,7 +2,7 @@
 //theSite = 'http://di2e.github.io/openstorefront/index.html';
 //openAM = false;
 
-theSite = 'http://storefront1.di2e.net';
+theSite = 'http://storefront1.di2e.net/index.html';
 openAM = false;
 
 //theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';

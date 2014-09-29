@@ -15,11 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -29,63 +31,62 @@ public interface UserService
 {
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param userId
-	 * @return 
+	 * @return
 	 */
 	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param userId
 	 * @param all
-	 * @return 
+	 * @return
 	 */
 	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId, boolean all);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param userId
-	 * @return 
+	 * @return
 	 */
 	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param userId
 	 * @param all
-	 * @return 
+	 * @return
 	 */
 	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId, boolean all);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param pk
-	 * @return 
+	 * @return
 	 */
 	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param pk
 	 * @param all
-	 * @return 
+	 * @return
 	 */
 	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk, Boolean all);
 
-	
 	/**
 	 * Return the list of watches tied to a userID
 	 *
@@ -121,7 +122,7 @@ public interface UserService
 	 * Get the user profile based on the userID
 	 *
 	 * @param userId
-	 * @return
+	 * @return profile or null if not found
 	 */
 	public UserProfile getUserProfile(String userId);
 
@@ -144,16 +145,31 @@ public interface UserService
 	 * Save any changes to the user profile
 	 *
 	 * @param userId
-	 * @return 
+	 * @return
 	 */
 	public Boolean deleteProfile(String userId);
 
 	/**
-	 * 
+	 *
 	 * @param tracking
-	 * @return 
+	 * @return
 	 */
 	public UserTracking saveUserTracking(UserTracking tracking);
+
+	/**
+	 * This is called on login to pull the user info It will check for an
+	 * existing user based on the user name. If the user doesn't exist it will
+	 * create a profile for them based on the information in the user profile
+	 * ...filling in gaps as needed. This will also add the user context to the
+	 * session.
+	 *
+	 * @param userprofile
+	 * @param request
+	 * @param admin (pass null if login in to shiro already
+	 * @return
+	 */
+	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean admin);
+
 //  This will be fleshed out more later
 //	/**
 //	 * Get the most recently viewed components list for a user
@@ -162,5 +178,4 @@ public interface UserService
 //	 * @return
 //	 */
 //	public List<Component> getRecentlyViewed(String userId);
-
 }

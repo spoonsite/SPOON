@@ -15,7 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -27,6 +30,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  * Reflection and Service related methods
@@ -144,4 +148,81 @@ public class ServiceUtil
 			return isSubClass(className, entityClass.getSuperclass());
 		}
 	}
+	
+	/**
+	 * Compares to object of the same type
+	 * @param original
+	 * @param compare
+	 * @param consumeFieldsOnly
+	 * @return 
+	 */
+	public static boolean compareObjects(Object original, Object compare, boolean consumeFieldsOnly)
+	{
+		boolean changed = false;
+			
+		if (original != null && compare == null)
+		{
+			changed = true;
+		}else if (original == null && compare != null)
+		{
+			changed = true;
+		}
+		else if (original != null && compare != null)
+		{
+			if (original.getClass().isInstance(compare))
+			{
+				List<Field> fields = getAllFields(original.getClass());
+				for (Field field : fields)
+				{
+					boolean check = true;
+					if (consumeFieldsOnly)
+					{
+						ConsumeField consume = (ConsumeField) field.getAnnotation(ConsumeField.class);
+						if (consume == null)
+						{
+							check = false;
+						}
+					}
+					if (check)
+					{
+						try
+						{
+							changed = compareFields(BeanUtils.getProperty(original, field.getName()), BeanUtils.getProperty(compare, field.getName()));
+							if (changed)
+							{
+								break;
+							}
+						}
+						catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
+						{
+							throw new OpenStorefrontRuntimeException("Can't compare object types", ex);
+						}
+					}
+				}
+			}
+			else
+			{
+				throw new OpenStorefrontRuntimeException("Can't compare different object types", "Check objects");
+			}
+		}		
+		return changed;
+	}
+	
+	public static boolean compareFields(Object original, Object newField)
+	{
+		boolean changed = false;
+		if (original != null && newField == null)
+		{
+			changed = true;
+		}else if (original == null && newField != null)
+		{
+			changed = true;
+		}
+		else if (original != null && newField != null)
+		{
+			changed = !(original.equals(newField));
+		}		
+		return changed;
+	}	
+	
 }
