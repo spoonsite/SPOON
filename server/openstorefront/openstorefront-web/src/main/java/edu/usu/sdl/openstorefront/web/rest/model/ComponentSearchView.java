@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +46,7 @@ public class ComponentSearchView
 	private String approvedUser;
 	private String articleAttributeType;
 	private String articleAttributeCode;
+	private Integer averageRating;
 	private Date releaseDate;
 	private Date approvedDts;
 	private Date lastActivityDts;
@@ -80,6 +82,17 @@ public class ComponentSearchView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
 		view.setTags(service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId()));
+		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
+		Integer total = 0;
+		for (ComponentReview review : reviews) {
+			total = total + review.getRating();
+		}
+		if (reviews.size() > 0) {
+			view.setAverageRating(total / reviews.size());
+		}
+		else {
+			view.setAverageRating(0);
+		}
 
 		view.setActiveStatus(component.getActiveStatus());
 		view.setCreateUser(component.getCreateUser());
@@ -96,6 +109,7 @@ public class ComponentSearchView
 		ComponentSearchView view = new ComponentSearchView();
 		view.setListingType("Article");
 		view.setComponentId(null);
+		view.setAverageRating(0);
 		view.setArticleAttributeType(article.getAttributeType());
 		view.setArticleAttributeCode(article.getAttributeCode());
 		AttributeType type = service.getPersistenceService().findById(AttributeType.class, article.getAttributeType());
@@ -107,7 +121,7 @@ public class ComponentSearchView
 		view.setName(type.getDescription() + "-" + code.getLabel() + " Article");
 		view.setLastActivityDts(article.getUpdateDts());
 		view.setOrganization(article.getOrganization());
-		List <ComponentAttribute> attributes = new ArrayList<>();
+		List<ComponentAttribute> attributes = new ArrayList<>();
 		view.setAttributes(SearchResultAttribute.toViewList(attributes));
 		return view;
 	}
@@ -390,6 +404,22 @@ public class ComponentSearchView
 	public void setArticleAttributeCode(String articleAttributeCode)
 	{
 		this.articleAttributeCode = articleAttributeCode;
+	}
+
+	/**
+	 * @return the averageRating
+	 */
+	public Integer getAverageRating()
+	{
+		return averageRating;
+	}
+
+	/**
+	 * @param averageRating the averageRating to set
+	 */
+	public void setAverageRating(Integer averageRating)
+	{
+		this.averageRating = averageRating;
 	}
 
 }

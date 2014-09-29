@@ -46,6 +46,9 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       hideMore: '@',
     },
     link: function postLink(scope, element, attrs) {
+
+      scope.getShortDescription = getShortDescription;
+
       if (scope.search && (!scope.search.type || !scope.search.key)) {
         scope.search = {};
         scope.search.type = 'search';
