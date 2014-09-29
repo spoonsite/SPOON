@@ -167,15 +167,22 @@ var app = angular
     '$analytics',
     function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics) {/* jshint unused: false*/
 
-      // this is called only on first view of the '/' route (login)
-      localCache.clearAll();
 
 
-      // grab the 'current user'
-      Business.userservice.initializeUser().then(function(result){
-        if (result) {
-          $rootScope.$broadcast('$LOGGEDIN', result);
-        }
+      $timeout(function() {
+        console.log('We\'ve added the module...');
+
+        // this is called only on first view of the '/' route (login)
+        localCache.clearAll();
+
+        // grab the 'current user'
+        Business.userservice.initializeUser().then(function(result){
+          if (result) {
+          console.log('We\'ve and initialized the user...');
+            $rootScope.$broadcast('$LOGGEDIN', result);
+            $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
+          }
+        });
       });
 
 
@@ -245,9 +252,6 @@ var app = angular
         $timeout(function() {
           $('[data-toggle=\'tooltip\']').tooltip();
         }, 300);
-        if (!Auth.signedIn() && $location.path() !== '/login') {
-          $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
-        }
         $timeout(function() {
           $rootScope.$broadcast('$UNLOAD', 'bodyLoad');
         });
@@ -305,7 +309,7 @@ var app = angular
         // console.log('we got an event', name, category, label);
         $analytics.eventTrack(name,{'category': category, 'label': label});
       };
-  
+
 
       $rootScope.openModal = function(id, current) {
         $rootScope.current = current;
@@ -511,7 +515,7 @@ var app = angular
       //   return [200, result.promise, {}];
       // });
 
-      $httpBackend.whenGET('api/v1/resource/attributes').passThrough();
+$httpBackend.whenGET('api/v1/resource/attributes').passThrough();
       // .respond(function(method, url, data) {
       //   return [200, MOCKDATA.filters, {}];
       // });
@@ -520,17 +524,17 @@ var app = angular
       //   return [200, MOCKDATA.tagsList, {}];
       // });
 
-      $httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
-        return [200, MOCKDATA.prosConsList, {}];
-      });
+$httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
+  return [200, MOCKDATA.prosConsList, {}];
+});
 
-      $httpBackend.whenGET('api/v1/resource/attributes/attributetypes/DI2ELEVEL/attributecodes').passThrough();
+$httpBackend.whenGET('api/v1/resource/attributes/attributetypes/DI2ELEVEL/attributecodes').passThrough();
       // respond(function(method, url, data) {
       //   var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
       //   return [200, result, {}];
       // });
 
-      $httpBackend.whenGET(/api\/v1\/resource\/lookuptypes\/[^\/][^\/]*\/?view/).passThrough();
+$httpBackend.whenGET(/api\/v1\/resource\/lookuptypes\/[^\/][^\/]*\/?view/).passThrough();
       // respond(function(method, url, data) {
       //   var result = [
       //     //
@@ -545,14 +549,14 @@ var app = angular
       //   return [200, result, {}];
       // });
 
-      $httpBackend.whenGET('api/v1/resource/lookup/watches').respond(function(method, url, data) {
-        return [200, MOCKDATA.watches, {}];
-      });
+$httpBackend.whenGET('api/v1/resource/lookup/watches').respond(function(method, url, data) {
+  return [200, MOCKDATA.watches, {}];
+});
 
-      $httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method, url, data) {
-        MOCKDATA.watches = data;
-        return [200, angular.fromJson(data), {}];
-      });
+$httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method, url, data) {
+  MOCKDATA.watches = data;
+  return [200, angular.fromJson(data), {}];
+});
     } // end of run function
   ] // end of injected dependencies for .run
 ); // end of app module

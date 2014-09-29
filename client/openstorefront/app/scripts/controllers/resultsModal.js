@@ -20,5 +20,5 @@ fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimati
 filtClick, setPageHeight*/
 
 app.controller('ResultsModalCtrl', ['$scope', function ($scope) { /*jshint unused: false*/
-
+  $scope.checkTagsList = $scope.$parent.checkTagsList;
 }]);

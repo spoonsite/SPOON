@@ -192,9 +192,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * we get the httpbackend fleshed out.
   ***************************************************************/
   $scope.reAdjust = function(key) {
-
-    console.log('READJUSTING -------------------------');
-    
     $scope.searchGroup        = key;
     $scope.searchKey          = $rootScope.searchKey;
     
@@ -208,7 +205,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     setupResults();
-    var start = new Date().getTime();
+    // var start = new Date().getTime();
     Business.componentservice.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
       if (result)
       {
@@ -240,9 +237,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           item.shortdescription = 'This is a temporary short description';
         }
       });
-      var end = new Date().getTime();
-      var time = end - start;
-      console.log('Total Execution time ****: ' + time);
+      // var end = new Date().getTime();
+      // var time = end - start;
+      // console.log('Total Execution time ****: ' + time);
       $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
       $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
       $scope.initializeData(key);
@@ -613,9 +610,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * Event for callSearch caught here. This is triggered by the nav
   * search bar when you are already on the results page.
   ***************************************************************/
-  $scope.$on('$callSearch', function(event, data) {/*jshint unused: false*/
-    callSearch(data);
-  });
+  // $scope.$on('$callSearch', function(event, data) {jshint unused: false
+  //   callSearch(data);
+  // });
 
   /***************************************************************
   * Event to trigger an update of the details that are shown
