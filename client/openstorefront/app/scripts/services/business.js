@@ -221,6 +221,31 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   };
 
 
+  var checkVersion = function (userAgent){
+    if (userAgent && userAgent.family === 'IE'){
+      if (userAgent.versionNumber && userAgent.versionNumber.major) {
+        console.log('version number', userAgent.versionNumber.major);
+        if (parseInt(userAgent.versionNumber.major) < 9){
+          return true;
+        }
+      }
+    }
+    return false;    
+  }
+
+  // This function builds the typeahead options.
+  business.ieCheck = function() {
+    var deferred = $q.defer();
+    $http.get('System.action?UserAgent').success(function(data, status, headers, config){
+      deferred.resolve(checkVersion(data));
+    }).error(function(){
+      deferred.resolve(false);
+    });
+
+    return deferred.promise;
+  };
+
+
 
 
   return business;
