@@ -33,7 +33,6 @@ var hasAttribute = function(list, attribute){
 }
 
 var search = function(searchKey, list) {
-  console.log('got to search function');
   
   if (list && searchKey) {
     var key;
@@ -159,13 +158,13 @@ var search = function(searchKey, list) {
         } 
       }
       matched = _.sortBy(matched, 'score').reverse();
-      console.log('matched', matched);
+      // console.log('matched', matched);
       result.keywords = keywords;
       result.found = matched;
       result.data = _.pluck(matched, 'data');
-      console.log('result.data', result.data);
+      // console.log('result.data', result.data);
     }
-    console.log('finished search function');
+    // console.log('finished search function');
     
     return result;
   } else {
