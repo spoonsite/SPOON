@@ -56,7 +56,7 @@
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Watches')">Watches</a></li>   
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Component Reviews')">Component Reviews</a></li>
               <li class="divider"></li>
-              <li ng-show="user.isLoggedIn"><a href="javascript: void(0)" ng-click="logout()">Logout</a></li>   
+              <li ng-show="user.isLoggedIn"><a href="/openstorefront/Login.action?Logout" ng-click="localCache.clear()">Logout</a></li>   
             </ul></li>
 
           </li>
@@ -82,7 +82,7 @@
           <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Watches'); ">Watches</a></li>   
           <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Component Feedback'); ">Component Feedback</a></li>
           <li class="divider"></li>
-          <li ng-show="user.isLoggedIn"><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); logout(); ">Logout</a></li>   
+          <li ng-show="user.isLoggedIn"><a href="/openstorefront/Login.action?Logout" ng-click="localCache.clear()">Logout</a></li>   
         </ul>
       </div>
     </div>

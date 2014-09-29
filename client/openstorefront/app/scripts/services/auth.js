@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.factory('auth', ['$rootScope', 'business', '$q', function($rootScope, Business, $q) {
+app.factory('auth', ['$rootScope', 'business', '$q', 'localCache', '$location', function($rootScope, Business, $q, localCache, $location) {
 
   // This variable will hold the state. (there is only 1 per factory -- singleton)  
   var authState = {};
@@ -43,8 +43,10 @@ app.factory('auth', ['$rootScope', 'business', '$q', function($rootScope, Busine
     },
     logout: function () {
       var deferred = $q.defer();
-    // Business.userservice.logout().then(function(){
-      authState.user = null;
+      localCache.clearAll();
+      $location.path('/Login.action?logout');
+      // Business.userservice.logout().then(function(){
+      // authState.user = null;
       deferred.resolve(null);
       // });
       //
