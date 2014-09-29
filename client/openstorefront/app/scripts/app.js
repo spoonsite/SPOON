@@ -166,6 +166,19 @@ var app = angular
     '$routeParams',
     '$analytics',
     function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics) {/* jshint unused: false*/
+
+      // this is called only on first view of the '/' route (login)
+      localCache.clearAll();
+
+
+      // grab the 'current user'
+      Business.userservice.initializeUser().then(function(result){
+        if (result) {
+          $rootScope.$broadcast('$LOGGEDIN', result);
+        }
+      });
+
+
       //////////////////////////////////////////////////////////////////////////////
       // Variables
       //////////////////////////////////////////////////////////////////////////////
