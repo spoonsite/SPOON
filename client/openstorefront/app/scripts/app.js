@@ -166,21 +166,16 @@ var app = angular
     '$routeParams',
     '$analytics',
     function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics) {/* jshint unused: false*/
+      
+      // initialization stuff.
       $rootScope.ieVersionCheck = false;
+      $rootScope.loaded = false;
 
       $timeout(function() {
         console.log('We\'ve added the module...');
 
         // this is called only on first view of the '/' route (login)
         localCache.clearAll();
-
-        Business.ieCheck().then(function(result){
-          $rootScope.ieVersionCheck = result;
-          $rootScope.loaded = true;
-        }, function(){
-          $rootScope.ieVersionCheck = false;
-          $rootScope.loaded = true;
-        })
 
         // grab the 'current user'
         Business.userservice.initializeUser().then(function(result){
@@ -201,7 +196,14 @@ var app = angular
             $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
           }
         });
-      });
+        Business.ieCheck().then(function(result){
+          $rootScope.ieVersionCheck = result;
+          $rootScope.loaded = true;
+        }, function(){
+          $rootScope.ieVersionCheck = false;
+          $rootScope.loaded = true;
+        })
+      }, 10);
 
 
       //////////////////////////////////////////////////////////////////////////////
