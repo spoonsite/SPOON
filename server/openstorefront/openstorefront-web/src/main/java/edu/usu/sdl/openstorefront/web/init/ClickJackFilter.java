@@ -25,10 +25,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
 
+//{@link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx}
 /**
  * This is added to prevent click-jacking by supported browsers Based on ESAPI
- * clickjackfilter see
- * {@link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx}.
+ * clickjackfilter see.
  * only happens for the client ui
  *
  * @author dshurtleff
