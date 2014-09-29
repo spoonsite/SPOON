@@ -29,7 +29,7 @@
                       </div>
                     </div>
                     <div class="results-content-description">
-                      <div ng-bind-html="item.description"></div>
+                      <div ng-bind-html="getShortDescription(item.description)"></div>
                       <br>
                       <span class="componentListDate pull left" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span>
                     </div>

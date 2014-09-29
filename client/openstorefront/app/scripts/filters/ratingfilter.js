@@ -28,8 +28,8 @@ app.filter('ratingFilter', function () {
       out = _.filter(input, function(entry) {
         // it passes the filter if the average rating for that component
         // is equal to or greater than the given rating.
-        if (entry.stats && entry.stats.averageRating) {
-          return entry.stats.averageRating >= rating;
+        if (entry && entry.averageRating) {
+          return entry.averageRating >= rating;
         } else {
           return false;
         }

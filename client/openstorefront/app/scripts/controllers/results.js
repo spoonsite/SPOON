@@ -192,6 +192,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * we get the httpbackend fleshed out.
   ***************************************************************/
   $scope.reAdjust = function(key) {
+
+    console.log('READJUSTING -------------------------');
+    
     $scope.searchGroup        = key;
     $scope.searchKey          = $rootScope.searchKey;
     
@@ -205,6 +208,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
 
     setupResults();
+    var start = new Date().getTime();
     Business.componentservice.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
       if (result)
       {
@@ -236,6 +240,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           item.shortdescription = 'This is a temporary short description';
         }
       });
+      var end = new Date().getTime();
+      var time = end - start;
+      console.log('Total Execution time ****: ' + time);
       $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
       $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
       $scope.initializeData(key);
@@ -343,59 +350,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search
   ***************************************************************/
-  var callSearch = function() {
-    Business.componentservice.search(false, false, true).then(
-    //This is the success function on returning a value from the business layer 
-
-    // TODO: CLEAN UP THIS FUNCTION!!!!
-    function(key) {
-
-      var type = 'search';
-      var code = 'all';
-      var query = null;
-      if (key === null || key === undefined) {
-        if (!isEmpty($location.search())) {
-          query = $location.search();
-          if (query.type === 'attribute') {
-            if (query.keyType && query.keyKey) {
-              type = 'attribute';
-              code = {
-                'type': query.keyType,
-                'key': query.keyKey
-              };
-            } 
-          } else if (query.type && query.code) {
-            type = query.type;
-            code = query.code;
-          } 
-        }
-      } else {
-        if (!isEmpty($location.search())) {
-          query = $location.search();
-          if (query.type === 'attribute') {
-            if (query.keyType && query.keyKey) {
-              type = 'attribute';
-              code = {
-                'type': query.keyType,
-                'key': query.keyKey
-              };
-            }
-          } else if (query.type && query.code) {
-            type = query.type;
-            code = query.code;
-          }
-        }
-      }
-      $scope.reAdjust([{ 'key': type, 'code': code }]);
-    },
-    // This is the failure function that handles a returned error
-    function(error) {
-      var type = 'search';
-      var code = 'all';
+  var callSearch = function(key) {
+    var type = 'search';
+    var code = 'all';
+    var query = null;
+    if (key === null || key === undefined) {
       if (!isEmpty($location.search())) {
-        var query = $location.search();
-        console.log('query', query);
-        
+        query = $location.search();
         if (query.type === 'attribute') {
           if (query.keyType && query.keyKey) {
             type = 'attribute';
@@ -409,9 +370,24 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           code = query.code;
         } 
       }
-      $scope.reAdjust([{ 'key': type, 'code': code }]);
-    });
-    //
+    } else {
+      if (!isEmpty($location.search())) {
+        query = $location.search();
+        if (query.type === 'attribute') {
+          if (query.keyType && query.keyKey) {
+            type = 'attribute';
+            code = {
+              'type': query.keyType,
+              'key': query.keyKey
+            };
+          }
+        } else if (query.type && query.code) {
+          type = query.type;
+          code = query.code;
+        }
+      }
+    }
+    $scope.reAdjust([{ 'key': type, 'code': code }]);
   };
 
   $scope.$on('$CHANGESEARCHRESULTTAGS', function(event, id, tags){
@@ -637,8 +613,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * Event for callSearch caught here. This is triggered by the nav
   * search bar when you are already on the results page.
   ***************************************************************/
-  $scope.$on('$callSearch', function(event) {/*jshint unused: false*/
-    callSearch();
+  $scope.$on('$callSearch', function(event, data) {/*jshint unused: false*/
+    callSearch(data);
   });
 
   /***************************************************************

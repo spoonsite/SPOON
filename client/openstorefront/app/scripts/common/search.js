@@ -21,9 +21,9 @@ var hasAttribute = function(list, attribute){
   if (list && attribute) {
     _.each(list, function(item){
       if (attribute.key && attribute.type && (_.find(item.attributes, {'code': attribute.key, 'type': attribute.type}) !== undefined)){
-        result.push({'data': item});
+        result.push(item);
       } else if (attribute.type && !attribute.key && (_.find(item.attributes, {'type': attribute.type}) !== undefined)) {
-        result.push({'data': item});
+        result.push(item);
       }
     });
   } else {
@@ -33,8 +33,9 @@ var hasAttribute = function(list, attribute){
 }
 
 var search = function(searchKey, list) {
+  console.log('got to search function');
+  
   if (list && searchKey) {
-
     var key;
     var type;
     var score       = {};
@@ -52,19 +53,13 @@ var search = function(searchKey, list) {
     var doStrict    = false;
     if (typeof searchKey === 'object'){
       if (searchKey.type && searchKey.key) {
-
         if (searchKey.type.toLowerCase() !== 'search' && typeof searchKey.key === 'object') {
           type = searchKey.key.type.toLowerCase().replace(/^\s+|\s+$/g,'');
           key = searchKey.key.key? searchKey.key.key.toLowerCase().replace(/^\s+|\s+$/g,''): null;
           doStrict = true;
           var result = {};
         } else if ((searchKey.type.toLowerCase().replace(/^\s+|\s+$/g,'') === 'search' && typeof searchKey.key === 'string' && searchKey.key.toLowerCase().replace(/^\s+|\s+$/g,'') === 'all') || !searchKey) {
-          result.data = [];
-          _.each(list, function(item){
-            temp = {};
-            temp.data = item;
-            result.data.push(temp);
-          });
+          result.data = list;
           return result;
         } else if (searchKey.type.toLowerCase() === 'search' && searchKey.key){
           key = searchKey.key.toLowerCase().replace(/^\s+|\s+$/g,'');
@@ -73,12 +68,7 @@ var search = function(searchKey, list) {
           score.attribute = 1;
         } 
       } else {
-        result.data = [];
-        _.each(list, function(item){
-          temp = {};
-          temp.data = item;
-          result.data.push(temp);
-        });
+        result.data = list;
         return result;
       }
     } else {
@@ -121,28 +111,33 @@ var search = function(searchKey, list) {
         }
       }
 
+      var index = 0;
       for (i = 0; i < keywords.length; i++) {
         for (j = 0; j < list.length; j++) {
           var tempMatch = {}; 
           tempMatch.score = 0;
           if (list[j])
           {
-            if (list[j].name.toLowerCase().indexOf(keywords[i]) > -1 ) {
-              if (list[j].name.toLowerCase().indexOf(keywords[i]) === 0) {
+            index = list[j].name.toLowerCase().indexOf(keywords[i]);
+            if (index > -1 ) {
+              if (index === 0) {
                 tempMatch.score = tempMatch.score + score.text;
               } else {
                 tempMatch.score = tempMatch.score + (score.text * 0.2);
               }
             }
-            if (list[j].description.toLowerCase().indexOf(keywords[i]) > -1 ) {
+            index = list[j].description.toLowerCase().indexOf(keywords[i]);
+            if (index > -1 ) {
               tempMatch.score = tempMatch.score + score.description;
             }
             if (list[j].attributes){
               _.each(list[j].attributes, function(attribute){
-                if (attribute.code.toLowerCase().indexOf(keywords[i]) > -1) {
+                index = attribute.code.toLowerCase().indexOf(keywords[i]);
+                if (index > -1) {
                   tempMatch.score = tempMatch.score + score.attribute;
                 }
-                if (attribute.type.toLowerCase().indexOf(keywords[i]) > -1) {
+                index = attribute.type.toLowerCase().indexOf(keywords[i]);
+                if (index > -1) {
                   tempMatch.score = tempMatch.score + score.attribute;
                 }
               });
@@ -163,24 +158,15 @@ var search = function(searchKey, list) {
           }
         } 
       }
-      // sort the matches  
-      if (matched.length) {
-        for (i = 0; i < matched.length - 1; i++) {
-          for(j = i + 1; j < matched.length; j++) {
-            if (matched[i].score < matched[j].score) {
-              temp = matched[j];
-              matched[j] = matched[i];
-              matched[i] = temp;
-            }
-          }
-        }
-      }
-      // end of sort
+      matched = _.sortBy(matched, 'score').reverse();
+      console.log('matched', matched);
       result.keywords = keywords;
       result.found = matched;
-      result.data = matched;
+      result.data = _.pluck(matched, 'data');
+      console.log('result.data', result.data);
     }
-
+    console.log('finished search function');
+    
     return result;
   } else {
     return {'data':[]};

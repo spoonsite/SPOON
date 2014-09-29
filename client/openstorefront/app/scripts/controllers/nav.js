@@ -140,13 +140,12 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       'type': 'search',
       'code': key
     });
-    Business.componentservice.search('search', key, true).then(function (key) {
-      if($location.path() === '/results') {
-        $rootScope.$broadcast('$callSearch');
-      } else {
-        $location.path('/results');
-      }
-    });
+    if($location.path() === '/results') {
+      console.log('we started a search from nav');
+      $rootScope.$broadcast('$callSearch', { 'key': 'search', 'code': key });
+    } else {
+      $location.path('/results');
+    }
   };
 
   /***************************************************************
