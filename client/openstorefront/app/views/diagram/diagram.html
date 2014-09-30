@@ -23,18 +23,18 @@ limitations under the License.
 			<div class="diagram-section-header">
 				<button  ng-click="child.show = !child.show;" class="diagram-toggle-btn " ng-class="{'diagram-toggle-flip': child.show}"><i class="fa fa-arrow-up"></i></button>									
 				<div class="diagram-top-level-text">
-					<span  ng-click="hidePopup(); goToSearch(child.attributeType, child.attributeCode, true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{child.name}}" data-container="body" data-content="{{child.description}}" >{{child.name}}</span>
+					<span  ng-click="hidePopup(); goToSearch('attribute', {'keyType': child.attributeType, 'keyKey': child.attributeCode}, true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{child.name}}" data-container="body" data-content="{{child.description}}" >{{child.name}}</span>
 				</div>					
 			</div>				
 			<div ng-show="child.show;" ng-class="{'diagram-second-level-min': level2.show }" ng-repeat="level2 in child.children" class="col-md-4 diagram-second-level">
 				<div class="diagram-section-header">
 					<button  ng-click="level2.show = !level2.show;" class="diagram-toggle-btn " style="margin-left: -14px;" ng-class="{'diagram-toggle-flip': level2.show}"><i class="fa fa-arrow-up"></i></button>									
 					<div class="diagram-top-level-text">
-						<span class="diagram-second-level-text" ng-click="hidePopup(); goToSearch(level2.attributeType, level2.attributeCode, true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{level2.name}}" data-container="body" data-content="{{level2.description}}" >{{level2.name}}</span>
+						<span class="diagram-second-level-text" ng-click="hidePopup(); goToSearch('attribute', {'keyType': level2.attributeType, 'keyKey': level2.attributeCode}, true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{level2.name}}" data-container="body" data-content="{{level2.description}}" >{{level2.name}}</span>
 					</div>					
 				</div>											
 				<div ng-show="level2.show;"  ng-repeat="level3 in level2.children" class="col-md-4 diagram-third-level">
-					<h6 ng-click="hidePopup(); goToSearch(level3.attributeType, level3.attributeCode, true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{level3.name}}" data-container="body" data-content="{{level3.description}}" >{{level3.name}}</h6>
+					<h6 ng-click="hidePopup(); goToSearch('attribute', {'keyType': level3.attributeType, 'keyKey': level3.attributeCode}, true);" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="{{level3.name}}" data-container="body" data-content="{{level3.description}}" >{{level3.name}}</h6>
 				</div>
 			</div>
 		</div>
