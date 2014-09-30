@@ -39,13 +39,14 @@ var app = angular
     'ngMockE2E',
     'bootstrapLightbox',
     'angular-carousel',
-    'angulartics.google.analytics'
+    'angulartics.google.analytics',
+    'ngIdle'
   // end of dependency injections
   ]
 // end of the module creation
 )
 // Here we configure the route provider
-.config(function ($routeProvider, tagsInputConfigProvider, LightboxProvider) {
+.config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider) {
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
@@ -147,7 +148,14 @@ var app = angular
       'height': Math.max(500, dimensions.imageDisplayHeight + 76)
     };
   };
-})
+
+  // set up the idleProvider and keepaliveProvider
+  $idleProvider.idleDuration(30 * 60);
+  $idleProvider.warningDuration(60);
+  $keepaliveProvider.interval(20 * 60);
+
+
+}])
 
 // here we add the .run function for intial setup and other useful functions
 .run(
@@ -165,8 +173,11 @@ var app = angular
     '$anchorScroll',
     '$routeParams',
     '$analytics',
-    function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics) {/* jshint unused: false*/
-      
+    '$idle',
+    '$keepalive',
+    '$uiModal',
+    function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
+
       // initialization stuff.
       $rootScope.ieVersionCheck = false;
       $rootScope.loaded = false;
@@ -579,6 +590,66 @@ $httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method,
   MOCKDATA.watches = data;
   return [200, angular.fromJson(data), {}];
 });
+
+
+      $rootScope.started = false;
+
+      $rootScope.closeModals = function() {
+        if ($rootScope.warning) {
+          $rootScope.warning.close();
+          $rootScope.warning = null;
+        }
+
+        if ($rootScope.timedout) {
+          $rootScope.timedout.close();
+          $rootScope.timedout = null;
+        }
+      }
+
+      $rootScope.logout = function() {
+        window.location('/openstorefront/Login.action?Logout');
+      }
+
+      $rootScope.$on('$idleStart', function() {
+        $rootScope.closeModals();
+
+        $rootScope.warning = $uiModal.open({
+          templateUrl: 'views/timeout/warning-dialog.html',
+          windowClass: 'modal-danger'
+        });
+      });
+
+      $rootScope.$on('$idleEnd', function() {
+        $rootScope.closeModals();
+        // no need to do anything unless you want to here.
+      });
+
+      $rootScope.$on('$keepalive', function() {
+        // do something to keep the user's session alive
+        Business.userservice.getCurrentUserProfile(true);
+      });
+
+      $rootScope.$on('$idleTimeout', function() {
+        //log them out here
+        $rootScope.closeModals();
+        $rootScope.logout();
+      });
+
+      // $rootScope.start = function() {
+      //   closeModals();
+      //   $idle.watch();
+      //   $rootScope.started = true;
+      // };
+
+      // $rootScope.stop = function() {
+      //   closeModals();
+      //   $idle.unwatch();
+      //   $rootScope.started = false;
+      // };
+      
+      $idle.watch();
+
+
     } // end of run function
   ] // end of injected dependencies for .run
 ); // end of app module
