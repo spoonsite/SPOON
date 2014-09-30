@@ -18,11 +18,12 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.core.GenericType;
 
 /**
+ * Generic List Wrapper
  *
  * @author dshurtleff
- * @param <T>
  */
 public class RestListResponse<T>
 {
@@ -32,7 +33,7 @@ public class RestListResponse<T>
 	@ParamTypeDescription("(Returned record count)")
 	private long results;
 
-	private List<T> data = new ArrayList<>();
+	private List<GenericType<T>> data = new ArrayList<>();
 
 	public RestListResponse()
 	{
@@ -58,12 +59,12 @@ public class RestListResponse<T>
 		this.results = results;
 	}
 
-	public List<T> getData()
+	public List<GenericType<T>> getData()
 	{
 		return data;
 	}
 
-	public void setData(List<T> data)
+	public void setData(List<GenericType<T>> data)
 	{
 		this.data = data;
 	}

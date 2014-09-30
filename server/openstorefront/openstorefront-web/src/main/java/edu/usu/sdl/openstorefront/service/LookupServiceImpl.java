@@ -203,7 +203,7 @@ public class LookupServiceImpl
 					T example = lookupClass.newInstance();
 					example.setCode(code);
 					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-					lookupEntity = persistenceService.queryByOneExample(lookupClass, new QueryByExample(example));
+					lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
 					lookupCacheMap.put(code, lookupEntity);
 				} catch (InstantiationException | IllegalAccessException e) {
 					throw new OpenStorefrontRuntimeException(e);
@@ -235,7 +235,7 @@ public class LookupServiceImpl
 				T example = lookupClass.newInstance();
 				example.setDescription(description);
 				example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-				lookupEntity = persistenceService.queryByOneExample(lookupClass, new QueryByExample(example));
+				lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
 
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new OpenStorefrontRuntimeException(e);

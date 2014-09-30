@@ -16,11 +16,13 @@
 package edu.usu.sdl.openstorefront.web.rest;
 
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.web.rest.resource.UserProfileResource;
 import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
@@ -36,17 +38,18 @@ public class SecurityFilter
 		implements ContainerRequestFilter
 {
 
+	@Context
+	ResourceInfo resourceInfo;
+
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException
 	{
 		boolean doAdminCheck = true;
-		for (Object resource : requestContext.getUriInfo().getMatchedResources()) {
-			if (resource instanceof UserProfileResource) {
-				String useridPassIn = requestContext.getUriInfo().getPathParameters().getFirst("id");
-				if (SecurityUtil.getCurrentUserName().equals(useridPassIn)) {
-					doAdminCheck = false;
-				}
-			}
+		RequireAdmin requireAdmin = resourceInfo.getResourceMethod().getAnnotation(RequireAdmin.class);
+		try {
+			doAdminCheck = requireAdmin.value().newInstance().requireAdminCheck(resourceInfo, requestContext);
+		} catch (InstantiationException | IllegalAccessException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
 		}
 
 		if (doAdminCheck) {

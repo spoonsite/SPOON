@@ -24,6 +24,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -73,7 +74,7 @@ public class PersistenceService
 		} else {
 			db = transaction;
 		}
-		db.setLazyLoading(false);		
+		db.setLazyLoading(false);
 		return db;
 	}
 
@@ -227,7 +228,7 @@ public class PersistenceService
 				if (idAnnotation != null) {
 					if (id.getClass().getName().equals(field.getType().getName()) == false) {
 						//Manage PK is like been pull by the DB and passed back in ...let it through
-						if ((id instanceof Proxy) == false)	{
+						if ((id instanceof Proxy) == false) {
 							pkValid = false;
 						}
 					}
@@ -343,6 +344,19 @@ public class PersistenceService
 			closeConnection(db);
 		}
 		return count;
+	}
+
+	/**
+	 * This will run the example with the default options
+	 *
+	 * @param <T>
+	 * @param exampleClass
+	 * @param baseEntity
+	 * @return
+	 */
+	public <T> List<T> queryByExample(Class<T> exampleClass, BaseEntity baseEntity)
+	{
+		return queryByExample(exampleClass, new QueryByExample(baseEntity));
 	}
 
 	public <T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample)
@@ -476,7 +490,21 @@ public class PersistenceService
 		return parameterMap;
 	}
 
-	public <T> T queryByOneExample(Class<T> exampleClass, QueryByExample queryByExample)
+	/**
+	 * This just returns one result. Typically the query results in only one
+	 * entity.
+	 *
+	 * @param <T>
+	 * @param exampleClass
+	 * @param baseEnity
+	 * @return the entity or null if not found
+	 */
+	public <T> T queryOneByExample(Class<T> exampleClass, BaseEntity baseEnity)
+	{
+		return queryOneByExample(exampleClass, new QueryByExample(baseEnity));
+	}
+
+	public <T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample)
 	{
 		List<T> results = queryByExample(exampleClass, queryByExample);
 		if (results.size() > 0) {
@@ -484,13 +512,14 @@ public class PersistenceService
 		}
 		return null;
 	}
-	
+
 	/**
 	 * This will run the query but return the Proxy Objects
+	 *
 	 * @param <T>
 	 * @param query
 	 * @param parameterMap
-	 * @return 
+	 * @return
 	 */
 	public <T> List<T> query(String query, Map<String, Object> parameterMap)
 	{
@@ -499,12 +528,13 @@ public class PersistenceService
 
 	/**
 	 * This will run the query and then unwrap if desired
+	 *
 	 * @param <T>
 	 * @param query
 	 * @param parameterMap
 	 * @param dataClass
 	 * @param unwrap
-	 * @return 
+	 * @return
 	 */
 	public <T> List<T> query(String query, Map<String, Object> parameterMap, Class<T> dataClass, boolean unwrap)
 	{
@@ -512,8 +542,7 @@ public class PersistenceService
 		List<T> results = new ArrayList<>();
 		try {
 			results = db.query(new OSQLSynchQuery<>(query), parameterMap);
-			if (unwrap)
-			{
+			if (unwrap) {
 				results = unwrapProxy(db, dataClass, results);
 			}
 		} finally {
@@ -559,7 +588,7 @@ public class PersistenceService
 	 *
 	 * @param <T>
 	 * @param entity
-	 * @return 
+	 * @return
 	 */
 	public <T> T detach(T entity)
 	{
@@ -578,7 +607,7 @@ public class PersistenceService
 	 *
 	 * @param <T>
 	 * @param entity
-	 * @return 
+	 * @return
 	 */
 	public <T> T deattachAll(T entity)
 	{
@@ -591,7 +620,7 @@ public class PersistenceService
 		}
 		return nonProxy;
 	}
-	
+
 	public <T> List<T> unwrapProxy(Class<T> origClass, List<T> data)
 	{
 		OObjectDatabaseTx db = getConnection();
@@ -613,7 +642,7 @@ public class PersistenceService
 		}
 		return nonProxyList;
 	}
-	
+
 	public <T> T unwrapProxyObject(Class<T> origClass, T data)
 	{
 		OObjectDatabaseTx db = getConnection();
@@ -623,9 +652,9 @@ public class PersistenceService
 		} finally {
 			closeConnection(db);
 		}
-		return nonProxyData;		
+		return nonProxyData;
 	}
-	
+
 	public <T> T unwrapProxyObject(OObjectDatabaseTx db, Class<T> origClass, T data)
 	{
 		T nonProxy = db.detachAll(data, true);

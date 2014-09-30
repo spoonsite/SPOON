@@ -127,7 +127,7 @@ public class UserServiceImpl
 	{
 		UserWatch temp = new UserWatch();
 		temp.setUserWatchId(watchId);
-		return persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(temp));
+		return persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(temp));
 	}
 
 	/**
@@ -312,6 +312,7 @@ public class UserServiceImpl
 				}
 			}
 
+			profile = persistenceService.deattachAll(profile);
 			userContext.setUserProfile(profile);
 			if (admin != null) {
 				userContext.setAdmin(admin);

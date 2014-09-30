@@ -54,7 +54,6 @@ public interface ComponentService
 	/**
 	 * This only returns the active
 	 *
-	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param componentId
@@ -68,12 +67,13 @@ public interface ComponentService
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param componentId
-	 * @param all (true to get inactive as well)
-	 * @return
+	 * @param activeStatus
+	 * @return List of base components
 	 */
-	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all);
+	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, String activeStatus);
 
 	/**
+	 * Deactivates a base component
 	 *
 	 * @param <T>
 	 * @param subComponentClass
@@ -83,31 +83,22 @@ public interface ComponentService
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk);
 
 	/**
+	 * Deletes a base component
 	 *
 	 * @param <T>
 	 * @param subComponentClass
-	 * @param pk
-	 * @param all
-	 * @return
+	 * @param pk (pk for the base component)
 	 */
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all);
+	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk);
 
 	/**
+	 * Deletes base components for a component Id
 	 *
 	 * @param <T>
 	 * @param subComponentClass
 	 * @param componentId
 	 */
-	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId);
-
-	/**
-	 *
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param componentId
-	 * @param all
-	 */
-	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId, Boolean all);
+	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId);
 
 	/**
 	 * Return the whole list of components. (the short view)
@@ -315,6 +306,5 @@ public interface ComponentService
 	 * @return
 	 */
 	public List<Component> findRecentlyAdded(int maxResults);
-
 
 }

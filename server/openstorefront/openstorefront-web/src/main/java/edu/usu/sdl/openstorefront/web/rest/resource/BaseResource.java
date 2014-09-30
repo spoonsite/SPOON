@@ -17,9 +17,11 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import java.util.List;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 /**
+ * Base Resource for all other resources
  *
  * @author dshurtleff
  */
@@ -37,12 +39,12 @@ public abstract class BaseResource
 		}
 	}
 
-	protected <T> RestListResponse<T> sendListResponse(List<T> data)
+	protected <T> RestListResponse<T> sendListResponse(List<GenericType<T>> data)
 	{
 		return sendListResponse(data, data.size());
 	}
 
-	protected <T> RestListResponse<T> sendListResponse(List<T> data, long totalResults)
+	protected <T> RestListResponse sendListResponse(List<GenericType<T>> data, long totalResults)
 	{
 		RestListResponse<T> restListResponse = new RestListResponse<>();
 		restListResponse.setData(data);
