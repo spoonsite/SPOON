@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * Used to add open am headers.
@@ -45,7 +44,7 @@ public class MockOpenAmRequest
 		fakeHeaders.put("sn", "Account");
 		fakeHeaders.put("mail", "test@test.com");
 		fakeHeaders.put("memberOf", "CN=STORE-Admin, OU=USU");
-		fakeHeaders.put("memberid", RandomStringUtils.randomAlphanumeric(15));
+		fakeHeaders.put("memberid", "55555");
 
 		if (fakeHeaders.containsKey(name)) {
 			return fakeHeaders.get(name);

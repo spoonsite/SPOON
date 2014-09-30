@@ -161,7 +161,11 @@ public class LoginAction
 		if (StringUtils.isBlank(logoutUrl)) {
 			logoutUrl = "/login.jsp";
 		}
-		return new RedirectResolution(logoutUrl);
+		if (logoutUrl.toLowerCase().startsWith("http")) {
+			return new RedirectResolution(logoutUrl, false);
+		} else {
+			return new RedirectResolution(logoutUrl);
+		}
 	}
 
 	public String getUsername()
