@@ -13,29 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.security;
 
-import edu.usu.sdl.openstorefront.security.CustomRequireHandler;
-import edu.usu.sdl.openstorefront.security.NoOpRequireHandler;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import javax.ws.rs.NameBinding;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ResourceInfo;
 
 /**
- * Used to check for Admin rights
+ * Default Handler
  *
  * @author dshurtleff
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@NameBinding
-@Documented
-public @interface RequireAdmin
+public class NoOpRequireHandler
+		implements CustomRequireHandler
 {
 
-	Class<? extends CustomRequireHandler> value() default NoOpRequireHandler.class;
+	@Override
+	public boolean requireAdminCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext)
+	{
+		return true;
+	}
 
 }

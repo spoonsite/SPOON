@@ -36,6 +36,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -57,7 +58,7 @@ public class Search
 			@BeanParam SearchQuery query,
 			@BeanParam FilterQueryParams filter)
 	{
-		List<SearchResult> searchResults = new ArrayList<>();
+		List<GenericType<SearchResult>> searchResults = new ArrayList<>();
 		long totalResults = 0;
 
 		return sendListResponse(searchResults, totalResults);
@@ -72,7 +73,7 @@ public class Search
 	{
 		return service.getSearchService().getAll();
 	}
-	
+
 	@GET
 	@APIDescription("Gets the recently added items")
 	@Produces({MediaType.APPLICATION_JSON})

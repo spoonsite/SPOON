@@ -102,18 +102,16 @@ public class ComponentServiceImpl
 	@Override
 	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId)
 	{
-		return getBaseComponent(subComponentClass, componentId, false);
+		return getBaseComponent(subComponentClass, componentId, BaseComponent.ACTIVE_STATUS);
 	}
 
 	@Override
-	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all)
+	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, String activeStatus)
 	{
 		try {
 			T baseComponentExample = subComponentClass.newInstance();
 			baseComponentExample.setComponentId(componentId);
-			if (all == false) {
-				baseComponentExample.setActiveStatus(BaseComponent.ACTIVE_STATUS);
-			}
+			baseComponentExample.setActiveStatus(activeStatus);
 			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
@@ -122,12 +120,6 @@ public class ComponentServiceImpl
 
 	@Override
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk)
-	{
-		return deactivateBaseComponent(subComponentClass, pk, false);
-	}
-
-	@Override
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all)
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
@@ -138,13 +130,16 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId)
+	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)
 	{
-		deleteBaseComponent(subComponentClass, componentId, false);
+		T found = persistenceService.findById(subComponentClass, pk);
+		if (found != null) {
+			persistenceService.delete(found);
+		}
 	}
 
 	@Override
-	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId, Boolean all)
+	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId)
 	{
 		try {
 			T example = subComponentClass.newInstance();
@@ -207,7 +202,7 @@ public class ComponentServiceImpl
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
-		UserWatch tempUserWatch = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(tempWatch));
+		UserWatch tempUserWatch = persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(tempWatch));
 		if (tempUserWatch != null) {
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
 		}
@@ -317,7 +312,7 @@ public class ComponentServiceImpl
 					example.setComponentAttributePk(new ComponentAttributePk());
 					example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 
-					ComponentAttribute test = persistenceService.queryByOneExample(ComponentAttribute.class, new QueryByExample(example));
+					ComponentAttribute test = persistenceService.queryOneByExample(ComponentAttribute.class, new QueryByExample(example));
 					if (test != null) {
 						throw new OpenStorefrontRuntimeException("Attribute Type doesn't allow multiple codes.  Type: " + type.getAttributeType(), "Check data passed in.");
 					}
@@ -1096,7 +1091,7 @@ public class ComponentServiceImpl
 		UserWatch example = new UserWatch();
 		example.setComponentId(componentId);
 		example.setUsername(userId);
-		example = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(example));
+		example = persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(example));
 		if (example != null) {
 			UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
 			watch.setLastViewDts(TimeUtil.currentDate());
@@ -1120,7 +1115,5 @@ public class ComponentServiceImpl
 
 		return persistenceService.query(query, parameters);
 	}
-
-
 
 }

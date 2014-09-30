@@ -372,7 +372,7 @@ public class AttributeResource
 		if (existing != null) {
 			return handleAttributePostPutCode(attributeCode, true);
 		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find existing type.", "Make sure type exists before call PUT");
+			throw new OpenStorefrontRuntimeException("Unable to find existing code.", "Make sure type exists before call PUT");
 		}
 	}
 

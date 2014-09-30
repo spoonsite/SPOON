@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.security.UserProfileRequireHandler;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
@@ -88,7 +89,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Gets user profile specified by id.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	@Path("/{id}")
@@ -110,7 +111,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Update user profile returns updated profile.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateProile(
 			@RequiredParam UserProfile inputProfile)
@@ -136,7 +137,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Update user profile returns updated profile.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateProile(
@@ -157,7 +158,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves Active User Watches.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches")
 	@DataType(UserWatchView.class)
@@ -176,7 +177,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves an user watch by id.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchView.class)
 	@Path("/{id}/watches/{watchId}")
@@ -193,7 +194,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a new watch to an existing user.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches")
 	public Response addWatch(
@@ -227,7 +228,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Update existing new watch. On update: it will update the last view date.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
@@ -263,7 +264,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Removes a Users Watch.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
@@ -306,6 +307,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a tracking entry for the specified entity")
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
@@ -320,7 +322,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@APIDescription("Update a tracking entry for the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
@@ -345,8 +347,8 @@ public class UserProfileResource
 		if (validationResult.valid()) {
 			tracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
-				// TODO: How does this work with composite keys?
-				return Response.created(URI.create(service.getUserService().saveUserTracking(tracking).getTrackingId())).entity(tracking).build();
+				tracking = service.getUserService().saveUserTracking(tracking);
+				return Response.created(URI.create("v1/resource/userprofiles/" + tracking.getCreateUser() + "/tracking/" + tracking.getTrackingId())).entity(tracking).build();
 			} else {
 				return Response.ok(service.getUserService().saveUserTracking(tracking)).build();
 			}
