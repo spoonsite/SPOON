@@ -51,7 +51,7 @@
             <a ng-show="!user.isLoggedIn" href="" ng-click="goToLogin()">Log in</a>
             <ul class="dropdown-menu">
               <li ng-show="user.info.admin"><a href="javascript: void(0)" ng-click="send('/admin')">Admin Tools</a></li>
-              <li class="divider"></li>
+              <li ng-show="user.info.admin" class="divider"></li>
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'User Profile')">User Profile</a></li>
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Watches')">Watches</a></li>   
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Component Reviews')">Component Reviews</a></li>
@@ -76,8 +76,8 @@
       </div>
       <div class="collapse navbar-collapse center navSearch" id="bs-example-navbar-collapse-2">
         <ul class="nav navbar-nav">
-          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); send('/admin'); ">Admin Tools</a></li>
-          <li class="divider"></li>
+          <li ng-show="user.info.admin"><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); send('/admin'); ">Admin Tools</a></li>
+          <li ng-show="user.info.admin" class="divider"></li>
           <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'User Profile'); ">User Profile</a></li>
           <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Watches'); ">Watches</a></li>   
           <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Component Feedback'); ">Component Feedback</a></li>
