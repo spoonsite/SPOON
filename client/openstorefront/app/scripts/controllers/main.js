@@ -125,11 +125,32 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
         $location.search('code', search);
       }
 
-    } else {
-      Business.componentservice.search(searchType, searchKey);
+    } else if (searchType === 'attribute') {
+      if (searchKey && searchKey.keyType) {
+        var keyKey = searchKey.keyKey? searchKey.keyKey : 'all';
+        $location.search({
+          'type': 'attribute',
+          'keyType': searchKey.keyType,
+          'keyKey': keyKey
+        });
+      }
       $location.path('/results');
-      $location.search('type', searchType);
-      $location.search('code', searchKey);
+    } else {
+      if (searchKey && searchKey.keyType) {
+        var keyKey = searchKey.keyKey? searchKey.keyKey : 'all';
+        $location.search({
+          'type': 'attribute',
+          'keyType': searchKey.keyType,
+          'keyKey': keyKey
+        });
+      } else {
+        $location.search({
+          'type': 'search',
+          'code': 'all'
+        });
+      }
+      // Business.componentservice.search(searchType, searchKey);
+      $location.path('/results');
     }
     return;
   };

@@ -246,6 +246,7 @@ var app = angular
       });
 
       $rootScope.$on('$routeChangeSuccess', function (event, next, current){
+        $rootScope.$broadcast('$UNLOAD', 'bodyLoad');
       });
 
 

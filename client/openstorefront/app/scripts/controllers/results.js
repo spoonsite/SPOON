@@ -203,48 +203,57 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.searchKey        = 'search';
       $scope.searchCode       = '';
     }
-
-    setupResults();
-    // var start = new Date().getTime();
-    Business.componentservice.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
-      if (result)
-      {
-        $scope.total = result.data || [];
+    Business.getFilters().then(function(result) {
+      if (result) {
+        $scope.filters = result;
+        $scope.filters = angular.copy($scope.filters);
+        $scope.filters = _.sortBy($scope.filters, function(item){
+          return item.description;
+        });
       } else {
-        $scope.total = [];
+        $scope.filters = null;
       }
-      $scope.filteredTotal = $scope.total;
+      setupResults();      
+      var architecture = null;
 
-      /*Simulate wait for the filters*/
-      Business.getFilters().then(function(result) {
-        if (result) {
-          $scope.filters = result;
-          $scope.filters = angular.copy($scope.filters);
-          $scope.filters = _.sortBy($scope.filters, function(item){
-            return item.description;
-          });
-        } else {
-          $scope.filters = null;
+      if ($scope.searchKey === 'attribute') {
+        if ($scope.searchCode.type) {
+          var filter = _.find($scope.filters, {'type': $scope.searchCode.type});
+          if (filter){
+            architecture = filter.archtechtureFlg;
+          }
         }
-      });
-      /*This is simulating the wait time for building the data so that we get a loader*/
-      $scope.data.data = $scope.total;
-      _.each($scope.data.data, function(item){
-        if (item.description !== null && item.description !== undefined && item.description !== '') {
-          var desc = item.description.match(/^(.*?)[.?!]\s/);
-          item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
+      }
+
+      Business.componentservice.doSearch($scope.searchKey, $scope.searchCode, architecture).then(function(result) {
+        if (result)
+        {
+          $scope.total = result.data || [];
         } else {
-          item.shortdescription = 'This is a temporary short description';
+          $scope.total = [];
         }
+        $scope.filteredTotal = $scope.total;
+
+        /*Simulate wait for the filters*/
+        /*This is simulating the wait time for building the data so that we get a loader*/
+        $scope.data.data = $scope.total;
+        _.each($scope.data.data, function(item){
+          if (item.description !== null && item.description !== undefined && item.description !== '') {
+            var desc = item.description.match(/^(.*?)[.?!]\s/);
+            item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
+          } else {
+            item.shortdescription = 'This is a temporary short description';
+          }
+        });
+        // var end = new Date().getTime();
+        // var time = end - start;
+        // console.log('Total Execution time ****: ' + time);
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+        $scope.initializeData(key);
+        adjustFilters();
       });
-      // var end = new Date().getTime();
-      // var time = end - start;
-      // console.log('Total Execution time ****: ' + time);
-      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-      $scope.initializeData(key);
-      adjustFilters();
-    });
+});
   }; //
 
 
@@ -349,7 +358,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   var callSearch = function(key) {
     $scope.$emit('$TRIGGERLOAD', 'mainLoader');
-    
+
     var type = 'search';
     var code = 'all';
     var query = null;

@@ -437,14 +437,13 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   };
 
-  componentservice.doSearch = function(type, key) {
+  componentservice.doSearch = function(type, key, architecture) {
     var result            = $q.defer();
     var url               = 'api/v1/service/search/all';
     var value             = null;
     var cachedComponents  = null;
     var name;
-    // console.log('type', type);
-    // console.log('key', key);
+
     
     if (type && key) {
       type  = type.toLowerCase();
@@ -470,7 +469,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         result.resolve(value);
       } else {
         if (cachedComponents) {
-          var temp = search({'type': type, 'key': key}, cachedComponents);
+          var temp = search({'type': type, 'key': key}, cachedComponents, architecture);
           // var end = new Date().getTime();
           // var time = end - start;
           // console.log('finished search!', temp);
@@ -486,7 +485,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
             if (data && !isEmpty(data) && isNotRequestError(data)) {
               removeError();
               save('cachedComponents', data);
-              var temp = search({'type': type, 'key': key}, data);
+              var temp = search({'type': type, 'key': key}, data, architecture);
               // var end = new Date().getTime();
               // var time = end - start;
               // console.log('finished search!', temp);

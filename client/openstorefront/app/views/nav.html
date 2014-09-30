@@ -50,7 +50,7 @@
             <span ng-if="!(user.info.firstName && user.info.firstName!== '') && !(user.info.lastName && user.info.lastName!== '') && (user.info.username && user.info.username!== '')">{{user.info.username}}&nbsp;<b class="caret"></b></span></a>
             <a ng-show="!user.isLoggedIn" href="" ng-click="goToLogin()">Log in</a>
             <ul class="dropdown-menu">
-              <li><a href="javascript: void(0)" ng-click="send('/admin')">Admin Tools</a></li>
+              <li ng-show="user.info.admin"><a href="javascript: void(0)" ng-click="send('/admin')">Admin Tools</a></li>
               <li class="divider"></li>
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'User Profile')">User Profile</a></li>
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Watches')">Watches</a></li>   
