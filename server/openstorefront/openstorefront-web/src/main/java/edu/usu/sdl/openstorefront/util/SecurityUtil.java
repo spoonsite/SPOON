@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.util;
 
 import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -85,6 +86,21 @@ public class SecurityUtil
 			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started.");
 		}
 		return userContext;
+	}
+
+	/**
+	 * Check to see if the current user created the entity
+	 *
+	 * @param entity (if null it will return false)
+	 * @return
+	 */
+	public static boolean isCurrentUserTheOwner(BaseEntity entity)
+	{
+		if (entity != null) {
+			return getCurrentUserName().equals(entity.getCreateUser());
+		} else {
+			return false;
+		}
 	}
 
 }

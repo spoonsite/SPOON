@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.security;
 
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.io.Serializable;
 
 /**
@@ -32,6 +33,15 @@ public class UserContext
 
 	public UserContext()
 	{
+	}
+
+	@Override
+	public String toString()
+	{
+		if (userProfile != null) {
+			return userProfile.getUsername();
+		}
+		return OpenStorefrontConstant.ANONYMOUS_USER;
 	}
 
 	public UserProfile getUserProfile()
