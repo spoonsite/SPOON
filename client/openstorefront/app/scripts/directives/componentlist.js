@@ -168,7 +168,15 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
         var key = (attrs.key !== null && attrs.key !== undefined && attrs.key !== '')? attrs.key: null;
         scope.search = {'type': 'attribute', key:{'type': attrs.type, 'key': key}};
-        Business.componentservice.doSearch(scope.search.type, scope.search.key).then(function(result){
+        var architecture = null;
+
+        var filter = _.find(scope.filters, {'type': attrs.type});
+        console.log('filter', filter);
+        
+        if (filter){
+          architecture = filter.archtechtureFlg;
+        }
+        Business.componentservice.doSearch(scope.search.type, scope.search.key, architecture).then(function(result){
           if (result)
           {
             if (result.data && result.data.length > 0) { 

@@ -16,25 +16,46 @@
 
 'use strict';
 
-var hasAttribute = function(list, attribute){
+var hasAttribute = function(list, attribute, architecture){
   var result = [];
-  if (list && attribute) {
-    _.each(list, function(item){
-      if (attribute.key && attribute.type && (_.find(item.attributes, {'code': attribute.key, 'type': attribute.type}) !== undefined)){
-        result.push(item);
-      } else if (attribute.type && !attribute.key && (_.find(item.attributes, {'type': attribute.type}) !== undefined)) {
+  if (!architecture) {
+    if (list && attribute) {
+      _.each(list, function(item){
+        if (attribute.key && attribute.type && (_.find(item.attributes, {'code': attribute.key, 'type': attribute.type}) !== undefined)){
+          result.push(item);
+        } else if (attribute.type && !attribute.key && (_.find(item.attributes, {'type': attribute.type}) !== undefined)) {
+          result.push(item);
+        }
+      });
+    } 
+  } else {
+    if (list && attribute && attribute.type && attribute.key) {
+      _.each(list, function(item){
+        if (attribute.key && attribute.type  &&
+          (_.some(item.attributes, function(attr){
+            if (attr.type !== attribute.type) {
+              return false;
+            } else {
+              var index = attr.code.indexOf(attribute.key);
+              if (index === 0) {
+                return true;
+              } return false;
+            }
+          })) ) {
+          result.push(item);
+        } //
+      })
+    } else if (list && attribute) {
+      if (attribute.type && !attribute.key && (_.find(item.attributes, {'type': attribute.type}) !== undefined)) {
         result.push(item);
       }
-    });
-  } else {
-    return [];
+    }
   }
   return result;
 }
 
-var search = function(searchKey, list) {
-  console.log('got to search function');
-  
+var search = function(searchKey, list, architecture) {
+
   if (list && searchKey) {
     var key;
     var type;
@@ -80,7 +101,7 @@ var search = function(searchKey, list) {
 
     // matching and storing the keywords in matched
     if (doStrict) {
-      matched = hasAttribute(list, searchKey.key);
+      matched = hasAttribute(list, searchKey.key, architecture);
       result.found = matched;
       result.data = matched;
     } else {
@@ -159,13 +180,13 @@ var search = function(searchKey, list) {
         } 
       }
       matched = _.sortBy(matched, 'score').reverse();
-      console.log('matched', matched);
+      // console.log('matched', matched);
       result.keywords = keywords;
       result.found = matched;
       result.data = _.pluck(matched, 'data');
-      console.log('result.data', result.data);
+      // console.log('result.data', result.data);
     }
-    console.log('finished search function');
+    // console.log('finished search function');
     
     return result;
   } else {

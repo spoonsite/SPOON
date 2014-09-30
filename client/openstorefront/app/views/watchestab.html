@@ -23,6 +23,9 @@ limitations under the License.
           <h3 class="panel-title watch-content-title">WATCHES</h3>
         </div>
         <div class="panel-body">
+          <div ng-if="!watches || watches.length === 0">
+            You have no watches to check up on yet. (Add one by clicking on the watch button in the component details page.)
+          </div>
           <div ng-class="isNewer(item.lastUpdateDts, item.lastViewDts)? 'newer':''" class="col-sm-4 watchesList" ng-repeat="item in watches">
             <div id="div{{item.componentId}}" >
               <span class="item_bold overflow-pair-left">

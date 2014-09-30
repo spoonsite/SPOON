@@ -17,7 +17,7 @@
 
 /*global setUpDropdown*/
 
-app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$route', '$timeout', 'auth', function ($scope, $location, $rootScope, Business, $route, $timeout, Auth) { /*jshint unused: false*/
+app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'business', '$route', '$timeout', 'auth', function ($scope, $location, localCache, $rootScope, Business, $route, $timeout, Auth) { /*jshint unused: false*/
 
   /*******************************************************************************
   * This Controller gives us a place to add functionality to the navbar
@@ -140,12 +140,7 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
       'type': 'search',
       'code': key
     });
-    if($location.path() === '/results') {
-      console.log('we started a search from nav');
-      $rootScope.$broadcast('$callSearch', { 'key': 'search', 'code': key });
-    } else {
-      $location.path('/results');
-    }
+    $location.path('/results');
   };
 
   /***************************************************************
@@ -179,7 +174,8 @@ app.controller('NavCtrl', ['$scope', '$location', '$rootScope', 'business', '$ro
   $scope.logout = function () {
     Auth.logout();
     $scope.user.isLoggedIn = false;
-    $route.reload();
+    localCache.clearAll();
+    window.location('/openstorefront/Login.action?logout');
   };
 
   //////////////////////////////////////////////////////////////////////////////

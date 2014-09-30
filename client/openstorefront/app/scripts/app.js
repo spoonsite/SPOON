@@ -39,13 +39,14 @@ var app = angular
     'ngMockE2E',
     'bootstrapLightbox',
     'angular-carousel',
-    'angulartics.google.analytics'
+    'angulartics.google.analytics',
+    'ngIdle'
   // end of dependency injections
   ]
 // end of the module creation
 )
 // Here we configure the route provider
-.config(function ($routeProvider, tagsInputConfigProvider, LightboxProvider) {
+.config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider) {
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
@@ -147,7 +148,14 @@ var app = angular
       'height': Math.max(500, dimensions.imageDisplayHeight + 76)
     };
   };
-})
+
+  // set up the idleProvider and keepaliveProvider
+  $idleProvider.idleDuration(30 * 60);
+  $idleProvider.warningDuration(60);
+  $keepaliveProvider.interval(20 * 60);
+
+
+}])
 
 // here we add the .run function for intial setup and other useful functions
 .run(
@@ -165,18 +173,48 @@ var app = angular
     '$anchorScroll',
     '$routeParams',
     '$analytics',
-    function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics) {/* jshint unused: false*/
+    '$idle',
+    '$keepalive',
+    '$uiModal',
+    function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
 
-      // this is called only on first view of the '/' route (login)
-      localCache.clearAll();
+      // initialization stuff.
+      $rootScope.ieVersionCheck = false;
+      $rootScope.loaded = false;
 
+      $timeout(function() {
+        console.log('We\'ve added the module...');
 
-      // grab the 'current user'
-      Business.userservice.initializeUser().then(function(result){
-        if (result) {
-          $rootScope.$broadcast('$LOGGEDIN', result);
-        }
-      });
+        // this is called only on first view of the '/' route (login)
+        localCache.clearAll();
+
+        // grab the 'current user'
+        Business.userservice.initializeUser().then(function(result){
+          if (result) {
+            // Google Analytics Tracking Code
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            if (result.username) {
+              ga('create', 'UA-48252919-8', { 'userId': result.username });
+            } else {
+              ga('create', 'UA-48252919-8', 'auto');
+            }
+            ga('require', 'displayfeatures');
+            console.log('We\'ve and initialized the user...');
+            $rootScope.$broadcast('$LOGGEDIN', result);
+            $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
+          }
+        });
+        Business.ieCheck().then(function(result){
+          $rootScope.ieVersionCheck = result;
+          $rootScope.loaded = true;
+        }, function(){
+          $rootScope.ieVersionCheck = false;
+          $rootScope.loaded = true;
+        })
+      }, 10);
 
 
       //////////////////////////////////////////////////////////////////////////////
@@ -219,6 +257,7 @@ var app = angular
       });
 
       $rootScope.$on('$routeChangeSuccess', function (event, next, current){
+        $rootScope.$broadcast('$UNLOAD', 'bodyLoad');
       });
 
 
@@ -245,9 +284,6 @@ var app = angular
         $timeout(function() {
           $('[data-toggle=\'tooltip\']').tooltip();
         }, 300);
-        if (!Auth.signedIn() && $location.path() !== '/login') {
-          $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
-        }
         $timeout(function() {
           $rootScope.$broadcast('$UNLOAD', 'bodyLoad');
         });
@@ -305,7 +341,7 @@ var app = angular
         // console.log('we got an event', name, category, label);
         $analytics.eventTrack(name,{'category': category, 'label': label});
       };
-  
+
 
       $rootScope.openModal = function(id, current) {
         $rootScope.current = current;
@@ -429,6 +465,7 @@ var app = angular
       $httpBackend.whenGET(/views.*/).passThrough();
       
       $httpBackend.whenGET(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenGET('System.action?UserAgent').passThrough();
       $httpBackend.whenPUT(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenGET('api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
       $httpBackend.whenGET(/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
@@ -511,7 +548,7 @@ var app = angular
       //   return [200, result.promise, {}];
       // });
 
-      $httpBackend.whenGET('api/v1/resource/attributes').passThrough();
+$httpBackend.whenGET('api/v1/resource/attributes').passThrough();
       // .respond(function(method, url, data) {
       //   return [200, MOCKDATA.filters, {}];
       // });
@@ -520,17 +557,17 @@ var app = angular
       //   return [200, MOCKDATA.tagsList, {}];
       // });
 
-      $httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
-        return [200, MOCKDATA.prosConsList, {}];
-      });
+$httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
+  return [200, MOCKDATA.prosConsList, {}];
+});
 
-      $httpBackend.whenGET('api/v1/resource/attributes/attributetypes/DI2ELEVEL/attributecodes').passThrough();
+$httpBackend.whenGET('api/v1/resource/attributes/attributetypes/DI2ELEVEL/attributecodes').passThrough();
       // respond(function(method, url, data) {
       //   var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
       //   return [200, result, {}];
       // });
 
-      $httpBackend.whenGET(/api\/v1\/resource\/lookuptypes\/[^\/][^\/]*\/?view/).passThrough();
+$httpBackend.whenGET(/api\/v1\/resource\/lookuptypes\/[^\/][^\/]*\/?view/).passThrough();
       // respond(function(method, url, data) {
       //   var result = [
       //     //
@@ -545,14 +582,74 @@ var app = angular
       //   return [200, result, {}];
       // });
 
-      $httpBackend.whenGET('api/v1/resource/lookup/watches').respond(function(method, url, data) {
-        return [200, MOCKDATA.watches, {}];
+$httpBackend.whenGET('api/v1/resource/lookup/watches').respond(function(method, url, data) {
+  return [200, MOCKDATA.watches, {}];
+});
+
+$httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method, url, data) {
+  MOCKDATA.watches = data;
+  return [200, angular.fromJson(data), {}];
+});
+
+
+      $rootScope.started = false;
+
+      $rootScope.closeModals = function() {
+        if ($rootScope.warning) {
+          $rootScope.warning.close();
+          $rootScope.warning = null;
+        }
+
+        if ($rootScope.timedout) {
+          $rootScope.timedout.close();
+          $rootScope.timedout = null;
+        }
+      }
+
+      $rootScope.logout = function() {
+        window.location('/openstorefront/Login.action?Logout');
+      }
+
+      $rootScope.$on('$idleStart', function() {
+        $rootScope.closeModals();
+
+        $rootScope.warning = $uiModal.open({
+          templateUrl: 'views/timeout/warning-dialog.html',
+          windowClass: 'modal-danger'
+        });
       });
 
-      $httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method, url, data) {
-        MOCKDATA.watches = data;
-        return [200, angular.fromJson(data), {}];
+      $rootScope.$on('$idleEnd', function() {
+        $rootScope.closeModals();
+        // no need to do anything unless you want to here.
       });
+
+      $rootScope.$on('$keepalive', function() {
+        // do something to keep the user's session alive
+        Business.userservice.getCurrentUserProfile(true);
+      });
+
+      $rootScope.$on('$idleTimeout', function() {
+        //log them out here
+        $rootScope.closeModals();
+        $rootScope.logout();
+      });
+
+      // $rootScope.start = function() {
+      //   closeModals();
+      //   $idle.watch();
+      //   $rootScope.started = true;
+      // };
+
+      // $rootScope.stop = function() {
+      //   closeModals();
+      //   $idle.unwatch();
+      //   $rootScope.started = false;
+      // };
+      
+      $idle.watch();
+
+
     } // end of run function
   ] // end of injected dependencies for .run
 ); // end of app module

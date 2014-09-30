@@ -437,14 +437,13 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   };
 
-  componentservice.doSearch = function(type, key) {
+  componentservice.doSearch = function(type, key, architecture) {
     var result            = $q.defer();
     var url               = 'api/v1/service/search/all';
     var value             = null;
     var cachedComponents  = null;
     var name;
-    // console.log('type', type);
-    // console.log('key', key);
+
     
     if (type && key) {
       type  = type.toLowerCase();
@@ -461,20 +460,20 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       // if they don't give me an ID I send them back the whole list.
       value = checkExpire(name, minute * 10);
       cachedComponents = checkExpire('cachedComponents', minute * 1440); // a day
-      console.log('started search');
-      var start = new Date().getTime();
+      // console.log('started search');
+      // var start = new Date().getTime();
       if (value) {
-        var end = new Date().getTime();
-        var time = end - start;
-        console.log('Total Execution time: ' + time);
+        // var end = new Date().getTime();
+        // var time = end - start;
+        // console.log('Total Execution time: ' + time);
         result.resolve(value);
       } else {
         if (cachedComponents) {
-          var temp = search({'type': type, 'key': key}, cachedComponents);
-          var end = new Date().getTime();
-          var time = end - start;
-          console.log('finished search!', temp);
-          console.log('Total Execution time: ' + time);
+          var temp = search({'type': type, 'key': key}, cachedComponents, architecture);
+          // var end = new Date().getTime();
+          // var time = end - start;
+          // console.log('finished search!', temp);
+          // console.log('Total Execution time: ' + time);
           save(name, temp);
           result.resolve(temp);
         } else {
@@ -486,11 +485,11 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
             if (data && !isEmpty(data) && isNotRequestError(data)) {
               removeError();
               save('cachedComponents', data);
-              var temp = search({'type': type, 'key': key}, data);
-              var end = new Date().getTime();
-              var time = end - start;
-              console.log('finished search!', temp);
-              console.log('Total Execution time: ' + time);
+              var temp = search({'type': type, 'key': key}, data, architecture);
+              // var end = new Date().getTime();
+              // var time = end - start;
+              // console.log('finished search!', temp);
+              // console.log('Total Execution time: ' + time);
               save(name, temp);
               result.resolve(temp);
             } else {
