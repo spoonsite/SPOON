@@ -290,11 +290,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // TODO: CLEAN UP THIS IF/ELSE switch!!!!!!!
 
 
-      if (_.contains(keys, $scope.searchKey)) {
+      if (_.contains(keys, $scope.searchCode.type)) {
         $scope.showSearch         = true;
         
-        foundFilter = _.where($scope.filters, {'type': $scope.searchGroup[0].key})[0];
-        foundCollection = _.where(foundFilter.codes, {'code': $scope.searchGroup[0].code})[0];
+        foundFilter = _.find($scope.filters, {'type': $scope.searchCode.type});
+        foundCollection = _.find(foundFilter.codes, {'code': $scope.searchCode.key});
+        console.log('found', foundFilter);
+        console.log('found', foundCollection);
+        
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all' && foundFilter && foundCollection) {
           $scope.filters = _.reject($scope.filters, function(filter) {
@@ -303,7 +306,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           $scope.searchColItem      = foundCollection;
           $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
           $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
-          $scope.searchDescription  = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
+          $scope.searchDescription  = getShortDescription(foundCollection.description) || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
 
           if (foundCollection.landing !== undefined && foundCollection.landing !== null) {
             getBody(foundCollection.landing).then(function(result) {

@@ -21,4 +21,5 @@ filtClick, setPageHeight*/
 
 app.controller('ResultsModalCtrl', ['$scope', function ($scope) { /*jshint unused: false*/
   $scope.checkTagsList = $scope.$parent.checkTagsList;
+  $scope.modal = $scope.$parent.modal;
 }]);
