@@ -17,46 +17,46 @@
 
 var doAttributes = function() {
 
-    $.get("/openstorefront/api/v1/resource/attributes/attributetypes", function(data) {
-        console.log('data', data);
-        var types = data;
-        for (var i = 0; i < types.length; i++) {
-            setupAttributes(types[i]);
+    $.get("/openstorefront/api/v1/resource/attributes", function(data) {
+        if (data && data.length > 0){
+            setupAttributes(data);
         }
     });
 };
 
 
-var setupAttributes = function(type) {
-    $.get("/openstorefront/api/v1/resource/attributes/attributetypes/" + type.attributeType + "/attributecodes", function(codes) {
+var setupAttributes = function(types) {
+    for (var i = 0; i < types.length; i++) {
+        var codes = types[i].codes;
         if (codes && codes.length > 0) {
-            $('#tableOfContents').append('<tr><td><span goTo="' + type.attributeType + '" class="imitateLink">' + type.description+ '</span></td></tr>');
-            $('#content').append('<div id="' + type.attributeType + '" style="margin-top: 50px;"><h3>' + type.description + '</h3><div style="margin-left: 20px;"><table><tr><th>Label</th><th>Code</th><th>Description</th></tr></table></div></div>');
-            $('span[goTo]').on('click', function(e) {
-                e.preventDefault();
-                var target = $(this).attr('goTo');
-                var $target = $('#' + target);
-
-                $('html, body').stop().animate({
-                    'scrollTop': $target.offset().top - 50
-                }, 400, 'swing', function() {
-                });
-            });
+            $('#tableOfContents').append('<tr><td><span goTo="' + types[i].type + '" class="imitateLink">' + types[i].description + '</span></td></tr>');
+            $('#content').append('<div id="' + types[i].type + '" style="margin-top: 50px;"><h3>' + types[i].description + '</h3><div style="margin-left: 20px;"><table><tr><th>Label</th><th>Code</th><th>Description</th></tr></table></div></div>');
             for (var j = 0; codes && j < codes.length; j++) {
-                $('#' + type.attributeType).find('table').append('<tr><td>' + codes[j].label + '</td><td>' + codes[j].attributeCodePk.attributeCode + '</td><td>'+ codes[j].description +'</td></tr></div>');
-
+                $('#' + types[i].type).find('table').append('<tr><td>' + codes[j].label + '</td><td>' + codes[j].code + '</td><td>' + codes[j].description + '</td></tr></div>');
             }
         }
+    }
+    $('span[goTo]').on('click', function(e) {
+        e.preventDefault();
+        var target = $(this).attr('goTo');
+        var $target = $('#' + target);
+
+        $('html, body').stop().animate({
+            'scrollTop': $target.offset().top - 50
+        }, 400, 'swing', function() {
+        });
     });
+
 };
 
 var doLookups = function() {
-
     $.get("/openstorefront/api/v1/resource/lookuptypes", function(data) {
-        console.log('data', data);
-        var types = data;
-        for (var i = 0; i < types.length; i++) {
-            setupLookups(types[i]);
+        if (data && data.length > 0) {
+            console.log('data', data);
+            var types = data;
+            for (var i = 0; i < types.length; i++) {
+                setupLookups(types[i]);
+            }
         }
     });
 };

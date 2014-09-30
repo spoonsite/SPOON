@@ -348,6 +348,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function grabs the search key and resets the page in order to update the search
   ***************************************************************/
   var callSearch = function(key) {
+    $scope.$emit('$TRIGGERLOAD', 'mainLoader');
+    
     var type = 'search';
     var code = 'all';
     var query = null;
