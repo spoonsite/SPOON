@@ -1736,7 +1736,7 @@ public class ComponentRESTResource
 		if (tag != null) {
 			response = ownerCheck(tag);
 			if (response == null) {
-				service.getPersistenceService().delete(tag);
+				service.getComponentService().deleteBaseComponent(ComponentTag.class, tag.getTagId());
 				response = Response.ok().build();
 			}
 		}
