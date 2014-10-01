@@ -183,8 +183,6 @@ var app = angular
       $rootScope.loaded = false;
 
       $timeout(function() {
-        console.log('We\'ve added the module...');
-
         // this is called only on first view of the '/' route (login)
         localCache.clearAll();
 
@@ -202,7 +200,6 @@ var app = angular
               ga('create', 'UA-48252919-8', 'auto');
             }
             ga('require', 'displayfeatures');
-            console.log('We\'ve and initialized the user...');
             $rootScope.$broadcast('$LOGGEDIN', result);
             $rootScope.$broadcast('$beforeLogin', $location.path(), $location.search());
           }
@@ -504,26 +501,26 @@ var app = angular
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
       $httpBackend.whenGET('api/v1/resource/components/tags').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tag/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tag/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question/).passThrough();
-      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?question\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags\/text/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags\/list/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions\/[^\/][^\/]*\/?responses\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions\/[^\/][^\/]*\/?responses\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPUT(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
       $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review/).passThrough();
-      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenPOST('api/v1/resource/components/reviews/ANONYMOUS').passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?pro/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?review\/[^\/][^\/]*\/?con/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?pro/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?con/).passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?attributecodes\/[^\/][^\/]*\/?article/).passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?architecture/).passThrough();
       // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {

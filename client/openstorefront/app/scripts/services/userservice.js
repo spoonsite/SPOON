@@ -297,7 +297,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   */
   var getReviews = function(username) {
     var deferred = $q.defer();
-    var reviews = checkExpire('reviews', minute * 0.5);
+    var reviews = checkExpire('reviews'+username, minute * 0.5);
     if (reviews) {
       deferred.resolve(reviews);
     } else {
@@ -307,7 +307,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
-          save('reviews', data);
+          save('reviews'+username, data);
           deferred.resolve(data);
         } else {
           removeError();
