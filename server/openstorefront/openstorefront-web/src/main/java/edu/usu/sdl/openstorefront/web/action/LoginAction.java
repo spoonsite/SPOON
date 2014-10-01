@@ -21,17 +21,20 @@ import edu.usu.sdl.openstorefront.security.HeaderRealm;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -113,6 +116,27 @@ public class LoginAction
 		} else {
 			return new RedirectResolution(startPage);
 		}
+	}
+
+	@HandlesEvent("CheckHeaders")
+	public Resolution checkHeaders()
+	{
+		StringBuilder headerInfo = new StringBuilder();
+		Enumeration<String> names = getContext().getRequest().getHeaderNames();
+		while (names.hasMoreElements()) {
+			String name = names.nextElement();
+			StringBuilder valueInfo = new StringBuilder();
+			Enumeration<String> values = getContext().getRequest().getHeaders(name);
+			while (values.hasMoreElements()) {
+				String value = values.nextElement();
+				valueInfo.append(value).append(" | ");
+
+			}
+			headerInfo.append(name).append(" = ").append(valueInfo).append("<br>");
+
+		}
+
+		return new StreamingResolution(MediaType.TEXT_HTML, headerInfo.toString());
 	}
 
 	@HandlesEvent("Login")
