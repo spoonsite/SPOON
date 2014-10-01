@@ -243,11 +243,11 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ***************************************************************/
   $scope.saveTags = function(id, tags, tag){
     Business.componentservice.saveTags(id, tags).then(function(result){
-      console.log('result', result);
+      // console.log('result', result);
       $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
       $scope.$emit('$TRIGGEREVENT', '$CHANGESEARCHRESULTTAGS', id, tags);
     }, function(result){
-      console.log('Error Result', result);
+      // console.log('Error Result', result);
 
     });
     $scope.applyFilters();
@@ -449,11 +449,15 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.deleteQuestion = function(questionId) {
     Business.componentservice.deleteQuestion($scope.details.details.componentId, questionId).then(function(result) {
       $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
+    },function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
     });
   };
 
-  $scope.deleteResponse = function(responseId) {
-    Business.componentservice.deleteResponse($scope.details.details.componentId, responseId).then(function(result) {
+  $scope.deleteResponse = function(responseId, questionId) {
+    Business.componentservice.deleteResponse($scope.details.details.componentId, responseId, questionId).then(function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
+    },function(result) {
       $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
     });
   };
@@ -461,6 +465,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.deleteReview = function(reviewId) {
     // console.log('reviewId', reviewId);
     Business.componentservice.deleteReview($scope.details.details.componentId, reviewId).then(function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
+      $scope.$emit('$TRIGGEREVENT', '$newReview');
+    },function(result) {
       $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
       $scope.$emit('$TRIGGEREVENT', '$newReview');
     });
@@ -497,8 +504,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       var lastViewedDts = sqlToJsDate(component.lastViewedDts);
       var shown = false;
       _.each(component.componentMedia, function(media){
-        console.log('media date', sqlToJsDate(media.updateDts));
-        console.log('lastViewed', lastViewedDts);
+        // console.log('media date', sqlToJsDate(media.updateDts));
+        // console.log('lastViewed', lastViewedDts);
         
         if (!shown && sqlToJsDate(media.updateDts) > lastViewedDts) {
           //media.updateDts is more recent. We should show it as updated

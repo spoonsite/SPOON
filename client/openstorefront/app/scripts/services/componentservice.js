@@ -70,7 +70,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var result = $q.defer();
     if (id && reviewId && pro)
     {
-      var url = 'api/v1/resource/components/'+id+'/review/'+reviewId+'/pro';
+      var url = 'api/v1/resource/components/'+id+'/reviews/'+reviewId+'/pro';
       $http({
         method: 'DELETE',
         url: url,
@@ -78,7 +78,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       })
       .success(function(data, status, headers, config) { /*jshint unused:false*/
       });
-      url = 'api/v1/resource/components/'+id+'/review/'+reviewId+'/con';
+      url = 'api/v1/resource/components/'+id+'/reviews/'+reviewId+'/con';
       $http({
         method: 'DELETE',
         url: url,
@@ -106,7 +106,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var result = $q.defer();
     if (id && questionId)
     {
-      var url = 'api/v1/resource/components/'+id+'/question/'+questionId;
+      var url = 'api/v1/resource/components/'+id+'/questions/'+questionId;
       $http({
         method: 'DELETE',
         url: url,
@@ -137,10 +137,10 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       var methodString; 
       if (questionId){
         methodString = 'PUT';
-        url = 'api/v1/resource/components/'+id+'/question/'+questionId;
+        url = 'api/v1/resource/components/'+id+'/questions/'+questionId;
       } else {
         methodString = 'POST';
-        url = 'api/v1/resource/components/'+id+'/question';
+        url = 'api/v1/resource/components/'+id+'/questions';
       }
       $http({
         method: methodString,
@@ -166,11 +166,11 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
   }
 
 
-  componentservice.deleteResponse = function(id, responseId) {
+  componentservice.deleteResponse = function(id, responseId, questionId) {
     var result = $q.defer();
-    if (id && responseId)
+    if (id && responseId && questionId)
     {
-      var url = 'api/v1/resource/components/'+id+'/response/'+responseId;
+      var url = 'api/v1/resource/components/'+id+'/questions/'+questionId+'/responses/'+responseId;
       $http({
         method: 'DELETE',
         url: url,
@@ -200,10 +200,10 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       var url;
       var methodString;
       if (!responseId) {
-        url = 'api/v1/resource/components/'+id+'/response/'+questionId;
+        url = 'api/v1/resource/components/'+id+'/questions/'+questionId+'/responses';
         methodString = 'POST';
       } else {
-        url = 'api/v1/resource/components/'+id+'/response/'+responseId;
+        url = 'api/v1/resource/components/'+id+'/questions/'+questionId+'/responses/'+responseId;
         methodString = 'PUT';
       }
       $http({
@@ -233,7 +233,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var result = $q.defer();
     if (id && reviewId)
     {
-      var url = 'api/v1/resource/components/'+id+'/review/'+reviewId;
+      var url = 'api/v1/resource/components/'+id+'/reviews/'+reviewId;
       $http({
         method: 'DELETE',
         url: url,
@@ -267,10 +267,10 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       var url;
       var methodString;
       if (!reviewId) {
-        url = 'api/v1/resource/components/'+id+'/review';
+        url = 'api/v1/resource/components/'+id+'/reviews';
         methodString = 'POST';
       } else {
-        url = 'api/v1/resource/components/'+id+'/review/' + reviewId;
+        url = 'api/v1/resource/components/'+id+'/reviews/' + reviewId;
         methodString = 'PUT';
       }
       $http({
@@ -300,7 +300,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var result = $q.defer();
     if (id && reviewId && pro)
     {
-      var url = 'api/v1/resource/components/'+id+'/review/'+reviewId+'/pro';
+      var url = 'api/v1/resource/components/'+id+'/reviews/'+reviewId+'/pros';
       $http({
         method: 'POST',
         url: url,
@@ -328,7 +328,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var result = $q.defer();
     if (id && reviewId && con)
     {
-      var url = 'api/v1/resource/components/'+id+'/review/'+reviewId + '/con';
+      var url = 'api/v1/resource/components/'+id+'/reviews/'+reviewId + '/cons';
       $http({
         method: 'POST',
         url: url,
@@ -539,7 +539,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     $http.delete('api/v1/resource/components/'+id+'/tags');
     $http({
       method: 'POST',
-      url: 'api/v1/resource/components/'+id+'/tags',
+      url: 'api/v1/resource/components/'+id+'/tags/list',
       data: tags
     }).success(function(data, status, headers, config){
       if (data && data !== 'false' && isNotRequestError(data)) {
@@ -561,7 +561,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     if (id && tag) {
       $http({
         method: 'POST',
-        url: 'api/v1/resource/components/'+id+'/tag',
+        url: 'api/v1/resource/components/'+id+'/tags',
         data: tag
       }).success(function(data, status, headers, config){
         if (data && data !== 'false' && isNotRequestError(data)) {
@@ -586,7 +586,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     if (id && tag) {
       $http({
         method: 'DELETE',
-        url: 'api/v1/resource/components/'+id+'/tag',
+        url: 'api/v1/resource/components/'+id+'/tags/text',
         headers: {
           'Content-Type': 'application/json'
         },
