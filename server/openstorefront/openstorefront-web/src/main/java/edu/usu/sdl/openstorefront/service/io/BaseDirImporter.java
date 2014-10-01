@@ -37,6 +37,8 @@ public abstract class BaseDirImporter
 
 	protected final ServiceProxy serviceProxy = new ServiceProxy();
 
+	private static final String SKIP_README = ".md";
+
 	@Override
 	public void filesUpdatedOrAdded(File[] updatedFiles)
 	{
@@ -44,6 +46,10 @@ public abstract class BaseDirImporter
 		log.log(Level.FINER, MessageFormat.format("{0} Last Sync time:  {1}", new Object[]{getSyncProperty(), lastSyncDts}));
 
 		for (File file : updatedFiles) {
+
+			if (file.getName().toLowerCase().endsWith(SKIP_README)) {
+				continue;
+			}
 
 			boolean process = true;
 			Date lastSyncDate = null;
