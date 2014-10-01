@@ -175,7 +175,7 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
     Auth.logout();
     $scope.user.isLoggedIn = false;
     localCache.clearAll();
-    window.location('/openstorefront/Login.action?logout');
+    window.location.replace('/openstorefront/Login.action?Logout');
   };
 
   //////////////////////////////////////////////////////////////////////////////

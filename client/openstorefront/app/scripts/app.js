@@ -607,7 +607,7 @@ $httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method,
       }
 
       $rootScope.logout = function() {
-        window.location('/openstorefront/Login.action?Logout');
+        window.location.replace('/openstorefront/Login.action?Logout');
       }
 
       $rootScope.$on('$idleStart', function() {
