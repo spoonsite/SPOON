@@ -46,7 +46,7 @@ var app = angular
 // end of the module creation
 )
 // Here we configure the route provider
-.config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider) {
+.config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', '$httpProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider, $httpProvider) {
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
@@ -79,6 +79,16 @@ var app = angular
   .otherwise({
     redirectTo: '/'
   });
+
+  //disable IE ajax request caching
+  //initialize get if not there
+  if (!$httpProvider.defaults.headers.get) {
+    $httpProvider.defaults.headers.get = {};    
+  }
+  $httpProvider.defaults.headers.get['If-Modified-Since'] = 'Mon, 26 Jul 1997 05:00:00 GMT';
+  $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+  $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+
   // /**
   // * Global error handling
   // */
@@ -589,44 +599,44 @@ $httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method,
 });
 
 
-      $rootScope.started = false;
+$rootScope.started = false;
 
-      $rootScope.closeModals = function() {
-        if ($rootScope.warning) {
-          $rootScope.warning.close();
-          $rootScope.warning = null;
-        }
+$rootScope.closeModals = function() {
+  if ($rootScope.warning) {
+    $rootScope.warning.close();
+    $rootScope.warning = null;
+  }
 
-        if ($rootScope.timedout) {
-          $rootScope.timedout.close();
-          $rootScope.timedout = null;
-        }
-      }
+  if ($rootScope.timedout) {
+    $rootScope.timedout.close();
+    $rootScope.timedout = null;
+  }
+}
 
-      $rootScope.logout = function() {
-        window.location.replace('/openstorefront/Login.action?Logout');
-      }
+$rootScope.logout = function() {
+  window.location.replace('/openstorefront/Login.action?Logout');
+}
 
-      $rootScope.$on('$idleStart', function() {
-        $rootScope.closeModals();
+$rootScope.$on('$idleStart', function() {
+  $rootScope.closeModals();
 
-        $rootScope.warning = $uiModal.open({
-          templateUrl: 'views/timeout/warning-dialog.html',
-          windowClass: 'modal-danger'
-        });
-      });
+  $rootScope.warning = $uiModal.open({
+    templateUrl: 'views/timeout/warning-dialog.html',
+    windowClass: 'modal-danger'
+  });
+});
 
-      $rootScope.$on('$idleEnd', function() {
-        $rootScope.closeModals();
+$rootScope.$on('$idleEnd', function() {
+  $rootScope.closeModals();
         // no need to do anything unless you want to here.
       });
 
-      $rootScope.$on('$keepalive', function() {
+$rootScope.$on('$keepalive', function() {
         // do something to keep the user's session alive
         Business.userservice.getCurrentUserProfile(true);
       });
 
-      $rootScope.$on('$idleTimeout', function() {
+$rootScope.$on('$idleTimeout', function() {
         //log them out here
         $rootScope.closeModals();
         $rootScope.logout();
