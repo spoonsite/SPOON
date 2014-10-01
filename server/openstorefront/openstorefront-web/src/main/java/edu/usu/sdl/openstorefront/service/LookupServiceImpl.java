@@ -204,7 +204,9 @@ public class LookupServiceImpl
 					example.setCode(code);
 					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 					lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
-					lookupCacheMap.put(code, lookupEntity);
+					if (lookupEntity != null) {
+						lookupCacheMap.put(code, lookupEntity);
+					}
 				} catch (InstantiationException | IllegalAccessException e) {
 					throw new OpenStorefrontRuntimeException(e);
 				}
