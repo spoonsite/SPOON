@@ -38,12 +38,12 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
     restrict: 'AE',
     scope: {
       data: '=',
-      list: '=',
       filters: '=',
-      setFilters: '=',
       clickCallback: '=',
-      search: '&',
       hideMore: '@',
+      // list: '=',
+      // search: '&',
+      // setFilters: '=',
     },
     link: function postLink(scope, element, attrs) {
 
@@ -89,10 +89,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       }
 
       scope.goToCompare = function() {
-        $location.search({
-          'id': list
-        });
-        $location.path('/compare');
+        // $location.search({
+        //   'id': list
+        // });
+        // $location.path('/compare');
         // console.log('list', encodeURI(list));
       };
 
@@ -223,6 +223,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       ***************************************************************/
       scope.addMore = function() {
         if (scope.hideMore !== undefined && scope.hideMore !== null && scope.hasMoreThan3){
+          scope.listOfClasses = ' min ' + scope.listOfClasses;
           element.find('.hideMore').addClass('moreContent');
           element.find('.hideMoreArticle').addClass('moreContentArticle');
           element.find('.moreSection').each(function() {
