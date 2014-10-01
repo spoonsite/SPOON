@@ -60,7 +60,7 @@ public class HighlightImporter
 				log.log(Level.SEVERE, "Unable to process highlight file.  File should conform to JSON format for a Highlight type.", e);
 			}
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("Skipping unknow hightlight file: {0}  (File should be named hightlights.json)", file));
+			log.log(Level.WARNING, MessageFormat.format("Skipping unknown hightlight file: {0}  (File should be named hightlights.json)", file));
 		}
 	}
 

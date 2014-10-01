@@ -53,7 +53,7 @@ public class ComponentImporter
 			});
 			componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
 			objectMapper.writeValue(file, componentAll);
-			//set it to the pass so we don't keep picking it up.
+			//set it to the past so we don't keep picking it up.
 			file.setLastModified(file.lastModified() - 10000);
 
 		} catch (Exception e) {
