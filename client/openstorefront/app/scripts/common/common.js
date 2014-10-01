@@ -19,6 +19,31 @@
 /* exported setupPopovers, setupTypeahead, isEmpty, toggleclass, setUpDropdown,
 setupParallax, triggerAlert, triggerError, removeError, initiateClick*/
 
+
+// Avoid `console` errors in browsers that lack a console.
+(function() {
+    var method;
+    var noop = function () {};
+    var methods = [
+        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+        'timeStamp', 'trace', 'warn'
+    ];
+    var length = methods.length;
+    var console = (window.console = window.console || {});
+
+    while (length--) {
+        method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
+    }
+}());
+
+
 /*****************************
 * This function sets up the popovers for the results page, but could be 
 * re-used anywhere that you use the data-toggle="popover" attribute on a div

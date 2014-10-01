@@ -180,20 +180,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
-  $scope.cancelUserProfile = function() {
-
-    Business.userservice.getCurrentUserProfile().then(function(profile) {
-      $scope.userProfile = profile;
-      $scope.userProfileForm = angular.copy(profile);
-
-      _.each($scope.userTypeCodes, function(element, index, list) { /*jshint unused:false*/
-        if (element.code === $scope.userProfileForm.userTypeCode) {
-          $scope.userProfileForm.userRole = element;
-        }
-      });
-    });
-  };
-
   /***************************************************************
   * Load the User profile 
   ***************************************************************/
@@ -212,6 +198,11 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
+  $scope.cancelUserProfile = function() {
+    loadUserProfile();
+    $scope.userProfileForm.mySwitch = false;
+  };
+
   /***************************************************************
   * Save the user profile
   ***************************************************************/
@@ -220,8 +211,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     // mask form
     $scope.$emit('$TRIGGERLOAD', 'userLoad');
 
-    $scope.mySwitch = false;
-
     //validate form
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
@@ -229,8 +218,10 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
       function(data, status, headers, config){ /* jshint unused:false */
         //SUCCESS:: data = return value
+        triggerAlert('Your profile was saved', 'profileSave', 'profileModal', 6000);
         $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
         $scope.$emit('$triggerEvent', '$RESETUSER');
+        $scope.userProfileForm.mySwitch = false;
       },
       function(value){ //FAILURE:: value = reason why it failed
         triggerError(value);
@@ -266,22 +257,11 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
 
 
   /***************************************************************
-  * This function saves the profile changes in the scope by copying them from
-  * the user variable into the backup variable (this function would be where
-  * you send the saved data to the database to store it)
-  ***************************************************************/ //
-  $scope.saveProfileChanges = function() {
-    $scope.userBackup = jQuery.extend(true, {}, $scope.user);
-  };
-
-
-  /***************************************************************
   * This function reverts the changes in the profile form by just copying back
   * the details in the backup. This function most likely won't change when
   * we get a database to work with.
   ***************************************************************/
   $scope.revertProfileChanges = function() {
-    $scope.user = jQuery.extend(true, {}, $scope.userBackup);
   };
 
   $scope.deleteReview = function(reviewId, componentId) {

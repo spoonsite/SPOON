@@ -195,7 +195,7 @@ var app = angular
               m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
             if (result.username) {
-              ga('create', 'UA-48252919-8', { 'userId': result.username });
+              ga('create', 'UA-48252919-8', { 'userId': result.guid });
             } else {
               ga('create', 'UA-48252919-8', 'auto');
             }
