@@ -10,7 +10,7 @@ describe('searchDetails_Search for VANTAGE', function() {
     browser.driver.sleep(7000);
 
     // Should only be two results
-    expect(element.all(by.repeater('item in data')).count()).toEqual(2);
+    expect(element.all(by.repeater('item in data')).count()).toEqual(3);
   });
 });
 
