@@ -20,8 +20,6 @@ import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
-import edu.usu.sdl.openstorefront.service.transfermodel.QuestionAll;
-import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -907,23 +905,23 @@ public class ComponentServiceImpl
 		handleBaseComponetSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId());
 		handleBaseComponetSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId());
 		handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId());
-		handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId());
 
-		for (QuestionAll question : componentAll.getQuestions()) {
-			List<ComponentQuestion> questions = new ArrayList<>(1);
-			questions.add(question.getQuestion());
-			handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId());
-			handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId());
-		}
-
-		for (ReviewAll reviewAll : componentAll.getReviews()) {
-			List<ComponentReview> reviews = new ArrayList<>(1);
-			reviews.add(reviewAll.getComponentReview());
-			handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId());
-			handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId());
-			handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId());
-		}
-
+		//Thesse are user data and they shouldn't be changed on sync (I'm leave it as a reminder)
+//		handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId());
+//		for (QuestionAll question : componentAll.getQuestions()) {
+//			List<ComponentQuestion> questions = new ArrayList<>(1);
+//			questions.add(question.getQuestion());
+//			handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId());
+//			handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId());
+//		}
+//
+//		for (ReviewAll reviewAll : componentAll.getReviews()) {
+//			List<ComponentReview> reviews = new ArrayList<>(1);
+//			reviews.add(reviewAll.getComponentReview());
+//			handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId());
+//			handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId());
+//			handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId());
+//		}
 		//validate
 		return componentAll;
 	}
