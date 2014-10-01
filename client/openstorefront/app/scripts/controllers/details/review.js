@@ -81,6 +81,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     body.userTimeCode = review.timeCode.code;
     // console.log('body', body);
     event.preventDefault();
+    // console.log('body', body);
     
     var componentId = $rootScope.getComponentId();
     var reviewId = null;

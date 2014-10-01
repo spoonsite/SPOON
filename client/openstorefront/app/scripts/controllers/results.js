@@ -295,8 +295,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         
         foundFilter = _.find($scope.filters, {'type': $scope.searchCode.type});
         foundCollection = _.find(foundFilter.codes, {'code': $scope.searchCode.key});
-        console.log('found', foundFilter);
-        console.log('found', foundCollection);
+        // console.log('found', foundFilter);
+        // console.log('found', foundCollection);
         
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all' && foundFilter && foundCollection) {
@@ -456,7 +456,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.updateDetails = function(id, article){
     // $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    console.log('article', article);
+    // console.log('article', article);
     if (article && article.listingType === 'Article') {
       $scope.isArticle = true;
       localCache.save('type', article.articleAttributeType);

@@ -171,7 +171,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         var architecture = null;
 
         var filter = _.find(scope.filters, {'type': attrs.type});
-        console.log('filter', filter);
+        // console.log('filter', filter);
         
         if (filter){
           architecture = filter.archtechtureFlg;
