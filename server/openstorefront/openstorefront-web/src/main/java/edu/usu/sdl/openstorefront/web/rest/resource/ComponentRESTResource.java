@@ -1737,6 +1737,7 @@ public class ComponentRESTResource
 			response = ownerCheck(tag);
 			if (response == null) {
 				service.getPersistenceService().delete(tag);
+				response = Response.ok().build();
 			}
 		}
 		return response;
