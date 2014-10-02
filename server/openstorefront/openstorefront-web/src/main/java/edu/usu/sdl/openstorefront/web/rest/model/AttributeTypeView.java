@@ -41,7 +41,7 @@ public class AttributeTypeView
 	private boolean requiredFlg;
 
 	@NotNull
-	private boolean archtechtureFlg;
+	private boolean architectureFlg;
 
 	@NotNull
 	private boolean importantFlg;
@@ -61,7 +61,7 @@ public class AttributeTypeView
 		AttributeTypeView attributeTypeView = new AttributeTypeView();
 		attributeTypeView.setType(attributeType.getAttributeType());
 		attributeTypeView.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
-		attributeTypeView.setArchtechtureFlg(attributeType.getArchitectureFlg());
+		attributeTypeView.setArchitectureFlg(attributeType.getArchitectureFlg());
 		attributeTypeView.setDescription(attributeType.getDescription());
 		attributeTypeView.setImportantFlg(attributeType.getImportantFlg());
 		attributeTypeView.setRequiredFlg(attributeType.getRequiredFlg());
@@ -120,14 +120,14 @@ public class AttributeTypeView
 		this.requiredFlg = requiredFlg;
 	}
 
-	public boolean getArchtechtureFlg()
+	public boolean getArchitectureFlg()
 	{
-		return archtechtureFlg;
+		return architectureFlg;
 	}
 
-	public void setArchtechtureFlg(boolean archtechtureFlg)
+	public void setArchitectureFlg(boolean architectureFlg)
 	{
-		this.archtechtureFlg = archtechtureFlg;
+		this.architectureFlg = architectureFlg;
 	}
 
 	public boolean getImportantFlg()

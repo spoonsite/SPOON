@@ -91,7 +91,7 @@ public class AttributeResource
 		}
 		attributeTypeViews.sort(new AttributeTypeViewComparator<>());
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
-			if (attributeTypeView.getArchtechtureFlg()) {
+			if (attributeTypeView.getArchitectureFlg()) {
 				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
 			} else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
