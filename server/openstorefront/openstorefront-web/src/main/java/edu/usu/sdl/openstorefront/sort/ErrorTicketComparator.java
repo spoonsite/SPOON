@@ -22,7 +22,7 @@ import java.util.Comparator;
  * Error Ticket sorter
  *
  * @author dshurtleff
- * @param <T extends ErrorTicket>
+ * @param <T>
  */
 public class ErrorTicketComparator<T extends ErrorTicket>
 		implements Comparator<T>
