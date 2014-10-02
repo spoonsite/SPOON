@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
@@ -306,5 +307,16 @@ public interface ComponentService
 	 * @return
 	 */
 	public List<Component> findRecentlyAdded(int maxResults);
+
+	/**
+	 * Save full review
+	 *
+	 * @param review
+	 * @param pros
+	 * @param cons
+	 * @return Validation Results
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public ValidationResult saveDetailReview(ComponentReview review, List<ComponentReviewPro> pros, List<ComponentReviewCon> cons);
 
 }

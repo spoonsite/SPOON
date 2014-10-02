@@ -1114,4 +1114,68 @@ public class ComponentServiceImpl
 		return persistenceService.query(query, parameters);
 	}
 
+	@Override
+	public ValidationResult saveDetailReview(ComponentReview review, List<ComponentReviewPro> pros, List<ComponentReviewCon> cons)
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		ValidationModel validationModel = new ValidationModel(review);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult reviewResults = ValidationUtil.validate(validationModel);
+		validationResult.merge(reviewResults);
+
+		for (ComponentReviewPro reviewPro : pros) {
+			validationModel = new ValidationModel(reviewPro);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult proResults = ValidationUtil.validate(validationModel);
+			validationResult.merge(proResults);
+		}
+
+		for (ComponentReviewCon reviewCon : cons) {
+			validationModel = new ValidationModel(reviewCon);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult conResults = ValidationUtil.validate(validationModel);
+			validationResult.merge(conResults);
+		}
+
+		if (validationResult.valid()) {
+
+			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+			review.setCreateUser(SecurityUtil.getCurrentUserName());
+			review.setUpdateUser(SecurityUtil.getCurrentUserName());
+			saveComponentReview(review);
+
+			//delete existing pros
+			ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
+			componentReviewProExample.setComponentId(review.getComponentId());
+			persistenceService.deleteByExample(componentReviewProExample);
+
+			for (ComponentReviewPro reviewPro : pros) {
+				reviewPro.setComponentId(review.getComponentId());
+				reviewPro.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());
+				reviewPro.setCreateUser(SecurityUtil.getCurrentUserName());
+				reviewPro.setUpdateUser(SecurityUtil.getCurrentUserName());
+				reviewPro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+				saveComponentReviewPro(reviewPro, false);
+			}
+
+			//delete existing cons
+			ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
+			componentReviewConExample.setComponentId(review.getComponentReviewId());
+			persistenceService.deleteByExample(componentReviewConExample);
+
+			for (ComponentReviewCon reviewCon : cons) {
+				reviewCon.setComponentId(review.getComponentId());
+				reviewCon.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());
+				reviewCon.setCreateUser(SecurityUtil.getCurrentUserName());
+				reviewCon.setUpdateUser(SecurityUtil.getCurrentUserName());
+				reviewCon.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+				saveComponentReviewCon(reviewCon, false);
+			}
+
+		}
+
+		return validationResult;
+	}
+
 }

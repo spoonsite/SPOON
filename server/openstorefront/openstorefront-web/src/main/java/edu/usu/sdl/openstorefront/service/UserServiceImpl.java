@@ -179,19 +179,24 @@ public class UserServiceImpl
 	@Override
 	public UserProfile saveUserProfile(UserProfile user)
 	{
-		UserProfile temp = persistenceService.findById(UserProfile.class, user.getUsername());
-		if (temp != null) {
-			temp.setActiveStatus(UserProfile.ACTIVE_STATUS);
-			temp.setEmail(user.getEmail());
-			temp.setFirstName(user.getFirstName());
-			temp.setLastName(user.getLastName());
-			temp.setOrganization(user.getOrganization());
-			temp.setUserTypeCode(user.getUserTypeCode());
-			temp.setUpdateUser(SecurityUtil.getCurrentUserName());
-			if (StringUtils.isNotBlank(temp.getInternalGuid())) {
-				temp.setInternalGuid(persistenceService.generateId());
+		return saveUserProfile(user, true);
+	}
+
+	public UserProfile saveUserProfile(UserProfile user, boolean refreshSession)
+	{
+		UserProfile userProfile = persistenceService.findById(UserProfile.class, user.getUsername());
+		if (userProfile != null) {
+			userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			userProfile.setEmail(user.getEmail());
+			userProfile.setFirstName(user.getFirstName());
+			userProfile.setLastName(user.getLastName());
+			userProfile.setOrganization(user.getOrganization());
+			userProfile.setUserTypeCode(user.getUserTypeCode());
+			userProfile.setUpdateUser(SecurityUtil.getCurrentUserName());
+			if (StringUtils.isNotBlank(userProfile.getInternalGuid())) {
+				userProfile.setInternalGuid(persistenceService.generateId());
 			}
-			return persistenceService.persist(temp);
+			persistenceService.persist(userProfile);
 		} else {
 			user.setActiveStatus(UserProfile.ACTIVE_STATUS);
 			user.setInternalGuid(persistenceService.generateId());
@@ -199,8 +204,20 @@ public class UserServiceImpl
 			user.setUpdateDts(TimeUtil.currentDate());
 			user.setCreateUser(SecurityUtil.getCurrentUserName());
 			user.setUpdateUser(SecurityUtil.getCurrentUserName());
-			return persistenceService.persist(user);
+			userProfile = persistenceService.persist(user);
 		}
+
+		userProfile = persistenceService.deattachAll(userProfile);
+		if (refreshSession) {
+			UserContext userContext = SecurityUtil.getUserContext();
+			if (userContext != null) {
+				if (userContext.getUserProfile().getUsername().equals(userProfile.getUsername())) {
+					userContext.setUserProfile(userProfile);
+					SecurityUtils.getSubject().getSession().setAttribute(SecurityUtil.USER_CONTEXT_KEY, userContext);
+				}
+			}
+		}
+		return userProfile;
 	}
 
 	@Override
@@ -275,7 +292,7 @@ public class UserServiceImpl
 			UserProfile profile = persistenceService.findById(UserProfile.class, userprofile.getUsername());
 			if (profile == null) {
 				profile = userprofile;
-				saveUserProfile(profile);
+				saveUserProfile(profile, false);
 			} else {
 				//Check user id
 				boolean conflictUsername = false;
@@ -301,7 +318,7 @@ public class UserServiceImpl
 							profile = userprofile;
 							profile.setExternalUserId(userprofile.getUsername());
 							profile.setUsername(userName);
-							saveUserProfile(profile);
+							saveUserProfile(profile, false);
 							unique = true;
 						}
 					} while (!unique && idIndex < MAX_NAME_CHECK);
