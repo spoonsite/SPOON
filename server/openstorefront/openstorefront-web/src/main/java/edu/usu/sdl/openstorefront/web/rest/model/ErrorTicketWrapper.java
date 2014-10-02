@@ -15,58 +15,61 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
+import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.core.GenericType;
 
 /**
- * Generic List Wrapper
+ * Wraps error tickets
  *
  * @author dshurtleff
  */
-public class RestListResponse<T>
+public class ErrorTicketWrapper
 {
 
-	private long totalResults;
+	private long totalNumber;
+	private int results;
+	private List<ErrorTicket> errorTickets = new ArrayList<>();
 
-	@ParamTypeDescription("(Returned record count)")
-	private long results;
-
-	private List<GenericType<T>> data = new ArrayList<>();
-
-	public RestListResponse()
+	public ErrorTicketWrapper()
 	{
 	}
 
-	public long getTotalResults()
+	public ErrorTicketWrapper(List<ErrorTicket> errorTickets, long totalNumber)
 	{
-		return totalResults;
+		this.errorTickets = errorTickets;
+		this.totalNumber = totalNumber;
+		this.results = errorTickets.size();
 	}
 
-	public void setTotalResults(long totalResults)
+	public List<ErrorTicket> getErrorTickets()
 	{
-		this.totalResults = totalResults;
+		return errorTickets;
 	}
 
-	public long getResults()
+	public void setErrorTickets(List<ErrorTicket> errorTickets)
+	{
+		this.errorTickets = errorTickets;
+	}
+
+	public long getTotalNumber()
+	{
+		return totalNumber;
+	}
+
+	public void setTotalNumber(long totalNumber)
+	{
+		this.totalNumber = totalNumber;
+	}
+
+	public int getResults()
 	{
 		return results;
 	}
 
-	public void setResults(long results)
+	public void setResults(int results)
 	{
 		this.results = results;
-	}
-
-	public List<GenericType<T>> getData()
-	{
-		return data;
-	}
-
-	public void setData(List<GenericType<T>> data)
-	{
-		this.data = data;
 	}
 
 }

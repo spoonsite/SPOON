@@ -27,7 +27,7 @@ public class OpenStorefrontConstant
 {
 
 	public static final String SORT_ASCENDING = "ASC";
-	public static final String SORT_DESCENDING = "DSC";
+	public static final String SORT_DESCENDING = "DESC";
 	public static final String MAX_RECORDS = Integer.toString(Integer.MAX_VALUE);
 	public static final String SYSTEM_USER = "SYSTEM";
 	public static final String SYSTEM_ADMIN_USER = "SYSTEM-ADMIN";

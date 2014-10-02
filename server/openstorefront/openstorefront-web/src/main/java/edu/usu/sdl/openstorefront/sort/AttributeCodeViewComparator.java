@@ -29,7 +29,7 @@ public class AttributeCodeViewComparator<T extends AttributeCodeView>
 	@Override
 	public int compare(T o1, T o2)
 	{
-		return o1.getDescription().compareTo(o2.getDescription());
+		return o1.getLabel().compareTo(o2.getLabel());
 	}
 
 }

@@ -49,6 +49,8 @@ public abstract class LookupEntity
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
 	private String detailedDecription;
 
+	private Integer sortOrder;
+
 	public LookupEntity()
 	{
 	}
@@ -81,6 +83,16 @@ public abstract class LookupEntity
 	public void setDetailedDecription(String detailedDecription)
 	{
 		this.detailedDecription = detailedDecription;
+	}
+
+	public Integer getSortOrder()
+	{
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder)
+	{
+		this.sortOrder = sortOrder;
 	}
 
 	@Override

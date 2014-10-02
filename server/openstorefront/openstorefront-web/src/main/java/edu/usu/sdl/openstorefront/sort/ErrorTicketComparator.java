@@ -13,27 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.rest.resource;
+package edu.usu.sdl.openstorefront.sort;
 
-import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
+import java.util.Comparator;
 
 /**
- * Base Resource for all other resources
+ * Error Ticket sorter
  *
  * @author dshurtleff
+ * @param <T extends ErrorTicket>
  */
-public abstract class BaseResource
+public class ErrorTicketComparator<T extends ErrorTicket>
+		implements Comparator<T>
 {
 
-	protected final edu.usu.sdl.openstorefront.service.ServiceProxy service = new edu.usu.sdl.openstorefront.service.ServiceProxy();
+	public static final int SORTBY_CREATE_DATE = 0;
 
-	protected Response sendSingleEnityResponse(Object entity)
+	private int sortBy = SORTBY_CREATE_DATE;
+
+	public ErrorTicketComparator()
 	{
-		if (entity == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		} else {
-			return Response.ok(entity).build();
+	}
+
+	public ErrorTicketComparator(int sortBy)
+	{
+		this.sortBy = sortBy;
+	}
+
+	@Override
+	public int compare(T o1, T o2)
+	{
+		switch (sortBy) {
+			case SORTBY_CREATE_DATE:
+				return o2.getCreateDts().compareTo(o1.getCreateDts());
 		}
+		return 0;
 	}
 
 }
