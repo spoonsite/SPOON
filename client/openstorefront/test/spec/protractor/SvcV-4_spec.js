@@ -2,8 +2,8 @@
 //theSite = 'http://di2e.github.io/openstorefront/index.html';
 //openAM = false;
 
-theSite = 'http://storefront1.di2e.net/index.html';
-openAM = false;
+theSite = 'https://storefront1.di2e.net/openstorefront/index.html';
+openAM = true;
 
 //theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
 //openAM = true;
@@ -17,7 +17,7 @@ browser.get(theSite, 3500);
 browser.driver.sleep(3000);
 browser.driver.findElement(by.id('IDToken1')).sendKeys('amadmin');
 browser.driver.findElement(by.id('IDToken2')).sendKeys('password', protractor.Key.ENTER);
-browser.driver.sleep(3000);
+browser.driver.sleep(7000);
 }
 
 describe('SvcV-4_button from the home page', function() {

@@ -3,7 +3,7 @@ describe('adminTools', function() {
         browser.get(theSite);
 
         // Click on User Name
-        element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
+        element(by.id('dropTheMenu')).get(0).click();
 
         // Click on the first dropdown menu item which is "Admin Tools"
         element.all(by.css('.dropdown-menu a')).get(0).click();
