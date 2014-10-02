@@ -49,10 +49,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
 
       scope.getShortDescription = getShortDescription;
 
-      if (scope.search && (!scope.search.type || !scope.search.key)) {
+      if (scope.search && (!scope.search.type || !scope.search.code)) {
         scope.search = {};
         scope.search.type = 'search';
-        scope.search.key = 'all';
+        scope.search.code = 'all';
       }
       var list = [];
 
@@ -166,8 +166,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       * override something else.
       ***************************************************************/
       if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
-        var key = (attrs.key !== null && attrs.key !== undefined && attrs.key !== '')? attrs.key: null;
-        scope.search = {'type': 'attribute', key:{'type': attrs.type, 'key': key}};
+        var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
+        scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
         var architecture = null;
 
         var filter = _.find(scope.filters, {'type': attrs.type});
@@ -176,7 +176,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         if (filter){
           architecture = filter.archtechtureFlg;
         }
-        Business.componentservice.doSearch(scope.search.type, scope.search.key, architecture).then(function(result){
+        Business.componentservice.doSearch(scope.search.type, scope.search.code, architecture).then(function(result){
           if (result)
           {
             if (result.data && result.data.length > 0) { 

@@ -218,7 +218,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
       function(data, status, headers, config){ /* jshint unused:false */
         //SUCCESS:: data = return value
-        triggerAlert('Your profile was saved', 'profileSave', 'profileModal', 6000);
+        triggerAlert('Your profile was saved', 'profileSave', '#profileModal .modal-body', 6000, true);
         $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
         $scope.$emit('$triggerEvent', '$RESETUSER');
         $scope.userProfileForm.mySwitch = false;

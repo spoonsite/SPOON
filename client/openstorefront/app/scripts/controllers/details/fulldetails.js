@@ -682,6 +682,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         }
         // setup the update list.
         if (onlyOnce !== $scope.details.details.componentId) {
+          $timeout(function() {
+            $('.component-details [data-toggle=\'tooltip\']').tooltip();
+          }, 300);
           setupUpdateFlags();
           onlyOnce = $scope.details.details.componentId;
           $scope.detailResultsTabs = [
