@@ -23,6 +23,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   // Variables
   //////////////////////////////////////////////////////////////////////////////
   $scope.total            = {};
+  $scope.userProfileForm  = {};
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
@@ -68,26 +69,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   });
 
   // TODO: Set this up so it is actually calling with the user's username. 
-  $scope.getReviews = function() {
-    Business.userservice.getCurrentUserProfile().then(function(result){
-      if (result) {
-        $scope.user.info = result;
-        if ($scope.user.info && $scope.user.info.username) {
-          Business.userservice.getReviews($scope.user.info.username).then(function(result){
-            if (result) {
-              $scope.reviews = result;
-            } else {
-              $scope.reviews = null;
-            }
-          });  
-        }
-      }
-    });
-  }
-  $scope.getReviews();
   $scope.$on('$newReview', function(){
-    $scope.getReviews();
+    loadUserProfile();
   })
+  $scope.$on('$RESETUSER', function(){
+    loadUserProfile();
+  })
+
   Business.lookupservice.getExpertise().then(function(result){
     if (result) {
       $scope.expertise = result;
@@ -98,10 +86,10 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   Business.lookupservice.getUserTypeCodes().then(function(result){
     if (result) {
       $scope.userTypeCodes = result;
+      loadUserProfile();
     } else {
       $scope.userTypeCodes = [];
     }
-    loadUserProfile();
   });
   Business.getProsConsList().then(function(result) {
     if (result) {
@@ -185,15 +173,26 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   ***************************************************************/
   var loadUserProfile = function() {
     //show load mask on form
-    Business.userservice.getCurrentUserProfile().then(function(profile) {
-      $scope.userProfile = profile;
-      $scope.userProfileForm = angular.copy(profile);
-
-      _.each($scope.userTypeCodes, function(element, index, list) { /*jshint unused:false*/
-        if (element.code === $scope.userProfileForm.userTypeCode) {
-          $scope.userProfileForm.userRole = element;
+    Business.userservice.getCurrentUserProfile(true).then(function(profile) {
+      if (profile) {
+        // console.log('profile', profile);
+        
+        $scope.userProfile = profile;
+        $scope.userProfileForm = angular.copy(profile);
+        // console.log('Code', $scope.userProfile.userTypeCode);
+        // console.log('list', $scope.userTypeCodes);
+        // console.log('found', _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode}));
+        $scope.userProfileForm.userRole = _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode});
+        if ($scope.user.info && $scope.user.info.username) {
+          Business.userservice.getReviews($scope.user.info.username).then(function(result){
+            if (result) {
+              $scope.reviews = result;
+            } else {
+              $scope.reviews = null;
+            }
+          });  
         }
-      });
+      }
       //hide load mask
     });
   };
@@ -219,9 +218,11 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
       function(data, status, headers, config){ /* jshint unused:false */
         //SUCCESS:: data = return value
         triggerAlert('Your profile was saved', 'profileSave', '#profileModal .modal-body', 6000, true);
-        $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
-        $scope.$emit('$triggerEvent', '$RESETUSER');
-        $scope.userProfileForm.mySwitch = false;
+        $timeout(function() {
+          $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+          $scope.$emit('$triggerEvent', '$RESETUSER');
+          $scope.userProfileForm.mySwitch = false;
+        })
       },
       function(value){ //FAILURE:: value = reason why it failed
         triggerError(value);
