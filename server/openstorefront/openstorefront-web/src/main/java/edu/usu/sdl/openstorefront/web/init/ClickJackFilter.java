@@ -28,12 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 //{@link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx}
 /**
  * This is added to prevent click-jacking by supported browsers Based on ESAPI
- * clickjackfilter see.
- * only happens for the client ui
+ * clickjackfilter see. only happens for the client ui
  *
  * @author dshurtleff
  */
-@WebFilter(filterName = "ClickJack", urlPatterns = {"/views/**", "/*"})
+@WebFilter(filterName = "ClickJack", urlPatterns = {"/views/*", "/*"})
 public class ClickJackFilter
 		implements Filter
 {

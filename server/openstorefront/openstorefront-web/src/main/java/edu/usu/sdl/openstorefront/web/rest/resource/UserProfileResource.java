@@ -71,7 +71,7 @@ public class UserProfileResource
 	}
 
 	@GET
-	@APIDescription("Gets the current user profile")
+	@APIDescription("Gets the current user profile from the session.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	@Path("/currentuser")

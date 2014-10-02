@@ -38,6 +38,11 @@ public class ValidationResult
 		return ruleResults.isEmpty();
 	}
 
+	public void merge(ValidationResult result)
+	{
+		ruleResults.addAll(result.getRuleResults());
+	}
+
 	@Override
 	public String toString()
 	{

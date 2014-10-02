@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -31,15 +32,19 @@ import java.util.List;
  */
 public class ComponentReviewProCon
 {
+
+	@NotNull
+	@ConsumeField
 	private String text;
 	private Date updateDts;
 	private String componentId;
 	private String reviewId;
 
-	public ComponentReviewProCon() {
-		
+	public ComponentReviewProCon()
+	{
+
 	}
-	
+
 	public static ComponentReviewProCon toView(ComponentReviewPro pro)
 	{
 		ComponentReviewProCon view = new ComponentReviewProCon();
@@ -49,6 +54,7 @@ public class ComponentReviewProCon
 		view.setReviewId(pro.getComponentReviewProPk().getComponentReviewId());
 		return view;
 	}
+
 	public static ComponentReviewProCon toView(ComponentReviewCon con)
 	{
 		ComponentReviewProCon view = new ComponentReviewProCon();
@@ -56,10 +62,9 @@ public class ComponentReviewProCon
 		view.setUpdateDts(con.getUpdateDts());
 		view.setText(TranslateUtil.translate(ReviewCon.class, con.getComponentReviewConPk().getReviewCon()));
 		view.setReviewId(con.getComponentReviewConPk().getComponentReviewId());
-		return view;		
+		return view;
 	}
-	
-	
+
 	public static List<ComponentReviewProCon> toViewListPro(List<ComponentReviewPro> pros)
 	{
 		List<ComponentReviewProCon> views = new ArrayList<>();
@@ -68,17 +73,16 @@ public class ComponentReviewProCon
 		});
 		return views;
 	}
-	
+
 	public static List<ComponentReviewProCon> toViewListCon(List<ComponentReviewCon> cons)
 	{
 		List<ComponentReviewProCon> views = new ArrayList<>();
 		cons.stream().forEach((con) -> {
 			views.add(ComponentReviewProCon.toView(con));
 		});
-		return views;		
+		return views;
 	}
-	
-	
+
 	/**
 	 * @return the text
 	 */

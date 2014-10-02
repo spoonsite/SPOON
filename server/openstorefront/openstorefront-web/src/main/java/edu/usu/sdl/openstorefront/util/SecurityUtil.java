@@ -66,7 +66,7 @@ public class SecurityUtil
 			Subject currentUser = SecurityUtils.getSubject();
 			admin = currentUser.hasRole(ADMIN_ROLE);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started.");
+			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started. Or no user is logged in.");
 		}
 		return admin;
 	}
@@ -83,7 +83,7 @@ public class SecurityUtil
 			Subject currentUser = SecurityUtils.getSubject();
 			userContext = (UserContext) currentUser.getSession().getAttribute(USER_CONTEXT_KEY);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started.");
+			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started. Or no user is logged in.");
 		}
 		return userContext;
 	}

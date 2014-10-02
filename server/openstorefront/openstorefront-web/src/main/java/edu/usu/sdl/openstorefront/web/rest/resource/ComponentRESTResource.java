@@ -57,6 +57,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
@@ -1381,6 +1382,89 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + review.getComponentId() + "/review/" + review.getComponentReviewId())).entity(review).build();
+		} else {
+			return Response.ok(review).build();
+		}
+	}
+
+	@POST
+	@APIDescription("Add a review to the specified entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentReviewView.class)
+	@Path("/{id}/reviews/detail")
+	public Response addComponentReviewDetail(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam ComponentReviewView review)
+	{
+		review.setComponentId(componentId);
+		return saveFullReview(review, true);
+	}
+
+	@PUT
+	@APIDescription("Update a review associated with the given entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}/reviews/{reviewId}/detail")
+	public Response updateComponentReviewDetail(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("reviewId")
+			@RequiredParam String reviewId,
+			@RequiredParam ComponentReviewView review)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
+		if (componentReview != null) {
+			checkBaseComponentBelongsToComponent(componentReview, componentId);
+			response = ownerCheck(componentReview);
+			if (response == null) {
+				review.setComponentId(componentId);
+				review.setReviewId(reviewId);
+				response = saveFullReview(review, false);
+			}
+		}
+		return response;
+	}
+
+	private Response saveFullReview(ComponentReviewView review, Boolean post)
+	{
+		ComponentReview componentReview = new ComponentReview();
+		componentReview.setComponentId(review.getComponentId());
+		componentReview.setComponentReviewId(review.getReviewId());
+		componentReview.setComment(review.getComment());
+		componentReview.setLastUsed(review.getLastUsed());
+		componentReview.setOrganization(review.getOrganization());
+		componentReview.setRating(review.getRating());
+		componentReview.setRecommend(review.isRecommend());
+		componentReview.setTitle(review.getTitle());
+		componentReview.setUserTimeCode(review.getUsedTimeCode());
+		componentReview.setUserTypeCode(review.getUserType());
+
+		List<ComponentReviewPro> pros = new ArrayList<>();
+		for (ComponentReviewProCon pro : review.getPros()) {
+			ComponentReviewPro componentReviewPro = new ComponentReviewPro();
+			ComponentReviewProPk reviewProPk = new ComponentReviewProPk();
+			reviewProPk.setReviewPro(pro.getText());
+			componentReviewPro.setComponentReviewProPk(reviewProPk);
+			pros.add(componentReviewPro);
+		}
+
+		List<ComponentReviewCon> cons = new ArrayList<>();
+		for (ComponentReviewProCon con : review.getCons()) {
+			ComponentReviewCon componentReviewCon = new ComponentReviewCon();
+			ComponentReviewConPk reviewConPk = new ComponentReviewConPk();
+			reviewConPk.setReviewCon(con.getText());
+			componentReviewCon.setComponentReviewConPk(reviewConPk);
+			cons.add(componentReviewCon);
+		}
+
+		ValidationResult validationResult = service.getComponentService().saveDetailReview(componentReview, pros, cons);
+
+		if (validationResult.valid() == false) {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			return Response.created(URI.create("v1/resource/components/" + componentReview.getComponentId() + "/review/" + componentReview.getComponentReviewId())).entity(review).build();
 		} else {
 			return Response.ok(review).build();
 		}
