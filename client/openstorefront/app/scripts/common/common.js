@@ -22,26 +22,26 @@ setupParallax, triggerAlert, triggerError, removeError, initiateClick*/
 
 // Avoid `console` errors in browsers that lack a console.
 (function() {
-    var method;
-    var noop = function () {};
-    var methods = [
-        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-        'timeStamp', 'trace', 'warn'
-    ];
-    var length = methods.length;
-    var console = (window.console = window.console || {});
+  var method;
+  var noop = function () {};
+  var methods = [
+  'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+  'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+  'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+  'timeStamp', 'trace', 'warn'
+  ];
+  var length = methods.length;
+  var console = (window.console = window.console || {});
 
-    while (length--) {
-        method = methods[length];
+  while (length--) {
+    method = methods[length];
 
         // Only stub undefined methods.
         if (!console[method]) {
-            console[method] = noop;
+          console[method] = noop;
         }
-    }
-}());
+      }
+    }());
 
 
 /*****************************
@@ -154,7 +154,7 @@ var hideAlert = function(uid, delay) {
 * params: id -- the id of the element to attach the alert box to
 * params: delay -- how long you want the alert to stay
 ***************************************************************/
-var triggerAlert = function(text, uid, id, delay) {
+var triggerAlert = function(text, uid, id, delay, append) {
   delay = delay || 5000;
   if (!text || !uid){
     console.error('TRIGGER-ALERT Failed because the text or uid fields were not set');
@@ -165,7 +165,11 @@ var triggerAlert = function(text, uid, id, delay) {
       id = 'body';
     }
     $('#alert_holder_'+uid).remove();
-    $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+    if (append) {
+      $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+    } else {
+      $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+    }
     
     // this will hide the alert on any action outside the alert box.
     // $(document).on('click keypress', function(event) {

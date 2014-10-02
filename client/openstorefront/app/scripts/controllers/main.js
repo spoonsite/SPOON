@@ -164,6 +164,10 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     $(window).scrollTop(0);
     localCache.save('type', searchType);
     localCache.save('code', searchKey);
+    $location.search({
+      'type': searchType,
+      'code': searchKey
+    });
     $location.path('/landing');
     return false; //
   };
