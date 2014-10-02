@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
-import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
@@ -36,7 +35,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -54,14 +52,12 @@ public class Search
 	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchResult.class)
-	public RestListResponse searchListing(
+	public List<SearchResult> searchListing(
 			@BeanParam SearchQuery query,
 			@BeanParam FilterQueryParams filter)
 	{
-		List<GenericType<SearchResult>> searchResults = new ArrayList<>();
-		long totalResults = 0;
-
-		return sendListResponse(searchResults, totalResults);
+		List<SearchResult> searchResults = new ArrayList<>();
+		return searchResults;
 	}
 
 	@GET

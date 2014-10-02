@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 /**
  * Methods for Converting Values. Typically from External Input.
  *
@@ -22,6 +25,10 @@ package edu.usu.sdl.openstorefront.util;
  */
 public class Convert
 {
+
+	private Convert()
+	{
+	}
 
 	/**
 	 * Converts an object to a boolean It's meant for handling different string
@@ -49,6 +56,34 @@ public class Convert
 
 		}
 		return Boolean.FALSE;
+	}
+
+	/**
+	 * Attempts to convert object to an Integer
+	 *
+	 * @param data
+	 * @return the integer or null if it can't convert.
+	 */
+	public static Integer toInteger(Object data)
+	{
+		if (data != null) {
+			try {
+				if (data instanceof Integer) {
+					return (Integer) data;
+				} else if (data instanceof String) {
+					return Integer.parseInt(data.toString());
+				} else if (data instanceof BigDecimal) {
+					return ((BigDecimal) data).intValue();
+				} else if (data instanceof BigInteger) {
+					return ((BigInteger) data).intValue();
+				} else if (data instanceof Number) {
+					return ((Number) data).intValue();
+				}
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		}
+		return null;
 	}
 
 }

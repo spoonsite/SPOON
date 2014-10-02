@@ -93,8 +93,8 @@ public class AttributeServiceImpl
 			attributeCodePk.setAttributeType(type);
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
 			attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));			
-			element =  new Element(type, attributeCodes);
+			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+			element = new Element(type, attributeCodes);
 			OSFCacheManager.getAttributeCache().put(element);
 			return attributeCodes;
 		}
@@ -128,9 +128,9 @@ public class AttributeServiceImpl
 	public void saveAttributeCode(AttributeCode attributeCode)
 	{
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
-		if (existing != null) {			
+		if (existing != null) {
 			//remove to inactivate
-			existing.setActiveStatus(AttributeCode.ACTIVE_STATUS);			
+			existing.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeCode.getUpdateUser());
 			existing.setArticleFilename(attributeCode.getArticleFilename());
@@ -259,9 +259,8 @@ public class AttributeServiceImpl
 			existingAttributeMap.put(attributeType.getAttributeType(), attributeType);
 		});
 
-		Set<String> newTypeSet = new HashSet<>();
 		attributeMap.keySet().stream().forEach(attributeType -> {
-		
+
 			try {
 				ValidationModel validationModel = new ValidationModel(attributeType);
 				validationModel.setConsumeFieldsOnly(true);
@@ -271,26 +270,22 @@ public class AttributeServiceImpl
 
 					AttributeType existing = existingAttributeMap.get(attributeType.getAttributeType());
 					if (existing != null) {
-						if (ServiceUtil.compareObjects(existing, attributeType, true))
-						{
-							existing.setDescription(attributeType.getDescription());
-							existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
-							existing.setArchitectureFlg(attributeType.getArchitectureFlg());
-							existing.setImportantFlg(attributeType.getImportantFlg());
-							existing.setRequiredFlg(attributeType.getRequiredFlg());
-							existing.setVisibleFlg(attributeType.getVisibleFlg());
-							existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
-							existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-							existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-							saveAttributeType(existing);
-						}
+						existing.setDescription(attributeType.getDescription());
+						existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
+						existing.setArchitectureFlg(attributeType.getArchitectureFlg());
+						existing.setImportantFlg(attributeType.getImportantFlg());
+						existing.setRequiredFlg(attributeType.getRequiredFlg());
+						existing.setVisibleFlg(attributeType.getVisibleFlg());
+						existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
+						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+						saveAttributeType(existing);
 					} else {
 						attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						attributeType.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						attributeType.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						saveAttributeType(attributeType);
 					}
-					newTypeSet.add(attributeType.getAttributeType());
 
 					List<AttributeCode> existingAttributeCodes = findCodesForType(attributeType.getAttributeType());
 					Map<String, AttributeCode> existingCodeMap = new HashMap<>();
@@ -310,8 +305,7 @@ public class AttributeServiceImpl
 
 								AttributeCode existingCode = existingCodeMap.get(attributeCode.getAttributeCodePk().toKey());
 								if (existingCode != null) {
-									if (ServiceUtil.compareObjects(existingCode, attributeCode, true))
-									{
+									if (ServiceUtil.compareObjects(existingCode, attributeCode, true)) {
 										existingCode.setDescription(attributeCode.getDescription());
 										existingCode.setDetailUrl(attributeCode.getDetailUrl());
 										existingCode.setLabel(attributeCode.getLabel());
@@ -348,18 +342,7 @@ public class AttributeServiceImpl
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
 			}
-
 		});
-
-		//inactive missing type
-		attributeTypes.stream().forEach((attributeType) -> {
-			if (newTypeSet.contains(attributeType.getAttributeType()) == false) {
-				attributeType.setActiveStatus(LookupEntity.INACTIVE_STATUS);
-				attributeType.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-				removeAttributeType(attributeType.getAttributeType());
-			}
-		});
-
 	}
 
 	@Override

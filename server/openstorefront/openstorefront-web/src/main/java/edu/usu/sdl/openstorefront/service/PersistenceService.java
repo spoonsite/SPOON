@@ -376,6 +376,18 @@ public class PersistenceService
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
 		}
+		if (queryByExample.getGroupBy() != null) {
+			String names = generateExampleNames(queryByExample.getGroupBy());
+			if (StringUtils.isNotBlank(names)) {
+				queryString.append(" group by ").append(names);
+			}
+		}
+		if (queryByExample.getOrderBy() != null) {
+			String names = generateExampleNames(queryByExample.getOrderBy());
+			if (StringUtils.isNotBlank(names)) {
+				queryString.append(" order by ").append(names).append(" ").append(queryByExample.getSortDirection());
+			}
+		}
 		if (queryByExample.getFirstResult() != null) {
 			queryString.append(" SKIP ").append(queryByExample.getFirstResult());
 		}
@@ -440,6 +452,63 @@ public class PersistenceService
 							}
 
 							where.append(fieldName).append(" = :").append(fieldName.replace(".", PARAM_NAME_SEPARATOR)).append("Param");
+						}
+					}
+				}
+			}
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+			throw new RuntimeException(ex);
+		}
+		return where.toString();
+	}
+
+	private <T> String generateExampleNames(T example)
+	{
+		return generateExampleNames(example, "");
+	}
+
+	private <T> String generateExampleNames(T example, String parentFieldName)
+	{
+		StringBuilder where = new StringBuilder();
+
+		try {
+			Map fieldMap = BeanUtils.describe(example);
+			boolean addAnd = false;
+			for (Object field : fieldMap.keySet()) {
+
+				if ("class".equalsIgnoreCase(field.toString()) == false) {
+					Object value = fieldMap.get(field);
+					if (value != null) {
+
+						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
+						Object returnObj = method.invoke(example, (Object[]) null);
+						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+							if (StringUtils.isNotBlank(parentFieldName)) {
+								parentFieldName = parentFieldName + ".";
+							}
+							parentFieldName = parentFieldName + field;
+							if (addAnd) {
+								where.append(",");
+							} else {
+								addAnd = true;
+								where.append(" ");
+							}
+
+							where.append(generateWhereClause(returnObj, parentFieldName));
+						} else {
+							if (addAnd) {
+								where.append(",");
+							} else {
+								addAnd = true;
+								where.append(" ");
+							}
+
+							String fieldName = field.toString();
+							if (StringUtils.isNotBlank(parentFieldName)) {
+								fieldName = parentFieldName + "." + fieldName;
+							}
+
+							where.append(fieldName);
 						}
 					}
 				}

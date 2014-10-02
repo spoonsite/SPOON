@@ -131,7 +131,8 @@ public interface AttributeService
 	public void removeAttributeCode(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Sync the db with the attribute code Map
+	 * Sync the db with the attribute code Map Note this won't remove types
+	 * because of the multiple file imports It will remove/inactivate codes.
 	 *
 	 * @param attributeMap
 	 */
