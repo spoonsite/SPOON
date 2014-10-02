@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +48,7 @@ public class FilterQueryParams
 	private int offset;
 
 	@QueryParam("status")
-	@DefaultValue("A")
+	@DefaultValue(BaseEntity.ACTIVE_STATUS)
 	private String status;
 
 	public FilterQueryParams()
@@ -65,7 +66,7 @@ public class FilterQueryParams
 	public <T> List<T> filter(List<T> data)
 	{
 		List<T> results = new ArrayList<>();
-		
+
 		//window
 		if (offset < data.size() && max > 0) {
 			int count = 0;
