@@ -220,7 +220,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         if ($scope.searchCode.type) {
           var filter = _.find($scope.filters, {'type': $scope.searchCode.type});
           if (filter){
-            architecture = filter.archtechtureFlg;
+            architecture = filter.architectureFlg;
           }
         }
       }

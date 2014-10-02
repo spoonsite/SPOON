@@ -613,7 +613,7 @@ MOCKDATA.filters = [ {
     "description" : "Funded",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -632,7 +632,7 @@ MOCKDATA.filters = [ {
     "description" : "JARM ESL Alignment",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : true,
+    "architectureFlg" : true,
     "importantFlg" : true,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -811,7 +811,7 @@ MOCKDATA.filters = [ {
     "description" : "Accreditation Status",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -845,7 +845,7 @@ MOCKDATA.filters = [ {
     "description" : "Network(s) Fielded",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -874,7 +874,7 @@ MOCKDATA.filters = [ {
     "description" : "License Type",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -923,7 +923,7 @@ MOCKDATA.filters = [ {
     "description" : "Commercial Exportable via EAR",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -942,7 +942,7 @@ MOCKDATA.filters = [ {
     "description" : "DI2E Evaluation Level",
     "visibleFlg" : true,
     "requiredFlg" : true,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -976,7 +976,7 @@ MOCKDATA.filters = [ {
     "description" : "Service Data Format",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -1010,7 +1010,7 @@ MOCKDATA.filters = [ {
     "description" : "JCA Alignment",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : true,
+    "architectureFlg" : true,
     "importantFlg" : true,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -3724,7 +3724,7 @@ MOCKDATA.filters = [ {
     "description" : "Service Transport Protocal",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -3758,7 +3758,7 @@ MOCKDATA.filters = [ {
     "description" : "DI2E State",
     "visibleFlg" : true,
     "requiredFlg" : true,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -3792,7 +3792,7 @@ MOCKDATA.filters = [ {
     "description" : "Data Rights",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -3841,7 +3841,7 @@ MOCKDATA.filters = [ {
     "description" : "OWF Compatible",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -3860,7 +3860,7 @@ MOCKDATA.filters = [ {
     "description" : "JCFSL Alignment",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : true,
+    "architectureFlg" : true,
     "importantFlg" : true,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -5314,7 +5314,7 @@ MOCKDATA.filters = [ {
     "description" : "Accreditation Process",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -5343,7 +5343,7 @@ MOCKDATA.filters = [ {
     "description" : "Lifecycle Stage",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -5382,7 +5382,7 @@ MOCKDATA.filters = [ {
     "description" : "License Classification",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -5421,7 +5421,7 @@ MOCKDATA.filters = [ {
     "description" : "Network Accredited On",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -5450,7 +5450,7 @@ MOCKDATA.filters = [ {
     "description" : "Component Type",
     "visibleFlg" : true,
     "requiredFlg" : true,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -5514,7 +5514,7 @@ MOCKDATA.filters = [ {
     "description" : "Protection / Impact Level",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -5543,7 +5543,7 @@ MOCKDATA.filters = [ {
     "description" : "ITAR Exportable",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -5562,7 +5562,7 @@ MOCKDATA.filters = [ {
     "description" : "DI2E SvcV-4 Alignment",
     "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : true,
+    "architectureFlg" : true,
     "importantFlg" : true,
     "allowMutlipleFlg" : true,
     "codes" : [ {

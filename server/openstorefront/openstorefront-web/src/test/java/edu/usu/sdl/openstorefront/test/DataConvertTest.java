@@ -730,7 +730,7 @@ public class DataConvertTest
 			List<String> data = new ArrayList<>();
 			data.add("Attribute Type");
 			data.add("Type Description");
-			data.add("Archtechture flag");
+			data.add("Architecture flag");
 			data.add("Visible");
 			data.add("Important");
 			data.add("Required");
@@ -745,7 +745,7 @@ public class DataConvertTest
 					data = new ArrayList<>();
 					data.add(attributeTypeView.getType());
 					data.add(attributeTypeView.getDescription());
-					data.add(Boolean.toString(attributeTypeView.getArchtechtureFlg()));
+					data.add(Boolean.toString(attributeTypeView.getArchitectureFlg()));
 					data.add(Boolean.toString(attributeTypeView.getVisibleFlg()));
 					data.add(Boolean.toString(attributeTypeView.getImportantFlg()));
 					data.add(Boolean.toString(attributeTypeView.getRequiredFlg()));

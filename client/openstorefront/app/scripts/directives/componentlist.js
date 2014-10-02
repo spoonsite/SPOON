@@ -174,7 +174,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         // console.log('filter', filter);
         
         if (filter){
-          architecture = filter.archtechtureFlg;
+          architecture = filter.architectureFlg;
         }
         Business.componentservice.doSearch(scope.search.type, scope.search.code, architecture).then(function(result){
           if (result)
