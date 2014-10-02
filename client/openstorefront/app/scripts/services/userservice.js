@@ -71,9 +71,11 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   */
   var getCurrentUserProfile = function(forceReload) {
     var deferred = $q.defer();
-
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    forceReload = true;
     var currentUser = checkExpire('currentUserProfile');
-    if (currentUser) {
+    if (currentUser && !forceReload) {
       deferred.resolve(currentUser);
     } else {
       loadProfile(CURRENT_USER, function(data, status, headers, config) { /*jshint unused:false*/
