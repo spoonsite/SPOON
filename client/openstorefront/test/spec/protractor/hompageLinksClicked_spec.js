@@ -2,6 +2,9 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
 
     it('click on the Highlights links', function() {
         browser.get(theSite, 25000);
+        // Wait for it to sync, a bit slower on the VPN
+        browser.driver.sleep(10000);
+
         for (var i=0; i < 5; i++) {
             element.all(by.css('.listing_short_title_text')).get(i).click();
             browser.driver.sleep(350);
