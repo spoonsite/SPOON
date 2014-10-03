@@ -43,6 +43,8 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
+import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -1125,6 +1127,17 @@ public class ComponentServiceImpl
 		validationResult.merge(reviewResults);
 
 		for (ComponentReviewPro reviewPro : pros) {
+			ReviewPro proCode = getLookupService().getLookupEnity(ReviewPro.class, reviewPro.getComponentReviewProPk().getReviewPro());
+			if (proCode == null) {
+				proCode = getLookupService().getLookupEnityByDesc(ReviewPro.class, reviewPro.getComponentReviewProPk().getReviewPro());
+				if (proCode == null) {
+					reviewPro.getComponentReviewProPk().setReviewPro(null);
+				} else {
+					reviewPro.getComponentReviewProPk().setReviewPro(proCode.getCode());
+				}
+			} else {
+				reviewPro.getComponentReviewProPk().setReviewPro(proCode.getCode());
+			}
 			validationModel = new ValidationModel(reviewPro);
 			validationModel.setConsumeFieldsOnly(true);
 			ValidationResult proResults = ValidationUtil.validate(validationModel);
@@ -1132,6 +1145,17 @@ public class ComponentServiceImpl
 		}
 
 		for (ComponentReviewCon reviewCon : cons) {
+			ReviewCon conCode = getLookupService().getLookupEnity(ReviewCon.class, reviewCon.getComponentReviewConPk().getReviewCon());
+			if (conCode == null) {
+				conCode = getLookupService().getLookupEnityByDesc(ReviewCon.class, reviewCon.getComponentReviewConPk().getReviewCon());
+				if (conCode == null) {
+					reviewCon.getComponentReviewConPk().setReviewCon(null);
+				} else {
+					reviewCon.getComponentReviewConPk().setReviewCon(conCode.getCode());
+				}
+			} else {
+				reviewCon.getComponentReviewConPk().setReviewCon(conCode.getCode());
+			}
 			validationModel = new ValidationModel(reviewCon);
 			validationModel.setConsumeFieldsOnly(true);
 			ValidationResult conResults = ValidationUtil.validate(validationModel);
