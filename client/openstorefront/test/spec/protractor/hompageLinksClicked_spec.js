@@ -4,9 +4,9 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
         browser.get(theSite, 25000);
         for (var i=0; i < 5; i++) {
             element.all(by.css('.listing_short_title_text')).get(i).click();
-            browser.driver.sleep(250);
+            browser.driver.sleep(350);
             browser.driver.navigate().back();
-            browser.driver.sleep(250);
+            browser.driver.sleep(350);
         }
         expect(true).toBe(true);   //Some links now go off of the di2e website.
     });

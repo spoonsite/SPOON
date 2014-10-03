@@ -22,7 +22,7 @@ describe('searchDetails_Click on the results', function() {
 
     // Verify tabs (Summary, Details, Reviews, Q&A) on the page
     var list = element.all(by.css('.nav-tabs li')); 
-    expect(list.count()).toBe(7);
+    expect(list.count()).toBe(3);
 
     // Click on the tabs from search results details page
     element.all(by.css('.nav-tabs li')).get(1).click();
