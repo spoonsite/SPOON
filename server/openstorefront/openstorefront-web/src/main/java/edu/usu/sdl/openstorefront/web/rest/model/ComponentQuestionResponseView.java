@@ -54,7 +54,7 @@ public class ComponentQuestionResponseView
 			if (typeCode == null) {
 				tempView.setUserTypeCode(null);
 			} else {
-				tempView.setUserTypeCode(typeCode.getDescription());
+				tempView.setUserTypeCode(typeCode.getCode());
 			}
 			tempView.setUsername(response.getUpdateUser());
 			tempView.setUpdateDts(response.getUpdateDts());
