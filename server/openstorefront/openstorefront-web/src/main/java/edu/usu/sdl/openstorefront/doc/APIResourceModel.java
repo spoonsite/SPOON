@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.doc;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import java.util.List;
  */
 public class APIResourceModel
 {
+
 	private String resourceName;
 	private String resourceDescription;
 	private String className;
@@ -66,7 +66,6 @@ public class APIResourceModel
 	{
 		this.className = className;
 	}
-
 
 	public String getResourcePath()
 	{
