@@ -15,41 +15,56 @@
 */
 'use strict';
 
-app.directive('question', ['business', function (Business) {
+app.directive('question', ['business', '$timeout', function (Business, $timeout) {
   return {
-    template: '<div><br ng-if="!questionId"><b ng-if="!questionId">Ask a Question</b><br ng-if="!questionId"><form ng-submit="submitQuestion($event)"><textarea cols="100" ng-model="content"></textarea><br><br><button class="btn btn-primary" type="submit"><span ng-if="!questionId">Post</span><span ng-if="questionId">Save</span></button></form></div>',
+    templateUrl: 'views/questionsResponse/questionTemplate.html',
     restrict: 'E',
     scope: {
       componentId: '=',
       questionId: '=',
-      content: '&'
     },
     link: function postLink(scope, element, attrs) {
       scope.user = {};
+      scope.post = {};
+
       Business.userservice.getCurrentUserProfile().then(function(result){
         if (result) {
           scope.user.info = result;
-        } 
-      });
-      scope.submitQuestion = function(event)
-      {
-        event.preventDefault();
-        if (scope.user.info) {
-          var post = {};
-          post.question = scope.content;
-          post.userTypeCode = scope.user.info.userTypeCode;
-          post.organization = scope.user.info.organization;
-          Business.componentservice.saveQuestion(scope.componentId, post, scope.questionId).then(function(result){
+          Business.lookupservice.getUserTypeCodes().then(function(result){
             if (result) {
-              // console.log('result', result);
-              scope.$emit('$TRIGGEREVENT', '$detailsUpdated', scope.componentId);
+              scope.userTypeCodes = result;
+              if (attrs && attrs.question) {
+                scope.post.question = attrs.question || '';
+                scope.post.userTypeCode = _.find(scope.userTypeCodes, {'code': attrs.userTypeCode}) || scope.userTypeCodes[0];
+                scope.post.organization = attrs.organization || '';
+              } else {
+                scope.post.userTypeCode = _.find(scope.userTypeCodes, {'code': scope.user.info.userTypeCode});
+                scope.post.organization = scope.user.info.organization;
+              }
+            } else {
+              $scope.userTypeCodes = [];
             }
           });
-        } else {
-          return false;
         }
-      }
+      });
 
-    }
+      scope.submitQuestion = function(event) {
+        event.preventDefault();
+        Business.userservice.getCurrentUserProfile().then(function(result){
+          if (result) {
+            scope.user.info = result;
+            var request = angular.copy(scope.post);
+            console.log('scope.user.info', scope.user.info);
+            request.userTypeCode = request.userTypeCode.code;
+            console.log('request', request);
+            Business.componentservice.saveQuestion(scope.componentId, request, scope.questionId).then(function(result){
+              if (result) {
+                scope.$emit('$TRIGGEREVENT', '$detailsUpdated', scope.componentId);
+              }
+            });
+          }
+        });
+      };
+    } 
   };
 }]);
