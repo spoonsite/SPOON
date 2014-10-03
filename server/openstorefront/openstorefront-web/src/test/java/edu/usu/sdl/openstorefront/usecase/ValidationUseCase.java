@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.test;
+package edu.usu.sdl.openstorefront.usecase;
 
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -32,7 +32,7 @@ import org.junit.Test;
  *
  * @author dshurtleff
  */
-public class ValidationTest
+public class ValidationUseCase
 {
 
 	@Test

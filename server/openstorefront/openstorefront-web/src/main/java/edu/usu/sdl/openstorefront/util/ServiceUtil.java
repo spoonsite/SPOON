@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -55,6 +56,8 @@ public class ServiceUtil
 	 */
 	public static boolean isComplexClass(Class fieldClass)
 	{
+		Objects.requireNonNull(fieldClass, "Class is required");
+
 		boolean complex = false;
 		if (!fieldClass.isPrimitive()
 				&& !fieldClass.isArray()
@@ -85,6 +88,8 @@ public class ServiceUtil
 	 */
 	public static boolean isCollectionClass(Class checkClass)
 	{
+		Objects.requireNonNull(checkClass, "Class is required");
+
 		boolean collection = false;
 		if (checkClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName())
 				|| checkClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
@@ -104,6 +109,8 @@ public class ServiceUtil
 	 */
 	public static List<Field> getAllFields(Class typeClass)
 	{
+		Objects.requireNonNull(typeClass, "Class is required");
+
 		List<Field> fields = new ArrayList<>();
 		if (typeClass.getSuperclass() != null) {
 			fields.addAll(getAllFields(typeClass.getSuperclass()));
@@ -148,81 +155,70 @@ public class ServiceUtil
 			return isSubClass(className, entityClass.getSuperclass());
 		}
 	}
-	
+
 	/**
 	 * Compares to object of the same type
+	 *
 	 * @param original
 	 * @param compare
 	 * @param consumeFieldsOnly
-	 * @return 
+	 * @return True is different, false if the same
 	 */
-	public static boolean compareObjects(Object original, Object compare, boolean consumeFieldsOnly)
+	public static boolean isObjectsDifferent(Object original, Object compare, boolean consumeFieldsOnly)
 	{
 		boolean changed = false;
-			
-		if (original != null && compare == null)
-		{
+
+		if (original != null && compare == null) {
 			changed = true;
-		}else if (original == null && compare != null)
-		{
+		} else if (original == null && compare != null) {
 			changed = true;
-		}
-		else if (original != null && compare != null)
-		{
-			if (original.getClass().isInstance(compare))
-			{
+		} else if (original != null && compare != null) {
+			if (original.getClass().isInstance(compare)) {
 				List<Field> fields = getAllFields(original.getClass());
-				for (Field field : fields)
-				{
+				for (Field field : fields) {
 					boolean check = true;
-					if (consumeFieldsOnly)
-					{
+					if (consumeFieldsOnly) {
 						ConsumeField consume = (ConsumeField) field.getAnnotation(ConsumeField.class);
-						if (consume == null)
-						{
+						if (consume == null) {
 							check = false;
 						}
 					}
-					if (check)
-					{
-						try
-						{
-							changed = compareFields(BeanUtils.getProperty(original, field.getName()), BeanUtils.getProperty(compare, field.getName()));
-							if (changed)
-							{
+					if (check) {
+						try {
+							changed = isFieldsDifferent(BeanUtils.getProperty(original, field.getName()), BeanUtils.getProperty(compare, field.getName()));
+							if (changed) {
 								break;
 							}
-						}
-						catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-						{
+						} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 							throw new OpenStorefrontRuntimeException("Can't compare object types", ex);
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				throw new OpenStorefrontRuntimeException("Can't compare different object types", "Check objects");
 			}
-		}		
+		}
 		return changed;
 	}
-	
-	public static boolean compareFields(Object original, Object newField)
+
+	/**
+	 * Check to see if two fields are different
+	 *
+	 * @param original
+	 * @param newField
+	 * @return True if different and false if the same
+	 */
+	public static boolean isFieldsDifferent(Object original, Object newField)
 	{
 		boolean changed = false;
-		if (original != null && newField == null)
-		{
+		if (original != null && newField == null) {
 			changed = true;
-		}else if (original == null && newField != null)
-		{
+		} else if (original == null && newField != null) {
 			changed = true;
-		}
-		else if (original != null && newField != null)
-		{
+		} else if (original != null && newField != null) {
 			changed = !(original.equals(newField));
-		}		
+		}
 		return changed;
-	}	
-	
+	}
+
 }

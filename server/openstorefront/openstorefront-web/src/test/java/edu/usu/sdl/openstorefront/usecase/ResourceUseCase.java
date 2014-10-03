@@ -13,29 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.openstorefront.usecase;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
+import org.junit.Test;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-@APIDescription("Resource Type: Document, Homepage, Releases...etc")
-public class ResourceType
-		extends LookupEntity
+public class ResourceUseCase
 {
 
-	public static final String DOCUMENT = "DOC";
-	public static final String INSTALL = "INSTALL";
-	public static final String DI2E_EVAL_REPORT = "DI2EEVAL";
-	public static final String HOME_PAGE = "HOME";
-	public static final String CODE = "CODE";
-	public static final String BINARY = "BINARIES";
-	public static final String SERVICE = "SERVICE";
-
-	public ResourceType()
+	@Test
+	public void testResourceFind()
 	{
+//		URL url = new DBManager().getClass().getResource("/data/lookup/MediaType.csv");
+//		System.out.println("Url: " + url);
+
+//		URL url = new JPAProvider().getClass().getResource("/META-INF/persistence.xml");
+//		Collection<PersistenceUnitInfo> allUnitInfos = (Collection<PersistenceUnitInfo>) PersistenceXmlUtil.parse(new JPAProvider().getClass().getResource("/META-INF/persistence.xml"));
+//		System.out.println(allUnitInfos);
+//
 	}
 
 }

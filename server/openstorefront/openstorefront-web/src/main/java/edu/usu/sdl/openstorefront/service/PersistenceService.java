@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import com.orientechnologies.orient.core.id.OClusterPositionFactory;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -316,16 +317,16 @@ public class PersistenceService
 		throw new OpenStorefrontRuntimeException("Unsupported operation", "Add support");
 	}
 
-	public int countByExample(QueryByExample queryByExample)
+	public long countByExample(QueryByExample queryByExample)
 	{
-		int count = 0;
+		long count = 0;
 		StringBuilder queryString = new StringBuilder();
 		switch (queryByExample.getQueryType()) {
 			case COUNT:
-				queryString.append("select sum(*) ");
+				queryString.append("select count(*) ");
 				break;
 			case COUNT_DISTINCT:
-				queryString.append("select sum(distinct(").append(queryByExample.getDistinctField()).append(") ");
+				queryString.append("select count(distinct(").append(queryByExample.getDistinctField()).append(") ");
 				break;
 			default:
 				throw new OpenStorefrontRuntimeException("Query Type unsupported: " + queryByExample.getQueryType(), "Only supports Count types");
@@ -339,7 +340,10 @@ public class PersistenceService
 
 		OObjectDatabaseTx db = getConnection();
 		try {
-			count = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(queryByExample.getExample()));
+			List<ODocument> documents = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(queryByExample.getExample()));
+			if (documents.isEmpty() == false) {
+				count = documents.get(0).field("count");
+			}
 		} finally {
 			closeConnection(db);
 		}

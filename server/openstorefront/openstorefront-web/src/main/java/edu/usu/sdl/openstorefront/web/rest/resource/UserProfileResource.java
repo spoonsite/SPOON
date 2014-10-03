@@ -21,22 +21,28 @@ import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.security.UserProfileRequireHandler;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.UserProfileView;
+import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.UserWatchView;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -280,20 +286,56 @@ public class UserProfileResource
 	// ComponentRESTResource TRACKING section
 	@GET
 	@RequireAdmin
-	@APIDescription("Get the list of tracking details on a specified entity")
+	@APIDescription("Gets the list of tracking details on a specified user. Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
-	public List<UserTracking> getComponentTracking(
+	public Response getComponentTracking(
 			@PathParam("id")
-			@RequiredParam String userId)
+			@RequiredParam String userId,
+			@BeanParam FilterQueryParams filterQueryParams)
 	{
-		return service.getUserService().getBaseEntityByCreateUser(UserTracking.class, userId);
+		UserTracking userTrackingExample = new UserTracking();
+		userTrackingExample.setCreateUser(userId);
+		userTrackingExample.setActiveStatus(filterQueryParams.getStatus());
+
+		QueryByExample<UserTracking> queryByExample = new QueryByExample(userTrackingExample);
+		queryByExample.setMaxResults(filterQueryParams.getMax());
+		queryByExample.setFirstResult(filterQueryParams.getOffset());
+
+		UserTracking userTrackingOrderExample = new UserTracking();
+		userTrackingOrderExample.setCreateDts(QueryByExample.DATE_FLAG);
+		queryByExample.setOrderBy(userTrackingOrderExample);
+		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
+
+		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(UserTracking.class, queryByExample);
+		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, userTrackingExample));
+		return sendSingleEnityResponse(new UserTrackingWrapper(userTrackings, total));
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets the tracking details on a specified user and tracking id")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(UserTracking.class)
+	@Path("/{id}/tracking/{trackingId}")
+	public Response getComponentTracking(
+			@PathParam("id")
+			@RequiredParam String userId,
+			@PathParam("trackingId")
+			@RequiredParam String trackingId)
+	{
+		UserTracking userTrackingExample = new UserTracking();
+		userTrackingExample.setCreateUser(userId);
+		userTrackingExample.setTrackingId(trackingId);
+
+		UserTracking userTracking = service.getPersistenceService().queryOneByExample(UserTracking.class, userTrackingExample);
+		return sendSingleEnityResponse(userTracking);
 	}
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a tracking entry from the specified entity")
+	@APIDescription("Remove a tracking entry from the specified user")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
@@ -306,7 +348,7 @@ public class UserProfileResource
 	}
 
 	@POST
-	@APIDescription("Add a tracking entry for the specified entity")
+	@APIDescription("Add a tracking entry for the specified user")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(UserTracking.class)
@@ -323,7 +365,7 @@ public class UserProfileResource
 
 	@PUT
 	@RequireAdmin(UserProfileRequireHandler.class)
-	@APIDescription("Update a tracking entry for the specified entity")
+	@APIDescription("Update a tracking entry for the specified user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
 	public Response updateComponentTracking(
