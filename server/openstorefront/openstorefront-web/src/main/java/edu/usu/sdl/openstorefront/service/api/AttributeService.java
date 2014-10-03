@@ -18,10 +18,12 @@ package edu.usu.sdl.openstorefront.service.api;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.util.List;
 import java.util.Map;
 
@@ -129,16 +131,12 @@ public interface AttributeService
 	public void removeAttributeCode(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Sync the db with the attribute code Map
+	 * Sync the db with the attribute code Map Note this won't remove types
+	 * because of the multiple file imports It will remove/inactivate codes.
 	 *
 	 * @param attributeMap
 	 */
 	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
-
-	/**
-	 * Refreshes the cache from the DB
-	 */
-	public void refreshCache();
 
 	/**
 	 * Find the recently posted (created date) articles
@@ -146,7 +144,7 @@ public interface AttributeService
 	 * @param maxResults
 	 * @return
 	 */
-	public List<AttributeCode> findRecentlyAddedArticles(int maxResults);
+	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults);
 
 	/**
 	 * Builds and Architecture given a attribute type NOTE: AttributeType must
@@ -156,5 +154,20 @@ public interface AttributeService
 	 * @return
 	 */
 	public Architecture generateArchitecture(String attributeType);
+
+	/**
+	 * Saves a new article Tracking event
+	 *
+	 * @param articleTracking
+	 */
+	public void addArticleTrackEvent(ArticleTracking articleTracking);
+
+	/**
+	 * Builds and Architecture given a attribute type NOTE: AttributeType must
+	 * an architecture with codes in the following format: 1.1.1
+	 *
+	 * @return
+	 */
+	public List<ComponentSearchView> getAllArticles();
 
 }

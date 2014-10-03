@@ -218,3 +218,24 @@ tr:nth-child(even) {
 .value-object-name{
 	color: yellow;
 }
+
+.highlight{
+	background-color: yellow;
+}
+
+.toTopDiv{
+	position: fixed;
+	background-color: slategray;
+	color: white;
+	font-size: 16px;
+	text-align: center;
+	width: 100px;
+	margin-left: auto;
+	opacity: 0.8;
+	margin-right: auto;
+	z-index: 99;
+	left: 40px;
+	bottom: 0px;
+	border-radius: 20px 20px 0px 0px;
+	 	
+}

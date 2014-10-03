@@ -16,8 +16,14 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,16 +34,20 @@ import java.util.List;
 public class ComponentSearchView
 {
 
+	private String listingType;
 	private String componentId;
 	private String name;
 	private String description;
 	private String parentComponentId;
 	private String guid;
 	private String organization;
-	private Date releaseDate;
 	private String version;
 	private String approvalState;
 	private String approvedUser;
+	private String articleAttributeType;
+	private String articleAttributeCode;
+	private Integer averageRating;
+	private Date releaseDate;
 	private Date approvedDts;
 	private Date lastActivityDts;
 	private List<ComponentTag> tags;
@@ -48,7 +58,7 @@ public class ComponentSearchView
 	private String updateUser;
 	private Date updateDts;
 
-	private List<ComponentAttributeView> attributes;
+	private List<SearchResultAttribute> attributes;
 
 	public ComponentSearchView()
 	{
@@ -58,6 +68,7 @@ public class ComponentSearchView
 	{
 		ServiceProxy service = new ServiceProxy();
 		ComponentSearchView view = new ComponentSearchView();
+		view.setListingType("Component");
 		view.setComponentId(component.getComponentId());
 		view.setName(component.getName());
 		view.setDescription(component.getDescription());
@@ -71,6 +82,17 @@ public class ComponentSearchView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
 		view.setTags(service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId()));
+		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
+		Integer total = 0;
+		for (ComponentReview review : reviews) {
+			total = total + review.getRating();
+		}
+		if (reviews.size() > 0) {
+			view.setAverageRating(total / reviews.size());
+		}
+		else {
+			view.setAverageRating(0);
+		}
 
 		view.setActiveStatus(component.getActiveStatus());
 		view.setCreateUser(component.getCreateUser());
@@ -78,6 +100,29 @@ public class ComponentSearchView
 		view.setCreateDts(component.getCreateDts());
 		view.setUpdateUser(component.getUpdateUser());
 
+		return view;
+	}
+
+	public static ComponentSearchView toView(Article article)
+	{
+		ServiceProxy service = new ServiceProxy();
+		ComponentSearchView view = new ComponentSearchView();
+		view.setListingType("Article");
+		view.setComponentId(null);
+		view.setAverageRating(0);
+		view.setArticleAttributeType(article.getAttributeType());
+		view.setArticleAttributeCode(article.getAttributeCode());
+		AttributeType type = service.getPersistenceService().findById(AttributeType.class, article.getAttributeType());
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(article.getAttributeCode());
+		pk.setAttributeType(article.getAttributeType());
+		AttributeCode code = service.getPersistenceService().findById(AttributeCode.class, pk);
+		view.setDescription(type.getDescription() + "-" + code.getLabel() + " Article");
+		view.setName(type.getDescription() + "-" + code.getLabel() + " Article");
+		view.setLastActivityDts(article.getUpdateDts());
+		view.setOrganization(article.getOrganization());
+		List<ComponentAttribute> attributes = new ArrayList<>();
+		view.setAttributes(SearchResultAttribute.toViewList(attributes));
 		return view;
 	}
 
@@ -204,7 +249,7 @@ public class ComponentSearchView
 	/**
 	 * @return the attributes
 	 */
-	public List<ComponentAttributeView> getAttributes()
+	public List<SearchResultAttribute> getAttributes()
 	{
 		return attributes;
 	}
@@ -212,7 +257,7 @@ public class ComponentSearchView
 	/**
 	 * @param attributes the attributes to set
 	 */
-	public void setAttributes(List<ComponentAttributeView> attributes)
+	public void setAttributes(List<SearchResultAttribute> attributes)
 	{
 		this.attributes = attributes;
 	}
@@ -311,6 +356,70 @@ public class ComponentSearchView
 	public void setTags(List<ComponentTag> tags)
 	{
 		this.tags = tags;
+	}
+
+	/**
+	 * @return the listingType
+	 */
+	public String getListingType()
+	{
+		return listingType;
+	}
+
+	/**
+	 * @param listingType the listingType to set
+	 */
+	public void setListingType(String listingType)
+	{
+		this.listingType = listingType;
+	}
+
+	/**
+	 * @return the articleAttributeType
+	 */
+	public String getArticleAttributeType()
+	{
+		return articleAttributeType;
+	}
+
+	/**
+	 * @param articleAttributeType the articleAttributeType to set
+	 */
+	public void setArticleAttributeType(String articleAttributeType)
+	{
+		this.articleAttributeType = articleAttributeType;
+	}
+
+	/**
+	 * @return the articleAttributeCode
+	 */
+	public String getArticleAttributeCode()
+	{
+		return articleAttributeCode;
+	}
+
+	/**
+	 * @param articleAttributeCode the articleAttributeCode to set
+	 */
+	public void setArticleAttributeCode(String articleAttributeCode)
+	{
+		this.articleAttributeCode = articleAttributeCode;
+	}
+
+	/**
+	 * @return the averageRating
+	 */
+	public Integer getAverageRating()
+	{
+		return averageRating;
+	}
+
+	/**
+	 * @param averageRating the averageRating to set
+	 */
+	public void setAverageRating(Integer averageRating)
+	{
+		this.averageRating = averageRating;
 	}
 
 }

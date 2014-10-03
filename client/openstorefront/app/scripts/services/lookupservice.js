@@ -140,7 +140,10 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     if (expertise) {
       deferred.resolve(expertise);
     } else {
-      loadLookupTable('ExperienceTimeType', function(data, status, headers, config) { /*jshint unused:false*/
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/lookuptypes/ExperienceTimeType?sortField=sortOrder'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && isNotRequestError(data)) {
           removeError();
           save('ExperienceTimeType', data);

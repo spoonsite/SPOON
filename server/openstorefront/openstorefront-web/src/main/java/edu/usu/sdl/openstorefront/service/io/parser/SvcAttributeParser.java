@@ -19,6 +19,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -74,8 +75,8 @@ public class SvcAttributeParser
 					attributeCode.setAttributeCodePk(attributeCodePk);
 
 					StringBuilder desc = new StringBuilder();
-					desc.append("<b>Definition:</b>").append(data[DEFINITION].replace("\n", "<br>")).append("<br>");
-					desc.append("<b>Description:</b>").append(data[DESCRIPTION].replace("\n", "<br>"));
+					desc.append("<b>Definition:</b>").append(StringProcessor.stripeExtendedChars(data[DEFINITION].replace("\n", "<br>"))).append("<br>");
+					desc.append("<b>Description:</b>").append(StringProcessor.stripeExtendedChars(data[DESCRIPTION].replace("\n", "<br>")));
 					attributeCode.setDescription(desc.toString());
 					attributeCode.setLabel(data[CODE].toUpperCase().trim() + " " + data[LABEL].trim());
 

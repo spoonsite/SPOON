@@ -34,6 +34,7 @@ public class ComponentQuestionView
 	private String questionId;
 	private String username;
 	private String userType;
+	private String userTypeCode;
 	private Date createDts;
 	private Date updateDts;
 
@@ -56,6 +57,7 @@ public class ComponentQuestionView
 			view.setUserType(null);
 		} else {
 			view.setUserType(typeCode.getDescription());
+			view.setUserTypeCode(typeCode.getCode());
 		}
 		view.setQuestionId(question.getQuestionId());
 		Date max;
@@ -176,5 +178,15 @@ public class ComponentQuestionView
 	public void setQuestionId(String questionId)
 	{
 		this.questionId = questionId;
+	}
+
+	public String getUserTypeCode()
+	{
+		return userTypeCode;
+	}
+
+	public void setUserTypeCode(String userTypeCode)
+	{
+		this.userTypeCode = userTypeCode;
 	}
 }

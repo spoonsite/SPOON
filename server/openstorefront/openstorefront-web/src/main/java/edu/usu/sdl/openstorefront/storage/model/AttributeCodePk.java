@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -43,6 +44,30 @@ public class AttributeCodePk
 	{
 	}
 
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (!(obj instanceof AttributeCodePk)) {
+			return false;
+		}
+		return toKey().equals(((AttributeCodePk)obj).toKey());		
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 5;
+		hash = 89 * hash + Objects.hashCode(getAttributeType());
+		hash = 89 * hash + Objects.hashCode(getAttributeCode());
+		return hash;
+	}
+
+	@Override
+	public String toString()
+	{
+		return toKey();
+	}
+	
 	public String toKey()
 	{
 		return getAttributeType() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getAttributeCode();

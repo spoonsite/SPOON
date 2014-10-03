@@ -1,12 +1,17 @@
+// 03 Oct 2014:
+// Admin tools not available on storefront1.di2e.net.  Devin says it is not expected for IOC?
+// Would have to request privileges from the di2e help desk.  
+
 describe('adminTools', function() {
     it('Navigate from user dropdown upper right to admin tools ', function () {
         browser.get(theSite);
 
         // Click on User Name
-        element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
+        element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
 
         // Click on the first dropdown menu item which is "Admin Tools"
         element.all(by.css('.dropdown-menu a')).get(0).click();
+
 
         expect(element.all(by.css('.adminTools')).count()).toEqual(1);
     });

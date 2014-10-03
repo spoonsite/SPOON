@@ -26,7 +26,7 @@
             <div class="row" style="margin:0px;">
               <label>How long have you used it:&nbsp;</label>
             </div>
-            <button id="userTimeCode" type="button" class="btn btn-default" style="width: 325px;" ng-model="timeCode" data-html="1" ng-options="level.description for level in expertise" data-animation="am-flip-x" bs-select>
+            <button id="userTimeCode" type="button" class="btn btn-default" style="width: 325px;" ng-model="timeCode" data-html="1" ng-options="level.description for level in expertise | orderBy:'sortOrder'" data-animation="am-flip-x" bs-select>
               Action <span class="caret"></span>
             </button>
           </div>
@@ -92,7 +92,7 @@
         </div>    
         <div class="text-center" style="padding-top: 20px;">
           <button type="submit" class="btn btn-primary"><span ng-show="!revs">Save</span><span ng-show="revs && revs.edit">Update</span>&nbsp;Review</button>                  
-          <button type="button" class="btn btn-primary" ng-click="revs.edit = !!!revs.edit">Cancel</button>                  
+          <button type="button" class="btn btn-primary" ng-show="revs" ng-click="revs.edit = !!!revs.edit">Cancel</button>                  
         </div>    
       </div>
     </div>

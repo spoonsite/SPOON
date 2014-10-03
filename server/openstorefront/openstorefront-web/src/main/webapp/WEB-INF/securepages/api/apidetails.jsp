@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!--
+<%--
 Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
--->
+--%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -39,7 +39,7 @@ limitations under the License.
 		<h2>Paths</h2>
 		<ul>
 		<c:forEach var="item" items="${actionBean.resourceModel.methods}">
-			<li><span class="${item.restMethod}" style="line-height: 28px;">${item.restMethod}</span> - ${actionBean.resourceModel.resourcePath}${item.methodPath}</li>
+			<li><span class="${item.restMethod}" style="line-height: 28px;">${item.restMethod}</span> - <a href="javascript:void();" onclick="scrollToAnchor('${item.id}');" >${actionBean.resourceModel.resourcePath}${item.methodPath}</a></li>
 		</c:forEach>
 		</ul>	
 	</c:if>
@@ -85,7 +85,7 @@ limitations under the License.
 				<td align="center"><span class="${item.restMethod}">${item.restMethod}</span></td>
 				<td align="center">${item.requireAdmin}</td>
 				<td>${item.description}</td>
-				<td><span class="resourcePath">${actionBean.resourceModel.resourcePath}${item.methodPath}</span></td>
+				<td id="${item.id}TD"><span class="resourcePath"><a id="${item.id}">${actionBean.resourceModel.resourcePath}${item.methodPath}</a></span></td>
 				<td>
 					<c:if test="${!empty item.methodParams}">
 					<table width="100%">
@@ -352,8 +352,17 @@ ${complexType.object}
 		</table> 
 			
 	</c:if>
-	
-	
+		<div class="toTopDiv" onclick="$('html,body').animate({scrollTop: 0},'slow');">Top</div>
+		
+		<script type="text/javascript">
+			
+			function scrollToAnchor(aid){
+				$('*').removeClass('highlight');
+				var aTag = $("a[id='"+ aid +"']");
+				$('#'+aid+'TD').addClass('highlight');
+				$('html,body').animate({scrollTop: (aTag.offset().top-200)},'slow');
+			}	
+		</script>
 	   
     </body>
 </html>

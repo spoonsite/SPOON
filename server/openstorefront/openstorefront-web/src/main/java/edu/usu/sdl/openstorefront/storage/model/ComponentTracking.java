@@ -37,8 +37,7 @@ public class ComponentTracking
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = TrackEventCode.class)
-	private String trackEventTypeCode;	
-
+	private String trackEventTypeCode;
 
 	@NotNull
 	private Date eventDts;

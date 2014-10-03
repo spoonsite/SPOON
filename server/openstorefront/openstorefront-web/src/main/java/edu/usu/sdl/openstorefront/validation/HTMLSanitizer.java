@@ -60,7 +60,7 @@ public class HTMLSanitizer
 					.addProtocols("q", "cite", "http", "https")
 					.addTags("component-list")
 					.addTags("span")
-					.addAttributes("component-list", "hide-more", "click-callback", "class-list", "title", "data", "cols", "type", "filters", "set-filters")
+					.addAttributes("component-list", "hide-more", "click-callback", "class-list", "title", "data", "cols", "type", "filters", "set-filters", "code")
 					.addAttributes("a", "ng-click", "id")
 					.addAttributes(":all", "style")
 					.addEnforcedAttribute("a", "rel", "nofollow")

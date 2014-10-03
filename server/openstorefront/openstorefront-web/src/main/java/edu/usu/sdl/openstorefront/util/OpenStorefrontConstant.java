@@ -27,13 +27,14 @@ public class OpenStorefrontConstant
 {
 
 	public static final String SORT_ASCENDING = "ASC";
-	public static final String SORT_DESCENDING = "DSC";
+	public static final String SORT_DESCENDING = "DESC";
 	public static final String MAX_RECORDS = Integer.toString(Integer.MAX_VALUE);
 	public static final String SYSTEM_USER = "SYSTEM";
 	public static final String SYSTEM_ADMIN_USER = "SYSTEM-ADMIN";
 	public static final String ANONYMOUS_USER = "ANONYMOUS";
 	public static final String NOT_AVAILABLE = "NA";
 	public static final String ERROR_LOGGER = "edu.usu.sdl.openstorefront.SYSTEM-ERROR-LOGGER";
+	public static final String HEADER_USER_AGENT = "User-Agent";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_USERNAME = 80;

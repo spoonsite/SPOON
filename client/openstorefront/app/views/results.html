@@ -25,8 +25,8 @@ limitations under the License.
         <option class="hidden-lg" selected disabled value="" hidden>Sort By</option>
         <option value="+name">Name (A-Z)</option>
         <option value="-name">Name (Z-A)</option>
-        <option value="-stats.averageRating">Rating (high-low)</option>
-        <option value="+stats.averageRating">Rating (low-high)</option>
+        <option value="-averageRating">Rating (high-low)</option>
+        <option value="+averageRating">Rating (low-high)</option>
         <option value="-updateDts">Last Update (newest)</option>
         <option value="+updateDts">Last Update (oldest)</option>
       </select>
@@ -166,7 +166,7 @@ limitations under the License.
         <div class='container-fluid results'>
           <div>
             <div class="searchTitle">
-              Search &mdash; {{searchTitle}}
+              Search &mdash; {{searchTitle}} <span ng-if="data && data.data && data.data.length" style="font-size: 12px;">({{data.data.length}} results)</span>
             </div>
             <div class="searchDescription">
               <!-- fa fa-file-text, fa fa-book, fa fa-info-circle-->
@@ -178,7 +178,7 @@ limitations under the License.
             </div>
           </div>
           <div ng-if="data.data.length > 0">
-            <component-list click-callback="updateDetails" class-list="" list="list" filters="filters" data="data.data" cols="3" ></component-list>
+            <component-list click-callback="updateDetails" class-list="" list="list" filters="filters" data="data.data" cols="3" search="doSearchKey"></component-list>
           </div>
           <div ng-show="moreThan200" class="moreThan200">
             <button class="btn btn-default">Load More Results...</button>
@@ -227,7 +227,7 @@ limitations under the License.
 <!-- End Results Container -->
 
 <!-- This is the results description modal (the contents are handled in this controller) -->
-<div modal controller-name="ResultsCtrl" modalId='descModal' modal-classes="classlist">
+<div modal controller-name="ResultsModalCtrl" modalId='descModal' modal-classes="classlist">
 </div>
 
 

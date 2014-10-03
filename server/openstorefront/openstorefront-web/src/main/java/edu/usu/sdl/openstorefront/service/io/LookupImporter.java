@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,6 +49,7 @@ public class LookupImporter
 	private static final int CODE = 0;
 	private static final int DESCRIPTION = 1;
 	private static final int DETAILED_DESCRIPTION = 2;
+	private static final int SORT_ORDER = 3;
 
 	@Override
 	public void initialize()
@@ -71,16 +73,6 @@ public class LookupImporter
 			}
 
 			filesUpdatedOrAdded((File[]) lookupCodeFiles.toArray(new File[0]));
-		} else {
-			//load cache
-			Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
-			for (Class entityClass : entityClasses) {
-				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
-					if (ServiceUtil.isSubLookupEntity(entityClass)) {
-						serviceProxy.getLookupService().refreshCache(entityClass);
-					}
-				}
-			}
 		}
 	}
 
@@ -105,19 +97,22 @@ public class LookupImporter
 		List<LookupEntity> lookupEntities = new ArrayList<>();
 		String className = file.getName().replace(".csv", "");
 		Class lookupClass = null;
-		try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(file)));) {
+		try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(file)))) {
 
 			lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + className);
 			List<String[]> allData = reader.readAll();
 			for (String data[] : allData) {
-				if (data.length >= 2) {
+				if (data.length > DESCRIPTION) {
 
 					LookupEntity lookupEntity = (LookupEntity) lookupClass.newInstance();
 					lookupEntity.setCode(data[CODE].trim().toUpperCase());
 					lookupEntity.setDescription(data[DESCRIPTION].trim());
 
-					if (data.length >= 3) {
+					if (data.length > DETAILED_DESCRIPTION) {
 						lookupEntity.setDetailedDecription(data[DETAILED_DESCRIPTION].trim());
+					}
+					if (data.length > SORT_ORDER) {
+						lookupEntity.setSortOrder(Convert.toInteger(data[SORT_ORDER].trim()));
 					}
 
 					lookupEntities.add(lookupEntity);

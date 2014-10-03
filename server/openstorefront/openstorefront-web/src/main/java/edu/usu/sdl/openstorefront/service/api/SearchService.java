@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service.api;
 
 //import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentModel;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
 import java.util.List;
@@ -25,13 +25,21 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public interface SearchService
-{
-	/**
-	 * Finds all Searched Components via Solr
-	 *
+public interface SearchService {
+
+    /**
+     * Finds all Searched Components via Solr
+     *
      * @param query
-	 * @return
-	 */
+     * @return
+     */
     public List<SolrComponentResultsModel> getSearchItems(SearchQuery query);
+
+    /**
+     * Find Recently Added
+     * 
+     * @return 
+     */
+    public List<ComponentSearchView> getAll();
+
 }

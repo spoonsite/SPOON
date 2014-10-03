@@ -15,21 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ExperienceTimeType;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.NotNull;
 
 /**
+ * Composite View of a Component Review
  *
  * @author dshurtleff
  */
@@ -37,31 +36,58 @@ public class ComponentReviewView
 {
 
 	private String username;
-    private String userType;
-    private String comment;
-    private int rating;
-    private String title;
-    private String usedTimeCode;
-    private Date lastUsed;    
-    private Date updateDate;
-    private String organization;
-    private boolean recommend;
+
+	@NotNull
+	@ConsumeField
+	private String userType;
+
+	@NotNull
+	@ConsumeField
+	private String comment;
+
+	@NotNull
+	@ConsumeField
+	private int rating;
+
+	@NotNull
+	@ConsumeField
+	private String title;
+
+	@NotNull
+	@ConsumeField
+	private String usedTimeCode;
+
+	@NotNull
+	@ConsumeField
+	private Date lastUsed;
+	private Date updateDate;
+
+	@NotNull
+	@ConsumeField
+	private String organization;
+
+	@ConsumeField
+	private boolean recommend;
 	private String componentId;
 	private String reviewId;
+
+	@NotNull
+	@ConsumeField
 	private String name;
 	private Component component;
 
-	
-	@DataType(ComponentReviewPro.class)
+	@ConsumeField
+	@DataType(ComponentReviewProCon.class)
 	private List<ComponentReviewProCon> pros = new ArrayList<>();
 
-	@DataType(ComponentReviewCon.class)
+	@ConsumeField
+	@DataType(ComponentReviewProCon.class)
 	private List<ComponentReviewProCon> cons = new ArrayList<>();
 
 	public ComponentReviewView()
 	{
 	}
-	
+
 	public static ComponentReviewView toView(ComponentReview review)
 	{
 		ServiceProxy service = new ServiceProxy();
@@ -80,10 +106,10 @@ public class ComponentReviewView
 		view.setReviewId(review.getComponentReviewId());
 		view.setName(service.getPersistenceService().findById(Component.class, review.getComponentId()).getName());
 		ExperienceTimeType timeCode = service.getLookupService().getLookupEnity(ExperienceTimeType.class, review.getUserTimeCode());
-		if (timeCode == null){
+		if (timeCode == null) {
 			view.setUsedTimeCode(null);
 		} else {
-			view.setUsedTimeCode(timeCode.getDescription());			
+			view.setUsedTimeCode(timeCode.getDescription());
 		}
 		view.setLastUsed(review.getLastUsed());
 		view.setUpdateDate(review.getUpdateDts());
@@ -112,225 +138,141 @@ public class ComponentReviewView
 		this.cons = cons;
 	}
 
-	/**
-	 * @return the username
-	 */
 	public String getUsername()
 	{
 		return username;
 	}
 
-	/**
-	 * @param username the username to set
-	 */
 	public void setUsername(String username)
 	{
 		this.username = username;
 	}
 
-	/**
-	 * @return the userType
-	 */
 	public String getUserType()
 	{
 		return userType;
 	}
 
-	/**
-	 * @param userType the userType to set
-	 */
 	public void setUserType(String userType)
 	{
 		this.userType = userType;
 	}
 
-	/**
-	 * @return the comment
-	 */
 	public String getComment()
 	{
 		return comment;
 	}
 
-	/**
-	 * @param comment the comment to set
-	 */
 	public void setComment(String comment)
 	{
 		this.comment = comment;
 	}
 
-	/**
-	 * @return the rating
-	 */
 	public int getRating()
 	{
 		return rating;
 	}
 
-	/**
-	 * @param rating the rating to set
-	 */
 	public void setRating(int rating)
 	{
 		this.rating = rating;
 	}
 
-	/**
-	 * @return the title
-	 */
 	public String getTitle()
 	{
 		return title;
 	}
 
-	/**
-	 * @param title the title to set
-	 */
 	public void setTitle(String title)
 	{
 		this.title = title;
 	}
 
-	/**
-	 * @return the usedTimeCode
-	 */
 	public String getUsedTimeCode()
 	{
 		return usedTimeCode;
 	}
 
-	/**
-	 * @param usedTimeCode the usedTimeCode to set
-	 */
 	public void setUsedTimeCode(String usedTimeCode)
 	{
 		this.usedTimeCode = usedTimeCode;
 	}
 
-	/**
-	 * @return the lastUsed
-	 */
 	public Date getLastUsed()
 	{
 		return lastUsed;
 	}
 
-	/**
-	 * @param lastUsed the lastUsed to set
-	 */
 	public void setLastUsed(Date lastUsed)
 	{
 		this.lastUsed = lastUsed;
 	}
 
-	/**
-	 * @return the updateDate
-	 */
 	public Date getUpdateDate()
 	{
 		return updateDate;
 	}
 
-	/**
-	 * @param updateDate the updateDate to set
-	 */
 	public void setUpdateDate(Date updateDate)
 	{
 		this.updateDate = updateDate;
 	}
 
-	/**
-	 * @return the organization
-	 */
 	public String getOrganization()
 	{
 		return organization;
 	}
 
-	/**
-	 * @param organization the organization to set
-	 */
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
 	}
 
-	/**
-	 * @return the recommend
-	 */
 	public boolean isRecommend()
 	{
 		return recommend;
 	}
 
-	/**
-	 * @param recommend the recommend to set
-	 */
 	public void setRecommend(boolean recommend)
 	{
 		this.recommend = recommend;
 	}
 
-	/**
-	 * @return the component
-	 */
 	public Component getComponent()
 	{
 		return component;
 	}
 
-	/**
-	 * @param component the component to set
-	 */
 	public void setComponent(Component component)
 	{
 		this.component = component;
 	}
 
-	/**
-	 * @return the componentId
-	 */
 	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	/**
-	 * @param componentId the componentId to set
-	 */
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}
 
-	/**
-	 * @return the name
-	 */
 	public String getName()
 	{
 		return name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name)
 	{
 		this.name = name;
 	}
 
-	/**
-	 * @return the reviewId
-	 */
 	public String getReviewId()
 	{
 		return reviewId;
 	}
 
-	/**
-	 * @param reviewId the reviewId to set
-	 */
 	public void setReviewId(String reviewId)
 	{
 		this.reviewId = reviewId;

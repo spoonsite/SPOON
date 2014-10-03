@@ -16,19 +16,29 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.api.UserService;
+import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
-import edu.usu.sdl.openstorefront.storage.model.TestEntity;
+import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
-import java.util.Date;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import net.sf.uadetector.ReadableUserAgent;
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 
 /**
  * Handles all user business logic
@@ -41,6 +51,8 @@ public class UserServiceImpl
 {
 
 	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
+
+	private static final int MAX_NAME_CHECK = 100;
 
 	@Override
 	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId)
@@ -115,7 +127,7 @@ public class UserServiceImpl
 	{
 		UserWatch temp = new UserWatch();
 		temp.setUserWatchId(watchId);
-		return persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(temp));
+		return persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(temp));
 	}
 
 	/**
@@ -152,24 +164,8 @@ public class UserServiceImpl
 	@Override
 	public UserProfile getUserProfile(String userId)
 	{
-		try {
-			UserProfile profile = persistenceService.findById(UserProfile.class, userId);
-			if (profile == null) {
-				/*TODO: Here we need to create a new profile if it doesn't exist...*/
-				profile = new UserProfile();
-				profile.setActiveStatus(TestEntity.ACTIVE_STATUS);
-				profile.setCreateDts(new Date());
-				profile.setCreateUser(userId);
-				profile.setUpdateDts(new Date());
-				profile.setUpdateUser(userId);
-				profile.setUserTypeCode(UserTypeCode.END_USER);
-				profile.setUsername(userId);
-				return persistenceService.persist(profile);
-			}
-			return profile;
-		} catch (OpenStorefrontRuntimeException ex) {
-			throw new OpenStorefrontRuntimeException("There was an error getting the user profile");
-		}
+		UserProfile profile = persistenceService.findById(UserProfile.class, userId);
+		return profile;
 	}
 
 	@Override
@@ -183,23 +179,45 @@ public class UserServiceImpl
 	@Override
 	public UserProfile saveUserProfile(UserProfile user)
 	{
-		UserProfile temp = persistenceService.findById(UserProfile.class, user.getUsername());
-		if (temp != null) {
-			temp.setActiveStatus(user.getActiveStatus());
-			temp.setEmail(user.getEmail());
-			temp.setFirstName(user.getFirstName());
-			temp.setLastName(user.getLastName());
-			temp.setOrganization(user.getOrganization());
-			temp.setUserTypeCode(user.getUserTypeCode());
-			temp.setUpdateUser(SecurityUtil.getCurrentUserName());
-			return persistenceService.persist(temp);
+		return saveUserProfile(user, true);
+	}
+
+	public UserProfile saveUserProfile(UserProfile user, boolean refreshSession)
+	{
+		UserProfile userProfile = persistenceService.findById(UserProfile.class, user.getUsername());
+		if (userProfile != null) {
+			userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			userProfile.setEmail(user.getEmail());
+			userProfile.setFirstName(user.getFirstName());
+			userProfile.setLastName(user.getLastName());
+			userProfile.setOrganization(user.getOrganization());
+			userProfile.setUserTypeCode(user.getUserTypeCode());
+			userProfile.setUpdateUser(SecurityUtil.getCurrentUserName());
+			if (StringUtils.isNotBlank(userProfile.getInternalGuid())) {
+				userProfile.setInternalGuid(persistenceService.generateId());
+			}
+			persistenceService.persist(userProfile);
 		} else {
+			user.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			user.setInternalGuid(persistenceService.generateId());
 			user.setCreateDts(TimeUtil.currentDate());
 			user.setUpdateDts(TimeUtil.currentDate());
 			user.setCreateUser(SecurityUtil.getCurrentUserName());
 			user.setUpdateUser(SecurityUtil.getCurrentUserName());
-			return persistenceService.persist(user);
+			userProfile = persistenceService.persist(user);
 		}
+
+		userProfile = persistenceService.deattachAll(userProfile);
+		if (refreshSession) {
+			UserContext userContext = SecurityUtil.getUserContext();
+			if (userContext != null) {
+				if (userContext.getUserProfile().getUsername().equals(userProfile.getUsername())) {
+					userContext.setUserProfile(userProfile);
+					SecurityUtils.getSubject().getSession().setAttribute(SecurityUtil.USER_CONTEXT_KEY, userContext);
+				}
+			}
+		}
+		return userProfile;
 	}
 
 	@Override
@@ -228,7 +246,7 @@ public class UserServiceImpl
 			oldTracking.setUpdateDts(TimeUtil.currentDate());
 			oldTracking.setUpdateUser(tracking.getUpdateUser());
 			oldTracking.setEventDts(tracking.getEventDts());
-			oldTracking.setMobileDevice(tracking.getMobileDevice());
+			oldTracking.setDeviceType(tracking.getDeviceType());
 			oldTracking.setOsPlatform(tracking.getOsPlatform());
 			oldTracking.setScreenHeight(tracking.getScreenHeight());
 			oldTracking.setScreenWidth(tracking.getScreenWidth());
@@ -236,6 +254,7 @@ public class UserServiceImpl
 			oldTracking.setUserAgent(tracking.getUserAgent());
 			return persistenceService.persist(oldTracking);
 		}
+		tracking.setActiveStatus(UserTracking.ACTIVE_STATUS);
 		tracking.setCreateDts(TimeUtil.currentDate());
 		tracking.setUpdateDts(TimeUtil.currentDate());
 		tracking.setTrackingId(persistenceService.generateId());
@@ -250,4 +269,101 @@ public class UserServiceImpl
 //		//CONTINUE HERE... left off after work on friday.
 //		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //	}
+//
+	@Override
+	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean admin)
+	{
+		Objects.requireNonNull(userprofile, "User Profile is required");
+		Objects.requireNonNull(userprofile.getUsername(), "User Profile -> username is required");
+
+		UserContext userContext = new UserContext();
+
+		if (StringUtils.isBlank(userprofile.getUserTypeCode())) {
+			userprofile.setUserTypeCode(UserTypeCode.END_USER);
+		}
+
+		//validate
+		ValidationModel validationModelCode = new ValidationModel(userprofile);
+		validationModelCode.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModelCode);
+		if (validationResult.valid()) {
+
+			//check for an existing profile
+			UserProfile profile = persistenceService.findById(UserProfile.class, userprofile.getUsername());
+			if (profile == null) {
+				profile = userprofile;
+				saveUserProfile(profile, false);
+			} else {
+				//Check user id
+				boolean conflictUsername = false;
+				if (StringUtils.isNotBlank(profile.getExternalGuid())
+						|| StringUtils.isNotBlank(userprofile.getExternalGuid())) {
+					if (profile.getExternalGuid() != null
+							&& profile.getExternalGuid().equals(userprofile.getExternalGuid()) == false) {
+						conflictUsername = true;
+					} else if (userprofile.getExternalGuid() != null
+							&& userprofile.getExternalGuid().equals(profile.getExternalGuid()) == false) {
+						conflictUsername = true;
+					}
+				}
+
+				if (conflictUsername) {
+					//create a new user name and then save the profile  (We may get multiple "john.doe" so this handles that situation)
+					boolean unique = false;
+					int idIndex = 1;
+					do {
+						String userName = userprofile.getUsername() + "_" + (idIndex++);
+						UserProfile profileCheck = persistenceService.findById(UserProfile.class, userName);
+						if (profileCheck == null) {
+							profile = userprofile;
+							profile.setExternalUserId(userprofile.getUsername());
+							profile.setUsername(userName);
+							saveUserProfile(profile, false);
+							unique = true;
+						}
+					} while (!unique && idIndex < MAX_NAME_CHECK);
+
+					if (profile == null) {
+						throw new OpenStorefrontRuntimeException("Failed to create a unique username.", "Check username and make sure it's unique.");
+					}
+				}
+			}
+
+			profile = persistenceService.deattachAll(profile);
+			userContext.setUserProfile(profile);
+			if (admin != null) {
+				userContext.setAdmin(admin);
+			} else {
+				userContext.setAdmin(SecurityUtil.isAdminUser());
+			}
+			SecurityUtils.getSubject().getSession().setAttribute(SecurityUtil.USER_CONTEXT_KEY, userContext);
+
+			//Add tracking if it's a client request
+			if (request != null) {
+				UserTracking userTracking = new UserTracking();
+				userTracking.setTrackEventTypeCode(TrackEventCode.LOGIN);
+				userTracking.setEventDts(TimeUtil.currentDate());
+				userTracking.setUpdateUser(profile.getUsername());
+				userTracking.setCreateUser(profile.getUsername());
+
+				String userAgent = request.getHeader(OpenStorefrontConstant.HEADER_USER_AGENT);
+				ReadableUserAgent readableUserAgent = UserAgentManager.parse(userAgent);
+				if (readableUserAgent != null) {
+					userTracking.setBrowser(readableUserAgent.getName());
+					userTracking.setBrowserVersion(readableUserAgent.getVersionNumber().toVersionString());
+					userTracking.setDeviceType(readableUserAgent.getTypeName());
+					userTracking.setOsPlatform(readableUserAgent.getOperatingSystem().getName() + "  version: " + readableUserAgent.getOperatingSystem().getVersionNumber().toVersionString());
+				}
+				userTracking.setClientIp(request.getRemoteAddr());
+				userTracking.setUserAgent(userAgent);
+
+				saveUserTracking(userTracking);
+			}
+
+		} else {
+			throw new OpenStorefrontRuntimeException("Failed to validate the userprofile. Validation Message: " + validationResult.toString(), "Check data");
+		}
+
+		return userContext;
+	}
 }

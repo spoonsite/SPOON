@@ -86,7 +86,7 @@ public class AttributeImport
 								attributeTypeView = new AttributeTypeView();
 								attributeTypeView.setType(data[0].trim());
 								attributeTypeView.setDescription(data[1].trim());
-								attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+								attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
 								attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 								attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 								attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
@@ -152,7 +152,7 @@ public class AttributeImport
 								
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
-				attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+				attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
 				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
@@ -215,7 +215,7 @@ public class AttributeImport
 								
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
-				attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+				attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
 				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
@@ -279,7 +279,7 @@ public class AttributeImport
 								
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
-				attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+				attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
 				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
@@ -338,7 +338,7 @@ public class AttributeImport
 								
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
-				attributeTypeView.setArchtechtureFlg(Convert.toBoolean(data[2].trim()));
+				attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
 				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));

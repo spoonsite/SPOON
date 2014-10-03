@@ -17,12 +17,13 @@
 
 /*global MOCKDATA2, jQuery, confirm, triggerError*/
 
-app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', function($scope, Business, $rootScope, $location, $timeout) {
+app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', '$q', function($scope, Business, $rootScope, $location, $timeout, $q) {
 
   //////////////////////////////////////////////////////////////////////////////
   // Variables
   //////////////////////////////////////////////////////////////////////////////
   $scope.total            = {};
+  $scope.userProfileForm  = {};
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
@@ -68,21 +69,13 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   });
 
   // TODO: Set this up so it is actually calling with the user's username. 
-  $scope.getReviews = function() {
-    Business.userservice.getReviews('ANONYMOUS').then(function(result){
-      if (result) {
-        // console.log('result', result);
-        $scope.username = 'ANONYMOUS';
-        $scope.reviews = result;
-      } else {
-        $scope.reviews = null;
-      }
-    });  
-  }
-  $scope.getReviews();
   $scope.$on('$newReview', function(){
-    $scope.getReviews();
+    loadUserProfile();
   })
+  $scope.$on('$RESETUSER', function(){
+    loadUserProfile();
+  })
+
   Business.lookupservice.getExpertise().then(function(result){
     if (result) {
       $scope.expertise = result;
@@ -93,10 +86,10 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   Business.lookupservice.getUserTypeCodes().then(function(result){
     if (result) {
       $scope.userTypeCodes = result;
+      loadUserProfile();
     } else {
       $scope.userTypeCodes = [];
     }
-    loadUserProfile();
   });
   Business.getProsConsList().then(function(result) {
     if (result) {
@@ -175,36 +168,38 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
-  $scope.cancelUserProfile = function() {
-
-    Business.userservice.getCurrentUserProfile().then(function(profile) {
-      $scope.userProfile = profile;
-      $scope.userProfileForm = angular.copy(profile);
-
-      _.each($scope.userTypeCodes, function(element, index, list) { /*jshint unused:false*/
-        if (element.code === $scope.userProfileForm.userTypeCode) {
-          $scope.userProfileForm.userRole = element;
-        }
-      });
-    });
-  };
-
   /***************************************************************
   * Load the User profile 
   ***************************************************************/
   var loadUserProfile = function() {
     //show load mask on form
-    Business.userservice.getCurrentUserProfile().then(function(profile) {
-      $scope.userProfile = profile;
-      $scope.userProfileForm = angular.copy(profile);
-
-      _.each($scope.userTypeCodes, function(element, index, list) { /*jshint unused:false*/
-        if (element.code === $scope.userProfileForm.userTypeCode) {
-          $scope.userProfileForm.userRole = element;
+    Business.userservice.getCurrentUserProfile(true).then(function(profile) {
+      if (profile) {
+        // console.log('profile', profile);
+        
+        $scope.userProfile = profile;
+        $scope.userProfileForm = angular.copy(profile);
+        // console.log('Code', $scope.userProfile.userTypeCode);
+        // console.log('list', $scope.userTypeCodes);
+        // console.log('found', _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode}));
+        $scope.userProfileForm.userRole = _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode});
+        if ($scope.user.info && $scope.user.info.username) {
+          Business.userservice.getReviews($scope.user.info.username).then(function(result){
+            if (result) {
+              $scope.reviews = result;
+            } else {
+              $scope.reviews = null;
+            }
+          });  
         }
-      });
+      }
       //hide load mask
     });
+  };
+
+  $scope.cancelUserProfile = function() {
+    loadUserProfile();
+    $scope.userProfileForm.mySwitch = false;
   };
 
   /***************************************************************
@@ -215,8 +210,6 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     // mask form
     $scope.$emit('$TRIGGERLOAD', 'userLoad');
 
-    $scope.mySwitch = false;
-
     //validate form
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
@@ -224,8 +217,12 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
       function(data, status, headers, config){ /* jshint unused:false */
         //SUCCESS:: data = return value
-        $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
-        $scope.$emit('$triggerEvent', '$RESETUSER');
+        triggerAlert('Your profile was saved', 'profileSave', '#profileModal .modal-body', 6000, true);
+        $timeout(function() {
+          $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+          $scope.$emit('$triggerEvent', '$RESETUSER');
+          $scope.userProfileForm.mySwitch = false;
+        })
       },
       function(value){ //FAILURE:: value = reason why it failed
         triggerError(value);
@@ -233,14 +230,30 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
       });
   };
 
-
   /***************************************************************
-  * This function saves the profile changes in the scope by copying them from
-  * the user variable into the backup variable (this function would be where
-  * you send the saved data to the database to store it)
-  ***************************************************************/ //
-  $scope.saveProfileChanges = function() {
-    $scope.userBackup = jQuery.extend(true, {}, $scope.user);
+  * This function is looked at for auto suggestions for the tag list
+  * if a ' ' is the user's entry, it will auto suggest the next 20 tags that
+  * are not currently in the list of tags. Otherwise, it will look at the
+  * string and do a substring search.
+  * params: query -- The input that the user has typed so far
+  * params: list -- The list of tags already tagged on the item
+  * params: source -- The source of the tags options
+  * returns: deferred.promise -- The promise that we will return a resolved tags list
+  ***************************************************************/
+  $scope.checkTagsList = function(query, list, source) {
+    var deferred = $q.defer();
+    var subList = null;
+    if (query === ' ') {
+      subList = _.reject(source, function(item) {
+        return !!(_.where(list, {'text': item}).length);
+      });
+    } else {
+      subList = _.filter(source, function(item) {
+        return item.toLowerCase().indexOf(query.toLowerCase()) > -1;
+      });
+    }
+    deferred.resolve(subList);
+    return deferred.promise;
   };
 
 
@@ -250,12 +263,14 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * we get a database to work with.
   ***************************************************************/
   $scope.revertProfileChanges = function() {
-    $scope.user = jQuery.extend(true, {}, $scope.userBackup);
   };
 
   $scope.deleteReview = function(reviewId, componentId) {
     // console.log('reviewId', reviewId);
     Business.componentservice.deleteReview(componentId, reviewId).then(function(result) {
+      $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
+      $scope.$emit('$TRIGGEREVENT', '$newReview');
+    }, function(result) {
       $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
       $scope.$emit('$TRIGGEREVENT', '$newReview');
     });

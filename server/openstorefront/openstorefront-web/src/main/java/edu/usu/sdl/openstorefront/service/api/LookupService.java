@@ -110,14 +110,5 @@ public interface LookupService
 	 * @return 
 	 */
 	public LookupEntity getLookupEnityByDesc(String lookClassName, String description);
-	
-	/**
-	 * Refreshes the cache for a given class.....for most part this used
-	 * internally However, there are case where it's useful outside.
-	 *
-	 * @param <T>
-	 * @param lookupClass
-	 */
-	public <T extends LookupEntity> void refreshCache(Class<T> lookupClass);
 
 }

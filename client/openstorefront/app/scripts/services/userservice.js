@@ -20,7 +20,7 @@
 app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $http, $q) {
 
   //Constants
-  var CURRENT_USER = 'JONLAW';
+  var CURRENT_USER = 'currentuser';
   var minute = 60 * 1000;
   var day = minute * 1440; //1 day
   var MAX_USER_CACHE_TIME = day; /*jshint unused:false*/
@@ -71,9 +71,11 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   */
   var getCurrentUserProfile = function(forceReload) {
     var deferred = $q.defer();
-
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    forceReload = true;
     var currentUser = checkExpire('currentUserProfile');
-    if (currentUser) {
+    if (currentUser && !forceReload) {
       deferred.resolve(currentUser);
     } else {
       loadProfile(CURRENT_USER, function(data, status, headers, config) { /*jshint unused:false*/
@@ -92,6 +94,35 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
 
     return deferred.promise;
   };
+
+
+  /**
+  *  Initialize the current user
+  */
+  var initializeUser = function() {
+    var deferred = $q.defer();
+    loadProfile(CURRENT_USER, function(data, status, headers, config) { /*jshint unused:false*/
+      if (data && isNotRequestError(data)) {
+        removeError();
+        if (data.username){
+          CURRENT_USER = data.username;
+        }
+        save('currentUserProfile', data);
+        deferred.resolve(data);
+      } else {
+        triggerError(data);
+        deferred.reject(false);
+      }
+    }, function(data, status, headers, config){
+      deferred.reject('There was an error');
+    });
+
+    return deferred.promise;
+  };
+
+
+
+
 
   /**
   *  Load profile from the server
@@ -268,7 +299,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   */
   var getReviews = function(username) {
     var deferred = $q.defer();
-    var reviews = checkExpire('reviews', minute * 0.5);
+    var reviews = checkExpire('reviews'+username, minute * 0.5);
     if (reviews) {
       deferred.resolve(reviews);
     } else {
@@ -278,7 +309,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
-          save('reviews', data);
+          save('reviews'+username, data);
           deferred.resolve(data);
         } else {
           removeError();
@@ -299,6 +330,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     saveCurrentUserProfile: saveCurrentUserProfile,
     getReviews: getReviews,
     getWatches: getWatches,
+    initializeUser: initializeUser,
     setWatches: setWatches,
     saveWatch: saveWatch,
     removeWatch: removeWatch

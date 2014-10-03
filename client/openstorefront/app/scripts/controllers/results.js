@@ -203,39 +203,57 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.searchKey        = 'search';
       $scope.searchCode       = '';
     }
+    Business.getFilters().then(function(result) {
+      if (result) {
+        $scope.filters = result;
+        $scope.filters = angular.copy($scope.filters);
+        $scope.filters = _.sortBy($scope.filters, function(item){
+          return item.description;
+        });
+      } else {
+        $scope.filters = null;
+      }
+      setupResults();      
+      var architecture = null;
 
-    setupResults();
-    Business.componentservice.doSearch($scope.searchKey, $scope.searchCode).then(function(result) {
-      $scope.total = result || {};
-      $scope.filteredTotal = $scope.total;
+      if ($scope.searchKey === 'attribute') {
+        if ($scope.searchCode.type) {
+          var filter = _.find($scope.filters, {'type': $scope.searchCode.type});
+          if (filter){
+            architecture = filter.architectureFlg;
+          }
+        }
+      }
 
-      /*Simulate wait for the filters*/
-      Business.getFilters().then(function(result) {
-        if (result) {
-          $scope.filters = result;
-          $scope.filters = angular.copy($scope.filters);
-          $scope.filters = _.sortBy($scope.filters, function(item){
-            return item.description;
-          });
+      Business.componentservice.doSearch($scope.searchKey, $scope.searchCode, architecture).then(function(result) {
+        if (result)
+        {
+          $scope.total = result.data || [];
         } else {
-          $scope.filters = null;
+          $scope.total = [];
         }
+        $scope.filteredTotal = $scope.total;
+
+        /*Simulate wait for the filters*/
+        /*This is simulating the wait time for building the data so that we get a loader*/
+        $scope.data.data = $scope.total;
+        _.each($scope.data.data, function(item){
+          if (item.description !== null && item.description !== undefined && item.description !== '') {
+            var desc = item.description.match(/^(.*?)[.?!]\s/);
+            item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
+          } else {
+            item.shortdescription = 'This is a temporary short description';
+          }
+        });
+        // var end = new Date().getTime();
+        // var time = end - start;
+        // console.log('Total Execution time ****: ' + time);
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+        $scope.initializeData(key);
+        adjustFilters();
       });
-      /*This is simulating the wait time for building the data so that we get a loader*/
-      $scope.data.data = $scope.total;
-      _.each($scope.data.data, function(item){
-        if (item.description !== null && item.description !== undefined && item.description !== '') {
-          var desc = item.description.match(/^(.*?)[.?!]\s/);
-          item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
-        } else {
-          item.shortdescription = 'This is a temporary short description';
-        }
-      });
-      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-      $scope.initializeData(key);
-      adjustFilters();
-    });
+});
   }; //
 
 
@@ -272,11 +290,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // TODO: CLEAN UP THIS IF/ELSE switch!!!!!!!
 
 
-      if (_.contains(keys, $scope.searchKey)) {
+      if (_.contains(keys, $scope.searchCode.type)) {
         $scope.showSearch         = true;
         
-        foundFilter = _.where($scope.filters, {'type': $scope.searchGroup[0].key})[0];
-        foundCollection = _.where(foundFilter.codes, {'code': $scope.searchGroup[0].code})[0];
+        foundFilter = _.find($scope.filters, {'type': $scope.searchCode.type});
+        foundCollection = _.find(foundFilter.codes, {'code': $scope.searchCode.key});
+        // console.log('found', foundFilter);
+        // console.log('found', foundCollection);
+        
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all' && foundFilter && foundCollection) {
           $scope.filters = _.reject($scope.filters, function(filter) {
@@ -285,7 +306,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           $scope.searchColItem      = foundCollection;
           $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
           $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
-          $scope.searchDescription  = foundCollection.description || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
+          $scope.searchDescription  = getShortDescription(foundCollection.description) || 'The results on this page are restricted by an implied filter on the attribute: ' + $scope.searchTitle;
 
           if (foundCollection.landing !== undefined && foundCollection.landing !== null) {
             getBody(foundCollection.landing).then(function(result) {
@@ -338,61 +359,46 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   /***************************************************************
   * This function grabs the search key and resets the page in order to update the search
   ***************************************************************/
-  var callSearch = function() {
-    Business.componentservice.search(false, false, true).then(
-    //This is the success function on returning a value from the business layer 
+  var callSearch = function(key) {
+    $scope.$emit('$TRIGGERLOAD', 'mainLoader');
 
-    // TODO: CLEAN UP THIS FUNCTION!!!!
-    function(key) {
-
-      var type = 'all';
-      var code = '';
-      var query = null;
-      if (key === null || key === undefined) {
-        if (!isEmpty($location.search())) {
-          query = $location.search();
-          if (query.type && query.code) {
-            type = query.type;
-            code = query.code;
-          }
-        }
-        $scope.reAdjust([{ 'key': type, 'code': code }]);
-      } else {
-        type = '';
-        code = '';
-        // console.log('search', $location.search());
-        
-        if (!isEmpty($location.search())) {
-          query = $location.search();
-          if (query.type && query.code) {
-            type = query.type;
-            code = query.code;
-          } else {
-            type = 'all';
-          }
-          key = [{ 'key': type, 'code': code }];
-        }
-        // console.log('key', key);
-        
-        $scope.reAdjust(key);
-      }
-    },
-    // This is the failure function that handles a returned error
-    function(error) {
-      console.error('ERROR: ', error);
-      
-      var type = 'all';
-      var code = '';
+    var type = 'search';
+    var code = 'all';
+    var query = null;
+    if (key === null || key === undefined) {
       if (!isEmpty($location.search())) {
-        var query = $location.search();
-        if (query.type && query.code) {
+        query = $location.search();
+        if (query.type === 'attribute') {
+          if (query.keyType && query.keyKey) {
+            type = 'attribute';
+            code = {
+              'type': query.keyType,
+              'key': query.keyKey
+            };
+          } 
+        } else if (query.type && query.code) {
+          type = query.type;
+          code = query.code;
+        } 
+      }
+    } else {
+      if (!isEmpty($location.search())) {
+        query = $location.search();
+        if (query.type === 'attribute') {
+          if (query.keyType && query.keyKey) {
+            type = 'attribute';
+            code = {
+              'type': query.keyType,
+              'key': query.keyKey
+            };
+          }
+        } else if (query.type && query.code) {
           type = query.type;
           code = query.code;
         }
       }
-      $scope.reAdjust([{ 'key': type, 'code': code }]);
-    });
-    //
+    }
+    $scope.reAdjust([{ 'key': type, 'code': code }]);
   };
 
   $scope.$on('$CHANGESEARCHRESULTTAGS', function(event, id, tags){
@@ -449,13 +455,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function updates the details when a component title is clicked on
   ***************************************************************/
   $scope.updateDetails = function(id, article){
-    $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    if (article && article.type === 'Article') {
-      $scope.sendPageView('article' + article.route);
+    // $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
+    // console.log('article', article);
+    if (article && article.listingType === 'Article') {
       $scope.isArticle = true;
-      localCache.save('type', article.type);
-      localCache.save('code', article.code);
-      $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+      localCache.save('type', article.articleAttributeType);
+      localCache.save('code', article.articleAttributeCode);
+      // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLANDING', false);
       $scope.showDetails = true;
       if (!openClick) {
@@ -504,13 +510,17 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             var view = new Date($scope.details.details.lastViewedDts);
             if (view < update) {
               showUpdateNotify();
+            } else {
+              resetUpdateNotify();
             }
+          } else {
+            resetUpdateNotify();
           }
 
           /* jshint ignore:end */
 
         }
-        $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
+        // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
         $scope.showDetails = true;
       });
     } //
@@ -614,9 +624,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * Event for callSearch caught here. This is triggered by the nav
   * search bar when you are already on the results page.
   ***************************************************************/
-  $scope.$on('$callSearch', function(event) {/*jshint unused: false*/
-    callSearch();
-  });
+  // $scope.$on('$callSearch', function(event, data) {jshint unused: false
+  //   callSearch(data);
+  // });
 
   /***************************************************************
   * Event to trigger an update of the details that are shown

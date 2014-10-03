@@ -55,17 +55,35 @@ public class LookupServiceImpl
 	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass)
 	{
 		Element element = OSFCacheManager.getLookupCache().get(lookTableClass.getName());
+		List<T> lookupList;
+		boolean updateCache = false;
 		if (element != null) {
 			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
 			if (lookupCacheMap != null) {
-				List<T> lookupList = new ArrayList<>(lookupCacheMap.values());
-				return lookupList;
+				lookupList = new ArrayList<>(lookupCacheMap.values());
 			} else {
-				return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
+				lookupList = findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
+				updateCache = true;
 			}
 		} else {
-			return findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
+			lookupList = findLookup(lookTableClass, LookupEntity.ACTIVE_STATUS);
+			updateCache = true;
 		}
+		if (updateCache) {
+			Map<String, T> lookupCacheMap = new HashMap<>();
+			for (T lookup : lookupList) {
+				if (lookupCacheMap.containsKey(lookup.getCode())) {
+					//remove any duplicates from the db
+					T existing = persistenceService.findById(lookTableClass, lookup.getCode());
+					persistenceService.delete(existing);
+				} else {
+					lookupCacheMap.put(lookup.getCode(), lookup);
+				}
+			}
+			Element cachedLookup = new Element(lookTableClass.getName(), lookupCacheMap);
+			OSFCacheManager.getLookupCache().put(cachedLookup);
+		}
+		return lookupList;
 	}
 
 	@Override
@@ -87,6 +105,7 @@ public class LookupServiceImpl
 		if (oldEntity != null) {
 			oldEntity.setDescription(lookupEntity.getDescription());
 			oldEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
+			oldEntity.setSortOrder(lookupEntity.getSortOrder());
 			oldEntity.setActiveStatus(lookupEntity.getActiveStatus());
 			oldEntity.setUpdateUser(lookupEntity.getUpdateUser());
 			oldEntity.setUpdateDts(TimeUtil.currentDate());
@@ -119,6 +138,7 @@ public class LookupServiceImpl
 					if (existing != null) {
 						existing.setDescription(lookupEntity.getDescription());
 						existing.setDetailedDecription(lookupEntity.getDetailedDecription());
+						existing.setSortOrder(lookupEntity.getSortOrder());
 						existing.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
@@ -148,8 +168,6 @@ public class LookupServiceImpl
 				getLookupService().saveLookupValue(lookupEntity);
 			}
 		}
-
-		refreshCache(lookupClass);
 	}
 
 	@Override
@@ -170,6 +188,15 @@ public class LookupServiceImpl
 		T lookupEntity = null;
 		if (StringUtils.isNotBlank(code)) {
 			Element element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
+			if (element == null) {
+				Map<String, T> lookupCacheMap = new HashMap<>();
+				List<T> lookupList = findLookup(lookupClass, LookupEntity.ACTIVE_STATUS);
+				for (T lookup : lookupList) {
+					lookupCacheMap.put(lookup.getCode(), lookup);
+				}
+				element = new Element(lookupClass.getName(), lookupCacheMap);
+				OSFCacheManager.getLookupCache().put(element);
+			}
 			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
 			lookupEntity = lookupCacheMap.get(code);
 			if (lookupEntity == null) {
@@ -178,7 +205,10 @@ public class LookupServiceImpl
 					T example = lookupClass.newInstance();
 					example.setCode(code);
 					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-					lookupEntity = persistenceService.queryByOneExample(lookupClass, new QueryByExample(example));
+					lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
+					if (lookupEntity != null) {
+						lookupCacheMap.put(code, lookupEntity);
+					}
 				} catch (InstantiationException | IllegalAccessException e) {
 					throw new OpenStorefrontRuntimeException(e);
 				}
@@ -201,43 +231,18 @@ public class LookupServiceImpl
 	}
 
 	@Override
-	public <T extends LookupEntity> void refreshCache(Class<T> lookupClass)
-	{
-		log.log(Level.FINE, MessageFormat.format("Refresh Cache of: {0}", lookupClass.getSimpleName()));
-
-		List<T> lookups = findLookup(lookupClass);
-		Map<String, T> lookupCacheMap = new HashMap<>();
-		for (T lookup : lookups) {
-			if (lookupCacheMap.containsKey(lookup.getCode())) {
-				//remove any duplicates from the db
-				T existing = persistenceService.findById(lookupClass, lookup.getCode());
-				persistenceService.delete(existing);
-			} else {
-				lookupCacheMap.put(lookup.getCode(), lookup);
-			}
-		}
-		Element cachedLookup = new Element(lookupClass.getName(), lookupCacheMap);
-		OSFCacheManager.getLookupCache().put(cachedLookup);
-	}
-
-	@Override
 	public <T extends LookupEntity> T getLookupEnityByDesc(Class<T> lookupClass, String description)
 	{
 		T lookupEntity = null;
 		if (StringUtils.isNotBlank(description)) {
-			Element element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
-			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
-			lookupEntity = lookupCacheMap.get(description);
-			if (lookupEntity == null) {
-				//cache miss
-				try {
-					T example = lookupClass.newInstance();
-					example.setDescription(description);
-					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-					lookupEntity = persistenceService.queryByOneExample(lookupClass, new QueryByExample(example));
-				} catch (InstantiationException | IllegalAccessException e) {
-					throw new OpenStorefrontRuntimeException(e);
-				}
+			try {
+				T example = lookupClass.newInstance();
+				example.setDescription(description);
+				example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+				lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
+
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new OpenStorefrontRuntimeException(e);
 			}
 		}
 		return lookupEntity;

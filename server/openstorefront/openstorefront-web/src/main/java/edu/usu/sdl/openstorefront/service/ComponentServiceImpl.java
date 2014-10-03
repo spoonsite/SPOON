@@ -20,8 +20,6 @@ import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
-import edu.usu.sdl.openstorefront.service.transfermodel.QuestionAll;
-import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -67,6 +65,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.web.rest.model.SearchResultAttribute;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -101,18 +100,16 @@ public class ComponentServiceImpl
 	@Override
 	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId)
 	{
-		return getBaseComponent(subComponentClass, componentId, false);
+		return getBaseComponent(subComponentClass, componentId, BaseComponent.ACTIVE_STATUS);
 	}
 
 	@Override
-	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, boolean all)
+	public <T extends BaseComponent> List<T> getBaseComponent(Class<T> subComponentClass, String componentId, String activeStatus)
 	{
 		try {
 			T baseComponentExample = subComponentClass.newInstance();
 			baseComponentExample.setComponentId(componentId);
-			if (all == false) {
-				baseComponentExample.setActiveStatus(BaseComponent.ACTIVE_STATUS);
-			}
+			baseComponentExample.setActiveStatus(activeStatus);
 			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
@@ -121,12 +118,6 @@ public class ComponentServiceImpl
 
 	@Override
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk)
-	{
-		return deactivateBaseComponent(subComponentClass, pk, false);
-	}
-
-	@Override
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean all)
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
@@ -137,13 +128,16 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId)
+	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)
 	{
-		deleteBaseComponent(subComponentClass, componentId, false);
+		T found = persistenceService.findById(subComponentClass, pk);
+		if (found != null) {
+			persistenceService.delete(found);
+		}
 	}
 
 	@Override
-	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, String componentId, Boolean all)
+	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId)
 	{
 		try {
 			T example = subComponentClass.newInstance();
@@ -181,7 +175,7 @@ public class ComponentServiceImpl
 		for (Component component : components) {
 			ComponentSearchView componentSearchView = ComponentSearchView.toView(component);
 			List<ComponentAttribute> attributes = attributeMaps.get(component.getComponentId());
-			componentSearchView.setAttributes(ComponentAttributeView.toViewList(attributes));
+			componentSearchView.setAttributes(SearchResultAttribute.toViewList(attributes));
 			componentSearchViews.add(componentSearchView);
 		}
 
@@ -203,18 +197,15 @@ public class ComponentServiceImpl
 		result.setComponentDetails(tempComponent, tempParentComponent);
 
 		UserWatch tempWatch = new UserWatch();
-		// TODO: take this out of the comments once we're in production.
-		//tempWatch.setUsername(SecurityUtil.getCurrentUserName());
+		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
-		UserWatch tempUserWatch = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(tempWatch));
+		UserWatch tempUserWatch = persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(tempWatch));
 		if (tempUserWatch != null) {
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
 		}
 		List<ComponentAttribute> attributes = this.getAttributeService().getAttributesByComponentId(componentId);
 		result.setAttributes(ComponentAttributeView.toViewList(attributes));
-
-		result.setLastActivityDts(tempComponent.getLastActivityDts());
 
 		result.setComponentId(componentId);
 		result.setTags(getBaseComponent(ComponentTag.class, componentId));
@@ -319,7 +310,7 @@ public class ComponentServiceImpl
 					example.setComponentAttributePk(new ComponentAttributePk());
 					example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 
-					ComponentAttribute test = persistenceService.queryByOneExample(ComponentAttribute.class, new QueryByExample(example));
+					ComponentAttribute test = persistenceService.queryOneByExample(ComponentAttribute.class, new QueryByExample(example));
 					if (test != null) {
 						throw new OpenStorefrontRuntimeException("Attribute Type doesn't allow multiple codes.  Type: " + type.getAttributeType(), "Check data passed in.");
 					}
@@ -458,6 +449,20 @@ public class ComponentServiceImpl
 
 	private void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule, boolean updateLastActivity)
 	{
+		//check schedule code vs level attribute
+		boolean levelMatches = false;
+		List<AttributeCode> levelCodes = getAttributeService().findCodesForType(AttributeType.DI2ELEVEL);
+		for (AttributeCode levelCode : levelCodes) {
+			if (levelCode.getAttributeCodePk().getAttributeCode().equals(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())) {
+				levelMatches = true;
+				break;
+			}
+		}
+
+		if (levelMatches == false) {
+			throw new OpenStorefrontRuntimeException("The evaluation level code doesn't match level in the attributes.", " Check data and the attribute code for type: " + AttributeType.DI2ELEVEL);
+		}
+
 		ComponentEvaluationSchedule oldSchedule = persistenceService.findById(ComponentEvaluationSchedule.class, schedule.getComponentEvaluationSchedulePk());
 		if (oldSchedule != null) {
 			oldSchedule.setCompletionDate(schedule.getCompletionDate());
@@ -900,23 +905,23 @@ public class ComponentServiceImpl
 		handleBaseComponetSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId());
 		handleBaseComponetSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId());
 		handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId());
-		handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId());
 
-		for (QuestionAll question : componentAll.getQuestions()) {
-			List<ComponentQuestion> questions = new ArrayList<>(1);
-			questions.add(question.getQuestion());
-			handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId());
-			handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId());
-		}
-
-		for (ReviewAll reviewAll : componentAll.getReviews()) {
-			List<ComponentReview> reviews = new ArrayList<>(1);
-			reviews.add(reviewAll.getComponentReview());
-			handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId());
-			handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId());
-			handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId());
-		}
-
+		//Thesse are user data and they shouldn't be changed on sync (I'm leave it as a reminder)
+//		handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId());
+//		for (QuestionAll question : componentAll.getQuestions()) {
+//			List<ComponentQuestion> questions = new ArrayList<>(1);
+//			questions.add(question.getQuestion());
+//			handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId());
+//			handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId());
+//		}
+//
+//		for (ReviewAll reviewAll : componentAll.getReviews()) {
+//			List<ComponentReview> reviews = new ArrayList<>(1);
+//			reviews.add(reviewAll.getComponentReview());
+//			handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId());
+//			handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId());
+//			handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId());
+//		}
 		//validate
 		return componentAll;
 	}
@@ -1077,26 +1082,23 @@ public class ComponentServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 	}
-	
-	
-    @Override
-    public Boolean setLastViewDts(String componentId, String userId)
-    {
-        UserWatch example = new UserWatch();
-        example.setComponentId(componentId);
-        example.setUsername(userId);
-        example = persistenceService.queryByOneExample(UserWatch.class, new QueryByExample(example));
-        if (example != null) {
-            UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
-            watch.setLastViewDts(TimeUtil.currentDate());
-            persistenceService.persist(watch);
-            return Boolean.TRUE;
-        } else{
-            return Boolean.FALSE;
-        }
-    }
 
-
+	@Override
+	public Boolean setLastViewDts(String componentId, String userId)
+	{
+		UserWatch example = new UserWatch();
+		example.setComponentId(componentId);
+		example.setUsername(userId);
+		example = persistenceService.queryOneByExample(UserWatch.class, new QueryByExample(example));
+		if (example != null) {
+			UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
+			watch.setLastViewDts(TimeUtil.currentDate());
+			persistenceService.persist(watch);
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
 
 	@Override
 	public List<Component> findRecentlyAdded(int maxResults)
@@ -1110,6 +1112,70 @@ public class ComponentServiceImpl
 		parameters.put("approvedStateParam", Component.APPROVAL_STATE_APPROVED);
 
 		return persistenceService.query(query, parameters);
+	}
+
+	@Override
+	public ValidationResult saveDetailReview(ComponentReview review, List<ComponentReviewPro> pros, List<ComponentReviewCon> cons)
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		ValidationModel validationModel = new ValidationModel(review);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult reviewResults = ValidationUtil.validate(validationModel);
+		validationResult.merge(reviewResults);
+
+		for (ComponentReviewPro reviewPro : pros) {
+			validationModel = new ValidationModel(reviewPro);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult proResults = ValidationUtil.validate(validationModel);
+			validationResult.merge(proResults);
+		}
+
+		for (ComponentReviewCon reviewCon : cons) {
+			validationModel = new ValidationModel(reviewCon);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult conResults = ValidationUtil.validate(validationModel);
+			validationResult.merge(conResults);
+		}
+
+		if (validationResult.valid()) {
+
+			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+			review.setCreateUser(SecurityUtil.getCurrentUserName());
+			review.setUpdateUser(SecurityUtil.getCurrentUserName());
+			saveComponentReview(review);
+
+			//delete existing pros
+			ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
+			componentReviewProExample.setComponentId(review.getComponentId());
+			persistenceService.deleteByExample(componentReviewProExample);
+
+			for (ComponentReviewPro reviewPro : pros) {
+				reviewPro.setComponentId(review.getComponentId());
+				reviewPro.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());
+				reviewPro.setCreateUser(SecurityUtil.getCurrentUserName());
+				reviewPro.setUpdateUser(SecurityUtil.getCurrentUserName());
+				reviewPro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+				saveComponentReviewPro(reviewPro, false);
+			}
+
+			//delete existing cons
+			ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
+			componentReviewConExample.setComponentId(review.getComponentReviewId());
+			persistenceService.deleteByExample(componentReviewConExample);
+
+			for (ComponentReviewCon reviewCon : cons) {
+				reviewCon.setComponentId(review.getComponentId());
+				reviewCon.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());
+				reviewCon.setCreateUser(SecurityUtil.getCurrentUserName());
+				reviewCon.setUpdateUser(SecurityUtil.getCurrentUserName());
+				reviewCon.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+				saveComponentReviewCon(reviewCon, false);
+			}
+
+		}
+
+		return validationResult;
 	}
 
 }

@@ -24,6 +24,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -40,6 +41,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javassist.util.proxy.Proxy;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -72,6 +74,7 @@ public class PersistenceService
 		} else {
 			db = transaction;
 		}
+		db.setLazyLoading(false);
 		return db;
 	}
 
@@ -173,7 +176,7 @@ public class PersistenceService
 		OObjectDatabaseTx db = getConnection();
 		T returnEntity = null;
 		try {
-			if (checkPkObject(entity, id)) {
+			if (checkPkObject(db, entity, id)) {
 				Map<String, Object> pkFields = findIdField(entity, id);
 
 				if (pkFields.isEmpty()) {
@@ -211,20 +214,23 @@ public class PersistenceService
 	 * @param id required
 	 * @return
 	 */
-	private boolean checkPkObject(Class entityClass, Object id)
+	private boolean checkPkObject(OObjectDatabaseTx db, Class entityClass, Object id)
 	{
 		boolean pkValid = true;
 		Objects.requireNonNull(id, "Id must not be null");
 
 		if (entityClass.getSuperclass() != null) {
-			pkValid = checkPkObject(entityClass.getSuperclass(), id);
+			pkValid = checkPkObject(db, entityClass.getSuperclass(), id);
 		}
 		if (pkValid) {
 			for (Field field : entityClass.getDeclaredFields()) {
 				PK idAnnotation = field.getAnnotation(PK.class);
 				if (idAnnotation != null) {
 					if (id.getClass().getName().equals(field.getType().getName()) == false) {
-						pkValid = false;
+						//Manage PK is like been pull by the DB and passed back in ...let it through
+						if ((id instanceof Proxy) == false) {
+							pkValid = false;
+						}
 					}
 				}
 			}
@@ -340,6 +346,19 @@ public class PersistenceService
 		return count;
 	}
 
+	/**
+	 * This will run the example with the default options
+	 *
+	 * @param <T>
+	 * @param exampleClass
+	 * @param baseEntity
+	 * @return
+	 */
+	public <T> List<T> queryByExample(Class<T> exampleClass, BaseEntity baseEntity)
+	{
+		return queryByExample(exampleClass, new QueryByExample(baseEntity));
+	}
+
 	public <T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample)
 	{
 		StringBuilder queryString = new StringBuilder();
@@ -357,9 +376,32 @@ public class PersistenceService
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
 		}
+		if (queryByExample.getGroupBy() != null) {
+			String names = generateExampleNames(queryByExample.getGroupBy());
+			if (StringUtils.isNotBlank(names)) {
+				queryString.append(" group by ").append(names);
+			}
+		}
+		if (queryByExample.getOrderBy() != null) {
+			String names = generateExampleNames(queryByExample.getOrderBy());
+			if (StringUtils.isNotBlank(names)) {
+				queryString.append(" order by ").append(names).append(" ").append(queryByExample.getSortDirection());
+			}
+		}
+		if (queryByExample.getFirstResult() != null) {
+			queryString.append(" SKIP ").append(queryByExample.getFirstResult());
+		}
+		if (queryByExample.getMaxResults() != null) {
+			queryString.append(" LIMIT ").append(queryByExample.getMaxResults());
+		}
+		if (queryByExample.getTimeout() != null) {
+			queryString.append(" TIMEOUT ").append(queryByExample.getTimeout()).append(" ").append(queryByExample.getTimeoutStrategy());
+		}
+		if (queryByExample.isParallelQuery()) {
+			queryString.append(" PARALLEL ");
+		}
 
-		List<T> results = query(queryString.toString(), mapParameters(queryByExample.getExample()));
-		results = unwrapProxy(exampleClass, results);
+		List<T> results = query(queryString.toString(), mapParameters(queryByExample.getExample()), exampleClass, queryByExample.isReturnNonProxied());
 		return results;
 	}
 
@@ -420,6 +462,63 @@ public class PersistenceService
 		return where.toString();
 	}
 
+	private <T> String generateExampleNames(T example)
+	{
+		return generateExampleNames(example, "");
+	}
+
+	private <T> String generateExampleNames(T example, String parentFieldName)
+	{
+		StringBuilder where = new StringBuilder();
+
+		try {
+			Map fieldMap = BeanUtils.describe(example);
+			boolean addAnd = false;
+			for (Object field : fieldMap.keySet()) {
+
+				if ("class".equalsIgnoreCase(field.toString()) == false) {
+					Object value = fieldMap.get(field);
+					if (value != null) {
+
+						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
+						Object returnObj = method.invoke(example, (Object[]) null);
+						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+							if (StringUtils.isNotBlank(parentFieldName)) {
+								parentFieldName = parentFieldName + ".";
+							}
+							parentFieldName = parentFieldName + field;
+							if (addAnd) {
+								where.append(",");
+							} else {
+								addAnd = true;
+								where.append(" ");
+							}
+
+							where.append(generateWhereClause(returnObj, parentFieldName));
+						} else {
+							if (addAnd) {
+								where.append(",");
+							} else {
+								addAnd = true;
+								where.append(" ");
+							}
+
+							String fieldName = field.toString();
+							if (StringUtils.isNotBlank(parentFieldName)) {
+								fieldName = parentFieldName + "." + fieldName;
+							}
+
+							where.append(fieldName);
+						}
+					}
+				}
+			}
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+			throw new RuntimeException(ex);
+		}
+		return where.toString();
+	}
+
 	private <T> Map<String, Object> mapParameters(T example)
 	{
 		return mapParameters(example, "");
@@ -460,7 +559,21 @@ public class PersistenceService
 		return parameterMap;
 	}
 
-	public <T> T queryByOneExample(Class<T> exampleClass, QueryByExample queryByExample)
+	/**
+	 * This just returns one result. Typically the query results in only one
+	 * entity.
+	 *
+	 * @param <T>
+	 * @param exampleClass
+	 * @param baseEnity
+	 * @return the entity or null if not found
+	 */
+	public <T> T queryOneByExample(Class<T> exampleClass, BaseEntity baseEnity)
+	{
+		return queryOneByExample(exampleClass, new QueryByExample(baseEnity));
+	}
+
+	public <T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample)
 	{
 		List<T> results = queryByExample(exampleClass, queryByExample);
 		if (results.size() > 0) {
@@ -469,12 +582,38 @@ public class PersistenceService
 		return null;
 	}
 
+	/**
+	 * This will run the query but return the Proxy Objects
+	 *
+	 * @param <T>
+	 * @param query
+	 * @param parameterMap
+	 * @return
+	 */
 	public <T> List<T> query(String query, Map<String, Object> parameterMap)
+	{
+		return query(query, parameterMap, null, false);
+	}
+
+	/**
+	 * This will run the query and then unwrap if desired
+	 *
+	 * @param <T>
+	 * @param query
+	 * @param parameterMap
+	 * @param dataClass
+	 * @param unwrap
+	 * @return
+	 */
+	public <T> List<T> query(String query, Map<String, Object> parameterMap, Class<T> dataClass, boolean unwrap)
 	{
 		OObjectDatabaseTx db = getConnection();
 		List<T> results = new ArrayList<>();
 		try {
 			results = db.query(new OSQLSynchQuery<>(query), parameterMap);
+			if (unwrap) {
+				results = unwrapProxy(db, dataClass, results);
+			}
 		} finally {
 			closeConnection(db);
 		}
@@ -518,15 +657,18 @@ public class PersistenceService
 	 *
 	 * @param <T>
 	 * @param entity
+	 * @return
 	 */
-	public <T> void detach(T entity)
+	public <T> T detach(T entity)
 	{
 		OObjectDatabaseTx db = getConnection();
+		T nonProxy = null;
 		try {
-			db.detach(entity, true);
+			nonProxy = db.detach(entity, true);
 		} finally {
 			closeConnection(db);
 		}
+		return nonProxy;
 	}
 
 	/**
@@ -534,42 +676,57 @@ public class PersistenceService
 	 *
 	 * @param <T>
 	 * @param entity
+	 * @return
 	 */
-	public <T> void deattachAll(T entity)
+	public <T> T deattachAll(T entity)
 	{
 		OObjectDatabaseTx db = getConnection();
+		T nonProxy = null;
 		try {
-			db.detachAll(entity, true);
+			nonProxy = db.detachAll(entity, true);
 		} finally {
 			closeConnection(db);
 		}
+		return nonProxy;
 	}
 
 	public <T> List<T> unwrapProxy(Class<T> origClass, List<T> data)
 	{
+		OObjectDatabaseTx db = getConnection();
+		List<T> nonProxyData = null;
+		try {
+			nonProxyData = unwrapProxy(db, origClass, data);
+		} finally {
+			closeConnection(db);
+		}
+		return nonProxyData;
+	}
+
+	public <T> List<T> unwrapProxy(OObjectDatabaseTx db, Class<T> origClass, List<T> data)
+	{
 		List<T> nonProxyList = new ArrayList<>();
 		for (T dbproxy : data) {
-			try {
-				T nonProxy = origClass.newInstance();
-				BeanUtils.copyProperties(nonProxy, dbproxy);
-				nonProxyList.add(nonProxy);
-			} catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-				log.log(Level.SEVERE, null, ex);
-			}
+			T nonProxied = db.detachAll(dbproxy, true);
+			nonProxyList.add(nonProxied);
 		}
 		return nonProxyList;
 	}
 
 	public <T> T unwrapProxyObject(Class<T> origClass, T data)
 	{
-		T nonProxy = data;
+		OObjectDatabaseTx db = getConnection();
+		T nonProxyData = null;
 		try {
-			nonProxy = origClass.newInstance();
-			BeanUtils.copyProperties(nonProxy, data);
-
-		} catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-			log.log(Level.SEVERE, null, ex);
+			nonProxyData = unwrapProxyObject(db, origClass, data);
+		} finally {
+			closeConnection(db);
 		}
+		return nonProxyData;
+	}
+
+	public <T> T unwrapProxyObject(OObjectDatabaseTx db, Class<T> origClass, T data)
+	{
+		T nonProxy = db.detachAll(data, true);
 		return nonProxy;
 	}
 

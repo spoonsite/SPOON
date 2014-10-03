@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.security.UserProfileRequireHandler;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
@@ -37,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -54,12 +55,10 @@ import javax.ws.rs.core.Response;
  */
 @Path("v1/resource/userprofiles")
 @APIDescription("A user profile contain information about the user and user specific data. A user profile is created at the time the user logins in.<br>"
-		+ "Note: id can be set to \"CURRENTUSER\" to perform operations on the currently logged in user.")
+		+ "Note: id if set to the current user it will won't require admin rights.")
 public class UserProfileResource
 		extends BaseResource
 {
-
-	private static final String DEFAULT_USER = "CURRENTUSER";
 
 	@GET
 	@APIDescription("Get a list of user profiles")
@@ -70,29 +69,49 @@ public class UserProfileResource
 	{
 		return UserProfileView.toViewList(service.getUserService().getAllProfiles());
 	}
-//	public RestListResponse userProfiles()
-//	{
-//		List<UserProfileView> userProfileViews = new ArrayList<>();
-//		return sendListResponse(userProfileViews);
-//	}
+
+	@GET
+	@APIDescription("Gets the current user profile from the session.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(UserProfileView.class)
+	@Path("/currentuser")
+	public Response getCurrentUser()
+	{
+		UserProfileView userProfileView = null;
+
+		UserContext userContext = SecurityUtil.getUserContext();
+		if (userContext != null) {
+			userProfileView = UserProfileView.toView(userContext.getUserProfile());
+			userProfileView.setAdmin(SecurityUtil.isAdminUser());
+		}
+		return sendSingleEnityResponse(userProfileView);
+	}
 
 	@GET
 	@APIDescription("Gets user profile specified by id.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	@Path("/{id}")
 	public UserProfileView userProfile(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId)
 	{
-		return UserProfileView.toView(service.getUserService().getUserProfile(userId));
+		UserProfileView userProfileView = null;
+
+		UserProfile userProfile = service.getUserService().getUserProfile(userId);
+		if (userProfile != null) {
+			userProfileView = UserProfileView.toView(userProfile);
+			if (SecurityUtil.getCurrentUserName().equals(userId)) {
+				userProfileView.setAdmin(SecurityUtil.isAdminUser());
+			}
+		}
+		return userProfileView;
 	}
 
 	@POST
 	@APIDescription("Update user profile returns updated profile.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateProile(
 			@RequiredParam UserProfile inputProfile)
@@ -111,19 +130,18 @@ public class UserProfileResource
 			validationResult.getRuleResults().add(result);
 			return Response.ok(validationResult.toRestError()).build();
 		} else if (validationResult.valid()) {
-			return Response.created(URI.create((service.getUserService().saveUserProfile(inputProfile)).getUsername())).entity(inputProfile).build();
+			return Response.created(URI.create("v1/resource/userprofiles/" + (service.getUserService().saveUserProfile(inputProfile)).getUsername())).entity(inputProfile).build();
 		}
 		return Response.ok(validationResult.toRestError()).build();
 	}
 
 	@PUT
 	@APIDescription("Update user profile returns updated profile.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateProile(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@RequiredParam UserProfile inputProfile)
 	{
@@ -138,28 +156,14 @@ public class UserProfileResource
 		return Response.ok(validationResult.toRestError()).build();
 	}
 
-	@DELETE
-	@APIDescription("Deactivate a profile")
-	@RequireAdmin
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}")
-	public Response deleteProfile(
-			@PathParam("id")
-			@RequiredParam String userId)
-	{
-		service.getUserService().deleteProfile(userId);
-		return Response.noContent().build();
-	}
-
 	@GET
 	@APIDescription("Retrieves Active User Watches.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches")
 	@DataType(UserWatchView.class)
 	public List<UserWatchView> getWatches(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId)
 	{
 		List<UserWatch> watches = service.getUserService().getWatches(userId);
@@ -173,13 +177,12 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves an user watch by id.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchView.class)
 	@Path("/{id}/watches/{watchId}")
 	public UserWatchView getWatch(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId)
@@ -191,42 +194,45 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a new watch to an existing user.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches")
 	public Response addWatch(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@RequiredParam UserWatch userWatch)
 	{
 		userWatch.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userWatch.setUsername(userId);
 		userWatch.setLastViewDts(TimeUtil.currentDate());
-		//TODO: return the location of the created watch
+
 		Boolean check = Boolean.TRUE;
 		List<UserWatch> watches = service.getUserService().getWatches(userId);
-		for(int i = 0; i < watches.size() && check; i++){
+		for (int i = 0; i < watches.size() && check; i++) {
 			check = !watches.get(i).getComponentId().equals(userWatch.getComponentId());
-			if (!check){
+			if (!check) {
 				userWatch = watches.get(i);
 			}
 		}
 		if (check) {
 			return saveWatch(userWatch, Boolean.TRUE);
 		} else {
-			return Response.created(URI.create(userWatch.getUserWatchId())).entity(userWatch).build();
+			ValidationResult validationResult = new ValidationResult();
+			RuleResult result = new RuleResult();
+			result.setMessage("Component was already in watch list");
+			result.setValidationRule("Duplicate Check");
+			validationResult.getRuleResults().add(result);
+			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
 
 	@PUT
 	@APIDescription("Update existing new watch. On update: it will update the last view date.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId,
@@ -247,7 +253,8 @@ public class UserProfileResource
 			watch.setCreateUser(SecurityUtil.getCurrentUserName());
 			watch.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
-				return Response.created(URI.create("v1/resource/userProfile/" + service.getUserService().saveWatch(watch).getUserWatchId())).entity(watch).build();
+				watch = service.getUserService().saveWatch(watch);
+				return Response.created(URI.create("v1/resource/userprofiles/" + watch.getUsername() + "/watches/" + watch.getUserWatchId())).entity(watch).build();
 			}
 			return Response.ok(service.getUserService().saveWatch(watch)).build();
 		} else {
@@ -257,12 +264,11 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Removes a Users Watch.")
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
 			@PathParam("id")
-			@DefaultValue(DEFAULT_USER)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId)
@@ -292,7 +298,7 @@ public class UserProfileResource
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
 			@PathParam("id")
-			@RequiredParam String componentId,
+			@RequiredParam String userId,
 			@PathParam("id")
 			@RequiredParam String trackingId)
 	{
@@ -301,6 +307,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a tracking entry for the specified entity")
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
@@ -315,7 +322,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireAdmin(UserProfileRequireHandler.class)
 	@APIDescription("Update a tracking entry for the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
@@ -340,8 +347,8 @@ public class UserProfileResource
 		if (validationResult.valid()) {
 			tracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
-				// TODO: How does this work with composite keys?
-				return Response.created(URI.create(service.getUserService().saveUserTracking(tracking).getTrackingId())).entity(tracking).build();
+				tracking = service.getUserService().saveUserTracking(tracking);
+				return Response.created(URI.create("v1/resource/userprofiles/" + tracking.getCreateUser() + "/tracking/" + tracking.getTrackingId())).entity(tracking).build();
 			} else {
 				return Response.ok(service.getUserService().saveUserTracking(tracking)).build();
 			}

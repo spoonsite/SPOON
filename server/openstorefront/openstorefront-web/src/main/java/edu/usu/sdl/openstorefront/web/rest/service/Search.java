@@ -24,9 +24,7 @@ import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
-import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
-import edu.usu.sdl.openstorefront.web.rest.model.SearchResult;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
@@ -65,7 +63,7 @@ public class Search
         List<SolrComponentResultsModel> solrResults = service.getSearchService().getSearchItems(query);
 
         for (SolrComponentResultsModel items : solrResults) {
-            
+
 //            ComponentSearchView mysearchResults = new ComponentSearchView();
 //
 //            mysearchResults.setComponentId(items.getComponentID());
@@ -73,13 +71,21 @@ public class Search
 //            mysearchResults.setDescription(items.getDescription());
 //            mysearchResults.setTags(items.getTags());
 //            mysearchResults.setAttributes(items.getAttributes());
-            
             totalResults++;
 //            searchResults.add(mysearchResults);
-      //      Component temp = service.getComponentService().getBaseComponent(Component.class, items.getComponentID());
-       //     searchResults.add(ComponentSearchView.toView(temp));
+//            Component temp = service.getComponentService().getBaseComponent(Component.class, items.getComponentID());
+//            searchResults.add(ComponentSearchView.toView(temp));
         }
         return searchResults;
+    }
+
+    @GET
+    @APIDescription("Used to retrieve all possible search results.")
+    @Produces({MediaType.APPLICATION_JSON})
+    @DataType(Component.class)
+    @Path("/all")
+    public List<ComponentSearchView> getAllForSearch() {
+        return service.getSearchService().getAll();
     }
 
     @GET

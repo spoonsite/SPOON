@@ -6,6 +6,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
   $scope.rating = 0;
   $scope.timeCode;
   $scope.role;
+  $scope.user = {};
 
   $scope.$watch('review', function() {
     if ($scope.review) {
@@ -42,27 +43,43 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
   });
 
 
-  Business.lookupservice.getExpertise().then(function(result){
-    if (result) {
-      $scope.expertise = result;
-    } else {
-      $scope.expertise = [];
-    }
-  });
-  Business.lookupservice.getUserTypeCodes().then(function(result){
-    if (result) {
-      $scope.userTypeCodes = result;
-    } else {
-      $scope.userTypeCodes = [];
-    }
-  });
-  Business.getProsConsList().then(function(result) {
-    if (result) {
-      $scope.prosConsList = result;
-    } else {
-      $scope.prosConsList = null;
-    }
-  });
+
+
+  /***************************************************************
+  * Load the User profile 
+  ***************************************************************/
+  (function() {
+    //show load mask on form
+    Business.userservice.getCurrentUserProfile().then(function(profile) {
+      if (profile) {
+        $scope.user.info = profile;
+        Business.lookupservice.getExpertise().then(function(result){
+          if (result) {
+            $scope.expertise = result;
+          } else {
+            $scope.expertise = [];
+          }
+        });
+        Business.lookupservice.getUserTypeCodes().then(function(result){
+          if (result) {
+            $scope.userTypeCodes = result;
+            $scope.role = _.find($scope.userTypeCodes, {'code': $scope.user.info.userTypeCode});
+          } else {
+            $scope.userTypeCodes = [];
+          }
+        });
+        Business.getProsConsList().then(function(result) {
+          if (result) {
+            $scope.prosConsList = result;
+          } else {
+            $scope.prosConsList = null;
+          }
+        });
+      }
+      //hide load mask
+    });
+  })();
+
 
   /***************************************************************
   * This function saves the profile changes in the scope by copying them from
@@ -72,6 +89,10 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
   $scope.submitReview = function(event, review, revs) {
     var body = {};
     body.userTypeCode = review.role.code;
+    if (!body.userTypeCode) {
+      triggerAlert('You need to select a user role.', 'brokenReview');
+      return;
+    }
     body.comment = review.comment? review.comment : '';
     body.title = review.title;
     body.rating = review.rating? review.rating: 0;
@@ -81,6 +102,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     body.userTimeCode = review.timeCode.code;
     // console.log('body', body);
     event.preventDefault();
+    // console.log('body', body);
     
     var componentId = $rootScope.getComponentId();
     var reviewId = null;

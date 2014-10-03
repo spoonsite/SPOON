@@ -6,7 +6,7 @@
     "description" : "Funded",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -25,7 +25,7 @@
     "description" : "JARM ESL Alignment",
     "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : true,
+    "architectureFlg" : true,
     "importantFlg" : true,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -204,7 +204,7 @@
     "description" : "Accreditation Status",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -238,7 +238,7 @@
     "description" : "Network(s) Fielded",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -267,7 +267,7 @@
     "description" : "License Type",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -316,7 +316,7 @@
     "description" : "Commercial Exportable via EAR",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -335,7 +335,7 @@
     "description" : "DI2E Evaluation Level",
     "visibleFlg" : true,
     "requiredFlg" : true,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -369,7 +369,7 @@
     "description" : "Service Data Format",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -403,7 +403,7 @@
     "description" : "JCA Alignment",
     "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : true,
+    "architectureFlg" : true,
     "importantFlg" : true,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -3117,7 +3117,7 @@
     "description" : "Service Transport Protocal",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -3151,7 +3151,7 @@
     "description" : "DI2E State",
     "visibleFlg" : true,
     "requiredFlg" : true,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -3185,7 +3185,7 @@
     "description" : "Data Rights",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -3234,7 +3234,7 @@
     "description" : "OWF Compatible",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -3253,7 +3253,7 @@
     "description" : "JCFSL Alignment",
     "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : true,
+    "architectureFlg" : true,
     "importantFlg" : true,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -4707,7 +4707,7 @@
     "description" : "Accreditation Process",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -4736,7 +4736,7 @@
     "description" : "Lifecycle Stage",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -4775,7 +4775,7 @@
     "description" : "License Classification",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -4814,7 +4814,7 @@
     "description" : "Network Accredited On",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : true,
     "codes" : [ {
@@ -4843,7 +4843,7 @@
     "description" : "Component Type",
     "visibleFlg" : true,
     "requiredFlg" : true,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : true,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -4907,7 +4907,7 @@
     "description" : "Protection / Impact Level",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -4936,7 +4936,7 @@
     "description" : "ITAR Exportable",
     "visibleFlg" : false,
     "requiredFlg" : false,
-    "archtechtureFlg" : false,
+    "architectureFlg" : false,
     "importantFlg" : false,
     "allowMutlipleFlg" : false,
     "codes" : [ {
@@ -4955,7 +4955,7 @@
     "description" : "DI2E SvcV-4 Alignment",
     "visibleFlg" : true,
     "requiredFlg" : false,
-    "archtechtureFlg" : true,
+    "architectureFlg" : true,
     "importantFlg" : true,
     "allowMutlipleFlg" : true,
     "codes" : [ {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--
+<%--
 Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
--->
+--%>
 <html>
 	<head>
 		<title>Open Storefront API</title>
@@ -40,6 +40,12 @@ limitations under the License.
 				</li>
 				<li>
 					<a href="#../API.action?Page&page=errorhandling" >Error Handling</a>
+				</li>
+				<li>
+					<a href="#../API.action?Page&page=lookup" >Lookup Table Reference</a>
+				</li>
+				<li>
+					<a href="#../API.action?Page&page=attribute" >Attribute Table Reference</a>
 				</li>
 			</ul>
 			
@@ -88,17 +94,17 @@ limitations under the License.
 		<script type="text/javascript">
 			$( document ).tooltip();
 			$(document).ready(function(){
-				var doctoLoad = window.location.href.split("#");
-				if (doctoLoad[1] !== undefined && doctoLoad[1] !== null){
-					$('#apidocId').load(doctoLoad[1]);
+				var docToLoad = window.location.href.split("#");
+				if (docToLoad[1] !== undefined && docToLoad[1] !== null){
+					$('#apidocId').load(docToLoad[1]);
 				} else {
 					$('#apidocId').load('../API.action?Page&page=intro');
 				}
 				
 				window.onhashchange = function(){
-					var doctoLoad = window.location.href.split("#");
-					if (doctoLoad[1] !== undefined && doctoLoad[1] !== null){
-						$('#apidocId').load(doctoLoad[1]);
+					var docToLoad = window.location.href.split("#");
+					if (docToLoad[1] !== undefined && docToLoad[1] !== null){
+						$('#apidocId').load(docToLoad[1]);
 					} else {
 						$('#apidocId').load('../API.action?Page&page=intro');
 					}					

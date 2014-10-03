@@ -15,11 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.web.rest.model.RestListResponse;
-import java.util.List;
 import javax.ws.rs.core.Response;
 
 /**
+ * Base Resource for all other resources
  *
  * @author dshurtleff
  */
@@ -35,20 +34,6 @@ public abstract class BaseResource
 		} else {
 			return Response.ok(entity).build();
 		}
-	}
-
-	protected <T> RestListResponse<T> sendListResponse(List<T> data)
-	{
-		return sendListResponse(data, data.size());
-	}
-
-	protected <T> RestListResponse<T> sendListResponse(List<T> data, long totalResults)
-	{
-		RestListResponse<T> restListResponse = new RestListResponse<>();
-		restListResponse.setData(data);
-		restListResponse.setResults(data.size());
-		restListResponse.setTotalResults(totalResults);
-		return restListResponse;
 	}
 
 }

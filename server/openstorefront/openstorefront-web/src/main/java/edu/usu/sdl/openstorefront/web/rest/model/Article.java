@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import java.util.Date;
+
 /**
  * Topic landing page/article
  *
@@ -26,9 +29,19 @@ public class Article
 	private String attributeCode;
 	private String attributeType;
 	private String html;
+	private Date updateDts;
+	private String organization;
 
 	public Article()
 	{
+	}
+	
+	public static Article toView(AttributeCode code){
+		Article article = new Article();
+		article.setAttributeCode(code.getAttributeCodePk().getAttributeCode());
+		article.setAttributeType(code.getAttributeCodePk().getAttributeType());
+		article.setUpdateDts(code.getUpdateDts());
+		return article;
 	}
 
 	public String getAttributeCode()
@@ -59,6 +72,38 @@ public class Article
 	public void setHtml(String html)
 	{
 		this.html = html;
+	}
+
+	/**
+	 * @return the updateDts
+	 */
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	/**
+	 * @param updateDts the updateDts to set
+	 */
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
+	}
+
+	/**
+	 * @return the organization
+	 */
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
 	}
 
 }

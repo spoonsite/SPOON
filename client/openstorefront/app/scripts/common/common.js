@@ -19,6 +19,31 @@
 /* exported setupPopovers, setupTypeahead, isEmpty, toggleclass, setUpDropdown,
 setupParallax, triggerAlert, triggerError, removeError, initiateClick*/
 
+
+// Avoid `console` errors in browsers that lack a console.
+(function() {
+  var method;
+  var noop = function () {};
+  var methods = [
+  'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+  'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+  'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+  'timeStamp', 'trace', 'warn'
+  ];
+  var length = methods.length;
+  var console = (window.console = window.console || {});
+
+  while (length--) {
+    method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+          console[method] = noop;
+        }
+      }
+    }());
+
+
 /*****************************
 * This function sets up the popovers for the results page, but could be 
 * re-used anywhere that you use the data-toggle="popover" attribute on a div
@@ -53,7 +78,7 @@ var setUpDropdown= function(id) {
 
 
 var resetUpdateNotify = function() {
-  $('#updateNotify').css('height', '0px');
+  $('#updateNotify').stop(true, true).animate({height: '0px'}, 0, function(){});
 }
 
 var showUpdateNotify = function() {
@@ -129,7 +154,7 @@ var hideAlert = function(uid, delay) {
 * params: id -- the id of the element to attach the alert box to
 * params: delay -- how long you want the alert to stay
 ***************************************************************/
-var triggerAlert = function(text, uid, id, delay) {
+var triggerAlert = function(text, uid, id, delay, append) {
   delay = delay || 5000;
   if (!text || !uid){
     console.error('TRIGGER-ALERT Failed because the text or uid fields were not set');
@@ -140,7 +165,11 @@ var triggerAlert = function(text, uid, id, delay) {
       id = 'body';
     }
     $('#alert_holder_'+uid).remove();
-    $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+    if (append) {
+      $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+    } else {
+      $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+    }
     
     // this will hide the alert on any action outside the alert box.
     // $(document).on('click keypress', function(event) {
@@ -166,42 +195,47 @@ var triggerAlert = function(text, uid, id, delay) {
 
 
 var getShortDescription = function(str){
-  var html = $.parseHTML(str);
-  var log = [];
-  // Gather the parsed HTML's node names
-  var count = 300;
-  var total = 0;
-  for(var i = 0; i < html.length && total < count; i++) {
-    var el = html[i];
-    var length;
-    if (el.nodeName === 'A') {
-      length = $(el).html().length;
-      if (!((total + length) > count)) {
-        total = total + length;
-        log.push($(el)[0].outerHTML);
-      } else {
-        total = total + length;
-        log.push('...');
-      }
-    } else if (el.nodeName === '#text'){
-      if ((total+el.length) > count){
-        var temp = $(el)[0].textContent.split(' ');
-        var j = 0;
-        while(total < count){
-          total = total + temp[j].length + 1;
-          log.push(temp[j]+" ");
-          j++;
+  if (str) {
+
+    var html = $.parseHTML(str);
+    var log = [];
+    // Gather the parsed HTML's node names
+    var count = 300;
+    var total = 0;
+    for(var i = 0; i < html.length && total < count; i++) {
+      var el = html[i];
+      var length;
+      if (el.nodeName === 'A') {
+        length = $(el).html().length;
+        if (!((total + length) > count)) {
+          total = total + length;
+          log.push($(el)[0].outerHTML);
+        } else {
+          total = total + length;
+          log.push('...');
         }
-        log.push('...');
-      } else {
-        total = total + el.length;
-        log.push($(el)[0].textContent);
+      } else if (el.nodeName === '#text'){
+        if ((total+el.length) > count){
+          var temp = $(el)[0].textContent.split(' ');
+          var j = 0;
+          while(total < count){
+            total = total + temp[j].length + 1;
+            log.push(temp[j]+" ");
+            j++;
+          }
+          log.push('...');
+        } else {
+          total = total + el.length;
+          log.push($(el)[0].textContent);
+        }
+      } else if (el.nodeName != 'BR'){
+        log.push($(el)[0].outerHTML);
       }
-    } else if (el.nodeName != 'BR'){
-      log.push($(el)[0].outerHTML);
-    }
-  };
-  return log.join(' ');
+    };
+    return log.join(' ');
+  } else {
+    return '';
+  }
 }
 
 
@@ -347,6 +381,10 @@ var isNotRequestError = function(response){
   } else {
     return true;
   }
+}
+
+var notInCollection = function(collection, item){
+  return _.contains(collection, item)? false: true;
 }
 
 // Base.esapi.properties.logging.ApplicationLogger = {

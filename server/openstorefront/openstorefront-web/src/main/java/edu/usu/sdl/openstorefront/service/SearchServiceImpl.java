@@ -16,11 +16,13 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.service.api.SearchService;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentModel;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrSearchComponent;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,9 +31,9 @@ import org.apache.solr.client.solrj.SolrServerException;
 /**
  *
  * @author gbagley
- * 
+ *
  * Prepare the search fields for SOLR search and call method
- * 
+ *
  */
 public class SearchServiceImpl
         extends ServiceProxy
@@ -40,17 +42,26 @@ public class SearchServiceImpl
     private static final Logger log = Logger.getLogger(SearchServiceImpl.class.getName());
 
     @Override
+    public List<ComponentSearchView> getAll() {
+        ServiceProxy service = new ServiceProxy();
+        List<ComponentSearchView> list = new ArrayList<>();
+        list.addAll(service.getComponentService().getComponents());
+        list.addAll(service.getAttributeService().getAllArticles());
+        return list;
+    }
+
+    @Override
     public List<SolrComponentResultsModel> getSearchItems(SearchQuery query) {
 
         // QUERY / SEARCH for a solr storefront component 
         SolrSearchComponent searchThis = new SolrSearchComponent();
-     
+
         SolrComponentModel mySolrModel = new SolrComponentModel();
 
         String exactMatch = "";
-        
+
         // did user request exact search?
-        if (query.isExactSearch()){
+        if (query.isExactSearch()) {
             exactMatch = "\"";
         }
 
@@ -65,8 +76,7 @@ public class SearchServiceImpl
 //        // mySolrModel.setQueryString("[2014-09-22T00:00:00.001Z TO 2014-09-22T23:59:59.999Z]");
 //        mySolrModel.setQueryString("" + exactMatch + "used to be chosen dynamically by the user at runtime rather than being chosen by the developer" + exactMatch + "");
 //        // mySolrModel.setQueryString("dynamically runtime developer");
-
-      //  mySolrModel.setQueryString(query.getQuery());
+        //  mySolrModel.setQueryString(query.getQuery());
         mySolrModel.setQueryString("" + exactMatch + query.getQuery() + exactMatch + "");
 
         // use for finding strings that are not equal / do not contain
@@ -106,7 +116,7 @@ public class SearchServiceImpl
             Logger.getLogger(SearchServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SolrServerException ex) {
             Logger.getLogger(SearchServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
         return resultsList;
     }
 }

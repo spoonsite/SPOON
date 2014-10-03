@@ -148,7 +148,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       // console.log('data', data);
       var splitData = data.split('### Component List ###');
       // console.log('sp', splitData);
-      data = splitData.join('\n<component-list click-callback="updateDetails" class-list="" data="data" cols="3" ></component-list>\n');
+      data = splitData.join('\n<component-list click-callback="updateDetails" class-list="" data="data" cols="3" search="doSearchKey" ></component-list>\n');
       // console.log('data', data);
       return data;
     }
