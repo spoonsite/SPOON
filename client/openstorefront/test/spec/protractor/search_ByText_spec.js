@@ -3,11 +3,20 @@ describe('search_ByText__Filter By Text', function() {
     function textSearch (theText, numFound) {
 
         // Search on ALL entries (null search term)
-        browser.get(theSite);
+        browser.ignoreSyncronization = false;
+        browser.get(theSite, 3500);
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
+        browser.driver.sleep(3500);
 
-        // Verify some results are returned, doesn't matter at this point how many
-        expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
+        // 3 Oct '14:  Click right button to get search filters
+        element(by.id('showPageLeft')).click();
+        browser.driver.sleep(5500);
+
+        // ****************************************************
+        // Select left-pane
+        //browser.driver.switchTo().defaultContent();
+        browser.driver.switchTo().frame(99);
+        // ****************************************************
 
         // Clear the box
         var theInput = element(by.model('query'));
