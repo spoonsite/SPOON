@@ -16,17 +16,22 @@
 
 package edu.usu.sdl.openstorefront.service.api;
 
+//import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentModel;
+import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
+import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
  */
 public interface SearchService
 {
-		/**
-	 * Finds all Required Attributes
+	/**
+	 * Finds all Searched Components via Solr
 	 *
+     * @param query
 	 * @return
 	 */
-//	public List<AttributeType> getSearchItems();
-
+    public List<SolrComponentResultsModel> getSearchItems(SearchQuery query);
 }

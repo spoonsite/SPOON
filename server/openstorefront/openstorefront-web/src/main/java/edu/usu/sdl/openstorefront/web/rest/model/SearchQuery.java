@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import javax.ws.rs.QueryParam;
@@ -22,77 +21,86 @@ import javax.ws.rs.QueryParam;
  *
  * @author dshurtleff
  */
-public class SearchQuery
-{
-	@QueryParam("query")	
-	private String query;
-	
-	@QueryParam("attributeType")
-	private String attributeType;
-	
-	@QueryParam("attributeCode")
-	private String attributeCode;
-	
-	@QueryParam("tag")
-	private String tag;
+public class SearchQuery {
 
-	@QueryParam("listingType")
-	private String listingType;
+    @QueryParam("query")
+    private String query;
 
-	public SearchQuery()
+    @QueryParam("attributeType")
+    private String attributeType;
+
+    @QueryParam("attributeCode")
+    private String attributeCode;
+
+    @QueryParam("tag")
+    private String tag;
+
+    @QueryParam("listingType")
+    private String listingType;
+
+    @QueryParam("exactSearch")
+    private Boolean exactSearch;
+
+    public SearchQuery() {
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public String getAttributeType() {
+        return attributeType;
+    }
+
+    public void setAttributeType(String attributeType) {
+        this.attributeType = attributeType;
+    }
+
+    public String getAttributeCode() {
+        return attributeCode;
+    }
+
+    public void setAttributeCode(String attributeCode) {
+        this.attributeCode = attributeCode;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getListingType() {
+        return listingType;
+    }
+
+    public void setListingType(String listingType) {
+        this.listingType = listingType;
+    }
+    
+    
+//    public String getExactSearch() {
+//        return exactSearch;
+//    }
+//
+//    public void setExactSearch(String exactSearch) {
+//        this.exactSearch = exactSearch;
+//    }
+
+    	public boolean isExactSearch()
 	{
+		return exactSearch;
 	}
 
-	public String getQuery()
+	public void setExactSearch(boolean exactSearch)
 	{
-		return query;
+		this.exactSearch = exactSearch;
 	}
-
-	public void setQuery(String query)
-	{
-		this.query = query;
-	}
-
-	public String getAttributeType()
-	{
-		return attributeType;
-	}
-
-	public void setAttributeType(String attributeType)
-	{
-		this.attributeType = attributeType;
-	}
-
-	public String getAttributeCode()
-	{
-		return attributeCode;
-	}
-
-	public void setAttributeCode(String attributeCode)
-	{
-		this.attributeCode = attributeCode;
-	}
-
-	public String getTag()
-	{
-		return tag;
-	}
-
-	public void setTag(String tag)
-	{
-		this.tag = tag;
-	}
-
-	public String getListingType()
-	{
-		return listingType;
-	}
-
-	public void setListingType(String listingType)
-	{
-		this.listingType = listingType;
-	}
-	
-	
-	
+        
 }

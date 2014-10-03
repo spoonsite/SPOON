@@ -20,33 +20,45 @@ package edu.usu.sdl.openstorefront.web.rest.model;
  *
  * @author dshurtleff
  */
-public class SearchResultAttribute
-{
-	private String type;	
-	private String code;
+public class SearchResultAttribute {
 
-	public SearchResultAttribute()
-	{
-	}
+    private String type;
+    private String code;
+    private String typeDescription;
+    private String codeDescription;
 
-	public String getType()
-	{
-		return type;
-	}
+    public SearchResultAttribute() {
+    }
 
-	public void setType(String type)
-	{
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public String getCode()
-	{
-		return code;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setCode(String code)
-	{
-		this.code = code;
-	}
-	
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getTypeDescription() {
+        return typeDescription;
+    }
+
+    public void setTypeDescription(String typeDescription) {
+        this.typeDescription = typeDescription;
+    }
+
+    public String getCodeDescription() {
+        return codeDescription;
+    }
+
+    public void setCodeDescription(String codeDescription) {
+        this.codeDescription = codeDescription;
+    }
 }
