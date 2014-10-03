@@ -55,6 +55,12 @@ public class QueryByExample<T extends BaseEntity>
 		this.example = example;
 	}
 
+	public QueryByExample(QueryType queryType, T example)
+	{
+		this.queryType = queryType;
+		this.example = example;
+	}
+
 	public QueryType getQueryType()
 	{
 		return queryType;

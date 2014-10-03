@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.test;
+package edu.usu.sdl.openstorefront.usecase;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -69,7 +69,7 @@ import org.junit.Test;
  *
  * @author dshurtleff
  */
-public class DataConvertTest
+public class DataConvertUseCase
 {
 
 	private static final int MAX_SEARCH_DESCRIPTION = 300;
@@ -95,7 +95,7 @@ public class DataConvertTest
 			try {
 				objectMapper.writeValue(new File("C:\\development\\storefront\\source\\master\\openstorefront\\server\\components\\" + filename + ".json"), asset);
 			} catch (IOException ex) {
-				Logger.getLogger(DataConvertTest.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(DataConvertUseCase.class.getName()).log(Level.SEVERE, null, ex);
 			}
 
 		});
@@ -793,7 +793,7 @@ public class DataConvertTest
 ////
 ////		} catch (IOException ex)
 ////		{
-////			Logger.getLogger(DataConvertTest.class.getName()).log(Level.SEVERE, null, ex);
+////			Logger.getLogger(DataConvertUseCase.class.getName()).log(Level.SEVERE, null, ex);
 ////		}
 ////
 ////	}

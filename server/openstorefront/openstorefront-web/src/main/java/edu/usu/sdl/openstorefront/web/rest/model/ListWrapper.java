@@ -13,29 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
-
-import edu.usu.sdl.openstorefront.doc.APIDescription;
+package edu.usu.sdl.openstorefront.web.rest.model;
 
 /**
+ * Used for list wrapping
  *
- * @author jlaw
+ * @author dshurtleff
  */
-@APIDescription("Resource Type: Document, Homepage, Releases...etc")
-public class ResourceType
-		extends LookupEntity
+public abstract class ListWrapper
 {
 
-	public static final String DOCUMENT = "DOC";
-	public static final String INSTALL = "INSTALL";
-	public static final String DI2E_EVAL_REPORT = "DI2EEVAL";
-	public static final String HOME_PAGE = "HOME";
-	public static final String CODE = "CODE";
-	public static final String BINARY = "BINARIES";
-	public static final String SERVICE = "SERVICE";
+	protected long totalNumber;
+	protected int results;
 
-	public ResourceType()
+	public ListWrapper()
 	{
+	}
+
+	public long getTotalNumber()
+	{
+		return totalNumber;
+	}
+
+	public void setTotalNumber(long totalNumber)
+	{
+		this.totalNumber = totalNumber;
+	}
+
+	public int getResults()
+	{
+		return results;
+	}
+
+	public void setResults(int results)
+	{
+		this.results = results;
 	}
 
 }
