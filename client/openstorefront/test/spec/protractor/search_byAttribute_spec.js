@@ -1,7 +1,10 @@
 describe('search_byAttribute_Rating_Reset_Filters', function() {
     // Open the main site
-    browser.get(theSite);
+    browser.get(theSite, 4000);
     element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
+
+    // Wait for it to sync, a bit slower on the VPN
+    browser.driver.sleep(10000);
 
     it('Search filter by 5 star Rating', function () {
         element.all(by.css('.star-off-png')).get(4).click();
