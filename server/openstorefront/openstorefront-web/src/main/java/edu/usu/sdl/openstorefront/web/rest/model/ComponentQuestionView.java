@@ -32,6 +32,7 @@ public class ComponentQuestionView
 
 	private String question;
 	private String questionId;
+	private String organization;
 	private String username;
 	private String userType;
 	private String userTypeCode;
@@ -59,6 +60,7 @@ public class ComponentQuestionView
 			view.setUserType(typeCode.getDescription());
 			view.setUserTypeCode(typeCode.getCode());
 		}
+		view.setOrganization(question.getOrganization());
 		view.setQuestionId(question.getQuestionId());
 		Date max;
 		if (responses.size() > 0) {
@@ -188,5 +190,21 @@ public class ComponentQuestionView
 	public void setUserTypeCode(String userTypeCode)
 	{
 		this.userTypeCode = userTypeCode;
+	}
+
+	/**
+	 * @return the organization
+	 */
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
 	}
 }

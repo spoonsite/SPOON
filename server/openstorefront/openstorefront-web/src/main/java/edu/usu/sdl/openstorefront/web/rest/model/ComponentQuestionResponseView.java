@@ -31,6 +31,7 @@ public class ComponentQuestionResponseView
 
 	private String response;
 	private String responseId;
+	private String organization;
 	private String username;
 	private String userType;
 	private Date answeredDate;
@@ -47,6 +48,7 @@ public class ComponentQuestionResponseView
 		responses.forEach(response->{
 			ComponentQuestionResponseView tempView = new ComponentQuestionResponseView();
 			tempView.setAnsweredDate(response.getCreateDts());
+			tempView.setOrganization(response.getOrganization());
 			tempView.setResponse(response.getResponse());
 			UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, response.getUserTypeCode());
 			if (typeCode == null) {
@@ -132,6 +134,22 @@ public class ComponentQuestionResponseView
 	public void setResponseId(String responseId)
 	{
 		this.responseId = responseId;
+	}
+
+	/**
+	 * @return the organization
+	 */
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
 	}
 
 }

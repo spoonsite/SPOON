@@ -508,7 +508,6 @@ var app = angular
       $httpBackend.whenGET('api/v1/resource/highlights').passThrough();
       $httpBackend.whenGET('api/v1/service/search/recent').passThrough();
       $httpBackend.whenGET('api/v1/service/search/all').passThrough();
-      $httpBackend.whenGET('api/v1/resource/lookuptypes/ExperienceTimeType?sortField=sortOrder').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
       $httpBackend.whenGET('api/v1/resource/components/tags').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
@@ -534,6 +533,7 @@ var app = angular
       $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?con/).passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?attributecodes\/[^\/][^\/]*\/?article/).passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?architecture/).passThrough();
+      $httpBackend.whenGET('api/v1/resource/lookuptypes/ExperienceTimeType?sortField=sortOrder').passThrough();
       // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
       //   // grab the url (needed for what the backend will simulate)
       //   // parse it into an array

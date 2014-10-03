@@ -18,7 +18,7 @@
           </button>
         </div>
         <div ng-if="item.edit" style="position: relative">
-          <question component-id="details.details.componentId" question-id="item.questionId" content="item.question"></question>
+          <question component-id="details.details.componentId" question-id="item.questionId" question="{{item.question}}" user-type-code="{{item.userTypeCode}}" organization="{{item.organization}}"></question>
           <button class="btn btn-sm btn-default" ng-click="item.edit = false" style="position: absolute; top:5px; right: 5px;">
             <i class="fa fa-remove"></i>
           </button>
@@ -34,7 +34,7 @@
             </div>
           </div>
           <div ng-if="answer.edit" style="position: relative">
-            <response component-id="details.details.componentId" question-id="item.questionId" content="answer.response" response-id="answer.responseId"></response>
+            <response component-id="details.details.componentId" question-id="item.questionId" response="{{answer.response}}" user-type-code="{{answer.usertypeCode}}" organization="{{answer.organization}}" response-id="answer.responseId"></response>
             <button class="btn btn-sm btn-default" ng-click="answer.edit = false" style="position: absolute; top:0px; right: 0px">
               <i class="fa fa-remove"></i>
             </button>
@@ -44,7 +44,7 @@
           <response component-id="details.details.componentId" question-id="item.questionId" response-id="null"></response>
         </div>
       </div>
-      <p style="border-bottom: 1px lightgray solid;padding: 5px; margin-top: -15px;">
+      <p style="border-bottom: 1px lightgray solid;padding: 5px;">
       </p>
     </div>
     <div ng-if="details.details.questions[0] === undefined">

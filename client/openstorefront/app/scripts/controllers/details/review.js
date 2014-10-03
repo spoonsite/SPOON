@@ -46,7 +46,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
 
 
   /***************************************************************
-  * Load the User profile 
+  * Load the User profile only once when the controller loads
   ***************************************************************/
   (function() {
     //show load mask on form
