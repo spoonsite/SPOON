@@ -8,7 +8,7 @@ describe('search_ByText__Filter By Text', function() {
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
 
         // Wait for it to sync, a bit slower on the VPN
-        browser.driver.sleep(9000);
+        browser.driver.sleep(11000);
 
         // Clear the box
         var theInput = element(by.model('query'));
