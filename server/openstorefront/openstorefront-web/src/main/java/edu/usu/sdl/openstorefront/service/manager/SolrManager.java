@@ -15,9 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.common.util.NamedList;
 
 /**
  * Handles the connection to Solr
@@ -28,13 +36,37 @@ public class SolrManager
 		implements Initializable
 {
 
+	private static final Logger log = Logger.getLogger(SolrManager.class.getName());
+
 	//Should reuse server to avoid leaks according to docs.
 	private static SolrServer solrServer;
 
 	public static void init()
 	{
 		String url = PropertiesManager.getValue(PropertiesManager.KEY_SOLR_URL);
-		solrServer = new HttpSolrServer(url, new DefaultHttpClient());
+		if (StringUtils.isNotBlank(url)) {
+			log.log(Level.INFO, MessageFormat.format("Connecting to Solr at {0}", url));
+			solrServer = new HttpSolrServer(url, new DefaultHttpClient());
+		} else {
+			log.log(Level.WARNING, "Solr property (" + PropertiesManager.KEY_SOLR_URL + ") is not set in openstorefront.properties. Search service unavailible. Using Mock");
+			solrServer = new SolrServer()
+			{
+
+				@Override
+				public NamedList<Object> request(SolrRequest request) throws SolrServerException, IOException
+				{
+					NamedList<Object> results = new NamedList<>();
+					log.log(Level.INFO, "Mock Solr recieved request: " + request);
+					return results;
+				}
+
+				@Override
+				public void shutdown()
+				{
+					//do nothing
+				}
+			};
+		}
 	}
 
 	public static void cleanup()
