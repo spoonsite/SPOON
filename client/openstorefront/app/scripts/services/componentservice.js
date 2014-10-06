@@ -416,10 +416,10 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         } else {
           removeError();
           triggerError(data);
-          deferred.reject(false);
+          result.reject(false);
         }
       }).error(function(data, status, headers, config){
-        deferred.reject('There was a server error');
+        result.reject('There was a server error');
       });
     }
     return result.promise;
