@@ -33,6 +33,7 @@ public class ComponentQuestionResponseView
 	private String responseId;
 	private String organization;
 	private String username;
+	private String userType;
 	private String userTypeCode;
 	private Date answeredDate;
 	private Date updateDts;
@@ -52,9 +53,11 @@ public class ComponentQuestionResponseView
 			tempView.setResponse(response.getResponse());
 			UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, response.getUserTypeCode());
 			if (typeCode == null) {
+				tempView.setUserType(null);
 				tempView.setUserTypeCode(null);
 			} else {
 				tempView.setUserTypeCode(typeCode.getCode());
+				tempView.setUserTypeCode(typeCode.getDescription());
 			}
 			tempView.setUsername(response.getUpdateUser());
 			tempView.setUpdateDts(response.getUpdateDts());
@@ -150,6 +153,22 @@ public class ComponentQuestionResponseView
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
+	}
+
+	/**
+	 * @return the userType
+	 */
+	public String getUserType()
+	{
+		return userType;
+	}
+
+	/**
+	 * @param userType the userType to set
+	 */
+	public void setUserType(String userType)
+	{
+		this.userType = userType;
 	}
 
 }
