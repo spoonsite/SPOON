@@ -12,7 +12,7 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
             browser.driver.sleep(350);
         }
         expect(true).toBe(true);   //Some links now go off of the di2e website.
-    });
+    }, 25000);
 
     it('click on the FOOTER links, columns 1-4, all links below them', function() {
         // Footer has columns 1, 2, 3, 4.  Column li's are zero-based.
@@ -41,6 +41,6 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
         browser.driver.navigate().back();
         browser.driver.sleep(750);
         expect(true).toBe(true);  // No page load failures, links exist
-    });
+    }, 25000);
 
  });
