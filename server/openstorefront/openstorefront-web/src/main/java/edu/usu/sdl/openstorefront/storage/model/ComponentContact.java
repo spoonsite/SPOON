@@ -44,7 +44,7 @@ public class ComponentContact
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	private String firstName;
 
@@ -61,7 +61,7 @@ public class ComponentContact
 
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String phone;
 
 	@NotNull

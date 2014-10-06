@@ -21,6 +21,7 @@ limitations under the License.
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="css/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
 		<link href="css/apidoc.css" rel="stylesheet" type="text/css"/>
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 		<script src="script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
 		<script src="script/jquery/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
 	</head>

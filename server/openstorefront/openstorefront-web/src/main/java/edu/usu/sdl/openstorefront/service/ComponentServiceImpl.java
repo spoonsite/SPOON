@@ -177,6 +177,9 @@ public class ComponentServiceImpl
 		for (Component component : components) {
 			ComponentSearchView componentSearchView = ComponentSearchView.toView(component);
 			List<ComponentAttribute> attributes = attributeMaps.get(component.getComponentId());
+			if (attributes == null) {
+				attributes = new ArrayList<>();
+			}
 			componentSearchView.setAttributes(SearchResultAttribute.toViewList(attributes));
 			componentSearchViews.add(componentSearchView);
 		}

@@ -46,7 +46,7 @@ public class FileSystemManager
 	public static final String IMPORT_LOOKUP_DIR = "/var/openstorefront/import/lookup";
 	public static final String IMPORT_ATTRIBUTE_DIR = "/var/openstorefront/import/attribute";
 	public static final String IMPORT_ARTICLE_DIR = "/var/openstorefront/import/article";
-	public static final String IMPORT_HIGHLIGHT_DIR = "/var/openstorefront/import/highlight";
+	public static final String IMPORT_HIGHLIGHT_DIR = "/var/openstorefront/import/highlights";
 	public static final String IMPORT_COMPONENT_DIR = "/var/openstorefront/import/component";
 	public static final String ARTICLE_DIR = MAIN_PERM_DIR + "/article";
 	public static final String MEDIA_DIR = MAIN_PERM_DIR + "/media";

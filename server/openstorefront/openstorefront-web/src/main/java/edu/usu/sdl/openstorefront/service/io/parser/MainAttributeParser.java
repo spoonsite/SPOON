@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.util.Convert;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -75,8 +76,8 @@ public class MainAttributeParser
 				attributeCodePk.setAttributeCode(data[CODE].trim().toUpperCase());
 				attributeCodePk.setAttributeType(attributeType.getAttributeType());
 				attributeCode.setAttributeCodePk(attributeCodePk);
-				attributeCode.setDescription(data[CODE_DESCRIPTION].trim());
-				attributeCode.setLabel(data[CODE_LABEL].trim());
+				attributeCode.setDescription(StringProcessor.stripeExtendedChars(data[CODE_DESCRIPTION].trim()));
+				attributeCode.setLabel(StringProcessor.stripeExtendedChars(data[CODE_LABEL].trim()));
 				attributeCode.setDetailUrl(data[EXTERNAL_LINK].trim());
 
 				if (attributeMap.containsKey(attributeType)) {

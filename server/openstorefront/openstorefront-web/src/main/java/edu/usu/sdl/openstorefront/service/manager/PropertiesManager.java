@@ -43,6 +43,7 @@ public class PropertiesManager
 	public static final String KEY_DB_USER = "db.user";
 	public static final String KEY_DB_AT = "db.pw";
 	public static final String KEY_MAX_ERROR_TICKETS = "errorticket.max";
+	public static final String KEY_SOLR_URL = "solr.server.url";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
