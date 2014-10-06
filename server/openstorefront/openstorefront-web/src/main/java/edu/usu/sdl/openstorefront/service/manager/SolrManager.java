@@ -44,7 +44,7 @@ public class SolrManager
 		}
 	}
 
-	public SolrServer getServer()
+	public static SolrServer getServer()
 	{
 		return solrServer;
 	}
