@@ -15,44 +15,58 @@
 */
 'use strict';
 
-app.directive('response', ['business', function (Business) {
+app.directive('response', ['business', '$timeout', function (Business, $timeout) {
   return {
-    template: '<div><br ng-if="!responseId"><b ng-if="!responseId">Give an Answer</b><br ng-if="!responseId"><form ng-submit="submitResponse($event)"><textarea cols="100" ng-model="content"></textarea><br><br><button class="btn btn-primary" style="margin-bottom: 15px;" type="submit"><span ng-if="!responseId">Post</span><span ng-if="responseId">Save</span></button></form></div>',
+    templateUrl: 'views/questionsResponse/responseTemplate.html',
     restrict: 'E',
     scope: {
       componentId: '=',
       questionId: '=',
       responseId: '=',
-      content: '&'
     },
     link: function postLink(scope, element, attrs) {
       scope.user = {};
+      scope.post = {};
+
       Business.userservice.getCurrentUserProfile().then(function(result){
         if (result) {
           scope.user.info = result;
-        } 
-      });
-      scope.submitResponse = function(event)
-      {
-        event.preventDefault();
-        if (scope.user.info) {
-          var post = {};
-          post.response = scope.content;
-          post.userTypeCode = scope.user.info.userTypeCode;
-          post.organization = scope.user.info.organization;
-          if (scope.responseId){
-            post.questionId = scope.questionId;
-          }
-          Business.componentservice.saveResponse(scope.componentId, scope.questionId, post, scope.responseId).then(function(result){
+          Business.lookupservice.getUserTypeCodes().then(function(result){
             if (result) {
-              scope.$emit('$TRIGGEREVENT', '$detailsUpdated', scope.componentId);
+              scope.userTypeCodes = result;
+              if (attrs && attrs.response) {
+                scope.post.response = attrs.response || '';
+                scope.post.userTypeCode = _.find(scope.userTypeCodes, {'code': attrs.userTypeCode}) || scope.userTypeCodes[0];
+                scope.post.organization = attrs.organization || '';
+              } else {
+                scope.post.userTypeCode = _.find(scope.userTypeCodes, {'code': scope.user.info.userTypeCode});
+                scope.post.organization = scope.user.info.organization;
+              }
+            } else {
+              $scope.userTypeCodes = [];
             }
           });
-        } else {
-          return false;
         }
-      }
+      });
 
+      scope.submitResponse = function(event) {
+        event.preventDefault();
+        Business.userservice.getCurrentUserProfile().then(function(result){
+          if (result) {
+            scope.user.info = result;
+            if (scope.responseId){
+              scope.post.questionId = scope.questionId;
+            }
+            var request = angular.copy(scope.post);
+            request.userTypeCode = request.userTypeCode.code;
+            Business.componentservice.saveResponse(scope.componentId, scope.questionId, request, scope.responseId).then(function(result){
+              if (result) {
+                scope.$emit('$TRIGGEREVENT', '$detailsUpdated', scope.componentId);
+              }
+            });
+          } 
+        });
+      }
     }
   };
 }]);

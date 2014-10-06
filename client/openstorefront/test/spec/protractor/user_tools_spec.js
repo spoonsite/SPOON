@@ -1,10 +1,14 @@
 describe('user-tools_User logged in drop-down', function() {
     it('Click on UserName then User Profile', function () {
         browser.get(theSite);
+        // Wait for it to sync, a bit slower on the VPN
+        browser.driver.sleep(8000);
         // Click on User Name
-        element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
+        element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
+        //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         // Click on 2nd menu item which is "User Profile"
         element.all(by.css('.dropdown-menu a')).get(1).click();
+        browser.driver.sleep(1000);
         expect(element.all(by.css('.btn')).count()).toEqual(9);
         // Close the window
         element.all(by.css('.close')).get(0).click();
@@ -14,18 +18,24 @@ describe('user-tools_User logged in drop-down', function() {
     it('Click on UserName then Watches', function() {
         // Sets the .get(x) indexes back, otherwise they become 'dirty' and off!
         browser.refresh();
-        element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
+        browser.driver.sleep(4000);
+        element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
+        //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         element.all(by.css('.dropdown-menu a')).get(2).click();
-        expect(element.all(by.css('.btn')).count()).toEqual(17);
+        browser.driver.sleep(3000);
+        expect(element.all(by.css('.btn')).count()).toEqual(9);
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(1000);
     });
 
     it('Click on UserName then Component Reviews', function() {
         browser.refresh();
-        element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
+        browser.driver.sleep(4000);
+        element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
+        //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         element.all(by.css('.dropdown-menu a')).get(3).click();
-        expect(element.all(by.css('.btn')).count()).toEqual(37);
+        browser.driver.sleep(1000);
+        expect(element.all(by.css('.btn')).count()).toEqual(7);
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(1000);
     });

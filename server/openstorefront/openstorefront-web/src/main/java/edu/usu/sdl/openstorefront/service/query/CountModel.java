@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
-
-import edu.usu.sdl.openstorefront.doc.APIDescription;
+package edu.usu.sdl.openstorefront.service.query;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-@APIDescription("Resource Type: Document, Homepage, Releases...etc")
-public class ResourceType
-		extends LookupEntity
+public class CountModel
 {
 
-	public static final String DOCUMENT = "DOC";
-	public static final String INSTALL = "INSTALL";
-	public static final String DI2E_EVAL_REPORT = "DI2EEVAL";
-	public static final String HOME_PAGE = "HOME";
-	public static final String CODE = "CODE";
-	public static final String BINARY = "BINARIES";
-	public static final String SERVICE = "SERVICE";
+	private int count;
 
-	public ResourceType()
+	public CountModel()
 	{
+	}
+
+	public int getCount()
+	{
+		return count;
+	}
+
+	public void setCount(int count)
+	{
+		this.count = count;
 	}
 
 }

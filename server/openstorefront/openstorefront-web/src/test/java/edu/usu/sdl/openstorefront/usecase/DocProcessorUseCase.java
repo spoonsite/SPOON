@@ -13,27 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.test;
 
+package edu.usu.sdl.openstorefront.usecase;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
+import edu.usu.sdl.openstorefront.web.rest.model.UserProfileView;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Test;
+
+
 
 /**
  *
  * @author dshurtleff
  */
-public class ResourceTest
+public class DocProcessorUseCase
 {
-
+	
 	@Test
-	public void testResourceFind()
+	public void testProcessor() throws JsonProcessingException
 	{
-//		URL url = new DBManager().getClass().getResource("/data/lookup/MediaType.csv");
-//		System.out.println("Url: " + url);
-
-//		URL url = new JPAProvider().getClass().getResource("/META-INF/persistence.xml");
-//		Collection<PersistenceUnitInfo> allUnitInfos = (Collection<PersistenceUnitInfo>) PersistenceXmlUtil.parse(new JPAProvider().getClass().getResource("/META-INF/persistence.xml"));
-//		System.out.println(allUnitInfos);
-//
+		Set<String> fields = new HashSet<>();
+		fields.add("username");
+		
+		String json = StringProcessor.stripeFieldJSON(StringProcessor.defaultObjectMapper().writeValueAsString(new UserProfileView()), fields);
+		System.out.println(json);
 	}
-
+	
+	
 }

@@ -305,7 +305,7 @@ public class AttributeServiceImpl
 
 								AttributeCode existingCode = existingCodeMap.get(attributeCode.getAttributeCodePk().toKey());
 								if (existingCode != null) {
-									if (ServiceUtil.compareObjects(existingCode, attributeCode, true)) {
+									if (ServiceUtil.isObjectsDifferent(existingCode, attributeCode, true)) {
 										existingCode.setDescription(attributeCode.getDescription());
 										existingCode.setDetailUrl(attributeCode.getDetailUrl());
 										existingCode.setLabel(attributeCode.getLabel());

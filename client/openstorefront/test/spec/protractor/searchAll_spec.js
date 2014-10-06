@@ -5,7 +5,7 @@ describe('searchAll_Search entire database', function() {
     
     it('returns ' + totalResults + ' expected current search results', function() {
         // Open the main site
-        browser.get(theSite);
+        browser.get(theSite, 4000);
 
         // Search on ALL entries (null search term)
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();

@@ -15,40 +15,40 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
+import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Wraps error tickets
+ * Wraps tracking record
  *
  * @author dshurtleff
  */
-public class ErrorTicketWrapper
+public class UserTrackingWrapper
 		extends ListWrapper
 {
 
-	private List<ErrorTicket> errorTickets = new ArrayList<>();
+	private List<UserTracking> userTracking = new ArrayList<>();
 
-	public ErrorTicketWrapper()
+	public UserTrackingWrapper()
 	{
 	}
 
-	public ErrorTicketWrapper(List<ErrorTicket> errorTickets, long totalNumber)
+	public UserTrackingWrapper(List<UserTracking> userTracking, long totalNumber)
 	{
-		this.errorTickets = errorTickets;
 		this.totalNumber = totalNumber;
-		this.results = errorTickets.size();
+		this.results = userTracking.size();
+		this.userTracking = userTracking;
 	}
 
-	public List<ErrorTicket> getErrorTickets()
+	public List<UserTracking> getUserTracking()
 	{
-		return errorTickets;
+		return userTracking;
 	}
 
-	public void setErrorTickets(List<ErrorTicket> errorTickets)
+	public void setUserTracking(List<UserTracking> userTracking)
 	{
-		this.errorTickets = errorTickets;
+		this.userTracking = userTracking;
 	}
 
 }

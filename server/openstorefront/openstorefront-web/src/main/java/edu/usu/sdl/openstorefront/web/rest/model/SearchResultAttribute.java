@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -23,60 +24,48 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class SearchResultAttribute {
+public class SearchResultAttribute
+{
+	private String type;	
+	private String code;
 
-    private String type;
-    private String code;
-    private String typeDescription;
-    private String codeDescription;
+	public SearchResultAttribute()
+	{
+	}
+	
+	public static SearchResultAttribute toView(ComponentAttribute attribute){
+		SearchResultAttribute view = new SearchResultAttribute();
+		view.setCode(attribute.getComponentAttributePk().getAttributeCode());
+		view.setType(attribute.getComponentAttributePk().getAttributeType());
+		return view;
+	}
+	
+	public static List<SearchResultAttribute> toViewList(List<ComponentAttribute> attributes){
+		List<SearchResultAttribute> list = new ArrayList<>();
+		attributes.stream().forEach((attribute) -> {
+			list.add(SearchResultAttribute.toView(attribute));
+		});
+		return list;
+	}
 
-    public SearchResultAttribute() {
-    }
+	public String getType()
+	{
+		return type;
+	}
 
-    public static SearchResultAttribute toView(ComponentAttribute attribute) {
-        SearchResultAttribute view = new SearchResultAttribute();
-        view.setCode(attribute.getComponentAttributePk().getAttributeCode());
-        view.setType(attribute.getComponentAttributePk().getAttributeType());
-        return view;
-    }
+	public void setType(String type)
+	{
+		this.type = type;
+	}
 
-    public static List<SearchResultAttribute> toViewList(List<ComponentAttribute> attributes) {
-        List<SearchResultAttribute> list = new ArrayList<>();
-        attributes.stream().forEach((attribute) -> {
-            list.add(SearchResultAttribute.toView(attribute));
-        });
-        return list;
-    }
+	public String getCode()
+	{
+		return code;
+	}
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getTypeDescription() {
-        return typeDescription;
-    }
-
-    public void setTypeDescription(String typeDescription) {
-        this.typeDescription = typeDescription;
-    }
-
-    public String getCodeDescription() {
-        return codeDescription;
-    }
-
-    public void setCodeDescription(String codeDescription) {
-        this.codeDescription = codeDescription;
-    }
+	public void setCode(String code)
+	{
+		this.code = code;
+	}
+	
 }

@@ -8,8 +8,8 @@ exports.config = {
     'spec/protractor/*_spec.js'
   ],
   onPrepare: function() {
-    //browser.driver.manage().window().maximize();
     browser.driver.manage().window().setSize(1180,1180);
+    browser.driver.manage().window().setPosition(400,0);  // Get off of left corner where IDE usually is
 
     // For the HTML Reporter
     require('../node_modules/jasmine-reporters');
