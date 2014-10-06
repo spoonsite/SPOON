@@ -35,6 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Imports Attributes
  *
  * @author dshurtleff
  */
@@ -56,6 +57,11 @@ public class AttributeImporter
 				attributeFiles.add(FileSystemManager.getImportAttribute(fileMap.getFilename()));
 			}
 			filesUpdatedOrAdded(attributeFiles.toArray(new File[0]));
+		} else {
+			//Put in defaults, if needed
+			for (FileMap fileMap : FileMap.values()) {
+				FileSystemManager.getImportAttribute(fileMap.getFilename());
+			}
 		}
 	}
 

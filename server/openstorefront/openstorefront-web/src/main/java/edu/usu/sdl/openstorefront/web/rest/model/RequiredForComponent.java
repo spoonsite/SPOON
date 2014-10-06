@@ -17,11 +17,16 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -48,21 +53,31 @@ public class RequiredForComponent
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-//		AttributeServiceImpl attributeService = new AttributeServiceImpl();
-//		List<AttributeType> requireds = attributeService.getRequiredAttributes();
-//		boolean found = false;
-//		for (AttributeType required : requireds) {
-//			for (ComponentAttribute attribute : attributes) {
-//				if (required.getAttributeType().equals(attribute.getComponentAttributePk().getAttributeType())) {
-//					found = true;
-//					break;
-//				}
-//			}
-//			if (!found) {
-//				return Boolean.FALSE;
-//			}
-//			found = false;
-//		}
+		ServiceProxy serviceProxy = new ServiceProxy();
+
+		List<AttributeType> requireds = serviceProxy.getAttributeService().getRequiredAttributes();
+		Set<String> requiredTypeSet = new HashSet<>();
+		for (AttributeType attributeType : requireds) {
+			requiredTypeSet.add(attributeType.getAttributeType());
+		}
+
+		List<String> matchedAttributes = new ArrayList<>();
+		for (ComponentAttribute attribute : attributes) {
+			String type = attribute.getComponentAttributePk().getAttributeType();
+			if (requiredTypeSet.contains(type)) {
+				if (matchedAttributes.add(type)) {
+					matchedAttributes.add(type);
+				}
+			}
+		}
+		if (matchedAttributes.size() < requiredTypeSet.size()) {
+			RuleResult ruleResult = new RuleResult();
+			ruleResult.setMessage("Missing Required Attributes");
+			ruleResult.setEntityClassName(ComponentAttribute.class.getSimpleName());
+			ruleResult.setFieldName("componentAttributes");
+			ruleResult.setValidationRule("Must has required attributes");
+			validationResult.getRuleResults().add(ruleResult);
+		}
 		return validationResult;
 	}
 
