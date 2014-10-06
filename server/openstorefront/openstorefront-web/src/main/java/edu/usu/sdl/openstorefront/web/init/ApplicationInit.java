@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.manager.SolrManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import java.text.MessageFormat;
 import java.util.logging.Level;
@@ -51,6 +52,7 @@ public class ApplicationInit
 
 		//Order is important
 		startupManager(new DBManager());
+		startupManager(new SolrManager());
 		startupManager(new OSFCacheManager());
 		startupManager(new LookupImporter());
 		startupManager(new AttributeImporter());
@@ -71,6 +73,7 @@ public class ApplicationInit
 		shutdownManager(new UserAgentManager());
 		shutdownManager(new JobManager());
 		shutdownManager(new OSFCacheManager());
+		shutdownManager(new SolrManager());
 		shutdownManager(new DBManager());
 	}
 

@@ -15,7 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -74,12 +80,25 @@ public class StringProcessorTest
 	public void testGetResourceNameFromUrl()
 	{
 		System.out.println("getResourceNameFromUrl");
-//		String url = "";
-//		String expResult = "";
-//		String result = StringProcessor.getResourceNameFromUrl(url);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+		String url = "";
+		String expResult = "";
+		String result = StringProcessor.getResourceNameFromUrl(url);
+		assertEquals(expResult, result);
+
+		url = "http:/google.com/test";
+		expResult = "test";
+		result = StringProcessor.getResourceNameFromUrl(url);
+		assertEquals(expResult, result);
+
+		url = "http:/google.com/test?query=p";
+		expResult = "test?query=p";
+		result = StringProcessor.getResourceNameFromUrl(url);
+		assertEquals(expResult, result);
+
+		url = "query=p";
+		expResult = "query=p";
+		result = StringProcessor.getResourceNameFromUrl(url);
+		assertEquals(expResult, result);
 	}
 
 	/**
@@ -89,12 +108,20 @@ public class StringProcessorTest
 	public void testExtractUrls()
 	{
 		System.out.println("extractUrls");
-//		String text = "";
-//		List<String> expResult = null;
-//		List<String> result = StringProcessor.extractUrls(text);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+		String text = "";
+		List<String> result = StringProcessor.extractUrls(text);
+		if (result.size() > 0) {
+			Assert.fail("Unexpected size from results. " + result.size());
+		}
+
+		text = "a http://google.com";
+		result = StringProcessor.extractUrls(text);
+		System.out.println(Arrays.toString(result.toArray(new String[0])));
+
+		text = "a http://google.com stuff  http://yahoo.com";
+		result = StringProcessor.extractUrls(text);
+		System.out.println(Arrays.toString(result.toArray(new String[0])));
+
 	}
 
 	/**
@@ -104,59 +131,54 @@ public class StringProcessorTest
 	public void testStripeExtendedChars()
 	{
 		System.out.println("stripeExtendedChars");
-//		String data = "";
-//		String expResult = "";
-//		String result = StringProcessor.stripeExtendedChars(data);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+		String data = "A";
+		String expResult = "A";
+		String result = StringProcessor.stripeExtendedChars(data);
+		assertEquals(expResult, result);
+
+		data = "A█";
+		expResult = "A ";
+		result = StringProcessor.stripeExtendedChars(data);
+		assertEquals(expResult, result);
+
 	}
 
 	/**
 	 * Test of createHrefUrls method, of class StringProcessor.
 	 */
 	@Test
-	public void testCreateHrefUrls_String()
+	public void testCreateHrefUrls()
 	{
 		System.out.println("createHrefUrls");
-//		String text = "";
-//		String expResult = "";
-//		String result = StringProcessor.createHrefUrls(text);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-	}
+		String text = "http://google.com";
+		boolean showFullURL = false;
+		String expResult = "<a href='http://google.com' title='http://google.com' target='_blank'> google.com</a>";
+		String result = StringProcessor.createHrefUrls(text, showFullURL);
+		assertEquals(expResult, result);
 
-	/**
-	 * Test of createHrefUrls method, of class StringProcessor.
-	 */
-	@Test
-	public void testCreateHrefUrls_String_boolean()
-	{
-		System.out.println("createHrefUrls");
-//		String text = "";
-//		boolean showFullURL = false;
-//		String expResult = "";
-//		String result = StringProcessor.createHrefUrls(text, showFullURL);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
 	}
 
 	/**
 	 * Test of stripeFieldJSON method, of class StringProcessor.
+	 *
+	 * @throws com.fasterxml.jackson.core.JsonProcessingException
 	 */
 	@Test
-	public void testStripeFieldJSON()
+	public void testStripeFieldJSON() throws JsonProcessingException
 	{
 		System.out.println("stripeFieldJSON");
-//		String json = "";
-//		Set<String> fieldsToKeep = null;
-//		String expResult = "";
-//		String result = StringProcessor.stripeFieldJSON(json, fieldsToKeep);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+		UserTypeCode userTypeCode = new UserTypeCode();
+		userTypeCode.setCode("Test");
+		userTypeCode.setDescription("Test2");
+
+		Set<String> fieldsToKeep = new HashSet<>();
+		fieldsToKeep.add("code");
+		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+		String result = StringProcessor.stripeFieldJSON(objectMapper.writeValueAsString(userTypeCode), fieldsToKeep);
+		System.out.println(result);
+		if (result.contains("description(")) {
+			Assert.fail("Description shouldn't be in reults");
+		}
 	}
 
 	/**
@@ -166,12 +188,12 @@ public class StringProcessorTest
 	public void testPrintObject()
 	{
 		System.out.println("printObject");
-//		Object o = null;
-//		String expResult = "";
-//		String result = StringProcessor.printObject(o);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+		UserTypeCode userTypeCode = new UserTypeCode();
+		userTypeCode.setCode("Test");
+		userTypeCode.setDescription("Test2");
+		String result = StringProcessor.printObject(userTypeCode);
+		System.out.println(result);
+
 	}
 
 	/**
@@ -181,28 +203,12 @@ public class StringProcessorTest
 	public void testEclipseString()
 	{
 		System.out.println("eclipseString");
-//		String data = "";
-//		int max_length = 0;
-//		String expResult = "";
-//		String result = StringProcessor.eclipseString(data, max_length);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-	}
-
-	/**
-	 * Test of blankIfNull method, of class StringProcessor.
-	 */
-	@Test
-	public void testBlankIfNull_String()
-	{
-		System.out.println("blankIfNull");
-//		String text = "";
-//		String expResult = "";
-//		String result = StringProcessor.blankIfNull(text);
-//		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+		String data = "This is a test string that is really long.  Does it all show?";
+		String result = StringProcessor.eclipseString(data, 20);
+		System.out.println(result);
+		if (result.endsWith("...") == false) {
+			Assert.fail("It didn't eclispe the text");
+		}
 	}
 
 	/**
