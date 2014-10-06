@@ -46,7 +46,7 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     var search = $location.search()
     var type;
     var code;
-    if (search && search.type && search.code){
+    if (search && search.type && search.code && $location.path() === '/landing'){
       type = search.type;
       code = search.code;
     } else {
@@ -63,7 +63,7 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     var code;
     if (!data) {
       var search = $location.search()
-      if (search && search.type && search.code){
+      if (search && search.type && search.code && $location.path() === '/landing'){
         type = search.type;
         code = search.code;
       } else {
