@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  *
- * @author dshurtleff
+ * @author dshurtleff 
  */
 public interface SearchService {
 

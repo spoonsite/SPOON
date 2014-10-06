@@ -51,7 +51,7 @@ public class SearchServiceImpl
     @Override
     public List<SolrComponentResultsModel> getSearchItems(SearchQuery query) {
 
-        // QUERY / SEARCH for a solr storefront component 
+        // QUERY / SEARCH for a solr storefront component  
         SolrSearchComponent searchThis = new SolrSearchComponent();
 
         SolrComponentModel mySolrModel = new SolrComponentModel();

@@ -60,18 +60,7 @@ public class Search
         List<SolrComponentResultsModel> solrResults = service.getSearchService().getSearchItems(query);
 
         for (SolrComponentResultsModel items : solrResults) {
-
-//            ComponentSearchView mysearchResults = new ComponentSearchView();
-//
-//            mysearchResults.setComponentId(items.getComponentID());
-//            mysearchResults.setName(items.getName());
-//            mysearchResults.setDescription(items.getDescription());
-//            mysearchResults.setTags(items.getTags());
-//            mysearchResults.setAttributes(items.getAttributes());
-//            totalResults++;
-//            searchResults.add(mysearchResults);
             Component temp = service.getPersistenceService().findById(Component.class, items.getComponentID());
-
             searchResults.add(ComponentSearchView.toView(temp));
         }
         return searchResults;
