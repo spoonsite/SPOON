@@ -48,7 +48,7 @@ public class ComponentQuestionResponseView
 		List<ComponentQuestionResponseView> viewList = new ArrayList();
 		responses.forEach(response->{
 			ComponentQuestionResponseView tempView = new ComponentQuestionResponseView();
-			tempView.setAnsweredDate(response.getCreateDts());
+			tempView.setAnsweredDate(response.getUpdateDts());
 			tempView.setOrganization(response.getOrganization());
 			tempView.setResponse(response.getResponse());
 			UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, response.getUserTypeCode());
