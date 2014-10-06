@@ -1,32 +1,29 @@
 describe('search_byAttribute_Rating_Reset_Filters', function() {
     // Open the main site
-    browser.get(theSite, 4000);
+    browser.get(theSite, 9000);
     element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
-
-    // Wait for it to sync, a bit slower on the VPN
-    browser.driver.sleep(10000);
 
     it('Search filter by 5 star Rating', function () {
         element.all(by.css('.star-off-png')).get(4).click();
         // No search results expected
         expect(element.all(by.repeater('item in data')).count()).toEqual(0);
-    });
+    }, 20000);
 
     it('Click Reset Filters button in SEARCH RESULTS', function () {
         element.all(by.css('.ng-scope.btn.btn-default')).get(0).click();
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
-    });
+    }, 15000);
 
     it('Search filter by 1 star Rating', function () {
         element.all(by.css('.star-off-png')).get(0).click();
         // No search results expected
         expect(element.all(by.repeater('item in data')).count()).toEqual(0);
-    });
+    }, 15000);
 
     it('Click Reset Filters button LEFT NAV', function () {
         element.all(by.css('.btn.red.btn-default')).get(0).click();
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
-    });
+    }, 15000);
 
    it('Click More Filters  Expand all filters click all down buttons', function() {
        // Click on "More Filters"
@@ -50,5 +47,5 @@ describe('search_byAttribute_Rating_Reset_Filters', function() {
        // Verify last element is present from the expansion
        //expect(element(by.id('Service Transport Protocal_OTH')).isDisplayed());
        expect(true).toEqual(true);
-   });
+   }, 25000);
 });
