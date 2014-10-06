@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.query;
 
-import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+//import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -24,33 +24,31 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
  *
  * @author dshurtleff
  */
-public class SolrService
-{
-//	private static final String CORE_EXAMPLE = "openstorefront";
-//	
-//	//Should reuse server to avoid leaks according to docs.
-//	private static SolrServer exampleServer;
-//	
-//	public static void init()
-//	{
-//		String url = PropertiesManager.getValue("SOLR_BASE_ADDRESS", "http://localhost:8983/solr/") + CORE_EXAMPLE;		
-//		exampleServer  = new HttpSolrServer(url, new DefaultHttpClient());		
-//	}
-//	
-//	public static void cleanup()
-//	{
-//		if (exampleServer != null)
-//		{
-//			exampleServer.shutdown();
-//		}
-//	}	
-//	
-//	public SolrServer getExampleServer()
-//	{
-//		return exampleServer;
-//	}
-	
-	
-	
-	
+public class SolrService {
+
+  //  private static final String CORE_EXAMPLE = "example";
+   // private static final String CORE_CARS = "cars";
+
+    //Should reuse server to avoid leaks according to docs.
+    private static SolrServer exampleServer;
+
+    public static void init() {
+	//String url = System.getProperty("SOLR_BASE_ADDRESS", "http://localhost:8983/solr/") + CORE_EXAMPLE;
+        //?String url = System.getProperty("SOLR_BASE_ADDRESS", "http://localhost:8983/solr/") + CORE_EXAMPLE;
+
+        String url = "http://192.168.56.105:8983/solr/esa";
+
+        exampleServer = new HttpSolrServer(url, new DefaultHttpClient());
+    }
+
+    public static void cleanup() {
+        if (exampleServer != null) {
+            exampleServer.shutdown();
+        }
+    }
+
+    public static SolrServer getExampleServer() {
+        return exampleServer;
+    }
+
 }
