@@ -161,8 +161,8 @@ public class ServiceUtilTest
 		assertEquals(expResult, result);
 
 		UserTypeCode userTypeCodeDiff = new UserTypeCode();
-		userTypeCode.setCode("Test");
-		userTypeCode.setDescription("Test2");
+		userTypeCodeDiff.setCode("Test");
+		userTypeCodeDiff.setDescription("Test2");
 
 		expResult = true;
 		result = ServiceUtil.isObjectsDifferent(userTypeCode, userTypeCodeDiff, consumeFieldsOnly);
