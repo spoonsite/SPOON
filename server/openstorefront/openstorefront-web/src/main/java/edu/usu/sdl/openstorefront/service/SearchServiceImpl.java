@@ -16,16 +16,28 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.service.api.SearchService;
+import edu.usu.sdl.openstorefront.service.manager.SolrManager;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentModel;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrSearchComponent;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 
 /**
@@ -98,11 +110,113 @@ public class SearchServiceImpl
         try {
             resultsList = searchThis.searchComponent(query, myQueryString, mySetFields[0], mySetFields[1], mySetFields[2], mySetFields[3], mySetFields[4]);
             //   List<SolrComponentModel> resultsList = searchThis.searchComponent(myQueryString, mySetFields[0], mySetFields[1], mySetFields[2]);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(SearchServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SolrServerException ex) {
+        } catch (MalformedURLException | SolrServerException ex) {
             Logger.getLogger(SearchServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return resultsList;
     }
+	
+	@Override
+	public void addComponent(Component component)
+	{
+
+		// initialize solr server
+		SolrServer solrService = SolrManager.getServer();
+		
+		//add document using the example schema
+		SolrComponentModel solrDocModel = new SolrComponentModel();
+		
+		solrDocModel.setIsComponent(Boolean.TRUE);
+		solrDocModel.setId(component.getComponentId());
+		solrDocModel.setNameString(component.getName());
+		solrDocModel.setName(component.getName());
+		solrDocModel.setDescription(component.getDescription());
+		solrDocModel.setUpdateDate(component.getUpdateDts());
+		// solrDocModel.setComponentSearch(isComponent);
+		
+		List<ComponentTag> tags = this.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
+		List<ComponentAttribute> attributes = this.getComponentService().getBaseComponent(ComponentAttribute.class, component.getComponentId());
+		
+		String tagList = "";
+		String attributeList = "";
+		
+		for(ComponentTag tag:tags){
+			tagList = tagList + tag.getText() + ",";
+		}
+		for(ComponentAttribute attribute:attributes){
+			ComponentAttributePk pk = attribute.getComponentAttributePk();
+			AttributeCodePk codePk = new AttributeCodePk();
+			codePk.setAttributeCode(pk.getAttributeCode());
+			codePk.setAttributeType(pk.getAttributeType());
+			AttributeCode code = this.getPersistenceService().findById(AttributeCode.class, codePk);
+			AttributeType type = this.getPersistenceService().findById(AttributeType.class, pk.getAttributeType());
+			if (pk != null){
+				attributeList = attributeList + pk.getAttributeCode();
+				attributeList = attributeList + pk.getAttributeType();
+			}
+			if (code != null && type != null){
+				attributeList = attributeList + code.getLabel() + ",";
+				if (code.getDescription() != ""){
+					attributeList = attributeList + code.getDescription() + ",";
+				}
+				if (type.getDescription() != ""){
+					attributeList = attributeList + code.getDescription() + ",";
+				}
+			}
+		}
+		
+		solrDocModel.setTags(tagList);
+		solrDocModel.setAttributes(attributeList);
+
+		try {
+			solrService.addBean(solrDocModel);
+			//results.append("Add: ").append(updateResponse.toString());
+			solrService.commit();
+		}
+		catch (IOException | SolrServerException ex) {
+			System.out.println("we have problems" + ex.toString());
+			//log.log(Level.SEVERE, "Failed", ex);
+		}
+	}
+	
+	@Override
+	public void addComponent(Article article)
+	{
+
+		// initialize solr server
+		SolrServer solrService = SolrManager.getServer();
+		
+		//add document using the example schema
+		SolrComponentModel solrDocModel = new SolrComponentModel();
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(article.getAttributeCode());
+		pk.setAttributeType(article.getAttributeType());
+		AttributeCode code = this.getPersistenceService().findById(AttributeCode.class, pk);
+		AttributeType type = this.getPersistenceService().findById(AttributeType.class, article.getAttributeType());
+		
+		solrDocModel.setIsComponent(Boolean.FALSE);
+		solrDocModel.setId(type.getAttributeType()+code.getAttributeCodePk().getAttributeCode());
+		solrDocModel.setNameString( type.getDescription() + " " + code.getLabel() + " Article");
+		solrDocModel.setName(type.getDescription() + " " + code.getLabel() + " Article");
+		solrDocModel.setDescription(type.getDescription() + " " + code.getLabel() + " Article" + code.getDescription());
+		solrDocModel.setUpdateDate(article.getUpdateDts());
+		// solrDocModel.setComponentSearch(isComponent);
+		
+		String tagList = "";
+		String attributeList = type.getAttributeType()+","+type.getDescription()+","+code.getLabel()+","+code.getDescription();
+		
+		solrDocModel.setTags(tagList);
+		solrDocModel.setAttributes(attributeList);
+
+		try {
+			solrService.addBean(solrDocModel);
+			//results.append("Add: ").append(updateResponse.toString());
+			solrService.commit();
+		}
+		catch (IOException | SolrServerException ex) {
+			System.out.println("we have problems" + ex.toString());
+			//log.log(Level.SEVERE, "Failed", ex);
+		}
+	}
+
 }
