@@ -71,10 +71,12 @@ public class Search
 //            mysearchResults.setDescription(items.getDescription());
 //            mysearchResults.setTags(items.getTags());
 //            mysearchResults.setAttributes(items.getAttributes());
-            totalResults++;
+//            totalResults++;
 //            searchResults.add(mysearchResults);
-//            Component temp = service.getComponentService().getBaseComponent(Component.class, items.getComponentID());
-//            searchResults.add(ComponentSearchView.toView(temp));
+        
+            Component temp = service.getPersistenceService().findById(Component.class,items.getComponentID());
+            
+           searchResults.add(ComponentSearchView.toView(temp));
         }
         return searchResults;
     }
