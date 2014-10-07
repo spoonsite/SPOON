@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
@@ -39,5 +41,17 @@ public interface SearchService {
      * @return
      */
     public List<SolrComponentResultsModel> getSearchItems(SearchQuery query);
+	
+	/**
+	 *
+	 * @param component
+	 */
+	public void addComponent(Component component);
+	
+	/**
+	 *
+	 * @param article
+	 */
+	public void addComponent(Article article);
 
 }

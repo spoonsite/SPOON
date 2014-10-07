@@ -1,7 +1,7 @@
 describe('search__SortBy', function() {
     it('Name Z-A returns Vega as the first search result', function() {
         // Search on ALL entries (null search term)
-        browser.get(theSite);
+        browser.get(theSite, 8000);
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
         browser.driver.sleep(10000);
 
@@ -18,7 +18,7 @@ describe('search__SortBy', function() {
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
         var ztoa = element(by.binding('item.description'));
         expect(ztoa.getText()).toBe('Vega is a 3D map widget with support for high-resolution imagery in various formats including WMS, WFS, and ArcGIS. Vega also supports 3-dimensional terrain, and time-based data and has tools for drawing shapes and points and importing/exporting data.');
-    });
+    }, 20000);
 
     it('Last Update newest returns DI2E SvcV-4 Alignment-1.2.1 IAM article as the first search result', function() {
 
@@ -35,7 +35,7 @@ describe('search__SortBy', function() {
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
         var newest = element(by.binding('item.description'));
         expect(newest.getText()).toBe('DI2E SvcV-4 Alignment-1.2.1 Identity and Access Management Article');
-    });
+    }, 20000);
 
     it('Last Update oldest returns EMP as the first search result', function() {
         // Select sort by drop down
@@ -46,7 +46,7 @@ describe('search__SortBy', function() {
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
         var oldest = element(by.binding('item.description'));
         expect(oldest.getText()).toBe('The Extensible Mapping Platform (EMP) is a US Government Open Source project providing a framework for building robust OWF map widgets and map centric web applications. The EMP project is currently managed by US Army Tactical Mission Command (TMC) in partnership with DI2E, and developed by CECOM Software ...');
-    });
+    }, 20000);
 
     it('Name A-Z returns Common Map API Javascript Library as the first search result', function() {
         // 18 Aug. 2014 Need to go UP more to get past Rating (low-high) and Rating (high-low)
@@ -62,5 +62,5 @@ describe('search__SortBy', function() {
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
         var atoz = element(by.binding('item.description'));
         expect(atoz.getText()).toBe('The Central Authentication Service (CAS) is a single sign-on protocol for the web. Its purpose is to permit a user to access multiple applications while providing their credentials (such as userid and password) only once. It also allows web applications to authenticate users without gaining access to ...');
-    });
+    }, 20000);
 });

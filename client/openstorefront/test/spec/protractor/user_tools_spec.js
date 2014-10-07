@@ -6,14 +6,16 @@ describe('user-tools_User logged in drop-down', function() {
         // Click on User Name
         element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
         //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
+        browser.driver.sleep(3000);
+
         // Click on 2nd menu item which is "User Profile"
         element.all(by.css('.dropdown-menu a')).get(1).click();
-        browser.driver.sleep(1000);
+        browser.driver.sleep(2000);
         expect(element.all(by.css('.btn')).count()).toEqual(9);
+
         // Close the window
         element.all(by.css('.close')).get(0).click();
-        browser.driver.sleep(1000);
-    });
+    }, 25000);
 
     it('Click on UserName then Watches', function() {
         // Sets the .get(x) indexes back, otherwise they become 'dirty' and off!
@@ -26,7 +28,7 @@ describe('user-tools_User logged in drop-down', function() {
         expect(element.all(by.css('.btn')).count()).toEqual(9);
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(1000);
-    });
+    }, 25000);
 
     it('Click on UserName then Component Reviews', function() {
         browser.refresh();
@@ -38,7 +40,7 @@ describe('user-tools_User logged in drop-down', function() {
         expect(element.all(by.css('.btn')).count()).toEqual(7);
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(1000);
-    });
+    }, 25000);
 
     /* // DOWN ARROW in Component Reviews
     it('Click buttons in Component Reviews', function() {

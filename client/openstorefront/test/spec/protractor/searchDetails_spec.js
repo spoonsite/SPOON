@@ -3,19 +3,16 @@ describe('searchDetails_Search for VANTAGE', function() {
     // Open the main site
     browser.get(theSite, 4000);
 
-    // Wait for it to sync, a bit slower on the VPN
-    browser.driver.sleep(10000);
-
     // Enter the search term (changed to enter after updates to search keys 7/28)
     element(by.id('mainSearchBar')).sendKeys('VANTAGE', protractor.Key.ENTER);
 
-    // Wait a bit on the VPN for it to finish the search (slower)
-    browser.driver.sleep(8000);
+    // Make sure search results are returned
+    browser.driver.sleep(10000);
 
     // Should be 3 results (after search improvements)
     expect(element.all(by.repeater('item in data')).count()).toEqual(3);
   });
-});
+}, 25000);
 
 
 describe('searchDetails_Click on the results', function() {
@@ -44,12 +41,13 @@ describe('searchDetails_Click on the results', function() {
     browser.driver.sleep(500);
     element(by.id('showPageRight')).click();
     browser.driver.sleep(500);
+
     // Move it back so that search filters can be used!
     element(by.id('showPageLeft')).click();
     browser.driver.sleep(500);
     // Assume if buttons are they they were clicked on (if not visible still there)
     expect(true).toBe(true);
-  });
+  }, 25000);
 
 
   it('click tags watches view unwatch full page buttons', function() {
@@ -64,28 +62,21 @@ describe('searchDetails_Click on the results', function() {
 
       // Click on View Watches
       element.all(by.css('.fa.fa-eye')).get(0).click();
-      browser.driver.sleep(3000);
-      //element(by.css('.close')).click();  // Element is not visible.
       browser.refresh(); // close the window
+      browser.driver.sleep(3000);
 
       element(by.id('globalSearch')).sendKeys('VANTAGE', protractor.Key.ENTER);
-      // Wait for slow VPN search results
-      browser.driver.sleep(7000);
       expect(element.all(by.repeater('item in data')).count()).toEqual(3);
       element.all(by.css('.results-content-title-content')).get(1).click();
 
       // Set back to original state
       element.all(by.css('.ic.ic-blocked')).get(0).click();
 
-      // Wait for VPN to refresh
-      browser.driver.sleep(3000);
-
       // Click on Go to Full Screen
       element.all(by.css('.fa.fa-copy')).get(0).click();
-      browser.driver.sleep(3000);
       expect(true).toBe(true);
 
-  });
+  }, 25000);
 
 
 });
