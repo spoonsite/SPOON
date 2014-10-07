@@ -72,11 +72,6 @@ public class SearchServiceImpl
 
 		String exactMatch = "";
 
-		// did user request exact search?
-		if (query.isExactSearch()) {
-			exactMatch = "\"";
-		}
-
 		mySolrModel.setQueryString("" + exactMatch + query.getQuery() + exactMatch + "");
 
 		// use for finding strings that are not equal / do not contain
@@ -90,7 +85,7 @@ public class SearchServiceImpl
 		//myAndOr = " AND ";  // 
 
 		// Define search fields per solr schema
-		String[] mySetFields = new String[5];
+		String[] mySetFields = new String[6];
 		mySetFields[0] = "id";
 		mySetFields[1] = "title";
 		mySetFields[2] = "content_text";
