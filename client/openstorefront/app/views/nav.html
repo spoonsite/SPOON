@@ -14,8 +14,15 @@
           <button ng-show="user.isLoggedIn" type="button" class="navbar-toggle navButton" data-toggle="collapse" id="openUserMenu" data-target="#bs-example-navbar-collapse-2">
             <span class="sr-only">User Panel</span>
             <span ng-if="!user.info">User Menu</span>
-            <span ng-if="(user.info.firstName && user.info.firstName!== '') || (user.info.lastName && user.info.lastName!== '')"><span ng-if="(user.info.firstName && user.info.firstName!== '')">{{user.info.firstName}}&nbsp;</span><span ng-if="(user.info.lastName && user.info.lastName!== '')">{{user.info.lastName}}&nbsp;</span><b class="caret"></b></span>
-            <span ng-if="!(user.info.firstName && user.info.firstName!== '') && !(user.info.lastName && user.info.lastName!== '') && (user.info.username && user.info.username!== '')">{{user.info.username}}&nbsp;<b class="caret"></b></span>
+            <span style="display:inline-block">
+              <span ng-if="(user.info.firstName && user.info.firstName!== '') || (user.info.lastName && user.info.lastName!== '')" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; text-align: right; max-width: 130px; ">
+                <span ng-if="(user.info.firstName && user.info.firstName!== '')">{{user.info.firstName}}&nbsp;</span>
+                <span ng-if="(user.info.lastName && user.info.lastName!== '')">{{user.info.lastName}}&nbsp;</span>
+              </span>
+            </span>
+            <b class="caret" style="position: relative; top: -5px;"></b>
+            <span ng-if="!(user.info.firstName && user.info.firstName!== '') && !(user.info.lastName && user.info.lastName!== '') && (user.info.username && user.info.username!== '')">{{user.info.username}}&nbsp;</span>
+            <b class="caret"></b>
           </button>
           <button ng-show="!user.isLoggedIn" type="button" class="navbar-toggle navButton" ng-click="goToLogin()">
             <span>Log in</span>
@@ -45,9 +52,16 @@
       <div  ng-show="user.isLoggedIn" class="collapse navbar-collapse pull-right userNavDropdown" style="padding-right: 30px;">
         <ul class="nav navbar-nav navbar-right">
           <li id="dropTheMenu" class="dropdown">
-            <a ng-show="user.isLoggedIn" href="" class="dropdown-toggle" data-toggle="dropdown"><span ng-if="!user.info">User Menu</span>
-            <span ng-if="(user.info.firstName && user.info.firstName!== '') || (user.info.lastName && user.info.lastName!== '')"><span ng-if="(user.info.firstName && user.info.firstName!== '')">{{user.info.firstName}}&nbsp;</span><span ng-if="(user.info.lastName && user.info.lastName!== '')">{{user.info.lastName}}&nbsp;</span><b class="caret"></b></span>
-            <span ng-if="!(user.info.firstName && user.info.firstName!== '') && !(user.info.lastName && user.info.lastName!== '') && (user.info.username && user.info.username!== '')">{{user.info.username}}&nbsp;<b class="caret"></b></span></a>
+            <a ng-show="user.isLoggedIn" href="" class="dropdown-toggle" data-toggle="dropdown" style="display:block;"><span ng-if="!user.info">User Menu</span>
+              <span style="display:inline-block">
+                <span ng-if="(user.info.firstName && user.info.firstName!== '') || (user.info.lastName && user.info.lastName!== '')" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; text-align: right; max-width: 130px; ">
+                  <span ng-if="(user.info.firstName && user.info.firstName!== '')">{{user.info.firstName}}&nbsp;</span>
+                  <span ng-if="(user.info.lastName && user.info.lastName!== '')">{{user.info.lastName}}&nbsp;</span>
+                </span>
+                <span ng-if="!(user.info.firstName && user.info.firstName!== '') && !(user.info.lastName && user.info.lastName!== '') && (user.info.username && user.info.username!== '')">{{user.info.username}}&nbsp;</span>
+              </span>
+              <b class="caret" style="position: relative; top: -5px;"></b>
+            </a>
             <a ng-show="!user.isLoggedIn" href="" ng-click="goToLogin()">Log in</a>
             <ul class="dropdown-menu">
               <li ng-show="user.info.admin"><a href="javascript: void(0)" ng-click="send('/admin')">Admin Tools</a></li>
