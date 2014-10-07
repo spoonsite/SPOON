@@ -506,8 +506,7 @@ var app = angular
       //
       $httpBackend.whenGET('api/v1/resource/components').passThrough();
       $httpBackend.whenGET('api/v1/resource/highlights').passThrough();
-      $httpBackend.whenGET('api/v1/service/search/recent').passThrough();
-      $httpBackend.whenGET('api/v1/service/search/all').passThrough();
+      $httpBackend.whenGET(/api\/v1\/service\/search\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
       $httpBackend.whenGET('api/v1/resource/components/tags').passThrough();
       $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
