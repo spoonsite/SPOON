@@ -512,13 +512,8 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         .success(function(data, status, headers, config) { /*jshint unused:false*/
           if (data && !isEmpty(data) && isNotRequestError(data)) {
             removeError();
-            var temp = [];
-            _.each(data, function(item){
-              var thing = {};
-              thing.data = item;
-              temp.push(thing);
-            })
-
+            var temp = {};
+            temp.data = data;
             save(name, temp);
             result.resolve(temp);
           } else {
