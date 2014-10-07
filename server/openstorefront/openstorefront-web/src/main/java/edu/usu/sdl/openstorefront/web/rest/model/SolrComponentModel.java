@@ -30,21 +30,21 @@ public class SolrComponentModel {
 
     @Field
     private String componentId;
-	
-	@Field("isComponentSearch_b_is")
-	private Boolean isComponent;
+
+    @Field("isComponentSearch_b_is")
+    private Boolean isComponent;
 
     @Field("title")
     private String name;
 
     @Field("content_text")
     private String description;
-	
-	@Field("content_tags")
-	private String tags;
-	
-	@Field("content_raw")
-	private String attributes;
+
+    @Field("content_tags")
+    private String tags;
+
+    @Field("content_raw")
+    private String attributes;
 
     @Field
     private String queryString;
@@ -188,52 +188,46 @@ public class SolrComponentModel {
         this.version = version;
     }
 
-	/**
-	 * @return the tags
-	 */
-	public String getTags()
-	{
-		return tags;
-	}
+    /**
+     * @return the tags
+     */
+    public String getTags() {
+        return tags;
+    }
 
-	/**
-	 * @param tags the tags to set
-	 */
-	public void setTags(String tags)
-	{
-		this.tags = tags;
-	}
+    /**
+     * @param tags the tags to set
+     */
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 
-	/**
-	 * @return the attributes
-	 */
-	public String getAttributes()
-	{
-		return attributes;
-	}
+    /**
+     * @return the attributes
+     */
+    public String getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(String attributes)
-	{
-		this.attributes = attributes;
-	}
+    /**
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * @return the isComponent
-	 */
-	public Boolean getIsComponent()
-	{
-		return isComponent;
-	}
+    /**
+     * @return the isComponent
+     */
+    public Boolean getIsComponent() {
+        return isComponent;
+    }
 
-	/**
-	 * @param isComponent the isComponent to set
-	 */
-	public void setIsComponent(Boolean isComponent)
-	{
-		this.isComponent = isComponent;
-	}
+    /**
+     * @param isComponent the isComponent to set
+     */
+    public void setIsComponent(Boolean isComponent) {
+        this.isComponent = isComponent;
+    }
 
 }
