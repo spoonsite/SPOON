@@ -76,12 +76,13 @@ public class SearchServiceImpl
         //myAndOr = " AND ";  // 
 
         // Define search fields per solr schema
-        String[] mySetFields = new String[5];
+        String[] mySetFields = new String[6];
         mySetFields[0] = "id";
         mySetFields[1] = "title";
         mySetFields[2] = "content_text";
         mySetFields[3] = "content_tags";
         mySetFields[4] = "content_raw";
+        mySetFields[5] = "isComponentSearch_b_is";
 
         String myQueryString = null;
 
@@ -96,7 +97,7 @@ public class SearchServiceImpl
         List<SolrComponentResultsModel> resultsList = null;
 
         try {
-            resultsList = searchThis.searchComponent(query, myQueryString, mySetFields[0], mySetFields[1], mySetFields[2], mySetFields[3], mySetFields[4]);
+            resultsList = searchThis.searchComponent(query, myQueryString, mySetFields[0], mySetFields[1], mySetFields[2], mySetFields[3], mySetFields[4], mySetFields[5]);
             //   List<SolrComponentModel> resultsList = searchThis.searchComponent(myQueryString, mySetFields[0], mySetFields[1], mySetFields[2]);
         } catch (MalformedURLException ex) {
             Logger.getLogger(SearchServiceImpl.class.getName()).log(Level.SEVERE, null, ex);

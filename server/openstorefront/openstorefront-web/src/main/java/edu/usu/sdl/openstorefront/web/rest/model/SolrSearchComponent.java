@@ -42,7 +42,8 @@ public class SolrSearchComponent //extends BaseTestCase
 			String setFieldsName,
 			String setFieldsDescription,
 			String setFieldsTags,
-			String setFieldsAttributes) throws MalformedURLException, SolrServerException
+			String setFieldsAttributes,
+                        String setFieldsComponentBoolean) throws MalformedURLException, SolrServerException
 	{
 
 		SolrQuery query = new SolrQuery();
@@ -50,7 +51,7 @@ public class SolrSearchComponent //extends BaseTestCase
 		query.setQuery(searchString); // (default field?)
 
 		// fields to be returned back from solr
-		query.setFields(setFieldsIndex, setFieldsName, setFieldsDescription, setFieldsTags, setFieldsAttributes);
+		query.setFields(setFieldsIndex, setFieldsName, setFieldsDescription, setFieldsTags, setFieldsAttributes, setFieldsComponentBoolean);
 
 		// begin at nth solr index entry
 		query.setStart(0);
@@ -70,7 +71,7 @@ public class SolrSearchComponent //extends BaseTestCase
 			resultsModel.setComponentID(doc.getFieldValue(setFieldsIndex).toString());
 			resultsModel.setName(doc.getFieldValue(setFieldsName).toString());
 			resultsModel.setDescription(doc.getFieldValue(setFieldsDescription).toString());
-
+                        resultsModel.setComponentSearch((boolean) doc.getFieldValue(setFieldsComponentBoolean));
 			//------------------------------------------------------------------------------
 			// Process Tags
 			List<String> solrTags = new ArrayList<String>();
