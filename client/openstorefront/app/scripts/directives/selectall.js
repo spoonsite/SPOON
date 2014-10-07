@@ -18,14 +18,14 @@ app.directive('selectall', [ function () {
           scope.$parent.sendEvent('Filter Set', scope.label, 'All forcedOn');
           angular.forEach(scope.checkboxes, function (cb, index) { /*jshint unused:false*/
             cb.checked = true;
-            scope.toggleCallback();
           });
+          scope.toggleCallback();
         } else {
           scope.$parent.sendEvent('Filter Set', scope.label, 'All forcedOff');
           angular.forEach(scope.checkboxes, function (cb, index) { /*jshint unused:false*/
             cb.checked = false;
-            scope.toggleCallback();
           });
+          scope.toggleCallback();
         }
       };
 
