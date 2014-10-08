@@ -38,8 +38,6 @@ public class SearchQuery {
     @QueryParam("listingType")
     private String listingType;
 
-    @QueryParam("exactSearch")
-    private Boolean exactSearch;
 
     public SearchQuery() {
     }
@@ -93,14 +91,5 @@ public class SearchQuery {
 //        this.exactSearch = exactSearch;
 //    }
 
-    	public boolean isExactSearch()
-	{
-		return exactSearch;
-	}
-
-	public void setExactSearch(boolean exactSearch)
-	{
-		this.exactSearch = exactSearch;
-	}
         
 }
