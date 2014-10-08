@@ -91,7 +91,7 @@ public class LoginAction
 					try {
 						currentUser.login(headerAuthToken);
 						resolution = handleLoginRedirect();
-					} catch (AuthenticationException ex) {
+					} catch (Exception ex) {
 						log.log(Level.SEVERE, "Check configuration", ex);
 						resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Unable to access system.");
 					}

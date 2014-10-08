@@ -22,7 +22,7 @@
 		<listener-class>edu.usu.sdl.openstorefront.web.init.ShiroLoader</listener-class>		
 	</listener>
 	
-	<!--  Uncomment to test Header realm
+
 	<filter>
 		<filter-name>MockHeaderFilter</filter-name>
 		<filter-class>edu.usu.sdl.openstorefront.web.init.HeaderTestFilter</filter-class>
@@ -32,7 +32,7 @@
 		<url-pattern>/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>	
-	-->
+
 	
 	<filter>
 		<filter-name>ShiroFilter</filter-name>
