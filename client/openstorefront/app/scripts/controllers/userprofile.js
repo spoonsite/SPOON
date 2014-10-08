@@ -213,6 +213,42 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     //validate form
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
+    var error = false;
+    var errorObjt = {};
+    errorObjt.errors = {};
+    errorObjt.errors.entry = [];
+
+    if (!$scope.userProfileForm.firstName){
+      errorObjt.errors.entry.push({'key':'firstName', 'value':'A first name is required.'});
+    } else if ($scope.userProfileForm.firstName.length > 80){
+      errorObjt.errors.entry.push({'key':'firstName', 'value':'Your first name has exceeded the accepted input length'});
+    }
+    if (!$scope.userProfileForm.lastName){
+      errorObjt.errors.entry.push({'key':'lastName', 'value':'A last name is required.'});
+    } else if ($scope.userProfileForm.lastName.length > 80){
+      errorObjt.errors.entry.push({'key':'lastName', 'value':'Your last name has exceeded the accepted input length'});
+    }
+    if (!$scope.userProfileForm.email){
+      errorObjt.errors.entry.push({'key':'email', 'value':'A valid email is required.'});
+    } else if ($scope.userProfileForm.email.length > 80){
+      errorObjt.errors.entry.push({'key':'email', 'value':'Your email has exceeded the accepted input length'});
+    }
+    if (!$scope.userProfileForm.organization){
+      errorObjt.errors.entry.push({'key':'organization', 'value':'An organization is required.'});
+    } else if ($scope.userProfileForm.organization.length > 120){
+      errorObjt.errors.entry.push({'key':'organization', 'value':'Your organization has exceeded the accepted input length'});
+    }
+    if (!$scope.userProfileForm.userTypeCode){
+      errorObjt.errors.entry.push({'key':'userRole', 'value':'A valid user type code is required.'});
+    }
+
+
+    if (error) {
+      errorObjt.success = false;
+      triggerError(errorObjt);
+      return false;
+    }
+
     // Business.userservice.saveCurrentUserProfile($scope.userProfileForm, success, failure);
     Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
       function(data, status, headers, config){ /* jshint unused:false */
