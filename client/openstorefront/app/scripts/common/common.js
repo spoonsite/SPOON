@@ -282,11 +282,13 @@ var showServerError = function(errorObj, id){
 *  };
 ***************************************************************/
 var triggerError = function(errorObj) {
-  // console.log('errorObject', errorObj);
+  console.log('errorObject', errorObj);
   
   if (isRequestError(errorObj)) {
     var errors = errorObj.errors;
     _.each(errors.entry, function(item) {
+      console.log('item', item);
+      
       var i = item.key;
       $('#'+i).addClass('errorOnInput');
       $('#'+i).tooltip({

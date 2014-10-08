@@ -5,42 +5,54 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Test 
+ * Test
+ *
  * @author dshurtleff
  */
-public abstract class BaseTestCase
+public class BaseTestCase
 {
+
 	private static final Logger log = Logger.getLogger(BaseTestCase.class.getName());
+
+	protected static final String TEST_USER = "TEST-USER";
 
 	protected boolean success;
 	protected StringBuilder failureReason = new StringBuilder();
 	protected StringBuilder results = new StringBuilder();
-	protected final ServiceProxy service;
+	protected ServiceProxy service = new ServiceProxy();
+	protected String description;
 
-	public BaseTestCase(ServiceProxy service)
+	public BaseTestCase()
 	{
-		this.service = service;
 	}
-		
-	public abstract String description();	
-	
-	public void runTest(){
-		try
-		{
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public void runTest()
+	{
+		try {
 			runInternalTest();
-			if (failureReason.length() == 0)
-			{
+			if (failureReason.length() == 0) {
 				success = true;
 			}
-		}
-		catch (Exception e)
-		{
-			log.log(Level.SEVERE, "Test " + description() +" Fail Trace: ",e);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Test " + getDescription() + " Fail Trace: ", e);
 			failureReason.append(e);
 		}
 	}
-	protected abstract void runInternalTest();
-	
+
+	protected void runInternalTest()
+	{
+	}
+
 	public boolean isSuccess()
 	{
 		return success;
@@ -70,5 +82,5 @@ public abstract class BaseTestCase
 	{
 		this.results = results;
 	}
-	
+
 }

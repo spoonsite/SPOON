@@ -87,25 +87,70 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
   * you send the saved data to the database to store it)
   ***************************************************************/ //
   $scope.submitReview = function(event, review, revs) {
+    removeError();
     var body = {};
-    body.userTypeCode = review.role.code;
-    if (!body.userTypeCode) {
-      triggerAlert('You need to select a user role.', 'brokenReview');
-      return;
+    var error = false;
+    var errorObjt = {};
+    errorObjt.errors = {};
+    errorObjt.errors.entry = [];
+    if (review.role && !review.role.code) {
+      error = true;
+      errorObjt.errors.entry.push({'key': 'userTypeCode', 'value': 'You must select a user role.'})
+    } else {
+      body.userTypeCode = review.role.code;
     }
-    body.comment = review.comment? review.comment : '';
-    body.title = review.title;
+    if (!review.comment) {
+      error = true;
+      errorObjt.errors.entry.push({'key': 'comment', 'value': 'A comment is required.'});
+    } else if (review.comment.length > 4096) {
+      error = true;
+      errorObjt.errors.entry.push({'key': 'comment', 'value': 'Your comment has exceeded the accepted length.'});
+    } else {
+      body.comment = review.comment? review.comment : '';
+    }
+    if (!review.title) {
+      error = true;
+      errorObjt.errors.entry.push({'key': 'title', 'value': 'A title is required.'});
+    } else if (review.title.length > 255) {
+      error = true;
+      errorObjt.errors.entry.push({'key': 'title', 'value': 'Your title has exceeded the accepted length.'});
+    } else {
+      body.title = review.title;
+    }
     body.rating = review.rating? review.rating: 0;
-    body.lastUsed = new Date(review.lastUsed).toISOString();
+    if (!review.lastUsed) {
+      error = true;
+      errorObjt.errors.entry.push({'key': 'lastUsed', 'value': 'You must included the last time you used this component.'});
+    } else {
+      body.lastUsed = new Date(review.lastUsed).toISOString();
+    }
     body.recommend = review.recommend? true: false;
-    body.organization = review.organization;
-    body.userTimeCode = review.timeCode.code;
+    if (!review.organization) {
+      error = true;
+      errorObjt.errors.entry.push({'key': 'organization', 'value': 'You must included your organization'});
+    } else {
+      body.organization = review.organization;
+    }
+    if (!review.timeCode) {
+      error = true;
+      errorObjt.errors.entry.push({'key': 'userTimeCode', 'value': 'You must included your how long you\'ve used this component.'});
+    } else {
+      body.userTimeCode = review.timeCode.code;
+    }
     // console.log('body', body);
     event.preventDefault();
     // console.log('body', body);
     
     var componentId = $rootScope.getComponentId();
     var reviewId = null;
+    if (error) {
+      console.log('triggering errors');
+      errorObjt.success = false;
+      triggerError(errorObjt);
+      return false;
+    }
+    console.log('Saving Review.');
+
     if (revs) {
       reviewId = revs.reviewId;
       componentId = revs.componentId;

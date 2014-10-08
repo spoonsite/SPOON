@@ -16,6 +16,7 @@
 'use strict';
 
 app.directive('question', ['business', '$timeout', function (Business, $timeout) {
+  var questionId = 1;
   return {
     templateUrl: 'views/questionsResponse/questionTemplate.html',
     restrict: 'E',
@@ -26,7 +27,11 @@ app.directive('question', ['business', '$timeout', function (Business, $timeout)
     link: function postLink(scope, element, attrs) {
       scope.user = {};
       scope.post = {};
-
+      element.find('textarea').attr('id', questionId+'question')
+      element.find('.giveMeARole').attr('id', questionId+'role')
+      element.find('.giveMeAnOrganization').attr('id', questionId+'org')
+      scope.id = questionId;
+      questionId++;
       Business.userservice.getCurrentUserProfile().then(function(result){
         if (result) {
           scope.user.info = result;
@@ -50,13 +55,48 @@ app.directive('question', ['business', '$timeout', function (Business, $timeout)
 
       scope.submitQuestion = function(event) {
         event.preventDefault();
+        
+        var error = false;
+        var errorObjt = {};
+        errorObjt.errors = {};
+        errorObjt.errors.entry = [];
+
+        if (!scope.post.question){
+          errorObjt.errors.entry.push({'key': scope.id+'question', 'value':'A reqsponse is required.'});
+          error = true;
+        } else if (scope.post.question.length > 1024){
+          errorObjt.errors.entry.push({'key':scope.id+'question', 'value':'Your question has exceeded the accepted input length'});
+          error = true;
+        }        
+        if (!scope.post.organization){
+          errorObjt.errors.entry.push({'key': scope.id+'org', 'value':'An organization name is required.'});
+          error = true;
+        } else if (scope.post.organization.length > 120){
+          errorObjt.errors.entry.push({'key':scope.id+'org', 'value':'Your organization has exceeded the accepted input length'});
+          error = true;
+        }
+
+
+        if (error) {
+          errorObjt.success = false;
+          triggerError(errorObjt);
+          return false;
+        }
+
         Business.userservice.getCurrentUserProfile().then(function(result){
           if (result) {
             scope.user.info = result;
             var request = angular.copy(scope.post);
-            console.log('scope.user.info', scope.user.info);
             request.userTypeCode = request.userTypeCode.code;
-            console.log('request', request);
+            if (!request.userTypeCode){
+              errorObjt.errors.entry.push({'key': scope.id+'role', 'value' :'A valid user type code is required.'});
+              error = true;
+            }
+            if (error) {
+              errorObjt.success = false;
+              triggerError(errorObjt);
+              return false;
+            }
             Business.componentservice.saveQuestion(scope.componentId, request, scope.questionId).then(function(result){
               if (result) {
                 scope.$emit('$TRIGGEREVENT', '$detailsUpdated', scope.componentId);
