@@ -910,7 +910,6 @@ public class ComponentServiceImpl
 		handleBaseComponetSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId());
 		handleBaseComponetSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId());
 		handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId());
-		this.getSearchService().addComponent(this.getPersistenceService().findById(Component.class, component.getComponentId()));
 		//Thesse are user data and they shouldn't be changed on sync (I'm leave it as a reminder)
 //		handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId());
 //		for (QuestionAll question : componentAll.getQuestions()) {

@@ -152,6 +152,7 @@ public class SearchServiceImpl
         List<ComponentTag> tags = this.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
         List<ComponentAttribute> attributes = this.getComponentService().getBaseComponent(ComponentAttribute.class, component.getComponentId());
 
+        
         String tagList = "";
         String attributeList = "";
 
@@ -166,8 +167,8 @@ public class SearchServiceImpl
             AttributeCode code = this.getPersistenceService().findById(AttributeCode.class, codePk);
             AttributeType type = this.getPersistenceService().findById(AttributeType.class, pk.getAttributeType());
             if (pk != null) {
-                attributeList = attributeList + pk.getAttributeCode();
-                attributeList = attributeList + pk.getAttributeType();
+                attributeList = attributeList + pk.getAttributeCode()+ ",";
+                attributeList = attributeList + pk.getAttributeType()+ ",";
             }
             if (code != null && type != null) {
                 attributeList = attributeList + code.getLabel() + ",";
