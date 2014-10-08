@@ -222,4 +222,19 @@ public class SearchServiceImpl
 		}
 	}
 
+    @Override
+    public List<ComponentSearchView> getSearchItems(AttributeCodePk pk) {
+        List<Article> articles = this.getAttributeService().getArticleLike(pk);
+        List<Component> components = new ArrayList<>();//persistenceService.query(query, params);
+        
+        List<ComponentSearchView> views = new ArrayList<>();
+        for(Article article: articles){
+            views.add(ComponentSearchView.toView(article));
+        }
+        for(Component component: components){
+//            views.add(ComponentSearchView.toView(components));
+        }
+        return views;
+    }
+
 }

@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +96,14 @@ public interface AttributeService
 	 * @return article data or null for no article.
 	 */
 	public String getArticle(AttributeCodePk attributeCodePk);
+
+	/**
+	 * Grabs the article for a give code or type
+	 *
+	 * @param attributeCodePk
+	 * @return article data or null for no article.
+	 */
+	public List<Article> getArticleLike(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Saves a new article (This will scub the article data prior to save)

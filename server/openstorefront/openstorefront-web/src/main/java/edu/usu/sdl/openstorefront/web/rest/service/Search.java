@@ -17,8 +17,10 @@ package edu.usu.sdl.openstorefront.web.rest.service;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
@@ -34,9 +36,11 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Search Service
@@ -64,6 +68,26 @@ public class Search
             searchResults.add(ComponentSearchView.toView(temp));
         }
         return searchResults;
+    }
+
+    @GET
+    @APIDescription("Searches listing according to parameters.  (Components, Articles)")
+    @Produces({MediaType.APPLICATION_JSON})
+    @DataType(ComponentSearchView.class)
+    @Path("/attribute/{type}/{code}")
+    public Response searchListing(
+            @PathParam("type")
+            @RequiredParam String type,
+            @PathParam("code")
+            @RequiredParam String code) {
+        
+        AttributeCodePk pk = new AttributeCodePk();
+        
+        pk.setAttributeCode(code);
+        pk.setAttributeType(type);
+
+        List<ComponentSearchView> results = service.getSearchService().getSearchItems(pk);
+        return Response.ok(results).build();
     }
 
     @GET

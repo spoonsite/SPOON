@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
@@ -24,7 +25,7 @@ import java.util.List;
 
 /**
  *
- * @author dshurtleff 
+ * @author dshurtleff
  */
 public interface SearchService {
 
@@ -41,17 +42,24 @@ public interface SearchService {
      * @return
      */
     public List<SolrComponentResultsModel> getSearchItems(SearchQuery query);
-	
-	/**
-	 *
-	 * @param component
-	 */
-	public void addComponent(Component component);
-	
-	/**
-	 *
-	 * @param article
-	 */
-	public void addComponent(Article article);
+
+    /**
+     *
+     * @param pk
+     * @return
+     */
+    public List<ComponentSearchView> getSearchItems(AttributeCodePk pk);
+
+    /**
+     *
+     * @param component
+     */
+    public void addComponent(Component component);
+
+    /**
+     *
+     * @param article
+     */
+    public void addComponent(Article article);
 
 }
