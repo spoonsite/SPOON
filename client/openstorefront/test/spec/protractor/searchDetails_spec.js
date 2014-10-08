@@ -54,6 +54,7 @@ describe('searchDetails_Click on the results', function() {
       // Click on the TAGS button
       // TODO: Add logic for if tags button is already depressed
       element.all(by.css('.fa.fa-tags')).get(0).click();
+      browser.driver.sleep(2000);
 
       // Click on binoculars to watch or not watch
       element.all(by.css('.ic.ic-binoculars')).get(0).click();
@@ -68,12 +69,15 @@ describe('searchDetails_Click on the results', function() {
       element(by.id('globalSearch')).sendKeys('VANTAGE', protractor.Key.ENTER);
       expect(element.all(by.repeater('item in data')).count()).toEqual(3);
       element.all(by.css('.results-content-title-content')).get(1).click();
+      browser.driver.sleep(2000);
 
       // Set back to original state
       element.all(by.css('.ic.ic-blocked')).get(0).click();
+      browser.driver.sleep(2000);
 
       // Click on Go to Full Screen
       element.all(by.css('.fa.fa-copy')).get(0).click();
+      browser.driver.sleep(2000);
       expect(true).toBe(true);
 
   }, 25000);
