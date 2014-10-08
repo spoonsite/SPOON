@@ -15,11 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import org.apache.solr.client.solrj.beans.Field;
 
 /**
@@ -35,30 +31,26 @@ public class SolrComponentModel {
     @Field
     private String componentId;
 
+    @Field("isComponentSearch_b_is")
+    private Boolean isComponent;
+
     @Field("title")
     private String name;
 
-//    @Field
-//    private String title;
     @Field("content_text")
     private String description;
 
-//    @Field
-//    private String content_text;
+    @Field("content_tags")
+    private String tags;
+
+    @Field("content_raw")
+    private String attributes;
+
     @Field
     private String queryString;
 
     @Field
     private String guid;
-
-    @Field("tags_s_ims")
-    @DataType(ComponentTag.class)
-    private List<ComponentTag> tags = new ArrayList<>();
-
-    @Field("attributes_s_ims")
-    // @DataType(ComponentTag.class)
-    //private List<ComponentTag> tags = new ArrayList<>();
-    private List<SolrAttributeCodeTypeModel> attributes = new ArrayList<>();
 
     @Field
     private String organization;
@@ -66,7 +58,7 @@ public class SolrComponentModel {
     @Field
     private Date releaseDate;
 
-    @Field
+    @Field("modified")
     private Date updateDate_dt_is;
 
     @Field
@@ -196,19 +188,46 @@ public class SolrComponentModel {
         this.version = version;
     }
 
-    public List<ComponentTag> getTags() {
+    /**
+     * @return the tags
+     */
+    public String getTags() {
         return tags;
     }
 
-    public void setTags(List<ComponentTag> tags) {
+    /**
+     * @param tags the tags to set
+     */
+    public void setTags(String tags) {
         this.tags = tags;
     }
 
-    public List<SolrAttributeCodeTypeModel> getAttributes() {
+    /**
+     * @return the attributes
+     */
+    public String getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(List<SolrAttributeCodeTypeModel> attributes) {
+    /**
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(String attributes) {
         this.attributes = attributes;
     }
+
+    /**
+     * @return the isComponent
+     */
+    public Boolean getIsComponent() {
+        return isComponent;
+    }
+
+    /**
+     * @param isComponent the isComponent to set
+     */
+    public void setIsComponent(Boolean isComponent) {
+        this.isComponent = isComponent;
+    }
+
 }

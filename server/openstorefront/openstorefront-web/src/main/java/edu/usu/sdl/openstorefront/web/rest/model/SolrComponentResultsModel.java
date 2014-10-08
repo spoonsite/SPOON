@@ -41,6 +41,9 @@ public class SolrComponentResultsModel {
     @Field("content_raw")
     private String attributesText;
 
+    @Field("isComponentSearch_b_is")
+    private Boolean componentSearch;
+       
     @Field("tags_s_ims")
     @DataType(ComponentTag.class)
     private List<ComponentTag> tags = new ArrayList<>();
@@ -104,6 +107,14 @@ public class SolrComponentResultsModel {
         this.tagsText = tagsText;
     }
 
+    public boolean isComponentSearch() {
+        return componentSearch;
+    }
+
+    public void setComponentSearch(boolean componentSearch) {
+        this.componentSearch = componentSearch;
+    }  
+    
     public String getComponentID() {
         return componentId;
     }

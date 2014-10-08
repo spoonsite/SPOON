@@ -460,20 +460,11 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       // if they don't give me an ID I send them back the whole list.
       value = checkExpire(name, minute * 10);
       cachedComponents = checkExpire('cachedComponents', minute * 1440); // a day
-      // console.log('started search');
-      // var start = new Date().getTime();
       if (value) {
-        // var end = new Date().getTime();
-        // var time = end - start;
-        // console.log('Total Execution time: ' + time);
         result.resolve(value);
       } else {
         if (cachedComponents) {
           var temp = search({'type': type, 'key': key}, cachedComponents, architecture);
-          // var end = new Date().getTime();
-          // var time = end - start;
-          // console.log('finished search!', temp);
-          // console.log('Total Execution time: ' + time);
           save(name, temp);
           result.resolve(temp);
         } else {
@@ -486,10 +477,6 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
               removeError();
               save('cachedComponents', data);
               var temp = search({'type': type, 'key': key}, data, architecture);
-              // var end = new Date().getTime();
-              // var time = end - start;
-              // console.log('finished search!', temp);
-              // console.log('Total Execution time: ' + time);
               save(name, temp);
               result.resolve(temp);
             } else {
@@ -505,6 +492,44 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     } else {
       result.reject('You must provide a type and key for the search');
     }
+
+    // if (type && key) {
+    //   name = type + key;
+    //   // if they don't give me an ID I send them back the whole list.
+    //   value = checkExpire(name, minute * 10);
+    //   cachedComponents = checkExpire(name, minute * 1440); // a day
+    //   if (value) {
+    //     result.resolve(value);
+    //   } else {
+    //     url = 'api/v1/service/search';
+    //     var paramsObj = {};
+    //     paramsObj.query = key;
+    //     $http({
+    //       method: 'GET',
+    //       url: url,
+    //       params: paramsObj
+    //     })
+    //     .success(function(data, status, headers, config) {
+    //       if (data && !isEmpty(data) && isNotRequestError(data)) {
+    //         removeError();
+    //         var temp = {};
+    //         temp.data = data;
+    //         save(name, temp);
+    //         result.resolve(temp);
+    //       } else {
+    //         removeError();
+    //         triggerError(data);
+    //         result.reject(false);
+    //       }
+    //     }).error(function(data, status, headers, config){
+    //       result.reject('There was a server error');
+    //     });
+    //   }
+    // } else {
+    //   result.reject('You must provide a type and key for the search');
+    // }
+
+
     return result.promise;
   };
 

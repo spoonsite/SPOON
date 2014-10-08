@@ -17,26 +17,32 @@ package edu.usu.sdl.openstorefront.web.rest.service;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
-import edu.usu.sdl.openstorefront.web.rest.model.SearchResult;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Search Service
@@ -56,14 +62,40 @@ public class Search
             @BeanParam SearchQuery query,
             @BeanParam FilterQueryParams filter) {
 
-        List<ComponentSearchView> searchResults = new ArrayList<>();
-        List<SolrComponentResultsModel> solrResults = service.getSearchService().getSearchItems(query);
-
-        for (SolrComponentResultsModel items : solrResults) {
-            Component temp = service.getPersistenceService().findById(Component.class, items.getComponentID());
-            searchResults.add(ComponentSearchView.toView(temp));
-        }
+        List<ComponentSearchView> searchResults = service.getSearchService().getSearchItems(query, filter);
+        
         return searchResults;
+    }
+
+    @DELETE
+	@RequireAdmin
+    @APIDescription("Removes all indexes from Solr")
+    @Consumes({MediaType.APPLICATION_JSON})
+	@Path("/clearSolr")
+    public Response searchListing() {
+		service.getSearchService().deleteAll();
+		return Response.noContent().build();
+    }
+
+    @GET
+    @APIDescription("Searches listing according to parameters.  (Components, Articles)")
+    @Produces({MediaType.APPLICATION_JSON})
+    @DataType(ComponentSearchView.class)
+    @Path("/attribute/{type}/{code}")
+    public Response searchListing(
+            @PathParam("type")
+            @RequiredParam String type,
+            @PathParam("code")
+            @RequiredParam String code,
+            @BeanParam FilterQueryParams filter) {
+        
+        AttributeCodePk pk = new AttributeCodePk();
+        
+        pk.setAttributeCode(code);
+        pk.setAttributeType(type);
+
+        List<ComponentSearchView> results = service.getSearchService().getSearchItems(pk, filter);
+        return Response.ok(results).build();
     }
 
     @GET

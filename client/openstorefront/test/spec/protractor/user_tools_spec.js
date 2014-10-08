@@ -6,9 +6,11 @@ describe('user-tools_User logged in drop-down', function() {
         // Click on User Name
         element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
         //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
+        browser.driver.sleep(3000);
 
         // Click on 2nd menu item which is "User Profile"
         element.all(by.css('.dropdown-menu a')).get(1).click();
+        browser.driver.sleep(2000);
         expect(element.all(by.css('.btn')).count()).toEqual(9);
 
         // Close the window
@@ -22,8 +24,8 @@ describe('user-tools_User logged in drop-down', function() {
         element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
         //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         element.all(by.css('.dropdown-menu a')).get(2).click();
-        browser.driver.sleep(3000);
-        expect(element.all(by.css('.btn')).count()).toEqual(9);
+        browser.driver.sleep(6000);
+        expect(element.all(by.css('.btn')).count()).toEqual(11);
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(1000);
     }, 25000);

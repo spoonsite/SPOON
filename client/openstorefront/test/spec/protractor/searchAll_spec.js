@@ -17,7 +17,7 @@ describe('searchAll_Search entire database', function() {
         expect(element.all(by.repeater('item in data')).count()).toEqual(totalResults);
     }, 25000);
 
-    it('for a LONG string with special characters, pseudo search returns zero results', function() {
+    it('for a LONG string with special characters- no errors- parses and gives zero results', function() {
         // Open the main site
         browser.get(theSite);
 
