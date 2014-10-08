@@ -15,7 +15,7 @@
 	  <div class="auth-content">
 		<div class="row">
 		  <h2>Log In</h2>
-		  <form action="Login.action?Login" method="POST">
+		  <form id="loginForm" action="Login.action?Login" method="POST">
 			<span>By logging in you are consenting to these conditions</span>
 			<div class="disclaimer">
 			  <h1>WARNING:</h1>
@@ -24,17 +24,41 @@
 			  </p>
 			</div>		
 			<div style="width: 300px; margin: 0px auto;">
-			<input type="text" name="username" placeholder="Username" class="form-control" autofocus autocomplete="false">
-			<br>
-			<input type="password" name="password" placeholder="Password" class="form-control" autocomplete="false">
-			<br>
-			<br>
-			<input type="submit" value="Log in" style="width: auto;" class="btn btn-primary" />
+				<input type="hidden" id="gotoPageId" name="gotoPage"  />	
+				<input type="text" name="username" placeholder="Username" class="form-control" autofocus autocomplete="false">
+				<br>
+				<input type="password" name="password" placeholder="Password" class="form-control" autocomplete="false">
+				<br>
+				<br>
+				<input type="submit" value="Log in" style="width: auto;" class="btn btn-primary" />
 			</div>
 		  </form>
 		</div>
 	  </div>
 	</div>	
+		<script type="text/javascript">
+			var QueryString = function () {				
+				  var query_string = {};
+				  var query = window.location.search.substring(1);
+				  var vars = query.split("&");
+				  for (var i=0;i<vars.length;i++) {
+					var pair = vars[i].split("=");
+						// If first entry with this name
+					if (typeof query_string[pair[0]] === "undefined") {
+					  query_string[pair[0]] = pair[1];
+						// If second entry with this name
+					} else if (typeof query_string[pair[0]] === "string") {
+					  var arr = [ query_string[pair[0]], pair[1] ];
+					  query_string[pair[0]] = arr;
+						// If third or later entry with this name
+					} else {
+					  query_string[pair[0]].push(pair[1]);
+					}
+				  } 
+					return query_string;
+				} ();
+				document.getElementById('gotoPageId').value = QueryString.gotoPage;
+		</script>
 	</body>
 </html>
 
