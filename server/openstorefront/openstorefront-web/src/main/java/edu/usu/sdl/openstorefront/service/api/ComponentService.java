@@ -145,7 +145,6 @@ public interface ComponentService
 	 *
 	 * @param attribute
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentAttribute(ComponentAttribute attribute);
 
 	/**

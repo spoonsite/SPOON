@@ -19,7 +19,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
-import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.File;
 import java.text.MessageFormat;
@@ -53,8 +52,8 @@ public class ComponentImporter
 			{
 			});
 			componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
-                        serviceProxy.getSearchService().addComponent(componentAll.getComponent());
-                        System.out.println();
+			serviceProxy.getSearchService().addComponent(componentAll.getComponent());
+
 			objectMapper.writeValue(file, componentAll);
 			//set it to the past so we don't keep picking it up.
 			file.setLastModified(file.lastModified() - 10000);
