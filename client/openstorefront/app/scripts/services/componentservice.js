@@ -445,89 +445,91 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var name;
 
     
+    if (type && key) {
+      type  = type.toLowerCase();
+      if (type !== 'attribute'){
+        key   = key.toLowerCase();
+        name  = type + '-' + key;
+      } else {
+        if (!key.key) {
+          name = type + key.type.toLowerCase() + '-ALL';
+        } else {
+          name = type + key.type.toLowerCase() + '-' + key.key.toLowerCase();
+        }
+      }
+      // if they don't give me an ID I send them back the whole list.
+      value = checkExpire(name, minute * 10);
+      cachedComponents = checkExpire('cachedComponents', minute * 1440); // a day
+      if (value) {
+        result.resolve(value);
+      } else {
+        if (cachedComponents) {
+          var temp = search({'type': type, 'key': key}, cachedComponents, architecture);
+          save(name, temp);
+          result.resolve(temp);
+        } else {
+          $http({
+            method: 'GET',
+            url: url
+          })
+          .success(function(data, status, headers, config) { /*jshint unused:false*/
+            if (data && !isEmpty(data) && isNotRequestError(data)) {
+              removeError();
+              save('cachedComponents', data);
+              var temp = search({'type': type, 'key': key}, data, architecture);
+              save(name, temp);
+              result.resolve(temp);
+            } else {
+              removeError();
+              triggerError(data);
+              result.reject(false);
+            }
+          }).error(function(data, status, headers, config){
+            result.reject('There was a server error');
+          });
+        }
+      }
+    } else {
+      result.reject('You must provide a type and key for the search');
+    }
+
     // if (type && key) {
-    //   type  = type.toLowerCase();
-    //   if (type !== 'attribute'){
-    //     key   = key.toLowerCase();
-    //     name  = type + '-' + key;
-    //   } else {
-    //     if (!key.key) {
-    //       name = type + key.type.toLowerCase() + '-ALL';
-    //     } else {
-    //       name = type + key.type.toLowerCase() + '-' + key.key.toLowerCase();
-    //     }
-    //   }
+    //   name = type + key;
     //   // if they don't give me an ID I send them back the whole list.
     //   value = checkExpire(name, minute * 10);
-    //   cachedComponents = checkExpire('cachedComponents', minute * 1440); // a day
+    //   cachedComponents = checkExpire(name, minute * 1440); // a day
     //   if (value) {
     //     result.resolve(value);
     //   } else {
-    //     if (cachedComponents) {
-    //       var temp = search({'type': type, 'key': key}, cachedComponents, architecture);
-    //       save(name, temp);
-    //       result.resolve(temp);
-    //     } else {
-    //       $http({
-    //         method: 'GET',
-    //         url: url
-    //       })
-    //       .success(function(data, status, headers, config) { /*jshint unused:false*/
-    //         if (data && !isEmpty(data) && isNotRequestError(data)) {
-    //           removeError();
-    //           save('cachedComponents', data);
-    //           var temp = search({'type': type, 'key': key}, data, architecture);
-    //           save(name, temp);
-    //           result.resolve(temp);
-    //         } else {
-    //           removeError();
-    //           triggerError(data);
-    //           result.reject(false);
-    //         }
-    //       }).error(function(data, status, headers, config){
-    //         result.reject('There was a server error');
-    //       });
-    //     }
+    //     url = 'api/v1/service/search';
+    //     var paramsObj = {};
+    //     paramsObj.query = key;
+    //     $http({
+    //       method: 'GET',
+    //       url: url,
+    //       params: paramsObj
+    //     })
+    //     .success(function(data, status, headers, config) {
+    //       if (data && !isEmpty(data) && isNotRequestError(data)) {
+    //         removeError();
+    //         var temp = {};
+    //         temp.data = data;
+    //         save(name, temp);
+    //         result.resolve(temp);
+    //       } else {
+    //         removeError();
+    //         triggerError(data);
+    //         result.reject(false);
+    //       }
+    //     }).error(function(data, status, headers, config){
+    //       result.reject('There was a server error');
+    //     });
     //   }
     // } else {
     //   result.reject('You must provide a type and key for the search');
     // }
 
-    if (type && key) {
-      name = type + key;
-      // if they don't give me an ID I send them back the whole list.
-      value = checkExpire(name, minute * 10);
-      cachedComponents = checkExpire(name, minute * 1440); // a day
-      if (value /*TODO: take out this false*/&& false) {
-        result.resolve(value);
-      } else {
-        url = 'api/v1/service/search';
-        var paramsObj = {};
-        paramsObj.query = key;
-        $http({
-          method: 'GET',
-          url: url,
-          params: paramsObj
-        })
-        .success(function(data, status, headers, config) { /*jshint unused:false*/
-          if (data && !isEmpty(data) && isNotRequestError(data)) {
-            removeError();
-            var temp = {};
-            temp.data = data;
-            save(name, temp);
-            result.resolve(temp);
-          } else {
-            removeError();
-            triggerError(data);
-            result.reject(false);
-          }
-        }).error(function(data, status, headers, config){
-          result.reject('There was a server error');
-        });
-      }
-    } else {
-      result.reject('You must provide a type and key for the search');
-    }
+
     return result.promise;
   };
 

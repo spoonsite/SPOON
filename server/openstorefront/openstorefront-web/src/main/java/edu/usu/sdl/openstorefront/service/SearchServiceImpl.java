@@ -237,4 +237,33 @@ public class SearchServiceImpl
         return views;
     }
 
+    
+	@Override
+	public void deleteComponent(String id)
+	{
+        // initialize solr server
+        SolrServer solrService = SolrManager.getServer();
+
+        try {
+            solrService.deleteById(id);
+            //results.append("Delete: ").append(updateResponse.toString());
+            solrService.commit();
+        } catch (IOException | SolrServerException ex) {
+            System.out.println("we have problems" + ex.toString());
+            //log.log(Level.SEVERE, "Failed", ex);
+        }
+	}
+
+	@Override
+	public void deleteAll()
+	{
+		SolrServer solrService = SolrManager.getServer();
+		try {
+			solrService.deleteByQuery( "*:*" );// CAUTION: deletes everything!
+		}
+		catch (SolrServerException | IOException ex) {
+			Logger.getLogger(SearchServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
 }
