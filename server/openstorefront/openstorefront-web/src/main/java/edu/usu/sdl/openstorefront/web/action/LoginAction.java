@@ -69,6 +69,11 @@ public class LoginAction
 	@DefaultHandler
 	public Resolution loginHandler()
 	{
+		Subject currentUser = SecurityUtils.getSubject();
+		if (currentUser.isAuthenticated()) {
+			return new RedirectResolution("/");
+		}
+
 		org.apache.shiro.mgt.SecurityManager securityManager = SecurityUtils.getSecurityManager();
 		gotoPage = (String) getContext().getRequest().getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE);
 		if (securityManager instanceof DefaultWebSecurityManager) {
@@ -87,7 +92,6 @@ public class LoginAction
 					headerAuthToken.setOrganization(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, STUB_HEADER)));
 					headerAuthToken.setUsername(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_USERNAME, STUB_HEADER)));
 
-					Subject currentUser = SecurityUtils.getSubject();
 					try {
 						currentUser.login(headerAuthToken);
 						resolution = handleLoginRedirect();
@@ -107,10 +111,11 @@ public class LoginAction
 
 	private Resolution handleLoginRedirect()
 	{
-		String startPage = "/index.html";
+		String startPage = "/";
 		if (StringUtils.isNotBlank(gotoPage)) {
 			startPage = gotoPage;
 		}
+		startPage = startPage.replace("Login.action", "");
 		if (startPage.toLowerCase().startsWith("http")) {
 			return new RedirectResolution(startPage, false);
 		} else {
