@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
+import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
@@ -90,7 +91,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ComponentServiceImpl
 		extends ServiceProxy
-		implements ComponentService
+		implements ComponentService, ComponentServicePrivate
 {
 
 	private static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
@@ -290,10 +291,11 @@ public class ComponentServiceImpl
 	@Override
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
-		saveComponentAttribute(attribute, true);
+		getComponentServicePrivate().saveComponentAttribute(attribute, true);
 	}
 
-	private void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
+	@Override
+	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
 	{
 		AttributeType type = persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 
