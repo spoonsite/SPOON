@@ -71,7 +71,6 @@ public interface AttributeService
 	 *
 	 * @param attributeType
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveAttributeType(AttributeType attributeType);
 
 	/**
@@ -79,7 +78,6 @@ public interface AttributeService
 	 *
 	 * @param attributeCode
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveAttributeCode(AttributeCode attributeCode);
 
 	/**
@@ -111,7 +109,6 @@ public interface AttributeService
 	 * @param attributeCodePk
 	 * @param article
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveArticle(AttributeCodePk attributeCodePk, String article);
 
 	/**
