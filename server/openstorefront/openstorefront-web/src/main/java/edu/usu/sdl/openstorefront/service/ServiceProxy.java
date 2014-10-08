@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.service.api.AttributeService;
+import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
@@ -35,6 +36,7 @@ public class ServiceProxy
 	protected PersistenceService persistenceService = new PersistenceService();
 	protected LookupService lookupService;
 	protected AttributeService attributeService;
+	private AttributeServicePrivate attributeServicePrivate;
 	protected ComponentService componentService;
 	protected ComponentServicePrivate componentServicePrivate;
 	protected SearchService searchService;
@@ -104,6 +106,22 @@ public class ServiceProxy
 			systemService = DynamicProxy.newInstance(new SystemServiceImpl());
 		}
 		return systemService;
+	}
+
+	/**
+	 * @return the attributeServicePrivate
+	 */
+	public AttributeServicePrivate getAttributeServicePrivate()
+	{
+		return attributeServicePrivate;
+	}
+
+	/**
+	 * @param attributeServicePrivate the attributeServicePrivate to set
+	 */
+	public void setAttributeServicePrivate(AttributeServicePrivate attributeServicePrivate)
+	{
+		this.attributeServicePrivate = attributeServicePrivate;
 	}
 
 }

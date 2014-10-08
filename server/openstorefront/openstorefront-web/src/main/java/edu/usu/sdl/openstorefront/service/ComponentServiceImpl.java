@@ -292,6 +292,7 @@ public class ComponentServiceImpl
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
 		getComponentServicePrivate().saveComponentAttribute(attribute, true);
+		getSearchService().addComponent(persistenceService.findById(Component.class, attribute.getComponentId()));
 	}
 
 	@Override
@@ -738,10 +739,12 @@ public class ComponentServiceImpl
 	@Override
 	public void saveComponentTag(ComponentTag tag)
 	{
-		saveComponentTag(tag, true);
+		getComponentServicePrivate().saveComponentTag(tag, true);
+		getSearchService().addComponent(persistenceService.findById(Component.class, tag.getComponentId()));
 	}
 
-	private void saveComponentTag(ComponentTag tag, boolean updateLastActivity)
+	@Override
+	public void saveComponentTag(ComponentTag tag, boolean updateLastActivity)
 	{
 		ComponentTag oldTag = persistenceService.findById(ComponentTag.class, tag.getTagId());
 		if (oldTag != null) {
@@ -786,6 +789,14 @@ public class ComponentServiceImpl
 
 	@Override
 	public RequiredForComponent saveComponent(RequiredForComponent component)
+	{
+		getComponentServicePrivate().saveComponent(component, true);
+		getSearchService().addComponent(component.getComponent());
+		return component;
+	}
+	
+	@Override
+	public RequiredForComponent saveComponent(RequiredForComponent component, boolean test)
 	{
 		Component oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 

@@ -243,7 +243,6 @@ public interface ComponentService
 	 *
 	 * @param tag
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentTag(ComponentTag tag);
 
 	/**
@@ -258,7 +257,6 @@ public interface ComponentService
 	 * @param component
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public RequiredForComponent saveComponent(RequiredForComponent component);
 	// Todo: Make an object that we can pass in to this function, or figure out which
 	// combination we'll need...

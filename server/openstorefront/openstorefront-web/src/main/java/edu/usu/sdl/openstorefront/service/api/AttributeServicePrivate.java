@@ -13,27 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
-import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 
 /**
  *
- * @author dshurtleff
+ * @author jlaw
  */
-public interface ComponentServicePrivate
+public interface AttributeServicePrivate
 {
-
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity);
-
+	public void saveArticle(AttributeCodePk attributeCodePk, String article, boolean test);
+	
+	
+	/**
+	 * Saves type
+	 *
+	 * @param attributeType
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentTag(ComponentTag tag, boolean test);
+	public void saveAttributeType(AttributeType attributeType, boolean test);
 
+	/**
+	 * Saves code
+	 *
+	 * @param attributeCode
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public RequiredForComponent saveComponent(RequiredForComponent component, boolean test);
+	public void saveAttributeCode(AttributeCode attributeCode, boolean test);
+	
 }
