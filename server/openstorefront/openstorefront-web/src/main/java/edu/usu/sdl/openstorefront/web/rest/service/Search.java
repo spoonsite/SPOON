@@ -62,13 +62,8 @@ public class Search
             @BeanParam SearchQuery query,
             @BeanParam FilterQueryParams filter) {
 
-        List<ComponentSearchView> searchResults = new ArrayList<>();
-        List<SolrComponentResultsModel> solrResults = service.getSearchService().getSearchItems(query);
-
-        for (SolrComponentResultsModel items : solrResults) {
-            Component temp = service.getPersistenceService().findById(Component.class, items.getComponentID());
-            searchResults.add(ComponentSearchView.toView(temp));
-        }
+        List<ComponentSearchView> searchResults = service.getSearchService().getSearchItems(query, filter);
+        
         return searchResults;
     }
 
@@ -91,14 +86,15 @@ public class Search
             @PathParam("type")
             @RequiredParam String type,
             @PathParam("code")
-            @RequiredParam String code) {
+            @RequiredParam String code,
+            @BeanParam FilterQueryParams filter) {
         
         AttributeCodePk pk = new AttributeCodePk();
         
         pk.setAttributeCode(code);
         pk.setAttributeType(type);
 
-        List<ComponentSearchView> results = service.getSearchService().getSearchItems(pk);
+        List<ComponentSearchView> results = service.getSearchService().getSearchItems(pk, filter);
         return Response.ok(results).build();
     }
 

@@ -29,116 +29,114 @@ public class SolrSearchComponent //extends BaseTestCase
 {
     //private static final Logger log = Logger.getLogger(AddTestCase.class.getName());
 
-	//@Override
-	public String description()
-	{
-		return "Search Component";
-	}
+    //@Override
+    public String description() {
+        return "Search Component";
+    }
 
-	public List<SolrComponentResultsModel> searchComponent(
-			SearchQuery searchQuery,
-			String searchString,
-			String setFieldsIndex,
-			String setFieldsName,
-			String setFieldsDescription,
-			String setFieldsTags,
-			String setFieldsAttributes,
-                        String setFieldsComponentBoolean) throws MalformedURLException, SolrServerException
-	{
+    public List<String> searchComponent(
+            SearchQuery searchQuery,
+            FilterQueryParams filter,
+            String searchString,
+            String setFieldsIndex,
+            String setFieldsName,
+            String setFieldsDescription,
+            String setFieldsTags,
+            String setFieldsAttributes,
+            String setFieldsComponentBoolean) throws MalformedURLException, SolrServerException {
 
-		SolrQuery query = new SolrQuery();
+        SolrQuery query = new SolrQuery();
 
-		query.setQuery(searchString); // (default field?)
+        query.setQuery(searchString); // (default field?)
 
-		// fields to be returned back from solr
-		query.setFields(setFieldsIndex, setFieldsName, setFieldsDescription, setFieldsTags, setFieldsAttributes, setFieldsComponentBoolean);
+        // fields to be returned back from solr
+        query.setFields(setFieldsIndex, setFieldsName, setFieldsDescription, setFieldsTags, setFieldsAttributes, setFieldsComponentBoolean);
 
-		// begin at nth solr index entry
-		query.setStart(0);
+        // begin at nth solr index entry
+        query.setStart(filter.getOffset());
+        query.setRows(filter.getMax());
 
-		// Solr call
-		QueryResponse response = SolrManager.getServer().query(query);
+        // Solr call
+        QueryResponse response = SolrManager.getServer().query(query);
 
-		SolrDocumentList results = response.getResults();
+        SolrDocumentList results = response.getResults();
 
-		// define array for holding solr response
-		List<SolrComponentResultsModel> resultsList = new ArrayList<>();
+        // define array for holding solr response
+        List<String> resultsList = new ArrayList<>();
 
-		for (SolrDocument doc : results) {
-			// place search results into results model
-			SolrComponentResultsModel resultsModel = new SolrComponentResultsModel();
-
-			resultsModel.setComponentID(doc.getFieldValue(setFieldsIndex).toString());
-			resultsModel.setName(doc.getFieldValue(setFieldsName).toString());
-			resultsModel.setDescription(doc.getFieldValue(setFieldsDescription).toString());
-                        resultsModel.setComponentSearch((boolean) doc.getFieldValue(setFieldsComponentBoolean));
-			//------------------------------------------------------------------------------
-			// Process Tags
-			List<String> solrTags = new ArrayList<String>();
-			List<ComponentTag> tagsComponentTag = new ArrayList<>();
-
-			solrTags.add(doc.getFieldValues(setFieldsTags).toString().replace("[", "").replace("]", ""));
-			// Solr sends back comma delimited list of tags
-			// iterate over array items in comma delimited string and copy into ComponentTag model
-			for (String s : solrTags) {
-				String[] temp;
-				String delimiter = ",";
-				temp = s.split(delimiter);
-				String solrItem;
-
-				for (int i = 0; i < temp.length; i++) {
-					ComponentTag tag = new ComponentTag();
-
-					solrItem = temp[i];
-
-					tag.setTagId(Integer.toString(i));
-					tag.setText(solrItem.trim());
-					tagsComponentTag.add(tag);
-				}
-				resultsModel.setTags(tagsComponentTag);
-			}
-
-			//------------------------------------------------------------------------------------------
-			// Process Attributes
-			List<String> solrAttributes = new ArrayList<String>();
-			List<SolrAttributeCodeTypeModel> attributesComponent = new ArrayList<>();
-
-			solrAttributes.add(doc.getFieldValues(setFieldsAttributes).toString().replace("[", "").replace("]", ""));
-
-			// Solr sends back comma delimited list of attributes
-			// iterate over array items in comma delimited string and copy into SolrAttributes model
-			for (String s : solrAttributes) {
-				String[] temp;
-				String delimiter = ",";
-				temp = s.split(delimiter);
-				String solrItem;
-
-				for (int i = 0; i < temp.length; i++) {
-//                    "code": "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment",
-//                    "codeDescription": "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment",
-//                    "type": "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment",
-//                    "typeDescription": "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment"
-					SolrAttributeCodeTypeModel attributes = new SolrAttributeCodeTypeModel();
-
-					solrItem = temp[i]; // "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment",
-
-					String[] temp2;
-					String delimiter2 = "|";
-					temp2 = solrItem.split("\\Q" + delimiter2);
-
-					attributes.setCode(temp2[0]);
-					attributes.setCodeDescription(temp2[1]);
-					attributes.setType(temp2[2]);
-					attributes.setTypeDescription(temp2[3]);
-
-					attributesComponent.add(attributes);
-				}
-				resultsModel.setAttributes(attributesComponent);
-			}
-
-			// populate before writing out
-			resultsList.add(resultsModel);
-		}
-		return resultsList;
-	}
+        for (SolrDocument doc : results) {
+            // place search results into results model
+            resultsList.add(doc.getFieldValue(setFieldsIndex).toString());
+//			resultsModel.setName(doc.getFieldValue(setFieldsName).toString());
+//			resultsModel.setDescription(doc.getFieldValue(setFieldsDescription).toString());
+//                        resultsModel.setComponentSearch((boolean) doc.getFieldValue(setFieldsComponentBoolean));
+//			//------------------------------------------------------------------------------
+//			// Process Tags
+//			List<String> solrTags = new ArrayList<String>();
+//			List<ComponentTag> tagsComponentTag = new ArrayList<>();
+//
+//			solrTags.add(doc.getFieldValues(setFieldsTags).toString().replace("[", "").replace("]", ""));
+//			// Solr sends back comma delimited list of tags
+//			// iterate over array items in comma delimited string and copy into ComponentTag model
+//			for (String s : solrTags) {
+//				String[] temp;
+//				String delimiter = ",";
+//				temp = s.split(delimiter);
+//				String solrItem;
+//
+//				for (int i = 0; i < temp.length; i++) {
+//					ComponentTag tag = new ComponentTag();
+//
+//					solrItem = temp[i];
+//
+//					tag.setTagId(Integer.toString(i));
+//					tag.setText(solrItem.trim());
+//					tagsComponentTag.add(tag);
+//				}
+//				resultsModel.setTags(tagsComponentTag);
+//			}
+//
+//			//------------------------------------------------------------------------------------------
+//			// Process Attributes
+//			List<String> solrAttributes = new ArrayList<String>();
+//			List<SolrAttributeCodeTypeModel> attributesComponent = new ArrayList<>();
+//
+//			solrAttributes.add(doc.getFieldValues(setFieldsAttributes).toString().replace("[", "").replace("]", ""));
+//
+//			// Solr sends back comma delimited list of attributes
+//			// iterate over array items in comma delimited string and copy into SolrAttributes model
+//			for (String s : solrAttributes) {
+//				String[] temp;
+//				String delimiter = ",";
+//				temp = s.split(delimiter);
+//				String solrItem;
+//
+//				for (int i = 0; i < temp.length; i++) {
+////                    "code": "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment",
+////                    "codeDescription": "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment",
+////                    "type": "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment",
+////                    "typeDescription": "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment"
+//					SolrAttributeCodeTypeModel attributes = new SolrAttributeCodeTypeModel();
+//
+//					solrItem = temp[i]; // "3.5.1.1|DI2E-SVCV4-A Code Description|DI2E-SVCV4-A|DI2E SvcV-4 Alignment",
+//
+//					String[] temp2;
+//					String delimiter2 = "|";
+//					temp2 = solrItem.split("\\Q" + delimiter2);
+//
+//					attributes.setCode(temp2[0]);
+//					attributes.setCodeDescription(temp2[1]);
+//					attributes.setType(temp2[2]);
+//					attributes.setTypeDescription(temp2[3]);
+//
+//					attributesComponent.add(attributes);
+//				}
+//				resultsModel.setAttributes(attributesComponent);
+//			}
+//
+//			// populate before writing out
+//			resultsList.add(resultsModel);
+        }
+        return resultsList;
+    }
 }

@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
 import java.util.List;
@@ -41,14 +42,14 @@ public interface SearchService {
      * @param query
      * @return
      */
-    public List<SolrComponentResultsModel> getSearchItems(SearchQuery query);
+    public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter);
 
     /**
      *
      * @param pk
      * @return
      */
-    public List<ComponentSearchView> getSearchItems(AttributeCodePk pk);
+    public List<ComponentSearchView> getSearchItems(AttributeCodePk pk, FilterQueryParams filter);
 	
 	/**
 	 *
