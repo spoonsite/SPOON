@@ -53,5 +53,16 @@ public interface SearchService {
 	 * @param article
 	 */
 	public void addComponent(Article article);
+	
+	/**
+	 *
+	 * @param id
+	 */
+	public void deleteComponent(String id);
+	
+	/**
+	 *
+	 */
+	public void deleteAll();
 
 }
