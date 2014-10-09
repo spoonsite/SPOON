@@ -34,7 +34,7 @@ describe('search__SortBy', function() {
         // VERIFY it is sorted correctly
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
         var newest = element(by.binding('item.description'));
-        expect(newest.getText()).toBe('DI2E SvcV-4 Alignment-1.2.1 Identity and Access Management Article');
+        expect(newest.getText()).toBe('Definition: Identity and Access Management (IdAM) defines the set of services that manage permissions required to access each resource. Description: IdAM includes services that provide criteria used in access decisions and the rules and requirements assessing each request against those criteria. Resources may include applications, ...');
     }, 20000);
 
     it('Last Update oldest returns EMP as the first search result', function() {
@@ -61,6 +61,6 @@ describe('search__SortBy', function() {
         // VERIFY it is sorted correctly
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
         var atoz = element(by.binding('item.description'));
-        expect(atoz.getText()).toBe('The Central Authentication Service (CAS) is a single sign-on protocol for the web. Its purpose is to permit a user to access multiple applications while providing their credentials (such as userid and password) only once. It also allows web applications to authenticate users without gaining access to ...');
+        expect(atoz.getText()).toBe('Definition: Identity and Access Management (IdAM) defines the set of services that manage permissions required to access each resource. Description: IdAM includes services that provide criteria used in access decisions and the rules and requirements assessing each request against those criteria. Resources may include applications, ...');
     }, 20000);
 });
