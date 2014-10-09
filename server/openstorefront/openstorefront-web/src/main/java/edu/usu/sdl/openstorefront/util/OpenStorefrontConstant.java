@@ -110,8 +110,21 @@ public class OpenStorefrontConstant
 	public static enum ListingType
 	{
 
-		ARTICLE,
-		COMPONENT;
+		ARTICLE("Article"),
+		COMPONENT("Component");
+
+		private final String description;
+
+		private ListingType(String description)
+		{
+			this.description = description;
+		}
+
+		public String getDescription()
+		{
+			return description;
+		}
+
 	}
 
 }

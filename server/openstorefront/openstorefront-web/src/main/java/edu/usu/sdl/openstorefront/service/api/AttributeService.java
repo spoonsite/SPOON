@@ -145,12 +145,21 @@ public interface AttributeService
 	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
 
 	/**
-	 * Find the recently posted (created date) articles
+	 * Find the recently posted (created date) articles (Active Only
 	 *
 	 * @param maxResults
 	 * @return
 	 */
 	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults);
+
+	/**
+	 * Find the recently posted (created date) articles
+	 *
+	 * @param maxResults
+	 * @param activeStatus
+	 * @return Codes with articles according to parameters
+	 */
+	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults, String activeStatus);
 
 	/**
 	 * Builds and Architecture given a attribute type NOTE: AttributeType must
