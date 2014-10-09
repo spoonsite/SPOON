@@ -18,12 +18,6 @@ if (openAM) {
     browser.driver.findElement(by.id('IDToken1')).sendKeys('amadmin'); // (amadmin) Set to valid account
     browser.driver.findElement(by.id('IDToken2')).sendKeys('password', protractor.Key.ENTER);
     browser.driver.sleep(1000);
-
-    // refresh past too many redirects error
-    browser.ignoreSyncronization = false;
-    browser.refresh();
-    browser.ignoreSyncronization = false;
-    browser.driver.sleep(3000);
 }
 
 describe('SvcV-4_button from the home page', function() {
@@ -38,9 +32,9 @@ describe('SvcV-4_button from the home page', function() {
         browser.driver.sleep(8000);
 
         // Expand
-        numNow=15;  // Couldn't get this dynamically, could change?
+        numNow = 15;  // Couldn't get this dynamically, could change?
         // loop get(0).click();
-        for (var i=0; i <= numNow; i++) {
+        for (var i = 0; i <= numNow; i++) {
             element.all(by.css('.diagram-toggle-btn')).get(i).click();
             browser.driver.sleep(1);
         }
