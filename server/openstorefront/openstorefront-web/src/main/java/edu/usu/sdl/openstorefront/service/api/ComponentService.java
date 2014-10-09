@@ -102,6 +102,22 @@ public interface ComponentService
 	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId);
 
 	/**
+	 * In-activates Component and removes all user watches for a component
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deactivateComponent(String componentId);
+
+	/**
+	 * Activates a Component
+	 *
+	 * @param componentId
+	 * @return Component updated or null if no component found
+	 */
+	public Component activateComponent(String componentId);
+
+	/**
 	 * Return the whole list of components. (the short view)
 	 *
 	 * @return
