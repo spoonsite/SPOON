@@ -28,6 +28,8 @@ public class Article
 
 	private String attributeCode;
 	private String attributeType;
+	private String attributeCodeLabel;
+	private String attributeCodeDescription;
 	private String html;
 	private Date updateDts;
 	private String organization;
@@ -35,11 +37,14 @@ public class Article
 	public Article()
 	{
 	}
-	
-	public static Article toView(AttributeCode code){
+
+	public static Article toView(AttributeCode code)
+	{
 		Article article = new Article();
 		article.setAttributeCode(code.getAttributeCodePk().getAttributeCode());
 		article.setAttributeType(code.getAttributeCodePk().getAttributeType());
+		article.setAttributeCodeLabel(code.getLabel());
+		article.setAttributeCodeDescription(code.getDescription());
 		article.setUpdateDts(code.getUpdateDts());
 		return article;
 	}
@@ -74,36 +79,44 @@ public class Article
 		this.html = html;
 	}
 
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
 	}
 
-	/**
-	 * @return the organization
-	 */
 	public String getOrganization()
 	{
 		return organization;
 	}
 
-	/**
-	 * @param organization the organization to set
-	 */
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
+	}
+
+	public String getAttributeCodeDescription()
+	{
+		return attributeCodeDescription;
+	}
+
+	public void setAttributeCodeDescription(String attributeCodeDescription)
+	{
+		this.attributeCodeDescription = attributeCodeDescription;
+	}
+
+	public String getAttributeCodeLabel()
+	{
+		return attributeCodeLabel;
+	}
+
+	public void setAttributeCodeLabel(String attributeCodeLabel)
+	{
+		this.attributeCodeLabel = attributeCodeLabel;
 	}
 
 }
