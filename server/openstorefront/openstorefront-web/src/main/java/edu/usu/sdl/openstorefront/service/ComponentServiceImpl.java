@@ -122,10 +122,21 @@ public class ComponentServiceImpl
 	@Override
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk)
 	{
+		return deactivateBaseComponent(subComponentClass, pk, true);
+	}
+
+	private <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity)
+	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
 			found.setActiveStatus(T.INACTIVE_STATUS);
+			found.setUpdateDts(TimeUtil.currentDate());
+			found.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(found);
+
+			if (updateComponentActivity) {
+				updateComponentLastActivity(found.getComponentId());
+			}
 		}
 		return found;
 	}
@@ -133,22 +144,67 @@ public class ComponentServiceImpl
 	@Override
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)
 	{
+		deleteBaseComponent(subComponentClass, pk, true);
+	}
+
+	private <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity)
+	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
+			String componentId = found.getComponentId();
 			persistenceService.delete(found);
+
+			if (updateComponentActivity) {
+				updateComponentLastActivity(componentId);
+			}
 		}
 	}
 
 	@Override
 	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId)
 	{
+		deleteAllBaseComponent(subComponentClass, componentId, true);
+	}
+
+	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId, boolean updateComponentActivity)
+	{
 		try {
 			T example = subComponentClass.newInstance();
 			example.setComponentId(componentId);
 			persistenceService.deleteByExample(example);
+
+			if (updateComponentActivity) {
+				updateComponentLastActivity(componentId);
+			}
 		} catch (InstantiationException | IllegalAccessException ex) {
 			Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+
+	@Override
+	public void deactivateComponent(String componentId)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			component.setActiveStatus(Component.INACTIVE_STATUS);
+			component.setUpdateDts(TimeUtil.currentDate());
+			component.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(component);
+			getUserService().removeAllWatchesForComponent(componentId);
+		}
+	}
+
+	@Override
+	public Component activateComponent(String componentId)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			component.setActiveStatus(Component.ACTIVE_STATUS);
+			component.setUpdateDts(TimeUtil.currentDate());
+			component.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(component);
+		}
+		return component;
 	}
 
 	@Override
@@ -794,7 +850,7 @@ public class ComponentServiceImpl
 		getSearchService().addComponent(component.getComponent());
 		return component;
 	}
-	
+
 	@Override
 	public RequiredForComponent saveComponent(RequiredForComponent component, boolean test)
 	{
