@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.AttributeService;
+import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
@@ -26,7 +27,6 @@ import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
@@ -65,7 +65,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class AttributeServiceImpl
 		extends ServiceProxy
-		implements AttributeService
+		implements AttributeService, AttributeServicePrivate
 {
 
 	private static final Logger log = Logger.getLogger(AttributeServiceImpl.class.getName());
@@ -103,6 +103,13 @@ public class AttributeServiceImpl
 	@Override
 	public void saveAttributeType(AttributeType attributeType)
 	{
+		getAttributeServicePrivate().saveAttributeType(attributeType, true);
+		//TODO: figure out where to update SOlr from this change.
+	}
+
+	@Override
+	public void saveAttributeType(AttributeType attributeType, boolean test)
+	{
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
 		if (existing != null) {
 			//remove to inactivate
@@ -126,6 +133,13 @@ public class AttributeServiceImpl
 
 	@Override
 	public void saveAttributeCode(AttributeCode attributeCode)
+	{
+		getAttributeServicePrivate().saveAttributeCode(attributeCode, true);
+		//TODO: figure out where to add changes to SOLR from this change.
+	}
+
+	@Override
+	public void saveAttributeCode(AttributeCode attributeCode, boolean test)
 	{
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
@@ -172,6 +186,15 @@ public class AttributeServiceImpl
 
 	@Override
 	public void saveArticle(AttributeCodePk attributeCodePk, String article)
+	{
+		getAttributeServicePrivate().saveArticle(attributeCodePk, article, true);
+		AttributeCode code = new AttributeCode();
+		code.setAttributeCodePk(attributeCodePk);
+		getSearchService().addComponent(Article.toView(code));
+	}
+
+	@Override
+	public void saveArticle(AttributeCodePk attributeCodePk, String article, boolean test)
 	{
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
@@ -343,6 +366,8 @@ public class AttributeServiceImpl
 				log.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
 			}
 		});
+
+		//TODO: Figure out where to update Solr from this change.
 	}
 
 	@Override
@@ -396,6 +421,12 @@ public class AttributeServiceImpl
 	@Override
 	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults)
 	{
+		return findRecentlyAddedArticles(maxResults, AttributeCode.ACTIVE_STATUS);
+	}
+
+	@Override
+	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults, String activeStatus)
+	{
 		String query;
 		if (maxResults != null) {
 			query = "select from AttributeCode where activeStatus = :activeStatusParam "
@@ -408,7 +439,7 @@ public class AttributeServiceImpl
 		}
 
 		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
+		parameters.put("activeStatusParam", activeStatus);
 
 		return persistenceService.query(query, parameters);
 	}
@@ -528,7 +559,6 @@ public class AttributeServiceImpl
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
-		//get me the list of articles from the query here.
 		//String query = "SELECT * FROM AttributeCodePk WHERE attributeType = :type AND attributeCode = :code ";
 		// SELECT * FROM AttributeCodePk WHERE attributeType = 'DI2E-SVCV4-A' AND attributeCode = '1.2.1'
 		String query = "SELECT * FROM AttributeCodePk WHERE attributeType = :type AND attributeCode LIKE ':code%'";

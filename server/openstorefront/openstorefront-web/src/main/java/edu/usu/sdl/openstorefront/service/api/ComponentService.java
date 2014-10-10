@@ -102,6 +102,22 @@ public interface ComponentService
 	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId);
 
 	/**
+	 * In-activates Component and removes all user watches for a component
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deactivateComponent(String componentId);
+
+	/**
+	 * Activates a Component
+	 *
+	 * @param componentId
+	 * @return Component updated or null if no component found
+	 */
+	public Component activateComponent(String componentId);
+
+	/**
 	 * Return the whole list of components. (the short view)
 	 *
 	 * @return
@@ -145,7 +161,6 @@ public interface ComponentService
 	 *
 	 * @param attribute
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentAttribute(ComponentAttribute attribute);
 
 	/**
@@ -244,7 +259,6 @@ public interface ComponentService
 	 *
 	 * @param tag
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentTag(ComponentTag tag);
 
 	/**
@@ -259,7 +273,6 @@ public interface ComponentService
 	 * @param component
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public RequiredForComponent saveComponent(RequiredForComponent component);
 	// Todo: Make an object that we can pass in to this function, or figure out which
 	// combination we'll need...

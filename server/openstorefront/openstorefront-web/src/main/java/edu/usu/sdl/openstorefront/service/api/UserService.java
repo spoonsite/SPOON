@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
+import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
@@ -117,6 +119,14 @@ public interface UserService
 	 * @return
 	 */
 	public Boolean deleteWatch(String watchId);
+
+	/**
+	 * Removes all watches for a component
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeAllWatchesForComponent(String componentId);
 
 	/**
 	 * Get the user profile based on the userID

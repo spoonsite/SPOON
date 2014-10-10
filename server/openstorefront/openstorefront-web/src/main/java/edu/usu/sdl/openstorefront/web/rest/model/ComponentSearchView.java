@@ -16,13 +16,11 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
-import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +66,7 @@ public class ComponentSearchView
 	{
 		ServiceProxy service = new ServiceProxy();
 		ComponentSearchView view = new ComponentSearchView();
-		view.setListingType("Component");
+		view.setListingType(OpenStorefrontConstant.ListingType.COMPONENT.getDescription());
 		view.setComponentId(component.getComponentId());
 		view.setName(component.getName());
 		view.setDescription(component.getDescription());
@@ -89,8 +87,7 @@ public class ComponentSearchView
 		}
 		if (reviews.size() > 0) {
 			view.setAverageRating(total / reviews.size());
-		}
-		else {
+		} else {
 			view.setAverageRating(0);
 		}
 
@@ -105,21 +102,14 @@ public class ComponentSearchView
 
 	public static ComponentSearchView toView(Article article)
 	{
-		ServiceProxy service = new ServiceProxy();
 		ComponentSearchView view = new ComponentSearchView();
-		view.setListingType("Article");
+		view.setListingType(OpenStorefrontConstant.ListingType.ARTICLE.getDescription());
 		view.setComponentId(null);
 		view.setAverageRating(0);
 		view.setArticleAttributeType(article.getAttributeType());
 		view.setArticleAttributeCode(article.getAttributeCode());
-//		AttributeType type = service.getPersistenceService().findById(AttributeType.class, article.getAttributeType());
-//		AttributeCodePk pk = new AttributeCodePk();
-//		pk.setAttributeCode(article.getAttributeCode());
-//		pk.setAttributeType(article.getAttributeType());
-//		AttributeCode code = service.getPersistenceService().findById(AttributeCode.class, pk);
-//		view.setDescription(type.getDescription() + "-" + code.getLabel() + " Article");
-//		view.setName(type.getDescription() + "-" + code.getLabel() + " Article");
-		view.setName("Self Made Article" + article.getAttributeCode() + ", " + article.getAttributeType());
+		view.setDescription(article.getAttributeCodeDescription());
+		view.setName(article.getAttributeCodeLabel());
 		view.setLastActivityDts(article.getUpdateDts());
 		view.setOrganization(article.getOrganization());
 		List<ComponentAttribute> attributes = new ArrayList<>();

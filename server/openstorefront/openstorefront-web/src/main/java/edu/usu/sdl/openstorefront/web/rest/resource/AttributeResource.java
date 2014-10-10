@@ -102,6 +102,18 @@ public class AttributeResource
 	}
 
 	@GET
+	@APIDescription("Gets codes with articles.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeCode.class)
+	@Path("/allcodeswitharticles")
+	public List<AttributeCode> getAllCodesWithArticles(@BeanParam FilterQueryParams filterQueryParams)
+	{
+		List<AttributeCode> attributeCodes = service.getAttributeService().findRecentlyAddedArticles(filterQueryParams.getMax(), filterQueryParams.getStatus());
+		attributeCodes = filterQueryParams.filter(attributeCodes);
+		return attributeCodes;
+	}
+
+	@GET
 	@APIDescription("Gets attributes types based on filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)

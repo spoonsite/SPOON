@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.web.servlet.ShiroFilter;
 
@@ -40,6 +41,13 @@ public class ShiroAdjustedFilter
 		if (servletRequest instanceof HttpServletRequest) {
 			HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 			String url = httpServletRequest.getRequestURL().toString();
+			if (url.contains("Login.action")
+					&& url.contains(";")) {
+				HttpServletResponse response = (HttpServletResponse) servletResponse;
+				response.sendRedirect(httpServletRequest.getContextPath());
+				return;
+			}
+
 			if (url.endsWith("Login.action") == false) {
 				String queryString = httpServletRequest.getQueryString();
 

@@ -366,4 +366,13 @@ public class UserServiceImpl
 
 		return userContext;
 	}
+
+	@Override
+	public void removeAllWatchesForComponent(String componentId)
+	{
+		UserWatch userWatchExample = new UserWatch();
+		userWatchExample.setComponentId(componentId);
+		persistenceService.deleteByExample(userWatchExample);
+	}
+
 }

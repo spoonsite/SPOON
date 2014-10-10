@@ -193,6 +193,32 @@ public class ComponentRESTResource
 		}
 	}
 
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates a component")
+	@Path("/{id}/activate")
+	public Response activateComponent(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		Component view = service.getPersistenceService().findById(Component.class, componentId);
+		if (view != null) {
+			view = service.getComponentService().activateComponent(componentId);
+		}
+		return sendSingleEnityResponse(view);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Inactivates Component and removes any assoicated user watches.")
+	@Path("/{id}")
+	public void deleteComponentSingle(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		service.getComponentService().deactivateComponent(componentId);
+	}
+
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})

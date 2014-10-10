@@ -57,7 +57,10 @@
 				  } 
 					return query_string;
 				} ();
-				document.getElementById('gotoPageId').value = QueryString.gotoPage;
+				if (QueryString.gotoPage != undefined)
+				{
+					document.getElementById('gotoPageId').value = QueryString.gotoPage;
+				}
 		</script>
 	</body>
 </html>

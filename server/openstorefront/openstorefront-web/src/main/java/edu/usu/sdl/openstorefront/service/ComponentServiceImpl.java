@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
+import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
@@ -90,7 +91,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ComponentServiceImpl
 		extends ServiceProxy
-		implements ComponentService
+		implements ComponentService, ComponentServicePrivate
 {
 
 	private static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
@@ -121,10 +122,21 @@ public class ComponentServiceImpl
 	@Override
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk)
 	{
+		return deactivateBaseComponent(subComponentClass, pk, true);
+	}
+
+	private <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity)
+	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
 			found.setActiveStatus(T.INACTIVE_STATUS);
+			found.setUpdateDts(TimeUtil.currentDate());
+			found.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(found);
+
+			if (updateComponentActivity) {
+				updateComponentLastActivity(found.getComponentId());
+			}
 		}
 		return found;
 	}
@@ -132,22 +144,67 @@ public class ComponentServiceImpl
 	@Override
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)
 	{
+		deleteBaseComponent(subComponentClass, pk, true);
+	}
+
+	private <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity)
+	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
+			String componentId = found.getComponentId();
 			persistenceService.delete(found);
+
+			if (updateComponentActivity) {
+				updateComponentLastActivity(componentId);
+			}
 		}
 	}
 
 	@Override
 	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId)
 	{
+		deleteAllBaseComponent(subComponentClass, componentId, true);
+	}
+
+	public <T extends BaseComponent> void deleteAllBaseComponent(Class<T> subComponentClass, String componentId, boolean updateComponentActivity)
+	{
 		try {
 			T example = subComponentClass.newInstance();
 			example.setComponentId(componentId);
 			persistenceService.deleteByExample(example);
+
+			if (updateComponentActivity) {
+				updateComponentLastActivity(componentId);
+			}
 		} catch (InstantiationException | IllegalAccessException ex) {
 			Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+
+	@Override
+	public void deactivateComponent(String componentId)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			component.setActiveStatus(Component.INACTIVE_STATUS);
+			component.setUpdateDts(TimeUtil.currentDate());
+			component.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(component);
+			getUserService().removeAllWatchesForComponent(componentId);
+		}
+	}
+
+	@Override
+	public Component activateComponent(String componentId)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			component.setActiveStatus(Component.ACTIVE_STATUS);
+			component.setUpdateDts(TimeUtil.currentDate());
+			component.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(component);
+		}
+		return component;
 	}
 
 	@Override
@@ -290,10 +347,12 @@ public class ComponentServiceImpl
 	@Override
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
-		saveComponentAttribute(attribute, true);
+		getComponentServicePrivate().saveComponentAttribute(attribute, true);
+		getSearchService().addComponent(persistenceService.findById(Component.class, attribute.getComponentId()));
 	}
 
-	private void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
+	@Override
+	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
 	{
 		AttributeType type = persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 
@@ -736,10 +795,12 @@ public class ComponentServiceImpl
 	@Override
 	public void saveComponentTag(ComponentTag tag)
 	{
-		saveComponentTag(tag, true);
+		getComponentServicePrivate().saveComponentTag(tag, true);
+		getSearchService().addComponent(persistenceService.findById(Component.class, tag.getComponentId()));
 	}
 
-	private void saveComponentTag(ComponentTag tag, boolean updateLastActivity)
+	@Override
+	public void saveComponentTag(ComponentTag tag, boolean updateLastActivity)
 	{
 		ComponentTag oldTag = persistenceService.findById(ComponentTag.class, tag.getTagId());
 		if (oldTag != null) {
@@ -784,6 +845,14 @@ public class ComponentServiceImpl
 
 	@Override
 	public RequiredForComponent saveComponent(RequiredForComponent component)
+	{
+		getComponentServicePrivate().saveComponent(component, true);
+		getSearchService().addComponent(component.getComponent());
+		return component;
+	}
+
+	@Override
+	public RequiredForComponent saveComponent(RequiredForComponent component, boolean test)
 	{
 		Component oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 
