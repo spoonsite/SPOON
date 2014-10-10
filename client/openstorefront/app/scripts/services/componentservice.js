@@ -503,7 +503,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       } else {
         var paramsObj = {};
         if (type !== 'search') {
-          url = 'api/v1/service/search/attribute/'+type+'/'+key;
+          url = 'api/v1/service/search/attribute/'+key.type+'/'+key.key;
         } else {
           url = 'api/v1/service/search';
           if (key.toLowerCase() !== 'all') {
