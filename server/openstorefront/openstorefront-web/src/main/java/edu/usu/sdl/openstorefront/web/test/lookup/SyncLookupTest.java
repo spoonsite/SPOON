@@ -13,53 +13,69 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.test.system;
+package edu.usu.sdl.openstorefront.web.test.lookup;
 
+import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class DBSaveTest
+public class SyncLookupTest
 		extends BaseTestCase
 {
 
-	public DBSaveTest()
+	public SyncLookupTest()
 	{
-		this.description = "Save_Test";
+		this.description = "Sync Lookup Test";
 	}
 
 	@Override
 	protected void runInternalTest()
 	{
+		List<LookupEntity> testEntities = new ArrayList<>();
 		Arrays.asList("A", "B").forEach(item -> {
 			TestEntity testEntity = new TestEntity();
 			testEntity.setCode(item);
 			testEntity.setDescription(item + " - Description");
-			testEntity.setActiveStatus(TestEntity.ACTIVE_STATUS);
 			testEntity.setCreateUser(TEST_USER);
 			testEntity.setUpdateUser(TEST_USER);
 
-			service.getLookupService().saveLookupValue(testEntity);
+			testEntities.add(testEntity);
 		});
-		results.append("Saved A, B").append("<br>");
+		service.getLookupService().syncLookupImport(TestEntity.class, testEntities);
+		LookupEntity lookupEntity = service.getLookupService().getLookupEnity(TestEntity.class, "A");
+		if (lookupEntity == null) {
+			failureReason.append("Unable to find look up - A");
+		}
 
-		Arrays.asList("C", "D").forEach(item -> {
+		List<LookupEntity> testEntities2 = new ArrayList<>();
+		Arrays.asList("A", "C").forEach(item -> {
 			TestEntity testEntity = new TestEntity();
 			testEntity.setCode(item);
 			testEntity.setDescription(item + " - Description");
-			testEntity.setActiveStatus(TestEntity.INACTIVE_STATUS);
 			testEntity.setCreateUser(TEST_USER);
 			testEntity.setUpdateUser(TEST_USER);
 
-			service.getLookupService().saveLookupValue(testEntity);
+			testEntities2.add(testEntity);
 		});
-		results.append("Saved C, D").append("<br>");
+		service.getLookupService().syncLookupImport(TestEntity.class, testEntities2);
+		lookupEntity = service.getLookupService().getLookupEnity(TestEntity.class, "C");
+		if (lookupEntity == null) {
+			failureReason.append("Unable to find look up - C");
+		}
+		lookupEntity = service.getLookupService().getLookupEnity(TestEntity.class, "B");
+		if (lookupEntity != null) {
+			failureReason.append("Found look up - B");
+		}
 
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
+
 }

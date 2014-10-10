@@ -67,9 +67,9 @@ public abstract class BaseTestAction
 
 				//results or failure
 				output.append("<div style='font-size: 9px; color: grey; border: 1px solid grey;'>Output: <br><br>");
-				if (test.isSuccess()) {
-					output.append(test.getResults());
-				} else {
+				output.append(test.getResults());
+				if (test.isSuccess() == false) {
+					output.append("<br>Failure Reason: <br>");
 					output.append(test.getFailureReason());
 				}
 				output.append("</div>").append("<br>");

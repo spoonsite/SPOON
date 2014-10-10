@@ -245,6 +245,16 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public List<ComponentAttribute> getAttributesByComponentId(String componentId)
+	{
+		ComponentAttribute example = new ComponentAttribute();
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setComponentId(componentId);
+		example.setComponentAttributePk(pk);
+		return persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(example));
+	}
+
+	@Override
 	public ComponentDetailView getComponentDetails(String componentId)
 	{
 
@@ -266,7 +276,7 @@ public class ComponentServiceImpl
 		if (tempUserWatch != null) {
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
 		}
-		List<ComponentAttribute> attributes = this.getAttributeService().getAttributesByComponentId(componentId);
+		List<ComponentAttribute> attributes = getAttributesByComponentId(componentId);
 		result.setAttributes(ComponentAttributeView.toViewList(attributes));
 
 		result.setComponentId(componentId);

@@ -376,10 +376,25 @@ public class PersistenceService
 		}
 		queryString.append(" from ").append(queryByExample.getExample().getClass().getSimpleName());
 
+		Map<String, Object> mappedParams = new HashMap<>();
 		String whereClause = generateWhereClause(queryByExample.getExample());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
+			mappedParams.putAll(mapParameters(queryByExample.getExample()));
 		}
+		if (queryByExample.getLikeExample() != null) {
+			String likeClause = generateWhereClause(queryByExample.getLikeExample(), "", "LIKE");
+			if (StringUtils.isNotBlank(likeClause)) {
+				if (StringUtils.isNotBlank(whereClause)) {
+					queryString.append(" AND ");
+				} else {
+					queryString.append(" where ");
+				}
+				queryString.append(likeClause);
+				mappedParams.putAll(mapParameters(queryByExample.getLikeExample()));
+			}
+		}
+
 		if (queryByExample.getGroupBy() != null) {
 			String names = generateExampleNames(queryByExample.getGroupBy());
 			if (StringUtils.isNotBlank(names)) {
@@ -405,16 +420,16 @@ public class PersistenceService
 			queryString.append(" PARALLEL ");
 		}
 
-		List<T> results = query(queryString.toString(), mapParameters(queryByExample.getExample()), exampleClass, queryByExample.isReturnNonProxied());
+		List<T> results = query(queryString.toString(), mappedParams, exampleClass, queryByExample.isReturnNonProxied());
 		return results;
 	}
 
 	private <T> String generateWhereClause(T example)
 	{
-		return generateWhereClause(example, "");
+		return generateWhereClause(example, "", null);
 	}
 
-	private <T> String generateWhereClause(T example, String parentFieldName)
+	private <T> String generateWhereClause(T example, String parentFieldName, String operator)
 	{
 		StringBuilder where = new StringBuilder();
 
@@ -441,7 +456,7 @@ public class PersistenceService
 								where.append(" ");
 							}
 
-							where.append(generateWhereClause(returnObj, parentFieldName));
+							where.append(generateWhereClause(returnObj, parentFieldName, operator));
 						} else {
 							if (addAnd) {
 								where.append(" AND ");
@@ -455,7 +470,12 @@ public class PersistenceService
 								fieldName = parentFieldName + "." + fieldName;
 							}
 
-							where.append(fieldName).append(" = :").append(fieldName.replace(".", PARAM_NAME_SEPARATOR)).append("Param");
+							String operatorLocal = "=";
+							if (StringUtils.isNotBlank(operator)) {
+								operatorLocal = operator;
+							}
+
+							where.append(fieldName).append(" ").append(operatorLocal).append(" :").append(fieldName.replace(".", PARAM_NAME_SEPARATOR)).append("Param");
 						}
 					}
 				}
@@ -498,7 +518,7 @@ public class PersistenceService
 								where.append(" ");
 							}
 
-							where.append(generateWhereClause(returnObj, parentFieldName));
+							where.append(generateExampleNames(returnObj, parentFieldName));
 						} else {
 							if (addAnd) {
 								where.append(",");

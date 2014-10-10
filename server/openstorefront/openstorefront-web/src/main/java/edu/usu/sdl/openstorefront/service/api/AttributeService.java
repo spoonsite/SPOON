@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.util.List;
@@ -79,13 +78,6 @@ public interface AttributeService
 	 * @param attributeCode
 	 */
 	public void saveAttributeCode(AttributeCode attributeCode);
-
-	/**
-	 *
-	 * @param componentId
-	 * @return
-	 */
-	public List<ComponentAttribute> getAttributesByComponentId(String componentId);
 
 	/**
 	 * Grabs the article for a give code or type
@@ -178,8 +170,7 @@ public interface AttributeService
 	public void addArticleTrackEvent(ArticleTracking articleTracking);
 
 	/**
-	 * Builds and Architecture given a attribute type NOTE: AttributeType must
-	 * an architecture with codes in the following format: 1.1.1
+	 * Get all articles as search results
 	 *
 	 * @return
 	 */

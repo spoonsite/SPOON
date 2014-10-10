@@ -27,8 +27,6 @@ import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -255,6 +253,9 @@ public class AttributeServiceImpl
 			attributeType.setUpdateDts(TimeUtil.currentDate());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
+
+			OSFCacheManager.getAttributeTypeCache().remove(type);
+			OSFCacheManager.getAttributeCache().remove(type);
 		}
 	}
 
@@ -269,6 +270,8 @@ public class AttributeServiceImpl
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeCode);
+
+			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
 		}
 	}
 
@@ -368,16 +371,6 @@ public class AttributeServiceImpl
 		});
 
 		//TODO: Figure out where to update Solr from this change.
-	}
-
-	@Override
-	public List<ComponentAttribute> getAttributesByComponentId(String componentId)
-	{
-		ComponentAttribute example = new ComponentAttribute();
-		ComponentAttributePk pk = new ComponentAttributePk();
-		pk.setComponentId(componentId);
-		example.setComponentAttributePk(pk);
-		return persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(example));
 	}
 
 	@Override

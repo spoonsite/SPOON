@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.test.system;
 
 import edu.usu.sdl.openstorefront.storage.model.TestEntity;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,12 +30,35 @@ public class DBQueryTest
 
 	public DBQueryTest()
 	{
-		this.description = "B-Querying_Test";
+		this.description = "Querying_Test";
 	}
 
 	@Override
 	protected void runInternalTest()
 	{
+		Arrays.asList("A", "B").forEach(item -> {
+			TestEntity testEntity = new TestEntity();
+			testEntity.setCode(item);
+			testEntity.setDescription(item + " - Description");
+			testEntity.setCreateUser(TEST_USER);
+			testEntity.setUpdateUser(TEST_USER);
+
+			service.getLookupService().saveLookupValue(testEntity);
+		});
+		results.append("Saved A, B").append("<br>");
+
+		Arrays.asList("C", "D").forEach(item -> {
+			TestEntity testEntity = new TestEntity();
+			testEntity.setCode(item);
+			testEntity.setDescription(item + " - Description");
+			testEntity.setActiveStatus(TestEntity.INACTIVE_STATUS);
+			testEntity.setCreateUser(TEST_USER);
+			testEntity.setUpdateUser(TEST_USER);
+
+			service.getLookupService().saveLookupValue(testEntity);
+		});
+		results.append("Saved C, D").append("<br>");
+
 		results.append("Active").append("<br>");
 		List<TestEntity> testActiveRecords = service.getLookupService().findLookup(TestEntity.class);
 		testActiveRecords.stream().forEach(record -> {
@@ -48,6 +72,8 @@ public class DBQueryTest
 			results.append("Pass").append("<br>");
 			success = true;
 		}
+		results.append("Clean up records").append("<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
 
 }
