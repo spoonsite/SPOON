@@ -995,7 +995,11 @@ public class ComponentServiceImpl
 //			handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId());
 //			handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId());
 //		}
-		//validate
+
+		if (Component.INACTIVE_STATUS.equals(component.getActiveStatus())) {
+			getUserService().removeAllWatchesForComponent(component.getComponentId());
+		}
+
 		return componentAll;
 	}
 
