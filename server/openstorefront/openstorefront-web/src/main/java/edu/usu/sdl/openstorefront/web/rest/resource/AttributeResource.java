@@ -62,7 +62,7 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 @Path("v1/resource/attributes")
-@APIDescription("Attributes are the filterable data asscoated with the listings.")
+@APIDescription("Attributes are the filterable data associated with the listings.")
 public class AttributeResource
 		extends BaseResource
 {

@@ -251,10 +251,9 @@ public class SearchServiceImpl
 
 		List<Component> components = new ArrayList<>();//persistenceService.query(query, params);
 
-		String query = "SELECT * FROM ComponentAttributePk WHERE attributeType = :type AND attributeCode LIKE ':code%'";
+		String query = "SELECT * FROM ComponentAttributePk WHERE attributeType = :type AND attributeCode LIKE '" + pk.getAttributeCode() + "%'";
 		Map<String, Object> params = new HashMap<>();
 		params.put("type", pk.getAttributeType());
-		params.put("code", pk.getAttributeCode());
 
 		List<ComponentAttributePk> attributeCodes = persistenceService.query(query, params);
 
@@ -266,6 +265,7 @@ public class SearchServiceImpl
 				components.add(persistenceService.findById(Component.class, attribute.getComponentAttributePk().getComponentId()));
 			}
 		}
+
 		List<ComponentSearchView> views = new ArrayList<>();
 		for (Article article : articles) {
 			views.add(ComponentSearchView.toView(article));

@@ -559,23 +559,22 @@ public class AttributeServiceImpl
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
-		//String query = "SELECT * FROM AttributeCodePk WHERE attributeType = :type AND attributeCode = :code ";
-		// SELECT * FROM AttributeCodePk WHERE attributeType = 'DI2E-SVCV4-A' AND attributeCode = '1.2.1'
-		String query = "SELECT * FROM AttributeCodePk WHERE attributeType = :type AND attributeCode LIKE ':code%'";
+		String query = "SELECT * FROM AttributeCodePk WHERE attributeType = :type AND attributeCode LIKE '" + attributeCodePk.getAttributeCode() + "%'";
+
 		Map<String, Object> params = new HashMap<>();
 		params.put("type", attributeCodePk.getAttributeType());
-		params.put("code", attributeCodePk.getAttributeCode());
 
-//		AttributeCode attributeCodeExample = new AttributeCode();
-//		attributeCodeExample.setAttributeCodePk(attributeCodePk);
-//		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, attributeCodeExample);
-		List<AttributeCode> attributeCodes = persistenceService.query(query, params);
+		List<AttributeCodePk> attributeCodes = persistenceService.query(query, params);
 
-		//List<AttributeCodePk> pks = persistenceService.query(query, params);
-		for (AttributeCode code : attributeCodes) {
-			articles.add(Article.toView(code));
+		for (AttributeCodePk code : attributeCodes) {
+			AttributeCode temp = new AttributeCode();
+			temp.setAttributeCodePk(code);
+			String check = getAttributeService().getArticle(code);
+			if (check != null) {
+				articles.add(Article.toView(persistenceService.queryOneByExample(AttributeCode.class, temp)));
+			}
+			// ? "java.lang.NoSuchMethodException: com.orientechnologies.orient.core.record.impl.ODocument.getDirty()"
 		}
-		//return new ArrayList<Article>();
 		return articles;
 	}
 }

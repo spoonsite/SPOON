@@ -84,7 +84,7 @@ public class Search
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	@Path("/attribute/{type}/{code}")
-	public Response searchListing(
+	public List<ComponentSearchView> searchListing(
 			@PathParam("type")
 			@RequiredParam String type,
 			@PathParam("code")
@@ -97,8 +97,7 @@ public class Search
 		pk.setAttributeCode(code);
 		pk.setAttributeType(type);
 
-		List<ComponentSearchView> results = service.getSearchService().getSearchItems(pk, filter);
-		return Response.ok(results).build();
+		return service.getSearchService().getSearchItems(pk, filter);
 	}
 
 	@GET
