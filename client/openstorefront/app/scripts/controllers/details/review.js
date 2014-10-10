@@ -1,72 +1,59 @@
 'use strict';
 
-app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', function ($scope, Business, $rootScope) {
+app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeout','$q', function ($scope, Business, $rootScope, $timeout, $q) {
 
-  $scope.review;
-  $scope.rating = 0;
-  $scope.timeCode;
-  $scope.role;
+  $scope.review = {};
   $scope.user = {};
+  $scope.backup = {};
 
-  $scope.$watch('review', function() {
-    if ($scope.review) {
-      $scope.rating = $scope.review.rating;
-    }
-    if ($scope.review && $scope.review.usedTimeCode) {
-      if (!$scope.timeCode) {
-        $scope.timeCode = _.find($scope.expertise, {'description': $scope.review.usedTimeCode});
+  var setupReview = function() {
+    $scope.rating = $scope.review.rating;
+    resetVars().then(function() {
+      if ($scope.review.usedTimeCode) {
+        $scope.review.timeCode = _.find($scope.expertise, {'description': $scope.review.usedTimeCode});
+      } else {
+        $scope.review.timeCode = $scope.expertise[0];
       }
-    }
-    if ($scope.review && $scope.review.userType) {
-      if (!$scope.role) {
-        $scope.role = _.find($scope.userTypeCodes, {'description': $scope.review.userType});
+      if ($scope.review.userType) {
+        $scope.review.role = _.find($scope.userTypeCodes, {'description': $scope.review.userType});
+      } else {
+        $scope.review.role = _.find($scope.userTypeCodes, {'code': $scope.user.info.userTypeCode});
       }
-    }
-  }, true);
+      if (!$scope.review.organization) {
+        $scope.review.organization = $scope.user.info.organization;
+      }
+    });
+  }
 
-  $scope.$watch('rating', function() {
-    if ($scope.review) {
-      $scope.review.rating = $scope.rating;
-    }
-  });
-  $scope.$watch('timeCode', function() {
-    if ($scope.review) {
-      $scope.review.usedTimeCode = $scope.timeCode.description;
-      $scope.review.timeCode = $scope.timeCode;
-    }
-  });
-  $scope.$watch('role', function() {
-    if ($scope.review) {
-      $scope.review.userType = $scope.role.description;
-      $scope.review.role = $scope.role;
-    }
-  });
-
-
-
-
-  /***************************************************************
-  * Load the User profile only once when the controller loads
-  ***************************************************************/
-  (function() {
-    //show load mask on form
+  var resetVars = function() {
+    var deferred = $q.defer();
     Business.userservice.getCurrentUserProfile().then(function(profile) {
       if (profile) {
         $scope.user.info = profile;
         Business.lookupservice.getExpertise().then(function(result){
           if (result) {
             $scope.expertise = result;
+            Business.lookupservice.getUserTypeCodes().then(function(result){
+              if (result) {
+                $scope.userTypeCodes = result;
+                deferred.resolve();
+              } else {
+                $scope.userTypeCodes = [];
+                deferred.reject();
+              }
+            }, function() {
+              $scope.userTypeCodes = [];
+              deferred.reject();
+            });
           } else {
+            deferred.reject();
+            $scope.userTypeCodes = [];
             $scope.expertise = [];
           }
-        });
-        Business.lookupservice.getUserTypeCodes().then(function(result){
-          if (result) {
-            $scope.userTypeCodes = result;
-            $scope.role = _.find($scope.userTypeCodes, {'code': $scope.user.info.userTypeCode});
-          } else {
-            $scope.userTypeCodes = [];
-          }
+        }, function() {
+          deferred.reject();
+          $scope.userTypeCodes = [];
+          $scope.expertise = [];
         });
         Business.getProsConsList().then(function(result) {
           if (result) {
@@ -76,9 +63,26 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
           }
         });
       }
-      //hide load mask
     });
-  })();
+    return deferred.promise; //
+  }
+
+  $scope.$on('$RESETREVIEWEDIT', function (event, review) {
+    $scope.review.timeCode = null;
+    $scope.review.role = null;
+    $scope.review = angular.copy(review);
+    $scope.backup = angular.copy(review);
+    setupReview();
+  });
+
+  (resetVars().then(function() {
+    $scope.review.timeCode = $scope.expertise[0];
+    $scope.review.role = _.find($scope.userTypeCodes, {'code': $scope.user.info.userTypeCode});
+    $scope.review.organization = $scope.user.info.organization;
+    $scope.rating = 0;
+  }));
+
+
 
 
   /***************************************************************
@@ -93,11 +97,11 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     var errorObjt = {};
     errorObjt.errors = {};
     errorObjt.errors.entry = [];
-    if (review.role && !review.role.code) {
+    if (role && !role.code) {
       error = true;
       errorObjt.errors.entry.push({'key': 'userTypeCode', 'value': 'You must select a user role.'})
     } else {
-      body.userTypeCode = review.role.code;
+      body.userTypeCode = role.code;
     }
     if (!review.comment) {
       error = true;
@@ -117,7 +121,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     } else {
       body.title = review.title;
     }
-    body.rating = review.rating? review.rating: 0;
+    body.rating = rating? rating: 0;
     if (!review.lastUsed) {
       error = true;
       errorObjt.errors.entry.push({'key': 'lastUsed', 'value': 'You must included the last time you used this component.'});
@@ -131,11 +135,11 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', functio
     } else {
       body.organization = review.organization;
     }
-    if (!review.timeCode) {
+    if (!timeCode) {
       error = true;
       errorObjt.errors.entry.push({'key': 'userTimeCode', 'value': 'You must included your how long you\'ve used this component.'});
     } else {
-      body.userTimeCode = review.timeCode.code;
+      body.userTimeCode = timeCode.code;
     }
     // console.log('body', body);
     event.preventDefault();

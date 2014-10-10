@@ -152,6 +152,12 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $('#' + id).collapse('toggle');
   };
 
+  $scope.sendRevs = function(revs) {
+    $timeout(function() {
+      $scope.$emit('$TRIGGEREVENT', '$RESETREVIEWEDIT', revs);
+    },10);
+  }
+
   /***************************************************************
   * This function takes the watch list, and the total data we got back, and 
   * grabs the data items that are really on the watch list. This will change
