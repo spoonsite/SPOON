@@ -5,11 +5,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Test
+ * Base Test Case for all container tests
  *
  * @author dshurtleff
  */
-public class BaseTestCase
+public abstract class BaseTestCase
 {
 
 	private static final Logger log = Logger.getLogger(BaseTestCase.class.getName());
@@ -49,9 +49,7 @@ public class BaseTestCase
 		}
 	}
 
-	protected void runInternalTest()
-	{
-	}
+	protected abstract void runInternalTest();
 
 	public boolean isSuccess()
 	{

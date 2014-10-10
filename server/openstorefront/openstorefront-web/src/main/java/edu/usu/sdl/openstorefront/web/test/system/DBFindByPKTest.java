@@ -30,7 +30,7 @@ public class DBFindByPKTest
 
 	public DBFindByPKTest()
 	{
-		this.description = "C-Checking_PK";
+		this.description = "Checking_PK";
 	}
 
 	@Override

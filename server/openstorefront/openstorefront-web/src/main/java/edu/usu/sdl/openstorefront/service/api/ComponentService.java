@@ -153,6 +153,13 @@ public interface ComponentService
 
 	/**
 	 *
+	 * @param componentId
+	 * @return
+	 */
+	public List<ComponentAttribute> getAttributesByComponentId(String componentId);
+
+	/**
+	 *
 	 * @return
 	 */
 	public List<ComponentTag> getTagCloud();
