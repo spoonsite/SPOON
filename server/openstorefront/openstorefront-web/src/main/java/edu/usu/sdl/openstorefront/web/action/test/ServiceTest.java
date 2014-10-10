@@ -88,6 +88,14 @@ public class ServiceTest
 		testSuiteModel.setName("Lookup Tests");
 		testSuiteModels.add(testSuiteModel);
 
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.user");
+		testSuiteModel.setName("User Tests");
+		testSuiteModels.add(testSuiteModel);
+
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.search");
+		testSuiteModel.setName("Search Tests");
+		testSuiteModels.add(testSuiteModel);
+
 		return testSuiteModels;
 	}
 

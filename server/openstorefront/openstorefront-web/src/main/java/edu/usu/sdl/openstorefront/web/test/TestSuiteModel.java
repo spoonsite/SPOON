@@ -17,6 +17,7 @@ public class TestSuiteModel
 
 	private String name;
 	private List<BaseTestCase> tests = new ArrayList<>();
+	private long runTimeInMills = 0;
 
 	public TestSuiteModel()
 	{
@@ -45,15 +46,18 @@ public class TestSuiteModel
 		sb.append("Total: ").append(tests.size()).append(" ");
 		sb.append("Success: <span style='font-weight:bold;color: green'>").append(successCount).append("</span> ");
 		sb.append("Fail: <span style='font-weight:bold;color: red'>").append(tests.size() - successCount).append("</span>  ");
+		sb.append("Run Time:  ").append(runTimeInMills).append("ms  ");
 
 		return sb.toString();
 	}
 
 	public void runAllTests()
 	{
+		long startTime = System.currentTimeMillis();
 		tests.stream().forEach((test) -> {
 			test.runTest();
 		});
+		runTimeInMills = System.currentTimeMillis() - startTime;
 	}
 
 	public String getName()

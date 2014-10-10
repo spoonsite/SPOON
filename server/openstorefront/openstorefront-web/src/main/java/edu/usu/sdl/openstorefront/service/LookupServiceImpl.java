@@ -102,6 +102,9 @@ public class LookupServiceImpl
 	public void saveLookupValue(LookupEntity lookupEntity)
 	{
 		LookupEntity oldEntity = persistenceService.findById(lookupEntity.getClass(), lookupEntity.getCode());
+		if (StringUtils.isBlank(lookupEntity.getActiveStatus())) {
+			lookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+		}
 		if (oldEntity != null) {
 			oldEntity.setDescription(lookupEntity.getDescription());
 			oldEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
@@ -111,10 +114,13 @@ public class LookupServiceImpl
 			oldEntity.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(oldEntity);
 		} else {
-			lookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 			lookupEntity.setCreateDts(TimeUtil.currentDate());
 			lookupEntity.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(lookupEntity);
+		}
+		if (LookupEntity.INACTIVE_STATUS.equals(lookupEntity.getActiveStatus())) {
+			//clear cache
+			OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
 		}
 	}
 
