@@ -45,6 +45,7 @@ public class QueryByExample<T extends BaseEntity>
 	private T orderBy;
 	private String sortDirection = OpenStorefrontConstant.SORT_ASCENDING;
 	private T groupBy;
+	private T likeExample;
 
 	public QueryByExample()
 	{
@@ -179,6 +180,16 @@ public class QueryByExample<T extends BaseEntity>
 	public void setGroupBy(T groupBy)
 	{
 		this.groupBy = groupBy;
+	}
+
+	public T getLikeExample()
+	{
+		return likeExample;
+	}
+
+	public void setLikeExample(T likeExample)
+	{
+		this.likeExample = likeExample;
 	}
 
 }

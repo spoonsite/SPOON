@@ -36,7 +36,7 @@ public class ServiceProxy
 	protected PersistenceService persistenceService = new PersistenceService();
 	protected LookupService lookupService;
 	protected AttributeService attributeService;
-	private AttributeServicePrivate attributeServicePrivate;
+	protected AttributeServicePrivate attributeServicePrivate;
 	protected ComponentService componentService;
 	protected ComponentServicePrivate componentServicePrivate;
 	protected SearchService searchService;
@@ -108,20 +108,12 @@ public class ServiceProxy
 		return systemService;
 	}
 
-	/**
-	 * @return the attributeServicePrivate
-	 */
 	public AttributeServicePrivate getAttributeServicePrivate()
 	{
+		if (attributeServicePrivate == null) {
+			attributeServicePrivate = DynamicProxy.newInstance(new AttributeServiceImpl());
+		}
 		return attributeServicePrivate;
-	}
-
-	/**
-	 * @param attributeServicePrivate the attributeServicePrivate to set
-	 */
-	public void setAttributeServicePrivate(AttributeServicePrivate attributeServicePrivate)
-	{
-		this.attributeServicePrivate = attributeServicePrivate;
 	}
 
 }
