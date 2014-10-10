@@ -28,7 +28,6 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
-import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,101 +51,107 @@ import javax.ws.rs.core.Response;
 @Path("v1/service/search")
 @APIDescription("Provides access to search listing in the application")
 public class Search
-        extends BaseResource {
+		extends BaseResource
+{
 
-    @GET
-    @APIDescription("Searches listing according to parameters.  (Components, Articles)")
-    @Produces({MediaType.APPLICATION_JSON})
-    @DataType(ComponentSearchView.class)
-    public List<ComponentSearchView> searchListing(
-            @BeanParam SearchQuery query,
-            @BeanParam FilterQueryParams filter) {
+	@GET
+	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentSearchView.class)
+	public List<ComponentSearchView> searchListing(
+			@BeanParam SearchQuery query,
+			@BeanParam FilterQueryParams filter)
+	{
 
-        List<ComponentSearchView> searchResults = service.getSearchService().getSearchItems(query, filter);
-        
-        return searchResults;
-    }
+		List<ComponentSearchView> searchResults = service.getSearchService().getSearchItems(query, filter);
 
-    @DELETE
+		return searchResults;
+	}
+
+	@DELETE
 	@RequireAdmin
-    @APIDescription("Removes all indexes from Solr")
-    @Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Removes all indexes from Solr")
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/clearSolr")
-    public Response searchListing() {
+	public Response searchListing()
+	{
 		service.getSearchService().deleteAll();
 		return Response.noContent().build();
-    }
+	}
 
-    @GET
-    @APIDescription("Searches listing according to parameters.  (Components, Articles)")
-    @Produces({MediaType.APPLICATION_JSON})
-    @DataType(ComponentSearchView.class)
-    @Path("/attribute/{type}/{code}")
-    public Response searchListing(
-            @PathParam("type")
-            @RequiredParam String type,
-            @PathParam("code")
-            @RequiredParam String code,
-            @BeanParam FilterQueryParams filter) {
-        
-        AttributeCodePk pk = new AttributeCodePk();
-        
-        pk.setAttributeCode(code);
-        pk.setAttributeType(type);
+	@GET
+	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentSearchView.class)
+	@Path("/attribute/{type}/{code}")
+	public Response searchListing(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code,
+			@BeanParam FilterQueryParams filter)
+	{
 
-        List<ComponentSearchView> results = service.getSearchService().getSearchItems(pk, filter);
-        return Response.ok(results).build();
-    }
+		AttributeCodePk pk = new AttributeCodePk();
 
-    @GET
-    @APIDescription("Used to retrieve all possible search results.")
-    @Produces({MediaType.APPLICATION_JSON})
-    @DataType(Component.class)
-    @Path("/all")
-    public List<ComponentSearchView> getAllForSearch() {
-        return service.getSearchService().getAll();
-    }
+		pk.setAttributeCode(code);
+		pk.setAttributeType(type);
 
-    @GET
-    @APIDescription("Gets the recently added items")
-    @Produces({MediaType.APPLICATION_JSON})
-    @DataType(RecentlyAddedView.class)
-    @Path("/recent")
-    public List<RecentlyAddedView> getRecentlyAdded(
-            @DefaultValue("5")
-            @QueryParam("max") int maxResults) {
-        List<RecentlyAddedView> recentlyAddedViews = new ArrayList<>();
+		List<ComponentSearchView> results = service.getSearchService().getSearchItems(pk, filter);
+		return Response.ok(results).build();
+	}
 
-        List<Component> components = service.getComponentService().findRecentlyAdded(maxResults);
-        List<AttributeCode> attributeCodes = service.getAttributeService().findRecentlyAddedArticles(maxResults);
+	@GET
+	@APIDescription("Used to retrieve all possible search results.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Component.class)
+	@Path("/all")
+	public List<ComponentSearchView> getAllForSearch()
+	{
+		return service.getSearchService().getAll();
+	}
 
-        for (Component component : components) {
-            RecentlyAddedView recentlyAddedView = new RecentlyAddedView();
-            recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.COMPONENT);
-            recentlyAddedView.setComponentId(component.getComponentId());
-            recentlyAddedView.setName(component.getName());
-            recentlyAddedView.setDescription(component.getDescription());
-            recentlyAddedView.setAddedDts(component.getApprovedDts());
-            recentlyAddedViews.add(recentlyAddedView);
-        }
+	@GET
+	@APIDescription("Gets the recently added items")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(RecentlyAddedView.class)
+	@Path("/recent")
+	public List<RecentlyAddedView> getRecentlyAdded(
+			@DefaultValue("5")
+			@QueryParam("max") int maxResults)
+	{
+		List<RecentlyAddedView> recentlyAddedViews = new ArrayList<>();
 
-        for (AttributeCode attributeCode : attributeCodes) {
-            RecentlyAddedView recentlyAddedView = new RecentlyAddedView();
-            recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.ARTICLE);
-            recentlyAddedView.setArticleAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
-            recentlyAddedView.setArticleAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-            recentlyAddedView.setDescription(attributeCode.getDescription());
-            recentlyAddedView.setName(attributeCode.getLabel());
-            recentlyAddedView.setAddedDts(attributeCode.getUpdateDts());
-            recentlyAddedViews.add(recentlyAddedView);
-        }
+		List<Component> components = service.getComponentService().findRecentlyAdded(maxResults);
+		List<AttributeCode> attributeCodes = service.getAttributeService().findRecentlyAddedArticles(maxResults);
 
-        recentlyAddedViews.sort(new RecentlyAddedViewComparator<>());
-        if (recentlyAddedViews.size() > maxResults) {
-            recentlyAddedViews = recentlyAddedViews.subList(0, maxResults);
-        }
+		for (Component component : components) {
+			RecentlyAddedView recentlyAddedView = new RecentlyAddedView();
+			recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.COMPONENT);
+			recentlyAddedView.setComponentId(component.getComponentId());
+			recentlyAddedView.setName(component.getName());
+			recentlyAddedView.setDescription(component.getDescription());
+			recentlyAddedView.setAddedDts(component.getApprovedDts());
+			recentlyAddedViews.add(recentlyAddedView);
+		}
 
-        return recentlyAddedViews;
-    }
+		for (AttributeCode attributeCode : attributeCodes) {
+			RecentlyAddedView recentlyAddedView = new RecentlyAddedView();
+			recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.ARTICLE);
+			recentlyAddedView.setArticleAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+			recentlyAddedView.setArticleAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+			recentlyAddedView.setDescription(attributeCode.getDescription());
+			recentlyAddedView.setName(attributeCode.getLabel());
+			recentlyAddedView.setAddedDts(attributeCode.getUpdateDts());
+			recentlyAddedViews.add(recentlyAddedView);
+		}
+
+		recentlyAddedViews.sort(new RecentlyAddedViewComparator<>());
+		if (recentlyAddedViews.size() > maxResults) {
+			recentlyAddedViews = recentlyAddedViews.subList(0, maxResults);
+		}
+
+		return recentlyAddedViews;
+	}
 
 }

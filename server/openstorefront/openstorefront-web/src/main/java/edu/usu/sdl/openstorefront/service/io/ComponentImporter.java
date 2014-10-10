@@ -54,7 +54,7 @@ public class ComponentImporter
 			});
 			componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
                         serviceProxy.getSearchService().addComponent(componentAll.getComponent());
-                        System.out.println();
+                        //System.out.println();
 			objectMapper.writeValue(file, componentAll);
 			//set it to the past so we don't keep picking it up.
 			file.setLastModified(file.lastModified() - 10000);
