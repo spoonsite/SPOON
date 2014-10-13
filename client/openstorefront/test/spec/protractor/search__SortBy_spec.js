@@ -1,18 +1,21 @@
 describe('search__SortBy', function() {
     it('Name Z-A returns Vega as the first search result', function() {
         // Search on ALL entries (null search term)
-        browser.get(theSite, 8000);
+        browser.get(theSite, 11000);
         element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
-        browser.driver.sleep(10000);
+        browser.driver.sleep(11500);
 
         // Verify some results are returned, doesn't matter at this point how many
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
 
         // Select sort by drop down
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
+        browser.driver.sleep(400);
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
+        browser.driver.sleep(400);
         // Add tab for Firefox as it needs to loose focus in order to dynamically sort (Chrome is automatic without the tabbing)
         element(by.model('orderProp')).sendKeys(protractor.Key.TAB);
+        browser.driver.sleep(1000);
 
         // VERIFY it is sorted Z - A
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);

@@ -182,6 +182,7 @@ public class UserServiceImpl
 		return saveUserProfile(user, true);
 	}
 
+	@Override
 	public UserProfile saveUserProfile(UserProfile user, boolean refreshSession)
 	{
 		UserProfile userProfile = persistenceService.findById(UserProfile.class, user.getUsername());
