@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.util.List;
@@ -69,15 +70,17 @@ public interface AttributeService
 	 * Saves type
 	 *
 	 * @param attributeType
+	 * @param test
 	 */
-	public void saveAttributeType(AttributeType attributeType);
+	public void saveAttributeType(AttributeType attributeType, boolean test);
 
 	/**
 	 * Saves code
 	 *
 	 * @param attributeCode
+	 * @param test
 	 */
-	public void saveAttributeCode(AttributeCode attributeCode);
+	public void saveAttributeCode(AttributeCode attributeCode, boolean test);
 
 	/**
 	 * Grabs the article for a give code or type
@@ -93,7 +96,16 @@ public interface AttributeService
 	 * @param attributeCodePk
 	 * @return article data or null for no article.
 	 */
-	public List<Article> getArticleLike(AttributeCodePk attributeCodePk);
+	public Article getArticleObj(AttributeCodePk attributeCodePk);
+
+	/**
+	 * Grabs the article for a give code or type Get the article codes only, not
+	 * the article html content
+	 *
+	 * @param attributeCodePk
+	 * @return article data or null for no article.
+	 */
+	public List<Article> getArticleForCodeLike(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Saves a new article (This will scub the article data prior to save)
@@ -109,7 +121,6 @@ public interface AttributeService
 	 *
 	 * @param attributeCodePk
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteArticle(AttributeCodePk attributeCodePk);
 
 	/**
@@ -175,5 +186,20 @@ public interface AttributeService
 	 * @return
 	 */
 	public List<ComponentSearchView> getAllArticles();
+
+	/**
+	 * Get all articles as search results
+	 *
+	 * @return
+	 */
+	public List<Article> getArticles();
+
+	/**
+	 * Get all articles as search results
+	 *
+	 * @param components
+	 * @param articles
+	 */
+	public void saveArticlesAndComponents(List<Article> articles, List<Component> components);
 
 }

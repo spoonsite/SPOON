@@ -184,6 +184,13 @@ public class ComponentServiceImpl
 	@Override
 	public void deactivateComponent(String componentId)
 	{
+		deactivateComponent(componentId, true);
+		getSearchService().deleteById(componentId);
+	}
+
+	@Override
+	public void deactivateComponent(String componentId, boolean test)
+	{
 		Component component = persistenceService.findById(Component.class, componentId);
 		if (component != null) {
 			component.setActiveStatus(Component.INACTIVE_STATUS);
@@ -192,6 +199,7 @@ public class ComponentServiceImpl
 			persistenceService.persist(component);
 			getUserService().removeAllWatchesForComponent(componentId);
 		}
+		
 	}
 
 	@Override
@@ -358,7 +366,7 @@ public class ComponentServiceImpl
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
 		getComponentServicePrivate().saveComponentAttribute(attribute, true);
-		getSearchService().addComponent(persistenceService.findById(Component.class, attribute.getComponentId()));
+		getSearchService().addIndex(persistenceService.findById(Component.class, attribute.getComponentId()));
 	}
 
 	@Override
@@ -806,7 +814,7 @@ public class ComponentServiceImpl
 	public void saveComponentTag(ComponentTag tag)
 	{
 		getComponentServicePrivate().saveComponentTag(tag, true);
-		getSearchService().addComponent(persistenceService.findById(Component.class, tag.getComponentId()));
+		getSearchService().addIndex(persistenceService.findById(Component.class, tag.getComponentId()));
 	}
 
 	@Override
@@ -857,7 +865,7 @@ public class ComponentServiceImpl
 	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
 		getComponentServicePrivate().saveComponent(component, true);
-		getSearchService().addComponent(component.getComponent());
+		getSearchService().addIndex(component.getComponent());
 		return component;
 	}
 

@@ -226,7 +226,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
 
       Business.componentservice.doSearch($scope.searchKey, $scope.searchCode, architecture).then(function(result) {
-        if (result)
+        if (result && result.data && result.data.length > 0)
         {
           $scope.total = result.data || [];
         } else {
@@ -252,6 +252,18 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
         $scope.initializeData(key);
         adjustFilters();
+      }, function(result){
+        if (result && result.data && result.data.length > 0)
+        {
+          $scope.total = result.data || [];
+        } else {
+          $scope.total = [];
+        }
+        $scope.data.data = $scope.total;
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+        $scope.initializeData(key);
+        $scope.showMessage = true;
       });
 });
   }; //
@@ -532,7 +544,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.goToFullPage = function(id){
     var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
-    window.open(url, 'Component ' + id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
+    window.open(url, 'Component_' + id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
   };
 
   /***************************************************************

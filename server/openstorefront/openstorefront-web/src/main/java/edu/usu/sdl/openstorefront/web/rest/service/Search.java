@@ -36,6 +36,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -73,10 +74,23 @@ public class Search
 	@APIDescription("Removes all indexes from Solr")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/clearSolr")
-	public Response searchListing()
+	public Response clearSolr()
 	{
 		service.getSearchService().deleteAll();
 		return Response.noContent().build();
+	}
+
+	
+	@POST
+	@RequireAdmin
+	@APIDescription("Removes all indexes from Solr and then re-indexes current components and articles")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/resetSolr")
+	public Response resetSolr()
+	{
+		service.getSearchService().deleteAll();
+		service.getSearchService().saveAll();
+		return Response.ok().build();
 	}
 
 	@GET
@@ -84,7 +98,7 @@ public class Search
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	@Path("/attribute/{type}/{code}")
-	public Response searchListing(
+	public List<ComponentSearchView> searchListing(
 			@PathParam("type")
 			@RequiredParam String type,
 			@PathParam("code")
@@ -97,8 +111,7 @@ public class Search
 		pk.setAttributeCode(code);
 		pk.setAttributeType(type);
 
-		List<ComponentSearchView> results = service.getSearchService().getSearchItems(pk, filter);
-		return Response.ok(results).build();
+		return service.getSearchService().getSearchItems(pk, filter);
 	}
 
 	@GET

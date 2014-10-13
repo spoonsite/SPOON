@@ -444,7 +444,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var cachedComponents  = null;
     var name;
 
-    
+    // use this code if you want the client to handle the search.    
     // if (type && key) {
     //   type  = type.toLowerCase();
     //   if (type !== 'attribute'){
@@ -493,6 +493,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     //   result.reject('You must provide a type and key for the search');
     // }
 
+    // use this code if you want solr to handle the search.    
     if (type && key) {
       name = type + key;
       // if they don't give me an ID I send them back the whole list.
@@ -506,7 +507,9 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
           url = 'api/v1/service/search/attribute/'+key.type+'/'+key.key;
         } else {
           url = 'api/v1/service/search';
-          if (key.toLowerCase() !== 'all') {
+          if (key.toLowerCase() === 'all' ){
+            paramsObj.query = "*";
+          } else {
             paramsObj.query = key;
           }
         }

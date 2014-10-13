@@ -52,7 +52,7 @@ public class ComponentImporter
 			{
 			});
 			componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
-			serviceProxy.getSearchService().addComponent(componentAll.getComponent());
+			serviceProxy.getSearchService().addIndex(componentAll.getComponent());
 
 			objectMapper.writeValue(file, componentAll);
 			//set it to the past so we don't keep picking it up.

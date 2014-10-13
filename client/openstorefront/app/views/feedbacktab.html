@@ -33,7 +33,7 @@ limitations under the License.
                 <div id="component-{{$index}}" class="panel-collapse collapse">
                   <!-- <div> -->
                   <div style="width: 100%">
-                    <button class="btn btn-default" ng-click="revs.edit = !!!revs.edit; review = revs">Edit&nbsp;<i class="fa fa-edit"></i></button>
+                    <button class="btn btn-default" ng-click="revs.edit = !!!revs.edit; sendRevs(revs);">Edit&nbsp;<i class="fa fa-edit"></i></button>
                     <button class="btn btn-default" ng-if="revs.username === user.info.username || user.info.admin === true" ng-click="deleteReview(revs.reviewId, revs.componentId)">Delete&nbsp;<i class="fa fa-trash-o"></i></button>
                   </div>
                   <div ng-if="!revs.edit">

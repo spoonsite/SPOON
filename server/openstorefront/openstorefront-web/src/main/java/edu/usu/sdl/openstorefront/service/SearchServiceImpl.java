@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.service.api.SearchService;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -138,7 +139,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void addComponent(Component component)
+	public void addIndex(Component component)
 	{
 
 		// initialize solr server
@@ -198,7 +199,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void addArticle(Article article)
+	public void addIndex(Article article)
 	{
 
 		// initialize solr server
@@ -243,25 +244,43 @@ public class SearchServiceImpl
 	@Override
 	public List<ComponentSearchView> getSearchItems(AttributeCodePk pk, FilterQueryParams filter)
 	{
-		List<Article> articles = this.getAttributeService().getArticleLike(pk);
-
+		List<Article> articles = this.getAttributeService().getArticleForCodeLike(pk);
+		Map<String, Component> componentMap = new HashMap<>();//persistenceService.query(query, params);
 		List<Component> components = new ArrayList<>();//persistenceService.query(query, params);
 
-		String query = "SELECT * FROM ComponentAttributePk WHERE attributeType = :type AND attributeCode LIKE ':code%'";
-		Map<String, Object> params = new HashMap<>();
-		params.put("type", pk.getAttributeType());
-		params.put("code", pk.getAttributeCode());
+		AttributeCode attributeCodeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
 
-		List<ComponentAttributePk> attributeCodes = persistenceService.query(query, params);
+		attributeCodePkExample.setAttributeType(pk.getAttributeType());
+		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 
-		for (ComponentAttributePk code : attributeCodes) {
+		AttributeCode attributeCodeLikeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkLikeExample = new AttributeCodePk();
+
+		attributeCodePkLikeExample.setAttributeCode(pk.getAttributeCode() + "%");
+		attributeCodeLikeExample.setAttributeCodePk(attributeCodePkLikeExample);
+
+		QueryByExample queryByExample = new QueryByExample(attributeCodeExample);
+
+		queryByExample.setLikeExample(attributeCodeLikeExample);
+
+		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+		for (AttributeCode code : attributeCodes) {
+			ComponentAttributePk codePk = new ComponentAttributePk();
 			ComponentAttribute attr = new ComponentAttribute();
-			attr.setComponentAttributePk(code);
+			codePk.setAttributeCode(code.getAttributeCodePk().getAttributeCode());
+			codePk.setAttributeType(code.getAttributeCodePk().getAttributeType());
+			attr.setComponentAttributePk(codePk);
 			List<ComponentAttribute> attrList = persistenceService.queryByExample(ComponentAttribute.class, attr);
 			for (ComponentAttribute attribute : attrList) {
-				components.add(persistenceService.findById(Component.class, attribute.getComponentAttributePk().getComponentId()));
+				Component temp = persistenceService.findById(Component.class, attribute.getComponentAttributePk().getComponentId());
+				componentMap.put(temp.getComponentId(), temp);
 			}
 		}
+
+		// eliminate duplicate componentID on search results
+		components.addAll(componentMap.values());
+
 		List<ComponentSearchView> views = new ArrayList<>();
 		for (Article article : articles) {
 			views.add(ComponentSearchView.toView(article));
@@ -273,7 +292,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void deleteIndex(String id)
+	public void deleteById(String id)
 	{
 		// initialize solr server
 		SolrServer solrService = SolrManager.getServer();
@@ -295,5 +314,22 @@ public class SearchServiceImpl
 		} catch (SolrServerException | IOException ex) {
 			log.log(Level.SEVERE, null, ex);
 		}
+	}
+
+	@Override
+	public void saveAll()
+	{
+		Component temp = new Component();
+		temp.setActiveStatus(Component.ACTIVE_STATUS);
+		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(temp));
+		List<Article> articles = getAttributeService().getArticles();
+
+		components.stream().forEach((component) -> {
+			getSearchService().addIndex(component);
+		});
+		articles.stream().forEach((article) -> {
+			getSearchService().addIndex(article);
+		});
+
 	}
 }

@@ -57,19 +57,24 @@ public interface SearchService
 	 *
 	 * @param component
 	 */
-	public void addComponent(Component component);
+	public void addIndex(Component component);
 
 	/**
 	 *
 	 * @param article
 	 */
-	public void addArticle(Article article);
+	public void addIndex(Article article);
 
 	/**
 	 *
-	 * @param id (Component Id or AttributeCodePK key)
+	 * @param id
 	 */
-	public void deleteIndex(String id);
+	public void deleteById(String id);
+
+	/**
+	 *
+	 */
+	public void saveAll();
 
 	/**
 	 *
