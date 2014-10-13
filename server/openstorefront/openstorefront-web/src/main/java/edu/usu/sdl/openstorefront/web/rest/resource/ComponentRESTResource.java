@@ -1806,6 +1806,8 @@ public class ComponentRESTResource
 		ComponentTag example = new ComponentTag();
 		example.setComponentId(componentId);
 		service.getPersistenceService().deleteByExample(example);
+		Component temp = service.getPersistenceService().findById(Component.class, componentId);
+		service.getSearchService().addIndex(temp);
 	}
 
 	@DELETE
@@ -1827,6 +1829,8 @@ public class ComponentRESTResource
 			response = ownerCheck(componentTag);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentTag.class, tagId);
+				Component temp = service.getPersistenceService().findById(Component.class, componentId);
+				service.getSearchService().addIndex(temp);
 			}
 		}
 		return response;
@@ -1852,6 +1856,8 @@ public class ComponentRESTResource
 			response = ownerCheck(tag);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tag.getTagId());
+				Component temp = service.getPersistenceService().findById(Component.class, componentId);
+				service.getSearchService().addIndex(temp);
 				response = Response.ok().build();
 			}
 		}
