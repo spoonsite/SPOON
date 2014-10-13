@@ -226,7 +226,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
 
       Business.componentservice.doSearch($scope.searchKey, $scope.searchCode, architecture).then(function(result) {
-        if (result)
+        if (result && result.data && result.data.length > 0)
         {
           $scope.total = result.data || [];
         } else {
@@ -252,6 +252,18 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
         $scope.initializeData(key);
         adjustFilters();
+      }, function(result){
+        if (result && result.data && result.data.length > 0)
+        {
+          $scope.total = result.data || [];
+        } else {
+          $scope.total = [];
+        }
+        $scope.data.data = $scope.total;
+        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+        $scope.initializeData(key);
+        $scope.showMessage = true;
       });
 });
   }; //
