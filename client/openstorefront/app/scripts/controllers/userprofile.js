@@ -129,7 +129,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.goToFullPage = function(id){
     var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
-    window.open(url, 'Component ' + id, 'scrollbars');
+    window.open(url, 'Component_' + id, 'scrollbars');
   };
 
   /***************************************************************
