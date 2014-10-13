@@ -326,7 +326,7 @@ public class AttributeResource
 			attributeType.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getAttributeService().saveAttributeType(attributeType);
+			service.getAttributeService().saveAttributeType(attributeType, false);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -397,7 +397,7 @@ public class AttributeResource
 			attributeCode.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 			attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getAttributeService().saveAttributeCode(attributeCode);
+			service.getAttributeService().saveAttributeCode(attributeCode, false);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}

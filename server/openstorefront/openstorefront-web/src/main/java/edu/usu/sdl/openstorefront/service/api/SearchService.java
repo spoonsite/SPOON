@@ -55,19 +55,24 @@ public interface SearchService {
 	 *
 	 * @param component
 	 */
-	public void addComponent(Component component);
+	public void addIndex(Component component);
 	
 	/**
 	 *
 	 * @param article
 	 */
-	public void addComponent(Article article);
+	public void addIndex(Article article);
 	
 	/**
 	 *
 	 * @param id
 	 */
-	public void deleteComponent(String id);
+	public void deleteById(String id);
+	
+	/**
+	 *
+	 */
+	public void saveAll();
 	
 	/**
 	 *
