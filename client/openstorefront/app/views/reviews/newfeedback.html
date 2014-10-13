@@ -26,7 +26,8 @@
             <div class="row" style="margin:0px;">
               <label>How long have you used it:&nbsp;</label>
             </div>
-            <button id="userTimeCode" type="button" class="btn btn-default" style="width: 325px;" ng-model="timeCode" data-html="1" ng-options="level.description for level in expertise | orderBy:'sortOrder'" data-animation="am-flip-x" bs-select>
+            <select id="userTimeCode" class="form-control" style="width: 325px;" ng-model="review.timeCode" ng-options="level as level.description for level in expertise | orderBy:'sortOrder'"></select>
+            <!-- <button id="userTimeCode" type="button" class="btn btn-default" style="width: 325px;" ng-model="review.timeCode" data-html="1" ng-options="level as level.description for level in expertise | orderBy:'sortOrder'" data-animation="am-flip-x" bs-select> -->
               Action <span class="caret"></span>
             </button>
           </div>
@@ -52,7 +53,8 @@
             <div class="row" style="margin:0px;">
               <label>Describe Yourself:&nbsp;</label>
             </div>
-            <button type="button" id="userTypeCode" class="btn btn-default" style="width: 325px;" ng-model="role" data-html="1" ng-options="usertype.description for usertype in userTypeCodes"  data-animation="am-flip-x" bs-select>
+            <select id="userTypeCode" class="form-control" style="width: 325px;" ng-model="review.role" ng-options="usertype as usertype.description for usertype in userTypeCodes"></select>
+            <!-- <button type="button" id="userTypeCode" class="btn btn-default" style="width: 325px;" ng-model="review.role" data-html="1" ng-options="usertype as usertype.description for usertype in userTypeCodes"  data-animation="am-flip-x" bs-select> -->
               Action <span class="caret"></span>
             </button>
           </div>
@@ -92,7 +94,7 @@
         </div>    
         <div class="text-center" style="padding-top: 20px;">
           <button type="submit" class="btn btn-primary"><span ng-show="!revs">Save</span><span ng-show="revs && revs.edit">Update</span>&nbsp;Review</button>                  
-          <button type="button" class="btn btn-primary" ng-show="revs" ng-click="revs.edit = !!!revs.edit">Cancel</button>                  
+          <button type="button" class="btn btn-primary" ng-show="revs" ng-click="revs.edit = !!!revs.edit; revs = angular.copy(backup);">Cancel</button>                  
         </div>    
       </div>
     </div>

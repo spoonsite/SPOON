@@ -80,10 +80,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             localCache.save('code', article.articleAttributeCode);
             // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
             url = url + '/landing';
-            window.open(url, 'Landing Page' + id, 'scrollbars');
+            window.open(url, 'Landing_Page' + id, 'scrollbars');
           } else {
             url = url + '/single?id=' + id;
-            window.open(url, 'Component ' + id, 'window settings');
+            window.open(url, 'Component_' + id, 'window settings');
           }
         };
       }
