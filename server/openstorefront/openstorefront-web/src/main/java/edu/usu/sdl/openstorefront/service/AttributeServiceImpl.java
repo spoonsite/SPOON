@@ -545,28 +545,36 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<Article> getArticleLike(AttributeCodePk attributeCodePk)
+	public List<Article> getArticleForCodeLike(AttributeCodePk attributeCodePk)
 	{
 		List<Article> articles = new ArrayList<>();
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
-		String query = "SELECT * FROM AttributeCodePk WHERE attributeType = :type AND attributeCode LIKE '" + attributeCodePk.getAttributeCode() + "%'";
+		AttributeCode attributeCodeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
 
-		Map<String, Object> params = new HashMap<>();
-		params.put("type", attributeCodePk.getAttributeType());
+		attributeCodePkExample.setAttributeType(attributeCodePk.getAttributeType());
+		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 
-		List<AttributeCodePk> attributeCodes = persistenceService.query(query, params);
+		AttributeCode attributeCodeLikeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkLikeExample = new AttributeCodePk();
 
-		for (AttributeCodePk code : attributeCodes) {
-			AttributeCode temp = new AttributeCode();
-			temp.setAttributeCodePk(code);
-			String check = getAttributeService().getArticle(code);
-			if (check != null) {
-				articles.add(Article.toView(persistenceService.queryOneByExample(AttributeCode.class, temp)));
+		// get attribute codes by using LIKE sql construct 'value%'
+		attributeCodePkLikeExample.setAttributeCode(attributeCodePk.getAttributeCode() + "%");
+		attributeCodeLikeExample.setAttributeCodePk(attributeCodePkLikeExample);
+
+		QueryByExample queryByExample = new QueryByExample(attributeCodeExample);
+
+		queryByExample.setLikeExample(attributeCodeLikeExample);
+
+		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+
+		for (AttributeCode code : attributeCodes) {
+			if (code.getArticleFilename() != null) {
+				articles.add(Article.toView(code));
 			}
-			// ? "java.lang.NoSuchMethodException: com.orientechnologies.orient.core.record.impl.ODocument.getDirty()"
 		}
 		return articles;
 	}

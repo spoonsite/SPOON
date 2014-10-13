@@ -88,12 +88,13 @@ public interface AttributeService
 	public String getArticle(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Grabs the article for a give code or type
+	 * Grabs the article for a give code or type Get the article codes only, not
+	 * the article html content
 	 *
 	 * @param attributeCodePk
 	 * @return article data or null for no article.
 	 */
-	public List<Article> getArticleLike(AttributeCodePk attributeCodePk);
+	public List<Article> getArticleForCodeLike(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Saves a new article (This will scub the article data prior to save)
