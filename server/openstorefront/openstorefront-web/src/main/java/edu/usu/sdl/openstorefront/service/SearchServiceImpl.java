@@ -244,7 +244,7 @@ public class SearchServiceImpl
 	@Override
 	public List<ComponentSearchView> getSearchItems(AttributeCodePk pk, FilterQueryParams filter)
 	{
-		List<Article> articles = this.getAttributeService().getArticleForCodeLike(pk);
+		List<Article> articles = this.getAttributeService().getArticlesForCodeLike(pk);
 		Map<String, Component> componentMap = new HashMap<>();//persistenceService.query(query, params);
 		List<Component> components = new ArrayList<>();//persistenceService.query(query, params);
 

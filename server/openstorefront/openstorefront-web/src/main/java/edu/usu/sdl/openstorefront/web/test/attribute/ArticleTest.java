@@ -50,7 +50,7 @@ public class ArticleTest
 		attributeType.setVisibleFlg(true);
 		attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
-		service.getAttributeService().saveAttributeType(attributeType);
+		service.getAttributeService().saveAttributeType(attributeType, false);
 
 		results.append("Save attribute code").append("<br>");
 		AttributeCode attributeCode = new AttributeCode();
@@ -62,7 +62,7 @@ public class ArticleTest
 		attributeCode.setLabel("A");
 		attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
-		service.getAttributeService().saveAttributeCode(attributeCode);
+		service.getAttributeService().saveAttributeCode(attributeCode, false);
 
 		List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
 		results.append("<br>Found Codes (New Type)").append("<br>");

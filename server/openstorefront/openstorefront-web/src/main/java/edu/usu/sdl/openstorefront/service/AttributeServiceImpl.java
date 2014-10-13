@@ -102,11 +102,17 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveAttributeType(AttributeType attributeType, boolean test)
+	public void saveAttributeType(AttributeType attributeType)
 	{
-		getAttributeServicePrivate().saveAttributeType(attributeType, test, true);
+		saveAttributeType(attributeType, true);
+	}
 
-		if (!test) {
+	@Override
+	public void saveAttributeType(AttributeType attributeType, boolean updateIndexes)
+	{
+		getAttributeServicePrivate().performSaveAttributeType(attributeType);
+
+		if (!updateIndexes) {
 			ComponentAttributePk pk = new ComponentAttributePk();
 			pk.setAttributeType(attributeType.getAttributeType());
 			ComponentAttribute example = new ComponentAttribute();
@@ -119,7 +125,7 @@ public class AttributeServiceImpl
 
 			attrs.stream().forEach((attr) -> {
 				AttributeCodePk codePk = new AttributeCodePk();
-				articles.add(getArticleObj(codePk));
+				articles.add(getArticleView(codePk));
 				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
 			});
 			saveArticlesAndComponents(articles, components);
@@ -127,7 +133,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveAttributeType(AttributeType attributeType, boolean test, boolean test2)
+	public void performSaveAttributeType(AttributeType attributeType)
 	{
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
 		if (existing != null) {
@@ -151,11 +157,17 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveAttributeCode(AttributeCode attributeCode, boolean test)
+	public void saveAttributeCode(AttributeCode attributeCode)
 	{
-		getAttributeServicePrivate().saveAttributeCode(attributeCode, test, true);
+		saveAttributeCode(attributeCode, true);
+	}
 
-		if (!test) {
+	@Override
+	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes)
+	{
+		getAttributeServicePrivate().performSaveAttributeCode(attributeCode);
+
+		if (!updateIndexes) {
 			ComponentAttributePk pk = new ComponentAttributePk();
 			pk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 			pk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
@@ -169,7 +181,7 @@ public class AttributeServiceImpl
 
 			attrs.stream().forEach((attr) -> {
 				AttributeCodePk codePk = new AttributeCodePk();
-				articles.add(getArticleObj(codePk));
+				articles.add(getArticleView(codePk));
 				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
 			});
 
@@ -178,7 +190,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveAttributeCode(AttributeCode attributeCode, boolean test, boolean test2)
+	public void performSaveAttributeCode(AttributeCode attributeCode)
 	{
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
@@ -226,14 +238,14 @@ public class AttributeServiceImpl
 	@Override
 	public void saveArticle(AttributeCodePk attributeCodePk, String article)
 	{
-		getAttributeServicePrivate().saveArticle(attributeCodePk, article, true);
+		getAttributeServicePrivate().performSaveArticle(attributeCodePk, article);
 		AttributeCode code = new AttributeCode();
 		code.setAttributeCodePk(attributeCodePk);
 		getSearchService().addIndex(Article.toView(code));
 	}
 
 	@Override
-	public void saveArticle(AttributeCodePk attributeCodePk, String article, boolean test)
+	public void performSaveArticle(AttributeCodePk attributeCodePk, String article)
 	{
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
@@ -267,7 +279,7 @@ public class AttributeServiceImpl
 	@Override
 	public void deleteArticle(AttributeCodePk attributeCodePk)
 	{
-		deleteArticle(attributeCodePk, true);
+		getAttributeServicePrivate().performDeleteArticle(attributeCodePk);
 
 		// currently articles don't have an 'id' so we're indexing them with
 		// a composite ID made from the type and code like so:
@@ -275,7 +287,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void deleteArticle(AttributeCodePk attributeCodePk, boolean test)
+	public void performDeleteArticle(AttributeCodePk attributeCodePk)
 	{
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
@@ -328,13 +340,6 @@ public class AttributeServiceImpl
 
 	@Override
 	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap)
-	{
-		syncAttribute(attributeMap, true);
-		getSearchService().saveAll();
-	}
-
-	@Override
-	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap, boolean test)
 	{
 		AttributeType attributeTypeExample = new AttributeType();
 		List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
@@ -428,7 +433,7 @@ public class AttributeServiceImpl
 			}
 		});
 
-		//TODO: Figure out where to update Solr from this change.
+		getSearchService().saveAll();
 	}
 
 	@Override
@@ -603,7 +608,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<Article> getArticleForCodeLike(AttributeCodePk attributeCodePk)
+	public List<Article> getArticlesForCodeLike(AttributeCodePk attributeCodePk)
 	{
 		List<Article> articles = new ArrayList<>();
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
@@ -649,7 +654,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public Article getArticleObj(AttributeCodePk attributeCodePk)
+	public Article getArticleView(AttributeCodePk attributeCodePk)
 	{
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
