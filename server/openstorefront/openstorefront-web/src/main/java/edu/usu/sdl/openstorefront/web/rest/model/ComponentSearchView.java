@@ -16,8 +16,10 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -79,6 +81,18 @@ public class ComponentSearchView
 		view.setOrganization(component.getOrganization());
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
+
+		ComponentAttribute example = new ComponentAttribute();
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setComponentId(component.getComponentId());
+		example.setComponentAttributePk(pk);
+		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+		List<SearchResultAttribute> addMes = new ArrayList<>();
+		for (ComponentAttribute attribute : attributes) {
+			addMes.add(SearchResultAttribute.toView(attribute));
+		}
+		view.setAttributes(addMes);
+
 		view.setTags(service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId()));
 		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
 		Integer total = 0;
@@ -113,6 +127,12 @@ public class ComponentSearchView
 		view.setLastActivityDts(article.getUpdateDts());
 		view.setOrganization(article.getOrganization());
 		List<ComponentAttribute> attributes = new ArrayList<>();
+		ComponentAttribute attribute = new ComponentAttribute();
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setAttributeCode(article.getAttributeCode());
+		pk.setAttributeType(article.getAttributeType());
+		attribute.setComponentAttributePk(pk);
+		attributes.add(attribute);
 		view.setAttributes(SearchResultAttribute.toViewList(attributes));
 		return view;
 	}

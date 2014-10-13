@@ -110,6 +110,7 @@ public interface UserService
 	 * @param watch
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public UserWatch saveWatch(UserWatch watch);
 
 	/**
@@ -118,6 +119,7 @@ public interface UserService
 	 * @param watchId
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public Boolean deleteWatch(String watchId);
 
 	/**
@@ -144,15 +146,26 @@ public interface UserService
 	public List<UserProfile> getAllProfiles();
 
 	/**
-	 * Save any changes to the user profile
+	 * Save any changes to the user profile (This will refresh the session) This
+	 * is the prefered call
 	 *
 	 * @param user
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public UserProfile saveUserProfile(UserProfile user);
 
 	/**
-	 * Save any changes to the user profile
+	 *
+	 * @param user
+	 * @param refreshSession
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public UserProfile saveUserProfile(UserProfile user, boolean refreshSession);
+
+	/**
+	 * Deletes the user profile
 	 *
 	 * @param userId
 	 * @return
@@ -164,6 +177,7 @@ public interface UserService
 	 * @param tracking
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public UserTracking saveUserTracking(UserTracking tracking);
 
 	/**
