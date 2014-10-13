@@ -545,30 +545,37 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<Article> getArticleLike(AttributeCodePk attributeCodePk)
+	public List<Article> getArticleForCodeLike(AttributeCodePk attributeCodePk)
 	{
 		List<Article> articles = new ArrayList<>();
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
-		//String query = "SELECT * FROM AttributeCodePk WHERE attributeType = :type AND attributeCode = :code ";
-		// SELECT * FROM AttributeCodePk WHERE attributeType = 'DI2E-SVCV4-A' AND attributeCode = '1.2.1'
-		String query = "SELECT * FROM AttributeCodePk WHERE attributeType = :type AND attributeCode LIKE ':code%'";
-		Map<String, Object> params = new HashMap<>();
-		params.put("type", attributeCodePk.getAttributeType());
-		params.put("code", attributeCodePk.getAttributeCode());
+		AttributeCode attributeCodeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
 
-//		AttributeCode attributeCodeExample = new AttributeCode();
-//		attributeCodeExample.setAttributeCodePk(attributeCodePk);
-//		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, attributeCodeExample);
-		List<AttributeCode> attributeCodes = persistenceService.query(query, params);
+		attributeCodePkExample.setAttributeType(attributeCodePk.getAttributeType());
+		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 
-		//List<AttributeCodePk> pks = persistenceService.query(query, params);
+		AttributeCode attributeCodeLikeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkLikeExample = new AttributeCodePk();
+
+		// get attribute codes by using LIKE sql construct 'value%'
+		attributeCodePkLikeExample.setAttributeCode(attributeCodePk.getAttributeCode() + "%");
+		attributeCodeLikeExample.setAttributeCodePk(attributeCodePkLikeExample);
+
+		QueryByExample queryByExample = new QueryByExample(attributeCodeExample);
+
+		queryByExample.setLikeExample(attributeCodeLikeExample);
+
+		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+
 		for (AttributeCode code : attributeCodes) {
-			articles.add(Article.toView(code));
+			if (code.getArticleFilename() != null) {
+				articles.add(Article.toView(code));
+			}
 		}
-		//return new ArrayList<Article>();
 		return articles;
 	}
 }
