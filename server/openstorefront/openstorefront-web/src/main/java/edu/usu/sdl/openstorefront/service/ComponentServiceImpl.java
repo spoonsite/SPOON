@@ -1089,6 +1089,8 @@ public class ComponentServiceImpl
 		}
 		Component component = persistenceService.findById(Component.class, componentId);
 		persistenceService.delete(component);
+
+		getUserService().removeAllWatchesForComponent(componentId);
 	}
 
 	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId)

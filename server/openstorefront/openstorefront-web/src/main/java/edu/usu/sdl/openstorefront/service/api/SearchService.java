@@ -21,54 +21,56 @@ import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
-import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentResultsModel;
 import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public interface SearchService {
+public interface SearchService
+{
 
-    /**
-     * Find Recently Added
-     *
-     * @return
-     */
-    public List<ComponentSearchView> getAll();
+	/**
+	 * Find Recently Added
+	 *
+	 * @return
+	 */
+	public List<ComponentSearchView> getAll();
 
-    /**
-     *
-     * @param query
-     * @return
-     */
-    public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter);
+	/**
+	 *
+	 * @param query
+	 * @param filter
+	 * @return
+	 */
+	public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter);
 
-    /**
-     *
-     * @param pk
-     * @return
-     */
-    public List<ComponentSearchView> getSearchItems(AttributeCodePk pk, FilterQueryParams filter);
-	
+	/**
+	 *
+	 * @param pk
+	 * @param filter
+	 * @return
+	 */
+	public List<ComponentSearchView> getSearchItems(AttributeCodePk pk, FilterQueryParams filter);
+
 	/**
 	 *
 	 * @param component
 	 */
 	public void addComponent(Component component);
-	
+
 	/**
 	 *
 	 * @param article
 	 */
-	public void addComponent(Article article);
-	
+	public void addArticle(Article article);
+
 	/**
 	 *
-	 * @param id
+	 * @param id (Component Id or AttributeCodePK key)
 	 */
-	public void deleteComponent(String id);
-	
+	public void deleteIndex(String id);
+
 	/**
 	 *
 	 */

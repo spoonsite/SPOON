@@ -42,6 +42,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 
 /**
+ * Handles Searching the data set and sync the indexes
  *
  * @author gbagley
  * @author dshurleff
@@ -95,14 +96,14 @@ public class SearchServiceImpl
 		mySetFields[4] = "content_raw";
 		mySetFields[5] = "isComponentSearch_b_is";
 
-		String myQueryString = null;
+		String myQueryString;
 
 		// If incoming query string is blank, default to solar *:* for the full query
 		if (mySolrModel.getQueryString() != null && !mySolrModel.getQueryString().trim().isEmpty()) {
 			myQueryString = myEqualNotEqual + mySetFields[1] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[2] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[3] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[4] + ":" + mySolrModel.getQueryString();
 		} else {
 			myQueryString = "*:*";
-		};
+		}
 
 		// execute the searchComponent method and bring back from solr a list array
 		List<String> resultsList = null;
@@ -115,7 +116,7 @@ public class SearchServiceImpl
 		}
 		List<ComponentSearchView> views = new ArrayList<>();
 		for (String componentId : resultsList) {
-			Component temp = this.getPersistenceService().findById(Component.class, componentId);
+			Component temp = persistenceService.findById(Component.class, componentId);
 			if (temp != null) {
 				views.add(ComponentSearchView.toView(temp));
 			}
@@ -170,10 +171,9 @@ public class SearchServiceImpl
 			codePk.setAttributeType(pk.getAttributeType());
 			AttributeCode code = this.getPersistenceService().findById(AttributeCode.class, codePk);
 			AttributeType type = this.getPersistenceService().findById(AttributeType.class, pk.getAttributeType());
-			if (pk != null) {
-				attributeList = attributeList + pk.getAttributeCode() + ",";
-				attributeList = attributeList + pk.getAttributeType() + ",";
-			}
+			attributeList = attributeList + pk.getAttributeCode() + ",";
+			attributeList = attributeList + pk.getAttributeType() + ",";
+
 			if (code != null && type != null) {
 				attributeList = attributeList + code.getLabel() + ",";
 				if (!code.getDescription().equals("")) {
@@ -191,16 +191,14 @@ public class SearchServiceImpl
 
 		try {
 			solrService.addBean(solrDocModel);
-			//results.append("Add: ").append(updateResponse.toString());
 			solrService.commit();
 		} catch (IOException | SolrServerException ex) {
-			System.out.println("we have problems" + ex.toString());
-			//log.log(Level.SEVERE, "Failed", ex);
+			log.log(Level.SEVERE, "Failed Adding Component", ex);
 		}
 	}
 
 	@Override
-	public void addComponent(Article article)
+	public void addArticle(Article article)
 	{
 
 		// initialize solr server
@@ -236,11 +234,9 @@ public class SearchServiceImpl
 
 		try {
 			solrService.addBean(solrDocModel);
-			//results.append("Add: ").append(updateResponse.toString());
 			solrService.commit();
 		} catch (IOException | SolrServerException ex) {
-			System.out.println("we have problems" + ex.toString());
-			//log.log(Level.SEVERE, "Failed", ex);
+			log.log(Level.SEVERE, "Failed Adding Article", ex);
 		}
 	}
 
@@ -277,18 +273,16 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void deleteComponent(String id)
+	public void deleteIndex(String id)
 	{
 		// initialize solr server
 		SolrServer solrService = SolrManager.getServer();
 
 		try {
 			solrService.deleteById(id);
-			//results.append("Delete: ").append(updateResponse.toString());
 			solrService.commit();
 		} catch (IOException | SolrServerException ex) {
-			System.out.println("we have problems" + ex.toString());
-			//log.log(Level.SEVERE, "Failed", ex);
+			log.log(Level.SEVERE, "Failed Deleting Index", ex);
 		}
 	}
 
@@ -298,10 +292,8 @@ public class SearchServiceImpl
 		SolrServer solrService = SolrManager.getServer();
 		try {
 			solrService.deleteByQuery("*:*");// CAUTION: deletes everything!
-
 		} catch (SolrServerException | IOException ex) {
-			Logger.getLogger(SearchServiceImpl.class
-					.getName()).log(Level.SEVERE, null, ex);
+			log.log(Level.SEVERE, null, ex);
 		}
 	}
 }
