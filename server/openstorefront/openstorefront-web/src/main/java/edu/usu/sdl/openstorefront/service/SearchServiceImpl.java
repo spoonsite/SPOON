@@ -138,7 +138,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void addComponent(Component component)
+	public void addIndex(Component component)
 	{
 
 		// initialize solr server
@@ -201,7 +201,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void addComponent(Article article)
+	public void addIndex(Article article)
 	{
 
 		// initialize solr server
@@ -296,7 +296,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void deleteComponent(String id)
+	public void deleteById(String id)
 	{
 		// initialize solr server
 		SolrServer solrService = SolrManager.getServer();
@@ -322,5 +322,22 @@ public class SearchServiceImpl
 			Logger.getLogger(SearchServiceImpl.class
 					.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+
+	@Override
+	public void saveAll()
+	{
+		Component temp = new Component();
+		temp.setActiveStatus(Component.ACTIVE_STATUS);
+		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(temp));
+		List<Article> articles = getAttributeService().getArticles();
+		
+		components.stream().forEach((component) -> {
+			getSearchService().addIndex(component);
+		});
+		articles.stream().forEach((article) -> {
+			getSearchService().addIndex(article);
+		});
+		
 	}
 }

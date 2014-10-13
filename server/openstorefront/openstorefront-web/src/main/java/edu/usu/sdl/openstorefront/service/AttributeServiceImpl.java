@@ -27,6 +27,9 @@ import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -46,6 +49,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -84,7 +88,8 @@ public class AttributeServiceImpl
 		Element element = OSFCacheManager.getAttributeCache().get(type);
 		if (element != null) {
 			return (List<AttributeCode>) element.getObjectValue();
-		} else {
+		}
+		else {
 
 			AttributeCode attributeCodeExample = new AttributeCode();
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
@@ -99,14 +104,32 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveAttributeType(AttributeType attributeType)
+	public void saveAttributeType(AttributeType attributeType, boolean test)
 	{
-		getAttributeServicePrivate().saveAttributeType(attributeType, true);
-		//TODO: figure out where to update SOlr from this change.
+		getAttributeServicePrivate().saveAttributeType(attributeType, test, true);
+
+		if (!test) {
+			ComponentAttributePk pk = new ComponentAttributePk();
+			pk.setAttributeType(attributeType.getAttributeType());
+			ComponentAttribute example = new ComponentAttribute();
+			example.setComponentAttributePk(pk);
+
+			List<ComponentAttribute> attrs = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+			
+			List<Article> articles = new ArrayList<>();
+			List<Component> components = new ArrayList<>();
+			
+			attrs.stream().forEach((attr) -> {
+				AttributeCodePk codePk = new AttributeCodePk();
+				articles.add(getArticleObj(codePk));
+				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
+			});
+			saveArticlesAndComponents(articles, components);
+		}
 	}
 
 	@Override
-	public void saveAttributeType(AttributeType attributeType, boolean test)
+	public void saveAttributeType(AttributeType attributeType, boolean test, boolean test2)
 	{
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
 		if (existing != null) {
@@ -121,7 +144,8 @@ public class AttributeServiceImpl
 			existing.setRequiredFlg(attributeType.getRequiredFlg());
 			existing.setVisibleFlg(attributeType.getVisibleFlg());
 			persistenceService.persist(existing);
-		} else {
+		}
+		else {
 			attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			attributeType.setUpdateDts(TimeUtil.currentDate());
 			attributeType.setCreateDts(TimeUtil.currentDate());
@@ -130,14 +154,34 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveAttributeCode(AttributeCode attributeCode)
+	public void saveAttributeCode(AttributeCode attributeCode, boolean test)
 	{
-		getAttributeServicePrivate().saveAttributeCode(attributeCode, true);
-		//TODO: figure out where to add changes to SOLR from this change.
+		getAttributeServicePrivate().saveAttributeCode(attributeCode, test, true);
+
+		if (!test) {
+			ComponentAttributePk pk = new ComponentAttributePk();
+			pk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+			pk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+			ComponentAttribute example = new ComponentAttribute();
+			example.setComponentAttributePk(pk);
+
+			List<ComponentAttribute> attrs = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+
+			List<Article> articles = new ArrayList<>();
+			List<Component> components = new ArrayList<>();
+
+			attrs.stream().forEach((attr) -> {
+				AttributeCodePk codePk = new AttributeCodePk();
+				articles.add(getArticleObj(codePk));
+				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
+			});
+
+			saveArticlesAndComponents(articles, components);
+		}
 	}
 
 	@Override
-	public void saveAttributeCode(AttributeCode attributeCode, boolean test)
+	public void saveAttributeCode(AttributeCode attributeCode, boolean test, boolean test2)
 	{
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
@@ -150,7 +194,8 @@ public class AttributeServiceImpl
 			existing.setDetailUrl(attributeCode.getDetailUrl());
 			existing.setLabel(attributeCode.getLabel());
 			persistenceService.persist(existing);
-		} else {
+		}
+		else {
 			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
 			attributeCode.setCreateDts(TimeUtil.currentDate());
@@ -174,7 +219,8 @@ public class AttributeServiceImpl
 				try {
 					byte data[] = Files.readAllBytes(Paths.get(articleDir.getPath() + "/" + attributeCode.getArticleFilename()));
 					article = new String(data);
-				} catch (IOException e) {
+				}
+				catch (IOException e) {
 					throw new OpenStorefrontRuntimeException("Unable to find article for type: " + attributeCodePk.getAttributeType() + " code: " + attributeCodePk.getAttributeCode(), "Contact system admin to confirm file exists and is not corrupt.", e);
 				}
 			}
@@ -188,7 +234,7 @@ public class AttributeServiceImpl
 		getAttributeServicePrivate().saveArticle(attributeCodePk, article, true);
 		AttributeCode code = new AttributeCode();
 		code.setAttributeCodePk(attributeCodePk);
-		getSearchService().addComponent(Article.toView(code));
+		getSearchService().addIndex(Article.toView(code));
 	}
 
 	@Override
@@ -215,16 +261,28 @@ public class AttributeServiceImpl
 				attributeCode.setUpdateDts(TimeUtil.currentDate());
 				attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 				persistenceService.persist(attributeCode);
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				throw new OpenStorefrontRuntimeException("Unable to save article.", "Contact system admin.  Check permissions on the directory and make sure device has enough space.");
 			}
-		} else {
+		}
+		else {
 			throw new OpenStorefrontRuntimeException("Unable to find attribute for type: " + attributeCodePk.getAttributeType() + " code: " + attributeCodePk.getAttributeCode(), "Add attribute first before posting article");
 		}
 	}
 
 	@Override
 	public void deleteArticle(AttributeCodePk attributeCodePk)
+	{
+		deleteArticle(attributeCodePk, true);
+		
+		// currently articles don't have an 'id' so we're indexing them with
+		// a composite ID made from the type and code like so:
+		getSearchService().deleteById(attributeCodePk.getAttributeType() + "#" + attributeCodePk.getAttributeCode());
+	}
+
+	@Override
+	public void deleteArticle(AttributeCodePk attributeCodePk, boolean test)
 	{
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
@@ -238,7 +296,7 @@ public class AttributeServiceImpl
 				attributeCode.setArticleFilename(null);
 			}
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
-			saveAttributeCode(attributeCode);
+			saveAttributeCode(attributeCode, false);
 		}
 	}
 
@@ -278,6 +336,13 @@ public class AttributeServiceImpl
 	@Override
 	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap)
 	{
+		syncAttribute(attributeMap, true);
+		getSearchService().saveAll();
+	}
+	
+	@Override
+	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap, boolean test)
+	{
 		AttributeType attributeTypeExample = new AttributeType();
 		List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
 		Map<String, AttributeType> existingAttributeMap = new HashMap<>();
@@ -305,12 +370,13 @@ public class AttributeServiceImpl
 						existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						saveAttributeType(existing);
-					} else {
+						saveAttributeType(existing, true);
+					}
+					else {
 						attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						attributeType.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						attributeType.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						saveAttributeType(attributeType);
+						saveAttributeType(attributeType, true);
 					}
 
 					List<AttributeCode> existingAttributeCodes = findCodesForType(attributeType.getAttributeType());
@@ -338,19 +404,22 @@ public class AttributeServiceImpl
 										existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 										existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-										saveAttributeCode(existingCode);
+										saveAttributeCode(existingCode, true);
 									}
-								} else {
+								}
+								else {
 									attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 									attributeCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 									attributeCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-									saveAttributeCode(attributeCode);
+									saveAttributeCode(attributeCode, true);
 								}
 								newCodeSet.add(attributeCode.getAttributeCodePk().toKey());
-							} else {
+							}
+							else {
 								log.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add  Attribute Code:  {0} Validation Issues:\n{1}", new Object[]{attributeCode.getAttributeCodePk().toKey(), validationResult.toString()}));
 							}
-						} catch (Exception e) {
+						}
+						catch (Exception e) {
 							log.log(Level.SEVERE, "Unable to save attribute code: " + attributeCode.getAttributeCodePk().toKey(), e);
 						}
 					}
@@ -362,10 +431,12 @@ public class AttributeServiceImpl
 							removeAttributeCode(attributeCode.getAttributeCodePk());
 						}
 					});
-				} else {
+				}
+				else {
 					log.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Type:  {0} Validation Issues:\n{1}", new Object[]{attributeType.getAttributeType(), validationResult.toString()}));
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
 			}
 		});
@@ -395,7 +466,8 @@ public class AttributeServiceImpl
 		Element element = OSFCacheManager.getAttributeTypeCache().get(type);
 		if (element != null) {
 			attributeType = (AttributeType) element.getObjectValue();
-		} else {
+		}
+		else {
 			AttributeType attributeTypeExample = new AttributeType();
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
@@ -425,7 +497,8 @@ public class AttributeServiceImpl
 			query = "select from AttributeCode where activeStatus = :activeStatusParam "
 					+ " and articleFilename is not null "
 					+ " order by updateDts DESC LIMIT " + maxResults;
-		} else {
+		}
+		else {
 			query = "select from AttributeCode where activeStatus = :activeStatusParam "
 					+ " and articleFilename is not null "
 					+ " order by updateDts DESC";
@@ -454,7 +527,8 @@ public class AttributeServiceImpl
 					if (rootCode.equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
 						architecture.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 						architecture.setDescription(attributeCode.getDescription());
-					} else {
+					}
+					else {
 						String codeTokens[] = attributeCode.getAttributeCodePk().getAttributeCode().split(Pattern.quote("."));
 						Architecture rootArchtecture = architecture;
 						StringBuilder codeKey = new StringBuilder();
@@ -499,10 +573,12 @@ public class AttributeServiceImpl
 					}
 				}
 
-			} else {
+			}
+			else {
 				throw new OpenStorefrontRuntimeException("Attribute Type is not an architecture: " + attributeType, "Make sure type is an architecture.");
 			}
-		} else {
+		}
+		else {
 			throw new OpenStorefrontRuntimeException("Unable to find attribute type: " + attributeType, "Check type code.");
 		}
 		sortArchitecture(architecture.getChildren());
@@ -577,5 +653,39 @@ public class AttributeServiceImpl
 			}
 		}
 		return articles;
+	}
+
+	@Override
+	public List<Article> getArticles()
+	{
+		List<Article> list = new ArrayList<>();
+		List<AttributeCode> codes = this.getAttributeService().findRecentlyAddedArticles(null);
+		codes.stream().forEach((code) -> {
+			list.add(Article.toView(code));
+		});
+		return list;
+	}
+
+	@Override
+	public Article getArticleObj(AttributeCodePk attributeCodePk)
+	{
+		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
+		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
+		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
+
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		Article article = Article.toView(attributeCode);
+		return article;
+	}
+
+	@Override
+	public void saveArticlesAndComponents(List<Article> articles, List<Component> components)
+	{
+		components.stream().forEach((component) -> {
+			getSearchService().addIndex(component);
+		});
+		articles.stream().forEach((article) -> {
+			getSearchService().addIndex(article);
+		});
 	}
 }

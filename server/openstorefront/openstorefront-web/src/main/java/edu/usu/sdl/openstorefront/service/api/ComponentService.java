@@ -106,7 +106,6 @@ public interface ComponentService
 	 *
 	 * @param componentId
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deactivateComponent(String componentId);
 
 	/**

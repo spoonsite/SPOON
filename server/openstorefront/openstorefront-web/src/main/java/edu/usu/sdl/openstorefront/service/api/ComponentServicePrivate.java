@@ -27,7 +27,6 @@ import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
  */
 public interface ComponentServicePrivate
 {
-
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity);
 
@@ -36,4 +35,8 @@ public interface ComponentServicePrivate
 
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public RequiredForComponent saveComponent(RequiredForComponent component, boolean test);
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deactivateComponent(String componentId, boolean test);
+
 }

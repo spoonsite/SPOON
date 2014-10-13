@@ -21,6 +21,8 @@ import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -36,16 +38,31 @@ public interface AttributeServicePrivate
 	 * Saves type
 	 *
 	 * @param attributeType
+	 * @param test
+	 * @param test2
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveAttributeType(AttributeType attributeType, boolean test);
+	public void saveAttributeType(AttributeType attributeType, boolean test, boolean test2);
 
 	/**
 	 * Saves code
 	 *
 	 * @param attributeCode
+	 * @param test
+	 * @param test2
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveAttributeCode(AttributeCode attributeCode, boolean test);
+	public void saveAttributeCode(AttributeCode attributeCode, boolean test, boolean test2);
 	
+	/**
+	 *
+	 * @param attributeMap
+	 * @param test
+	 */
+	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap, boolean test);
+	
+	
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteArticle(AttributeCodePk attributeCodePk, boolean test);
+
 }
