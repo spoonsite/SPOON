@@ -70,6 +70,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
   $scope.$on('$RESETREVIEWEDIT', function (event, review) {
     $scope.review.timeCode = null;
     $scope.review.role = null;
+    $scope.rating = 0;
     $scope.review = angular.copy(review);
     $scope.backup = angular.copy(review);
     setupReview();
@@ -97,11 +98,11 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
     var errorObjt = {};
     errorObjt.errors = {};
     errorObjt.errors.entry = [];
-    if (role && !role.code) {
+    if (review.role && !review.role.code) {
       error = true;
       errorObjt.errors.entry.push({'key': 'userTypeCode', 'value': 'You must select a user role.'})
     } else {
-      body.userTypeCode = role.code;
+      body.userTypeCode = review.role.code;
     }
     if (!review.comment) {
       error = true;
@@ -121,7 +122,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
     } else {
       body.title = review.title;
     }
-    body.rating = rating? rating: 0;
+    body.rating = $scope.rating? $scope.rating: 0;
     if (!review.lastUsed) {
       error = true;
       errorObjt.errors.entry.push({'key': 'lastUsed', 'value': 'You must included the last time you used this component.'});
@@ -135,11 +136,11 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
     } else {
       body.organization = review.organization;
     }
-    if (!timeCode) {
+    if (!review.timeCode) {
       error = true;
       errorObjt.errors.entry.push({'key': 'userTimeCode', 'value': 'You must included your how long you\'ve used this component.'});
     } else {
-      body.userTimeCode = timeCode.code;
+      body.userTimeCode = review.timeCode.code;
     }
     // console.log('body', body);
     event.preventDefault();
