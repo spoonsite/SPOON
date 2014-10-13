@@ -15,7 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.test.attribute;
 
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import java.util.List;
 
 /**
  *
@@ -25,55 +30,61 @@ public class ArticleTest
 		extends BaseTestCase
 {
 
+	public ArticleTest()
+	{
+		this.description = "Article Test";
+	}
+
 	@Override
 	protected void runInternalTest()
 	{
-		//FIXME: finish
 
-//		results.append("<br>Save attribute type").append("<br>");
-//		AttributeType attributeType = new AttributeType();
-//		attributeType.setAttributeType("TEST-CASE-TMP");
-//		attributeType.setDescription("This is a temp test attribute");
-//		attributeType.setAllowMutlipleFlg(true);
-//		attributeType.setArchitectureFlg(false);
-//		attributeType.setImportantFlg(true);
-//		attributeType.setRequiredFlg(false);
-//		attributeType.setVisibleFlg(true);
-//		attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
-//		attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
-//		service.getAttributeService().saveAttributeType(attributeType);
-//
-//		results.append("Save attribute code").append("<br>");
-//		AttributeCode attributeCode = new AttributeCode();
-//		AttributeCodePk attributeCodePk = new AttributeCodePk();
-//		attributeCodePk.setAttributeCode("A");
-//		attributeCodePk.setAttributeType(attributeType.getAttributeType());
-//		attributeCode.setAttributeCodePk(attributeCodePk);
-//		attributeCode.setDescription("Test");
-//		attributeCode.setLabel("A");
-//		attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
-//		attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
-//		service.getAttributeService().saveAttributeCode(attributeCode);
-//
-//		List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
-//		results.append("<br>Found Codes (New Type)").append("<br>");
-//		attributeCodes.forEach(code -> {
-//			results.append(code.getAttributeCodePk().getAttributeType()).append(" - ").append(code.getAttributeCodePk().getAttributeCode());
-//		});
-//
-//		results.append("Save Article").append("<br>");
-//		AttributeCodePk attributeCodePk = new AttributeCodePk();
-//		attributeCodePk.setAttributeCode("Test");
-//
-//		service.getAttributeService().saveArticle(, TEST_USER);
-//
-//		results.append("Get Article").append("<br>");
-//
-//		results.append("Remove Article").append("<br>");
-//
-//		results.append("<br>Remove attribute").append("<br>");
-//		service.getAttributeService().removeAttributeCode(attributeCodePk);
-//		service.getAttributeService().removeAttributeType(attributeType.getAttributeType());
+		results.append("<br>Save attribute type").append("<br>");
+		AttributeType attributeType = new AttributeType();
+		attributeType.setAttributeType("TEST-CASE-TMP");
+		attributeType.setDescription("This is a temp test attribute");
+		attributeType.setAllowMutlipleFlg(true);
+		attributeType.setArchitectureFlg(false);
+		attributeType.setImportantFlg(true);
+		attributeType.setRequiredFlg(false);
+		attributeType.setVisibleFlg(true);
+		attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
+		attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
+		service.getAttributeService().saveAttributeType(attributeType, false);
+
+		results.append("Save attribute code").append("<br>");
+		AttributeCode attributeCode = new AttributeCode();
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode("A");
+		attributeCodePk.setAttributeType(attributeType.getAttributeType());
+		attributeCode.setAttributeCodePk(attributeCodePk);
+		attributeCode.setDescription("Test");
+		attributeCode.setLabel("A");
+		attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
+		attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
+		service.getAttributeService().saveAttributeCode(attributeCode, false);
+
+		List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
+		results.append("<br>Found Codes (New Type)").append("<br>");
+		attributeCodes.forEach(code -> {
+			results.append(code.getAttributeCodePk().getAttributeType()).append(" - ").append(code.getAttributeCodePk().getAttributeCode());
+		});
+
+		results.append("Save Article").append("<br>");
+		service.getAttributeService().saveArticle(attributeCodePk, "This is an article.");
+
+		results.append("Get Article").append("<br>");
+		String content = service.getAttributeService().getArticle(attributeCodePk);
+		if ("This is an article.".equals(content) == false) {
+			failureReason.append("Article content doesn't match");
+		}
+
+		results.append("Remove Article").append("<br>");
+		service.getAttributeService().deleteArticle(attributeCodePk);
+
+		results.append("<br>Remove attribute").append("<br>");
+		service.getAttributeService().removeAttributeCode(attributeCodePk);
+		service.getAttributeService().removeAttributeType(attributeType.getAttributeType());
 	}
 
 }

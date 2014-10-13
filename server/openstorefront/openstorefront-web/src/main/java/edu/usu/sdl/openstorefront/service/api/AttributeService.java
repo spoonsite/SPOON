@@ -67,20 +67,34 @@ public interface AttributeService
 	public AttributeType findType(String type);
 
 	/**
+	 * Saves type and Updates Indexes
+	 *
+	 * @param attributeType
+	 */
+	public void saveAttributeType(AttributeType attributeType);
+
+	/**
 	 * Saves type
 	 *
 	 * @param attributeType
-	 * @param test
+	 * @param updateIndexes (For Searching)
 	 */
-	public void saveAttributeType(AttributeType attributeType, boolean test);
+	public void saveAttributeType(AttributeType attributeType, boolean updateIndexes);
 
 	/**
 	 * Saves code
 	 *
 	 * @param attributeCode
-	 * @param test
 	 */
-	public void saveAttributeCode(AttributeCode attributeCode, boolean test);
+	public void saveAttributeCode(AttributeCode attributeCode);
+
+	/**
+	 * Saves code and Updates Indexes
+	 *
+	 * @param attributeCode
+	 * @param updateIndexes (For Searching)
+	 */
+	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
 
 	/**
 	 * Grabs the article for a give code or type
@@ -91,21 +105,22 @@ public interface AttributeService
 	public String getArticle(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Grabs the article for a give code or type
-	 *
-	 * @param attributeCodePk
-	 * @return article data or null for no article.
-	 */
-	public Article getArticleObj(AttributeCodePk attributeCodePk);
-
-	/**
 	 * Grabs the article for a give code or type Get the article codes only, not
 	 * the article html content
 	 *
 	 * @param attributeCodePk
 	 * @return article data or null for no article.
 	 */
-	public List<Article> getArticleForCodeLike(AttributeCodePk attributeCodePk);
+	public Article getArticleView(AttributeCodePk attributeCodePk);
+
+	/**
+	 * Grabs the article for a give code or type. Get the article codes only,
+	 * not the article html content
+	 *
+	 * @param attributeCodePk
+	 * @return article data or null for no article.
+	 */
+	public List<Article> getArticlesForCodeLike(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Saves a new article (This will scub the article data prior to save)

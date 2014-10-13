@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
@@ -21,48 +20,25 @@ import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import java.util.List;
-import java.util.Map;
 
 /**
+ * Used to jump into a transaction when needed.
  *
  * @author jlaw
  */
 public interface AttributeServicePrivate
 {
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveArticle(AttributeCodePk attributeCodePk, String article, boolean test);
-	
-	
-	/**
-	 * Saves type
-	 *
-	 * @param attributeType
-	 * @param test
-	 * @param test2
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveAttributeType(AttributeType attributeType, boolean test, boolean test2);
 
-	/**
-	 * Saves code
-	 *
-	 * @param attributeCode
-	 * @param test
-	 * @param test2
-	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveAttributeCode(AttributeCode attributeCode, boolean test, boolean test2);
-	
-	/**
-	 *
-	 * @param attributeMap
-	 * @param test
-	 */
-	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap, boolean test);
-	
-	
+	public void performSaveArticle(AttributeCodePk attributeCodePk, String article);
+
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void deleteArticle(AttributeCodePk attributeCodePk, boolean test);
+	public void performSaveAttributeType(AttributeType attributeType);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void performSaveAttributeCode(AttributeCode attributeCode);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void performDeleteArticle(AttributeCodePk attributeCodePk);
 
 }
