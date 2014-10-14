@@ -444,12 +444,6 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     var cachedComponents  = null;
     var name;
 
-
-    console.log('type', type);
-    console.log('key', key);
-    console.log('architecture', architecture);
-    
-
     // use this code if you want the client to handle the search.    
     // if (type && key) {
     //   type  = type.toLowerCase();
