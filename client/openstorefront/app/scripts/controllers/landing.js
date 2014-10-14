@@ -59,6 +59,7 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
   }, 1000); //
 
   $scope.$on('$TRIGGERLANDING', function(event, data) {
+    $scope.data = [];
     var type;
     var code;
     if (!data) {

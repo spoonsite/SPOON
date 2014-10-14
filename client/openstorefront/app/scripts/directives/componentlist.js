@@ -159,7 +159,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         return null;
       };
 
-
+      console.log('Added a new component list');
+      
 
       /***************************************************************
       * Here we handle attribute set ups. If an attribute is set, it will most likely
@@ -169,6 +170,9 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
         scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
         var architecture = null;
+
+        console.log('We updated the data');
+        
 
         var filter = _.find(scope.filters, {'type': attrs.type});
         // console.log('filter', filter);
