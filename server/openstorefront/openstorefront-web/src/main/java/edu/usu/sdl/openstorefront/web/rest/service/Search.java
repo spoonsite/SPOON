@@ -80,11 +80,9 @@ public class Search
 		return Response.noContent().build();
 	}
 
-	
 	@POST
 	@RequireAdmin
 	@APIDescription("Removes all indexes from Solr and then re-indexes current components and articles")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/resetSolr")
 	public Response resetSolr()
 	{
