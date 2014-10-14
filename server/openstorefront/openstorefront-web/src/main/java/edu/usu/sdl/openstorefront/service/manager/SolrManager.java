@@ -20,7 +20,6 @@ import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -46,7 +45,8 @@ public class SolrManager
 		String url = PropertiesManager.getValue(PropertiesManager.KEY_SOLR_URL);
 		if (StringUtils.isNotBlank(url)) {
 			log.log(Level.INFO, MessageFormat.format("Connecting to Solr at {0}", url));
-			solrServer = new HttpSolrServer(url, new DefaultHttpClient());
+			solrServer = new HttpSolrServer(url);
+
 		} else {
 			log.log(Level.WARNING, "Solr property (" + PropertiesManager.KEY_SOLR_URL + ") is not set in openstorefront.properties. Search service unavailible. Using Mock");
 			solrServer = new SolrServer()
