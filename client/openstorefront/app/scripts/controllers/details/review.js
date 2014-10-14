@@ -9,19 +9,21 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
   var setupReview = function() {
     $scope.rating = $scope.review.rating;
     resetVars().then(function() {
-      if ($scope.review.usedTimeCode) {
-        $scope.review.timeCode = _.find($scope.expertise, {'description': $scope.review.usedTimeCode});
-      } else {
-        $scope.review.timeCode = $scope.expertise[0];
-      }
-      if ($scope.review.userType) {
-        $scope.review.role = _.find($scope.userTypeCodes, {'description': $scope.review.userType});
-      } else {
-        $scope.review.role = _.find($scope.userTypeCodes, {'code': $scope.user.info.userTypeCode});
-      }
-      if (!$scope.review.organization) {
-        $scope.review.organization = $scope.user.info.organization;
-      }
+      $timeout(function() {
+        if ($scope.review.usedTimeCode) {
+          $scope.review.timeCode = _.find($scope.expertise, {'description': $scope.review.usedTimeCode});
+        } else {
+          $scope.review.timeCode = $scope.expertise[0];
+        }
+        if ($scope.review.userType) {
+          $scope.review.role = _.find($scope.userTypeCodes, {'description': $scope.review.userType});
+        } else {
+          $scope.review.role = _.find($scope.userTypeCodes, {'code': $scope.user.info.userTypeCode});
+        }
+        if (!$scope.review.organization) {
+          $scope.review.organization = $scope.user.info.organization;
+        }
+      });
     });
   }
 
