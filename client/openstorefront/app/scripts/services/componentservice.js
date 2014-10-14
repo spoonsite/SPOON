@@ -495,7 +495,11 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
 
     // use this code if you want solr to handle the search.    
     if (type && key) {
-      name = type + key;
+      if (type !== 'search') {
+        name = key.type + key.key;
+      } else {
+        name = type + key;
+      }
       // if they don't give me an ID I send them back the whole list.
       value = checkExpire(name, minute * 10);
       cachedComponents = checkExpire(name, minute * 1440); // a day
