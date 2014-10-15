@@ -16,7 +16,7 @@ if (openAM) {
     browser.get(theSite, 3500);
     browser.driver.sleep(1000);
     browser.driver.findElement(by.id('IDToken1')).sendKeys('amadmin'); // (amadmin) Set to valid account
-    browser.driver.findElement(by.id('IDToken2')).sendKeys('password!', protractor.Key.ENTER);
+    browser.driver.findElement(by.id('IDToken2')).sendKeys('password', protractor.Key.ENTER);
     browser.driver.sleep(1000);
 }
 
