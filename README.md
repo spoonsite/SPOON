@@ -277,7 +277,8 @@ To do this:
 Running
 =======
 
-Run wildfly in standalone mode 
+Run in Tomcat 7
+Note: it requires ESA (Solr) for Searching.
 
 
 
