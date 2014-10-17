@@ -47,6 +47,10 @@ public class GlobalIntegrationModel
 	@ConsumeField
 	private String refreshRate;
 
+	public GlobalIntegrationModel(){
+		
+	}
+	
 	/**
 	 * @return the username
 	 */

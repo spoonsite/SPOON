@@ -24,12 +24,14 @@ app.directive('cron', function () {
       ngModel: '='
     },
     link: function postLink(scope, element, attrs) {
+      if (!scope.ngModel) {
+        scope.ngModel = '0 0 * * *';
+      }
       var c = $(element).cron({
-        initial: '0 0 * * *', // Initial value. default = "* * * * *"
+        initial: scope.ngModel, // Initial value. default = "* * * * *"
         onChange: function() {
           // console.log('cron value', $(this).cron('value'));
           scope.ngModel = '0 ' + $(this).cron('value');
-          // scope.$apply();
         }
       });
     }

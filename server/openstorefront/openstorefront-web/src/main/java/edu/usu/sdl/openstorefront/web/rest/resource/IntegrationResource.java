@@ -87,11 +87,6 @@ public class IntegrationResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			integration.setActiveStatus(Integration.ACTIVE_STATUS);
-			integration.setCreateDts(TimeUtil.currentDate());
-			integration.setUpdateDts(TimeUtil.currentDate());
-			integration.setCreateUser(SecurityUtil.getCurrentUserName());
-			integration.setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getComponentId())).entity(integration).build();
 		}
 		else {
@@ -133,8 +128,6 @@ public class IntegrationResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			integration.setUpdateDts(TimeUtil.currentDate());
-			integration.setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getComponentId())).entity(integration).build();
 		}
 		else {
