@@ -1,6 +1,6 @@
 <div ng-controller="AdminConfigurationCtrl">
   <h3>Global configuration</h3>
-  <form class="form-horizontal" role="form">
+  <form class="form-horizontal" ng-submit="saveGlobalConf()" role="form">
     <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
       <div class="col-sm-6 pull-right"  style="padding-left:0px; padding-right:0px; min-height: 50px;">
         <div class="col-sm-offset-2" style="padding-left:0px; padding-right:0px;">
@@ -30,14 +30,14 @@
     </div>
     <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
       <div class="col-sm-offset-2">
-        <button class="btn btn-primary">Save&nbsp;<i class="fa fa-save"></i></button>
+        <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
       </div>
     </div>
   </form>
   <div class="col-sm-12" style="padding: 0;">
     <hr>
     <h3>Jira configuration</h3>
-    <form class="form-horizontal" role="form">
+    <form class="form-horizontal" ng-submit="saveMappingConf()" role="form">
       <!-- Show the two cross reference tables -->
       <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
         Cross reference for States
@@ -47,7 +47,7 @@
       </div>
       <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
         <div class="col-sm-offset-2">
-          <button class="btn btn-primary">Save&nbsp;<i class="fa fa-save"></i></button>
+          <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
         </div>
       </div>
     </form>
@@ -55,33 +55,55 @@
   <div class="col-sm-12" style="padding: 0;">
     <hr>
     <h3>Component configuration</h3>
-    <form class="form-horizontal" role="form">
-      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
-        <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="componentSearch">Search For Component:&nbsp;</label>
-        <div class="col-sm-8" style="padding: 0;">
-          <input type="text" class="form-control searchBar" id="componentSearch" ng-model="componentId" ng-options="key.id as key.name for key in typeahead" placeholder="Search For Component" bs-typeahead>
+    <select class="form-control" style="width:auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
+    <div ng-show="type === 'jira'">
+      <form class="form-horizontal" ng-submit="saveComponentConf()" role="form">
+        <div class="col-sm-10 col-sm-offset-2">
+          <small>If you're using IE 9, click on the component selection once you've found it.</small>
         </div>
-      </div>
-      <div class="col-sm-offset-1 col-sm-4" style="padding-left:0px; padding-right:0px; height:50px;">
-        <button class="btn btn-default">Force&nbsp;Component&nbsp;Refresh&nbsp;<i class="fa fa-refresh"></i></button>
-      </div>
-      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
-        <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="jiraTicketNum">Jira Issue Number:&nbsp;</label>
-        <div class="col-sm-8" style="padding: 0;">
-          <input class="form-control" type="text" id="jiraTicketNum" ng-model="jiraTicketNum" placeholder="Jira Issue Number">
+        <div class="form-group form-group-sm col-sm-6" ng-class="(componentId && componentId !== -1)? ' has-success has-feedback ': componentId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
+          <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="componentSearch">Search For Component:&nbsp;</label>
+          <div class="col-sm-8" style="padding: 0;">
+            <input type="text" class="form-control searchBar" id="componentSearch" ng-model="component" ng-options="key as key.name for key in typeahead" placeholder="Search For Component" bs-typeahead>
+            <span ng-class="(componentId && componentId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': componentId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
+          </div>
         </div>
-      </div>
-      <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
-        <label style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
-        <div class="col-sm-10" style="padding: 0;">
-          <cron ng-model="component_cron" id="cmpRefreshRate"></cron>
+        <div class="col-sm-offset-1 col-sm-4" style="padding-left:0px; padding-right:0px; height:50px;">
+          <button class="btn btn-default" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1))">Force&nbsp;Component&nbsp;Refresh&nbsp;<i class="fa fa-refresh"></i></button>
         </div>
-      </div>
-      <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
-        <div class="col-sm-offset-2">
-          <button class="btn btn-primary">Save&nbsp;<i class="fa fa-save"></i></button>
+        <div class="col-sm-10 col-sm-offset-2">
+          <small>If you're using IE 9, click on the issue number selection once you've found it.</small>
         </div>
-      </div>
-    </form>
+        <div class="form-group form-group-sm col-sm-6" ng-class="(issueId && issueId !== -1)? ' has-success has-feedback ': issueId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
+          <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="jiraTicketNum">Jira Issue Number:&nbsp;</label>
+          <div class="col-sm-8" style="padding: 0;">
+            <input type="text" class="form-control searchBar" id="jiraTicketNum" ng-model="issue" ng-options="key as key.name for key in typeahead" placeholder="Search For Jira Issue Number" bs-typeahead>
+            <span ng-class="(issueId && issueId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': issueId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
+          </div>
+        </div>
+        <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+          <div class="checkbox col-sm-offset-2" style="margin-top: -10px;">
+            <label>
+              <input type="checkbox" ng-model="overRideDefault" ng-checked="overRideDefault"> Override Default Refresh Rate
+            </label>
+          </div>
+          <div ng-switch="overRideDefault">
+            <div ng-switch-default>
+            </div>
+            <div ng-switch-when="true">
+              <label style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
+              <div class="col-sm-10" style="padding: 0;">
+                <cron ng-model="component_cron" id="cmpRefreshRate"></cron>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
+          <div class="col-sm-offset-2">
+            <button class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1))">Save&nbsp;<i class="fa fa-save"></i></button>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

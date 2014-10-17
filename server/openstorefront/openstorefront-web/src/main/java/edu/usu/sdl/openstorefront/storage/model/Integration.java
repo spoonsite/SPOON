@@ -28,7 +28,6 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class Integration
-		extends BaseComponent
 {
 	@PK
 	@NotNull
@@ -57,7 +56,20 @@ public class Integration
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String errorNumber;
-
+	
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String componentId;
+	
+	
+	
+	
+	public Integration() {
+		
+	}
+	
 	/**
 	 * @return the refreshRate
 	 */
@@ -120,5 +132,37 @@ public class Integration
 	public void setErrorNumber(String errorNumber)
 	{
 		this.errorNumber = errorNumber;
+	}
+
+	/**
+	 * @return the integrationId
+	 */
+	public String getIntegrationId()
+	{
+		return integrationId;
+	}
+
+	/**
+	 * @param integrationId the integrationId to set
+	 */
+	public void setIntegrationId(String integrationId)
+	{
+		this.integrationId = integrationId;
+	}
+
+	/**
+	 * @return the componentId
+	 */
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	/**
+	 * @param componentId the componentId to set
+	 */
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
 	}
 }
