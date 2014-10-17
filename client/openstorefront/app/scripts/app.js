@@ -470,176 +470,55 @@ var app = angular
       //////////////////////////////////////////////////////////////////////////////
       //Mock Back End  (use passThrough to route to server)
       $httpBackend.whenGET(/views.*/).passThrough();
-      
-      $httpBackend.whenGET(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?/).passThrough();
       $httpBackend.whenGET('System.action?UserAgent').passThrough();
-      $httpBackend.whenPUT(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenGET('api/v1/resource/lookup/UserTypeCodes').respond(MOCKDATA.userTypeCodes);
-      $httpBackend.whenGET(/api\/v1\/resource\/component\/search\/\?.*/).respond(function(method, url, data) {
-        // var query = getParams(url);
-        // var result = null;
-        // // console.log('query Parameters', query);
-        // // console.log('Key', query.key);
-        // if (query.type === 'search' && (query.key === 'all' || query.key === 'All'))
-        // {
-        //   query.key = '';
-        // }
-        // if (query.key !== '' && query.type === 'search') {
-        //   result = _.filter(MOCKDATA2.resultsList, function(item) {
-        //     return _.contains(item.name, query.key) || _.contains(item.description, query.key) || _.contains(item.owner, query.key);
-        //   });
-        // } else if (query.type && query.type === 'search'){
-        //   result = MOCKDATA2.resultsList;
-        // } else if (query.type){
-        //   result = _.filter(MOCKDATA2.resultsList, function(item){
-        //     return _.some(item.attributes, function(code) {
-        //       if (code.type === query.type) {
-        //         return code.code === query.key;
-        //       } else {
-        //         return false;
-        //       }
-        //     });
-        //   });
-        // }
-        return [200, result, {}];
+      
+
+      // LET THEM ALL THROUGH
+      $httpBackend.whenGET(/api\/v1\/*/).passThrough();
+      $httpBackend.whenPUT(/api\/v1\/*/).passThrough();
+      $httpBackend.whenDELETE(/api\/v1\/*/).passThrough();
+      $httpBackend.whenPOST(/api\/v1\/*/).passThrough();
+
+
+
+      $rootScope.started = false;
+
+      $rootScope.closeModals = function() {
+        if ($rootScope.warning) {
+          $rootScope.warning.close();
+          $rootScope.warning = null;
+        }
+
+        if ($rootScope.timedout) {
+          $rootScope.timedout.close();
+          $rootScope.timedout = null;
+        }
+      }
+
+      $rootScope.logout = function() {
+        window.location.replace('/openstorefront/Login.action?Logout');
+      }
+
+      $rootScope.$on('$idleStart', function() {
+        $rootScope.closeModals();
+
+        $rootScope.warning = $uiModal.open({
+          templateUrl: 'views/timeout/warning-dialog.html',
+          windowClass: 'modal-danger'
+        });
       });
-      //
-      $httpBackend.whenGET('api/v1/resource/components').passThrough();
-      $httpBackend.whenGET('api/v1/resource/highlights').passThrough();
-      $httpBackend.whenGET(/api\/v1\/service\/search\/attribute\/[^\/][^\/]*\/?\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenGET(/api\/v1\/service\/search\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenGET(/api\/v1\/service\/search\?[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenGET(/api\/v1\/service\/search/).passThrough();
-      $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).passThrough();
-      $httpBackend.whenGET('api/v1/resource/components/tags').passThrough();
-      $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags\/text/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?tags\/list/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions/).passThrough();
-      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions\/[^\/][^\/]*\/?responses\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?questions\/[^\/][^\/]*\/?responses\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenPUT(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
-      $httpBackend.whenGET(/api\/v1\/resource\/userprofiles\/[^\/][^\/]*\/?watches/).passThrough();
-      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?response\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews/).passThrough();
-      $httpBackend.whenPUT(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?/).passThrough();
-      $httpBackend.whenPOST('api/v1/resource/components/reviews/ANONYMOUS').passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?pro/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/resource\/components\/[^\/][^\/]*\/?reviews\/[^\/][^\/]*\/?con/).passThrough();
-      $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?attributecodes\/[^\/][^\/]*\/?article/).passThrough();
-      $httpBackend.whenGET(/api\/v1\/resource\/attributes\/attributetypes\/[^\/][^\/]*\/?architecture/).passThrough();
-      $httpBackend.whenGET('api/v1/resource/lookuptypes/ExperienceTimeType?sortField=sortOrder').passThrough();
-      // $httpBackend.whenGET(/api\/v1\/resource\/components\/[^\/][^\/]*\/?detail/).respond(function(method, url, data) {
-      //   // grab the url (needed for what the backend will simulate)
-      //   // parse it into an array
-      //   var urlSplit = url.split('/');
-      //   var i = 0;
-      //   // go until we find our resource
-      //   while (urlSplit[i++] !== 'component'){}
-      //     // if there is an id, grab it for our use.
-      //   var id = urlSplit[i]? parseInt(urlSplit[i]) : null;
 
-      //   var result = $q.defer();
-      //   $timeout(function() {
-      //     if (id && id !== '') {
-      //       var temp = _.find(MOCKDATA2.componentList, {'componentId': id});
-      //       result.resolve(temp);
-      //     } else {
-      //       result.resolve(MOCKDATA2.componentList);
-      //     }
-      //   }, 1000);
-      //   return [200, result.promise, {}];
-      // });
-
-$httpBackend.whenGET('api/v1/resource/attributes').passThrough();
-      // .respond(function(method, url, data) {
-      //   return [200, MOCKDATA.filters, {}];
-      // });
-
-      // respond(function(method, url, data) {
-      //   return [200, MOCKDATA.tagsList, {}];
-      // });
-
-$httpBackend.whenGET('api/v1/resource/pros').respond(function(method, url, data) {
-  return [200, MOCKDATA.prosConsList, {}];
-});
-
-$httpBackend.whenGET('api/v1/resource/attributes/attributetypes/DI2ELEVEL/attributecodes').passThrough();
-      // respond(function(method, url, data) {
-      //   var result = _.find(MOCKDATA.filters, {'type':'DI2ELEVEL'});
-      //   return [200, result, {}];
-      // });
-
-$httpBackend.whenGET(/api\/v1\/resource\/lookuptypes\/[^\/][^\/]*\/?view/).passThrough();
-      // respond(function(method, url, data) {
-      //   var result = [
-      //     //
-      //     {'value':'1', 'label': 'Less than 1 month'},
-      //     {'value':'2', 'label': 'Less than 3 months'},
-      //     {'value':'3', 'label': 'Less than 6 months'},
-      //     {'value':'4', 'label': 'Less than 1 year'},
-      //     {'value':'5', 'label': 'Less than 3 years'},
-      //     {'value':'6', 'label': 'More than 3 years'}
-      //   //
-      //   ];
-      //   return [200, result, {}];
-      // });
-
-$httpBackend.whenGET('api/v1/resource/lookup/watches').respond(function(method, url, data) {
-  return [200, MOCKDATA.watches, {}];
-});
-
-$httpBackend.whenPOST('api/v1/resource/lookup/watches').respond(function(method, url, data) {
-  MOCKDATA.watches = data;
-  return [200, angular.fromJson(data), {}];
-});
-
-
-$rootScope.started = false;
-
-$rootScope.closeModals = function() {
-  if ($rootScope.warning) {
-    $rootScope.warning.close();
-    $rootScope.warning = null;
-  }
-
-  if ($rootScope.timedout) {
-    $rootScope.timedout.close();
-    $rootScope.timedout = null;
-  }
-}
-
-$rootScope.logout = function() {
-  window.location.replace('/openstorefront/Login.action?Logout');
-}
-
-$rootScope.$on('$idleStart', function() {
-  $rootScope.closeModals();
-
-  $rootScope.warning = $uiModal.open({
-    templateUrl: 'views/timeout/warning-dialog.html',
-    windowClass: 'modal-danger'
-  });
-});
-
-$rootScope.$on('$idleEnd', function() {
-  $rootScope.closeModals();
+      $rootScope.$on('$idleEnd', function() {
+        $rootScope.closeModals();
         // no need to do anything unless you want to here.
       });
 
-$rootScope.$on('$keepalive', function() {
+      $rootScope.$on('$keepalive', function() {
         // do something to keep the user's session alive
         Business.userservice.getCurrentUserProfile(true);
       });
 
-$rootScope.$on('$idleTimeout', function() {
+      $rootScope.$on('$idleTimeout', function() {
         //log them out here
         $rootScope.closeModals();
         $rootScope.logout();

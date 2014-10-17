@@ -365,7 +365,8 @@ module.exports = function (grunt) {
           'styles/*.css',
           'scripts/esapi4js/**/*',
           'scripts/common-min/*.js',
-          'scripts/common/data.js'
+          'scripts/common/data.js',
+          'scripts/common/jquery-cron.js'
           ]
         }, {
           expand: true,

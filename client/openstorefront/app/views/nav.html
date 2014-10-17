@@ -22,7 +22,6 @@
             </span>
             <b class="caret" style="position: relative; top: -5px;"></b>
             <span ng-if="!(user.info.firstName && user.info.firstName!== '') && !(user.info.lastName && user.info.lastName!== '') && (user.info.username && user.info.username!== '')">{{user.info.username}}&nbsp;</span>
-            <b class="caret"></b>
           </button>
           <button ng-show="!user.isLoggedIn" type="button" class="navbar-toggle navButton" ng-click="goToLogin()">
             <span>Log in</span>

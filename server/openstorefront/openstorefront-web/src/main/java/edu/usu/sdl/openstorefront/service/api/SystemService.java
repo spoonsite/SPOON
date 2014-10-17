@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
+import edu.usu.sdl.openstorefront.storage.model.Integration;
+import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.util.List;
 
@@ -110,5 +112,44 @@ public interface SystemService
 	 * Removes excess errors beyond max....deleting oldest first
 	 */
 	public void cleanupOldErrors();
+	
+	/**
+	 *
+	 * @return
+	 */
+	public List<Integration> getIntegrationModels();
+	
+	/**
+	 *
+	 * @return
+	 */
+	public GlobalIntegrationModel getGlobalConfig();
+	
+	/**
+	 *
+	 * @param integration
+	 * @param isPost
+	 * @return
+	 */
+	public Integration saveIntegration(Integration integration, boolean isPost);
+	
+	/**
+	 *
+	 * @param integration
+	 * @param isPost
+	 * @return
+	 */
+	public GlobalIntegrationModel saveIntegration(GlobalIntegrationModel integration, boolean isPost);
+	
+	/**
+	 *
+	 * @param componentId
+	 */
+	public void deactivateIntegration(String componentId);
+	
+	/**
+	 *
+	 */
+	public void deactivateIntegration();
 
 }

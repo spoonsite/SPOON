@@ -1,53 +1,85 @@
 <div ng-controller="AdminConfigurationCtrl">
   <h3>Global configuration</h3>
   <form class="form-horizontal" role="form">
-    <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0;">
-      <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="userna,e">Username:&nbsp;</label>
-      <div class="col-sm-8" style="padding: 0;">
-        <input class="form-control" type="text" id="username" ng-model="username" placeholder="Storefront User Username">
+    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+      <div class="col-sm-6 pull-right"  style="padding-left:0px; padding-right:0px; min-height: 50px;">
+        <div class="col-sm-offset-2" style="padding-left:0px; padding-right:0px;">
+          <button class="btn btn-default">Refresh&nbsp;All&nbsp;Jira&nbsp;<i class="fa fa-refresh"></i></button>
+        </div>
+      </div>
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="userna,e">Username:&nbsp;</label>
+        <div class="col-sm-8" style="padding: 0;">
+          <input class="form-control" type="text" id="username" ng-model="username" placeholder="Storefront User Username">
+        </div>
       </div>
     </div>
-    <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0;">
-      <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
-      <div class="col-sm-8" style="padding: 0;">
-        <input class="form-control" type="text" id="glbRefreshRate" ng-model="glbRefreshRate" placeholder="Storefront User Password">
+    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="password">Password:&nbsp;</label>
+        <div class="col-sm-8" style="padding: 0;">
+          <input class="form-control" type="text" id="password" ng-model="password" placeholder="Storefront User Password">
+        </div>
       </div>
     </div>
-    <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0;">
-      <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="password">Password:&nbsp;</label>
-      <div class="col-sm-8" style="padding: 0;">
-        <input class="form-control" type="text" id="password" ng-model="password" placeholder="Storefront User Password">
+    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+      <label style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
+      <div class="col-sm-10" style="padding: 0;">
+        <cron ng-model="global_cron" id="glbRefreshRate"></cron>
+      </div>
+    </div>
+    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
+      <div class="col-sm-offset-2">
+        <button class="btn btn-primary">Save&nbsp;<i class="fa fa-save"></i></button>
       </div>
     </div>
   </form>
-  <div class="col-sm-12">
-    <div class="col-sm-offset-2" style="padding-left:0px; padding-right:0px;">
-      <button class="btn btn-default">Refresh&nbsp;All&nbsp;<i class="fa fa-refresh"></i></button>
-    </div>
+  <div class="col-sm-12" style="padding: 0;">
+    <hr>
+    <h3>Jira configuration</h3>
+    <form class="form-horizontal" role="form">
+      <!-- Show the two cross reference tables -->
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        Cross reference for States
+      </div>
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        Cross reference for Levels
+      </div>
+      <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
+        <div class="col-sm-offset-2">
+          <button class="btn btn-primary">Save&nbsp;<i class="fa fa-save"></i></button>
+        </div>
+      </div>
+    </form>
   </div>
   <div class="col-sm-12" style="padding: 0;">
     <hr>
     <h3>Component configuration</h3>
     <form class="form-horizontal" role="form">
-      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0;">
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
         <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="componentSearch">Search For Component:&nbsp;</label>
         <div class="col-sm-8" style="padding: 0;">
-          <input class="form-control" type="text" id="componentSearch" ng-model="password" placeholder="Search For Component">
+          <input type="text" class="form-control searchBar" id="componentSearch" ng-model="componentId" ng-options="key.id as key.name for key in typeahead" placeholder="Search For Component" bs-typeahead>
         </div>
       </div>
-      <div class="col-sm-offset-2 col-sm-4" style="padding-left:0px; padding-right:0px;">
-        <button class="btn btn-default">Refresh&nbsp;All&nbsp;<i class="fa fa-refresh"></i></button>
+      <div class="col-sm-offset-1 col-sm-4" style="padding-left:0px; padding-right:0px; height:50px;">
+        <button class="btn btn-default">Force&nbsp;Component&nbsp;Refresh&nbsp;<i class="fa fa-refresh"></i></button>
       </div>
-      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0;">
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
         <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="jiraTicketNum">Jira Issue Number:&nbsp;</label>
         <div class="col-sm-8" style="padding: 0;">
           <input class="form-control" type="text" id="jiraTicketNum" ng-model="jiraTicketNum" placeholder="Jira Issue Number">
         </div>
       </div>
-      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0;">
-        <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="cmpRefreshRate">Global Refresh Rate:&nbsp;</label>
-        <div class="col-sm-8" style="padding: 0;">
-          <input class="form-control" type="text" id="cmpRefreshRate" ng-model="cmpRefreshRate" placeholder="Component Refresh Rate">
+      <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+        <label style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
+        <div class="col-sm-10" style="padding: 0;">
+          <cron ng-model="component_cron" id="cmpRefreshRate"></cron>
+        </div>
+      </div>
+      <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
+        <div class="col-sm-offset-2">
+          <button class="btn btn-primary">Save&nbsp;<i class="fa fa-save"></i></button>
         </div>
       </div>
     </form>
