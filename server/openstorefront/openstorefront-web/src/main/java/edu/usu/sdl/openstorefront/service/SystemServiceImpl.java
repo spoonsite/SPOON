@@ -23,12 +23,14 @@ import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
+import edu.usu.sdl.openstorefront.storage.model.Integration;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -263,6 +266,45 @@ public class SystemServiceImpl
 				persistenceService.delete(errorTicket);
 			});
 		}
+	}
+
+	@Override
+	public List<Integration> getIntegrationModels()
+	{
+		// TODO: Set up the Integration manager for use here
+		return new ArrayList<>();
+	}
+
+	@Override
+	public Integration saveIntegration(Integration integration, boolean isPost)
+	{
+		// save Integration model here and return it.
+		return integration;
+	}
+
+	@Override
+	public void deactivateIntegration(String componentId)
+	{
+		// deactivate the Integration here...
+	}
+
+	@Override
+	public GlobalIntegrationModel saveIntegration(GlobalIntegrationModel integration, boolean isPost)
+	{
+		// save the global configuratoin
+		return integration;
+	}
+
+	@Override
+	public void deactivateIntegration()
+	{
+		// TODO: deactivate all integration models.
+	}
+
+	@Override
+	public GlobalIntegrationModel getGlobalConfig()
+	{
+		return new GlobalIntegrationModel();
 	}
 
 }

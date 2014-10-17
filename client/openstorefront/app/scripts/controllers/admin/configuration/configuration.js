@@ -19,4 +19,31 @@
 app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope, Business) {
   $scope.username;
   $scope.password;
+  $scope.componentId;
+  $scope.typeahead;
+
+  $scope.$watch('componentId', function(value) {
+    console.log('value', value);
+    console.log('type of value', typeof value);
+  })
+
+
+  Business.componentservice.getComponentDetails().then(function(result) {
+    console.log('result', result);
+    Business.typeahead(result, null).then(function(value){
+      if (value) {
+        $scope.typeahead = value;
+        console.log('value', value);
+      } else {
+        $scope.typeahead = null;
+      }
+    }, function(){
+      console.log('The typeahead call broke');
+      
+    });
+  }, function() {
+    console.log('There was an error');
+    
+  });
+
 }]);
