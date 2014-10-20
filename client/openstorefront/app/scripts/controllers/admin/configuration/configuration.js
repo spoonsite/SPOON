@@ -16,14 +16,11 @@
 
 'use strict';
 
-app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope, Business) {
+app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($scope, Business, $q) {
   $scope.username;
+  $scope.modal = {};
   $scope.password;
   $scope.selectedMapping;
-  $scope.component;
-  $scope.issue;
-  $scope.componentId;
-  $scope.issueId;
   $scope.typeahead;
   $scope.overRideDefault = false;
   $scope.componentCron = '0 0 * * *';
@@ -35,15 +32,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope,
   ]
   $scope.type = 'jira';
 
-  Business.componentservice.getComponentList().then(function(result) {
-    Business.typeahead(result, null).then(function(value){
-      if (value) {
-        $scope.typeahead = value;
-      } else {
-        $scope.typeahead = null;
-      }
-    });
-  });
+
   $scope.getXRefTypes = function(){
     Business.configurationservice.getXRefTypes().then(function(result){
       console.log('result', result);
@@ -56,50 +45,29 @@ app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope,
   
   $scope.getXRefTypes();
 
-  $scope.$watch('component', function(value) {
-    if (value && typeof value === 'object') {
-      if (value.componentId){
-        $scope.componentId = value.componentId;
-      } else {
-        $scope.componentId = -1;
+
+  $scope.setupModal = function(id) {
+    if (id) {
+      Business.saveLocal('configId', id)
+    }
+    var deferred = $q.defer();
+    $scope.modal.classes = '';
+    $scope.modal.nav = {
+      'current': 'Save New Configuration',
+      'bars': [
+      {
+        'title': 'Save New Configuration',
+        'include': 'views/admin/configuration/savecompconf.html'
       }
-    } else if ($scope.componentId !== undefined && $scope.componentId !== null) {
-      $scope.componentId = -1;
-    }
-  });
-
-  $scope.$watch('issue', function(value) {
-    if (value && typeof value === 'object') {
-      if (value.componentId){
-        $scope.issueId = value.componentId;
-      } else {
-        $scope.issueId = -1;
-      }
-    } else if ($scope.issueId !== undefined && $scope.issueId !== null) {
-      $scope.issueId = -1;
-    }
-  });
+      ]
+    };
+    $scope.$emit('$TRIGGEREVENT', 'updateBody');
+    deferred.resolve();
+    return deferred.promise;
+  };
 
 
-  $scope.$watch('componentCron', function(){
-    $scope.componentCron;
-  });
 
-
-  $scope.saveComponentConf = function(){
-    var conf = {};
-    conf.componentId = $scope.componentId;
-    conf.issueId = $scope.issueId;
-    console.log('$scope.componentCron', $scope.componentCron);
-    if (overRideDefault) {
-      conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
-    } else {
-      conf.refreshRate = null;
-    }
-    //save the object;
-    console.log('conf', conf);
-    return false;
-  }
   $scope.saveMappingConf = function(){
     var conf = {};
     conf.componentId = $scope.componentId;
@@ -118,6 +86,9 @@ app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope,
     conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
     //save the object;
     console.log('conf', conf);
+    return false;
+  }
+  $scope.forceRefresh = function() {
     return false;
   }
 
