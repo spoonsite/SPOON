@@ -55,7 +55,14 @@
   <div class="col-sm-12" style="padding: 0;">
     <hr>
     <h3>Component configuration</h3>
-    <select class="form-control" style="width:auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
+    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+      <label for="componentConfType" style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" style="text-align:right;">Choose an integration type:&nbsp;</label>
+      <select id="componentConfType" class="form-control" style="width:auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
+    </div>
+    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+      <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" style="text-align:right;">Choose a mapping:&nbsp;</label>
+      <select id="componentConfMap" class="form-control" style="width:auto;" ng-model="selectedMapping" ng-options="type as type.mappingName for type in xRefTypes"></select>
+    </div>
     <div ng-show="type === 'jira'">
       <form class="form-horizontal" ng-submit="saveComponentConf()" role="form">
         <div class="col-sm-10 col-sm-offset-2">
@@ -69,7 +76,7 @@
           </div>
         </div>
         <div class="col-sm-offset-1 col-sm-4" style="padding-left:0px; padding-right:0px; height:50px;">
-          <button class="btn btn-default" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1))">Force&nbsp;Component&nbsp;Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+          <button class="btn btn-default" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1) && !selectedMapping )">Force&nbsp;Component&nbsp;Refresh&nbsp;<i class="fa fa-refresh"></i></button>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
           <small>If you're using IE 9, click on the issue number selection once you've found it.</small>
@@ -87,20 +94,16 @@
               <input type="checkbox" ng-model="overRideDefault" ng-checked="overRideDefault"> Override Default Refresh Rate
             </label>
           </div>
-          <div ng-switch="overRideDefault">
-            <div ng-switch-default>
-            </div>
-            <div ng-switch-when="true">
-              <label style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
-              <div class="col-sm-10" style="padding: 0;">
-                <cron ng-model="component_cron" id="cmpRefreshRate"></cron>
-              </div>
+          <div ng-show="overRideDefault === true">
+            <label style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
+            <div class="col-sm-10" style="padding: 0;">
+              <cron ng-model="componentCron" id="cmpRefreshRate"></cron>
             </div>
           </div>
         </div>
         <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
           <div class="col-sm-offset-2">
-            <button class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1))">Save&nbsp;<i class="fa fa-save"></i></button>
+            <button class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1) && !selectedMapping) ">Save&nbsp;<i class="fa fa-save"></i></button>
           </div>
         </div>
       </form>

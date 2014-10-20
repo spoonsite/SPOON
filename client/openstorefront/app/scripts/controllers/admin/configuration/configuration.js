@@ -19,13 +19,14 @@
 app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope, Business) {
   $scope.username;
   $scope.password;
+  $scope.selectedMapping;
   $scope.component;
   $scope.issue;
   $scope.componentId;
   $scope.issueId;
   $scope.typeahead;
   $scope.overRideDefault = false;
-  $scope.component_cron;
+  $scope.componentCron = '0 0 * * *';
   $scope.types = [
   {
     'label': 'Jira Configuration',
@@ -33,6 +34,27 @@ app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope,
   }
   ]
   $scope.type = 'jira';
+
+  Business.componentservice.getComponentList().then(function(result) {
+    Business.typeahead(result, null).then(function(value){
+      if (value) {
+        $scope.typeahead = value;
+      } else {
+        $scope.typeahead = null;
+      }
+    });
+  });
+  $scope.getXRefTypes = function(){
+    Business.configurationservice.getXRefTypes().then(function(result){
+      console.log('result', result);
+      if (result.length > 0) {
+        $scope.xRefTypes = result;
+        $scope.selectedMapping = result[0];
+      }
+    });
+  }
+  
+  $scope.getXRefTypes();
 
   $scope.$watch('component', function(value) {
     if (value && typeof value === 'object') {
@@ -58,30 +80,22 @@ app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope,
     }
   });
 
-  Business.componentservice.getComponentList().then(function(result) {
-    // console.log('result', result);
-    
-    Business.typeahead(result, null).then(function(value){
-      if (value) {
-        $scope.typeahead = value;
-      } else {
-        $scope.typeahead = null;
-      }
-    });
-  });
 
-  $scope.$watch('component_cron', function(value){
-    console.log('value', value);
-  })
+  $scope.$watch('componentCron', function(){
+    $scope.componentCron;
+  });
 
 
   $scope.saveComponentConf = function(){
     var conf = {};
     conf.componentId = $scope.componentId;
     conf.issueId = $scope.issueId;
-    console.log('$scope.component_cron', $scope.component_cron);
-    
-    conf.refreshRate = $scope.component_cron? $scope.component_cron: '';
+    console.log('$scope.componentCron', $scope.componentCron);
+    if (overRideDefault) {
+      conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
+    } else {
+      conf.refreshRate = null;
+    }
     //save the object;
     console.log('conf', conf);
     return false;
@@ -90,8 +104,8 @@ app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope,
     var conf = {};
     conf.componentId = $scope.componentId;
     conf.issueId = $scope.issueId;
-    console.log('$scope.component_cron', $scope.component_cron);
-    conf.refreshRate = $scope.component_cron? $scope.component_cron: '';
+    console.log('$scope.componentCron', $scope.componentCron);
+    conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
     //save the object;
     console.log('conf', conf);
     return false;
@@ -100,8 +114,8 @@ app.controller('AdminConfigurationCtrl',['$scope','business',  function ($scope,
     var conf = {};
     conf.componentId = $scope.componentId;
     conf.issueId = $scope.issueId;
-    console.log('$scope.component_cron', $scope.component_cron);
-    conf.refreshRate = $scope.component_cron? $scope.component_cron: '';
+    console.log('$scope.componentCron', $scope.componentCron);
+    conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
     //save the object;
     console.log('conf', conf);
     return false;
