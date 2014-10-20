@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
@@ -41,6 +42,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.jsoup.Jsoup;
+import org.jsoup.examples.HtmlToPlainText;
 
 /**
  * Handles Searching the data set and sync the indexes
@@ -68,7 +71,6 @@ public class SearchServiceImpl
 	@Override
 	public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter)
 	{
-
 		// QUERY / SEARCH for a solr storefront component
 		SolrSearchComponent searchThis = new SolrSearchComponent();
 
@@ -89,19 +91,20 @@ public class SearchServiceImpl
 		//myAndOr = " AND ";  //
 
 		// Define search fields per solr schema
-		String[] mySetFields = new String[6];
+		String[] mySetFields = new String[7];
 		mySetFields[0] = "id";
 		mySetFields[1] = "title";
 		mySetFields[2] = "content_text";
 		mySetFields[3] = "content_tags";
 		mySetFields[4] = "content_raw";
 		mySetFields[5] = "isComponentSearch_b_is";
+		mySetFields[6] = "articleHtml_text";
 
 		String myQueryString;
 
 		// If incoming query string is blank, default to solar *:* for the full query
 		if (mySolrModel.getQueryString() != null && !mySolrModel.getQueryString().trim().isEmpty()) {
-			myQueryString = myEqualNotEqual + mySetFields[1] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[2] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[3] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[4] + ":" + mySolrModel.getQueryString();
+			myQueryString = myEqualNotEqual + mySetFields[1] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[2] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[3] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[4] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[6] + ":" + mySolrModel.getQueryString();
 		} else {
 			myQueryString = "*:*";
 		}
@@ -141,7 +144,6 @@ public class SearchServiceImpl
 	@Override
 	public void addIndex(Component component)
 	{
-
 		// initialize solr server
 		SolrServer solrService = SolrManager.getServer();
 
@@ -189,6 +191,7 @@ public class SearchServiceImpl
 		solrDocModel.setTags(tagList);
 
 		solrDocModel.setAttributes(attributeList);
+		solrDocModel.setArticleHtml("");
 
 		try {
 			solrService.addBean(solrDocModel);
@@ -201,7 +204,6 @@ public class SearchServiceImpl
 	@Override
 	public void addIndex(Article article)
 	{
-
 		// initialize solr server
 		SolrServer solrService = SolrManager.getServer();
 
@@ -232,6 +234,16 @@ public class SearchServiceImpl
 		solrDocModel.setTags(tagList);
 
 		solrDocModel.setAttributes(attributeList);
+
+		String htmlArticle = article.getHtml();
+
+		HTMLSanitizer sanitizer = new HTMLSanitizer();
+		htmlArticle = sanitizer.santize(htmlArticle).toString();
+
+		// remove HTML markup article
+		String plainText = new HtmlToPlainText().getPlainText(Jsoup.parse(htmlArticle));
+
+		solrDocModel.setArticleHtml(plainText.replace("<>", "").replace("\n", ""));
 
 		try {
 			solrService.addBean(solrDocModel);
