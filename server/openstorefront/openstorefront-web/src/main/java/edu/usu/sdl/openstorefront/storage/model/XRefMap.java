@@ -16,42 +16,38 @@
 
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author jlaw
  */
-public class CrossReference
+public class XRefMap
 {
 	@PK
 	@NotNull
-	private String id;
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ConsumeField
 	private String attributeType;
-	private String localCode;
-	private String externalCode;
 	
-	public CrossReference(){
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ConsumeField
+	private String localCode;
+	
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ConsumeField
+	private String externalCode;
+
+	public XRefMap(){
 		
 	}
-
-	/**
-	 * @return the id
-	 */
-	public String getId()
-	{
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id)
-	{
-		this.id = id;
-	}
-
+	
 	/**
 	 * @return the attributeType
 	 */
@@ -99,5 +95,4 @@ public class CrossReference
 	{
 		this.externalCode = externalCode;
 	}
-	
 }

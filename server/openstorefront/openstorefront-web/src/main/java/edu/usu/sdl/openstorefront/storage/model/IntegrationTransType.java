@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package edu.usu.sdl.openstorefront.web.rest.model;
+package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
@@ -27,75 +28,94 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class GlobalIntegrationModel
+public class IntegrationTransType
 {
+	@PK
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String username;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String password;
-
+	private String id;
+	
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
-	private String jiraRefreshRate;
+	private String type;
 
-	public GlobalIntegrationModel(){
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String issueNumber;
+	
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String componentId;
+	
+	public IntegrationTransType(){
 		
 	}
-	
+
 	/**
-	 * @return the username
+	 * @return the type
 	 */
-	public String getUsername()
+	public String getType()
 	{
-		return username;
+		return type;
 	}
 
 	/**
-	 * @param username the username to set
+	 * @param type the type to set
 	 */
-	public void setUsername(String username)
+	public void setType(String type)
 	{
-		this.username = username;
+		this.type = type;
 	}
 
 	/**
-	 * @return the password
+	 * @return the componentId
 	 */
-	public String getPassword()
+	public String getComponentId()
 	{
-		return password;
+		return componentId;
 	}
 
 	/**
-	 * @param password the password to set
+	 * @param componentId the componentId to set
 	 */
-	public void setPassword(String password)
+	public void setComponentId(String componentId)
 	{
-		this.password = password;
+		this.componentId = componentId;
 	}
 
 	/**
-	 * @return the jiraRefreshRate
+	 * @return the id
 	 */
-	public String getJiraRefreshRate()
+	public String getId()
 	{
-		return jiraRefreshRate;
+		return id;
 	}
 
 	/**
-	 * @param jiraRefreshRate the jiraRefreshRate to set
+	 * @param id the id to set
 	 */
-	public void setJiraRefreshRate(String jiraRefreshRate)
+	public void setId(String id)
 	{
-		this.jiraRefreshRate = jiraRefreshRate;
+		this.id = id;
+	}
+
+	/**
+	 * @return the issueNumber
+	 */
+	public String getIssueNumber()
+	{
+		return issueNumber;
+	}
+
+	/**
+	 * @param issueNumber the issueNumber to set
+	 */
+	public void setIssueNumber(String issueNumber)
+	{
+		this.issueNumber = issueNumber;
 	}
 }

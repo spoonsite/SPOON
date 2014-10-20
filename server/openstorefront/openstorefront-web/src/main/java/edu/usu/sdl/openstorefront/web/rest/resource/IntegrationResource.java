@@ -21,8 +21,6 @@ import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -106,7 +104,7 @@ public class IntegrationResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getRefreshRate())).entity(integration).build();
+			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getJiraRefreshRate())).entity(integration).build();
 		}
 		else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -150,7 +148,7 @@ public class IntegrationResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getRefreshRate())).entity(integration).build();
+			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getJiraRefreshRate())).entity(integration).build();
 		}
 		else {
 			return Response.ok(validationResult.toRestError()).build();

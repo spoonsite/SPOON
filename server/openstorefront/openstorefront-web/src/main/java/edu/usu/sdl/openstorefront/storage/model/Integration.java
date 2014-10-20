@@ -56,6 +56,12 @@ public class Integration
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String errorNumber;
+
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String errorMessage;
 	
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
@@ -164,5 +170,21 @@ public class Integration
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
+	}
+
+	/**
+	 * @return the errorMessage
+	 */
+	public String getErrorMessage()
+	{
+		return errorMessage;
+	}
+
+	/**
+	 * @param errorMessage the errorMessage to set
+	 */
+	public void setErrorMessage(String errorMessage)
+	{
+		this.errorMessage = errorMessage;
 	}
 }
