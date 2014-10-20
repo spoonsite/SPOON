@@ -7,7 +7,7 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
         // Wait for it to sync, a bit slower on the VPN
         browser.driver.sleep(10000);
 
-        for (var i=0; i < 3; i++) {
+        for (var i=0; i < 4; i++) {
             element.all(by.css('.listing_short_title_text')).get(i).click();
             browser.driver.sleep(350);
             browser.driver.navigate().back();
