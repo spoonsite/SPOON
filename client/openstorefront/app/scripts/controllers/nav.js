@@ -35,7 +35,9 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   /***************************************************************
   * Set up typeahead, and then watch for selection made
   ***************************************************************/
-  Business.componentservice.getComponentDetails().then(function(result) {
+  Business.componentservice.getComponentList().then(function(result) {
+    // console.log('result', result);
+    
     Business.typeahead(result, null).then(function(value){
       if (value) {
         $scope.typeahead = value;
