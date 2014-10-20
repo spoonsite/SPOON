@@ -241,7 +241,9 @@ public class AttributeServiceImpl
 		getAttributeServicePrivate().performSaveArticle(attributeCodePk, article);
 		AttributeCode code = new AttributeCode();
 		code.setAttributeCodePk(attributeCodePk);
-		getSearchService().addIndex(Article.toView(code));
+		//getSearchService().addIndex(Article.toView(code));
+		getSearchService().addIndex(Article.toViewHtml(code, article));
+
 	}
 
 	@Override
