@@ -1,4 +1,39 @@
+// FUNCTIONS
+function textSearch (theText, numFound) {
+    // Search on ALL entries (null search term)
+    browser.ignoreSyncronization = false;
+    browser.get(theSite, 15000);
+    element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
+
+    // Wait for it to sync, a bit slower on the VPN
+    browser.driver.sleep(12000);
+
+    // Clear the box
+    var theInput = element(by.model('query'));
+    theInput.clear();
+
+    // Enter text
+    theInput.sendKeys(theText);
+
+    // Should be numFound results
+    expect(element.all(by.repeater('item in data')).count()).toEqual(numFound);
+
+    // May not always show up onscreen?
+    var newest = element(by.binding('item.description'));
+    expect(newest.getText()).toContain(theText);
+}
+
+function attribFilter(checkB, expResults) {
+    element(by.id(checkB)).click();
+    browser.driver.sleep(1800);
+    expect(element.all(by.repeater('item in data')).count()).toEqual(expResults);
+    element(by.id(checkB)).click();
+    browser.driver.sleep(1500);
+}
+
+// ***** MAIN TEST ***** //
 describe('search_Filters', function() {
+
     // FILTER BY TEXT
     var theText1 = 'DIB';
     var numFound1 = 3;
@@ -18,8 +53,8 @@ describe('search_Filters', function() {
         textSearch(theText4, numFound4);
     }, 30000);
 
-
-// FILTER BY ATTRIBUTE
+/*
+    // FILTER BY ATTRIBUTE
     browser.ignoreSyncronization = false;
     browser.get(theSite, 15000);
     element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
@@ -29,7 +64,7 @@ describe('search_Filters', function() {
 
     // Expand "DI2E Evaluation Level"
     // *************** 1 won't work, says it is out of range *************************
-    element.all(by.css('.overflow-pair-right')).get(0).click();
+    element.all(by.css('.fa.fa-caret-down')).get(0).click();
     browser.driver.sleep(6000);
 
     var checkB0 = 'DI2E Evaluation Level_LEVEL0';
@@ -51,41 +86,9 @@ describe('search_Filters', function() {
     }, 20000);
 
     // *************** 1 won't work, says it is out of range *************************
-    element.all(by.css('.fa.fa-caret-down')).get(0).click();
+    element.all(by.css('.fa.fa-caret-down')).get(0).click();   // was .overflow-pair-right
     browser.driver.sleep(300);
-
-    // FUNCTIONS
-    function textSearch (theText, numFound) {
-        // Search on ALL entries (null search term)
-        browser.ignoreSyncronization = false;
-        browser.get(theSite, 15000);
-        element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
-
-        // Wait for it to sync, a bit slower on the VPN
-        browser.driver.sleep(12000);
-
-        // Clear the box
-        var theInput = element(by.model('query'));
-        theInput.clear();
-
-        // Enter text
-        theInput.sendKeys(theText);
-
-        // Should be numFound results
-        expect(element.all(by.repeater('item in data')).count()).toEqual(numFound);
-
-        // May not always show up onscreen?
-        var newest = element(by.binding('item.description'));
-        expect(newest.getText()).toContain(theText);
-    }
-
-    function attribFilter(checkB, expResults) {
-        element(by.id(checkB)).click();
-        browser.driver.sleep(1800);
-        expect(element.all(by.repeater('item in data')).count()).toEqual(expResults);
-        element(by.id(checkB)).click();
-        browser.driver.sleep(1500);
-    }
+*/
 });
 
 
