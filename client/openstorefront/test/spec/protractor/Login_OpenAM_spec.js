@@ -27,8 +27,9 @@ if (openAM) {
 
 // Other Non-OpenAM site, but still need to login!
 if (other) {
-    console.log('**********  Please manually log in, you have 30 seconds.  **********');
+    console.log('**********  Please manually log in, you have ~30 seconds.  **********');
     console.log(theSite);
+    console.log('*********************************************************************');
     browser.driver.sleep(33000);
 
     //browser.get('');
