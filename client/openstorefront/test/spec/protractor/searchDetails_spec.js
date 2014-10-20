@@ -1,5 +1,5 @@
 describe('searchDetails_Search for VANTAGE', function() {
-  it('keyword search for VANTAGE returns x results', function() {
+  it('Global search for VANTAGE returns 2 results', function() {
     // Open the main site
     browser.get(theSite, 9000);
 

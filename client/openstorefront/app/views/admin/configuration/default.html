@@ -1,0 +1,82 @@
+<div ng-controller="AdminConfigurationCtrl">
+  <h3>Global configuration</h3>
+  <form class="form-horizontal" ng-submit="saveGlobalConf()" role="form">
+    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+      <!-- <div class="col-sm-6 pull-right"  style="padding-left:0px; padding-right:0px; min-height: 50px;"> -->
+      <div class="col-sm-4 pull-right"  style="padding-left:0px; padding-right:0px; min-height: 50px;">
+        <!-- <div class="col-sm-offset-2" style="padding-left:0px; padding-right:0px;"> -->
+        <div class="" style="padding-left:0px; padding-right:0px;">
+          <button class="btn btn-default">Refresh&nbsp;All&nbsp;Jira&nbsp;<i class="fa fa-refresh"></i></button>
+        </div>
+      </div>
+<!--       <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="userna,e">Username:&nbsp;</label>
+        <div class="col-sm-8" style="padding: 0;">
+          <input class="form-control" type="text" id="username" ng-model="username" placeholder="Storefront User Username">
+        </div>
+      </div> -->
+      <div class="form-group form-group-sm col-sm-8" style="margin: 0 auto; padding: 0;">
+        <label style="padding-left:0px; padding-right:0px;" class="col-sm-3 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
+        <div class="col-sm-9" style="padding: 0;">
+          <cron ng-model="global_cron" id="glbRefreshRate"></cron>
+        </div>
+      </div>
+    </div>
+<!--     <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="password">Password:&nbsp;</label>
+        <div class="col-sm-8" style="padding: 0;">
+          <input class="form-control" type="text" id="password" ng-model="password" placeholder="Storefront User Password">
+        </div>
+      </div>
+    </div> -->
+    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
+      <div class="col-sm-offset-2">
+        <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
+      </div>
+    </div>
+  </form>
+  <div class="col-sm-12" style="padding: 0;">
+    <hr>
+    <h3>Jira configuration</h3>
+    <form class="form-horizontal" ng-submit="saveMappingConf()" role="form">
+      <!-- Show the two cross reference tables -->
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        Cross reference for States
+      </div>
+      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        Cross reference for Levels
+      </div>
+      <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
+        <div class="col-sm-offset-2">
+          <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-sm-12" style="padding: 0;">
+    <hr>
+    <h3>Component configuration</h3>
+    <form class="form-horizontal" role="form">
+      <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <label for="componentConfType" style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" style="text-align:right;">Choose an integration type:&nbsp;</label>
+        <select id="componentConfType" class="form-control" style="width:auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
+      </div>
+      <div ng-show="!xRefTypes || xRefTypes.length === 0" class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <div class="warning"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;You need to add a mapping before you can link components to an issue number.</div>
+      </div>
+      <div ng-show="xRefTypes.length > 0">
+        <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+          <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" style="text-align:right;">Choose a mapping:&nbsp;</label>
+          <select id="componentConfMap" class="form-control" style="width:auto;" ng-model="selectedMapping" ng-options="type as type.mappingName for type in xRefTypes"></select>
+        </div>
+        <div ng-show="type === 'jira'">
+          <button class="btn btn-default" ng-click="setupModal(88); openModal('compConf');">Add New Configuration&nbsp;</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- This is the results description modal (the contents are handled in this controller) -->
+  <div modal controller-name="BaseCtrl" modalId='compConf' modal-classes="classlist">
+  </div>
+</div>
