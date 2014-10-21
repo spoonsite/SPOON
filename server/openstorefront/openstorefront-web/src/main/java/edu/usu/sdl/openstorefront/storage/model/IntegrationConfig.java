@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -28,94 +28,70 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class IntegrationTransType
+public class IntegrationConfig
+		extends BaseEntity
 {
+
 	@PK
 	@NotNull
 	private String id;
-	
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String type;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@NotNull
+	@ValidValueType(value = {}, lookupClass = IntegrationType.class)
+	@ConsumeField
+	private String integrationType;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String issueNumber;
-	
+
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
-	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String componentId;
-	
-	public IntegrationTransType(){
-		
-	}
 
-	/**
-	 * @return the type
-	 */
-	public String getType()
+	public IntegrationConfig()
 	{
-		return type;
+
 	}
 
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type)
-	{
-		this.type = type;
-	}
-
-	/**
-	 * @return the componentId
-	 */
 	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	/**
-	 * @param componentId the componentId to set
-	 */
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}
 
-	/**
-	 * @return the id
-	 */
 	public String getId()
 	{
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(String id)
 	{
 		this.id = id;
 	}
 
-	/**
-	 * @return the issueNumber
-	 */
 	public String getIssueNumber()
 	{
 		return issueNumber;
 	}
 
-	/**
-	 * @param issueNumber the issueNumber to set
-	 */
 	public void setIssueNumber(String issueNumber)
 	{
 		this.issueNumber = issueNumber;
+	}
+
+	public String getIntegrationType()
+	{
+		return integrationType;
+	}
+
+	public void setIntegrationType(String integrationType)
+	{
+		this.integrationType = integrationType;
 	}
 }

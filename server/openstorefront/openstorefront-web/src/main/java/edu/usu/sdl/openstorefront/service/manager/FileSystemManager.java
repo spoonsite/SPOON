@@ -70,15 +70,30 @@ public class FileSystemManager
 
 	public static File getImportLookup(String configFilename)
 	{
-		return getFileDir(configFilename, IMPORT_LOOKUP_DIR, "/data/lookup/");
+		return getImportLookup(configFilename, null);
+	}
+
+	public static File getImportLookup(String configFilename, NewFileHandler newFileHandler)
+	{
+		return getFileDir(configFilename, IMPORT_LOOKUP_DIR, "/data/lookup/", newFileHandler);
 	}
 
 	public static File getImportAttribute(String configFilename)
+	{
+		return getImportAttribute(configFilename, null);
+	}
+
+	public static File getImportAttribute(String configFilename, NewFileHandler newFileHandler)
 	{
 		return getFileDir(configFilename, IMPORT_ATTRIBUTE_DIR, "/data/attribute/");
 	}
 
 	private static File getFileDir(String configFilename, String directory, String resourceDir)
+	{
+		return getFileDir(configFilename, directory, resourceDir, null);
+	}
+
+	private static File getFileDir(String configFilename, String directory, String resourceDir, NewFileHandler newFileHandler)
 	{
 		File configFile = new File(getDir(directory) + "/" + configFilename);
 		if (configFile.exists() == false) {
@@ -93,6 +108,10 @@ public class FileSystemManager
 				}
 			} else {
 				log.log(Level.WARNING, MessageFormat.format("Unable to find resource: {0}{1}", new Object[]{resourceDir, configFilename}));
+			}
+
+			if (newFileHandler != null) {
+				newFileHandler.handleNewFile(configFile);
 			}
 		}
 		return configFile;
