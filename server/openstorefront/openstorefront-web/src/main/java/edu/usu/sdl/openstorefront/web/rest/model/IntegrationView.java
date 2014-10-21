@@ -19,7 +19,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
-import edu.usu.sdl.openstorefront.storage.model.IntegrationTransType;
+import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
 
 /**
  *
@@ -28,7 +28,7 @@ import edu.usu.sdl.openstorefront.storage.model.IntegrationTransType;
 public class IntegrationView
 {
 	private String id;
-	private IntegrationTransType type;
+	private IntegrationConfig type;
 	private Component component;
 	private String issueNumber;
 	private String status;
@@ -38,14 +38,14 @@ public class IntegrationView
 		
 	}
 	
-	public IntegrationView toView(Integration integration, IntegrationTransType type){
+	public IntegrationView toView(Integration integration, IntegrationConfig type){
 		ServiceProxy proxy = new ServiceProxy();
 		IntegrationView view = new IntegrationView();
 		
 		view.setId(integration.getIntegrationId());
 		view.setType(type);
 		view.setComponent(proxy.getPersistenceService().findById(Component.class, integration.getComponentId()));
-		view.setIssueNumber(integration.getIssueNumber());
+		view.setIssueNumber(type.getIssueNumber());
 		view.setStatus(integration.getStatus());
 		view.setErrorMessage(integration.getErrorMessage());
 		
@@ -135,7 +135,7 @@ public class IntegrationView
 	/**
 	 * @return the type
 	 */
-	public IntegrationTransType getType()
+	public IntegrationConfig getType()
 	{
 		return type;
 	}
@@ -143,7 +143,7 @@ public class IntegrationView
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(IntegrationTransType type)
+	public void setType(IntegrationConfig type)
 	{
 		this.type = type;
 	}

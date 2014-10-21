@@ -70,7 +70,7 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
       if ($scope.config && $scope.typeahead) {
         console.log('$scope.config', $scope.config);
         
-        if ($scope.config.component && $scope.config.componentId) {
+        if ($scope.config.componentId) {
           $scope.component = _.find($scope.typeahead, {'componentId': $scope.config.componentId});
         }
         if ($scope.config.issueNumber){
