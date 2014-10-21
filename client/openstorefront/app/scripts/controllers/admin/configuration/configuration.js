@@ -21,9 +21,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.modal = {};
   $scope.password;
   $scope.selectedMapping;
-  $scope.typeahead;
-  $scope.overRideDefault = false;
-  $scope.componentCron = '0 0 * * *';
+
   $scope.types = [
   {
     'label': 'Jira Configuration',
@@ -46,10 +44,17 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.getXRefTypes();
 
   $scope.sendToModal = function(mapping) {
+    console.log('mapping', mapping);
+    
     $scope.getConfigId(mapping).then(function(result){
-      $scope.setupModal(result); 
-      $scope.openModal('compConf');
+      console.log('result', result);
+      if (result && result.type) {
+        $scope.setupModal(result.type); 
+        $scope.openModal('compConf');
+      }
     }, function(result){
+      console.log('There was a problem');
+      
       return false;
     })
   }
