@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
@@ -40,9 +41,9 @@ public class XRefType
 	private String fieldName;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ConsumeField
-	private String key;
+	private String fieldKey;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -58,7 +59,7 @@ public class XRefType
 	private String issueType;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
+	@ValidValueType(value = {}, lookupClass = IntegrationType.class)
 	@ConsumeField
 	private String integrationType;
 
@@ -67,116 +68,74 @@ public class XRefType
 
 	}
 
-	/**
-	 * @return the attributeType
-	 */
 	public String getAttributeType()
 	{
 		return attributeType;
 	}
 
-	/**
-	 * @param attributeType the attributeType to set
-	 */
 	public void setAttributeType(String attributeType)
 	{
 		this.attributeType = attributeType;
 	}
 
-	/**
-	 * @return the fieldName
-	 */
 	public String getFieldName()
 	{
 		return fieldName;
 	}
 
-	/**
-	 * @param fieldName the fieldName to set
-	 */
 	public void setFieldName(String fieldName)
 	{
 		this.fieldName = fieldName;
 	}
 
-	/**
-	 * @return the key
-	 */
-	public String getKey()
+	public String getFieldKey()
 	{
-		return key;
+		return fieldKey;
 	}
 
-	/**
-	 * @param key the key to set
-	 */
-	public void setKey(String key)
+	public void setFieldKey(String fieldKey)
 	{
-		this.key = key;
+		this.fieldKey = fieldKey;
 	}
 
-	/**
-	 * @return the integrationType
-	 */
-	public String getIntegrationType()
-	{
-		return integrationType;
-	}
-
-	/**
-	 * @param integrationType the integrationType to set
-	 */
-	public void setIntegrationType(String integrationType)
-	{
-		this.integrationType = integrationType;
-	}
-
-	/**
-	 * @return the mappingName
-	 */
 	public String getMappingName()
 	{
 		return mappingName;
 	}
 
-	/**
-	 * @param mappingName the mappingName to set
-	 */
 	public void setMappingName(String mappingName)
 	{
 		this.mappingName = mappingName;
 	}
 
-	/**
-	 * @return the projectType
-	 */
 	public String getProjectType()
 	{
 		return projectType;
 	}
 
-	/**
-	 * @param projectType the projectType to set
-	 */
 	public void setProjectType(String projectType)
 	{
 		this.projectType = projectType;
 	}
 
-	/**
-	 * @return the issueType
-	 */
 	public String getIssueType()
 	{
 		return issueType;
 	}
 
-	/**
-	 * @param issueType the issueType to set
-	 */
 	public void setIssueType(String issueType)
 	{
 		this.issueType = issueType;
+	}
+
+	public String getIntegrationType()
+	{
+		return integrationType;
+	}
+
+	public void setIntegrationType(String integrationType)
+	{
+		this.integrationType = integrationType;
 	}
 
 }

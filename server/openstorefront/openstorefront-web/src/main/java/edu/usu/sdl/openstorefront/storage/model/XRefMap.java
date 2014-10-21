@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
@@ -28,71 +27,69 @@ import javax.validation.constraints.Size;
  */
 public class XRefMap
 {
+
 	@PK
+	@NotNull
+	private String xrefId;
+
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ConsumeField
 	private String attributeType;
-	
+
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ConsumeField
 	private String localCode;
-	
+
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String externalCode;
 
-	public XRefMap(){
-		
+	public XRefMap()
+	{
+
 	}
-	
-	/**
-	 * @return the attributeType
-	 */
+
+	public String getXrefId()
+	{
+		return xrefId;
+	}
+
+	public void setXrefId(String xrefId)
+	{
+		this.xrefId = xrefId;
+	}
+
 	public String getAttributeType()
 	{
 		return attributeType;
 	}
 
-	/**
-	 * @param attributeType the attributeType to set
-	 */
 	public void setAttributeType(String attributeType)
 	{
 		this.attributeType = attributeType;
 	}
 
-	/**
-	 * @return the localCode
-	 */
 	public String getLocalCode()
 	{
 		return localCode;
 	}
 
-	/**
-	 * @param localCode the localCode to set
-	 */
 	public void setLocalCode(String localCode)
 	{
 		this.localCode = localCode;
 	}
 
-	/**
-	 * @return the externalCode
-	 */
 	public String getExternalCode()
 	{
 		return externalCode;
 	}
 
-	/**
-	 * @param externalCode the externalCode to set
-	 */
 	public void setExternalCode(String externalCode)
 	{
 		this.externalCode = externalCode;
 	}
+
 }
