@@ -9,7 +9,7 @@
           <button class="btn btn-default">Refresh&nbsp;All&nbsp;Jira&nbsp;<i class="fa fa-refresh"></i></button>
         </div>
       </div>
-<!--       <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
+      <!-- <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
         <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="userna,e">Username:&nbsp;</label>
         <div class="col-sm-8" style="padding: 0;">
           <input class="form-control" type="text" id="username" ng-model="username" placeholder="Storefront User Username">
@@ -22,7 +22,7 @@
         </div>
       </div>
     </div>
-<!--     <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+    <!-- <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
       <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
         <label style="padding-left:0px; padding-right:0px;" class="col-sm-4 control-label" for="password">Password:&nbsp;</label>
         <div class="col-sm-8" style="padding: 0;">
@@ -66,12 +66,30 @@
         <div class="warning"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;You need to add a mapping before you can link components to an issue number.</div>
       </div>
       <div ng-show="xRefTypes.length > 0">
-        <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
-          <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" style="text-align:right;">Choose a mapping:&nbsp;</label>
-          <select id="componentConfMap" class="form-control" style="width:auto;" ng-model="selectedMapping" ng-options="type as type.mappingName for type in xRefTypes"></select>
-        </div>
         <div ng-show="type === 'jira'">
-          <button class="btn btn-default" ng-click="setupModal(88); openModal('compConf');">Add New Configuration&nbsp;</button>
+          <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+            <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="col-sm-2 control-label" style="text-align:right;">Choose a mapping:&nbsp;</label>
+            <select id="componentConfMap" class="form-control" style="width:auto;" ng-model="selectedMapping" ng-options="type as type.mappingName for type in xRefTypes"></select>
+          </div>
+          <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0;">
+            <table ng-show="configurations" class="table table-striped table-bordered">
+              <tr>
+                <th>Component</th>
+                <th>Issue Number</th>
+                <th>Status</th>
+                <th>Edit/Delete</th>
+              </tr>
+              <tr ng-repeat="config in configurations" ng-class="config.status === 'error'? 'danger': ''">
+                <td>{{config.component.name}}</td>
+                <td>{{config.issueNumber}}</td>
+                <td>{{config.status}}</td>
+                <td style="padding:0px;"><button class="btn btn-default" ng-click="setupModal(config.type); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config.type)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-10 col-sm-offset-2" style="padding: 0; min-height: 50px;">
+            <button class="btn btn-default" ng-click="sendToModal(selectedMapping)">Add New Configuration&nbsp;</button>
+          </div>
         </div>
       </div>
     </form>

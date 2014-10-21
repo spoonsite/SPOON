@@ -22,7 +22,7 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   $scope.issue;
   $scope.componentId;
   $scope.issueId;
-  $scope.id;
+  $scope.config;
 
   Business.componentservice.getComponentList().then(function(result) {
     Business.typeahead(result, null).then(function(value){
@@ -51,13 +51,12 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
     }
   }, true);
 
-  $scope.id = Business.getLocal('configId');
+  $scope.config = Business.getLocal('configId');
 
-  $scope.$watch('id', function() {
-    if ($scope.id) {
+  $scope.$watch('config', function() {
+    if ($scope.config) {
       //get the configuration information;
-      console.log('We got an id', $scope.id);
-      
+      console.log('We got an id', $scope.config);
     }
   })
 
