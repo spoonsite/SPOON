@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -28,163 +29,91 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class Integration
+		extends BaseEntity
 {
+
 	@PK
 	@NotNull
 	private String integrationId;
-	
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String refreshRate;
-	
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String issueNumber;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = RunStatus.class)
 	private String status;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String errorNumber;
+	private String errorTicketNumber;
+	private String errorMessage;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String errorMessage;
-	
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
-	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String componentId;
-	
-	
-	
-	
-	public Integration() {
-		
-	}
-	
-	/**
-	 * @return the refreshRate
-	 */
-	public String getRefreshRate()
+
+	public Integration()
 	{
-		return refreshRate;
+
 	}
 
-	/**
-	 * @param refreshRate the refreshRate to set
-	 */
-	public void setRefreshRate(String refreshRate)
+	public String getErrorTicketNumber()
 	{
-		this.refreshRate = refreshRate;
+		return errorTicketNumber;
 	}
 
-	/**
-	 * @return the issueNumber
-	 */
-	public String getIssueNumber()
+	public void setErrorTicketNumber(String errorTicketNumber)
 	{
-		return issueNumber;
+		this.errorTicketNumber = errorTicketNumber;
 	}
 
-	/**
-	 * @param issueNumber the issueNumber to set
-	 */
-	public void setIssueNumber(String issueNumber)
-	{
-		this.issueNumber = issueNumber;
-	}
-
-	/**
-	 * @return the status
-	 */
-	public String getStatus()
-	{
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(String status)
-	{
-		this.status = status;
-	}
-
-	/**
-	 * @return the errorNumber
-	 */
-	public String getErrorNumber()
-	{
-		return errorNumber;
-	}
-
-	/**
-	 * @param errorNumber the errorNumber to set
-	 */
-	public void setErrorNumber(String errorNumber)
-	{
-		this.errorNumber = errorNumber;
-	}
-
-	/**
-	 * @return the integrationId
-	 */
 	public String getIntegrationId()
 	{
 		return integrationId;
 	}
 
-	/**
-	 * @param integrationId the integrationId to set
-	 */
 	public void setIntegrationId(String integrationId)
 	{
 		this.integrationId = integrationId;
 	}
 
-	/**
-	 * @return the componentId
-	 */
-	public String getComponentId()
+	public String getRefreshRate()
 	{
-		return componentId;
+		return refreshRate;
 	}
 
-	/**
-	 * @param componentId the componentId to set
-	 */
-	public void setComponentId(String componentId)
+	public void setRefreshRate(String refreshRate)
 	{
-		this.componentId = componentId;
+		this.refreshRate = refreshRate;
 	}
 
-	/**
-	 * @return the errorMessage
-	 */
+	public String getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(String status)
+	{
+		this.status = status;
+	}
+
 	public String getErrorMessage()
 	{
 		return errorMessage;
 	}
 
-	/**
-	 * @param errorMessage the errorMessage to set
-	 */
 	public void setErrorMessage(String errorMessage)
 	{
 		this.errorMessage = errorMessage;
+	}
+
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
 	}
 }

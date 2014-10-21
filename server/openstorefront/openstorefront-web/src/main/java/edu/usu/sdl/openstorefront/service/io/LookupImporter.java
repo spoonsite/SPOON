@@ -19,6 +19,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
+import edu.usu.sdl.openstorefront.service.manager.NewFileHandler;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.Convert;
@@ -79,7 +80,16 @@ public class LookupImporter
 			for (Class entityClass : entityClasses) {
 				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 					if (ServiceUtil.isSubLookupEntity(entityClass)) {
-						FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv");
+						FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv", new NewFileHandler()
+						{
+							@Override
+							public void handleNewFile(File newFile)
+							{
+								File files[] = new File[1];
+								files[0] = newFile;
+								filesUpdatedOrAdded(files);
+							}
+						});
 					}
 				}
 			}

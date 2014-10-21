@@ -60,8 +60,8 @@ public class JiraManager
 
 	public static void cleanup()
 	{
-		if (clientPool.remainingCapacity() != maxPoolSize) {
-			log.log(Level.WARNING, MessageFormat.format("{0} jira connections were in process. ", (maxPoolSize - clientPool.remainingCapacity())));
+		if (getAvavilableConnections() != maxPoolSize) {
+			log.log(Level.WARNING, MessageFormat.format("{0} jira connections were in process. ", getAvavilableConnections()));
 		}
 	}
 
