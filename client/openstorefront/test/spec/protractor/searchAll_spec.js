@@ -1,7 +1,7 @@
 describe('searchAll_Search entire database', function() {
 
     // *** varies, depending on what is in the sample database ***
-    var totalResults = 59;
+    var totalResults = 58; // No articles
 
     it('Global search (all blank) returns ' + totalResults + ' expected current db results', function() {
         // Open the main site

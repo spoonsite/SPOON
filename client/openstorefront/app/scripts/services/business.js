@@ -56,6 +56,10 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     localCache.save(name+'-time', new Date());
   };
 
+  var get = function(key) {
+    return localCache.get(key, 'object');
+  }
+
   var updateCache = function(name, value) {
     save(name, value);
   };
@@ -246,6 +250,19 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     return deferred.promise;
   };
 
+
+  business.saveLocal = function(key, value){
+    save(key, value);
+  }
+
+  business.getLocal = function(key){
+    if (key) {
+      var result = get(key);
+      return result? result: null;
+    } else {
+      return null;
+    }
+  }
 
 
 

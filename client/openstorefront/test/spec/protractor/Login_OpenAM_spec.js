@@ -1,13 +1,18 @@
 // GLOBAL Variable for the tests
 //theSite = 'http://di2e.github.io/openstorefront/index.html';
-//openAM = false;
-
-theSite = 'https://storefront1.di2e.net/openstorefront/index.html';
-openAM = true;
-
+//openAM = false; other = false;
 
 //theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
-//openAM = true;
+//openAM = true; other = false;
+
+// CURRENT PRODUCTION
+//theSite = 'https://storefront1.di2e.net/openstorefront/index.html';
+//openAM = true; other = false;
+
+// TESTING SITE
+theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
+openAM = false; other = true;
+
 
 // Leave OUTSIDE of describe, it, expect as it is NOT an Angular website page.
 if (openAM) {
@@ -20,4 +25,12 @@ if (openAM) {
     browser.driver.sleep(1000);
 }
 
-browser.ignoreSynchronization = false;
+// Other Non-OpenAM site, but still need to login!
+if (other) {
+    console.log('**********  Please manually log in, you have ~30 seconds.  **********');
+    console.log(theSite);
+    console.log('UN:admin,  PW:secret');
+    console.log('*********************************************************************');
+    browser.driver.sleep(33000);
+}
+

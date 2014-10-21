@@ -8,7 +8,6 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 //import edu.usu.sdl.solr.service.SolrService;
 //import edu.usu.sdl.solr.service.model.SolrComponentResultsModel;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,44 +28,46 @@ public class SolrSearchComponent //extends BaseTestCase
 {
     //private static final Logger log = Logger.getLogger(AddTestCase.class.getName());
 
-    //@Override
-    public String description() {
-        return "Search Component";
-    }
+	//@Override
+	public String description()
+	{
+		return "Search Component";
+	}
 
-    public List<String> searchComponent(
-            SearchQuery searchQuery,
-            FilterQueryParams filter,
-            String searchString,
-            String setFieldsIndex,
-            String setFieldsName,
-            String setFieldsDescription,
-            String setFieldsTags,
-            String setFieldsAttributes,
-            String setFieldsComponentBoolean) throws MalformedURLException, SolrServerException {
+	public List<String> searchComponent(
+			SearchQuery searchQuery,
+			FilterQueryParams filter,
+			String searchString,
+			String setFieldsIndex,
+			String setFieldsName,
+			String setFieldsDescription,
+			String setFieldsTags,
+			String setFieldsAttributes,
+			String setFieldsComponentBoolean) throws MalformedURLException, SolrServerException
+	{
 
-        SolrQuery query = new SolrQuery();
+		SolrQuery query = new SolrQuery();
 
-        query.setQuery(searchString); // (default field?)
+		query.setQuery(searchString); // (default field?)
 
-        // fields to be returned back from solr
-        query.setFields(setFieldsIndex, setFieldsName, setFieldsDescription, setFieldsTags, setFieldsAttributes, setFieldsComponentBoolean);
+		// fields to be returned back from solr
+		query.setFields(setFieldsIndex, setFieldsName, setFieldsDescription, setFieldsTags, setFieldsAttributes, setFieldsComponentBoolean);
 
-        // begin at nth solr index entry
-        query.setStart(filter.getOffset());
-        query.setRows(filter.getMax());
+		// begin at nth solr index entry
+		query.setStart(filter.getOffset());
+		query.setRows(filter.getMax());
 
-        // Solr call
-        QueryResponse response = SolrManager.getServer().query(query);
+		// Solr call
+		QueryResponse response = SolrManager.getServer().query(query);
 
-        SolrDocumentList results = response.getResults();
+		SolrDocumentList results = response.getResults();
 
-        // define array for holding solr response
-        List<String> resultsList = new ArrayList<>();
+		// define array for holding solr response
+		List<String> resultsList = new ArrayList<>();
 
-        for (SolrDocument doc : results) {
-            // place search results into results model
-            resultsList.add(doc.getFieldValue(setFieldsIndex).toString());
+		for (SolrDocument doc : results) {
+			// place search results into results model
+			resultsList.add(doc.getFieldValue(setFieldsIndex).toString());
 //			resultsModel.setName(doc.getFieldValue(setFieldsName).toString());
 //			resultsModel.setDescription(doc.getFieldValue(setFieldsDescription).toString());
 //                        resultsModel.setComponentSearch((boolean) doc.getFieldValue(setFieldsComponentBoolean));
@@ -136,7 +137,7 @@ public class SolrSearchComponent //extends BaseTestCase
 //
 //			// populate before writing out
 //			resultsList.add(resultsModel);
-        }
-        return resultsList;
-    }
+		}
+		return resultsList;
+	}
 }

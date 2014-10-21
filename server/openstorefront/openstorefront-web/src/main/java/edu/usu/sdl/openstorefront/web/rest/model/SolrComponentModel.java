@@ -22,93 +22,104 @@ import org.apache.solr.client.solrj.beans.Field;
  *
  * @author gbagley
  */
-public class SolrComponentModel {
+public class SolrComponentModel
+{
 // private variables
 
-    @Field
-    private String id;
+	@Field
+	private String id;
 
-    @Field
-    private String componentId;
+	@Field
+	private String componentId;
 
-    @Field("isComponentSearch_b_is")
-    private Boolean isComponent;
+	@Field("isComponentSearch_b_is")
+	private Boolean isComponent;
 
-    @Field("title")
-    private String name;
+	@Field("title")
+	private String name;
 
-    @Field("content_text")
-    private String description;
+	@Field("content_text")
+	private String description;
 
-    @Field("content_tags")
-    private String tags;
+	@Field("content_tags")
+	private String tags;
 
-    @Field("content_raw")
-    private String attributes;
+	@Field("content_raw")
+	private String attributes;
 
-    @Field
-    private String queryString;
+	@Field("articleHtml_text")
+	private String articleHtml;
 
-    @Field
-    private String guid;
+	@Field
+	private String queryString;
 
-    @Field
-    private String organization;
+	@Field
+	private String guid;
 
-    @Field
-    private Date releaseDate;
+	@Field
+	private String organization;
 
-    @Field("modified")
-    private Date updateDate_dt_is;
+	@Field
+	private Date releaseDate;
 
-    @Field
-    private String version;
+	@Field("modified")
+	private Date updateDate_dt_is;
 
-    @Field("idInt_i_is")
-    private int idInt;
+	@Field
+	private String version;
 
-    @Field("name_s_is")
-    private String nameString;
+	@Field("idInt_i_is")
+	private int idInt;
 
-    // constructor 
-    public SolrComponentModel() {
-    }
+	@Field("name_s_is")
+	private String nameString;
 
-    // public methods
-    public String getId() {
-        return id;
-    }
+	// constructor
+	public SolrComponentModel()
+	{
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	// public methods
+	public String getId()
+	{
+		return id;
+	}
 
-    public int getIdInt() {
-        return idInt;
-    }
+	public void setId(String id)
+	{
+		this.id = id;
+	}
 
-    public void setIdInt(Integer idInt) {
-        this.idInt = idInt;
-    }
+	public int getIdInt()
+	{
+		return idInt;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setIdInt(Integer idInt)
+	{
+		this.idInt = idInt;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName()
+	{
+		return name;
+	}
 
-    public String getNameString() {
-        return nameString;
-    }
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
-    public void setNameString(String nameString) {
-        this.nameString = nameString;
-    }
+	public String getNameString()
+	{
+		return nameString;
+	}
 
-//
-//    
+	public void setNameString(String nameString)
+	{
+		this.nameString = nameString;
+	}
+
 //    public String getName() {
 //        return title;
 //    }
@@ -116,15 +127,27 @@ public class SolrComponentModel {
 //    public void setName(String title) {
 //        this.title = title;
 //    }
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription()
+	{
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 
-//    
+	public String getArticleHtml()
+	{
+		return articleHtml;
+	}
+
+	public void setArticleHtml(String articleHtml)
+	{
+		this.articleHtml = articleHtml;
+	}
+
+//
 //    public String getDescription() {
 //        return content_text;
 //    }
@@ -132,102 +155,122 @@ public class SolrComponentModel {
 //    public void setDescription(String content_text) {
 //        this.content_text = content_text;
 //    }
-    public String getComponentID() {
-        return componentId;
-    }
+	public String getComponentID()
+	{
+		return componentId;
+	}
 
-    public void setComponentID(String componentId) {
-        this.componentId = componentId;
-    }
+	public void setComponentID(String componentId)
+	{
+		this.componentId = componentId;
+	}
 
-    public String getGuid() {
-        return guid;
-    }
+	public String getGuid()
+	{
+		return guid;
+	}
 
-    public void setGuid(String guid) {
-        this.guid = guid;
-    }
+	public void setGuid(String guid)
+	{
+		this.guid = guid;
+	}
 
-    public String getOrganization() {
-        return organization;
-    }
+	public String getOrganization()
+	{
+		return organization;
+	}
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
 
-    public Date getReleaseDate() {
-        return releaseDate;
-    }
+	public Date getReleaseDate()
+	{
+		return releaseDate;
+	}
 
-    public void setReleaseDate(Date releaseDate) {
-        this.releaseDate = releaseDate;
-    }
+	public void setReleaseDate(Date releaseDate)
+	{
+		this.releaseDate = releaseDate;
+	}
 
-    public Date getUpdateDate() {
-        return updateDate_dt_is;
-    }
+	public Date getUpdateDate()
+	{
+		return updateDate_dt_is;
+	}
 
-    public void setUpdateDate(Date updateDate_dt_is) {
-        this.updateDate_dt_is = updateDate_dt_is;
-    }
+	public void setUpdateDate(Date updateDate_dt_is)
+	{
+		this.updateDate_dt_is = updateDate_dt_is;
+	}
 
-    public String getQueryString() {
-        return queryString;
-    }
+	public String getQueryString()
+	{
+		return queryString;
+	}
 
-    public void setQueryString(String queryString) {
-        this.queryString = queryString;
-    }
+	public void setQueryString(String queryString)
+	{
+		this.queryString = queryString;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	public String getVersion()
+	{
+		return version;
+	}
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	public void setVersion(String version)
+	{
+		this.version = version;
+	}
 
-    /**
-     * @return the tags
-     */
-    public String getTags() {
-        return tags;
-    }
+	/**
+	 * @return the tags
+	 */
+	public String getTags()
+	{
+		return tags;
+	}
 
-    /**
-     * @param tags the tags to set
-     */
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(String tags)
+	{
+		this.tags = tags;
+	}
 
-    /**
-     * @return the attributes
-     */
-    public String getAttributes() {
-        return attributes;
-    }
+	/**
+	 * @return the attributes
+	 */
+	public String getAttributes()
+	{
+		return attributes;
+	}
 
-    /**
-     * @param attributes the attributes to set
-     */
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
-    }
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(String attributes)
+	{
+		this.attributes = attributes;
+	}
 
-    /**
-     * @return the isComponent
-     */
-    public Boolean getIsComponent() {
-        return isComponent;
-    }
+	/**
+	 * @return the isComponent
+	 */
+	public Boolean getIsComponent()
+	{
+		return isComponent;
+	}
 
-    /**
-     * @param isComponent the isComponent to set
-     */
-    public void setIsComponent(Boolean isComponent) {
-        this.isComponent = isComponent;
-    }
+	/**
+	 * @param isComponent the isComponent to set
+	 */
+	public void setIsComponent(Boolean isComponent)
+	{
+		this.isComponent = isComponent;
+	}
 
 }
