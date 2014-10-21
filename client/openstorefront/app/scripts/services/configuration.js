@@ -147,7 +147,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
           "updateUser" : null,
           "updateDts" : null,
           "storageVersion" : null,
-          "componentId" : 67,
+          "componentId" : '67',
           "name" : 'CAS',
           "description" : null,
           "parentComponentId" : null,
