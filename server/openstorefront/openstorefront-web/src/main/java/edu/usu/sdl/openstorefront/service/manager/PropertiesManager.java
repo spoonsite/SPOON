@@ -56,6 +56,13 @@ public class PropertiesManager
 	public static final String KEY_OPENAM_HEADER_ORGANIZATION = "openam.header.organization";
 	public static final String KEY_OPENAM_HEADER_ADMIN_GROUP = "openam.header.admingroupname";
 
+	public static final String KEY_TOOLS_USER = "tools.login.user";
+	public static final String KEY_TOOLS_CREDENTIALS = "tools.login.pw";
+
+	public static final String KEY_JIRA_POOL_SIZE = "jira.connectionpool.size";
+	public static final String KEY_JIRA_CONNECTION_WAIT_TIME = "jira.connection.wait.seconds";
+	public static final String KEY_JIRA_URL = "jira.server.url";
+
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 

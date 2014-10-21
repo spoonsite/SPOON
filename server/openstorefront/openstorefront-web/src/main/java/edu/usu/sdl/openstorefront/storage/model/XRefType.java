@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
@@ -28,13 +27,13 @@ import javax.validation.constraints.Size;
  */
 public class XRefType
 {
-	
+
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ConsumeField
 	private String attributeType;
-	
+
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
@@ -44,30 +43,30 @@ public class XRefType
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
 	@ConsumeField
 	private String key;
-		
+
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String mappingName;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String projectType;
-		
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
-	private String issueType;		
-	
+	private String issueType;
+
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
 	@ConsumeField
 	private String integrationType;
 
-	
-	public XRefType() {
-		
+	public XRefType()
+	{
+
 	}
-	
+
 	/**
 	 * @return the attributeType
 	 */
