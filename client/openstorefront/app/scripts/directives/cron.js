@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.directive('cron', function () {
+app.directive('cron', ['$timeout', function ($timeout) {
   return {
     template: '<div></div>',
     restrict: 'E',
@@ -24,16 +24,41 @@ app.directive('cron', function () {
       ngModel: '='
     },
     link: function postLink(scope, element, attrs) {
+      var flag = false;
+
       if (!scope.ngModel) {
-        scope.ngModel = '0 0 * * *';
+        scope.ngModel = '0 0 0 * * *';
       }
-      var c = $(element).cron({
-        initial: scope.ngModel, // Initial value. default = "* * * * *"
-        onChange: function() {
-          // console.log('cron value', $(this).cron('value'));
-          scope.ngModel = '0 ' + $(this).cron('value');
+
+      var cleanNgModel = function(value) {
+        var check = value.trim().split(' ');
+        if (check.length === 6) {
+          check.shift();
+          return check.join(' ');
+        } else if (check.length === 5) {
+          return check.join(' ');
+        } else {
+          return '0 0 * * *';
         }
-      });
+      }
+
+      $timeout(function() {
+        var c = $(element).cron({
+          initial: cleanNgModel(scope.ngModel), // Initial value. default = "* * * * *"
+          onChange: function() {
+            // console.log('cron value', $(this).cron('value'));
+            scope.ngModel = '0 ' + $(this).cron('value');
+            flag = true;
+          }
+        });
+        scope.$watch('ngModel', function(value){
+          if (value && !flag){
+            $(element).cron('value', cleanNgModel(value));
+          }
+          flag = false;
+        })
+      })
+
     }
   };
-});
+}]);

@@ -21,9 +21,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.modal = {};
   $scope.password;
   $scope.selectedMapping;
-  $scope.typeahead;
-  $scope.overRideDefault = false;
-  $scope.componentCron = '0 0 * * *';
+
   $scope.types = [
   {
     'label': 'Jira Configuration',
@@ -45,10 +43,42 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   
   $scope.getXRefTypes();
 
+  $scope.sendToModal = function(mapping) {
+    console.log('mapping', mapping);
+    
+    $scope.getConfigId(mapping).then(function(result){
+      console.log('result', result);
+      if (result && result.type) {
+        $scope.setupModal(result.type); 
+        $scope.openModal('compConf');
+      }
+    }, function(result){
+      console.log('There was a problem');
+      
+      return false;
+    })
+  }
 
-  $scope.setupModal = function(id) {
-    if (id) {
-      Business.saveLocal('configId', id)
+  $scope.getConfigId = function(mapping) {
+    var deferred = $q.defer();
+    if(!mapping) {
+      deferred.reject(false);
+    } else {
+      Business.configurationservice.getConfigId(mapping).then(function(result){
+        if (result) {
+          deferred.resolve(result);
+        }
+      }, function(){
+        deferred.reject(false);
+      });
+    }
+    return deferred.promise
+  }
+
+
+  $scope.setupModal = function(config) {
+    if (config) {
+      Business.saveLocal('configId', config)
     }
     var deferred = $q.defer();
     $scope.modal.classes = '';
@@ -91,5 +121,22 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.forceRefresh = function() {
     return false;
   }
+
+
+  $scope.$watch('selectedMapping', function(value){
+    if (value) {
+      Business.configurationservice.getConfigurations(value).then(function(result){
+        console.log('result', result);
+        
+        if (result && result.length > 0) {
+          $scope.configurations = result;
+        } else {
+          $scope.configurations = null;
+        }
+      }, function(result) {
+        $scope.configurations = null;
+      });
+    }
+  })
 
 }]);

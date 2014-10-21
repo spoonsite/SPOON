@@ -76,6 +76,102 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     return deferred.promise;
   }
 
+  service.getConfigId = function(mapping) {
+    var deferred = $q.defer();
+
+
+    // if the mapping has the same attribute as a previously made config, send back that config
+    // grab the configuration by id!
+    if (mapping.attributeType === 'DI2ELEVEL') {
+      deferred.resolve({
+        'id': 239402,
+        'type': {
+          'id': 2304923,
+          'type': 'jira',
+          'issueNumber': 'ASSET-151',
+          'componentId': '67', 
+          'overRideRefreshRate': '0 4 4 * * *',
+        },
+        'component': {
+          "activeStatus" : null,
+          "createUser" : null,
+          "createDts" : null,
+          "updateUser" : null,
+          "updateDts" : null,
+          "storageVersion" : null,
+          "componentId" : '67',
+          "name" : 'CAS',
+          "description" : null,
+          "parentComponentId" : null,
+          "guid" : null,
+          "organization" : null,
+          "releaseDate" : null,
+          "version" : null,
+          "approvalState" : null,
+          "approvedUser" : null,
+          "approvedDts" : null,
+          "lastActivityDts" : null
+        },
+        'issueNumber': 'ASSET-151',
+        'status': 'error',
+        'errorMessage': 'The ticket was not found' 
+      });
+    } else {
+      deferred.resolve(false);
+    }
+
+
+    return deferred.promise;
+  }
+
+  service.getConfigurations = function(mapping) {
+
+    var deferred = $q.defer();
+
+
+    // if the mapping has the same attribute as a previously made config, send back that config
+    if (mapping.attributeType === 'DI2ELEVEL') {
+      deferred.resolve([{
+        'id': 239402,
+        'type': {
+          'id': 2304923,
+          'type': 'jira',
+          'issueNumber': 'ASSET-151',
+          'componentId': '67',
+          'overRideRefreshRate': '0 4 4 * * *',
+        },
+        'component': {
+          "activeStatus" : null,
+          "createUser" : null,
+          "createDts" : null,
+          "updateUser" : null,
+          "updateDts" : null,
+          "storageVersion" : null,
+          "componentId" : '67',
+          "name" : 'CAS',
+          "description" : null,
+          "parentComponentId" : null,
+          "guid" : null,
+          "organization" : null,
+          "releaseDate" : null,
+          "version" : null,
+          "approvalState" : null,
+          "approvedUser" : null,
+          "approvedDts" : null,
+          "lastActivityDts" : null
+        },
+        'issueNumber': 'ASSET-151',
+        'status': 'error',
+        'errorMessage': 'The ticket was not found' 
+      }]);
+    } else {
+      deferred.reject(false);
+    }
+
+
+    return deferred.promise;
+  }
+
 
   return service;
 
