@@ -84,35 +84,11 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     // grab the configuration by id!
     if (mapping.attributeType === 'DI2ELEVEL') {
       deferred.resolve({
-        'id': 239402,
-        'type': {
-          'id': 2304923,
-          'type': 'jira',
-          'issueNumber': 'ASSET-151',
-          'componentId': '67', 
-          'overRideRefreshRate': '0 4 4 * * *',
-        },
-        'component': {
-          "activeStatus" : null,
-          "createUser" : null,
-          "createDts" : null,
-          "updateUser" : null,
-          "updateDts" : null,
-          "storageVersion" : null,
-          "componentId" : '67',
-          "name" : 'CAS',
-          "description" : null,
-          "parentComponentId" : null,
-          "guid" : null,
-          "organization" : null,
-          "releaseDate" : null,
-          "version" : null,
-          "approvalState" : null,
-          "approvedUser" : null,
-          "approvedDts" : null,
-          "lastActivityDts" : null
-        },
+        'id': 2304923,
+        'type': 'jira',
         'issueNumber': 'ASSET-151',
+        'componentId': '67', 
+        'overRideRefreshRate': '0 4 4 * * *',
         'status': 'error',
         'errorMessage': 'The ticket was not found' 
       });
@@ -132,35 +108,11 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     // if the mapping has the same attribute as a previously made config, send back that config
     if (mapping.attributeType === 'DI2ELEVEL') {
       deferred.resolve([{
-        'id': 239402,
-        'type': {
-          'id': 2304923,
-          'type': 'jira',
-          'issueNumber': 'ASSET-151',
-          'componentId': '67',
-          'overRideRefreshRate': '0 4 4 * * *',
-        },
-        'component': {
-          "activeStatus" : null,
-          "createUser" : null,
-          "createDts" : null,
-          "updateUser" : null,
-          "updateDts" : null,
-          "storageVersion" : null,
-          "componentId" : '67',
-          "name" : 'CAS',
-          "description" : null,
-          "parentComponentId" : null,
-          "guid" : null,
-          "organization" : null,
-          "releaseDate" : null,
-          "version" : null,
-          "approvalState" : null,
-          "approvedUser" : null,
-          "approvedDts" : null,
-          "lastActivityDts" : null
-        },
+        'id': 2304923,
+        'type': 'jira',
         'issueNumber': 'ASSET-151',
+        'componentId': '67', 
+        'overRideRefreshRate': '0 4 4 * * *',
         'status': 'error',
         'errorMessage': 'The ticket was not found' 
       }]);
@@ -170,6 +122,60 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
 
 
     return deferred.promise;
+  }
+
+  service.getProjects = function() {
+    var deferred = $q.defer();
+    var value = checkExpire('JiraProjects', minute * 1440);
+    if (value) {
+      deferred.resolve(value);
+    } else {
+      var url = 'api/v1/resource/integration/projects'
+      $http({
+        'method': 'GET',
+        'url': url
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data)) {
+          save('JiraProjects', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(){
+        deferred.reject(false);
+      });
+    }
+
+    return deferred.promise;
+  }
+
+  service.getIssueOptions = function(project) {
+      var deferred = $q.defer();
+    if (project && project.code) {
+      var value = checkExpire(project.code+'-IssueOptions', minute * 1440);
+      if (value) {
+        deferred.resolve(value);
+      } else {
+        var url = 'api/v1/resource/integration/projects/'+project.code;
+        $http({
+          'method': 'GET',
+          'url': url
+        }).success(function(data, status, headers, config){
+          if (data && isNotRequestError(data)) {
+            save(project.code+'-IssueOptions', data);
+            deferred.resolve(data);
+          } else {
+            deferred.reject(false);
+          }
+        }).error(function(){
+          deferred.reject(false);
+        });
+      }
+
+    } else {
+      deferred.reject(false);
+    }
+      return deferred.promise;
   }
 
 

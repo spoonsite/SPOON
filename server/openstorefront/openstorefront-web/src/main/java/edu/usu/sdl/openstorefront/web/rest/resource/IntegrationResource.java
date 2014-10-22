@@ -15,18 +15,23 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import com.atlassian.jira.rest.client.domain.BasicProject;
+import com.atlassian.jira.rest.client.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -59,7 +64,7 @@ public class IntegrationResource
 	}
 
 	@GET
-	@APIDescription("Gets all integration models from the database.")
+	@APIDescription("Gets the global model from the database.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
 	@Path("/global")
@@ -75,7 +80,7 @@ public class IntegrationResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Creates a component")
+	@APIDescription("Save an integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response saveIntegration(
 		@RequiredParam Integration integration)
@@ -94,7 +99,7 @@ public class IntegrationResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Creates a component")
+	@APIDescription("Save a global integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/global")
 	public Response saveGlobal(
@@ -113,7 +118,7 @@ public class IntegrationResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates a component")
+	@APIDescription("Update an integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateComponentConfig(
@@ -135,7 +140,7 @@ public class IntegrationResource
 	
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates a component")
+	@APIDescription("Updates a global integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/global")
 	public Response updateGlobalConfig(
@@ -173,5 +178,43 @@ public class IntegrationResource
 	public void deleteGlobalConfig()
 	{
 		service.getSystemService().deactivateIntegration();
+	}
+	
+	@GET
+	@APIDescription("Gets the possible projects from Jira.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/projects")
+	public List<LookupModel> getJiraProjects()
+	{
+		return service.getSystemService().getAllJiraProjects();
+	}
+	
+	@GET
+	@APIDescription("Gets the possible issues from a specific project in Jira.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(String.class)
+	@Path("/projects/{projectCode}")
+	public List<JiraIssueModel> getJiraIssueTypes(
+			@PathParam("projectCode")
+			@RequiredParam String code
+	)
+	{
+		return service.getSystemService().getAllProjectIssueTypes(code);
+	}
+	
+	@GET
+	@APIDescription("Gets the possible fields from the issue type.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(String.class)
+	@Path("/projects/{projectCode}/{issueType}/fields")
+	public Map<String, CimFieldInfo> getJiraIssueTypes(
+			@PathParam("projectCode")
+			@RequiredParam String code,
+			@PathParam("issueType")
+			@RequiredParam String type
+	)
+	{
+		return service.getSystemService().getIssueTypeFields(code, type);
 	}
 }
