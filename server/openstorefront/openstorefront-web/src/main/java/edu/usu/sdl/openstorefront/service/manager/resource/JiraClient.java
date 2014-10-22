@@ -27,6 +27,7 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -106,16 +107,20 @@ public class JiraClient
 		return projects;
 	}
 
-	public List<String> getIssueTypesForProject(String projectKey)
+	public List<JiraIssueModel> getIssueTypesForProject(String projectKey)
 	{
-		List<String> issueTypeNames = new ArrayList<>();
+		List<JiraIssueModel> issueTypeNames = new ArrayList<>();
 		GetCreateIssueMetadataOptions options = new GetCreateIssueMetadataOptionsBuilder()
 				.withProjectKeys(projectKey)
 				.build();
 		Iterable<CimProject> cimProjects = getRestClient().getIssueClient().getCreateIssueMetadata(options).claim();
 		cimProjects.forEach(project -> {
 			project.getIssueTypes().forEach(type -> {
-				issueTypeNames.add(type.getName());
+				JiraIssueModel temp = new JiraIssueModel();
+				temp.setDescription(type.getDescription());
+				temp.setId(type.getId());
+				temp.setName(type.getName());
+				issueTypeNames.add(temp);
 			});
 		});
 		return issueTypeNames;

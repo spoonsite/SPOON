@@ -28,9 +28,10 @@ import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
 public class IntegrationView
 {
 	private String id;
-	private IntegrationConfig type;
-	private Component component;
+	private String componentId;
+	private String componentName;
 	private String issueNumber;
+	private String overRideRefreshRate;
 	private String status;
 	private String errorMessage;
 
@@ -41,10 +42,12 @@ public class IntegrationView
 	public IntegrationView toView(Integration integration, IntegrationConfig type){
 		ServiceProxy proxy = new ServiceProxy();
 		IntegrationView view = new IntegrationView();
-		
+		Component temp = proxy.getPersistenceService().findById(Component.class, integration.getComponentId());
+
+		view.setComponentName(temp.getName());
+		view.setComponentId(integration.getComponentId());
+		view.setOverRideRefreshRate(integration.getRefreshRate());
 		view.setId(integration.getIntegrationId());
-		view.setType(type);
-		view.setComponent(proxy.getPersistenceService().findById(Component.class, integration.getComponentId()));
 		view.setIssueNumber(type.getIssueNumber());
 		view.setStatus(integration.getStatus());
 		view.setErrorMessage(integration.getErrorMessage());
@@ -52,21 +55,6 @@ public class IntegrationView
 		return view;
 	}
 
-	/**
-	 * @return the component
-	 */
-	public Component getComponent()
-	{
-		return component;
-	}
-
-	/**
-	 * @param component the component to set
-	 */
-	public void setComponent(Component component)
-	{
-		this.component = component;
-	}
 
 	/**
 	 * @return the issueNumber
@@ -133,18 +121,52 @@ public class IntegrationView
 	}
 
 	/**
-	 * @return the type
+	 * @return the componentId
 	 */
-	public IntegrationConfig getType()
+	public String getComponentId()
 	{
-		return type;
+		return componentId;
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param componentId the componentId to set
 	 */
-	public void setType(IntegrationConfig type)
+	public void setComponentId(String componentId)
 	{
-		this.type = type;
+		this.componentId = componentId;
 	}
+
+	/**
+	 * @return the componentName
+	 */
+	public String getComponentName()
+	{
+		return componentName;
+	}
+
+	/**
+	 * @param componentName the componentName to set
+	 */
+	public void setComponentName(String componentName)
+	{
+		this.componentName = componentName;
+	}
+
+	/**
+	 * @return the overRideRefreshRate
+	 */
+	public String getOverRideRefreshRate()
+	{
+		return overRideRefreshRate;
+	}
+
+	/**
+	 * @param overRideRefreshRate the overRideRefreshRate to set
+	 */
+	public void setOverRideRefreshRate(String overRideRefreshRate)
+	{
+		this.overRideRefreshRate = overRideRefreshRate;
+	}
+
+
 }

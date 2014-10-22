@@ -15,15 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import com.atlassian.jira.rest.client.domain.BasicProject;
+import com.atlassian.jira.rest.client.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -152,4 +157,20 @@ public interface SystemService
 	 */
 	public void deactivateIntegration();
 
+	/**
+	 *
+	 * @return
+	 */
+	public List<LookupModel> getAllJiraProjects();
+	
+	/**
+	 *
+	 * @param code
+	 * @return
+	 */
+	public List<JiraIssueModel> getAllProjectIssueTypes(String code);
+	
+	
+	public Map<String, CimFieldInfo> getIssueTypeFields(String code, String type);
+	
 }

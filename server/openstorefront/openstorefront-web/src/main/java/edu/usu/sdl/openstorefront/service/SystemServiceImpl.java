@@ -15,10 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.atlassian.jira.rest.client.domain.BasicProject;
+import com.atlassian.jira.rest.client.domain.CimFieldInfo;
+import com.atlassian.jira.rest.client.domain.ServerInfo;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
+import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
@@ -31,6 +37,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,7 +47,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,7 +96,8 @@ public class SystemServiceImpl
 			existingProperty.setUpdateDts(TimeUtil.currentDate());
 			existingProperty.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 			persistenceService.persist(existingProperty);
-		} else {
+		}
+		else {
 			ApplicationProperty property = new ApplicationProperty();
 			property.setKey(key);
 			property.setValue(value);
@@ -125,7 +135,8 @@ public class SystemServiceImpl
 			existing.setUpdateUser(highlight.getUpdateUser());
 			persistenceService.persist(existing);
 
-		} else {
+		}
+		else {
 			highlight.setHighlightId(persistenceService.generateId());
 			highlight.setActiveStatus(Highlight.ACTIVE_STATUS);
 			highlight.setCreateDts(TimeUtil.currentDate());
@@ -163,7 +174,8 @@ public class SystemServiceImpl
 					getSystemService().saveHightlight(highlight);
 				}
 
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to save highlight.  Title: " + highlight.getTitle(), e);
 			}
 		}
@@ -219,7 +231,8 @@ public class SystemServiceImpl
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			Files.write(path, ticket.toString().getBytes());
 
-		} catch (Throwable t) {
+		}
+		catch (Throwable t) {
 			//NOTE: this is a critial path.  if an error is thrown and not catch it would result in a info link or potential loop.
 			//So that's why there is a catch all here.
 			log.log(Level.SEVERE, "Error was thrown while processing the error", t);
@@ -237,7 +250,8 @@ public class SystemServiceImpl
 			try {
 				byte data[] = Files.readAllBytes(path);
 				ticketData = new String(data);
-			} catch (IOException io) {
+			}
+			catch (IOException io) {
 				//We don't want to throw an error here if there something going on with the system.
 				ticketData = "Unable to retrieve ticket information.  (Check log for more details) Message: " + io.getMessage();
 				log.log(Level.WARNING, ticketData, io);
@@ -305,6 +319,42 @@ public class SystemServiceImpl
 	public GlobalIntegrationModel getGlobalConfig()
 	{
 		return new GlobalIntegrationModel();
+	}
+
+	@Override
+	public List<LookupModel> getAllJiraProjects()
+	{
+		List<LookupModel> response = new ArrayList<>();
+		try (JiraClient jiraClient = JiraManager.getClient()) {
+			Iterable<BasicProject> projects = jiraClient.getAllProjects();
+			for (BasicProject project : projects) {
+				LookupModel temp = new LookupModel();
+				temp.setDescription(project.getName());
+				temp.setCode(project.getKey());
+				response.add(temp);
+			}
+		}
+		return response;
+	}
+
+	@Override
+	public List<JiraIssueModel> getAllProjectIssueTypes(String code)
+	{
+		List<JiraIssueModel> response = new ArrayList<>();
+		try (JiraClient jiraClient = JiraManager.getClient()) {
+			response = jiraClient.getIssueTypesForProject(code);
+		}
+		return response;
+	}
+
+	@Override
+	public Map<String, CimFieldInfo> getIssueTypeFields(String code, String type)
+	{
+		Map<String, CimFieldInfo> response = new HashMap();
+		try (JiraClient jiraClient = JiraManager.getClient()) {
+			response = jiraClient.getProjectIssueTypeFields(code, type);
+		}
+		return response;
 	}
 
 }

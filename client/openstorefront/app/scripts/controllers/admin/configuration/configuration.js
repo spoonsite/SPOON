@@ -21,6 +21,10 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.modal = {};
   $scope.password;
   $scope.selectedMapping;
+  $scope.projects;
+  $scope.issueOptions;
+  $scope.jiraProject;
+  $scope.jiraIssue;
 
   $scope.types = [
   {
@@ -30,7 +34,35 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   ]
   $scope.type = 'jira';
 
+  $scope.getProjects = function() {
+    Business.configurationservice.getProjects().then(function(result){
+      $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
+      $scope.projects = result? result: [];
+      if (!$scope.projects.length) {
+        $scope.noProjects = true;
+      } else {
+        $scope.noProjects = false;
+      }
+    }, function() {
+      $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
+      $scope.projects = [];
+      $scope.noProjects = true;
+    });
+  }
+  $scope.getIssueOptions = function(project) {
+    if (project && project.code) {
+      Business.configurationservice.getIssueOptions(project).then(function(result){
+        console.log('issues', result);
+        $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
+        
+        $scope.issueOptions = result? result: [];
 
+      }, function() {
+        $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
+        $scope.issueOptions = [];
+      });
+    }
+  }
   $scope.getXRefTypes = function(){
     Business.configurationservice.getXRefTypes().then(function(result){
       console.log('result', result);
@@ -41,7 +73,13 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
     });
   }
   
-  $scope.getXRefTypes();
+  $scope.setup = function() {
+    $scope.$emit('$TRIGGERLOAD', 'JiraConfigLoad');
+    $scope.getXRefTypes();
+    $scope.getProjects();
+  }
+
+  $scope.setup();
 
   $scope.sendToModal = function(mapping) {
     console.log('mapping', mapping);
@@ -49,7 +87,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
     $scope.getConfigId(mapping).then(function(result){
       console.log('result', result);
       if (result && result.type) {
-        $scope.setupModal(result.type); 
+        $scope.setupModal(result); 
         $scope.openModal('compConf');
       }
     }, function(result){
@@ -136,6 +174,13 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
       }, function(result) {
         $scope.configurations = null;
       });
+    }
+  })
+
+  $scope.$watch('jiraProject', function(value){
+    if (value && typeof value === 'object') {
+      $scope.$emit('$TRIGGERLOAD', 'JiraConfigLoad');
+      $scope.getIssueOptions(value);
     }
   })
 

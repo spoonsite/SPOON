@@ -41,11 +41,25 @@
     <h3>Jira configuration</h3>
     <form class="form-horizontal" ng-submit="saveMappingConf()" role="form">
       <!-- Show the two cross reference tables -->
-      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
-        Cross reference for States
-      </div>
-      <div class="form-group form-group-sm col-sm-6" style="margin: 0 auto; padding: 0; min-height: 50px;">
-        Cross reference for Levels
+      <div style="display: inline-block; position:relative; width: 100%; min-height: 120px;">
+        <loader trigger="JiraConfigLoad"></loader>
+        <div ng-show="noProjects">
+          There were no projects in your associated Jira connection.
+        </div>
+        <div ng-show="!noProjects">
+          <div ng-show="projects.length" class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+            <label style="padding-left:0px; padding-right:0px;" class="control-label" for="projectSelect">Select a Jira Project:&nbsp;</label>
+            <div class="" style="padding: 0;">
+              <select ng-model="jiraProject" class="form-control" style="width:auto;" id="projectSelect" ng-options="option as option.description for option in projects"></select>
+            </div>
+          </div>
+          <div ng-show="issueOptions.length" class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+            <label style="padding-left:0px; padding-right:0px;" class="control-label" for="issueSelect">Select a Jira Project Issue Type:&nbsp;</label>
+            <div class="" style="padding: 0;">
+              <select ng-model="jiraIssue" class="form-control" style="width:auto;" id="issueSelect" ng-options="option as option.name for option in issueOptions"></select>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
         <div class="col-sm-offset-2">
@@ -77,13 +91,13 @@
                 <th>Component</th>
                 <th>Issue Number</th>
                 <th>Status</th>
-                <th>Edit/Delete</th>
+                <th>Refresh/Edit/Delete/</th>
               </tr>
               <tr ng-repeat="config in configurations" ng-class="config.status === 'error'? 'danger': ''">
-                <td>{{config.component.name}}</td>
+                <td>{{config.componentName}}</td>
                 <td>{{config.issueNumber}}</td>
                 <td>{{config.status}}</td>
-                <td style="padding:0px;">&nbsp;<button class="btn btn-default" ng-click="setupModal(config.type); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config.type)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
+                <td style="padding:0px;">&nbsp;<button class="btn btn-default" ng-click="forceRefresh(config)">Refresh&nbsp;<i class="fa fa-refresh"></i></button>&nbsp;<button class="btn btn-default" ng-click="setupModal(config); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
               </tr>
             </table>
           </div>
