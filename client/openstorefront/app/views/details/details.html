@@ -17,6 +17,8 @@
             <div ng-if="details.details.evaluation.evaluationSchedule.length === 4">
               <div ng-repeat="rows in details.details.evaluation.evaluationSchedule">
                 <div ng-class="rows.levelStatus === 'C'? 'complete': rows.levelStatus === 'H'? 'haulted': rows.levelStatus === 'P'? 'inprogress': 'notstarted'" class="col-md-3" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Evaluation Level {{$index}}<br/> {{getEval(rows.evaluationLevelCode).label}}" data-container="body" data-content="<p class='dd'>{{getEval(rows.evaluationLevelCode).description}}</p>"> <span class="helpcontent" > <a href="javascript:void(0)" class="helpcontent">{{getEval(rows.evaluationLevelCode).label}}  </a> </span> </div>
+              </div>
+              <div ng-repeat="rows in details.details.evaluation.evaluationSchedule">
                 <div>
                   <div class="col-md-3" ng-class="rows.levelStatus === 'C'? 'completeLabel': rows.levelStatus === 'H'? 'haultedLabel': rows.levelStatus === 'P'? 'inprogressLabel': 'notstartedLabel'" >{{grabEvaluationMessage(rows.levelStatus, getDate(rows.actualCompletionDate), getDate(rows.estimatedCompletionDate))}}</div>
                 </div>
