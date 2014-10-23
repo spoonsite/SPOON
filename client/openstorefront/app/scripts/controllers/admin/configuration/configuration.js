@@ -25,6 +25,11 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.issueOptions;
   $scope.jiraProject;
   $scope.jiraIssue;
+  $scope.jiraField;
+  $scope.storeCodes;
+  $scope.masterSelected;
+
+  $scope.loading = 0;
 
   $scope.types = [
   {
@@ -36,15 +41,16 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
 
   $scope.getProjects = function() {
     Business.configurationservice.getProjects().then(function(result){
-      $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
       $scope.projects = result? result: [];
+      $scope.loading--;
+
       if (!$scope.projects.length) {
         $scope.noProjects = true;
       } else {
         $scope.noProjects = false;
       }
     }, function() {
-      $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
+      $scope.loading--;
       $scope.projects = [];
       $scope.noProjects = true;
     });
@@ -52,16 +58,45 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.getIssueOptions = function(project) {
     if (project && project.code) {
       Business.configurationservice.getIssueOptions(project).then(function(result){
-        console.log('issues', result);
-        $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
-        
+        $scope.loading--;
         $scope.issueOptions = result? result: [];
 
       }, function() {
-        $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
+        $scope.loading--;
         $scope.issueOptions = [];
       });
     }
+  }
+  $scope.getJiraFields = function(project, issueType) {
+    if (project && project.code && issueType && issueType.name) {
+      Business.configurationservice.getJiraFields(project, issueType).then(function(result){
+        $scope.loading--;
+        $scope.fields = result? result: [];
+
+      }, function() {
+        $scope.loading--;
+        $scope.fields = [];
+      });
+    }
+  }
+  $scope.getStoreFields = function() {
+    Business.configurationservice.getStoreFields().then(function(result){
+      $scope.loading--;
+      $scope.storeFields = result? result: [];
+
+    }, function() {
+      $scope.loading--;
+      $scope.storeFields = [];
+    });
+  }
+  $scope.getStoreCodes = function(attribute) {
+    Business.configurationservice.getStoreCodes(attribute).then(function(result){
+      $scope.loading--;
+      $scope.storeCodes = result? result: [];
+    }, function() {
+      $scope.loading--;
+      $scope.storeCodes = [];
+    });
   }
   $scope.getXRefTypes = function(){
     Business.configurationservice.getXRefTypes().then(function(result){
@@ -74,7 +109,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   }
   
   $scope.setup = function() {
-    $scope.$emit('$TRIGGERLOAD', 'JiraConfigLoad');
+    $scope.loading++;
     $scope.getXRefTypes();
     $scope.getProjects();
   }
@@ -160,12 +195,47 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
     return false;
   }
 
+  $scope.isInMasterList = function(value) {
+    return !!_.find($scope.masterSelected, {'value': value});
+  }
+
+
+  $scope.masterSelect = [];
+  $scope.moveLeft = function(code) {
+    if(!code.selected){
+      code.selected = [];
+    }
+    var right = $scope.masterSelect;
+    for (var i = 0; i < right.length; i++) {
+      var el = right[i];
+      if (code.selected.indexOf(el) < 0) {
+        code.selected.push(el);
+      }
+      var indexOf = $scope.masterSelected.indexOf(el);
+      $scope.masterSelected.splice(indexOf, 1);
+    }
+  };
+
+  $scope.moveRight = function(code) {
+    if(!code.selected){
+      code.selected = [];
+    }
+    var toRemove = code.toRemove;
+    for (var i = 0; i < toRemove.length; i++) {
+      var el = toRemove[i];
+      if ($scope.masterSelected.indexOf(el) < 0) {
+        $scope.masterSelected.push(el);
+      }
+      var indexOf = code.selected.indexOf(el);
+      code.selected.splice(indexOf, 1);
+    }
+  };
+
+
 
   $scope.$watch('selectedMapping', function(value){
     if (value) {
       Business.configurationservice.getConfigurations(value).then(function(result){
-        console.log('result', result);
-        
         if (result && result.length > 0) {
           $scope.configurations = result;
         } else {
@@ -179,9 +249,37 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
 
   $scope.$watch('jiraProject', function(value){
     if (value && typeof value === 'object') {
-      $scope.$emit('$TRIGGERLOAD', 'JiraConfigLoad');
+      $scope.loading++;
       $scope.getIssueOptions(value);
     }
   })
+  $scope.$watch('jiraIssue', function(value){
+    if (value && typeof value === 'object') {
+      $scope.loading++;
+      $scope.loading++;
+      $scope.getJiraFields($scope.jiraProject, $scope.jiraIssue);
+      $scope.getStoreFields();
+    }
+  })
+  $scope.$watch('storeField', function(value){
+    if (value && typeof value === 'object') {
+      $scope.loading++;
+      $scope.getStoreCodes(value);
+    }
+  })
+  $scope.$watch('jiraField', function(value){
+    if (value && typeof value === 'object') {
+      $scope.masterSelected = angular.copy(value.allowedValues);
+    }
+  })
+
+
+  $scope.$watch('loading', function(value){
+    if (value > 0){
+      $scope.$emit('$TRIGGERLOAD', 'JiraConfigLoad');
+    } else {
+      $scope.$emit('$TRIGGERUNLOAD', 'JiraConfigLoad');
+    }
+  })  
 
 }]);

@@ -19,6 +19,7 @@ import com.atlassian.jira.rest.client.domain.BasicProject;
 import com.atlassian.jira.rest.client.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
@@ -171,6 +172,6 @@ public interface SystemService
 	public List<JiraIssueModel> getAllProjectIssueTypes(String code);
 	
 	
-	public Map<String, CimFieldInfo> getIssueTypeFields(String code, String type);
+	public List<JiraFieldInfoModel> getIssueTypeFields(String code, String type);
 	
 }

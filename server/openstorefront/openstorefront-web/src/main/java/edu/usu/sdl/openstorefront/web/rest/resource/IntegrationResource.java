@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
@@ -208,7 +209,7 @@ public class IntegrationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(String.class)
 	@Path("/projects/{projectCode}/{issueType}/fields")
-	public Map<String, CimFieldInfo> getJiraIssueTypes(
+	public List<JiraFieldInfoModel> getJiraIssueFields(
 			@PathParam("projectCode")
 			@RequiredParam String code,
 			@PathParam("issueType")

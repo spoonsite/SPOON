@@ -40,7 +40,8 @@ var app = angular
     'bootstrapLightbox',
     'angular-carousel',
     'angulartics.google.analytics',
-    'ngIdle'
+    'ngIdle',
+    'multi-select'
   // end of dependency injections
   ]
 // end of the module creation
