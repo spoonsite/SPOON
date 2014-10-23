@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -36,6 +37,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Represents Client
@@ -47,6 +54,8 @@ public class JiraClient
 {
 
 	private static final Logger log = Logger.getLogger(JiraClient.class.getName());
+
+	private static final String BASE_API_URL = "/rest/api/2/";
 
 	private final ConnectionModel connectionModel;
 	private JiraRestClient restClient;
@@ -70,6 +79,13 @@ public class JiraClient
 		} else {
 			throw new OpenStorefrontRuntimeException("Jira client has been closed.", "Obtain a new client from Manager.");
 		}
+	}
+
+	private WebTarget getRestTarget(String service)
+	{
+		Client client = ClientBuilder.newClient().register(new BasicAuthenticator(connectionModel.getUsername(), connectionModel.getCredential()));
+		WebTarget webTarget = client.target(connectionModel.getUrl() + BASE_API_URL + service);
+		return webTarget;
 	}
 
 	public Issue getTicket(String ticket)
@@ -130,6 +146,19 @@ public class JiraClient
 	{
 		ServerInfo serverInfo = getRestClient().getMetadataClient().getServerInfo().claim();
 		return serverInfo;
+	}
+
+	public List<JiraIssueType> getProjectStatusForAllIssueTypes(String projectKey)
+	{
+		List<JiraIssueType> jiraIssueTypes;
+
+		WebTarget webTarget = getRestTarget("project/" + projectKey + "/statuses");
+		Response response = webTarget.request(MediaType.APPLICATION_JSON).get();
+		jiraIssueTypes = response.readEntity(new GenericType<List<JiraIssueType>>()
+		{
+		});
+
+		return jiraIssueTypes;
 	}
 
 	@Override
