@@ -16,11 +16,10 @@
 package edu.usu.sdl.openstorefront.service.manager.resource;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * Handles basic Auth
@@ -51,11 +50,7 @@ public class BasicAuthenticator
 	private String getBasicAuthenication()
 	{
 		String token = this.user + ":" + this.password;
-		try {
-			return "BASIC " + DatatypeConverter.printBase64Binary(token.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException ex) {
-			throw new IllegalStateException("Unable to encode with UTF-8", ex);
-		}
+		return "Basic " + Base64.getEncoder().encodeToString(token.getBytes());
 	}
 
 }
