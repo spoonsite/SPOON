@@ -17,13 +17,15 @@ package edu.usu.sdl.openstorefront.service;
 
 import com.atlassian.jira.rest.client.domain.BasicProject;
 import com.atlassian.jira.rest.client.domain.CimFieldInfo;
-import com.atlassian.jira.rest.client.domain.ServerInfo;
+import com.atlassian.jira.rest.client.domain.CustomFieldOption;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
@@ -47,7 +49,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -348,11 +350,36 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public Map<String, CimFieldInfo> getIssueTypeFields(String code, String type)
+	public List<JiraFieldInfoModel> getIssueTypeFields(String code, String type)
 	{
-		Map<String, CimFieldInfo> response = new HashMap();
+		List<JiraFieldInfoModel> response = new ArrayList<>();
+		Map<String, CimFieldInfo> results = null;
+		List<JiraIssueType> statuses = new ArrayList<>();
+		JiraIssueType issueType = null;
 		try (JiraClient jiraClient = JiraManager.getClient()) {
-			response = jiraClient.getProjectIssueTypeFields(code, type);
+			results = jiraClient.getProjectIssueTypeFields(code, type);
+			if (results != null) {
+				for (Map.Entry<String, CimFieldInfo> entry : results.entrySet()) {
+					String string = entry.getKey();
+					CimFieldInfo cimFieldInfo = entry.getValue();
+					if (cimFieldInfo.getAllowedValues() != null) {
+						JiraFieldInfoModel model = JiraFieldInfoModel.toView(string, cimFieldInfo);
+						if (model != null) {
+							response.add(model);
+						}
+					}
+				}
+			}
+			statuses = jiraClient.getProjectStatusForAllIssueTypes(code);
+			for(int i = 0; i < statuses.size(); i++){
+				if (statuses.get(i).getName().equals(type)){
+					issueType = statuses.get(i);
+					break;
+				}
+			}
+			if (issueType != null) {
+				response.add(JiraFieldInfoModel.toView(issueType));
+			}
 		}
 		return response;
 	}

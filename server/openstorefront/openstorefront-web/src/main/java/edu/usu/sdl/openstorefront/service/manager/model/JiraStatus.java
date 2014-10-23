@@ -26,7 +26,7 @@ public class JiraStatus
 	private String description;
 	private String iconUrl;
 	private String name;
-	private String id;
+	private Long id;
 	private JiraStatusCategory statusCategory;
 
 	public JiraStatus()
@@ -73,12 +73,12 @@ public class JiraStatus
 		this.name = name;
 	}
 
-	public String getId()
+	public Long getId()
 	{
 		return id;
 	}
 
-	public void setId(String id)
+	public void setId(Long id)
 	{
 		this.id = id;
 	}

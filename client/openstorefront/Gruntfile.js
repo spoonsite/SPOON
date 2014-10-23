@@ -366,7 +366,8 @@ module.exports = function (grunt) {
           'scripts/esapi4js/**/*',
           'scripts/common-min/*.js',
           'scripts/common/data.js',
-          'scripts/common/jquery-cron.js'
+          'scripts/common/jquery-cron.js',
+          'scripts/common/angular-multi-select.js'
           ]
         }, {
           expand: true,
