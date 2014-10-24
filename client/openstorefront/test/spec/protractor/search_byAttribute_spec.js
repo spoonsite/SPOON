@@ -34,18 +34,9 @@ describe('search_byAttribute_Rating_Reset_Filters', function() {
        for (var i=0; i <= carrotsDown; i++) {
            element.all(by.css('.fa.fa-caret-down')).get(i).click();
            browser.driver.sleep(1);
-           /* Checkboxes go (scroll) offscreen
-           var sthere = (i*4)-4;
-           if (sthere <0) sthere=0;
-           console.log(sthere);
-           for (var j=sthere; j <= sthere+4; j++) {
-               element.all(by.css('.checkbox.filterCheckbox')).get(j).click();
-               browser.driver.sleep(1);
-           }
-           */
        }
        // Verify last element is present from the expansion
-       //expect(element(by.id('Service Transport Protocal_OTH')).isDisplayed());
+       expect(element(by.id('Service Transport Protocol_OTH')).isDisplayed());
        expect(true).toEqual(true);
    }, 25000);
 });
