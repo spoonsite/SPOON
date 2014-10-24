@@ -249,9 +249,12 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
 
   $scope.$watch('jiraProject', function(value){
     if (value && typeof value === 'object') {
+      $scope.jiraIssue = null;
       $scope.loading++;
       $scope.getIssueOptions(value);
-    }
+    } 
+    $scope.jiraIssue = false;
+    $scope.issueOptions = [];
   })
   $scope.$watch('jiraIssue', function(value){
     if (value && typeof value === 'object') {
@@ -259,19 +262,20 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
       $scope.loading++;
       $scope.getJiraFields($scope.jiraProject, $scope.jiraIssue);
       $scope.getStoreFields();
-    }
+    } 
+    $scope.storeField = false;
+    $scope.storeFields = null;
+    $scope.jiraField = false;
+    $scope.fields = [];
+    $scope.storeCodes = [];
   })
-  $scope.$watch('storeField', function(value){
-    if (value && typeof value === 'object') {
-      $scope.loading++;
-      $scope.getStoreCodes(value);
-    }
-  })
-  $scope.$watch('jiraField', function(value){
-    if (value && typeof value === 'object') {
-      $scope.masterSelected = angular.copy(value.allowedValues);
-    }
-  })
+
+  $scope.$watchCollection('[storeField, jiraField]', function(newValues, oldValues, scope){
+    if ((newValues[0] && typeof newValues[0] === 'object') && (newValues[1] && typeof newValues[1] === 'object'))
+    $scope.masterSelected = angular.copy(newValues[1].allowedValues);
+    $scope.loading++;
+    $scope.getStoreCodes(newValues[0]);
+  });
 
 
   $scope.$watch('loading', function(value){

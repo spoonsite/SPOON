@@ -71,7 +71,7 @@ public class JiraFieldInfoModel
 
 		view.setKey(temp.toString());
 		view.setId(temp.getId());
-		view.setName("Workflow Status");
+		view.setName("Status");
 		List<JiraFieldAllowedValues> values = new ArrayList<>();
 		if (temp.getStatuses() != null) {
 			List<JiraStatus> statuses = temp.getStatuses();

@@ -27,6 +27,7 @@ public class JiraFieldAllowedValues
 	private Long id;
 	private String value;
 	private String name;
+	private String label;
 
 	public JiraFieldAllowedValues(){
 		
@@ -37,14 +38,16 @@ public class JiraFieldAllowedValues
 		view.setId(option.getId());
 		view.setValue(option.getValue());
 		view.setName(null);
+		view.setLabel(option.getValue());
 		return view;
 	}
 	
 	public static JiraFieldAllowedValues toView(JiraStatus status){
 		JiraFieldAllowedValues view = new JiraFieldAllowedValues();
 		view.setId(status.getId());
-		view.setValue(status.getDescription());
+		view.setValue(null);
 		view.setName(status.getName());
+		view.setLabel(status.getName());
 		return view;
 	}
 	
@@ -95,5 +98,21 @@ public class JiraFieldAllowedValues
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	/**
+	 * @return the label
+	 */
+	public String getLabel()
+	{
+		return label;
+	}
+
+	/**
+	 * @param label the label to set
+	 */
+	public void setLabel(String label)
+	{
+		this.label = label;
 	}
 }
