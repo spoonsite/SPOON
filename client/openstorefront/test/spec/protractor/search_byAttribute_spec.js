@@ -36,7 +36,7 @@ describe('search_byAttribute_Rating_Reset_Filters', function() {
            browser.driver.sleep(1);
        }
        // Verify last element is present from the expansion
-       expect(element(by.id('Service Transport Protocol_OTH')).isDisplayed());
+       expect(element(by.id('Service Transport Protocal_OTH')).isDisplayed());
        expect(true).toEqual(true);
    }, 25000);
 });
