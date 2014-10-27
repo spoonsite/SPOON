@@ -28,6 +28,9 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.jiraField;
   $scope.storeCodes;
   $scope.masterSelected;
+  $scope.componentConfMap;
+  $scope.componentId;
+  $scope.typeahead;
 
   $scope.loading = 0;
 
@@ -38,6 +41,18 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   }
   ]
   $scope.type = 'jira';
+
+  Business.componentservice.getComponentList().then(function(result) {
+    Business.typeahead(result, null).then(function(value){
+      if (value) {
+        $scope.typeahead = value;
+      } else {
+        $scope.typeahead = null;
+      }
+    }, function() {
+    });
+  }, function() {
+  });
 
   $scope.getProjects = function() {
     Business.configurationservice.getProjects().then(function(result){
@@ -172,15 +187,40 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
 
 
   $scope.saveMappingConf = function(){
-    var conf = {};
-    conf.componentId = $scope.componentId;
-    conf.issueId = $scope.issueId;
-    console.log('$scope.componentCron', $scope.componentCron);
-    conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
-    //save the object;
-    console.log('conf', conf);
+    if ($scope.storeCodes.length && $scope.jiraField) {
+
+      console.log('storeCodes', $scope.storeCodes);
+      console.log('Field', $scope.jiraField);
+      console.log('Project', $scope.jiraProject);
+      console.log('Issue', $scope.jiraIssue);
+      var xRefMaps = [];
+      var type = $scope.storeCodes[0].attributeCodePk.attributeType;
+      _.each($scope.storeCodes, function(localCode){
+        _.each(localCode.selected, function(externalCode){
+          xRefMaps.push({
+            'attributeType': type,
+            'localCode': localCode.attributeCodePk.attributeCode,
+            'externalCode': externalCode.value
+          });
+        });
+      });
+      var body = {};
+      body.type = {
+        'attributeType': type,
+        'fieldName': $scope.jiraField.name,
+        'fieldKey': $scope.jiraField.id,
+        'projectType': $scope.jiraProject.code,
+        'issueType': $scope.jiraIssue.name,
+        'integrationType': 'jira'
+      };
+      body.map = xRefMaps;
+
+      console.log('body', body);
+      
+    }
     return false;
   }
+
   $scope.saveGlobalConf = function(){
     var conf = {};
     conf.componentId = $scope.componentId;
@@ -191,6 +231,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
     console.log('conf', conf);
     return false;
   }
+
   $scope.forceRefresh = function() {
     return false;
   }
@@ -231,7 +272,17 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
     }
   };
 
-
+  $scope.$watch('componentConfMap', function(value) {
+    if (value && typeof value === 'object') {
+      if (value.componentId){
+        $scope.componentId = value.componentId;
+      } else {
+        $scope.componentId = -1;
+      }
+    } else if ($scope.componentId !== undefined && $scope.componentId !== null) {
+      $scope.componentId = -1;
+    }
+  }, true);
 
   $scope.$watch('selectedMapping', function(value){
     if (value) {
@@ -245,7 +296,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
         $scope.configurations = null;
       });
     }
-  })
+  });
 
   $scope.$watch('jiraProject', function(value){
     if (value && typeof value === 'object') {
@@ -256,6 +307,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
     $scope.jiraIssue = false;
     $scope.issueOptions = [];
   })
+
   $scope.$watch('jiraIssue', function(value){
     if (value && typeof value === 'object') {
       $scope.loading++;
@@ -271,12 +323,13 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   })
 
   $scope.$watchCollection('[storeField, jiraField]', function(newValues, oldValues, scope){
-    if ((newValues[0] && typeof newValues[0] === 'object') && (newValues[1] && typeof newValues[1] === 'object'))
-    $scope.masterSelected = angular.copy(newValues[1].allowedValues);
-    $scope.loading++;
-    $scope.getStoreCodes(newValues[0]);
+    if ((newValues[0] && typeof newValues[0] === 'object') && (newValues[1] && typeof newValues[1] === 'object')) {
+      // check to see if it previously existed. Show warning if it did.
+      $scope.masterSelected = angular.copy(newValues[1].allowedValues);
+      $scope.loading++;
+      $scope.getStoreCodes(newValues[0]);
+    }
   });
-
 
   $scope.$watch('loading', function(value){
     if (value > 0){

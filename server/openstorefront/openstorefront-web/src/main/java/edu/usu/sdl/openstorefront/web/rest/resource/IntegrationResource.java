@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
+import edu.usu.sdl.openstorefront.web.rest.model.XRef;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.net.URI;
 import java.util.List;
@@ -217,5 +218,25 @@ public class IntegrationResource
 	)
 	{
 		return service.getSystemService().getIssueTypeFields(code, type);
+	}
+	
+	
+	@POST
+	@RequireAdmin
+	@APIDescription("Save a global integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/mapping")
+	public Response saveMapping(
+		@RequiredParam XRef integration)
+	{
+		ValidationModel validationModel = new ValidationModel(integration);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+//		if (validationResult.valid()) {
+//			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getJiraRefreshRate())).entity(integration).build();
+//		}
+//		else {
+			return Response.ok(validationResult.toRestError()).build();
+//		}
 	}
 }

@@ -27,30 +27,49 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   $scope.overRideDefault = false;
   $scope.componentCron = '0 0 0 * * *';
 
-  Business.componentservice.getComponentList().then(function(result) {
-    Business.typeahead(result, null).then(function(value){
-      if (value) {
-        console.log('value', value);
-        
-        $scope.typeahead = value;
-      } else {
-        $scope.typeahead = null;
-      }
-      $scope.ready();
-      $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
+
+  $scope.getProjects = function() {
+    Business.configurationservice.getProjects().then(function(result){
+      $scope.projects = result? result: [];
     }, function() {
-      $scope.ready();
+      $scope.projects = [];
     });
-  }, function() {
-    $scope.ready();
-  });
+  }
+
+  $scope.getProjects();
+
+  $scope.getIssueOptions = function(project) {
+    if (project && project.code) {
+      Business.configurationservice.getIssueOptions(project).then(function(result){
+        $scope.issueOptions = result? result: [];
+      }, function() {
+        $scope.issueOptions = [];
+      });
+    }
+  }
+
+  $scope.saveComponentConf = function(){
+    if (!((!$scope.componentId || $scope.componentId === -1) || (!$scope.issueId || $scope.issueId === -1))) {
+      var conf = {};
+      conf.componentId = $scope.componentId;
+      conf.issueId = $scope.issueId;
+      console.log('$scope.componentCron', $scope.componentCron);
+      if ($scope.overRideDefault) {
+        conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
+      } else {
+        conf.refreshRate = null;
+      }
+      //save the object;
+      console.log('conf', conf);
+    }
+    return false;
+  }
 
   $scope.ready = function() {
 
     $scope.$watch('componentCron', function(){
       // console.log('Title', $scope.componentCron);
     }, true);
-
 
     $scope.$watch('component', function(value) {
       if (value && typeof value === 'object') {
@@ -81,38 +100,49 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
           $scope.componentCron = $scope.config.overRideRefreshRate;
         }
       }
-    })
+    });
+  };
 
-    $scope.$watch('issue', function(value) {
-      if (value) {
-        value = value.replace(' ', '');
-        var id = value.split('-');
-        if (id.length  === 2){
-          $scope.issueId = id[1];
-        } else {
-          $scope.issueId = -1;
-        }
-      } else if ($scope.issueId !== undefined && $scope.issueId !== null) {
+  $scope.$watch('issue', function(value) {
+    if (value) {
+      value = value.replace(' ', '');
+      var id = value.split('-');
+      if (id.length  === 2){
+        $scope.issueId = id[1];
+      } else {
         $scope.issueId = -1;
       }
-    }, true);
-
-    $scope.saveComponentConf = function(){
-      if (!((!$scope.componentId || $scope.componentId === -1) || (!$scope.issueId || $scope.issueId === -1))) {
-        var conf = {};
-        conf.componentId = $scope.componentId;
-        conf.issueId = $scope.issueId;
-        console.log('$scope.componentCron', $scope.componentCron);
-        if ($scope.overRideDefault) {
-          conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
-        } else {
-          conf.refreshRate = null;
-        }
-        //save the object;
-        console.log('conf', conf);
-      }
-      return false;
+    } else if ($scope.issueId !== undefined && $scope.issueId !== null) {
+      $scope.issueId = -1;
     }
-  }
+  }, true);
+
+  $scope.$watch('jiraProject', function(value){
+    if (value && typeof value === 'object') {
+      $scope.jiraIssue = null;
+      $scope.getIssueOptions(value);
+    } 
+    $scope.jiraIssue = false;
+    $scope.issueOptions = [];
+  })
+
+
+  Business.componentservice.getComponentList().then(function(result) {
+    Business.typeahead(result, null).then(function(value){
+      if (value) {
+        console.log('value', value);
+        $scope.typeahead = value;
+      } else {
+        $scope.typeahead = null;
+      }
+      $scope.ready();
+      $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
+    }, function() {
+      $scope.ready();
+    });
+  }, function() {
+    $scope.ready();
+  });
+
 
 }]);
