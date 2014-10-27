@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
+import edu.usu.sdl.openstorefront.web.rest.model.XRef;
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.Consumes;
