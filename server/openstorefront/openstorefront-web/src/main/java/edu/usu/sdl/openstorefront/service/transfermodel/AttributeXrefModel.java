@@ -13,33 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.test.integration;
-
-import edu.usu.sdl.openstorefront.service.manager.JiraManager;
-import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
-import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+package edu.usu.sdl.openstorefront.service.transfermodel;
 
 /**
  *
  * @author dshurtleff
  */
-public class JiraIssueTypeTest
-		extends BaseTestCase
+public class AttributeXrefModel
 {
 
-	public JiraIssueTypeTest()
+	private String integrationType;
+	private String projectKey;
+	private String issueType;
+
+	public AttributeXrefModel()
 	{
-		this.description = "Issue Type Test";
 	}
 
-	@Override
-	protected void runInternalTest()
+	public String getIntegrationType()
 	{
-		try (JiraClient jiraClient = JiraManager.getClient()) {
-			jiraClient.getIssueTypesForProject("ASSET").forEach(item -> {
-				results.append("Type: ").append(item.getName()).append("<br>");
-			});
-		}
+		return integrationType;
+	}
+
+	public void setIntegrationType(String integrationType)
+	{
+		this.integrationType = integrationType;
+	}
+
+	public String getProjectKey()
+	{
+		return projectKey;
+	}
+
+	public void setProjectKey(String projectKey)
+	{
+		this.projectKey = projectKey;
+	}
+
+	public String getIssueType()
+	{
+		return issueType;
+	}
+
+	public void setIssueType(String issueType)
+	{
+		this.issueType = issueType;
 	}
 
 }

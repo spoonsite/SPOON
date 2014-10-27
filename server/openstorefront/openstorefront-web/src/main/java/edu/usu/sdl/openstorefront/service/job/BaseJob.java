@@ -15,7 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 /**
  *
@@ -25,4 +29,18 @@ public abstract class BaseJob
 		implements Job
 {
 
+	private static final Logger log = Logger.getLogger(BaseJob.class.getName());
+
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException
+	{
+		try {
+			executeInternaljob(context);
+		} catch (Exception e) {
+			//According the quartz best practise the job shouldn't throw an error.
+			log.log(Level.SEVERE, "Job failed unexpectly to run", e);
+		}
+	}
+
+	protected abstract void executeInternaljob(JobExecutionContext context);
 }

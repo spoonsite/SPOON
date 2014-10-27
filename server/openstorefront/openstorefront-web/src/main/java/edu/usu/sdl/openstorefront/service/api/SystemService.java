@@ -15,16 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
-import com.atlassian.jira.rest.client.domain.BasicProject;
-import com.atlassian.jira.rest.client.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
+import edu.usu.sdl.openstorefront.storage.model.XRefAttributeType;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
@@ -118,19 +118,21 @@ public interface SystemService
 	 * Removes excess errors beyond max....deleting oldest first
 	 */
 	public void cleanupOldErrors();
-	
+
 	/**
+	 * Gets Active Integrations
 	 *
+	 * @param activeStatus
 	 * @return
 	 */
-	public List<Integration> getIntegrationModels();
-	
+	public List<Integration> getIntegrationModels(String activeStatus);
+
 	/**
 	 *
 	 * @return
 	 */
 	public GlobalIntegrationModel getGlobalConfig();
-	
+
 	/**
 	 *
 	 * @param integration
@@ -138,7 +140,7 @@ public interface SystemService
 	 * @return
 	 */
 	public Integration saveIntegration(Integration integration, boolean isPost);
-	
+
 	/**
 	 *
 	 * @param integration
@@ -146,13 +148,13 @@ public interface SystemService
 	 * @return
 	 */
 	public GlobalIntegrationModel saveIntegration(GlobalIntegrationModel integration, boolean isPost);
-	
+
 	/**
 	 *
 	 * @param componentId
 	 */
 	public void deactivateIntegration(String componentId);
-	
+
 	/**
 	 *
 	 */
@@ -163,15 +165,44 @@ public interface SystemService
 	 * @return
 	 */
 	public List<LookupModel> getAllJiraProjects();
-	
+
 	/**
 	 *
 	 * @param code
 	 * @return
 	 */
 	public List<JiraIssueModel> getAllProjectIssueTypes(String code);
-	
-	
-	public List<JiraFieldInfoModel> getIssueTypeFields(String code, String type);
-	
+
+	/**
+	 * This handling running call active integration configs for a component
+	 *
+	 * @param componentId
+	 * @param integrationConfigId
+	 */
+	public void processIntegration(String componentId, String integrationConfigId);
+
+	/**
+	 * Gets the active xref types for an IntegrationType
+	 *
+	 * @param attributeXrefModel
+	 * @return
+	 */
+	public List<XRefAttributeType> getXrefAttributeTypes(AttributeXrefModel attributeXrefModel);
+
+	/**
+	 * Gets the code mappings
+	 *
+	 * @return Attribute key, external code, our code
+	 */
+	public Map<String, Map<String, String>> getXrefAttributeMapFieldMap();
+
+	/**
+	 * Get the fields for an issue type
+	 *
+	 * @param projectCode
+	 * @param issueType
+	 * @return
+	 */
+	public List<JiraFieldInfoModel> getIssueTypeFields(String projectCode, String issueType);
+
 }

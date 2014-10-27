@@ -13,33 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.test.integration;
-
-import edu.usu.sdl.openstorefront.service.manager.JiraManager;
-import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
-import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+package edu.usu.sdl.openstorefront.web.rest.model;
 
 /**
  *
  * @author dshurtleff
  */
-public class JiraIssueTypeTest
-		extends BaseTestCase
+public class JobSchedulerStatus
 {
 
-	public JiraIssueTypeTest()
+	private String status;
+
+	public JobSchedulerStatus()
 	{
-		this.description = "Issue Type Test";
 	}
 
-	@Override
-	protected void runInternalTest()
+	public String getStatus()
 	{
-		try (JiraClient jiraClient = JiraManager.getClient()) {
-			jiraClient.getIssueTypesForProject("ASSET").forEach(item -> {
-				results.append("Type: ").append(item.getName()).append("<br>");
-			});
-		}
+		return status;
+	}
+
+	public void setStatus(String status)
+	{
+		this.status = status;
 	}
 
 }
