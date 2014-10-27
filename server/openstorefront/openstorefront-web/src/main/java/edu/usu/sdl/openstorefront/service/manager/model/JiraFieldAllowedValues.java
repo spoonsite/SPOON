@@ -31,7 +31,6 @@ public class JiraFieldAllowedValues
 
 	public JiraFieldAllowedValues()
 	{
-
 	}
 
 	public static JiraFieldAllowedValues toView(CustomFieldOption option)
