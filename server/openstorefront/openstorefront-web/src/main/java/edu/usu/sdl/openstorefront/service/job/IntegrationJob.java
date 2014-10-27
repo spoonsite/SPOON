@@ -15,23 +15,39 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import org.quartz.JobExecutionContext;
 
 /**
- * Reaps the errors
+ * External system integration
  *
  * @author dshurtleff
  */
-public class ErrorTicketCleanupJob
+public class IntegrationJob
 		extends BaseJob
 {
+
+	public static final String COMPONENT_ID = "Component-Id";
+	public static final String CONFIG_ID = "Config-Id";
 
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getSystemService().cleanupOldErrors();
+		Object componentIdObj = context.get(COMPONENT_ID);
+		if (componentIdObj != null) {
+			String componentId = componentIdObj.toString();
+			Object configIdObj = context.get(CONFIG_ID);
+			String configId = null;
+			if (configIdObj != null) {
+				configId = configIdObj.toString();
+			}
+
+			ServiceProxy serviceProxy = new ServiceProxy();
+			serviceProxy.getSystemService().processIntegration(componentId, configId);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to get component id.  Job failed.", "Check config data.");
+		}
 	}
 
 }

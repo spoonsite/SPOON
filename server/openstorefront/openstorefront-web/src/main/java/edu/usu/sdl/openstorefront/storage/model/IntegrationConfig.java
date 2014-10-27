@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,7 +35,7 @@ public class IntegrationConfig
 
 	@PK
 	@NotNull
-	private String id;
+	private String integrationConfigId;
 
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = IntegrationType.class)
@@ -45,6 +46,24 @@ public class IntegrationConfig
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String issueNumber;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ConsumeField
+	private String projectType;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ConsumeField
+	private String issueType;
+
+	@NotNull
+	@ValidValueType(value = {}, lookupClass = RunStatus.class)
+	private String status;
+
+	private String errorTicketNumber;
+	private String errorMessage;
+	private String potentialResolution;
+	private Date lastStartTime;
+	private Date lastEndTime;
 
 	@NotNull
 	@ConsumeField
@@ -63,16 +82,6 @@ public class IntegrationConfig
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
-	}
-
-	public String getId()
-	{
-		return id;
-	}
-
-	public void setId(String id)
-	{
-		this.id = id;
 	}
 
 	public String getIssueNumber()
@@ -94,4 +103,95 @@ public class IntegrationConfig
 	{
 		this.integrationType = integrationType;
 	}
+
+	public String getProjectType()
+	{
+		return projectType;
+	}
+
+	public void setProjectType(String projectType)
+	{
+		this.projectType = projectType;
+	}
+
+	public String getIssueType()
+	{
+		return issueType;
+	}
+
+	public void setIssueType(String issueType)
+	{
+		this.issueType = issueType;
+	}
+
+	public String getIntegrationConfigId()
+	{
+		return integrationConfigId;
+	}
+
+	public void setIntegrationConfigId(String integrationConfigId)
+	{
+		this.integrationConfigId = integrationConfigId;
+	}
+
+	public String getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(String status)
+	{
+		this.status = status;
+	}
+
+	public String getErrorTicketNumber()
+	{
+		return errorTicketNumber;
+	}
+
+	public void setErrorTicketNumber(String errorTicketNumber)
+	{
+		this.errorTicketNumber = errorTicketNumber;
+	}
+
+	public String getErrorMessage()
+	{
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage)
+	{
+		this.errorMessage = errorMessage;
+	}
+
+	public String getPotentialResolution()
+	{
+		return potentialResolution;
+	}
+
+	public void setPotentialResolution(String potentialResolution)
+	{
+		this.potentialResolution = potentialResolution;
+	}
+
+	public Date getLastStartTime()
+	{
+		return lastStartTime;
+	}
+
+	public void setLastStartTime(Date lastStartTime)
+	{
+		this.lastStartTime = lastStartTime;
+	}
+
+	public Date getLastEndTime()
+	{
+		return lastEndTime;
+	}
+
+	public void setLastEndTime(Date lastEndTime)
+	{
+		this.lastEndTime = lastEndTime;
+	}
+
 }

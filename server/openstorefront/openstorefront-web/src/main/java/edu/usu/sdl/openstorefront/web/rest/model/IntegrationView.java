@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
@@ -27,19 +26,21 @@ import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
  */
 public class IntegrationView
 {
+
 	private String id;
 	private String componentId;
 	private String componentName;
 	private String issueNumber;
 	private String overRideRefreshRate;
 	private String status;
-	private String errorMessage;
 
-	public IntegrationView() {
-		
+	public IntegrationView()
+	{
+
 	}
-	
-	public IntegrationView toView(Integration integration, IntegrationConfig type){
+
+	public IntegrationView toView(Integration integration, IntegrationConfig type)
+	{
 		ServiceProxy proxy = new ServiceProxy();
 		IntegrationView view = new IntegrationView();
 		Component temp = proxy.getPersistenceService().findById(Component.class, integration.getComponentId());
@@ -50,11 +51,9 @@ public class IntegrationView
 		view.setId(integration.getIntegrationId());
 		view.setIssueNumber(type.getIssueNumber());
 		view.setStatus(integration.getStatus());
-		view.setErrorMessage(integration.getErrorMessage());
-		
+
 		return view;
 	}
-
 
 	/**
 	 * @return the issueNumber
@@ -86,22 +85,6 @@ public class IntegrationView
 	public void setStatus(String status)
 	{
 		this.status = status;
-	}
-
-	/**
-	 * @return the errorMessage
-	 */
-	public String getErrorMessage()
-	{
-		return errorMessage;
-	}
-
-	/**
-	 * @param errorMessage the errorMessage to set
-	 */
-	public void setErrorMessage(String errorMessage)
-	{
-		this.errorMessage = errorMessage;
 	}
 
 	/**
@@ -167,6 +150,5 @@ public class IntegrationView
 	{
 		this.overRideRefreshRate = overRideRefreshRate;
 	}
-
 
 }

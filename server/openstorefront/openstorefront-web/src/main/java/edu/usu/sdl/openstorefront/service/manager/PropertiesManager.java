@@ -62,6 +62,7 @@ public class PropertiesManager
 	public static final String KEY_JIRA_POOL_SIZE = "jira.connectionpool.size";
 	public static final String KEY_JIRA_CONNECTION_WAIT_TIME = "jira.connection.wait.seconds";
 	public static final String KEY_JIRA_URL = "jira.server.url";
+	public static final String KEY_JOB_WORKING_STATE_OVERRIDE = "job.working.state.override.minutes";
 
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();

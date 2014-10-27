@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.test.integration;
 
-import com.atlassian.jira.rest.client.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;

@@ -15,10 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service.manager.model;
 
-import com.atlassian.jira.rest.client.IdentifiableEntity;
-import com.atlassian.jira.rest.client.domain.BasicIssueType;
-import com.atlassian.jira.rest.client.domain.CimFieldInfo;
-import com.atlassian.jira.rest.client.domain.CustomFieldOption;
+import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
+import com.atlassian.jira.rest.client.api.domain.CustomFieldOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,8 +53,7 @@ public class JiraFieldInfoModel
 						values.add(JiraFieldAllowedValues.toView((CustomFieldOption) allowedValue));
 					}
 				}
-			}
-			else {
+			} else {
 				return null;
 			}
 		}
@@ -65,6 +62,7 @@ public class JiraFieldInfoModel
 
 		return view;
 	}
+
 	public static JiraFieldInfoModel toView(JiraIssueType temp)
 	{
 		JiraFieldInfoModel view = new JiraFieldInfoModel();
@@ -79,8 +77,7 @@ public class JiraFieldInfoModel
 				for (JiraStatus status : statuses) {
 					values.add(JiraFieldAllowedValues.toView(status));
 				}
-			}
-			else {
+			} else {
 				return null;
 			}
 		}

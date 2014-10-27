@@ -16,23 +16,34 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.io.ArticleImporter;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
+import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
+import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
+import edu.usu.sdl.openstorefront.storage.model.Integration;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.newTrigger;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.jobs.DirectoryScanJob;
 import org.quartz.jobs.DirectoryScanListener;
 
@@ -73,7 +84,43 @@ public class JobManager
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 
 		addCleanUpErrorsJob();
+		addIntegrationJobs();
+	}
 
+	private static void addIntegrationJobs() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Integration Jobs");
+
+		ServiceProxy serviceProxy = new ServiceProxy();
+		List<Integration> integrations = serviceProxy.getSystemService().getIntegrationModels(Integration.ACTIVE_STATUS);
+		for (Integration integration : integrations) {
+
+			JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+					.withIdentity("ComponentJob-" + integration.getIntegrationId(), JOB_GROUP_SYSTEM)
+					.build();
+
+			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, integration.getComponentId());
+
+			Trigger trigger = newTrigger()
+					.withIdentity("ComponentTrigger-" + integration.getIntegrationId(), JOB_GROUP_SYSTEM)
+					.startNow()
+					.withSchedule(cronSchedule("0 " + integration.getRefreshRate()))
+					.build();
+
+			scheduler.scheduleJob(job, trigger);
+		}
+	}
+
+	public static void unscheduleSystemJob(String job)
+	{
+		try {
+			TriggerKey triggerKey = TriggerKey.triggerKey(job, JOB_GROUP_SYSTEM);
+			if (scheduler.checkExists(triggerKey)) {
+				scheduler.unscheduleJob(triggerKey);
+			}
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable schedule Job.", ex);
+		}
 	}
 
 	private static void addCleanUpErrorsJob() throws SchedulerException
@@ -117,6 +164,96 @@ public class JobManager
 				.build();
 
 		scheduler.scheduleJob(job, trigger);
+	}
+
+	public static void pauseSystemJob(String jobName)
+	{
+		try {
+			scheduler.pauseJob(JobKey.jobKey(jobName, JOB_GROUP_SYSTEM));
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
+		}
+	}
+
+	public static void resumeSystemJob(String jobName)
+	{
+		try {
+			scheduler.resumeJob(JobKey.jobKey(jobName, JOB_GROUP_SYSTEM));
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
+		}
+	}
+
+	public static void pauseScheduler()
+	{
+		try {
+			scheduler.standby();
+			log.info("Job Manager in Standby");
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to pause scheduler", ex);
+		}
+	}
+
+	public static void resumeScheduler()
+	{
+		try {
+			scheduler.start();
+			log.info("Job Manager restarted");
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to resume scheduler", ex);
+		}
+	}
+
+	public static String status()
+	{
+		String status = "Running";
+		try {
+			if (scheduler.isInStandbyMode()) {
+				status = "In Standby";
+			}
+		} catch (SchedulerException ex) {
+			Logger.getLogger(JobManager.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return status;
+	}
+
+	public static List<JobModel> getAllJobs()
+	{
+		List<JobModel> jobs = new ArrayList<>();
+		try {
+			Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.anyGroup());
+			for (JobKey jobKey : jobKeys) {
+				JobModel jobModel = new JobModel();
+
+				JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+				jobModel.setJobName(jobKey.getName());
+				jobModel.setGroupName(jobKey.getGroup());
+				jobModel.setDescription(jobDetail.getDescription());
+				jobModel.setConcurrentExectionDisallowed(jobDetail.isConcurrentExectionDisallowed());
+				jobModel.setDurable(jobDetail.isDurable());
+				jobModel.setPersistJobDataAfterExecution(jobDetail.isPersistJobDataAfterExecution());
+				jobModel.setRequestsRecovery(jobDetail.requestsRecovery());
+				StringBuilder dataMap = new StringBuilder();
+				for (String dataKey : jobDetail.getJobDataMap().getKeys()) {
+					dataMap.append(dataKey).append(" : ").append(jobDetail.getJobDataMap().get(dataKey)).append(" | ");
+				}
+				jobModel.setJobData(dataMap.toString());
+
+				List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+				if (triggers.isEmpty() == false) {
+					//just grab the first trigger as we should only have one
+					Trigger trigger = triggers.get(0);
+					jobModel.setPrimaryTrigger(trigger.getKey().getName() + " - " + trigger.getKey().getGroup());
+					jobModel.setPerviousFiredTime(trigger.getPreviousFireTime());
+					jobModel.setNextFiredTime(trigger.getNextFireTime());
+					jobModel.setStatus(scheduler.getTriggerState(trigger.getKey()).toString());
+				}
+				jobs.add(jobModel);
+			}
+		} catch (SchedulerException ex) {
+			Logger.getLogger(JobManager.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return jobs;
 	}
 
 	public static void cleanup()

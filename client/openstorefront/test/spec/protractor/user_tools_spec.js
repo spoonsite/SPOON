@@ -17,6 +17,7 @@ describe('user-tools_User logged in drop-down', function() {
         element.all(by.css('.close')).get(0).click();
     }, 25000);
 
+/*
     it('Update User Info and Save', function() {
       // Check the Update User Info checkbox to allow editing
       element(by.id('myCheckValue')).sendKeys(protractor.Key.SPACEBAR);
@@ -34,6 +35,8 @@ describe('user-tools_User logged in drop-down', function() {
     it('Revert the changes', function () {
       //TODO:
     }, 25000);
+*/
+
 
   it('Click on UserName then Watches', function() {
         // Sets the .get(x) indexes back, otherwise they become 'dirty' and off!
@@ -57,7 +60,7 @@ describe('user-tools_User logged in drop-down', function() {
         browser.driver.sleep(1000);
         expect(element.all(by.css('.btn')).count()).toEqual(7);
         element.all(by.css('.close')).get(0).click();
-        browser.driver.sleep(1000);
+        browser.driver.sleep(19000);
     }, 25000);
 
 /*

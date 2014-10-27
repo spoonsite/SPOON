@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.viewmodel;
 
-import com.atlassian.jira.rest.client.domain.ServerInfo;
+import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import java.io.Serializable;
 
 /**

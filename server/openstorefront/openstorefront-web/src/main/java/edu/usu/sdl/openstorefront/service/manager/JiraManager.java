@@ -55,7 +55,6 @@ public class JiraManager
 		for (int i = 0; i < maxPoolSize; i++) {
 			clientPool.offer(new JiraClient(connectionModel));
 		}
-
 	}
 
 	public static void cleanup()
@@ -69,7 +68,9 @@ public class JiraManager
 	{
 		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
 		try {
-			return clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
+			JiraClient jiraClient = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
+			jiraClient.initConnection();
+			return jiraClient;
 		} catch (InterruptedException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to retrieve Jira Connection in time.  No resource available.", "Adjust jira pool size appropriate to load.", ex);
 		}

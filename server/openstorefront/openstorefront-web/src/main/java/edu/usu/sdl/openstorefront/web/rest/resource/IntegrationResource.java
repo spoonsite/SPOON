@@ -15,33 +15,29 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import com.atlassian.jira.rest.client.domain.BasicProject;
-import com.atlassian.jira.rest.client.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
-import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
-import edu.usu.sdl.openstorefront.web.rest.model.XRef;
-import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -56,16 +52,24 @@ public class IntegrationResource
 {
 
 	@GET
+	@RequireAdmin
 	@APIDescription("Gets all integration models from the database.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
-	public List<Integration> getIntegrations()
+	public List<Integration> getIntegrations(
+			@QueryParam("status")
+			@DefaultValue("A")
+			@APIDescription("Pass 'ALL' to view active and inactive") String status)
 	{
-		List<Integration> integrationModels = service.getSystemService().getIntegrationModels();
+		if (OpenStorefrontConstant.STATUS_VIEW_ALL.equals(status)) {
+			status = null;
+		}
+		List<Integration> integrationModels = service.getSystemService().getIntegrationModels(status);
 		return integrationModels;
 	}
 
 	@GET
+	@RequireAdmin
 	@APIDescription("Gets the global model from the database.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
@@ -85,16 +89,15 @@ public class IntegrationResource
 	@APIDescription("Save an integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response saveIntegration(
-		@RequiredParam Integration integration)
-			
+			@RequiredParam Integration integration)
+
 	{
 		ValidationModel validationModel = new ValidationModel(integration);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getComponentId())).entity(integration).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -105,15 +108,14 @@ public class IntegrationResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/global")
 	public Response saveGlobal(
-		@RequiredParam GlobalIntegrationModel integration)
+			@RequiredParam GlobalIntegrationModel integration)
 	{
 		ValidationModel validationModel = new ValidationModel(integration);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getJiraRefreshRate())).entity(integration).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -134,12 +136,11 @@ public class IntegrationResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getComponentId())).entity(integration).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
-	
+
 	@PUT
 	@RequireAdmin
 	@APIDescription("Updates a global integration model")
@@ -156,8 +157,7 @@ public class IntegrationResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getJiraRefreshRate())).entity(integration).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -172,7 +172,7 @@ public class IntegrationResource
 	{
 		service.getSystemService().deactivateIntegration(componentId);
 	}
-	
+
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Inactivates Component and removes any assoicated user watches.")
@@ -181,45 +181,6 @@ public class IntegrationResource
 	{
 		service.getSystemService().deactivateIntegration();
 	}
-	
-	@GET
-	@APIDescription("Gets the possible projects from Jira.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(LookupModel.class)
-	@Path("/projects")
-	public List<LookupModel> getJiraProjects()
-	{
-		return service.getSystemService().getAllJiraProjects();
-	}
-	
-	@GET
-	@APIDescription("Gets the possible issues from a specific project in Jira.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(String.class)
-	@Path("/projects/{projectCode}")
-	public List<JiraIssueModel> getJiraIssueTypes(
-			@PathParam("projectCode")
-			@RequiredParam String code
-	)
-	{
-		return service.getSystemService().getAllProjectIssueTypes(code);
-	}
-	
-	@GET
-	@APIDescription("Gets the possible fields from the issue type.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(String.class)
-	@Path("/projects/{projectCode}/{issueType}/fields")
-	public List<JiraFieldInfoModel> getJiraIssueFields(
-			@PathParam("projectCode")
-			@RequiredParam String code,
-			@PathParam("issueType")
-			@RequiredParam String type
-	)
-	{
-		return service.getSystemService().getIssueTypeFields(code, type);
-	}
-	
 	
 	@POST
 	@RequireAdmin

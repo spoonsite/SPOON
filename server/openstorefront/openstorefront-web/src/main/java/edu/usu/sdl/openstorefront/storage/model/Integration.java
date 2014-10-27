@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -44,9 +45,8 @@ public class Integration
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = RunStatus.class)
 	private String status;
-
-	private String errorTicketNumber;
-	private String errorMessage;
+	private Date lastStartTime;
+	private Date lastEndTime;
 
 	@NotNull
 	@ConsumeField
@@ -55,16 +55,6 @@ public class Integration
 	public Integration()
 	{
 
-	}
-
-	public String getErrorTicketNumber()
-	{
-		return errorTicketNumber;
-	}
-
-	public void setErrorTicketNumber(String errorTicketNumber)
-	{
-		this.errorTicketNumber = errorTicketNumber;
 	}
 
 	public String getIntegrationId()
@@ -97,16 +87,6 @@ public class Integration
 		this.status = status;
 	}
 
-	public String getErrorMessage()
-	{
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage)
-	{
-		this.errorMessage = errorMessage;
-	}
-
 	public String getComponentId()
 	{
 		return componentId;
@@ -116,4 +96,25 @@ public class Integration
 	{
 		this.componentId = componentId;
 	}
+
+	public Date getLastStartTime()
+	{
+		return lastStartTime;
+	}
+
+	public void setLastStartTime(Date lastStartTime)
+	{
+		this.lastStartTime = lastStartTime;
+	}
+
+	public Date getLastEndTime()
+	{
+		return lastEndTime;
+	}
+
+	public void setLastEndTime(Date lastEndTime)
+	{
+		this.lastEndTime = lastEndTime;
+	}
+
 }

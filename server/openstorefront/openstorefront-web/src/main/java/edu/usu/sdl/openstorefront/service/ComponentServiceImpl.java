@@ -15,11 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueField;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
+import static edu.usu.sdl.openstorefront.service.io.integration.JiraIntegrationHandler.STATUS_FIELD;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -44,9 +48,11 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.storage.model.XRefAttributeType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
@@ -199,7 +205,7 @@ public class ComponentServiceImpl
 			persistenceService.persist(component);
 			getUserService().removeAllWatchesForComponent(componentId);
 		}
-		
+
 	}
 
 	@Override
@@ -1295,6 +1301,79 @@ public class ComponentServiceImpl
 		}
 
 		return validationResult;
+	}
+
+	@Override
+	public void mapComponentAttributes(Issue issue, IntegrationConfig integrationConfig)
+	{
+		Objects.requireNonNull(issue, "Jira Issue Required");
+		Objects.requireNonNull(integrationConfig, "Integration Config Required");
+
+		log.finer("Pull Xref Mapping");
+		AttributeXrefModel attributeXrefModel = new AttributeXrefModel();
+		attributeXrefModel.setIntegrationType(integrationConfig.getIntegrationType());
+		attributeXrefModel.setProjectKey(integrationConfig.getProjectType());
+		attributeXrefModel.setIssueType(integrationConfig.getIssueType());
+
+		List<XRefAttributeType> xrefAttributeTypes = getSystemService().getXrefAttributeTypes(attributeXrefModel);
+		Map<String, Map<String, String>> xrefAttributeMaps = getSystemService().getXrefAttributeMapFieldMap();
+
+		for (XRefAttributeType xrefAttributeType : xrefAttributeTypes) {
+
+			String jiraValue = null;
+			if (STATUS_FIELD.equals(xrefAttributeType.getFieldName())) {
+				jiraValue = issue.getStatus().getName();
+			} else {
+				IssueField jiraField = issue.getField(xrefAttributeType.getFieldId());
+				if (jiraField != null) {
+					jiraValue = jiraField.getValue().toString();
+				} else {
+					throw new OpenStorefrontRuntimeException("Unable to find Jira Field: " + xrefAttributeType.getFieldName());
+				}
+			}
+			String ourAttributeCode = xrefAttributeMaps.get(xrefAttributeType.getAttributeType()).get(jiraValue);
+
+			if (ourAttributeCode != null) {
+				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+				componentAttributePk.setComponentId(integrationConfig.getComponentId());
+				componentAttributePk.setAttributeType(xrefAttributeType.getAttributeType());
+				componentAttributePk.setAttributeCode(ourAttributeCode);
+
+				if (StringUtils.isBlank(componentAttributePk.getComponentId())) {
+					throw new OpenStorefrontRuntimeException("Component Id is required");
+				}
+
+				AttributeCodePk attributeCodePk = new AttributeCodePk();
+				attributeCodePk.setAttributeType(componentAttributePk.getAttributeType());
+				attributeCodePk.setAttributeCode(componentAttributePk.getAttributeCode());
+
+				AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+				if (attributeCode != null) {
+					ComponentAttributePk deleteComponentAttributePKExample = new ComponentAttributePk();
+					deleteComponentAttributePKExample.setAttributeType(componentAttributePk.getAttributeType());
+					deleteComponentAttributePKExample.setComponentId(componentAttributePk.getComponentId());
+					ComponentAttribute componentAttributeExample = new ComponentAttribute();
+					componentAttributeExample.setComponentAttributePk(deleteComponentAttributePKExample);
+					persistenceService.deleteByExample(componentAttributeExample);
+
+					ComponentAttribute componentAttribute = new ComponentAttribute();
+					componentAttribute.setComponentAttributePk(componentAttributePk);
+					componentAttribute.setComponentId(componentAttributePk.getComponentId());
+					componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+					componentAttribute.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+					componentAttribute.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+					saveComponentAttribute(componentAttribute, false);
+				} else {
+					throw new OpenStorefrontRuntimeException("Unable to find attribute code.  Attribute Type: " + componentAttributePk.getAttributeType() + " Code: " + componentAttributePk.getAttributeCode(),
+							"Check data (Attributes and Input)");
+				}
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find Mapping for Jira Field value: " + jiraValue);
+			}
+		}
+
+		updateComponentLastActivity(integrationConfig.getComponentId());
+		getSearchService().addIndex(persistenceService.findById(Component.class, integrationConfig.getComponentId()));
 	}
 
 }
