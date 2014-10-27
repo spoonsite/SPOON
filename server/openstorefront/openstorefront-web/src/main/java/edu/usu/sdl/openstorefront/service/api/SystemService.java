@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
-import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
@@ -173,8 +173,6 @@ public interface SystemService
 	 */
 	public List<JiraIssueModel> getAllProjectIssueTypes(String code);
 
-	public Map<String, CimFieldInfo> getIssueTypeFields(String code, String type);
-
 	/**
 	 * This handling running call active integration configs for a component
 	 *
@@ -197,5 +195,14 @@ public interface SystemService
 	 * @return Attribute key, external code, our code
 	 */
 	public Map<String, Map<String, String>> getXrefAttributeMapFieldMap();
+
+	/**
+	 * Get the fields for an issue type
+	 *
+	 * @param projectCode
+	 * @param issueType
+	 * @return
+	 */
+	public List<JiraFieldInfoModel> getIssueTypeFields(String projectCode, String issueType);
 
 }

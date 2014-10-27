@@ -23,7 +23,9 @@ import edu.usu.sdl.openstorefront.service.io.integration.BaseIntegrationHandler;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
@@ -353,11 +355,36 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public Map<String, CimFieldInfo> getIssueTypeFields(String code, String type)
+	public List<JiraFieldInfoModel> getIssueTypeFields(String projectCode, String issueType)
 	{
-		Map<String, CimFieldInfo> response = new HashMap();
+		List<JiraFieldInfoModel> response = new ArrayList<>();
+		Map<String, CimFieldInfo> results = null;
+		List<JiraIssueType> statuses = new ArrayList<>();
+		JiraIssueType jiraIssueType = null;
 		try (JiraClient jiraClient = JiraManager.getClient()) {
-			response = jiraClient.getProjectIssueTypeFields(code, type);
+			results = jiraClient.getProjectIssueTypeFields(projectCode, issueType);
+			if (results != null) {
+				for (Map.Entry<String, CimFieldInfo> entry : results.entrySet()) {
+					String key = entry.getKey();
+					CimFieldInfo cimFieldInfo = entry.getValue();
+					if (cimFieldInfo.getAllowedValues() != null) {
+						JiraFieldInfoModel model = JiraFieldInfoModel.toView(key, cimFieldInfo);
+						if (model != null) {
+							response.add(model);
+						}
+					}
+				}
+			}
+			statuses = jiraClient.getProjectStatusForAllIssueTypes(projectCode);
+			for (int i = 0; i < statuses.size(); i++) {
+				if (statuses.get(i).getName().equals(jiraIssueType)) {
+					jiraIssueType = statuses.get(i);
+					break;
+				}
+			}
+			if (jiraIssueType != null) {
+				response.add(JiraFieldInfoModel.toView(jiraIssueType));
+			}
 		}
 		return response;
 	}

@@ -126,7 +126,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
 
   service.getProjects = function() {
     var deferred = $q.defer();
-    var value = checkExpire('JiraProjects', minute * 1440);
+    var value = null;/*checkExpire('JiraProjects', minute * 1440);*/
     if (value) {
       deferred.resolve(value);
     } else {
@@ -150,9 +150,9 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   }
 
   service.getIssueOptions = function(project) {
-      var deferred = $q.defer();
+    var deferred = $q.defer();
     if (project && project.code) {
-      var value = checkExpire(project.code+'-IssueOptions', minute * 1440);
+      var value = null;/*checkExpire(project.code+'-IssueOptions', minute * 1440);*/
       if (value) {
         deferred.resolve(value);
       } else {
@@ -175,7 +175,89 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     } else {
       deferred.reject(false);
     }
-      return deferred.promise;
+    return deferred.promise;
+  }
+
+  service.getJiraFields = function(project, issueType) {
+    var deferred = $q.defer();
+    if (project && project.code && issueType && issueType.name) {
+      var value = null;/*checkExpire(project.code+'-'+issueType.name+'-fields', minute * 1440);*/
+      if (value) {
+        deferred.resolve(value);
+      } else {
+        var url = 'api/v1/resource/integration/projects/'+project.code+'/'+issueType.name+'/fields';
+        $http({
+          'method': 'GET',
+          'url': url
+        }).success(function(data, status, headers, config){
+          if (data && isNotRequestError(data)) {
+            save(project.code+'-'+issueType.name+'-fields', data);
+            deferred.resolve(data);
+          } else {
+            deferred.reject(false);
+          }
+        }).error(function(){
+          deferred.reject(false);
+        });
+      }
+
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.getStoreFields = function() {
+    var deferred = $q.defer();
+    var value = null;/*checkExpire('attributeTypes', minute * 1440);*/
+    if (value) {
+      deferred.resolve(value);
+    } else {
+      var url = 'api/v1/resource/attributes/attributetypes';
+      $http({
+        'method': 'GET',
+        'url': url
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data)) {
+          save('attributeTypes', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(){
+        deferred.reject(false);
+      });
+    }
+    return deferred.promise;
+  }
+
+  service.getStoreCodes = function(attribute) {
+    var deferred = $q.defer();
+    if (attribute && attribute.attributeType) {
+
+      var value = null;/*checkExpire('attributeCodes-'+attribute.attributeType, minute * 1440);*/
+      if (value) {
+        deferred.resolve(value);
+      } else {
+        var url = 'api/v1/resource/attributes/attributetypes/'+attribute.attributeType+'/attributecodes';
+        $http({
+          'method': 'GET',
+          'url': url
+        }).success(function(data, status, headers, config){
+          if (data && isNotRequestError(data)) {
+            save('attributeCodes-'+attribute.attributeType, data);
+            deferred.resolve(data);
+          } else {
+            deferred.reject(false);
+          }
+        }).error(function(){
+          deferred.reject(false);
+        });
+      }
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
   }
 
 
