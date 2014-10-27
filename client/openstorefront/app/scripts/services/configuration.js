@@ -130,7 +130,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     if (value) {
       deferred.resolve(value);
     } else {
-      var url = 'api/v1/resource/integration/projects'
+      var url = 'api/v1/service/jira/projects'
       $http({
         'method': 'GET',
         'url': url
@@ -156,7 +156,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       if (value) {
         deferred.resolve(value);
       } else {
-        var url = 'api/v1/resource/integration/projects/'+project.code;
+        var url = 'api/v1/service/jira/projects/'+project.code;
         $http({
           'method': 'GET',
           'url': url
@@ -185,7 +185,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       if (value) {
         deferred.resolve(value);
       } else {
-        var url = 'api/v1/resource/integration/projects/'+project.code+'/'+issueType.name+'/fields';
+        var url = 'api/v1/service/jira/projects/'+project.code+'/'+issueType.name+'/fields';
         $http({
           'method': 'GET',
           'url': url

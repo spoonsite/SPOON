@@ -8,7 +8,8 @@
   font-family: "raty";
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  /*font-weight: normal;*/
+  font-weight: bolder;
   line-height: 1;
   speak: none;
   text-transform: none;
@@ -16,7 +17,7 @@
   font-size: 2em;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  -webkit-text-stroke: 1px black;
+  /*-webkit-text-stroke: 1px black;*/
   background: transparent; 
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fceabb), color-stop(61%,#fccd4d), color-stop(100%,#f8b500), color-stop(100%,#fbdf93), color-stop(101%,#f8b500)); 
   background: -webkit-linear-gradient(top,  #fceabb 0%,#fccd4d 61%,#f8b500 100%,#fbdf93 100%,#f8b500 101%); 

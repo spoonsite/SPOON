@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.XRefAttributeMap;
 import edu.usu.sdl.openstorefront.storage.model.XRefAttributeType;
+import java.util.List;
 
 /**
  *
@@ -26,7 +27,7 @@ import edu.usu.sdl.openstorefront.storage.model.XRefAttributeType;
 public class XRef
 {
 	private XRefAttributeType type;
-	private XRefAttributeMap map;
+	private List<XRefAttributeMap> map;
 
 	public XRef(){
 		
@@ -51,7 +52,7 @@ public class XRef
 	/**
 	 * @return the map
 	 */
-	public XRefAttributeMap getMap()
+	public List<XRefAttributeMap> getMap()
 	{
 		return map;
 	}
@@ -59,7 +60,7 @@ public class XRef
 	/**
 	 * @param map the map to set
 	 */
-	public void setMap(XRefAttributeMap map)
+	public void setMap(List<XRefAttributeMap> map)
 	{
 		this.map = map;
 	}
