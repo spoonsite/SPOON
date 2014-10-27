@@ -25,7 +25,8 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class XRefMap
+public class XRefAttributeMap
+		extends BaseEntity
 {
 
 	@PK
@@ -47,7 +48,7 @@ public class XRefMap
 	@ConsumeField
 	private String externalCode;
 
-	public XRefMap()
+	public XRefAttributeMap()
 	{
 
 	}

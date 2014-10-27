@@ -15,8 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.test.integration;
 
-import com.atlassian.jira.rest.client.domain.CimFieldInfo;
-import com.atlassian.jira.rest.client.domain.CimProject;
+import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
+import com.atlassian.jira.rest.client.api.domain.CimProject;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;

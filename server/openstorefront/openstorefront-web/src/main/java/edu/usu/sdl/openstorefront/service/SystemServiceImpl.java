@@ -15,21 +15,27 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.atlassian.jira.rest.client.domain.BasicProject;
-import com.atlassian.jira.rest.client.domain.CimFieldInfo;
-import com.atlassian.jira.rest.client.domain.ServerInfo;
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
+import edu.usu.sdl.openstorefront.service.io.integration.BaseIntegrationHandler;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
+import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
+import edu.usu.sdl.openstorefront.storage.model.RunStatus;
+import edu.usu.sdl.openstorefront.storage.model.XRefAttributeMap;
+import edu.usu.sdl.openstorefront.storage.model.XRefAttributeType;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
@@ -46,6 +52,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,8 +104,7 @@ public class SystemServiceImpl
 			existingProperty.setUpdateDts(TimeUtil.currentDate());
 			existingProperty.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 			persistenceService.persist(existingProperty);
-		}
-		else {
+		} else {
 			ApplicationProperty property = new ApplicationProperty();
 			property.setKey(key);
 			property.setValue(value);
@@ -135,8 +142,7 @@ public class SystemServiceImpl
 			existing.setUpdateUser(highlight.getUpdateUser());
 			persistenceService.persist(existing);
 
-		}
-		else {
+		} else {
 			highlight.setHighlightId(persistenceService.generateId());
 			highlight.setActiveStatus(Highlight.ACTIVE_STATUS);
 			highlight.setCreateDts(TimeUtil.currentDate());
@@ -174,8 +180,7 @@ public class SystemServiceImpl
 					getSystemService().saveHightlight(highlight);
 				}
 
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to save highlight.  Title: " + highlight.getTitle(), e);
 			}
 		}
@@ -231,8 +236,7 @@ public class SystemServiceImpl
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			Files.write(path, ticket.toString().getBytes());
 
-		}
-		catch (Throwable t) {
+		} catch (Throwable t) {
 			//NOTE: this is a critial path.  if an error is thrown and not catch it would result in a info link or potential loop.
 			//So that's why there is a catch all here.
 			log.log(Level.SEVERE, "Error was thrown while processing the error", t);
@@ -250,8 +254,7 @@ public class SystemServiceImpl
 			try {
 				byte data[] = Files.readAllBytes(path);
 				ticketData = new String(data);
-			}
-			catch (IOException io) {
+			} catch (IOException io) {
 				//We don't want to throw an error here if there something going on with the system.
 				ticketData = "Unable to retrieve ticket information.  (Check log for more details) Message: " + io.getMessage();
 				log.log(Level.WARNING, ticketData, io);
@@ -283,10 +286,12 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public List<Integration> getIntegrationModels()
+	public List<Integration> getIntegrationModels(String activeStatus)
 	{
-		// TODO: Set up the Integration manager for use here
-		return new ArrayList<>();
+		Integration integrationExample = new Integration();
+		integrationExample.setActiveStatus(activeStatus);
+		List<Integration> integrations = persistenceService.queryByExample(Integration.class, integrationExample);
+		return integrations;
 	}
 
 	@Override
@@ -355,6 +360,149 @@ public class SystemServiceImpl
 			response = jiraClient.getProjectIssueTypeFields(code, type);
 		}
 		return response;
+	}
+
+	@Override
+	public void processIntegration(String componentId, String integrationConfigId)
+	{
+		Integration integrationExample = new Integration();
+		integrationExample.setActiveStatus(Integration.ACTIVE_STATUS);
+		integrationExample.setComponentId(componentId);
+		Integration integration = persistenceService.queryOneByExample(Integration.class, integrationExample);
+		if (integration != null) {
+
+			boolean run = true;
+			if (RunStatus.WORKING.equals(integration.getStatus())) {
+				//check for override
+				String overrideTime = PropertiesManager.getValue(PropertiesManager.KEY_JOB_WORKING_STATE_OVERRIDE, "30");
+				if (integration.getLastStartTime() != null) {
+					LocalDateTime maxLocalDateTime = LocalDateTime.ofInstant(integration.getLastStartTime().toInstant(), ZoneId.systemDefault());
+					maxLocalDateTime.plusMinutes(Convert.toLong(overrideTime));
+					if (maxLocalDateTime.compareTo(LocalDateTime.now()) <= 0) {
+						log.log(Level.FINE, "Overriding the working it assume it was stuck.");
+						run = true;
+					} else {
+						run = false;
+					}
+				} else {
+					throw new OpenStorefrontRuntimeException("Missing Last Start time.  Data is corrupt.", "Delete the job and recreate it.");
+				}
+			}
+
+			if (run) {
+
+				integration.setStatus(RunStatus.WORKING);
+				integration.setLastStartTime(TimeUtil.currentDate());
+				integration.setUpdateDts(TimeUtil.currentDate());
+				integration.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+				persistenceService.persist(integration);
+
+				IntegrationConfig integrationConfigExample = new IntegrationConfig();
+				integrationConfigExample.setActiveStatus(IntegrationConfig.ACTIVE_STATUS);
+				integrationConfigExample.setComponentId(componentId);
+				integrationConfigExample.setIntegrationConfigId(integrationConfigId);
+
+				List<IntegrationConfig> integrationConfigs = persistenceService.queryByExample(IntegrationConfig.class, integrationConfigExample);
+				boolean errorConfig = false;
+				if (integrationConfigs.isEmpty()) {
+					for (IntegrationConfig integrationConfig : integrationConfigs) {
+						try {
+							integrationConfig.setStatus(RunStatus.WORKING);
+							integrationConfig.setLastStartTime(TimeUtil.currentDate());
+							integrationConfig.setUpdateDts(TimeUtil.currentDate());
+							integrationConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							persistenceService.persist(integrationConfig);
+
+							BaseIntegrationHandler baseIntegrationHandler = BaseIntegrationHandler.getIntegrationHandler(integrationConfig);
+							if (baseIntegrationHandler != null) {
+								baseIntegrationHandler.processConfig();
+							} else {
+								throw new OpenStorefrontRuntimeException("Intergration handler not supported for " + integrationConfig.getIntegrationType(), "Add handler");
+							}
+
+							integrationConfig.setStatus(RunStatus.COMPLETE);
+							integrationConfig.setLastEndTime(TimeUtil.currentDate());
+							integrationConfig.setUpdateDts(TimeUtil.currentDate());
+							integrationConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							persistenceService.persist(integrationConfig);
+						} catch (Exception e) {
+							errorConfig = true;
+							//This is a critical loop
+							ErrorInfo errorInfo = new ErrorInfo(e, null);
+							SystemErrorModel errorModel = generateErrorTicket(errorInfo);
+
+							//put in fail state
+							integrationConfig.setStatus(RunStatus.ERROR);
+							integrationConfig.setErrorMessage(errorModel.getMessage());
+							integrationConfig.setErrorTicketNumber(errorModel.getErrorTicketNumber());
+							integrationConfig.setLastEndTime(TimeUtil.currentDate());
+							integrationConfig.setUpdateDts(TimeUtil.currentDate());
+							integrationConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							persistenceService.persist(integrationConfig);
+						}
+					}
+				}
+
+				if (errorConfig) {
+					integration.setStatus(RunStatus.ERROR);
+				} else {
+					integration.setStatus(RunStatus.COMPLETE);
+				}
+				integration.setLastEndTime(TimeUtil.currentDate());
+				integration.setUpdateDts(TimeUtil.currentDate());
+				integration.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+				persistenceService.persist(integration);
+
+			} else {
+				log.log(Level.FINE, MessageFormat.format("Not time to run integration or the system is currently working on the integration. Component Id: {0}", componentId));
+			}
+		} else {
+			log.log(Level.WARNING, MessageFormat.format("There are no active integration for this component. Id: {0}", componentId));
+		}
+	}
+
+	@Override
+	public List<XRefAttributeType> getXrefAttributeTypes(AttributeXrefModel attributeXrefModel)
+	{
+		XRefAttributeType xrefAttributeTypeExample = new XRefAttributeType();
+		xrefAttributeTypeExample.setActiveStatus(XRefAttributeType.ACTIVE_STATUS);
+		xrefAttributeTypeExample.setIntegrationType(attributeXrefModel.getIntegrationType());
+		xrefAttributeTypeExample.setProjectType(attributeXrefModel.getProjectKey());
+		xrefAttributeTypeExample.setIssueType(attributeXrefModel.getIssueType());
+		List<XRefAttributeType> xrefAttributeTypes = persistenceService.queryByExample(XRefAttributeType.class, xrefAttributeTypeExample);
+		return xrefAttributeTypes;
+	}
+
+	@Override
+	public Map<String, Map<String, String>> getXrefAttributeMapFieldMap()
+	{
+		Map<String, Map<String, String>> attributeCodeMap = new HashMap<>();
+
+		XRefAttributeMap xrefAttributeMapExample = new XRefAttributeMap();
+		xrefAttributeMapExample.setActiveStatus(XRefAttributeMap.ACTIVE_STATUS);
+
+		List<XRefAttributeMap> xrefAttributeMaps = persistenceService.queryByExample(XRefAttributeMap.class, xrefAttributeMapExample);
+		for (XRefAttributeMap xrefAttributeMap : xrefAttributeMaps) {
+
+			if (attributeCodeMap.containsKey(xrefAttributeMap.getAttributeType())) {
+				Map<String, String> codeMap = attributeCodeMap.get(xrefAttributeMap.getAttributeType());
+				if (codeMap.containsKey(xrefAttributeMap.getExternalCode())) {
+
+					//should only have one external code if there's a dup will only use one.
+					//(however, which  code  is used dependa on the order that came in.  which is not  determinate)
+					//First one we hit wins
+					log.log(Level.WARNING, MessageFormat.format("Duplicate external code for attribute type: {0} Code: {1}", new Object[]{xrefAttributeMap.getAttributeType(), xrefAttributeMap.getExternalCode()}));
+				} else {
+					codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
+				}
+			} else {
+				Map<String, String> codeMap = new HashMap<>();
+				codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
+				attributeCodeMap.put(xrefAttributeMap.getAttributeType(), codeMap);
+			}
+		}
+
+		return attributeCodeMap;
 	}
 
 }

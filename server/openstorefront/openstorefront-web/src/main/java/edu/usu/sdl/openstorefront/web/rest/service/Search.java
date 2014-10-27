@@ -63,7 +63,6 @@ public class Search
 			@BeanParam SearchQuery query,
 			@BeanParam FilterQueryParams filter)
 	{
-
 		List<ComponentSearchView> searchResults = service.getSearchService().getSearchItems(query, filter);
 
 		return searchResults;

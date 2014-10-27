@@ -15,20 +15,21 @@
  */
 package edu.usu.sdl.openstorefront.service.manager.resource;
 
-import com.atlassian.jira.rest.client.GetCreateIssueMetadataOptions;
-import com.atlassian.jira.rest.client.GetCreateIssueMetadataOptionsBuilder;
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.domain.BasicProject;
-import com.atlassian.jira.rest.client.domain.CimFieldInfo;
-import com.atlassian.jira.rest.client.domain.CimProject;
-import com.atlassian.jira.rest.client.domain.Issue;
-import com.atlassian.jira.rest.client.domain.ServerInfo;
+import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptions;
+import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptionsBuilder;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
+import com.atlassian.jira.rest.client.api.domain.CimProject;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -59,14 +60,19 @@ public class JiraClient
 
 	private final ConnectionModel connectionModel;
 	private JiraRestClient restClient;
-	private boolean alive = true;
+	private boolean alive = false;
 
 	public JiraClient(ConnectionModel connectionModel)
 	{
 		this.connectionModel = connectionModel;
+	}
+
+	public void initConnection()
+	{
 		AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
 		try {
 			restClient = factory.createWithBasicHttpAuthentication(new URI(connectionModel.getUrl()), connectionModel.getUsername(), connectionModel.getCredential());
+			alive = true;
 		} catch (URISyntaxException ex) {
 			throw new OpenStorefrontRuntimeException("Jira Server url is mal-formed ", "Check server url in properties.", ex);
 		}
@@ -165,8 +171,14 @@ public class JiraClient
 	public void close()
 	{
 		log.log(Level.FINEST, "Releasing jira connection.");
-		alive = false;
-		JiraManager.releaseClient(this);
+		try {
+			restClient.close();
+		} catch (IOException ex) {
+			log.log(Level.WARNING, "Failed to close JIRA connection. ", ex);
+		} finally {
+			alive = false;
+			JiraManager.releaseClient(this);
+		}
 	}
 
 	public boolean isAlive()

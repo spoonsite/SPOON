@@ -26,7 +26,8 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class XRefType
+public class XRefAttributeType
+		extends BaseEntity
 {
 
 	@PK
@@ -41,14 +42,14 @@ public class XRefType
 	private String fieldName;
 
 	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@ConsumeField
+	private String fieldId;
+
+	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ConsumeField
 	private String fieldKey;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@ConsumeField
-	private String mappingName;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
@@ -63,7 +64,7 @@ public class XRefType
 	@ConsumeField
 	private String integrationType;
 
-	public XRefType()
+	public XRefAttributeType()
 	{
 
 	}
@@ -98,16 +99,6 @@ public class XRefType
 		this.fieldKey = fieldKey;
 	}
 
-	public String getMappingName()
-	{
-		return mappingName;
-	}
-
-	public void setMappingName(String mappingName)
-	{
-		this.mappingName = mappingName;
-	}
-
 	public String getProjectType()
 	{
 		return projectType;
@@ -136,6 +127,16 @@ public class XRefType
 	public void setIntegrationType(String integrationType)
 	{
 		this.integrationType = integrationType;
+	}
+
+	public String getFieldId()
+	{
+		return fieldId;
+	}
+
+	public void setFieldId(String fieldId)
+	{
+		this.fieldId = fieldId;
 	}
 
 }
