@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.service.manager.model;
 
-import com.atlassian.jira.rest.client.domain.CustomFieldOption;
+import com.atlassian.jira.rest.client.api.domain.CustomFieldOption;
 
 /**
  *
@@ -24,31 +23,34 @@ import com.atlassian.jira.rest.client.domain.CustomFieldOption;
  */
 public class JiraFieldAllowedValues
 {
+
 	private Long id;
 	private String value;
 	private String name;
 
-	public JiraFieldAllowedValues(){
-		
+	public JiraFieldAllowedValues()
+	{
+
 	}
-	
-	public static JiraFieldAllowedValues toView(CustomFieldOption option){
+
+	public static JiraFieldAllowedValues toView(CustomFieldOption option)
+	{
 		JiraFieldAllowedValues view = new JiraFieldAllowedValues();
 		view.setId(option.getId());
 		view.setValue(option.getValue());
 		view.setName(null);
 		return view;
 	}
-	
-	public static JiraFieldAllowedValues toView(JiraStatus status){
+
+	public static JiraFieldAllowedValues toView(JiraStatus status)
+	{
 		JiraFieldAllowedValues view = new JiraFieldAllowedValues();
 		view.setId(status.getId());
 		view.setValue(status.getDescription());
 		view.setName(status.getName());
 		return view;
 	}
-	
-	
+
 	/**
 	 * @return the id
 	 */

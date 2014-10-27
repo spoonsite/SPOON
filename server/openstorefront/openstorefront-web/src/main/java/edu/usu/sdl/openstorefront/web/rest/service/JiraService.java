@@ -15,16 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
-import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -70,9 +69,9 @@ public class JiraService
 	@RequireAdmin
 	@APIDescription("Gets the possible fields from the issue type.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(String.class)
+	@DataType(JiraFieldInfoModel.class)
 	@Path("/projects/{projectCode}/{issueType}/fields")
-	public Map<String, CimFieldInfo> getJiraIssueTypes(
+	public List<JiraFieldInfoModel> getJiraIssueTypes(
 			@PathParam("projectCode")
 			@RequiredParam String code,
 			@PathParam("issueType")
