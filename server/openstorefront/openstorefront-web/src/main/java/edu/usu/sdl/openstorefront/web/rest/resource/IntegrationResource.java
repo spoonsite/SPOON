@@ -21,11 +21,16 @@ import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
+import edu.usu.sdl.openstorefront.storage.model.XRefAttributeMap;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
+import edu.usu.sdl.openstorefront.web.rest.model.MappingTypeModel;
+import edu.usu.sdl.openstorefront.web.rest.model.XRef;
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -79,7 +84,8 @@ public class IntegrationResource
 		GlobalIntegrationModel model = service.getSystemService().getGlobalConfig();
 		if (model != null) {
 			return Response.ok(model).build();
-		} else {
+		}
+		else {
 			return Response.serverError().build();
 		}
 	}
@@ -97,7 +103,8 @@ public class IntegrationResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getComponentId())).entity(integration).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -115,7 +122,8 @@ public class IntegrationResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getJiraRefreshRate())).entity(integration).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -136,7 +144,8 @@ public class IntegrationResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getComponentId())).entity(integration).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -157,7 +166,8 @@ public class IntegrationResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getJiraRefreshRate())).entity(integration).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -182,4 +192,45 @@ public class IntegrationResource
 		service.getSystemService().deactivateIntegration();
 	}
 
+	@POST
+	@RequireAdmin
+	@APIDescription("Save a global integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/mapping")
+	public Response saveMapping(
+			@RequiredParam XRef integration)
+	{
+		integration.getType().setCreateDts(TimeUtil.currentDate());
+		integration.getType().setUpdateDts(TimeUtil.currentDate());
+		integration.getType().setCreateUser(SecurityUtil.getCurrentUserName());
+		integration.getType().setUpdateUser(SecurityUtil.getCurrentUserName());
+		integration.getType().setActiveStatus(Integration.ACTIVE_STATUS);
+		ValidationModel validationModel = new ValidationModel(integration);
+		validationModel.setConsumeFieldsOnly(true);
+
+		for (XRefAttributeMap map : integration.getMap()) {
+			map.setCreateDts(TimeUtil.currentDate());
+			map.setUpdateDts(TimeUtil.currentDate());
+			map.setCreateUser(SecurityUtil.getCurrentUserName());
+			map.setUpdateUser(SecurityUtil.getCurrentUserName());
+			map.setActiveStatus(Integration.ACTIVE_STATUS);
+		}
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			return Response.created(URI.create("v1/resource/integration/" + service.getSystemService().saveIntegration(integration).getType().getAttributeType())).build();
+		}
+		else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@GET
+	@APIDescription("Gets the list of mapping projects and issue types.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Component.class)
+	@Path("/mapping/types")
+	public List<MappingTypeModel> getMappingTypes()
+	{
+		return service.getSystemService().getMappingTypes();
+	}
 }

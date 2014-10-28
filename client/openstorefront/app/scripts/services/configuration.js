@@ -130,7 +130,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     if (value) {
       deferred.resolve(value);
     } else {
-      var url = 'api/v1/resource/integration/projects'
+      var url = 'api/v1/service/jira/projects'
       $http({
         'method': 'GET',
         'url': url
@@ -156,7 +156,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       if (value) {
         deferred.resolve(value);
       } else {
-        var url = 'api/v1/resource/integration/projects/'+project.code;
+        var url = 'api/v1/service/jira/projects/'+project.code;
         $http({
           'method': 'GET',
           'url': url
@@ -185,7 +185,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       if (value) {
         deferred.resolve(value);
       } else {
-        var url = 'api/v1/resource/integration/projects/'+project.code+'/'+issueType.name+'/fields';
+        var url = 'api/v1/service/jira/projects/'+project.code+'/'+issueType.name+'/fields';
         $http({
           'method': 'GET',
           'url': url
@@ -256,6 +256,53 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       }
     } else {
       deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.saveMappingConf = function(mapping) {
+    var deferred = $q.defer();
+    var url = 'api/v1/resource/integration/mapping';
+    $http({
+      'method': 'POST',
+      'url': url,
+      'data': mapping
+    }).success(function(data, status, headers, config){
+      if (data && isNotRequestError(data)) {
+        deferred.resolve(data);
+      } else {
+        deferred.reject(false);
+      }
+    }).error(function(data, status, headers, config){
+      if (status !== 201) {
+        deferred.reject(false);
+      } else {
+        deferred.resolve(data);
+      }
+    });
+    return deferred.promise;
+  }
+
+  service.getMappingTypes = function() {
+    var deferred = $q.defer();
+    var url = 'api/v1/resource/integration/mapping/types';
+    var value = null; /*checkExpire('previousMappings', minute * 1440);*/
+    if (value) {
+      deferred.resolve(value);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data)) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(data);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
     }
     return deferred.promise;
   }

@@ -163,7 +163,7 @@ var app = angular
   // set up the idleProvider and keepaliveProvider
   $idleProvider.idleDuration(30 * 60);
   $idleProvider.warningDuration(60);
-  $keepaliveProvider.interval(20 * 60);
+  $keepaliveProvider.interval(14 * 60);
 
 
 }])

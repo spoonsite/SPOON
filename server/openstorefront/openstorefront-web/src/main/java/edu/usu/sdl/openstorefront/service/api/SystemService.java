@@ -26,6 +26,8 @@ import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
 import edu.usu.sdl.openstorefront.storage.model.XRefAttributeType;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
+import edu.usu.sdl.openstorefront.web.rest.model.MappingTypeModel;
+import edu.usu.sdl.openstorefront.web.rest.model.XRef;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.util.List;
@@ -140,6 +142,19 @@ public interface SystemService
 	 * @return
 	 */
 	public Integration saveIntegration(Integration integration, boolean isPost);
+
+	/**
+	 *
+	 * @param integration
+	 * @return
+	 */
+	public XRef saveIntegration(XRef integration);
+
+	/**
+	 *
+	 * @return
+	 */
+	public List<MappingTypeModel> getMappingTypes();
 
 	/**
 	 *

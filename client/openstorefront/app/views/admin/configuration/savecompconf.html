@@ -1,6 +1,18 @@
 <loader trigger="editLoad"></loader>
 <div style="display:inline-block" ng-controller="SavecompconfCtrl">
   <form ng-submit="((!componentId || componentId === -1) || (!issueId || issueId === -1)) || saveComponentConf()" role="form">
+    <div ng-show="projects.length" class="form-group form-group-md col-md-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+      <label style="padding-left:0px; padding-right:0px;" class="control-label" for="projectSelect">Select a Jira Project:&nbsp;</label>
+      <div class="" style="padding: 0;">
+        <select ng-model="jiraProject" class="form-control" style="min-width: 350px;" id="projectSelect" ng-options="option as option.description for option in projects"></select>
+      </div>
+    </div>
+    <div ng-show="issueOptions.length" class="form-group form-group-md col-md-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+      <label style="padding-left:0px; padding-right:0px;" class="control-label" for="issueSelect">Select a Jira Project Issue Type:&nbsp;</label>
+      <div class="" style="padding: 0;">
+        <select ng-model="jiraIssue" class="form-control" style="min-width: 350px;" id="issueSelect" ng-options="option as option.name for option in issueOptions"></select>
+      </div>
+    </div>
     <div class="form-group form-group-sm col-sm-12" ng-class="(componentId && componentId !== -1)? ' has-success has-feedback ': componentId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
       <label style="padding-left:0px; padding-right:0px;" class="control-label" for="componentSearch">Search For Component:&nbsp;</label>
       <div class="" style="padding: 0;">
