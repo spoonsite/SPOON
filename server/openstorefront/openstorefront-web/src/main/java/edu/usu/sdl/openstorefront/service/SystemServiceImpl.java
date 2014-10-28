@@ -27,9 +27,11 @@ import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.Integration;
@@ -45,6 +47,8 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
+import edu.usu.sdl.openstorefront.web.rest.model.MappingTypeModel;
+import edu.usu.sdl.openstorefront.web.rest.model.XRef;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.io.IOException;
@@ -106,7 +110,8 @@ public class SystemServiceImpl
 			existingProperty.setUpdateDts(TimeUtil.currentDate());
 			existingProperty.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 			persistenceService.persist(existingProperty);
-		} else {
+		}
+		else {
 			ApplicationProperty property = new ApplicationProperty();
 			property.setKey(key);
 			property.setValue(value);
@@ -144,7 +149,8 @@ public class SystemServiceImpl
 			existing.setUpdateUser(highlight.getUpdateUser());
 			persistenceService.persist(existing);
 
-		} else {
+		}
+		else {
 			highlight.setHighlightId(persistenceService.generateId());
 			highlight.setActiveStatus(Highlight.ACTIVE_STATUS);
 			highlight.setCreateDts(TimeUtil.currentDate());
@@ -182,7 +188,8 @@ public class SystemServiceImpl
 					getSystemService().saveHightlight(highlight);
 				}
 
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to save highlight.  Title: " + highlight.getTitle(), e);
 			}
 		}
@@ -238,7 +245,8 @@ public class SystemServiceImpl
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			Files.write(path, ticket.toString().getBytes());
 
-		} catch (Throwable t) {
+		}
+		catch (Throwable t) {
 			//NOTE: this is a critial path.  if an error is thrown and not catch it would result in a info link or potential loop.
 			//So that's why there is a catch all here.
 			log.log(Level.SEVERE, "Error was thrown while processing the error", t);
@@ -256,7 +264,8 @@ public class SystemServiceImpl
 			try {
 				byte data[] = Files.readAllBytes(path);
 				ticketData = new String(data);
-			} catch (IOException io) {
+			}
+			catch (IOException io) {
 				//We don't want to throw an error here if there something going on with the system.
 				ticketData = "Unable to retrieve ticket information.  (Check log for more details) Message: " + io.getMessage();
 				log.log(Level.WARNING, ticketData, io);
@@ -300,6 +309,57 @@ public class SystemServiceImpl
 	public Integration saveIntegration(Integration integration, boolean isPost)
 	{
 		// save Integration model here and return it.
+		return integration;
+	}
+
+	@Override
+	public XRef saveIntegration(XRef integration)
+	{
+		XRefAttributeType type = persistenceService.findById(XRefAttributeType.class, integration.getType().getAttributeType());
+		if (type != null) {
+			type.setAttributeType(integration.getType().getAttributeType());
+			type.setActiveStatus(integration.getType().getActiveStatus());
+			type.setFieldId(integration.getType().getFieldId());
+			type.setFieldKey(integration.getType().getFieldKey());
+			type.setFieldName(integration.getType().getFieldName());
+			type.setIntegrationType(integration.getType().getIntegrationType());
+			type.setIssueType(integration.getType().getIssueType());
+			type.setProjectType(integration.getType().getProjectType());
+			persistenceService.persist(type);
+			XRefAttributeMap mapTemp = new XRefAttributeMap();
+			mapTemp.setAttributeType(type.getAttributeType());
+			List<XRefAttributeMap> tempMaps = persistenceService.queryByExample(XRefAttributeMap.class, new QueryByExample(mapTemp));
+			for (XRefAttributeMap tempMap : tempMaps) {
+				mapTemp = persistenceService.findById(XRefAttributeMap.class, tempMap.getXrefId());
+				persistenceService.delete(mapTemp);
+			}
+
+			for (XRefAttributeMap map : integration.getMap()) {
+				XRefAttributeMap temp = persistenceService.queryOneByExample(XRefAttributeMap.class, map);
+				if (temp != null) {
+					temp.setActiveStatus(map.getActiveStatus());
+					temp.setAttributeType(map.getAttributeType());
+					temp.setExternalCode(map.getExternalCode());
+					temp.setLocalCode(map.getLocalCode());
+					persistenceService.persist(temp);
+				}
+				else {
+					map.setActiveStatus(XRefAttributeMap.ACTIVE_STATUS);
+					map.setXrefId(persistenceService.generateId());
+					persistenceService.persist(map);
+				}
+			}
+		}
+		else {
+			integration.getType().setActiveStatus(XRefAttributeType.ACTIVE_STATUS);
+			persistenceService.persist(integration.getType());
+			for (XRefAttributeMap map : integration.getMap()) {
+				map.setActiveStatus(XRefAttributeMap.ACTIVE_STATUS);
+				map.setXrefId(persistenceService.generateId());
+				persistenceService.persist(map);
+			}
+		}
+
 		return integration;
 	}
 
@@ -396,7 +456,8 @@ public class SystemServiceImpl
 		integrationExample.setActiveStatus(Integration.ACTIVE_STATUS);
 		integrationExample.setComponentId(componentId);
 		Integration integration = persistenceService.queryOneByExample(Integration.class, integrationExample);
-		if (integration != null) {
+		if (integration
+				!= null) {
 
 			boolean run = true;
 			if (RunStatus.WORKING.equals(integration.getStatus())) {
@@ -408,10 +469,12 @@ public class SystemServiceImpl
 					if (maxLocalDateTime.compareTo(LocalDateTime.now()) <= 0) {
 						log.log(Level.FINE, "Overriding the working it assume it was stuck.");
 						run = true;
-					} else {
+					}
+					else {
 						run = false;
 					}
-				} else {
+				}
+				else {
 					throw new OpenStorefrontRuntimeException("Missing Last Start time.  Data is corrupt.", "Delete the job and recreate it.");
 				}
 			}
@@ -443,7 +506,8 @@ public class SystemServiceImpl
 							BaseIntegrationHandler baseIntegrationHandler = BaseIntegrationHandler.getIntegrationHandler(integrationConfig);
 							if (baseIntegrationHandler != null) {
 								baseIntegrationHandler.processConfig();
-							} else {
+							}
+							else {
 								throw new OpenStorefrontRuntimeException("Intergration handler not supported for " + integrationConfig.getIntegrationType(), "Add handler");
 							}
 
@@ -452,7 +516,8 @@ public class SystemServiceImpl
 							integrationConfig.setUpdateDts(TimeUtil.currentDate());
 							integrationConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 							persistenceService.persist(integrationConfig);
-						} catch (Exception e) {
+						}
+						catch (Exception e) {
 							errorConfig = true;
 							//This is a critical loop
 							ErrorInfo errorInfo = new ErrorInfo(e, null);
@@ -472,7 +537,8 @@ public class SystemServiceImpl
 
 				if (errorConfig) {
 					integration.setStatus(RunStatus.ERROR);
-				} else {
+				}
+				else {
 					integration.setStatus(RunStatus.COMPLETE);
 				}
 				integration.setLastEndTime(TimeUtil.currentDate());
@@ -480,10 +546,13 @@ public class SystemServiceImpl
 				integration.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 				persistenceService.persist(integration);
 
-			} else {
+			}
+			else {
 				log.log(Level.FINE, MessageFormat.format("Not time to run integration or the system is currently working on the integration. Component Id: {0}", componentId));
 			}
-		} else {
+		}
+
+		else {
 			log.log(Level.WARNING, MessageFormat.format("There are no active integration for this component. Id: {0}", componentId));
 		}
 	}
@@ -519,10 +588,12 @@ public class SystemServiceImpl
 					//(however, which  code  is used dependa on the order that came in.  which is not  determinate)
 					//First one we hit wins
 					log.log(Level.WARNING, MessageFormat.format("Duplicate external code for attribute type: {0} Code: {1}", new Object[]{xrefAttributeMap.getAttributeType(), xrefAttributeMap.getExternalCode()}));
-				} else {
+				}
+				else {
 					codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
 				}
-			} else {
+			}
+			else {
 				Map<String, String> codeMap = new HashMap<>();
 				codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
 				attributeCodeMap.put(xrefAttributeMap.getAttributeType(), codeMap);
@@ -530,6 +601,37 @@ public class SystemServiceImpl
 		}
 
 		return attributeCodeMap;
+	}
+
+	@Override
+	public List<MappingTypeModel> getMappingTypes()
+	{
+		List<MappingTypeModel> result = new ArrayList<>();
+
+		XRefAttributeType example = new XRefAttributeType();
+		example.setActiveStatus(XRefAttributeType.ACTIVE_STATUS);
+		List<XRefAttributeType> types = persistenceService.queryByExample(XRefAttributeType.class, new QueryByExample(example));
+
+		for (XRefAttributeType type : types) {
+			MappingTypeModel model = new MappingTypeModel();
+			AttributeType attType = persistenceService.findById(AttributeType.class, type.getAttributeType());
+			model.setAttributeName(attType.getDescription());
+			model.setAttributeType(type.getAttributeType());
+			model.setFieldName(type.getFieldName());
+			model.setFieldKey(type.getFieldKey());
+			model.setFieldId(type.getFieldId());
+			model.setIssueType(type.getIssueType());
+			model.setProjectType(type.getProjectType());
+
+			XRefAttributeMap tempMap = new XRefAttributeMap();
+			tempMap.setActiveStatus(XRefAttributeMap.ACTIVE_STATUS);
+			tempMap.setAttributeType(type.getAttributeType());
+			model.setMapping(persistenceService.queryByExample(XRefAttributeMap.class, tempMap));
+			
+			result.add(model);
+		}
+
+		return result;
 	}
 
 }
