@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($scope, Business, $q) {
+app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout',  function ($scope, Business, $q, $timeout) {
   $scope.username;
   $scope.modal = {};
   $scope.password;
@@ -25,12 +25,17 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   $scope.issueOptions;
   $scope.jiraProject;
   $scope.jiraIssue;
-  $scope.jiraField;
+  $scope.watch = {};
+  $scope.watch.storeField;
+  $scope.watch.jiraField;
   $scope.storeCodes;
   $scope.masterSelected;
+  $scope.jiraCodes = {};
+  $scope.jiraCodes.masterSelect;
   $scope.componentConfMap;
   $scope.componentId;
   $scope.typeahead;
+  $scope.previousMappings;
 
   $scope.loading = 0;
 
@@ -54,11 +59,20 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   }, function() {
   });
 
+  Business.configurationservice.getMappingTypes().then(function(result){
+    if (result) {
+      $scope.previousMappings = result;
+    } else {
+      $scope.previousMappings = [];
+    }
+  }, function() {
+    $scope.previousMappings = [];
+  });
+
   $scope.getProjects = function() {
     Business.configurationservice.getProjects().then(function(result){
       $scope.projects = result? result: [];
       $scope.loading--;
-
       if (!$scope.projects.length) {
         $scope.noProjects = true;
       } else {
@@ -104,95 +118,119 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
       $scope.storeFields = [];
     });
   }
-  $scope.getStoreCodes = function(attribute) {
+  $scope.getStoreCodes = function(attribute, setup, value) {
     Business.configurationservice.getStoreCodes(attribute).then(function(result){
       $scope.loading--;
       $scope.storeCodes = result? result: [];
+      if (setup) {
+        console.log('we hit the setup');
+        var found = _.find($scope.previousMappings, {'attributeType': value.storeField.attributeType, 'projectType': $scope.jiraProject.code, 'issueType': $scope.jiraIssue.name});
+        console.log('found', found);
+        
+        if (found) {
+          $timeout(function() {
+            _.each(found.mapping, function(map){
+              console.log('map', map);
+              var code = _.find($scope.masterSelected, {'label': map.externalCode});
+              if (code) {
+                console.log('code', code);
+                var indexOf = $scope.masterSelected.indexOf(code);
+                $scope.masterSelected.splice(indexOf, 1);
+                var index = _.find($scope.storeCodes, function(item){
+                  return (item.attributeCodePk.attributeType === map.attributeType && item.attributeCodePk.attributeCode === map.localCode);
+                })
+                if (index && index.selected && index.selected.indexOf(code) < 0) {
+                  index.selected.push(code);
+                } else if (index && !index.selected) {
+                  index.selected = [];
+                  index.selected.push(code);
+                }
+              }
+            })
+          }, 200);
+        }
+      }
     }, function() {
       $scope.loading--;
       $scope.storeCodes = [];
     });
-  }
-  $scope.getXRefTypes = function(){
-    Business.configurationservice.getXRefTypes().then(function(result){
-      console.log('result', result);
-      if (result.length > 0) {
-        $scope.xRefTypes = result;
-        $scope.selectedMapping = result[0];
+}
+$scope.getXRefTypes = function(){
+  Business.configurationservice.getXRefTypes().then(function(result){
+    if (result.length > 0) {
+      $scope.xRefTypes = result;
+      $scope.selectedMapping = result[0];
+    }
+  });
+}
+
+$scope.setup = function() {
+  $scope.loading++;
+  $scope.getXRefTypes();
+  $scope.getProjects();
+}
+
+$scope.setup();
+
+$scope.sendToModal = function(mapping) {
+
+  $scope.getConfigId(mapping).then(function(result){
+    if (result && result.type) {
+      $scope.setupModal(result); 
+      $scope.openModal('compConf');
+    }
+  }, function(result){
+
+    return false;
+  })
+}
+
+$scope.getConfigId = function(mapping) {
+  var deferred = $q.defer();
+  if(!mapping) {
+    deferred.reject(false);
+  } else {
+    Business.configurationservice.getConfigId(mapping).then(function(result){
+      if (result) {
+        deferred.resolve(result);
       }
+    }, function(){
+      deferred.reject(false);
     });
   }
-  
-  $scope.setup = function() {
-    $scope.loading++;
-    $scope.getXRefTypes();
-    $scope.getProjects();
+  return deferred.promise
+}
+
+
+$scope.setupModal = function(config) {
+  if (config) {
+    Business.saveLocal('configId', config)
   }
-
-  $scope.setup();
-
-  $scope.sendToModal = function(mapping) {
-    console.log('mapping', mapping);
-    
-    $scope.getConfigId(mapping).then(function(result){
-      console.log('result', result);
-      if (result && result.type) {
-        $scope.setupModal(result); 
-        $scope.openModal('compConf');
-      }
-    }, function(result){
-      console.log('There was a problem');
-      
-      return false;
-    })
-  }
-
-  $scope.getConfigId = function(mapping) {
-    var deferred = $q.defer();
-    if(!mapping) {
-      deferred.reject(false);
-    } else {
-      Business.configurationservice.getConfigId(mapping).then(function(result){
-        if (result) {
-          deferred.resolve(result);
-        }
-      }, function(){
-        deferred.reject(false);
-      });
+  var deferred = $q.defer();
+  $scope.modal.classes = '';
+  $scope.modal.nav = {
+    'current': 'Save New Configuration',
+    'bars': [
+    {
+      'title': 'Save New Configuration',
+      'include': 'views/admin/configuration/savecompconf.html'
     }
-    return deferred.promise
-  }
-
-
-  $scope.setupModal = function(config) {
-    if (config) {
-      Business.saveLocal('configId', config)
-    }
-    var deferred = $q.defer();
-    $scope.modal.classes = '';
-    $scope.modal.nav = {
-      'current': 'Save New Configuration',
-      'bars': [
-      {
-        'title': 'Save New Configuration',
-        'include': 'views/admin/configuration/savecompconf.html'
-      }
-      ]
-    };
-    $scope.$emit('$TRIGGEREVENT', 'updateBody');
-    deferred.resolve();
-    return deferred.promise;
+    ]
   };
+  $scope.$emit('$TRIGGEREVENT', 'updateBody');
+  deferred.resolve();
+  return deferred.promise;
+};
 
 
 
-  $scope.saveMappingConf = function(){
-    if ($scope.storeCodes.length && $scope.jiraField) {
+$scope.saveMappingConf = function(){
+  if ($scope.storeCodes.length && $scope.watch.jiraField) {
 
-      console.log('storeCodes', $scope.storeCodes);
-      console.log('Field', $scope.jiraField);
-      console.log('Project', $scope.jiraProject);
-      console.log('Issue', $scope.jiraIssue);
+      // console.log('storeCodes', $scope.storeCodes);
+      // console.log('Field', $scope.jiraField);
+      // console.log('Project', $scope.jiraProject);
+      // console.log('Issue', $scope.jiraIssue);
       var xRefMaps = [];
       var type = $scope.storeCodes[0].attributeCodePk.attributeType;
       _.each($scope.storeCodes, function(localCode){
@@ -207,15 +245,20 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
       var body = {};
       body.type = {
         'attributeType': type,
-        'fieldName': $scope.jiraField.name,
-        'fieldKey': $scope.jiraField.id,
+        'fieldName': $scope.watch.jiraField.name,
+        'fieldId': $scope.watch.jiraField.id,
+        'fieldKey': $scope.watch.jiraField.key,
         'projectType': $scope.jiraProject.code,
         'issueType': $scope.jiraIssue.name,
-        'integrationType': 'jira'
+        'integrationType': 'JIRA'
       };
       body.map = xRefMaps;
 
-      console.log('body', body);
+      Business.configurationservice.saveMappingConf(body).then(function(result){
+        // console.log('result', result);
+      }, function(){
+        // triggerAlert('There was an error saving the mapping', 'mappingFields', 'body', 6000);
+      })
       
     }
     return false;
@@ -225,10 +268,8 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
     var conf = {};
     conf.componentId = $scope.componentId;
     conf.issueId = $scope.issueId;
-    console.log('$scope.componentCron', $scope.componentCron);
     conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
     //save the object;
-    console.log('conf', conf);
     return false;
   }
 
@@ -241,23 +282,83 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
   }
 
 
-  $scope.masterSelect = [];
+  $scope.setEdit = function(mappingModel){
+    if (mappingModel && $scope.projects && $scope.projects.length) {
+      $scope.loading++;
+      var found = _.find($scope.projects, {'code': mappingModel.projectType});
+      if (found) {
+        var project = found;
+        $scope.jiraProject = found;
+        Business.configurationservice.getIssueOptions(found).then(function(result){
+          $scope.issueOptions = result? result: [];
+          $timeout(function(){
+            found = _.find($scope.issueOptions, {'name': mappingModel.issueType});
+            if (found) {
+              var issueType = found;
+              $scope.jiraIssue = found;
+              if (project && project.code && issueType && issueType.name) {
+                Business.configurationservice.getStoreFields().then(function(storeFields){
+                  $scope.storeFields = storeFields? storeFields: [];
+                  $timeout(function(){
+                    var found = _.find($scope.storeFields, {'attributeType': mappingModel.attributeType});
+                    if (found) {
+                      Business.configurationservice.getJiraFields(project, issueType).then(function(jiraFields){
+                        $scope.jiraFields = jiraFields? jiraFields: [];
+                        $timeout(function(){
+                          $scope.watch.storeField = found;
+                          $scope.loading--;
+                        }, 100);
+                      });
+                    } else {
+                      $scope.loading--;
+                      triggerAlert('There was an error loading this mapping for edit', 'mappingFields', 'body', 6000);
+                    }
+                  }, 100);
+                });
+              }  else {
+                $scope.watch.storeField = undefined;
+                $scope.loading--;
+                triggerAlert('There was an error loading this mapping for edit', 'mappingFields', 'body', 6000);
+              }
+            } else {
+              $scope.jiraIssue = false;
+              $scope.loading--;
+              triggerAlert('There was an error loading this mapping for edit', 'mappingFields', 'body', 6000);
+            }
+          }, 100);
+        }); //
+      } else { //
+        $scope.jiraProject = false;
+        $scope.loading--;
+        triggerAlert('There was an error loading this mapping for edit', 'mappingFields', 'body', 6000);
+      }
+    }
+  }
+
   $scope.moveLeft = function(code) {
+    console.log('code - move Left', code);
+    console.log('masterSelected', $scope.masterSelected);
+    console.log('$scope.masterSelect', $scope.jiraCodes.masterSelect);
+    
     if(!code.selected){
       code.selected = [];
     }
-    var right = $scope.masterSelect;
+    var right = $scope.jiraCodes.masterSelect;
     for (var i = 0; i < right.length; i++) {
       var el = right[i];
+    console.log('code.selected.indexOf(el) should be < 0', code.selected.indexOf(el));
       if (code.selected.indexOf(el) < 0) {
         code.selected.push(el);
       }
+    console.log('masterselected index should be > -1', $scope.masterSelected.indexOf(el));
       var indexOf = $scope.masterSelected.indexOf(el);
       $scope.masterSelected.splice(indexOf, 1);
     }
   };
 
   $scope.moveRight = function(code) {
+    console.log('code - move Right', code);
+    console.log('masterSelected', $scope.masterSelected);
     if(!code.selected){
       code.selected = [];
     }
@@ -315,23 +416,36 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q',  function ($
       $scope.getJiraFields($scope.jiraProject, $scope.jiraIssue);
       $scope.getStoreFields();
     } 
-    $scope.storeField = false;
+    $scope.watch.storeField = false;
     $scope.storeFields = null;
     $scope.jiraField = false;
     $scope.fields = [];
     $scope.storeCodes = [];
   })
 
-  $scope.$watchCollection('[storeField, jiraField]', function(newValues, oldValues, scope){
-    if ((newValues[0] && typeof newValues[0] === 'object') && (newValues[1] && typeof newValues[1] === 'object')) {
-      // check to see if it previously existed. Show warning if it did.
-      $scope.masterSelected = angular.copy(newValues[1].allowedValues);
-      $scope.loading++;
-      $scope.getStoreCodes(newValues[0]);
+  $scope.$watch('watch', function(value, oldvalue) { //
+    if (value && value.storeField && typeof value.storeField === 'object' && !angular.equals(value.storeField, oldvalue.storeField)) {
+      var found = _.find($scope.previousMappings, {'attributeType': value.storeField.attributeType, 'projectType': $scope.jiraProject.code, 'issueType': $scope.jiraIssue.name});
+      if (found) {
+        $scope.jiraField = null;
+        triggerAlert('This attribute has previously been mapped. The fields have been prepopulated with the old values.', 'mappingFields', 'body', 6000);
+        var field = _.find($scope.fields, {'id': found.fieldId});
+        if (field) {
+          $scope.watch.jiraField = field;
+          value.jiraField = field;
+        }
+      } else {
+        value.jiraField = null;
+      }
     }
-  });
+    if (value && value.jiraField && typeof value.jiraField === 'object' && value.storeField && typeof value.storeField === 'object') {
+      $scope.masterSelected = angular.copy(value.jiraField.allowedValues);
+      $scope.loading++;
+      $scope.getStoreCodes(value.storeField, true, value);
+    }
+  }, true);
 
-  $scope.$watch('loading', function(value){
+  $scope.$watch('loading', function(value){ //
     if (value > 0){
       $scope.$emit('$TRIGGERLOAD', 'JiraConfigLoad');
     } else {
