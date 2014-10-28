@@ -255,6 +255,11 @@ $scope.saveMappingConf = function(){
       body.map = xRefMaps;
 
       Business.configurationservice.saveMappingConf(body).then(function(result){
+        if ($scope.masterSelected.length) {
+          triggerAlert('<i class="fa fa-warning"></i>&nbsp;There are unmapped codes. This could lead to an error.<br>The mapping was saved successfully', 'mappingFields', 'body', 8000);
+        } else {
+          triggerAlert('The mapping was saved successfully', 'mappingFields', 'body', 6000);
+        }
         // console.log('result', result);
       }, function(){
         // triggerAlert('There was an error saving the mapping', 'mappingFields', 'body', 6000);
