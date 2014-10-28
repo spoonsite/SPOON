@@ -338,4 +338,12 @@ public interface ComponentService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ValidationResult saveDetailReview(ComponentReview review, List<ComponentReviewPro> pros, List<ComponentReviewCon> cons);
 
+	/**
+	 * This will grab components in an efficient manner, possible given the id's
+	 *
+	 * @param componentIds
+	 * @return
+	 */
+	public List<ComponentSearchView> getSearchComponentList(List<String> componentIds);
+
 }

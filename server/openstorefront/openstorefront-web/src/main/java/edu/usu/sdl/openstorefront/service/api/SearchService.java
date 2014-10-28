@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import java.util.List;
 
 /**
+ * Search Service Interface
  *
  * @author dshurtleff
  */
@@ -31,13 +32,14 @@ public interface SearchService
 {
 
 	/**
-	 * Find Recently Added
+	 * Get all components and articles
 	 *
 	 * @return
 	 */
 	public List<ComponentSearchView> getAll();
 
 	/**
+	 * Performs a search
 	 *
 	 * @param query
 	 * @param filter
@@ -46,38 +48,50 @@ public interface SearchService
 	public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter);
 
 	/**
+	 * This is used for an architecture search
 	 *
 	 * @param pk
 	 * @param filter
 	 * @return
 	 */
-	public List<ComponentSearchView> getSearchItems(AttributeCodePk pk, FilterQueryParams filter);
+	public List<ComponentSearchView> architectureSearch(AttributeCodePk pk, FilterQueryParams filter);
 
 	/**
+	 * Indexes a component
 	 *
 	 * @param component
 	 */
 	public void addIndex(Component component);
 
 	/**
+	 * Indexes an article
 	 *
 	 * @param article
 	 */
 	public void addIndex(Article article);
 
 	/**
+	 * Indexes articles and Components
+	 *
+	 * @param components
+	 * @param articles
+	 */
+	public void indexArticlesAndComponents(List<Article> articles, List<Component> components);
+
+	/**
+	 * Removes a search index
 	 *
 	 * @param id
 	 */
 	public void deleteById(String id);
 
 	/**
-	 *
+	 * Updates all records in the index
 	 */
 	public void saveAll();
 
 	/**
-	 *
+	 * This clears all records in the index CAUTION: deletes everything!
 	 */
 	public void deleteAll();
 

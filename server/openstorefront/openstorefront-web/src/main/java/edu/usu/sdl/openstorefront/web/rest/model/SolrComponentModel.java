@@ -24,12 +24,13 @@ import org.apache.solr.client.solrj.beans.Field;
  */
 public class SolrComponentModel
 {
-// private variables
+
+	public static final String ID_FIELD = "id";
+	public static final String ISCOMPONENT_FIELD = "isComponentSearch_b_is";
 
 	@Field
 	private String id;
 
-	@Field
 	private String componentId;
 
 	@Field("isComponentSearch_b_is")
@@ -50,22 +51,18 @@ public class SolrComponentModel
 	@Field("articleHtml_text")
 	private String articleHtml;
 
-	@Field
 	private String queryString;
 
-	@Field
 	private String guid;
 
-	@Field
+	@Field("organization_s_is")
 	private String organization;
 
-	@Field
 	private Date releaseDate;
 
 	@Field("modified")
-	private Date updateDate_dt_is;
+	private Date updateDts;
 
-	@Field
 	private String version;
 
 	@Field("idInt_i_is")
@@ -74,12 +71,10 @@ public class SolrComponentModel
 	@Field("name_s_is")
 	private String nameString;
 
-	// constructor
 	public SolrComponentModel()
 	{
 	}
 
-	// public methods
 	public String getId()
 	{
 		return id;
@@ -120,13 +115,6 @@ public class SolrComponentModel
 		this.nameString = nameString;
 	}
 
-//    public String getName() {
-//        return title;
-//    }
-//
-//    public void setName(String title) {
-//        this.title = title;
-//    }
 	public String getDescription()
 	{
 		return description;
@@ -147,20 +135,12 @@ public class SolrComponentModel
 		this.articleHtml = articleHtml;
 	}
 
-//
-//    public String getDescription() {
-//        return content_text;
-//    }
-//
-//    public void setDescription(String content_text) {
-//        this.content_text = content_text;
-//    }
-	public String getComponentID()
+	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	public void setComponentID(String componentId)
+	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}
@@ -195,16 +175,6 @@ public class SolrComponentModel
 		this.releaseDate = releaseDate;
 	}
 
-	public Date getUpdateDate()
-	{
-		return updateDate_dt_is;
-	}
-
-	public void setUpdateDate(Date updateDate_dt_is)
-	{
-		this.updateDate_dt_is = updateDate_dt_is;
-	}
-
 	public String getQueryString()
 	{
 		return queryString;
@@ -225,52 +195,44 @@ public class SolrComponentModel
 		this.version = version;
 	}
 
-	/**
-	 * @return the tags
-	 */
 	public String getTags()
 	{
 		return tags;
 	}
 
-	/**
-	 * @param tags the tags to set
-	 */
 	public void setTags(String tags)
 	{
 		this.tags = tags;
 	}
 
-	/**
-	 * @return the attributes
-	 */
 	public String getAttributes()
 	{
 		return attributes;
 	}
 
-	/**
-	 * @param attributes the attributes to set
-	 */
 	public void setAttributes(String attributes)
 	{
 		this.attributes = attributes;
 	}
 
-	/**
-	 * @return the isComponent
-	 */
 	public Boolean getIsComponent()
 	{
 		return isComponent;
 	}
 
-	/**
-	 * @param isComponent the isComponent to set
-	 */
 	public void setIsComponent(Boolean isComponent)
 	{
 		this.isComponent = isComponent;
+	}
+
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
 	}
 
 }
