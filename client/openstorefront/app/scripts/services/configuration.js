@@ -268,12 +268,14 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       'url': url,
       'data': mapping
     }).success(function(data, status, headers, config){
-      if (data && isNotRequestError(data)) {
+      console.log('-------------------status---------------', status, headers, config);
+      if (isNotRequestError(data)) {
         deferred.resolve(data);
       } else {
         deferred.reject(false);
       }
     }).error(function(data, status, headers, config){
+      
       if (status !== 201) {
         deferred.reject(false);
       } else {
