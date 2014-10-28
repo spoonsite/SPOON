@@ -1376,4 +1376,90 @@ public class ComponentServiceImpl
 		getSearchService().addIndex(persistenceService.findById(Component.class, integrationConfig.getComponentId()));
 	}
 
+	@Override
+	public List<ComponentSearchView> getSearchComponentList(List<String> componentIds)
+	{
+		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
+		if (componentIds.isEmpty() == false) {
+
+			StringBuilder inQuery = new StringBuilder();
+			inQuery.append("[");
+			for (String componentId : componentIds) {
+				inQuery.append("'").append(componentId).append("',");
+			}
+			inQuery.deleteCharAt(inQuery.length() - 1);
+			inQuery.append("]");
+
+			//get all data
+			StringBuilder componentQuery = new StringBuilder();
+			componentQuery.append("select from Component where componentId in ").append(inQuery);
+			List<Component> components = persistenceService.query(componentQuery.toString(), new HashMap<>(), Component.class, true);
+
+			StringBuilder componentAttributeQuery = new StringBuilder();
+			componentAttributeQuery.append("select from ComponentAttribute where componentId in ").append(inQuery);
+			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery.toString(), new HashMap<>(), ComponentAttribute.class, true);
+			Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
+			for (ComponentAttribute componentAttribute : componentAttributes) {
+				if (attributeMap.containsKey(componentAttribute.getComponentId())) {
+					attributeMap.get(componentAttribute.getComponentId()).add(componentAttribute);
+				} else {
+					List<ComponentAttribute> attributes = new ArrayList<>();
+					attributes.add(componentAttribute);
+					attributeMap.put(componentAttribute.getComponentId(), attributes);
+				}
+			}
+
+			StringBuilder componentReviewQuery = new StringBuilder();
+			componentReviewQuery.append("select from ComponentReview where componentId in ").append(inQuery);
+			List<ComponentReview> componentReviews = persistenceService.query(componentReviewQuery.toString(), new HashMap<>(), ComponentReview.class, true);
+			Map<String, List<ComponentReview>> reviewMap = new HashMap<>();
+			for (ComponentReview componentReview : componentReviews) {
+				if (reviewMap.containsKey(componentReview.getComponentId())) {
+					reviewMap.get(componentReview.getComponentId()).add(componentReview);
+				} else {
+					List<ComponentReview> reviews = new ArrayList<>();
+					reviews.add(componentReview);
+					reviewMap.put(componentReview.getComponentId(), reviews);
+				}
+			}
+
+			StringBuilder componentTagQuery = new StringBuilder();
+			componentTagQuery.append("select from ComponentTag where componentId in ").append(inQuery);
+			List<ComponentTag> componentTags = persistenceService.query(componentTagQuery.toString(), new HashMap<>(), ComponentTag.class, true);
+			Map<String, List<ComponentTag>> tagMap = new HashMap<>();
+			for (ComponentTag componentTag : componentTags) {
+				if (attributeMap.containsKey(componentTag.getComponentId())) {
+					tagMap.get(componentTag.getComponentId()).add(componentTag);
+				} else {
+					List<ComponentTag> tags = new ArrayList<>();
+					tags.add(componentTag);
+					tagMap.put(componentTag.getComponentId(), tags);
+				}
+			}
+
+			//group by component
+			for (Component component : components) {
+				List<ComponentAttribute> attributes = attributeMap.get(component.getComponentId());
+				if (attributes == null) {
+					attributes = new ArrayList<>();
+				}
+
+				List<ComponentReview> reviews = reviewMap.get(component.getComponentId());
+				if (reviews == null) {
+					reviews = new ArrayList<>();
+				}
+
+				List<ComponentTag> tags = tagMap.get(component.getComponentId());
+				if (tags == null) {
+					tags = new ArrayList<>();
+				}
+				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, attributes, reviews, tags);
+				componentSearchViews.add(componentSearchView);
+			}
+
+		}
+
+		return componentSearchViews;
+	}
+
 }

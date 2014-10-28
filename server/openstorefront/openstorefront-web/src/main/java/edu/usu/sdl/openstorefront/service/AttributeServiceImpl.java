@@ -113,22 +113,31 @@ public class AttributeServiceImpl
 		getAttributeServicePrivate().performSaveAttributeType(attributeType);
 
 		if (!updateIndexes) {
-			ComponentAttributePk pk = new ComponentAttributePk();
-			pk.setAttributeType(attributeType.getAttributeType());
-			ComponentAttribute example = new ComponentAttribute();
-			example.setComponentAttributePk(pk);
-
-			List<ComponentAttribute> attrs = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(attributeType.getAttributeType());
+			ComponentAttribute componentAttribute = new ComponentAttribute();
+			componentAttribute.setComponentAttributePk(componentAttributePk);
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, componentAttribute);
 
 			List<Article> articles = new ArrayList<>();
-			List<Component> components = new ArrayList<>();
 
-			attrs.stream().forEach((attr) -> {
-				AttributeCodePk codePk = new AttributeCodePk();
-				articles.add(getArticleView(codePk));
+			AttributeCode attributeCodeExample = new AttributeCode();
+			AttributeCodePk codePk = new AttributeCodePk();
+			codePk.setAttributeType(attributeType.getAttributeType());
+			attributeCodeExample.setAttributeCodePk(codePk);
+			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, attributeCodeExample);
+			for (AttributeCode attributeCode : attributeCodes) {
+				if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
+					String articleContext = getArticle(attributeCode.getAttributeCodePk());
+					articles.add(Article.toViewHtml(attributeCode, articleContext));
+				}
+			}
+
+			List<Component> components = new ArrayList<>();
+			componentAttributes.stream().forEach((attr) -> {
 				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
 			});
-			saveArticlesAndComponents(articles, components);
+			getSearchService().indexArticlesAndComponents(articles, components);
 		}
 	}
 
@@ -174,18 +183,19 @@ public class AttributeServiceImpl
 			ComponentAttribute example = new ComponentAttribute();
 			example.setComponentAttributePk(pk);
 
-			List<ComponentAttribute> attrs = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
 
 			List<Article> articles = new ArrayList<>();
-			List<Component> components = new ArrayList<>();
+			if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
+				String articleContext = getArticle(attributeCode.getAttributeCodePk());
+				articles.add(Article.toViewHtml(attributeCode, articleContext));
+			}
 
-			attrs.stream().forEach((attr) -> {
-				AttributeCodePk codePk = new AttributeCodePk();
-				articles.add(getArticleView(codePk));
+			List<Component> components = new ArrayList<>();
+			componentAttributes.stream().forEach((attr) -> {
 				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
 			});
-
-			saveArticlesAndComponents(articles, components);
+			getSearchService().indexArticlesAndComponents(articles, components);
 		}
 	}
 
@@ -241,7 +251,7 @@ public class AttributeServiceImpl
 		getAttributeServicePrivate().performSaveArticle(attributeCodePk, article);
 		AttributeCode code = new AttributeCode();
 		code.setAttributeCodePk(attributeCodePk);
-		//getSearchService().addIndex(Article.toView(code));
+
 		getSearchService().addIndex(Article.toViewHtml(code, article));
 
 	}
@@ -285,7 +295,7 @@ public class AttributeServiceImpl
 
 		// currently articles don't have an 'id' so we're indexing them with
 		// a composite ID made from the type and code like so:
-		getSearchService().deleteById(attributeCodePk.getAttributeType() + "#" + attributeCodePk.getAttributeCode());
+		getSearchService().deleteById(attributeCodePk.toKey());
 	}
 
 	@Override
@@ -599,7 +609,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<ComponentSearchView> getAllArticles()
+	public List<ComponentSearchView> getArticlesSearchView()
 	{
 		List<ComponentSearchView> list = new ArrayList<>();
 		List<AttributeCode> codes = this.getAttributeService().findRecentlyAddedArticles(null);
@@ -650,7 +660,8 @@ public class AttributeServiceImpl
 		List<Article> list = new ArrayList<>();
 		List<AttributeCode> codes = this.getAttributeService().findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
-			list.add(Article.toView(code));
+			String content = getArticle(code.getAttributeCodePk());
+			list.add(Article.toViewHtml(code, content));
 		});
 		return list;
 	}
@@ -658,23 +669,18 @@ public class AttributeServiceImpl
 	@Override
 	public Article getArticleView(AttributeCodePk attributeCodePk)
 	{
+		Article article = null;
+
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
-		Article article = Article.toView(attributeCode);
+		if (attributeCode.getArticleFilename() != null) {
+			String content = getArticle(attributeCodePk);
+			article = Article.toViewHtml(attributeCode, content);
+		}
 		return article;
 	}
 
-	@Override
-	public void saveArticlesAndComponents(List<Article> articles, List<Component> components)
-	{
-		components.stream().forEach((component) -> {
-			getSearchService().addIndex(component);
-		});
-		articles.stream().forEach((article) -> {
-			getSearchService().addIndex(article);
-		});
-	}
 }
