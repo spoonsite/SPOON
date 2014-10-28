@@ -21,75 +21,76 @@ import javax.ws.rs.QueryParam;
  *
  * @author dshurtleff
  */
-public class SearchQuery {
+public class SearchQuery
+{
 
-    @QueryParam("query")
-    private String query;
+	@QueryParam("query")
+	private String query;
 
-    @QueryParam("attributeType")
-    private String attributeType;
+	@QueryParam("attributeType")
+	private String attributeType;
 
-    @QueryParam("attributeCode")
-    private String attributeCode;
+	@QueryParam("attributeCode")
+	private String attributeCode;
 
-    @QueryParam("tag")
-    private String tag;
+	@QueryParam("tag")
+	private String tag;
 
-    @QueryParam("listingType")
-    private String listingType;
+	@QueryParam("listingType")
+	private String listingType;
 
+	public SearchQuery()
+	{
+	}
 
-    public SearchQuery() {
-    }
+	public String getQuery()
+	{
+		return query;
+	}
 
-    public String getQuery() {
-        return query;
-    }
+	public void setQuery(String query)
+	{
+		this.query = query;
+	}
 
-    public void setQuery(String query) {
-        this.query = query;
-    }
+	public String getAttributeType()
+	{
+		return attributeType;
+	}
 
-    public String getAttributeType() {
-        return attributeType;
-    }
+	public void setAttributeType(String attributeType)
+	{
+		this.attributeType = attributeType;
+	}
 
-    public void setAttributeType(String attributeType) {
-        this.attributeType = attributeType;
-    }
+	public String getAttributeCode()
+	{
+		return attributeCode;
+	}
 
-    public String getAttributeCode() {
-        return attributeCode;
-    }
+	public void setAttributeCode(String attributeCode)
+	{
+		this.attributeCode = attributeCode;
+	}
 
-    public void setAttributeCode(String attributeCode) {
-        this.attributeCode = attributeCode;
-    }
+	public String getTag()
+	{
+		return tag;
+	}
 
-    public String getTag() {
-        return tag;
-    }
+	public void setTag(String tag)
+	{
+		this.tag = tag;
+	}
 
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
+	public String getListingType()
+	{
+		return listingType;
+	}
 
-    public String getListingType() {
-        return listingType;
-    }
+	public void setListingType(String listingType)
+	{
+		this.listingType = listingType;
+	}
 
-    public void setListingType(String listingType) {
-        this.listingType = listingType;
-    }
-    
-    
-//    public String getExactSearch() {
-//        return exactSearch;
-//    }
-//
-//    public void setExactSearch(String exactSearch) {
-//        this.exactSearch = exactSearch;
-//    }
-
-        
 }

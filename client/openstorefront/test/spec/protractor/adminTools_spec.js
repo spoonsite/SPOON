@@ -1,7 +1,7 @@
-// 03 Oct 2014:
-// Admin tools not available on storefront1.di2e.net.  Devin says it is not expected for IOC?
-// Would have to request privileges from the di2e help desk.  
-
+/* 03 Oct 2014:  Admin tools not available on storefront1.di2e.net.  Devin says it is not expected for IOC?
+                  Would have to request privileges from the di2e help desk.
+   28 Oct 2014:  Put this back in as Admin Tools are available on store-accept
+*/
 describe('adminTools', function() {
     it('Navigate from user dropdown upper right to admin tools ', function () {
         browser.get(theSite);
@@ -26,18 +26,15 @@ describe('adminTools', function() {
 
         // Manage Lookups (highest level no sub-trees)
         element.all(by.css('.indented')).get(5).click();
-                                                      // was 26 on github.io
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(434);
+        expect(element.all(by.css('.ng-scope')).count()).toEqual(33);
 
         // Manage Components
         element.all(by.css('.indented')).get(7).click();
-                                                     // was 30 on github.io
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(26);
+        expect(element.all(by.css('.ng-scope')).count()).toEqual(37);
 
         // Manage Branding
         element.all(by.css('.indented')).get(8).click();
-                                                    // was 23 on github.io
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(26);
+        expect(element.all(by.css('.ng-scope')).count()).toEqual(30);
 
     });
 

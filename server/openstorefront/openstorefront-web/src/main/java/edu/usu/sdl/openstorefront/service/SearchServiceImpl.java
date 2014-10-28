@@ -15,8 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.SearchService;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
+import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrAndOr;
+import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrEquals;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -25,23 +28,26 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
-import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentModel;
-import edu.usu.sdl.openstorefront.web.rest.model.SolrSearchComponent;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import java.util.Objects;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.jsoup.Jsoup;
 import org.jsoup.examples.HtmlToPlainText;
 
@@ -64,80 +70,95 @@ public class SearchServiceImpl
 		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
 		list.addAll(service.getComponentService().getComponents());
-		list.addAll(service.getAttributeService().getAllArticles());
+		list.addAll(service.getAttributeService().getArticlesSearchView());
 		return list;
 	}
 
 	@Override
 	public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter)
 	{
-		// QUERY / SEARCH for a solr storefront component
-		SolrSearchComponent searchThis = new SolrSearchComponent();
-
-		SolrComponentModel mySolrModel = new SolrComponentModel();
-
-		String exactMatch = "";
-
-		mySolrModel.setQueryString("" + exactMatch + query.getQuery() + exactMatch + "");
-
-		// use for finding strings that are not equal / do not contain
-		String myEqualNotEqual = "";
-        // myEqualNotEqual = ""; // Equal
-		// myEqualNotEqual = "-"; // NOT Equal
-
 		// use for advanced search with And - Or combinations on separate fields
-		String myAndOr = " OR ";
-        //myAndOr = " OR ";
-		//myAndOr = " AND ";  //
-
-		// Define search fields per solr schema
-		String[] mySetFields = new String[7];
-		mySetFields[0] = "id";
-		mySetFields[1] = "title";
-		mySetFields[2] = "content_text";
-		mySetFields[3] = "content_tags";
-		mySetFields[4] = "content_raw";
-		mySetFields[5] = "isComponentSearch_b_is";
-		mySetFields[6] = "articleHtml_text";
-
+		String queryOperator = " " + SolrAndOr.OR + " ";
 		String myQueryString;
 
 		// If incoming query string is blank, default to solar *:* for the full query
-		if (mySolrModel.getQueryString() != null && !mySolrModel.getQueryString().trim().isEmpty()) {
-			myQueryString = myEqualNotEqual + mySetFields[1] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[2] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[3] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[4] + ":" + mySolrModel.getQueryString() + myAndOr + myEqualNotEqual + mySetFields[6] + ":" + mySolrModel.getQueryString();
-		} else {
-			myQueryString = "*:*";
-		}
+		if (StringUtils.isNotBlank(query.getQuery())) {
+			StringBuilder queryData = new StringBuilder();
 
-		// execute the searchComponent method and bring back from solr a list array
-		List<String> resultsList = null;
+			Field fields[] = SolrComponentModel.class.getDeclaredFields();
+			for (Field field : fields) {
+				org.apache.solr.client.solrj.beans.Field fieldAnnotation = field.getAnnotation(org.apache.solr.client.solrj.beans.Field.class);
+				if (fieldAnnotation != null && field.getType() == String.class) {
+					String name = field.getName();
+					if (StringUtils.isNotBlank(fieldAnnotation.value())
+							&& org.apache.solr.client.solrj.beans.Field.DEFAULT.equals(fieldAnnotation.value()) == false) {
+						name = fieldAnnotation.value();
+					}
 
-		try {
-			resultsList = searchThis.searchComponent(query, filter, myQueryString, mySetFields[0], mySetFields[1], mySetFields[2], mySetFields[3], mySetFields[4], mySetFields[5]);
-			//   List<SolrComponentModel> resultsList = searchThis.searchComponent(myQueryString, mySetFields[0], mySetFields[1], mySetFields[2]);
-		} catch (MalformedURLException | SolrServerException ex) {
-			Logger.getLogger(SearchServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		List<ComponentSearchView> views = new ArrayList<>();
-		for (String componentId : resultsList) {
-			Component temp = persistenceService.findById(Component.class, componentId);
-			if (temp != null) {
-				views.add(ComponentSearchView.toView(temp));
-			}
-		}
-		for (String componentId : resultsList) {
-			String[] pkInfo = componentId.split("#");
-			if (pkInfo.length == 2) {
-				AttributeCodePk pk = new AttributeCodePk();
-				pk.setAttributeCode(pkInfo[1]);
-				pk.setAttributeType(pkInfo[0]);
-				AttributeCode temp = this.getPersistenceService().findById(AttributeCode.class, pk);
-				if (temp != null) {
-					views.add(ComponentSearchView.toView(Article.toView(temp)));
+					queryData.append(SolrEquals.EQUAL.getSolrOperator())
+							.append(name)
+							.append(SolrManager.SOLR_QUERY_SEPERATOR)
+							.append(query.getQuery())
+							.append(queryOperator);
 				}
 			}
-
+			myQueryString = queryData.toString();
+			if (myQueryString.endsWith(queryOperator)) {
+				queryData.delete((myQueryString.length() - (queryOperator.length())), myQueryString.length());
+				myQueryString = queryData.toString();
+			}
+		} else {
+			myQueryString = SolrManager.SOLR_ALL_QUERY;
 		}
+		log.fine(myQueryString);
+
+		// execute the searchComponent method and bring back from solr a list array
+		List<SolrComponentModel> resultsList = new ArrayList<>();
+		try {
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setQuery(myQueryString);
+
+			// fields to be returned back from solr
+			solrQuery.setFields(SolrComponentModel.ID_FIELD, SolrComponentModel.ISCOMPONENT_FIELD);
+			solrQuery.setStart(filter.getOffset());
+			solrQuery.setRows(filter.getMax());
+			solrQuery.setIncludeScore(true);
+
+			QueryResponse response = SolrManager.getServer().query(solrQuery);
+			SolrDocumentList results = response.getResults();
+			DocumentObjectBinder binder = new DocumentObjectBinder();
+			resultsList = binder.getBeans(SolrComponentModel.class, results);
+		} catch (SolrServerException ex) {
+			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach Server Unavailable", ex);
+		}
+
+		//Pulling the full object on the return
+		List<ComponentSearchView> views = new ArrayList<>();
+
+		List<String> componentIds = new ArrayList<>();
+		for (SolrComponentModel result : resultsList) {
+			if (result.getIsComponent()) {
+				componentIds.add(result.getId());
+			}
+		}
+		views.addAll(getComponentService().getSearchComponentList(componentIds));
+
+		List<ComponentSearchView> componentSearchViews = getAttributeService().getArticlesSearchView();
+		Map<String, ComponentSearchView> allViews = new HashMap<>();
+		for (ComponentSearchView componentSearchView : componentSearchViews) {
+			AttributeCodePk attributeCodePk = new AttributeCodePk();
+			attributeCodePk.setAttributeType(componentSearchView.getArticleAttributeType());
+			attributeCodePk.setAttributeCode(componentSearchView.getArticleAttributeCode());
+			allViews.put(attributeCodePk.toKey(), componentSearchView);
+		}
+		for (SolrComponentModel result : resultsList) {
+
+			if (result.getIsComponent() == false) {
+				views.add(allViews.get(result.getId()));
+			}
+		}
+
+		//TODO: Get the score and sort by score
 		return views;
 	}
 
@@ -154,12 +175,13 @@ public class SearchServiceImpl
 		solrDocModel.setId(component.getComponentId());
 		solrDocModel.setNameString(component.getName());
 		solrDocModel.setName(component.getName());
-		solrDocModel.setDescription(component.getDescription());
-		solrDocModel.setUpdateDate(component.getUpdateDts());
-		// solrDocModel.setComponentSearch(isComponent);
+		String description = new HtmlToPlainText().getPlainText(Jsoup.parse(component.getDescription()));
+		solrDocModel.setDescription(description.replace("<>", "").replace("\n", ""));
+		solrDocModel.setUpdateDts(component.getUpdateDts());
+		solrDocModel.setOrganization(component.getOrganization());
 
-		List<ComponentTag> tags = this.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
-		List<ComponentAttribute> attributes = this.getComponentService().getBaseComponent(ComponentAttribute.class, component.getComponentId());
+		List<ComponentTag> tags = getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
+		List<ComponentAttribute> attributes = getComponentService().getBaseComponent(ComponentAttribute.class, component.getComponentId());
 
 		String tagList = "";
 		String attributeList = "";
@@ -189,7 +211,6 @@ public class SearchServiceImpl
 		}
 
 		solrDocModel.setTags(tagList);
-
 		solrDocModel.setAttributes(attributeList);
 		solrDocModel.setArticleHtml("");
 
@@ -197,13 +218,15 @@ public class SearchServiceImpl
 			solrService.addBean(solrDocModel);
 			solrService.commit();
 		} catch (IOException | SolrServerException ex) {
-			log.log(Level.SEVERE, "Failed Adding Component", ex);
+			throw new OpenStorefrontRuntimeException("Failed Adding Component", ex);
 		}
 	}
 
 	@Override
 	public void addIndex(Article article)
 	{
+		Objects.requireNonNull(article.getHtml(), "Html content is required for an article");
+
 		// initialize solr server
 		SolrServer solrService = SolrManager.getServer();
 
@@ -217,30 +240,17 @@ public class SearchServiceImpl
 
 		solrDocModel.setIsComponent(Boolean.FALSE);
 
-		solrDocModel.setId(type.getAttributeType() + "#" + code.getAttributeCodePk().getAttributeCode());
+		solrDocModel.setId(pk.toKey());
 		solrDocModel.setNameString(type.getDescription() + " " + code.getLabel() + " Article");
 		solrDocModel.setName(type.getDescription() + " " + code.getLabel() + " Article");
 		solrDocModel.setDescription(type.getDescription() + " " + code.getLabel() + " Article" + code.getDescription());
-		solrDocModel.setUpdateDate(article.getUpdateDts());
-		// solrDocModel.setComponentSearch(isComponent);
+		solrDocModel.setUpdateDts(article.getUpdateDts());
 
-		String tagList = "";
-		String attributeList = "";
-		if (type != null && code
-				!= null) {
-			attributeList = type.getAttributeType() + "," + type.getDescription() + "," + code.getLabel() + "," + code.getDescription();
-		}
-
-		solrDocModel.setTags(tagList);
-
+		String attributeList = type.getAttributeType() + "," + type.getDescription() + "," + code.getLabel() + "," + code.getDescription();
+		solrDocModel.setTags("");
 		solrDocModel.setAttributes(attributeList);
 
 		String htmlArticle = article.getHtml();
-
-		HTMLSanitizer sanitizer = new HTMLSanitizer();
-		htmlArticle = sanitizer.santize(htmlArticle).toString();
-
-		// remove HTML markup article
 		String plainText = new HtmlToPlainText().getPlainText(Jsoup.parse(htmlArticle));
 
 		solrDocModel.setArticleHtml(plainText.replace("<>", "").replace("\n", ""));
@@ -249,45 +259,34 @@ public class SearchServiceImpl
 			solrService.addBean(solrDocModel);
 			solrService.commit();
 		} catch (IOException | SolrServerException ex) {
-			log.log(Level.SEVERE, "Failed Adding Article", ex);
+			throw new OpenStorefrontRuntimeException("Failed Adding Article", ex);
 		}
 	}
 
 	@Override
-	public List<ComponentSearchView> getSearchItems(AttributeCodePk pk, FilterQueryParams filter)
+	public List<ComponentSearchView> architectureSearch(AttributeCodePk pk, FilterQueryParams filter)
 	{
 		List<Article> articles = this.getAttributeService().getArticlesForCodeLike(pk);
-		Map<String, Component> componentMap = new HashMap<>();//persistenceService.query(query, params);
-		List<Component> components = new ArrayList<>();//persistenceService.query(query, params);
+		Map<String, Component> componentMap = new HashMap<>();
+		List<Component> components = new ArrayList<>();
 
-		AttributeCode attributeCodeExample = new AttributeCode();
-		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePkExample = new ComponentAttributePk();
+		componentAttributePkExample.setAttributeType(pk.getAttributeType());
+		componentAttributeExample.setComponentAttributePk(componentAttributePkExample);
 
-		attributeCodePkExample.setAttributeType(pk.getAttributeType());
-		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
+		ComponentAttribute componentAttributeLikeExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePkLikeExample = new ComponentAttributePk();
+		componentAttributePkLikeExample.setAttributeCode(pk.getAttributeCode() + "%");
+		componentAttributeLikeExample.setComponentAttributePk(componentAttributePkLikeExample);
 
-		AttributeCode attributeCodeLikeExample = new AttributeCode();
-		AttributeCodePk attributeCodePkLikeExample = new AttributeCodePk();
+		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
+		queryByExample.setLikeExample(componentAttributeLikeExample);
 
-		attributeCodePkLikeExample.setAttributeCode(pk.getAttributeCode() + "%");
-		attributeCodeLikeExample.setAttributeCodePk(attributeCodePkLikeExample);
-
-		QueryByExample queryByExample = new QueryByExample(attributeCodeExample);
-
-		queryByExample.setLikeExample(attributeCodeLikeExample);
-
-		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
-		for (AttributeCode code : attributeCodes) {
-			ComponentAttributePk codePk = new ComponentAttributePk();
-			ComponentAttribute attr = new ComponentAttribute();
-			codePk.setAttributeCode(code.getAttributeCodePk().getAttributeCode());
-			codePk.setAttributeType(code.getAttributeCodePk().getAttributeType());
-			attr.setComponentAttributePk(codePk);
-			List<ComponentAttribute> attrList = persistenceService.queryByExample(ComponentAttribute.class, attr);
-			for (ComponentAttribute attribute : attrList) {
-				Component temp = persistenceService.findById(Component.class, attribute.getComponentAttributePk().getComponentId());
-				componentMap.put(temp.getComponentId(), temp);
-			}
+		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(ComponentAttribute.class, queryByExample);
+		for (ComponentAttribute componentAttribute : componentAttributes) {
+			Component temp = persistenceService.findById(Component.class, componentAttribute.getComponentAttributePk().getComponentId());
+			componentMap.put(temp.getComponentId(), temp);
 		}
 
 		// eliminate duplicate componentID on search results
@@ -306,14 +305,13 @@ public class SearchServiceImpl
 	@Override
 	public void deleteById(String id)
 	{
-		// initialize solr server
 		SolrServer solrService = SolrManager.getServer();
 
 		try {
 			solrService.deleteById(id);
 			solrService.commit();
 		} catch (IOException | SolrServerException ex) {
-			log.log(Level.SEVERE, "Failed Deleting Index", ex);
+			throw new OpenStorefrontRuntimeException("Failed Deleting Index", "Make sure Search is active and can be reached", ex);
 		}
 	}
 
@@ -322,9 +320,10 @@ public class SearchServiceImpl
 	{
 		SolrServer solrService = SolrManager.getServer();
 		try {
-			solrService.deleteByQuery("*:*");// CAUTION: deletes everything!
+			// CAUTION: deletes everything!
+			solrService.deleteByQuery(SolrManager.SOLR_ALL_QUERY);
 		} catch (SolrServerException | IOException ex) {
-			log.log(Level.SEVERE, null, ex);
+			throw new OpenStorefrontRuntimeException("Unable to clear all indexes", "Make sure Search is active and can be reached", ex);
 		}
 	}
 
@@ -337,11 +336,21 @@ public class SearchServiceImpl
 		List<Article> articles = getAttributeService().getArticles();
 
 		components.stream().forEach((component) -> {
-			getSearchService().addIndex(component);
+			addIndex(component);
 		});
 		articles.stream().forEach((article) -> {
-			getSearchService().addIndex(article);
+			addIndex(article);
 		});
+	}
 
+	@Override
+	public void indexArticlesAndComponents(List<Article> articles, List<Component> components)
+	{
+		components.stream().forEach((component) -> {
+			addIndex(component);
+		});
+		articles.stream().forEach((article) -> {
+			addIndex(article);
+		});
 	}
 }

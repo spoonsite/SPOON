@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.util.List;
@@ -105,8 +104,7 @@ public interface AttributeService
 	public String getArticle(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Grabs the article for a give code or type Get the article codes only, not
-	 * the article html content
+	 * Grabs the article for a give code or type with content
 	 *
 	 * @param attributeCodePk
 	 * @return article data or null for no article.
@@ -163,7 +161,7 @@ public interface AttributeService
 	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
 
 	/**
-	 * Find the recently posted (created date) articles (Active Only
+	 * Find the recently posted (created date) articles (Active Only)
 	 *
 	 * @param maxResults
 	 * @return
@@ -196,25 +194,18 @@ public interface AttributeService
 	public void addArticleTrackEvent(ArticleTracking articleTracking);
 
 	/**
-	 * Get all articles as search results
+	 * Get all articles as search results. Note: This doesn't pull the article
+	 * content.
 	 *
 	 * @return
 	 */
-	public List<ComponentSearchView> getAllArticles();
+	public List<ComponentSearchView> getArticlesSearchView();
 
 	/**
-	 * Get all articles as search results
+	 * Get all articles as search results with content
 	 *
 	 * @return
 	 */
 	public List<Article> getArticles();
-
-	/**
-	 * Get all articles as search results
-	 *
-	 * @param components
-	 * @param articles
-	 */
-	public void saveArticlesAndComponents(List<Article> articles, List<Component> components);
 
 }

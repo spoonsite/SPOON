@@ -108,7 +108,7 @@ public class Search
 		pk.setAttributeCode(code);
 		pk.setAttributeType(type);
 
-		return service.getSearchService().getSearchItems(pk, filter);
+		return service.getSearchService().architectureSearch(pk, filter);
 	}
 
 	@GET
