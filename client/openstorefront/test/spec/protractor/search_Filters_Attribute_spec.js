@@ -1,5 +1,4 @@
 // FUNCTION
-blah = 3;
 function attribFilter(checkB, expResults) {
   element(by.id(checkB)).click();
   browser.driver.sleep(1800);
