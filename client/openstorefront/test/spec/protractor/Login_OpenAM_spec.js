@@ -28,7 +28,9 @@ if (openAM) {
 // Other Non-OpenAM site, but still need to login!
 if (other) {
     console.log('**********  Please manually log in, you have ~30 seconds.  **********');
+    browser.ignoreSynchronization = false;
     console.log(theSite);
+    browser.ignoreSynchronization = false;
     console.log('UN:admin,  PW:secret');
     console.log('*********************************************************************');
     browser.driver.sleep(33000);
