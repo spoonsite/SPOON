@@ -17,5 +17,5 @@ describe('SvcV-4_button from the home page', function() {
         }
         // Brittle
         expect(element.all(by.css('.btn')).count()).toEqual(7);
-    });
+    }, 63000);
 });
