@@ -44,8 +44,6 @@ describe('search_Filters_Text', function() {
         textSearch(theText4, numFound4);
   }, 30000);
 
-  browser.driver.sleep(12000);
-
 });
 
 
