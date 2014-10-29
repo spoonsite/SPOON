@@ -2103,10 +2103,10 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Saves a component integration model")
+	@APIDescription("Activates  a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/activate")
-	public Response saveIntegration(
+	public Response activateIntegration(
 			@PathParam("componentId")
 			@RequiredParam String componentId)
 	{
@@ -2117,30 +2117,58 @@ public class ComponentRESTResource
 		return sendSingleEnityResponse(componentIntegration);
 	}
 
+	@PUT
+	@RequireAdmin
+	@APIDescription("Inactivates a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/inactivate")
+	public Response inactiveIntegration(
+			@PathParam("componentId")
+			@RequiredParam String componentId)
+	{
+		ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (componentIntegration != null) {
+			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
+		}
+		return sendSingleEnityResponse(componentIntegration);
+	}
+
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Inactivates component integration")
+	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
 	public void deleteComponentConfig(
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
-		//If it's not found we don't need to do anything, in this case
-		if (componentIntegration != null) {
-			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
+		service.getComponentService().deleteComponentIntegration(componentId);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Runs a full component integration")
+	@Path("/{componentId}/integration/run")
+	public Response runComponentIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId)
+	{
+		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (integration != null) {
+			service.getComponentService().processComponentIntegration(componentId, null);
+			return Response.ok().build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
 
-	//TODO: Post for Run Integration
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets all component integration configs")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentIntegrationConfig.class)
-	@Path("/{id}/integration/configs")
+	@Path("/{componentId}/integration/configs")
 	public List<ComponentIntegrationConfig> getIntegrationConfigs(
-			@QueryParam("id") String componentId)
+			@PathParam("componentId") String componentId)
 	{
 		List<ComponentIntegrationConfig> configs;
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
@@ -2149,23 +2177,128 @@ public class ComponentRESTResource
 		return configs;
 	}
 
-//	@POST
-//	@RequireAdmin
-//	@APIDescription("Saves a component integration model")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Path("/{componentId}/integration/configs")
-//	public Response saveIntegrationConfig(
-//			@PathParam("componentId")
-//			@RequiredParam String componentId,
-//			ComponentIntegrationConfig integrationConfig)
-//	{
-//
-//
-//
-//	}
-	//TODO: Put for at least activating a config
-	//TODO: Delele For config
-	//TODO: Post for Run config
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all component integration configs")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentIntegrationConfig.class)
+	@Path("/{componentId}/integration/configs/{configId}")
+	public Response getIntegrationConfigs(
+			@PathParam("componentId") String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		return sendSingleEnityResponse(integrationConfig);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/configs")
+	public Response saveIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			ComponentIntegrationConfig integrationConfig)
+	{
+		integrationConfig.setComponentId(componentId);
+
+		ValidationModel validationModel = new ValidationModel(integrationConfig);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
+			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates a component integration config")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/configs/{configId}/activate")
+	public Response activateIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+
+		if (integrationConfig != null) {
+			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.ACTIVE_STATUS);
+		}
+		return sendSingleEnityResponse(integrationConfig);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/configs/{configId}/inactivate")
+	public Response inactiveIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+
+		if (integrationConfig != null) {
+			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.INACTIVE_STATUS);
+		}
+		return sendSingleEnityResponse(integrationConfig);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Removes component integration config")
+	@Path("/{componentId}/integration/configs/{configId}")
+	public void deleteComponentIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+
+		if (integrationConfig != null) {
+			service.getComponentService().deleteComponentIntegrationConfig(configId);
+		}
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Runs a component integration config.")
+	@Path("/{componentId}/integration/configs/{configId}/run")
+	public Response runComponentIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+
+		if (integrationConfig != null) {
+			service.getComponentService().processComponentIntegration(componentId, configId);
+			return Response.ok().build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+
 	private void checkBaseComponentBelongsToComponent(BaseComponent component, String componentId)
 	{
 		if (component.getComponentId().equals(componentId) == false) {
