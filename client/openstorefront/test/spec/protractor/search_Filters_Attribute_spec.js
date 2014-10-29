@@ -1,5 +1,4 @@
 // FUNCTION
-blah = 3;
 function attribFilter(checkB, expResults) {
   element(by.id(checkB)).click();
   browser.driver.sleep(1800);
@@ -21,6 +20,11 @@ describe('search_Filters_Attribute', function() {
   // Wait for it to sync, a bit slower on the VPN
   browser.driver.sleep(14000);
 
+  // IF exists?
+  element(by.id('showPageLeft')).click();
+  browser.driver.sleep(1500);
+
+
   // Expand "DI2E Evaluation Level"
   element.all(by.css('.overflow-pair-right')).get(1).click();
   browser.driver.sleep(2000);
@@ -28,7 +32,6 @@ describe('search_Filters_Attribute', function() {
   // Prime the pump! ?
   element.all(by.css('.ng-pristine.ng-valid')).get(2).click();
   browser.driver.sleep(500);
-  element.all(by.css('.ng-pristine.ng-valid')).get(2).click();
 
   var checkB0 = 'DI2E Evaluation Level_LEVEL0';
   var expResults0 = 37;

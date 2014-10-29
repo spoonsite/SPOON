@@ -3,7 +3,7 @@
    28 Oct 2014:  Put this back in as Admin Tools are available on store-accept
 */
 describe('adminTools', function() {
-    it('Navigate from user dropdown upper right to admin tools ', function () {
+    it('Navigate through the adminTools menus', function () {
         browser.get(theSite);
 
         // Click on User Name
