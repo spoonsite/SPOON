@@ -1097,7 +1097,7 @@ public class ComponentServiceImpl
 	public void cascadeDeleteOfComponent(String componentId)
 	{
 		Objects.requireNonNull(componentId, "Component Id is required.");
-		log.log(Level.INFO, "Attempting to Removing component: " + componentId);
+		log.log(Level.INFO, MessageFormat.format("Attempting to Removing component: {0}", componentId));
 
 		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
@@ -1111,6 +1111,8 @@ public class ComponentServiceImpl
 				}
 			}
 		}
+		deleteComponentIntegration(componentId);
+
 		Component component = persistenceService.findById(Component.class, componentId);
 		persistenceService.delete(component);
 
@@ -1616,7 +1618,7 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void saveComponentIntegrationConfig(ComponentIntegrationConfig integrationConfig)
+	public ComponentIntegrationConfig saveComponentIntegrationConfig(ComponentIntegrationConfig integrationConfig)
 	{
 		ComponentIntegrationConfig componentIntegrationConfig = persistenceService.findById(ComponentIntegrationConfig.class, integrationConfig.getIntegrationConfigId());
 		if (componentIntegrationConfig != null) {
@@ -1628,11 +1630,13 @@ public class ComponentServiceImpl
 			componentIntegrationConfig.setUpdateUser(integrationConfig.getUpdateUser());
 			componentIntegrationConfig.populateBaseUpdateFields();
 			persistenceService.persist(componentIntegrationConfig);
+			integrationConfig = componentIntegrationConfig;
 		} else {
 			integrationConfig.setIntegrationConfigId(persistenceService.generateId());
 			integrationConfig.populateBaseCreateFields();
 			persistenceService.persist(integrationConfig);
 		}
+		return integrationConfig;
 	}
 
 	@Override
@@ -1646,6 +1650,29 @@ public class ComponentServiceImpl
 			persistenceService.persist(componentIntegrationConfig);
 		} else {
 			throw new OpenStorefrontRuntimeException("Component Integration Config doesn't exist", "Check input");
+		}
+	}
+
+	@Override
+	public void deleteComponentIntegration(String componentId)
+	{
+		Objects.requireNonNull(componentId, "Component Id required");
+
+		ComponentIntegration componentIntegration = persistenceService.findById(ComponentIntegration.class, componentId);
+		if (componentIntegration != null) {
+			ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+			integrationConfigExample.setComponentId(componentId);
+			persistenceService.deleteByExample(integrationConfigExample);
+			persistenceService.delete(componentIntegration);
+		}
+	}
+
+	@Override
+	public void deleteComponentIntegrationConfig(String integrationConfigId)
+	{
+		ComponentIntegrationConfig componentIntegrationConfig = persistenceService.findById(ComponentIntegrationConfig.class, integrationConfigId);
+		if (componentIntegrationConfig != null) {
+			persistenceService.delete(componentIntegrationConfig);
 		}
 	}
 

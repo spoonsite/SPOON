@@ -360,9 +360,10 @@ public interface ComponentService
 	 * Saves an Component Integration config
 	 *
 	 * @param integrationConfig
+	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentIntegrationConfig(ComponentIntegrationConfig integrationConfig);
+	public ComponentIntegrationConfig saveComponentIntegrationConfig(ComponentIntegrationConfig integrationConfig);
 
 	/**
 	 * Saves an Component Integration config
@@ -397,5 +398,21 @@ public interface ComponentService
 	 * @param integrationConfigId
 	 */
 	public void processComponentIntegration(String componentId, String integrationConfigId);
+
+	/**
+	 * This will delete the integration and all child configs
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteComponentIntegration(String componentId);
+
+	/**
+	 * This will delete the integration config
+	 *
+	 * @param integrationConfigId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteComponentIntegrationConfig(String integrationConfigId);
 
 }
