@@ -1,37 +1,32 @@
-// FUNCTION
-function attribFilter(checkB, expResults) {
-  element(by.id(checkB)).click();
-  browser.driver.sleep(1800);
+describe('search_Filters_by_Attribute', function() {
+  // FUNCTION
+  function attribFilter(checkB, expResults) {
+    element(by.id(checkB)).click();
+    browser.driver.sleep(1800);
 
-  // ***** NOTE: ***** switch from element.all(by.repeater('item in data')) to by.css('.results-content') !!!
-  expect(element.all(by.css('.results-content')).count()).toEqual(expResults);
-  element(by.id(checkB)).click();
-  browser.driver.sleep(1500);
-}
+    // ***** NOTE: ***** switch from element.all(by.repeater('item in data')) to by.css('.results-content') !!!
+    expect(element.all(by.css('.results-content')).count()).toEqual(expResults);
+    element(by.id(checkB)).click();
+    browser.driver.sleep(1500);
+  }
 
-
-// ***** MAIN TEST ***** //
-describe('search_Filters_Attribute', function() {
+  // *** MAIN TEST ***
   // FILTER BY ATTRIBUTE
-  browser.ignoreSynchronization = false;
   browser.get(theSite, 15000);
+  browser.driver.sleep(12000);
+
   element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
 
   // Wait for it to sync, a bit slower on the VPN
   browser.driver.sleep(14000);
 
-  // IF exists?
-  element(by.id('showPageLeft')).click();
-  browser.driver.sleep(1500);
-
-
   // Expand "DI2E Evaluation Level"
   element.all(by.css('.overflow-pair-right')).get(1).click();
-  browser.driver.sleep(2000);
+  browser.driver.sleep(1000);
 
   // Prime the pump! ?
-  element.all(by.css('.ng-pristine.ng-valid')).get(2).click();
-  browser.driver.sleep(500);
+  element.all(by.css('.ng-pristine.ng-valid')).get(1).click();
+  browser.driver.sleep(1000);
 
   var checkB0 = 'DI2E Evaluation Level_LEVEL0';
   var expResults0 = 37;
@@ -46,12 +41,15 @@ describe('search_Filters_Attribute', function() {
   }, 45000);
 
   var checkBNA = 'DI2E Evaluation Level_NA';
-  var expResultsNA = 17;
+  var expResultsNA = 15;
   it('Filter By Attribute- ' + checkBNA + ' gives ' + expResultsNA + ' results', function() {
     attribFilter(checkBNA, expResultsNA);
   }, 45000);
 
-
   element.all(by.css('.btn.btn-link.spread.empty')).get(0).click();
   browser.driver.sleep(3000);
+
 }, 35000);
+
+
+
