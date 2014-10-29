@@ -3,7 +3,7 @@
    28 Oct 2014:  Put this back in as Admin Tools are available on store-accept
 */
 describe('adminTools', function() {
-    it('Navigate from user dropdown upper right to admin tools ', function () {
+    it('Admin Tools Menu is available from the drop-down under username', function () {
         browser.get(theSite);
 
         // Click on User Name
@@ -17,7 +17,7 @@ describe('adminTools', function() {
     });
 
 
-    it('Click left menus of Admin tools and check for resulting right pane data', function() {
+    it('Click left menus of Admin Tools and check for resulting right pane data', function() {
         // TODO:  Fill this in when coding is complete, look for more specific info on "expect"
 
         // Manage Attributes (highest level no sub-trees)

@@ -154,6 +154,7 @@ var hideAlert = function(uid, delay) {
 * params: id -- the id of the element to attach the alert box to
 * params: delay -- how long you want the alert to stay
 ***************************************************************/
+var timeouts = [];
 var triggerAlert = function(text, uid, id, delay, append) {
   delay = delay || 5000;
   if (!text || !uid){
@@ -185,7 +186,10 @@ var triggerAlert = function(text, uid, id, delay, append) {
     //   }
     // });
     //
-    setTimeout(function() {
+    if (timeouts['uid']) {
+      clearTimeout(timeouts['uid']);
+    }
+    timeouts['uid'] = setTimeout(function() {
       hideAlert(uid, 1000);
     }, delay);
   }

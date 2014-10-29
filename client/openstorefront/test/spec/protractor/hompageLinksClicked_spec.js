@@ -14,7 +14,7 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
             browser.driver.sleep(350);
         }
         expect(true).toBe(true);   //Some links now go off of the di2e website.
-    }, 35000);
+    }, 61000);
 
     it('click on the FOOTER links, columns 1-4, all links below them', function() {
         // Footer has columns 1, 2, 3, 4.  Column li's are zero-based.
@@ -54,6 +54,7 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
         browser.driver.sleep(750);
         // Turn Angular sync back on!
         browser.ignoreSyncronization = false;
+        browser.get(theSite, 35000);
     }, 35000);
 
  });
