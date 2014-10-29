@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.service.io.integration;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.storage.model.IntegrationType;
 
 /**
@@ -27,15 +27,15 @@ import edu.usu.sdl.openstorefront.storage.model.IntegrationType;
 public abstract class BaseIntegrationHandler
 {
 
-	protected final IntegrationConfig integrationConfig;
+	protected final ComponentIntegrationConfig integrationConfig;
 	protected ServiceProxy serviceProxy = new ServiceProxy();
 
-	public BaseIntegrationHandler(IntegrationConfig integrationConfig)
+	public BaseIntegrationHandler(ComponentIntegrationConfig integrationConfig)
 	{
 		this.integrationConfig = integrationConfig;
 	}
 
-	public static BaseIntegrationHandler getIntegrationHandler(IntegrationConfig integrationConfig)
+	public static BaseIntegrationHandler getIntegrationHandler(ComponentIntegrationConfig integrationConfig)
 	{
 		BaseIntegrationHandler baseIntegration = null;
 		switch (integrationConfig.getIntegrationType()) {

@@ -18,11 +18,14 @@ package edu.usu.sdl.openstorefront.service.api;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.util.List;
 import java.util.Map;
@@ -207,5 +210,27 @@ public interface AttributeService
 	 * @return
 	 */
 	public List<Article> getArticles();
+
+	/**
+	 * Gets the active xref types for an IntegrationType
+	 *
+	 * @param attributeXrefModel
+	 * @return
+	 */
+	public List<AttributeXRefType> getAttributeXrefTypes(AttributeXrefModel attributeXrefModel);
+
+	/**
+	 * Gets the code mappings
+	 *
+	 * @return Attribute key, external code, our code
+	 */
+	public Map<String, Map<String, String>> getAttributeXrefMapFieldMap();
+
+	/**
+	 * Save Attribute Mapping
+	 *
+	 * @param attributeXRefView
+	 */
+	public void saveAttributeXrefMap(AttributeXRefView attributeXRefView);
 
 }

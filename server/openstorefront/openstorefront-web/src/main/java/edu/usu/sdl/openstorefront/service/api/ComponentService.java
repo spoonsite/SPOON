@@ -25,6 +25,8 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
@@ -345,5 +347,55 @@ public interface ComponentService
 	 * @return
 	 */
 	public List<ComponentSearchView> getSearchComponentList(List<String> componentIds);
+
+	/**
+	 * Saves an Component Integration
+	 *
+	 * @param integration
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentIntegration(ComponentIntegration integration);
+
+	/**
+	 * Saves an Component Integration config
+	 *
+	 * @param integrationConfig
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentIntegrationConfig(ComponentIntegrationConfig integrationConfig);
+
+	/**
+	 * Saves an Component Integration config
+	 *
+	 * @param integrationCofigId
+	 * @param activeStatus
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void setStatusOnComponentIntegrationConfig(String integrationConfigId, String activeStatus);
+
+	/**
+	 * Gets Active Integrations
+	 *
+	 * @param activeStatus
+	 * @return
+	 */
+	public List<ComponentIntegration> getComponentIntegrationModels(String activeStatus);
+
+	/**
+	 * Enable/Disables integration
+	 *
+	 * @param componentId
+	 * @param status
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void setStatusOnComponentIntegration(String componentId, String status);
+
+	/**
+	 * This handling running call active integration configs for a component
+	 *
+	 * @param componentId
+	 * @param integrationConfigId
+	 */
+	public void processComponentIntegration(String componentId, String integrationConfigId);
 
 }

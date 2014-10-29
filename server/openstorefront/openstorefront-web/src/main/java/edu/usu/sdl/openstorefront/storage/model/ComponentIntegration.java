@@ -29,13 +29,14 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class Integration
+public class ComponentIntegration
 		extends BaseEntity
 {
 
 	@PK
 	@NotNull
-	private String integrationId;
+	@ConsumeField
+	private String componentId;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
 	@Sanitize(TextSanitizer.class)
@@ -48,23 +49,9 @@ public class Integration
 	private Date lastStartTime;
 	private Date lastEndTime;
 
-	@NotNull
-	@ConsumeField
-	private String componentId;
-
-	public Integration()
+	public ComponentIntegration()
 	{
 
-	}
-
-	public String getIntegrationId()
-	{
-		return integrationId;
-	}
-
-	public void setIntegrationId(String integrationId)
-	{
-		this.integrationId = integrationId;
 	}
 
 	public String getRefreshRate()

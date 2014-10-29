@@ -35,6 +35,8 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedulePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
@@ -73,6 +75,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -2046,6 +2049,123 @@ public class ComponentRESTResource
 		service.getComponentService().cascadeDeleteOfComponent(componentId);
 	}
 
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all integration models from the database.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentIntegration.class)
+	@Path("/integration")
+	public List<ComponentIntegration> getIntegrations(
+			@QueryParam("status")
+			@DefaultValue("A")
+			@APIDescription("Pass 'ALL' to view active and inactive") String status)
+	{
+		if (OpenStorefrontConstant.STATUS_VIEW_ALL.equals(status)) {
+			status = null;
+		}
+		List<ComponentIntegration> integrationModels = service.getComponentService().getComponentIntegrationModels(status);
+		return integrationModels;
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets a integration model")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentIntegration.class)
+	@Path("/{id}/integration")
+	public Response getIntegration(
+			@QueryParam("id") String componentId)
+	{
+		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		return sendSingleEnityResponse(integration);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration")
+	public Response saveIntegration(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			ComponentIntegration integration)
+	{
+		ValidationModel validationModel = new ValidationModel(integration);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			service.getComponentService().saveComponentIntegration(integration);
+			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/activate")
+	public Response saveIntegration(
+			@PathParam("componentId")
+			@RequiredParam String componentId)
+	{
+		ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (componentIntegration != null) {
+			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.ACTIVE_STATUS);
+		}
+		return sendSingleEnityResponse(componentIntegration);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Inactivates component integration")
+	@Path("/{componentId}/integration")
+	public void deleteComponentConfig(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		//If it's not found we don't need to do anything, in this case
+		if (componentIntegration != null) {
+			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
+		}
+	}
+
+	//TODO: Post for Run Integration
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all component integration configs")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentIntegrationConfig.class)
+	@Path("/{id}/integration/configs")
+	public List<ComponentIntegrationConfig> getIntegrationConfigs(
+			@QueryParam("id") String componentId)
+	{
+		List<ComponentIntegrationConfig> configs;
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		configs = service.getPersistenceService().queryByExample(null, integrationConfigExample);
+		return configs;
+	}
+
+//	@POST
+//	@RequireAdmin
+//	@APIDescription("Saves a component integration model")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Path("/{componentId}/integration/configs")
+//	public Response saveIntegrationConfig(
+//			@PathParam("componentId")
+//			@RequiredParam String componentId,
+//			ComponentIntegrationConfig integrationConfig)
+//	{
+//
+//
+//
+//	}
+	//TODO: Put for at least activating a config
+	//TODO: Delele For config
+	//TODO: Post for Run config
 	private void checkBaseComponentBelongsToComponent(BaseComponent component, String componentId)
 	{
 		if (component.getComponentId().equals(componentId) == false) {

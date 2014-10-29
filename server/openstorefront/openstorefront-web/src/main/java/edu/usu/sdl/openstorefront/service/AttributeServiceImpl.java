@@ -22,11 +22,14 @@ import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.sort.ArchitectureComparator;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefMap;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -40,6 +43,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.io.File;
 import java.io.IOException;
@@ -681,6 +685,98 @@ public class AttributeServiceImpl
 			article = Article.toViewHtml(attributeCode, content);
 		}
 		return article;
+	}
+
+	@Override
+	public List<AttributeXRefType> getAttributeXrefTypes(AttributeXrefModel attributeXrefModel)
+	{
+		AttributeXRefType xrefAttributeTypeExample = new AttributeXRefType();
+		xrefAttributeTypeExample.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		xrefAttributeTypeExample.setIntegrationType(attributeXrefModel.getIntegrationType());
+		xrefAttributeTypeExample.setProjectType(attributeXrefModel.getProjectKey());
+		xrefAttributeTypeExample.setIssueType(attributeXrefModel.getIssueType());
+		List<AttributeXRefType> xrefAttributeTypes = persistenceService.queryByExample(AttributeXRefType.class, xrefAttributeTypeExample);
+		return xrefAttributeTypes;
+	}
+
+	@Override
+	public Map<String, Map<String, String>> getAttributeXrefMapFieldMap()
+	{
+		Map<String, Map<String, String>> attributeCodeMap = new HashMap<>();
+
+		AttributeXRefMap xrefAttributeMapExample = new AttributeXRefMap();
+		xrefAttributeMapExample.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+
+		List<AttributeXRefMap> xrefAttributeMaps = persistenceService.queryByExample(AttributeXRefMap.class, xrefAttributeMapExample);
+		for (AttributeXRefMap xrefAttributeMap : xrefAttributeMaps) {
+
+			if (attributeCodeMap.containsKey(xrefAttributeMap.getAttributeType())) {
+				Map<String, String> codeMap = attributeCodeMap.get(xrefAttributeMap.getAttributeType());
+				if (codeMap.containsKey(xrefAttributeMap.getExternalCode())) {
+
+					//should only have one external code if there's a dup will only use one.
+					//(however, which  code  is used dependa on the order that came in.  which is not  determinate)
+					//First one we hit wins
+					log.log(Level.WARNING, MessageFormat.format("Duplicate external code for attribute type: {0} Code: {1}", new Object[]{xrefAttributeMap.getAttributeType(), xrefAttributeMap.getExternalCode()}));
+				} else {
+					codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
+				}
+			} else {
+				Map<String, String> codeMap = new HashMap<>();
+				codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
+				attributeCodeMap.put(xrefAttributeMap.getAttributeType(), codeMap);
+			}
+		}
+
+		return attributeCodeMap;
+	}
+
+	@Override
+	public void saveAttributeXrefMap(AttributeXRefView attributeXRefView)
+	{
+		AttributeXRefType type = persistenceService.findById(AttributeXRefType.class, attributeXRefView.getType().getAttributeType());
+		if (type != null) {
+			type.setAttributeType(attributeXRefView.getType().getAttributeType());
+			type.setActiveStatus(attributeXRefView.getType().getActiveStatus());
+			type.setFieldId(attributeXRefView.getType().getFieldId());
+			type.setFieldKey(attributeXRefView.getType().getFieldKey());
+			type.setFieldName(attributeXRefView.getType().getFieldName());
+			type.setIntegrationType(attributeXRefView.getType().getIntegrationType());
+			type.setIssueType(attributeXRefView.getType().getIssueType());
+			type.setProjectType(attributeXRefView.getType().getProjectType());
+			persistenceService.persist(type);
+			AttributeXRefMap mapTemp = new AttributeXRefMap();
+			mapTemp.setAttributeType(type.getAttributeType());
+			List<AttributeXRefMap> tempMaps = persistenceService.queryByExample(AttributeXRefMap.class, new QueryByExample(mapTemp));
+			for (AttributeXRefMap tempMap : tempMaps) {
+				mapTemp = persistenceService.findById(AttributeXRefMap.class, tempMap.getXrefId());
+				persistenceService.delete(mapTemp);
+			}
+
+			for (AttributeXRefMap map : attributeXRefView.getMap()) {
+				AttributeXRefMap temp = persistenceService.queryOneByExample(AttributeXRefMap.class, map);
+				if (temp != null) {
+					temp.setActiveStatus(map.getActiveStatus());
+					temp.setAttributeType(map.getAttributeType());
+					temp.setExternalCode(map.getExternalCode());
+					temp.setLocalCode(map.getLocalCode());
+					persistenceService.persist(temp);
+				} else {
+					map.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+					map.setXrefId(persistenceService.generateId());
+					persistenceService.persist(map);
+				}
+			}
+		} else {
+			attributeXRefView.getType().setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+			persistenceService.persist(attributeXRefView.getType());
+			for (AttributeXRefMap map : attributeXRefView.getMap()) {
+				map.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+				map.setXrefId(persistenceService.generateId());
+				persistenceService.persist(map);
+			}
+		}
+
 	}
 
 }

@@ -29,6 +29,9 @@ import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefMap;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -38,6 +41,8 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.net.URI;
 import java.util.ArrayList;
@@ -426,6 +431,113 @@ public class AttributeResource
 		attributeCodePk.setAttributeCode(code.toUpperCase());
 		attributeCodePk.setAttributeType(type.toUpperCase());
 		service.getAttributeService().removeAttributeCode(attributeCodePk);
+	}
+
+	@GET
+	@APIDescription("Gets the list of mapping for attributes to fields")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeXrefMapView.class)
+	@Path("/attributexreftypes/detail")
+	public List<AttributeXrefMapView> getMappingTypes()
+	{
+		List<AttributeXrefMapView> attributeXrefMapViews = new ArrayList<>();
+
+		AttributeXRefType example = new AttributeXRefType();
+		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+
+		for (AttributeXRefType type : types) {
+			AttributeXrefMapView model = new AttributeXrefMapView();
+			AttributeType attType = service.getPersistenceService().findById(AttributeType.class, type.getAttributeType());
+			model.setAttributeName(attType.getDescription());
+			model.setAttributeType(type.getAttributeType());
+			model.setFieldName(type.getFieldName());
+			model.setFieldKey(type.getFieldKey());
+			model.setFieldId(type.getFieldId());
+			model.setIssueType(type.getIssueType());
+			model.setProjectType(type.getProjectType());
+
+			AttributeXRefMap tempMap = new AttributeXRefMap();
+			tempMap.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+			tempMap.setAttributeType(type.getAttributeType());
+			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
+
+			attributeXrefMapViews.add(model);
+		}
+
+		return attributeXrefMapViews;
+	}
+
+	@GET
+	@APIDescription("Gets the list of mapping for attributes to fields")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeXrefMapView.class)
+	@Path("/attributexreftypes/{attributeType}/detail")
+	public Response getMappingType(
+			@PathParam("attributeType") String attributeType)
+	{
+		AttributeXrefMapView model = null;
+
+		AttributeXRefType example = new AttributeXRefType();
+		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		example.setAttributeType(attributeType);
+		AttributeXRefType attributeXRefType = service.getPersistenceService().queryOneByExample(AttributeXRefType.class, example);
+
+		if (attributeXRefType != null) {
+			model = new AttributeXrefMapView();
+			AttributeType attType = service.getPersistenceService().findById(AttributeType.class, attributeXRefType.getAttributeType());
+			model.setAttributeName(attType.getDescription());
+			model.setAttributeType(attributeXRefType.getAttributeType());
+			model.setFieldName(attributeXRefType.getFieldName());
+			model.setFieldKey(attributeXRefType.getFieldKey());
+			model.setFieldId(attributeXRefType.getFieldId());
+			model.setIssueType(attributeXRefType.getIssueType());
+			model.setProjectType(attributeXRefType.getProjectType());
+
+			AttributeXRefMap tempMap = new AttributeXRefMap();
+			tempMap.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+			tempMap.setAttributeType(attributeXRefType.getAttributeType());
+			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
+		}
+		return sendSingleEnityResponse(model);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Save a attribute cross-ref mapping")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/attributexreftypes/detail")
+	public Response saveMapping(
+			@RequiredParam AttributeXRefView attributeXref)
+	{
+		attributeXref.getType().setCreateDts(TimeUtil.currentDate());
+		attributeXref.getType().setUpdateDts(TimeUtil.currentDate());
+		attributeXref.getType().setCreateUser(SecurityUtil.getCurrentUserName());
+		attributeXref.getType().setUpdateUser(SecurityUtil.getCurrentUserName());
+		attributeXref.getType().setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
+		ValidationModel validationModel = new ValidationModel(attributeXref.getType());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		for (AttributeXRefMap map : attributeXref.getMap()) {
+			map.setCreateDts(TimeUtil.currentDate());
+			map.setUpdateDts(TimeUtil.currentDate());
+			map.setCreateUser(SecurityUtil.getCurrentUserName());
+			map.setUpdateUser(SecurityUtil.getCurrentUserName());
+			map.setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
+
+			validationModel = new ValidationModel(map);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult mapValidationResult = ValidationUtil.validate(validationModel);
+			validationResult.merge(mapValidationResult);
+		}
+		if (validationResult.valid()) {
+			service.getAttributeService().saveAttributeXrefMap(attributeXref);
+
+			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/" + attributeXref.getType().getAttributeType() + "/detail")).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 }

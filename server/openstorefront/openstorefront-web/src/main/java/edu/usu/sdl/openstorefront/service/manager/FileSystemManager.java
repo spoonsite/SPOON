@@ -99,9 +99,9 @@ public class FileSystemManager
 		if (configFile.exists() == false) {
 			log.log(Level.INFO, MessageFormat.format("Trying to copy: {0}{1} to {2}", new Object[]{resourceDir, configFilename, configFile}));
 
-			URL resourceUrl = new DBManager().getClass().getResource(resourceDir + configFilename);
+			URL resourceUrl = new FileSystemManager().getClass().getResource(resourceDir + configFilename);
 			if (resourceUrl != null) {
-				try (InputStream in = new DBManager().getClass().getResourceAsStream(resourceDir + configFilename)) {
+				try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(resourceDir + configFilename)) {
 					Files.copy(in, Paths.get(directory + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException(ex);

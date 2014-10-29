@@ -15,15 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
+import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
+import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -48,7 +55,17 @@ public class JiraService
 	@Path("/projects")
 	public List<LookupModel> getJiraProjects()
 	{
-		return service.getSystemService().getAllJiraProjects();
+		List<LookupModel> lookupModels = new ArrayList<>();
+		try (JiraClient jiraClient = JiraManager.getClient()) {
+			Iterable<BasicProject> projects = jiraClient.getAllProjects();
+			for (BasicProject project : projects) {
+				LookupModel lookupModel = new LookupModel();
+				lookupModel.setDescription(project.getName());
+				lookupModel.setCode(project.getKey());
+				lookupModels.add(lookupModel);
+			}
+		}
+		return lookupModels;
 	}
 
 	@GET
@@ -62,7 +79,11 @@ public class JiraService
 			@RequiredParam String code
 	)
 	{
-		return service.getSystemService().getAllProjectIssueTypes(code);
+		List<JiraIssueModel> jiraIssueModels;
+		try (JiraClient jiraClient = JiraManager.getClient()) {
+			jiraIssueModels = jiraClient.getIssueTypesForProject(code);
+		}
+		return jiraIssueModels;
 	}
 
 	@GET
@@ -73,12 +94,41 @@ public class JiraService
 	@Path("/projects/{projectCode}/{issueType}/fields")
 	public List<JiraFieldInfoModel> getJiraIssueTypes(
 			@PathParam("projectCode")
-			@RequiredParam String code,
+			@RequiredParam String projectCode,
 			@PathParam("issueType")
-			@RequiredParam String type
+			@RequiredParam String issueType
 	)
 	{
-		return service.getSystemService().getIssueTypeFields(code, type);
+		List<JiraFieldInfoModel> jiraFieldInfoModels = new ArrayList<>();
+		Map<String, CimFieldInfo> results;
+		List<JiraIssueType> statuses;
+		JiraIssueType jiraIssueType = null;
+		try (JiraClient jiraClient = JiraManager.getClient()) {
+			results = jiraClient.getProjectIssueTypeFields(projectCode, issueType);
+			if (results != null) {
+				for (Map.Entry<String, CimFieldInfo> entry : results.entrySet()) {
+					String key = entry.getKey();
+					CimFieldInfo cimFieldInfo = entry.getValue();
+					if (cimFieldInfo.getAllowedValues() != null) {
+						JiraFieldInfoModel model = JiraFieldInfoModel.toView(key, cimFieldInfo);
+						if (model != null) {
+							jiraFieldInfoModels.add(model);
+						}
+					}
+				}
+			}
+			statuses = jiraClient.getProjectStatusForAllIssueTypes(projectCode);
+			for (int i = 0; i < statuses.size(); i++) {
+				if (statuses.get(i).getName().equals(issueType)) {
+					jiraIssueType = statuses.get(i);
+					break;
+				}
+			}
+			if (jiraIssueType != null) {
+				jiraFieldInfoModels.add(JiraFieldInfoModel.toView(jiraIssueType));
+			}
+		}
+		return jiraFieldInfoModels;
 	}
 
 }
