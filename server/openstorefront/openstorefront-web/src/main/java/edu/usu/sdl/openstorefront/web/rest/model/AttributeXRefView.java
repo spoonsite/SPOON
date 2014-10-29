@@ -13,30 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.storage.model.XRefAttributeMap;
-import edu.usu.sdl.openstorefront.storage.model.XRefAttributeType;
+import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefMap;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
 import java.util.List;
 
 /**
  *
  * @author jlaw
  */
-public class XRef
+public class AttributeXRefView
 {
-	private XRefAttributeType type;
-	private List<XRefAttributeMap> map;
 
-	public XRef(){
-		
+	private AttributeXRefType type;
+
+	@DataType(AttributeXRefMap.class)
+	private List<AttributeXRefMap> map;
+
+	public AttributeXRefView()
+	{
+
 	}
-	
+
 	/**
 	 * @return the type
 	 */
-	public XRefAttributeType getType()
+	public AttributeXRefType getType()
 	{
 		return type;
 	}
@@ -44,7 +48,7 @@ public class XRef
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(XRefAttributeType type)
+	public void setType(AttributeXRefType type)
 	{
 		this.type = type;
 	}
@@ -52,7 +56,7 @@ public class XRef
 	/**
 	 * @return the map
 	 */
-	public List<XRefAttributeMap> getMap()
+	public List<AttributeXRefMap> getMap()
 	{
 		return map;
 	}
@@ -60,7 +64,7 @@ public class XRef
 	/**
 	 * @param map the map to set
 	 */
-	public void setMap(List<XRefAttributeMap> map)
+	public void setMap(List<AttributeXRefMap> map)
 	{
 		this.map = map;
 	}

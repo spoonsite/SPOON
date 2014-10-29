@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class IntegrationConfig
+public class ComponentIntegrationConfig
 		extends BaseEntity
 {
 
@@ -69,7 +69,7 @@ public class IntegrationConfig
 	@ConsumeField
 	private String componentId;
 
-	public IntegrationConfig()
+	public ComponentIntegrationConfig()
 	{
 
 	}

@@ -19,30 +19,16 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.Integration;
-import edu.usu.sdl.openstorefront.storage.model.XRefAttributeMap;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
-import edu.usu.sdl.openstorefront.web.rest.model.MappingTypeModel;
-import edu.usu.sdl.openstorefront.web.rest.model.XRef;
 import java.net.URI;
-import java.util.List;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -50,114 +36,34 @@ import javax.ws.rs.core.Response;
  *
  * @author jlaw
  */
-@Path("v1/resource/integration")
-@APIDescription("Integration models are resources used to connect component information to external sources.")
+@Path("v1/resource/integrations")
+@APIDescription("Integration models are resources used to connect to external sources.")
 public class IntegrationResource
 		extends BaseResource
 {
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets all integration models from the database.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Component.class)
-	public List<Integration> getIntegrations(
-			@QueryParam("status")
-			@DefaultValue("A")
-			@APIDescription("Pass 'ALL' to view active and inactive") String status)
-	{
-		if (OpenStorefrontConstant.STATUS_VIEW_ALL.equals(status)) {
-			status = null;
-		}
-		List<Integration> integrationModels = service.getSystemService().getIntegrationModels(status);
-		return integrationModels;
-	}
-
-	@GET
-	@RequireAdmin
 	@APIDescription("Gets the global model from the database.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Component.class)
+	@DataType(GlobalIntegrationModel.class)
 	@Path("/global")
 	public Response getGlobalConfig()
 	{
-		GlobalIntegrationModel model = service.getSystemService().getGlobalConfig();
+		GlobalIntegrationModel model = service.getSystemService().getGlobalIntegrationConfig();
 		if (model != null) {
 			return Response.ok(model).build();
-		}
-		else {
+		} else {
 			return Response.serverError().build();
 		}
 	}
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Save an integration model")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response saveIntegration(
-			@RequiredParam Integration integration)
-
-	{
-		ValidationModel validationModel = new ValidationModel(integration);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getComponentId())).entity(integration).build();
-		}
-		else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-	}
-
-	@POST
-	@RequireAdmin
-	@APIDescription("Save a global integration model")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/global")
-	public Response saveGlobal(
-			@RequiredParam GlobalIntegrationModel integration)
-	{
-		ValidationModel validationModel = new ValidationModel(integration);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, true).getJiraRefreshRate())).entity(integration).build();
-		}
-		else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-	}
-
-	@PUT
-	@RequireAdmin
-	@APIDescription("Update an integration model")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}")
-	public Response updateComponentConfig(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@RequiredParam Integration integration
-	)
-	{
-		ValidationModel validationModel = new ValidationModel(integration);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getComponentId())).entity(integration).build();
-		}
-		else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-	}
-
-	@PUT
-	@RequireAdmin
-	@APIDescription("Updates a global integration model")
+	@APIDescription("Saves a global integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/global")
 	public Response updateGlobalConfig(
-			@PathParam("id")
-			@RequiredParam String componentId,
 			@RequiredParam GlobalIntegrationModel integration
 	)
 	{
@@ -165,72 +71,11 @@ public class IntegrationResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/components/" + service.getSystemService().saveIntegration(integration, false).getJiraRefreshRate())).entity(integration).build();
-		}
-		else {
+			service.getSystemService().saveGlobalIntegrationConfig(integration);
+			return Response.created(URI.create("v1/resource/integrations/global")).entity(integration).build();
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
 
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Inactivates Component and removes any assoicated user watches.")
-	@Path("/{id}")
-	public void deleteComponentConfig(
-			@PathParam("id")
-			@RequiredParam String componentId)
-	{
-		service.getSystemService().deactivateIntegration(componentId);
-	}
-
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Inactivates Component and removes any assoicated user watches.")
-	@Path("/global")
-	public void deleteGlobalConfig()
-	{
-		service.getSystemService().deactivateIntegration();
-	}
-
-	@POST
-	@RequireAdmin
-	@APIDescription("Save a global integration model")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/mapping")
-	public Response saveMapping(
-			@RequiredParam XRef integration)
-	{
-		integration.getType().setCreateDts(TimeUtil.currentDate());
-		integration.getType().setUpdateDts(TimeUtil.currentDate());
-		integration.getType().setCreateUser(SecurityUtil.getCurrentUserName());
-		integration.getType().setUpdateUser(SecurityUtil.getCurrentUserName());
-		integration.getType().setActiveStatus(Integration.ACTIVE_STATUS);
-		ValidationModel validationModel = new ValidationModel(integration);
-		validationModel.setConsumeFieldsOnly(true);
-
-		for (XRefAttributeMap map : integration.getMap()) {
-			map.setCreateDts(TimeUtil.currentDate());
-			map.setUpdateDts(TimeUtil.currentDate());
-			map.setCreateUser(SecurityUtil.getCurrentUserName());
-			map.setUpdateUser(SecurityUtil.getCurrentUserName());
-			map.setActiveStatus(Integration.ACTIVE_STATUS);
-		}
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/integration/" + service.getSystemService().saveIntegration(integration).getType().getAttributeType())).build();
-		}
-		else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-	}
-
-	@GET
-	@APIDescription("Gets the list of mapping projects and issue types.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Component.class)
-	@Path("/mapping/types")
-	public List<MappingTypeModel> getMappingTypes()
-	{
-		return service.getSystemService().getMappingTypes();
-	}
 }

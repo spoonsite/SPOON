@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
@@ -29,17 +28,9 @@ import javax.validation.constraints.Size;
  */
 public class GlobalIntegrationModel
 {
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String username;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String password;
+	//10 am server time (UTC) every day
+	public static final String DEFAULT_REFRESH_RATE = "0 10 * * ?";
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
@@ -47,55 +38,19 @@ public class GlobalIntegrationModel
 	@ConsumeField
 	private String jiraRefreshRate;
 
-	public GlobalIntegrationModel(){
-		
-	}
-	
-	/**
-	 * @return the username
-	 */
-	public String getUsername()
+	public GlobalIntegrationModel()
 	{
-		return username;
+
 	}
 
-	/**
-	 * @param username the username to set
-	 */
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
-
-	/**
-	 * @return the password
-	 */
-	public String getPassword()
-	{
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password)
-	{
-		this.password = password;
-	}
-
-	/**
-	 * @return the jiraRefreshRate
-	 */
 	public String getJiraRefreshRate()
 	{
 		return jiraRefreshRate;
 	}
 
-	/**
-	 * @param jiraRefreshRate the jiraRefreshRate to set
-	 */
 	public void setJiraRefreshRate(String jiraRefreshRate)
 	{
 		this.jiraRefreshRate = jiraRefreshRate;
 	}
+
 }

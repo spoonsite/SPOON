@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-public class XRefAttributeType
+public class AttributeXRefType
 		extends BaseEntity
 {
 
@@ -64,7 +64,7 @@ public class XRefAttributeType
 	@ConsumeField
 	private String integrationType;
 
-	public XRefAttributeType()
+	public AttributeXRefType()
 	{
 
 	}

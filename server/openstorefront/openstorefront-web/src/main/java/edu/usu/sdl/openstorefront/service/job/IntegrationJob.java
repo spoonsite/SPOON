@@ -44,7 +44,7 @@ public class IntegrationJob
 			}
 
 			ServiceProxy serviceProxy = new ServiceProxy();
-			serviceProxy.getSystemService().processIntegration(componentId, configId);
+			serviceProxy.getComponentService().processComponentIntegration(componentId, configId);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to get component id.  Job failed.", "Check config data.");
 		}

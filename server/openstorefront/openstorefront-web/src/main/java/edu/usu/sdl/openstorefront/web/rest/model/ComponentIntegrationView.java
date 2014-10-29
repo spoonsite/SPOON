@@ -17,135 +17,87 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.Integration;
-import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
 
 /**
  *
  * @author jlaw
  */
-public class IntegrationView
+public class ComponentIntegrationView
 {
 
-	private String id;
 	private String componentId;
 	private String componentName;
 	private String issueNumber;
 	private String overRideRefreshRate;
 	private String status;
 
-	public IntegrationView()
+	public ComponentIntegrationView()
 	{
 
 	}
 
-	public IntegrationView toView(Integration integration, IntegrationConfig type)
+	public ComponentIntegrationView toView(ComponentIntegration integration, ComponentIntegrationConfig integrationConfig)
 	{
 		ServiceProxy proxy = new ServiceProxy();
-		IntegrationView view = new IntegrationView();
+		ComponentIntegrationView view = new ComponentIntegrationView();
 		Component temp = proxy.getPersistenceService().findById(Component.class, integration.getComponentId());
 
 		view.setComponentName(temp.getName());
 		view.setComponentId(integration.getComponentId());
 		view.setOverRideRefreshRate(integration.getRefreshRate());
-		view.setId(integration.getIntegrationId());
-		view.setIssueNumber(type.getIssueNumber());
+		view.setIssueNumber(integrationConfig.getIssueNumber());
 		view.setStatus(integration.getStatus());
 
 		return view;
 	}
 
-	/**
-	 * @return the issueNumber
-	 */
 	public String getIssueNumber()
 	{
 		return issueNumber;
 	}
 
-	/**
-	 * @param issueNumber the issueNumber to set
-	 */
 	public void setIssueNumber(String issueNumber)
 	{
 		this.issueNumber = issueNumber;
 	}
 
-	/**
-	 * @return the status
-	 */
 	public String getStatus()
 	{
 		return status;
 	}
 
-	/**
-	 * @param status the status to set
-	 */
 	public void setStatus(String status)
 	{
 		this.status = status;
 	}
 
-	/**
-	 * @return the id
-	 */
-	public String getId()
-	{
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id)
-	{
-		this.id = id;
-	}
-
-	/**
-	 * @return the componentId
-	 */
 	public String getComponentId()
 	{
 		return componentId;
 	}
 
-	/**
-	 * @param componentId the componentId to set
-	 */
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
 	}
 
-	/**
-	 * @return the componentName
-	 */
 	public String getComponentName()
 	{
 		return componentName;
 	}
 
-	/**
-	 * @param componentName the componentName to set
-	 */
 	public void setComponentName(String componentName)
 	{
 		this.componentName = componentName;
 	}
 
-	/**
-	 * @return the overRideRefreshRate
-	 */
 	public String getOverRideRefreshRate()
 	{
 		return overRideRefreshRate;
 	}
 
-	/**
-	 * @param overRideRefreshRate the overRideRefreshRate to set
-	 */
 	public void setOverRideRefreshRate(String overRideRefreshRate)
 	{
 		this.overRideRefreshRate = overRideRefreshRate;

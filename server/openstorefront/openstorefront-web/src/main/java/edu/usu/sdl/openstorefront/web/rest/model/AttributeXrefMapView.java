@@ -15,14 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.storage.model.XRefAttributeMap;
+import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefMap;
 import java.util.List;
 
 /**
  *
  * @author jlaw
  */
-public class MappingTypeModel
+public class AttributeXrefMapView
 {
 
 	private String projectType;
@@ -32,138 +33,93 @@ public class MappingTypeModel
 	private String fieldName;
 	private String fieldId;
 	private String attributeName;
-	private List<XRefAttributeMap> mapping;
 
-	public MappingTypeModel()
+	@DataType(AttributeXRefMap.class)
+	private List<AttributeXRefMap> mapping;
+
+	public AttributeXrefMapView()
 	{
 
 	}
 
-	/**
-	 * @return the projectType
-	 */
-	public String getProjectType()
-	{
-		return projectType;
-	}
-
-	/**
-	 * @param projectType the projectType to set
-	 */
-	public void setProjectType(String projectType)
-	{
-		this.projectType = projectType;
-	}
-
-	/**
-	 * @return the issueType
-	 */
-	public String getIssueType()
-	{
-		return issueType;
-	}
-
-	/**
-	 * @param issueType the issueType to set
-	 */
-	public void setIssueType(String issueType)
-	{
-		this.issueType = issueType;
-	}
-
-	/**
-	 * @return the attributeType
-	 */
-	public String getAttributeType()
-	{
-		return attributeType;
-	}
-
-	/**
-	 * @param attributeType the attributeType to set
-	 */
-	public void setAttributeType(String attributeType)
-	{
-		this.attributeType = attributeType;
-	}
-
-	/**
-	 * @return the fieldKey
-	 */
 	public String getFieldKey()
 	{
 		return fieldKey;
 	}
 
-	/**
-	 * @param fieldKey the fieldKey to set
-	 */
 	public void setFieldKey(String fieldKey)
 	{
 		this.fieldKey = fieldKey;
 	}
 
-	/**
-	 * @return the fieldName
-	 */
+	public String getProjectType()
+	{
+		return projectType;
+	}
+
+	public void setProjectType(String projectType)
+	{
+		this.projectType = projectType;
+	}
+
+	public String getIssueType()
+	{
+		return issueType;
+	}
+
+	public void setIssueType(String issueType)
+	{
+		this.issueType = issueType;
+	}
+
+	public String getAttributeType()
+	{
+		return attributeType;
+	}
+
+	public void setAttributeType(String attributeType)
+	{
+		this.attributeType = attributeType;
+	}
+
 	public String getFieldName()
 	{
 		return fieldName;
 	}
 
-	/**
-	 * @param fieldName the fieldName to set
-	 */
 	public void setFieldName(String fieldName)
 	{
 		this.fieldName = fieldName;
 	}
 
-	/**
-	 * @return the fieldId
-	 */
 	public String getFieldId()
 	{
 		return fieldId;
 	}
 
-	/**
-	 * @param fieldId the fieldId to set
-	 */
 	public void setFieldId(String fieldId)
 	{
 		this.fieldId = fieldId;
 	}
 
-	/**
-	 * @return the attributeName
-	 */
 	public String getAttributeName()
 	{
 		return attributeName;
 	}
 
-	/**
-	 * @param attributeName the attributeName to set
-	 */
 	public void setAttributeName(String attributeName)
 	{
 		this.attributeName = attributeName;
 	}
 
-	/**
-	 * @return the mapping
-	 */
-	public List<XRefAttributeMap> getMapping()
+	public List<AttributeXRefMap> getMapping()
 	{
 		return mapping;
 	}
 
-	/**
-	 * @param mapping the mapping to set
-	 */
-	public void setMapping(List<XRefAttributeMap> mapping)
+	public void setMapping(List<AttributeXRefMap> mapping)
 	{
 		this.mapping = mapping;
 	}
+
 }

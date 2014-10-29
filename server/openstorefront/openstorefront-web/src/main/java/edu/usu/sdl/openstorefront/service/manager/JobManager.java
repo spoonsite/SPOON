@@ -25,7 +25,7 @@ import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
-import edu.usu.sdl.openstorefront.storage.model.Integration;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,25 +84,25 @@ public class JobManager
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 
 		addCleanUpErrorsJob();
-		addIntegrationJobs();
+		addComponentIntegrationJobs();
 	}
 
-	private static void addIntegrationJobs() throws SchedulerException
+	private static void addComponentIntegrationJobs() throws SchedulerException
 	{
 		log.log(Level.INFO, "Adding Integration Jobs");
 
 		ServiceProxy serviceProxy = new ServiceProxy();
-		List<Integration> integrations = serviceProxy.getSystemService().getIntegrationModels(Integration.ACTIVE_STATUS);
-		for (Integration integration : integrations) {
+		List<ComponentIntegration> integrations = serviceProxy.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
+		for (ComponentIntegration integration : integrations) {
 
 			JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
-					.withIdentity("ComponentJob-" + integration.getIntegrationId(), JOB_GROUP_SYSTEM)
+					.withIdentity("ComponentJob-" + integration.getComponentId(), JOB_GROUP_SYSTEM)
 					.build();
 
 			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, integration.getComponentId());
 
 			Trigger trigger = newTrigger()
-					.withIdentity("ComponentTrigger-" + integration.getIntegrationId(), JOB_GROUP_SYSTEM)
+					.withIdentity("ComponentTrigger-" + integration.getComponentId(), JOB_GROUP_SYSTEM)
 					.startNow()
 					.withSchedule(cronSchedule("0 " + integration.getRefreshRate()))
 					.build();

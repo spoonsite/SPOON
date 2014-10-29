@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
 import java.util.logging.Logger;
 
 /**
@@ -35,7 +35,7 @@ public class JiraIntegrationHandler
 
 	private static final Logger log = Logger.getLogger(JiraIntegrationHandler.class.getName());
 
-	public JiraIntegrationHandler(IntegrationConfig integrationConfig)
+	public JiraIntegrationHandler(ComponentIntegrationConfig integrationConfig)
 	{
 		super(integrationConfig);
 	}

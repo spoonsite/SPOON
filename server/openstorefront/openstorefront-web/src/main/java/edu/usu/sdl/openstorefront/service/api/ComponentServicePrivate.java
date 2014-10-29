@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
-import edu.usu.sdl.openstorefront.storage.model.IntegrationConfig;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 
 /**
@@ -50,6 +50,6 @@ public interface ComponentServicePrivate
 	 * @param integrationConfig
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void mapComponentAttributes(Issue issue, IntegrationConfig integrationConfig);
+	public void mapComponentAttributes(Issue issue, ComponentIntegrationConfig integrationConfig);
 
 }
