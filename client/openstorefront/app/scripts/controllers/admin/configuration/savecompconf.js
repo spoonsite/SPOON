@@ -21,11 +21,12 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   $scope.component;
   $scope.issue;
   $scope.componentId;
+  $scope.jiraProject;
+  $scope.jiraIssue;
   $scope.issueId;
   $scope.config;
   $scope.typeahead;
-  $scope.overRideDefault = false;
-  $scope.componentCron = '0 0 0 * * *';
+
 
 
   $scope.getProjects = function() {
@@ -49,18 +50,20 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   }
 
   $scope.saveComponentConf = function(){
-    if (!((!$scope.componentId || $scope.componentId === -1) || (!$scope.issueId || $scope.issueId === -1))) {
+    if (!(!$scope.componentId || $scope.componentId === -1) && !(!$scope.issueId || $scope.issueId === -1) && !(!$scope.jiraIssue || !$scope.jiraProject)) {
+      console.log('$scope', $scope.componentId);
+      console.log('$scope', $scope.issueId);
+      console.log('$scope', $scope.jiraIssue);
+      console.log('$scope', $scope.jiraProject);
+
       var conf = {};
       conf.componentId = $scope.componentId;
       conf.issueId = $scope.issueId;
       console.log('$scope.componentCron', $scope.componentCron);
-      if ($scope.overRideDefault) {
-        conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
-      } else {
-        conf.refreshRate = null;
-      }
       //save the object;
       console.log('conf', conf);
+    } else {
+      triggerAlert('<i class="fa fa-warning"></i>&nbsp;You must select a project and issue type!', 'newConfig', '.modal-dialog', 6000);
     }
     return false;
   }

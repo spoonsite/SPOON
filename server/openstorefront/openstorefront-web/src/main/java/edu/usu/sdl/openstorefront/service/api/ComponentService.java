@@ -367,7 +367,7 @@ public interface ComponentService
 	/**
 	 * Saves an Component Integration config
 	 *
-	 * @param integrationCofigId
+	 * @param integrationConfigId
 	 * @param activeStatus
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)

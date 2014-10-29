@@ -32,24 +32,9 @@
       </div>
     </div>
     <div class="col-sm-12">&nbsp;</div>
-    <div class="checkbox col-sm-12" style="padding-right:0px;">
-      <label>
-        <input type="checkbox" ng-model="overRideDefault" ng-checked="overRideDefault"> Override Default Refresh Rate
-      </label>
-    </div>
-    <div ng-show="overRideDefault === true" class="col-sm-12" style="padding-left:0px; padding-right:0px; min-height:50px;">
-      <label style="padding-left:0px; padding-right:0px;" class="control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
-      <div class="" style="padding-left:0px; padding-right: 0;">
-        <cron ng-model="componentCron" id="cmpRefreshRate"></cron>
-      </div>
-    </div>
-    <div class="col-sm-12" style="padding-left:0px; padding-right:0px; min-height:50px; margin-top:10px;">
-      <button type="button" class="btn btn-default" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1) )" ng-click="forceRefresh()">Force&nbsp;Component&nbsp;Refresh&nbsp;<i class="fa fa-refresh"></i></button>
-    </div>
     <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
       <div class="">
-        <button class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1)) ">Save&nbsp;<i class="fa fa-save"></i></button>
-        <button ng-show="id" class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1)) ">Delete&nbsp;<i class="fa fa-trash-o"></i></button>
+        <button class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1) && !(!jiraIssue || !jiraProject)) ">Save&nbsp;<i class="fa fa-save"></i></button>
       </div>
     </div>
   </form>

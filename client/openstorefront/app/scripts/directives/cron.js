@@ -27,7 +27,7 @@ app.directive('cron', ['$timeout', function ($timeout) {
       var flag = false;
 
       if (!scope.ngModel) {
-        scope.ngModel = '0 0 0 * * *';
+        scope.ngModel = '0 0 * * *';
       }
 
       var cleanNgModel = function(value) {
@@ -47,7 +47,7 @@ app.directive('cron', ['$timeout', function ($timeout) {
           initial: cleanNgModel(scope.ngModel), // Initial value. default = "* * * * *"
           onChange: function() {
             // console.log('cron value', $(this).cron('value'));
-            scope.ngModel = '0 ' + $(this).cron('value');
+            scope.ngModel = $(this).cron('value');
             flag = true;
           }
         });
