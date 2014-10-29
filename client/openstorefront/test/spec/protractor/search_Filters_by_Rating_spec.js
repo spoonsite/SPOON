@@ -1,4 +1,4 @@
-describe('search_byAttribute_Rating_Reset_Filters', function() {
+describe('search_Filters_by_Rating', function() {
     // Open the main site
     browser.get(theSite, 9000);
     element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();

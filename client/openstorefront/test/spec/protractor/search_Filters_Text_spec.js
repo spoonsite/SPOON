@@ -1,7 +1,6 @@
 // FUNCTION
 function textSearch (theText, numFound) {
   // Search on ALL entries (null search term)
-  browser.ignoreSynchronization = false;
   browser.get(theSite, 15000);
   element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
 
@@ -45,7 +44,7 @@ describe('search_Filters_Text', function() {
         textSearch(theText4, numFound4);
   }, 30000);
 
-  browser.driver.sleep(5000);
+  browser.driver.sleep(12000);
 
 });
 

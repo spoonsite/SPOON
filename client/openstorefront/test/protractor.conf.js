@@ -9,7 +9,7 @@ exports.config = {
   ],
   onPrepare: function() {
     browser.driver.manage().window().setSize(1180,1180);
-    browser.driver.manage().window().setPosition(625,0);  // Get off of left corner where IDE usually is
+    browser.driver.manage().window().setPosition(550,0);  // Get off of left corner where IDE usually is
 
     // For the HTML Reporter
     require('../node_modules/jasmine-reporters');
