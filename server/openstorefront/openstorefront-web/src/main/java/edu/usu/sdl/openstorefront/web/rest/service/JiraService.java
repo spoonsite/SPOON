@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.service;
 
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
@@ -36,6 +37,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -84,6 +86,30 @@ public class JiraService
 			jiraIssueModels = jiraClient.getIssueTypesForProject(code);
 		}
 		return jiraIssueModels;
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets the possible issues from a specific project in Jira.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(String.class)
+	@Path("/getTicket/{ticketId}")
+	public Response getJiraTicket(
+			@PathParam("ticketId")
+			@RequiredParam String ticketId
+	)
+	{
+		LookupModel response = new LookupModel();
+		response.setDescription(ticketId);
+		try (JiraClient jiraClient = JiraManager.getClient()) {
+			Issue issue = jiraClient.getTicket(ticketId);
+			if (issue != null) {
+				return Response.ok(issue.getSummary()).build();
+			}
+			else {
+				return Response.ok(response).build();
+			}
+		}
 	}
 
 	@GET

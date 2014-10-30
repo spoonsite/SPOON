@@ -96,7 +96,6 @@ public class JiraClient
 
 	public Issue getTicket(String ticket)
 	{
-
 		return getRestClient().getIssueClient().getIssue(ticket).claim();
 	}
 

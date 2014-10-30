@@ -22,35 +22,60 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   $scope.issue;
   $scope.componentId;
   $scope.jiraProject;
-  $scope.jiraIssue;
   $scope.issueId;
   $scope.config;
   $scope.typeahead;
-
+  $scope.noProjects = false;
+  $scope.checkTicketTimeout;
+  $scope.ticketContents;
+  $scope.loading = 0;
 
 
   $scope.getProjects = function() {
-    Business.configurationservice.getProjects().then(function(result){
+    Business.configurationservice.getMappingTypes(true).then(function(result){
+      console.log('result', result);
+      _.each(result, function(item){
+        item.description = item.projectType + ' - ' + item.issueType;
+      });
+      $scope.noProjects = false;
       $scope.projects = result? result: [];
     }, function() {
+      $scope.noProjects = true;
       $scope.projects = [];
     });
   }
 
-  $scope.getProjects();
-
-  $scope.getIssueOptions = function(project) {
-    if (project && project.code) {
-      Business.configurationservice.getIssueOptions(project).then(function(result){
-        $scope.issueOptions = result? result: [];
-      }, function() {
-        $scope.issueOptions = [];
-      });
+  $scope.checkTicket = function(ticketId) {
+    console.log('we are checking a ticket');
+    
+    if ($scope.checkTicketTimeout) {
+      clearTimeout($scope.checkTicketTimeout);
     }
+    $scope.checkTicketTimeout = setTimeout(function() {
+      console.log('We hit the timeout');
+      $scope.loading++;
+      Business.configurationservice.checkTicket(ticketId).then(function(result){
+        $scope.ticketContents = result;
+        $scope.loading--;
+      }, function(){
+        $scope.ticketContents = null;
+        $scope.loading--;
+      })
+    }, 1000);
   }
 
+  $scope.$watch('loading', function(value){ //
+    if (value > 0){
+      $scope.$emit('$TRIGGERLOAD', 'ticketContLoad');
+    } else {
+      $scope.$emit('$TRIGGERUNLOAD', 'ticketContLoad');
+    }
+  }) 
+
+  $scope.getProjects();
+
   $scope.saveComponentConf = function(){
-    if (!(!$scope.componentId || $scope.componentId === -1) && !(!$scope.issueId || $scope.issueId === -1) && !(!$scope.jiraIssue || !$scope.jiraProject)) {
+    if (!(!$scope.componentId || $scope.componentId === -1) && !(!$scope.issueId || $scope.issueId === -1) && $scope.jiraProject) {
       console.log('$scope', $scope.componentId);
       console.log('$scope', $scope.issueId);
       console.log('$scope', $scope.jiraIssue);
@@ -58,7 +83,9 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
 
       var conf = {};
       conf.componentId = $scope.componentId;
-      conf.issueId = $scope.issueId;
+      conf.issueId = $scope.issue;
+      conf.projectType = $scope.jiraProject.projectType;
+      conf.issueType = $scope.jiraProject.issueType
       console.log('$scope.componentCron', $scope.componentCron);
       //save the object;
       console.log('conf', conf);
@@ -112,6 +139,7 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
       var id = value.split('-');
       if (id.length  === 2){
         $scope.issueId = id[1];
+        $scope.checkTicket(value);
       } else {
         $scope.issueId = -1;
       }
@@ -119,16 +147,6 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
       $scope.issueId = -1;
     }
   }, true);
-
-  $scope.$watch('jiraProject', function(value){
-    if (value && typeof value === 'object') {
-      $scope.jiraIssue = null;
-      $scope.getIssueOptions(value);
-    } 
-    $scope.jiraIssue = false;
-    $scope.issueOptions = [];
-  })
-
 
   Business.componentservice.getComponentList().then(function(result) {
     Business.typeahead(result, null).then(function(value){
@@ -148,4 +166,12 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   });
 
 
+}]);
+
+
+// quick custom filter to adjust display of options on the project select list.
+app.filter('formatOption', [function(){
+  return function( option ){
+    return option.projectType + ' (' + option.issueType + ')';
+  };
 }]);
