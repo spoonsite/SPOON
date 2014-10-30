@@ -194,7 +194,7 @@ Logs messages will show in the "catalina" log file.  /usr/local/tomcat/latest/lo
 
 ###Log Level Definitions
 	SEVERE - Something didn't run correctly or as expected
-	WARN -Bahavior made not be desired, but the system was able to continue
+	WARN -Bahavior may not be desired, but the system was able to continue
 	INFO -System Admin messages
 	FINE -Developer messages 
 	FINER -Detailed Developer messages
