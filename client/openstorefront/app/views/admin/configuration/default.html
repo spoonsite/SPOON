@@ -51,6 +51,7 @@
               There were no projects in your associated Jira connection.
             </div>
             <div ng-show="!noProjects">
+              <h3>Add/Edit a mapping</h3>
               <div ng-show="projects.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
                 <label style="padding-left:0px; padding-right:0px;" class="control-label" for="projectSelect">Select a Jira Project:&nbsp;</label>
                 <div class="" style="padding: 0;">
@@ -123,37 +124,35 @@
         </div>
         <tabset>
           <tab heading="All Jobs">
-            <div ng-show="allJobs.length">{{allJobs}}
-              <div ng-show="xRefTypes.length > 0">
-                <div ng-show="type === 'jira'">
-                  <div class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
-                    <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select a Mapped Attribute:&nbsp;</label>
-                    <select id="componentConfMap" class="form-control" style="min-width:350px;" ng-model="selectedMapping" ng-options="type as type.mappingName for type in xRefTypes"></select>
+            <div ng-show="xRefTypes.length > 0">
+              <div ng-show="type === 'jira'">
+                <div class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
+                  <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Filter by Component name:&nbsp;</label>
+                  <div class="" style="padding: 0;">
+                    <input type="text" class="form-control searchBar" id="componentSearch" ng-model="componentSearch" ng-options="key.name as key.name for key in typeahead" placeholder="Filter by Component Name" bs-typeahead>
                   </div>
-                  <div class="form-group form-group-md col-md-12" style="margin:0px;">
-                    <table ng-show="configurations" class="table table-striped table-bordered">
-                      <tr>
-                        <th>Component</th>
-                        <th>Issue Number</th>
-                        <th>Status</th>
-                        <th>Refresh/Edit/Delete/</th>
-                      </tr>
-                      <tr ng-repeat="config in configurations" ng-class="config.status === 'error'? 'danger': ''">
-                        <td>{{config.componentName}}</td>
-                        <td>{{config.issueNumber}}</td>
-                        <td>{{config.status}}</td>
-                        <td style="padding:0px;">&nbsp;<button class="btn btn-default" ng-click="forceRefresh(config)">Refresh&nbsp;<i class="fa fa-refresh"></i></button></td>
-                      </tr>
-                    </table>
-                  </div>
+                </div>
+                <div class="form-group form-group-md col-md-12" style="margin:0px;">
+                  <table ng-show="configurations" class="table table-striped table-bordered">
+                    <tr>
+                      <th>Component</th>
+                      <th>Status</th>
+                      <th>Refresh/Edit/Delete/</th>
+                    </tr>
+                    <tr ng-repeat="config in configurations | filter: {componentName: componentSearch}" ng-class="config.status === 'error'? 'danger': ''">
+                      <td>{{config.componentName}}</td>
+                      <td>{{config.status}}</td>
+                      <td style="padding:0px;">&nbsp;<button class="btn btn-default" ng-click="setupModal(config); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
+                    </tr>
+                  </table>
                 </div>
               </div>
             </div>
-            <div ng-show="!allJobs.length">
+            <div ng-show="!xRefTypes.length">
               There are no jobs saved in the Storefront Configuration.
             </div>
           </tab>
-          <tab heading="Job By Component">
+          <tab heading="Component Job Configurations">
             <div class="checkbox col-sm-12" style="padding-right:0px;">
               <label>
                 <input type="checkbox" ng-model="overRideDefault" ng-checked="overRideDefault"> Override Default Refresh Rate (this overrides the refresh rate for all configurations for this component)
@@ -166,35 +165,6 @@
               </div>
             </div>
             <form class="form-horizontal" role="form">
-              <div ng-show="!xRefTypes || xRefTypes.length === 0" class="form-group form-group-md col-md-12" style=" min-height: 50px;">
-                <div class="warning"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;You need to add a mapping before you can link components to an issue number.</div>
-              </div>
-              <div ng-show="xRefTypes.length > 0">
-                <div ng-show="type === 'jira'">
-                  <div class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
-                    <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select a Component:&nbsp;</label>
-                    <div class="" style="padding: 0;">
-                      <input type="text" class="form-control searchBar" id="componentSearch" ng-model="componentSearch" ng-options="key.name as key.name for key in typeahead" placeholder="Filter by Component Name" bs-typeahead>
-                    </div>
-                  </div>
-                  <div class="form-group form-group-md col-md-12" style="margin:0px;">
-                    <table ng-show="configurations" class="table table-striped table-bordered">
-                      <tr>
-                        <th>Component</th>
-                        <th>Issue Number</th>
-                        <th>Status</th>
-                        <th>Refresh/Edit/Delete/</th>
-                      </tr>
-                      <tr ng-repeat="config in configurations | filter: {componentName: componentSearch}" ng-class="config.status === 'error'? 'danger': ''">
-                        <td>{{config.componentName}}</td>
-                        <td>{{config.issueNumber}}</td>
-                        <td>{{config.status}}</td>
-                        <td style="padding:0px;">&nbsp;<button class="btn btn-default" ng-click="setupModal(config); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-              </div>
             </form>
           </tab>
         </tabset>

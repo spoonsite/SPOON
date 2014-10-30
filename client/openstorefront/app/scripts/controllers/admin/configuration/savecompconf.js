@@ -22,7 +22,6 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   $scope.issue;
   $scope.componentId;
   $scope.jiraProject;
-  $scope.jiraIssue;
   $scope.issueId;
   $scope.config;
   $scope.typeahead;
@@ -84,7 +83,9 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
 
       var conf = {};
       conf.componentId = $scope.componentId;
-      conf.issueId = $scope.issueId;
+      conf.issueId = $scope.issue;
+      conf.projectType = $scope.jiraProject.projectType;
+      conf.issueType = $scope.jiraProject.issueType
       console.log('$scope.componentCron', $scope.componentCron);
       //save the object;
       console.log('conf', conf);
