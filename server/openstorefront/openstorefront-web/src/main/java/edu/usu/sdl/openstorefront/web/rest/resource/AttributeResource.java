@@ -46,7 +46,11 @@ import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -461,7 +465,6 @@ public class AttributeResource
 			model.setAttributeName(attType.getDescription());
 			model.setAttributeType(type.getAttributeType());
 			model.setFieldName(type.getFieldName());
-			model.setFieldKey(type.getFieldKey());
 			model.setFieldId(type.getFieldId());
 			model.setIssueType(type.getIssueType());
 			model.setProjectType(type.getProjectType());
@@ -475,6 +478,29 @@ public class AttributeResource
 		}
 
 		return attributeXrefMapViews;
+	}
+	
+	@GET
+	@APIDescription("Gets the list of mapping for attributes to fields")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeXrefMapView.class)
+	@Path("/attributexreftypes/detail/distinct")
+	public List<AttributeXrefMapView> getDistinctProjectMappings()
+	{
+		Set<AttributeXrefMapView> attributeXrefMapViews = new HashSet<>();
+
+		AttributeXRefType example = new AttributeXRefType();
+		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+
+		for (AttributeXRefType type : types) {
+			AttributeXrefMapView model = new AttributeXrefMapView();
+			model.setIssueType(type.getIssueType());
+			model.setProjectType(type.getProjectType());
+			attributeXrefMapViews.add(model);
+		}
+
+		return new ArrayList<AttributeXrefMapView>(attributeXrefMapViews);
 	}
 
 	@GET
@@ -498,7 +524,6 @@ public class AttributeResource
 			model.setAttributeName(attType.getDescription());
 			model.setAttributeType(attributeXRefType.getAttributeType());
 			model.setFieldName(attributeXRefType.getFieldName());
-			model.setFieldKey(attributeXRefType.getFieldKey());
 			model.setFieldId(attributeXRefType.getFieldId());
 			model.setIssueType(attributeXRefType.getIssueType());
 			model.setProjectType(attributeXRefType.getProjectType());

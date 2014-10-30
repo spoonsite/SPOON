@@ -46,10 +46,6 @@ public class AttributeXRefType
 	@ConsumeField
 	private String fieldId;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@ConsumeField
-	private String fieldKey;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
@@ -87,16 +83,6 @@ public class AttributeXRefType
 	public void setFieldName(String fieldName)
 	{
 		this.fieldName = fieldName;
-	}
-
-	public String getFieldKey()
-	{
-		return fieldKey;
-	}
-
-	public void setFieldKey(String fieldKey)
-	{
-		this.fieldKey = fieldKey;
 	}
 
 	public String getProjectType()

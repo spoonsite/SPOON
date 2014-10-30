@@ -254,7 +254,7 @@ $scope.saveMappingConf = function(){
         xRefMaps.push({
           'attributeType': type,
           'localCode': localCode.attributeCodePk.attributeCode,
-          'externalCode': externalCode.value
+          'externalCode': externalCode.label
         });
       });
     });
@@ -263,7 +263,6 @@ $scope.saveMappingConf = function(){
       'attributeType': type,
       'fieldName': $scope.watch.jiraField.name,
       'fieldId': $scope.watch.jiraField.id,
-      'fieldKey': $scope.watch.jiraField.key,
       'projectType': $scope.jira.jiraProject.code,
       'issueType': $scope.jira.jiraIssue.name,
       'integrationType': 'JIRA'
@@ -479,3 +478,4 @@ $scope.saveGlobalConf = function(){
   })  
 
 }]);
+

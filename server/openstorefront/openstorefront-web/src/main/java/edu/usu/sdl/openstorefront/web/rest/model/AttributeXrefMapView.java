@@ -18,6 +18,9 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.AttributeXRefMap;
 import java.util.List;
+import java.util.Objects;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  *
@@ -28,7 +31,6 @@ public class AttributeXrefMapView
 
 	private String projectType;
 	private String issueType;
-	private String fieldKey;
 	private String attributeType;
 	private String fieldName;
 	private String fieldId;
@@ -42,14 +44,52 @@ public class AttributeXrefMapView
 
 	}
 
-	public String getFieldKey()
+	@Override
+	public int hashCode()
 	{
-		return fieldKey;
+		int hash = 3;
+		hash = 47 * hash + Objects.hashCode(this.projectType);
+		hash = 47 * hash + Objects.hashCode(this.issueType);
+		hash = 47 * hash + Objects.hashCode(this.attributeType);
+		hash = 47 * hash + Objects.hashCode(this.fieldName);
+		hash = 47 * hash + Objects.hashCode(this.fieldId);
+		hash = 47 * hash + Objects.hashCode(this.attributeName);
+		hash = 47 * hash + Objects.hashCode(this.mapping);
+		return hash;
 	}
 
-	public void setFieldKey(String fieldKey)
+	@Override
+	public boolean equals(Object obj)
 	{
-		this.fieldKey = fieldKey;
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final AttributeXrefMapView other = (AttributeXrefMapView) obj;
+		if (!Objects.equals(this.projectType, other.projectType)) {
+			return false;
+		}
+		if (!Objects.equals(this.issueType, other.issueType)) {
+			return false;
+		}
+		if (!Objects.equals(this.attributeType, other.attributeType)) {
+			return false;
+		}
+		if (!Objects.equals(this.fieldName, other.fieldName)) {
+			return false;
+		}
+		if (!Objects.equals(this.fieldId, other.fieldId)) {
+			return false;
+		}
+		if (!Objects.equals(this.attributeName, other.attributeName)) {
+			return false;
+		}
+		if (!Objects.equals(this.mapping, other.mapping)) {
+			return false;
+		}
+		return true;
 	}
 
 	public String getProjectType()

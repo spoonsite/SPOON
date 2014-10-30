@@ -277,7 +277,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         deferred.reject(false);
       }
     }).error(function(data, status, headers, config){
-
       if (status !== 201) {
         deferred.reject(false);
       } else {
@@ -287,9 +286,13 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     return deferred.promise;
   }
 
-  service.getMappingTypes = function() {
+  service.getMappingTypes = function(distinct) {
     var deferred = $q.defer();
-    var url = 'api/v1/resource/attributes/attributexreftypes/detail';
+    if (distinct) {
+      var url = 'api/v1/resource/attributes/attributexreftypes/detail/distinct';
+    } else {
+      var url = 'api/v1/resource/attributes/attributexreftypes/detail';
+    }
     var value = null; /*checkExpire('previousMappings', minute * 1440);*/
     if (value) {
       deferred.resolve(value);
@@ -320,6 +323,30 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (isNotRequestError(data)) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+
+  service.checkTicket = function(ticketId) {
+    var deferred = $q.defer();
+    if (ticketId) {
+      var url = 'api/v1/service/jira/getTicket/'+ticketId;
+      $http({
+        'method': 'GET',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && data.response !== 'false' && isNotRequestError(data) ) {
           console.log('data', data);
           deferred.resolve(data);
         } else {
