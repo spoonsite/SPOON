@@ -34,6 +34,7 @@ public class ComponentIntegrationView
 	private String status;
 	private Date lastStartTime;
 	private Date lastEndTime;
+	private String activeStatus;
 
 	public ComponentIntegrationView()
 	{
@@ -52,6 +53,7 @@ public class ComponentIntegrationView
 		view.setStatus(integration.getStatus());
 		view.setLastEndTime(integration.getLastEndTime());
 		view.setLastStartTime(integration.getLastStartTime());
+		view.setActiveStatus(integration.getActiveStatus());
 
 		return view;
 	}
@@ -68,6 +70,7 @@ public class ComponentIntegrationView
 		view.setStatus(integration.getStatus());
 		view.setLastEndTime(integration.getLastEndTime());
 		view.setLastStartTime(integration.getLastStartTime());
+		view.setActiveStatus(integration.getActiveStatus());
 
 		return view;
 	}
@@ -142,6 +145,22 @@ public class ComponentIntegrationView
 	public void setLastEndTime(Date lastEndTime)
 	{
 		this.lastEndTime = lastEndTime;
+	}
+
+	/**
+	 * @return the activeStatus
+	 */
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	/**
+	 * @param activeStatus the activeStatus to set
+	 */
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }

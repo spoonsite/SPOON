@@ -28,7 +28,7 @@
           <td>{{config.issueType}}</td>
           <td>{{config.issueNumber}}</td>
           <td>{{calcStatus(config.status)}}</td>
-          <td style="padding:0px;">&nbsp;<button class="btn btn-primary" ng-click="refreshJob(config.componentId)">Run Configuration&nbsp;<i class="fa fa-refresh"></i></button>&nbsp;<button class="btn btn-default" ng-click="setupModal(config); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-warning" ng-click="deactivateConfig(config.componentId)">Deactivate&nbsp;<i class="fa fa-trash-o"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config.componentId)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
+          <td style="padding:0px;">&nbsp;<button class="btn btn-primary" ng-click="refreshJob(config.componentId)">Run Configuration&nbsp;<i class="fa fa-refresh"></i></button>&nbsp;<button class="btn btn-default" ng-click="setupModal(config); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button ng-show="config.activeStatus === 'A'" class="btn btn-warning" ng-click="deactivateConfig(config.componentId, config.integrationConfigId)">Deactivate&nbsp;<i class="fa fa-ban"></i></button><button ng-show="config.activeStatus !== 'A'" class="btn btn-warning" ng-click="activateConfig(config.componentId, config.integrationConfigId)">Activate&nbsp;<i class="glyphicon glyphicon-off"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config.componentId, config.integrationConfigId)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
         </tr>
       </table>
     </div>
