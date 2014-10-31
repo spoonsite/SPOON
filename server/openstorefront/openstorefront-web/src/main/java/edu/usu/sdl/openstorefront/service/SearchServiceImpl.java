@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -110,7 +111,7 @@ public class SearchServiceImpl
 		} else {
 			myQueryString = SolrManager.SOLR_ALL_QUERY;
 		}
-		log.fine(myQueryString);
+		log.log(Level.FINER, myQueryString);
 
 		// execute the searchComponent method and bring back from solr a list array
 		List<SolrComponentModel> resultsList = new ArrayList<>();
