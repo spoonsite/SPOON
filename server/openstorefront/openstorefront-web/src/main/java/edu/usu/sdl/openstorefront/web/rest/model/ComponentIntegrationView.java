@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
+import java.util.Date;
 
 /**
  *
@@ -29,16 +30,17 @@ public class ComponentIntegrationView
 
 	private String componentId;
 	private String componentName;
-	private String issueNumber;
-	private String overRideRefreshRate;
+	private String refreshRate;
 	private String status;
+	private Date lastStartTime;
+	private Date lastEndTime;
 
 	public ComponentIntegrationView()
 	{
 
 	}
 
-	public ComponentIntegrationView toView(ComponentIntegration integration, ComponentIntegrationConfig integrationConfig)
+	public static ComponentIntegrationView toView(ComponentIntegration integration, ComponentIntegrationConfig integrationConfig)
 	{
 		ServiceProxy proxy = new ServiceProxy();
 		ComponentIntegrationView view = new ComponentIntegrationView();
@@ -46,21 +48,28 @@ public class ComponentIntegrationView
 
 		view.setComponentName(temp.getName());
 		view.setComponentId(integration.getComponentId());
-		view.setOverRideRefreshRate(integration.getRefreshRate());
-		view.setIssueNumber(integrationConfig.getIssueNumber());
+		view.setRefreshRate(integration.getRefreshRate());
 		view.setStatus(integration.getStatus());
+		view.setLastEndTime(integration.getLastEndTime());
+		view.setLastStartTime(integration.getLastStartTime());
 
 		return view;
 	}
-
-	public String getIssueNumber()
+	
+	public static ComponentIntegrationView toView(ComponentIntegration integration)
 	{
-		return issueNumber;
-	}
+		ServiceProxy proxy = new ServiceProxy();
+		ComponentIntegrationView view = new ComponentIntegrationView();
+		Component temp = proxy.getPersistenceService().findById(Component.class, integration.getComponentId());
 
-	public void setIssueNumber(String issueNumber)
-	{
-		this.issueNumber = issueNumber;
+		view.setComponentName(temp.getName());
+		view.setComponentId(integration.getComponentId());
+		view.setRefreshRate(integration.getRefreshRate());
+		view.setStatus(integration.getStatus());
+		view.setLastEndTime(integration.getLastEndTime());
+		view.setLastStartTime(integration.getLastStartTime());
+
+		return view;
 	}
 
 	public String getStatus()
@@ -93,14 +102,46 @@ public class ComponentIntegrationView
 		this.componentName = componentName;
 	}
 
-	public String getOverRideRefreshRate()
+	public String getRefreshRate()
 	{
-		return overRideRefreshRate;
+		return refreshRate;
 	}
 
-	public void setOverRideRefreshRate(String overRideRefreshRate)
+	public void setRefreshRate(String refreshRate)
 	{
-		this.overRideRefreshRate = overRideRefreshRate;
+		this.refreshRate = refreshRate;
+	}
+
+	/**
+	 * @return the lastStartTime
+	 */
+	public Date getLastStartTime()
+	{
+		return lastStartTime;
+	}
+
+	/**
+	 * @param lastStartTime the lastStartTime to set
+	 */
+	public void setLastStartTime(Date lastStartTime)
+	{
+		this.lastStartTime = lastStartTime;
+	}
+
+	/**
+	 * @return the lastEndTime
+	 */
+	public Date getLastEndTime()
+	{
+		return lastEndTime;
+	}
+
+	/**
+	 * @param lastEndTime the lastEndTime to set
+	 */
+	public void setLastEndTime(Date lastEndTime)
+	{
+		this.lastEndTime = lastEndTime;
 	}
 
 }

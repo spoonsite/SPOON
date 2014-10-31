@@ -1634,6 +1634,7 @@ public class ComponentServiceImpl
 		} else {
 			integrationConfig.setIntegrationConfigId(persistenceService.generateId());
 			integrationConfig.populateBaseCreateFields();
+			integrationConfig.setStatus(RunStatus.COMPLETE);
 			persistenceService.persist(integrationConfig);
 		}
 		return integrationConfig;

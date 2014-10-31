@@ -29,21 +29,9 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   $scope.checkTicketTimeout;
   $scope.ticketContents;
   $scope.loading = 0;
+  $scope.integrationConfs;
 
 
-  $scope.getProjects = function() {
-    Business.configurationservice.getMappingTypes(true).then(function(result){
-      console.log('result', result);
-      _.each(result, function(item){
-        item.description = item.projectType + ' - ' + item.issueType;
-      });
-      $scope.noProjects = false;
-      $scope.projects = result? result: [];
-    }, function() {
-      $scope.noProjects = true;
-      $scope.projects = [];
-    });
-  }
 
   $scope.checkTicket = function(ticketId) {
     console.log('we are checking a ticket');
@@ -72,23 +60,31 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
     }
   }) 
 
-  $scope.getProjects();
 
   $scope.saveComponentConf = function(){
     if (!(!$scope.componentId || $scope.componentId === -1) && !(!$scope.issueId || $scope.issueId === -1) && $scope.jiraProject) {
-      console.log('$scope', $scope.componentId);
-      console.log('$scope', $scope.issueId);
-      console.log('$scope', $scope.jiraIssue);
-      console.log('$scope', $scope.jiraProject);
 
-      var conf = {};
-      conf.componentId = $scope.componentId;
-      conf.issueId = $scope.issue;
+      var conf = $scope.conf? $scope.conf: {};
+      if ($scope.integrationConfigId) {
+        conf.integrationConfigId = $scope.integrationConfigId;
+      }
+      conf.issueNumber = $scope.issue;
       conf.projectType = $scope.jiraProject.projectType;
       conf.issueType = $scope.jiraProject.issueType
-      console.log('$scope.componentCron', $scope.componentCron);
-      //save the object;
+      conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
+
       console.log('conf', conf);
+
+      Business.configurationservice.saveIntegrationConf($scope.componentId, conf).then(function(result){
+        console.log('conf result', result);
+        console.log('conf', conf);
+        $scope.$emit('$TRIGGEREVENT', '$UPDATECONFFORID', $scope.componentId);
+        triggerAlert('The configuration was saved', 'saveIntegrationConf','.modal-dialog', 5000);
+      }, function(result){
+        triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
+        console.log('Failed', result);
+        
+      });
     } else {
       triggerAlert('<i class="fa fa-warning"></i>&nbsp;You must select a project and issue type!', 'newConfig', '.modal-dialog', 6000);
     }
@@ -125,10 +121,16 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
         if ($scope.config.issueNumber){
           $scope.issue = $scope.config.issueNumber;
         }
-        if ($scope.config.overRideRefreshRate) {
-          $scope.overRideDefault = true;          
-          $scope.componentCron = $scope.config.overRideRefreshRate;
+        if ($scope.config.integrationType){
+          $scope.integrationType = $scope.config.integrationType;
         }
+        if ($scope.config.integrationConfigId){
+          $scope.integrationConfigId = $scope.config.integrationConfigId;
+        }
+        if ($scope.config.projectType && $scope.config.issueType){
+          $scope.jiraProject = _.find($scope.projects, {'projectType': $scope.config.projectType, 'issueType': $scope.config.issueType});
+        }
+        $scope.conf = $scope.config;
       }
     });
   };
@@ -156,12 +158,26 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
       } else {
         $scope.typeahead = null;
       }
-      $scope.ready();
-      $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
+      Business.configurationservice.getMappingTypes(true).then(function(result){
+        console.log('result', result);
+        _.each(result, function(item){
+          item.description = item.projectType + ' - ' + item.issueType;
+        });
+        $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
+        $scope.noProjects = false;
+        $scope.projects = result? result: [];
+        $scope.ready();
+      }, function() {
+        $scope.noProjects = true;
+        $scope.projects = [];
+        $scope.ready();
+      });
     }, function() {
+      $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
       $scope.ready();
     });
   }, function() {
+    $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
     $scope.ready();
   });
 
