@@ -32,8 +32,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -68,7 +70,6 @@ public class JobManager
 			scheduler = factory.getScheduler();
 			initSystemJobs();
 			scheduler.start();
-
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Failed to init quartz.", ex);
 		}
@@ -95,7 +96,7 @@ public class JobManager
 		List<ComponentIntegration> integrations = serviceProxy.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
 		for (ComponentIntegration integration : integrations) {
 
-			JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
 					.withIdentity("ComponentJob-" + integration.getComponentId(), JOB_GROUP_SYSTEM)
 					.build();
 
@@ -108,6 +109,22 @@ public class JobManager
 					.build();
 
 			scheduler.scheduleJob(job, trigger);
+		}
+	}
+
+	public static void runComponentIntegrationNow(String componentId, String integrationConfigId)
+	{
+		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
+		try {
+			if (StringUtils.isNotBlank(integrationConfigId)) {
+				JobDataMap jobDataMap = new JobDataMap();
+				jobDataMap.put(IntegrationJob.CONFIG_ID, integrationConfigId);
+				scheduler.triggerJob(jobKey, jobDataMap);
+			} else {
+				scheduler.triggerJob(jobKey);
+			}
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable run Job.", ex);
 		}
 	}
 
