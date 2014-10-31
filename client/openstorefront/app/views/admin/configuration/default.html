@@ -3,216 +3,175 @@
     <tab heading="Global Configuratoin">
       <form class="form-horizontal" ng-submit="saveGlobalConf()" role="form">
         <div class="form-group form-group-md col-md-12" style="margin:0px;">
-          <!-- <div class="col-md-6 pull-right"  style="padding-left:0px; padding-right:0px; min-height: 50px;"> -->
-          <div class="col-md-4 pull-right"  style="padding-left:0px; padding-right:0px; min-height: 50px;">
-            <!-- <div class="col-md-offset-2" style="padding-left:0px; padding-right:0px;"> -->
-            <div class="" style="padding-left:0px; padding-right:0px;">
-              <button class="btn btn-default">Refresh&nbsp;All&nbsp;Jira&nbsp;<i class="fa fa-refresh"></i></button>
+          <div class="form-group form-group-md col-md-8" style="margin:0px; margin-top: 20px; padding:0px;">
+            <label style="padding-left:0px; padding-right:0px; text-align:left;" class="col-md-12 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
+            <div class="col-md-12" style="padding: 0;">
+              <cron ng-model="global_cron" id="glbRefreshRate"></cron>
             </div>
           </div>
-      <!-- <div class="form-group form-group-md col-md-6" style=" min-height: 50px;">
-        <label style="padding-left:0px; padding-right:0px;" class="col-md-4 control-label" for="userna,e">Username:&nbsp;</label>
-        <div class="col-md-8" style="padding: 0;">
-          <input class="form-control" type="text" id="username" ng-model="username" placeholder="Storefront User Username">
         </div>
-      </div> -->
-      <div class="form-group form-group-md col-md-8" style="margin:0px;">
-        <label style="padding-left:0px; padding-right:0px;" class="col-md-3 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
-        <div class="col-md-9" style="padding: 0;">
-          <cron ng-model="global_cron" id="glbRefreshRate"></cron>
-        </div>
-      </div>
-    </div>
-    <!-- <div class="form-group form-group-md col-md-12" style="">
-      <div class="form-group form-group-md col-md-6" style=" min-height: 50px;">
-        <label style="padding-left:0px; padding-right:0px;" class="col-md-4 control-label" for="password">Password:&nbsp;</label>
-        <div class="col-md-8" style="padding: 0;">
-          <input class="form-control" type="text" id="password" ng-model="password" placeholder="Storefront User Password">
-        </div>
-      </div>
-    </div> -->
-    <div class="form-group form-group-md col-md-12" style="margin:0px; margin-top: 10px; ">
-      <div class="">
-        <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
-      </div>
-    </div>
-  </form>
-</tab>
-<tab heading="Jira Configuraiton">
-  <div class="col-md-12" style="padding:0px;">
-    <hr>
-    <h3 style="padding-left: 15px; padding-right: 15px;">Jira configuration</h3>
-    <form class="form-horizontal" ng-submit="saveMappingConf()" role="form">
-      <div style="display: inline-block; position:relative; width: 100%; min-height: 120px; padding-left: 15px; padding-right: 15px;">
-        <loader trigger="JiraConfigLoad"></loader>
-        <div ng-show="previousMappings.length" class="form-group form-group-md col-md-12" style="margin:0px;">
-          <label >Previously made Jira Mappings</label>
-          <table class="table table-striped table-bordered">
-            <tr>
-              <th>Project Id</th>
-              <th>Issue Type</th>
-              <th>Attribute</th>
-              <th>Custom Field</th>
-              <th>Edit/Delete</th>
-            </tr>
-            <tr ng-repeat="mapping in previousMappings">
-              <td>{{mapping.projectType}}</td>
-              <td>{{mapping.issueType}}</td>
-              <td>{{mapping.attributeName}}</td>
-              <td>{{mapping.fieldName}}</td>
-              <td style="padding:0px;">&nbsp;<button ng-disable="noProjects" class="btn btn-default" ng-click="setEdit(mapping);">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
-            </tr>
-          </table>
-        </div>
-        <!-- Show the two cross reference tables -->
-        <div ng-show="noProjects">
-          There were no projects in your associated Jira connection.
-        </div>
-        <div ng-show="!noProjects">
-          <div ng-show="projects.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
-            <label style="padding-left:0px; padding-right:0px;" class="control-label" for="projectSelect">Select a Jira Project:&nbsp;</label>
-            <div class="" style="padding: 0;">
-              <select ng-model="jiraProject" class="form-control" style="min-width: 350px;" id="projectSelect" ng-options="option as option.description for option in projects"></select>
-            </div>
+        <div class="form-group form-group-md col-md-12" style="margin:0px; margin-top: 10px; ">
+          <div class="" style="padding-left:0px; padding-right:0px;">
+            <button class="btn btn-default">Refresh&nbsp;All&nbsp;Jira&nbsp;<i class="fa fa-refresh"></i></button>
           </div>
-          <div ng-show="issueOptions.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
-            <label style="padding-left:0px; padding-right:0px;" class="control-label" for="issueSelect">Select a Jira Project Issue Type:&nbsp;</label>
-            <div class="" style="padding: 0;">
-              <select ng-model="jiraIssue" class="form-control" style="min-width: 350px;" id="issueSelect" ng-options="option as option.name for option in issueOptions"></select>
-            </div>
+          <br>
+          <div class="">
+            <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
           </div>
-          <div ng-show="jiraIssue" class="col-md-12" style="padding:0px;">
-            <h4 style="margin-top:25px; margin-bottom: 0px;">Map an Attribute to the custom field in Jira</h4>
-            <div style="display: inline-block; width: 100%;">
-              <div ng-show="storeFields.length && fields.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
-                <label style="padding-left:0px; padding-right:0px;" class="control-label" for="storeFieldSelect">Select an Attribute Type:&nbsp;</label>
+        </div>
+      </form>
+    </tab>
+    <tab heading="Jira Configuraiton">
+      <div class="col-md-12" style="padding:0px;">
+        <h3 style="padding-left: 15px; padding-right: 15px;">Edit Mappings</h3>
+        <form class="form-horizontal" ng-submit="saveMappingConf()" role="form">
+          <div style="display: inline-block; position:relative; width: 100%; min-height: 120px;">
+            <loader trigger="JiraConfigLoad"></loader>
+            <div ng-show="previousMappings.length" class="form-group form-group-md col-md-12" style="margin:0px;">
+              <label >Previously made Jira Mappings</label>
+              <table class="table table-striped table-bordered">
+                <tr>
+                  <th>Project Id</th>
+                  <th>Issue Type</th>
+                  <th>Attribute</th>
+                  <th>Custom Field</th>
+                  <th>Edit/Delete</th>
+                </tr>
+                <tr ng-repeat="mapping in previousMappings">
+                  <td>{{mapping.projectType}}</td>
+                  <td>{{mapping.issueType}}</td>
+                  <td>{{mapping.attributeName}}</td>
+                  <td>{{mapping.fieldName}}</td>
+                  <td style="padding:0px;">&nbsp;<button ng-disable="noProjects" class="btn btn-default" ng-click="setEdit(mapping);">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteMapping(mapping)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
+                </tr>
+              </table>
+            </div>
+            <!-- Show the two cross reference tables -->
+            <div ng-show="noProjects">
+              There were no projects in your associated Jira connection.
+            </div>
+            <div ng-show="!noProjects">
+              <h3>Add/Edit a mapping</h3>
+              <div ng-show="projects.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
+                <label style="padding-left:0px; padding-right:0px;" class="control-label" for="projectSelect">Select a Jira Project:&nbsp;</label>
                 <div class="" style="padding: 0;">
-                  <select ng-model="watch.storeField" class="form-control" style="min-width: 350px;" id="storeFieldSelect" ng-options="option as option.description for option in storeFields"></select>
+                  <select ng-model="jira.jiraProject" class="form-control" style="min-width: 350px;" id="projectSelect" ng-options="option as option.description for option in projects"></select>
                 </div>
               </div>
-              <div ng-show="watch.storeField" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
-                <label style="padding-left:0px; padding-right:0px;" class="control-label" for="fieldSelect">Select the field:&nbsp;</label>
+              <div ng-show="issueOptions.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
+                <label style="padding-left:0px; padding-right:0px;" class="control-label" for="issueSelect">Select a Jira Project Issue Type:&nbsp;</label>
                 <div class="" style="padding: 0;">
-                  <select ng-model="watch.jiraField" class="form-control" style="min-width:350px;" id="fieldSelect" ng-options="option as option.name for option in fields"></select>
+                  <select ng-model="jira.jiraIssue" class="form-control" style="min-width: 350px;" id="issueSelect" ng-options="option as option.name for option in issueOptions"></select>
                 </div>
               </div>
-            </div>
-          </div>
-          <div ng-show="jiraIssue" class="col-md-12" style="padding:0px;">
-            <h4 style="margin-top:25px; margin-bottom: 0px;">Select Jira Codes to associate with the storefront attribute code</h4>
-            <div ng-show="storeCodes.length && watch.jiraField" style="padding: 0px; margin-right: 15px; margin-left: 15px;" class="col-md-8">
-              <strong style="height:20px;">Storefront Codes</strong>
-              <div style="height: 280px; overflow:auto; border: 1px solid darkgray; background: dimgray; ">
-                <div ng-repeat="code in storeCodes" style="display:flex; ">
-                  <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; padding-left:5px; padding-right:5px;">
-                    <label style="padding-left:0px; padding-right:0px; width: 100%; text-align: left; color: #F2D42E" class="control-label">{{code.label}}:&nbsp;</label>
-                    <select ng-model="code.toRemove" ng-options="item.label for item in code.selected" class="form-control" style="width: calc(100% - 100px); display:inline-block;" size="2" multiple></select>
-                    <div style="display: inline-block; margin: 5px;">
-                      <button ng-click="moveLeft(code)" type="button" class="btn btn-small btn-default" style="">&#60;&#60;</button>
-                      <button ng-click="moveRight(code)" type="button" class="btn btn-small btn-default" style="">&#62;&#62;</button>
+              <div ng-show="jira.jiraIssue" class="col-md-12" style="padding:0px;">
+                <h4 style="margin-top:25px; margin-bottom: 0px;  padding-left: 15px; padding-right: 15px;">Map an Attribute to the custom field in Jira</h4>
+                <div style="display: inline-block; width: 100%;">
+                  <div ng-show="storeFields.length && fields.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
+                    <label style="padding-left:0px; padding-right:0px;" class="control-label" for="storeFieldSelect">Select an Attribute Type:&nbsp;</label>
+                    <div class="" style="padding: 0;">
+                      <select ng-model="watch.storeField" class="form-control" style="min-width: 350px;" id="storeFieldSelect" ng-options="option as option.description for option in storeFields"></select>
+                    </div>
+                  </div>
+                  <div ng-show="watch.storeField" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
+                    <label style="padding-left:0px; padding-right:0px;" class="control-label" for="fieldSelect">Select the field:&nbsp;</label>
+                    <div class="" style="padding: 0;">
+                      <select ng-model="watch.jiraField" class="form-control" style="min-width:350px;" id="fieldSelect" ng-options="option as option.name for option in fields"></select>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div ng-show="storeCodes.length && watch.jiraField" style="height:300px; margin-left: -15px; margin-right: -15px;" class="col-md-4">
-              <strong style="height:20px;">Jira Codes</strong>
-              <select ng-model="jiraCodes.masterSelect" ng-options="item.label for item in masterSelected" multiple style="height: 280px" class="form-control"></select>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="form-group form-group-md col-md-12" style="margin:0px; margin-top: 10px; padding-left: 15px; padding-right: 15px; margin-bottom: 20px;">
-        <div class="">
-          <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
-        </div>
-      </div>
-    </form>
-  </div>
-</tab>
-<tab heading="Component Configuration">
-  <div class="col-md-12" style=" margin-bottom: 20px;">
-    <hr>
-    <h3>Component configuration</h3>
-    <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; margin-bottom: 10px;">
-      <label for="componentConfType" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select an integration type:&nbsp;</label>
-      <select id="componentConfType" class="form-control" style="min-width:350px; width: auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
-    </div>
-    <div class="col-md-12" style="padding: 0; min-height: 50px;">
-      <button class="btn btn-default" ng-click="sendToModal(selectedMapping)">Add New Configuration&nbsp;</button>
-    </div>
-    <tabset>
-      <tab heading="All Jobs">
-        <div ng-show="allJobs.length">{{allJobs}}
-          <div ng-show="xRefTypes.length > 0">
-            <div ng-show="type === 'jira'">
-              <div class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
-                <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select a Mapped Attribute:&nbsp;</label>
-                <select id="componentConfMap" class="form-control" style="min-width:350px;" ng-model="selectedMapping" ng-options="type as type.mappingName for type in xRefTypes"></select>
-              </div>
-              <div class="form-group form-group-md col-md-12" style="margin:0px;">
-                <table ng-show="configurations" class="table table-striped table-bordered">
-                  <tr>
-                    <th>Component</th>
-                    <th>Issue Number</th>
-                    <th>Status</th>
-                    <th>Refresh/Edit/Delete/</th>
-                  </tr>
-                  <tr ng-repeat="config in configurations" ng-class="config.status === 'error'? 'danger': ''">
-                    <td>{{config.componentName}}</td>
-                    <td>{{config.issueNumber}}</td>
-                    <td>{{config.status}}</td>
-                    <td style="padding:0px;">&nbsp;<button class="btn btn-default" ng-click="forceRefresh(config)">Refresh&nbsp;<i class="fa fa-refresh"></i></button></td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div ng-show="!allJobs.length">
-          There are no jobs saved in the Storefront Configuration.
-        </div>
-      </tab>
-      <tab heading="Job By Component">
-
-        <form class="form-horizontal" role="form">
-          <div ng-show="!xRefTypes || xRefTypes.length === 0" class="form-group form-group-md col-md-12" style=" min-height: 50px;">
-            <div class="warning"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;You need to add a mapping before you can link components to an issue number.</div>
-          </div>
-          <div ng-show="xRefTypes.length > 0">
-            <div ng-show="type === 'jira'">
-              <div class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
-                <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select a Component:&nbsp;</label>
-                <div class="" style="padding: 0;">
-                  <input type="text" class="form-control searchBar" id="componentSearch" ng-model="componentConfMap" ng-options="key as key.name for key in typeahead" placeholder="Search For Component" bs-typeahead>
-                  <span ng-class="(componentConfMap && componentId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': componentId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
+              <div ng-show="jira.jiraIssue" class="col-md-12" style="padding:0px;">
+                <h4 style="margin-top:25px; margin-bottom: 0px; padding-left: 15px; padding-right: 15px;">Select Jira Codes to associate with the storefront attribute code</h4>
+                <div ng-show="storeCodes.length && watch.jiraField" style="padding: 0px; margin-right: 15px; margin-left: 15px; position: relative; z-index: 1" class="col-md-8">
+                  <strong style="height:20px;">Storefront Codes</strong>
+                  <div style="height: 280px; overflow:auto; border: 1px solid darkgray; background: dimgray; ">
+                    <div ng-repeat="code in storeCodes" style="display:flex; ">
+                      <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; padding-left:5px; padding-right:5px;">
+                        <label style="padding-left:0px; padding-right:0px; width: 100%; text-align: left; color: #F2D42E" class="control-label">{{code.label}}:&nbsp;</label>
+                        <select ng-model="code.toRemove" ng-options="item.label for item in code.selected" class="form-control" style="width: calc(100% - 100px); display:inline-block;" size="2" multiple></select>
+                        <div style="display: inline-block; margin: 5px;">
+                          <button ng-click="moveLeft(code)" type="button" class="btn btn-small btn-default" style="">&#60;&#60;</button>
+                          <button ng-click="moveRight(code)" type="button" class="btn btn-small btn-default" style="">&#62;&#62;</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div ng-show="storeCodes.length && watch.jiraField" style="height:300px; margin-left: -30px; margin-right: -15px;" class="col-md-4">
+                  <strong style="height:20px;">Jira Codes</strong>
+                  <select ng-model="jiraCodes.masterSelect" ng-options="item.label for item in masterSelected" multiple style="height: 280px" class="form-control"></select>
                 </div>
               </div>
-              <div class="form-group form-group-md col-md-12" style="margin:0px;">
-                <table ng-show="configurations" class="table table-striped table-bordered">
-                  <tr>
-                    <th>Component</th>
-                    <th>Issue Number</th>
-                    <th>Status</th>
-                    <th>Refresh/Edit/Delete/</th>
-                  </tr>
-                  <tr ng-repeat="config in configurations" ng-class="config.status === 'error'? 'danger': ''">
-                    <td>{{config.componentName}}</td>
-                    <td>{{config.issueNumber}}</td>
-                    <td>{{config.status}}</td>
-                    <td style="padding:0px;">&nbsp;<button class="btn btn-default" ng-click="setupModal(config); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
-                  </tr>
-                </table>
-              </div>
+            </div>
+          </div>
+          <div class="form-group form-group-md col-md-12" style="margin:0px; margin-top: 10px; padding-left: 15px; padding-right: 15px; margin-bottom: 20px;">
+            <div class="">
+              <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
             </div>
           </div>
         </form>
-      </tab>
-    </tabset>
-  </tab>
-</tabset>
-</div>
-<!-- This is the results description modal (the contents are handled in this controller) -->
-<div modal controller-name="BaseCtrl" modalId='compConf' modal-classes="classlist">
-</div>
+      </div>
+    </tab>
+    <tab heading="Component Configuration">
+      <div class="col-md-12" style=" margin-top:20px; margin-bottom: 20px;">
+        <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; margin-bottom: 10px; padding: 0px;">
+          <label for="componentConfType" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select an integration type:&nbsp;</label>
+          <select id="componentConfType" class="form-control" style="min-width:350px; width: auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
+        </div>
+        <div class="col-md-12" style="padding: 0; min-height: 50px;">
+          <button class="btn btn-default" ng-click="setupModal({}); openModal('compConf');">Add New Configuration&nbsp;</button>
+        </div>
+        <tabset>
+          <tab heading="All Jobs">
+            <div ng-show="xRefTypes.length > 0">
+              <div ng-show="type === 'jira'">
+                <div class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
+                  <label for="componentConfMap" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Filter by Component name:&nbsp;</label>
+                  <div class="" style="padding: 0;">
+                    <input type="text" class="form-control searchBar" id="componentSearch" ng-model="componentSearch" ng-options="key.name as key.name for key in typeahead" placeholder="Filter by Component Name" bs-typeahead>
+                  </div>
+                </div>
+                <div class="form-group form-group-md col-md-12" style="margin:0px;">
+                  <table ng-show="configurations" class="table table-striped table-bordered">
+                    <tr>
+                      <th>Component</th>
+                      <th>Status</th>
+                      <th>Refresh/Edit/Delete/</th>
+                    </tr>
+                    <tr ng-repeat="config in configurations | filter: {componentName: componentSearch}" ng-class="config.status === 'error'? 'danger': ''">
+                      <td>{{config.componentName}}</td>
+                      <td>{{config.status}}</td>
+                      <td style="padding:0px;">&nbsp;<button class="btn btn-default" ng-click="setupModal(config); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div ng-show="!xRefTypes.length">
+              There are no jobs saved in the Storefront Configuration.
+            </div>
+          </tab>
+          <tab heading="Component Job Configurations">
+            <div class="checkbox col-sm-12" style="padding-right:0px;">
+              <label>
+                <input type="checkbox" ng-model="overRideDefault" ng-checked="overRideDefault"> Override Default Refresh Rate (this overrides the refresh rate for all configurations for this component)
+              </label>
+            </div>
+            <div ng-show="overRideDefault === true" class="col-sm-12" style="padding-left:0px; padding-right:0px; min-height:50px;">
+              <label style="padding-left:0px; padding-right:0px;" class="control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
+              <div class="" style="padding-left:0px; padding-right: 0;">
+                <cron ng-model="componentCron" id="cmpRefreshRate"></cron>
+              </div>
+            </div>
+            <form class="form-horizontal" role="form">
+            </form>
+          </tab>
+        </tabset>
+      </div>
+    </tab>
+  </tabset>
+  <!-- This is the results description modal (the contents are handled in this controller) -->
+  <div modal controller-name="BaseCtrl" modalId='compConf' modal-classes="classlist">
+  </div>
 </div>

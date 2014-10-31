@@ -47,7 +47,11 @@ import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -99,7 +103,8 @@ public class AttributeResource
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 			if (attributeTypeView.getArchitectureFlg()) {
 				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
-			} else {
+			}
+			else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
 		}
@@ -145,7 +150,8 @@ public class AttributeResource
 		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
 		if (attributeType == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
-		} else {
+		}
+		else {
 			return Response.ok(attributeType).build();
 		}
 	}
@@ -167,7 +173,8 @@ public class AttributeResource
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, pk);
 		if (attributeCode == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
-		} else {
+		}
+		else {
 			return Response.ok(attributeCode).build();
 		}
 	}
@@ -319,7 +326,8 @@ public class AttributeResource
 		if (existing != null) {
 			attributeType.setAttributeType(type.toUpperCase());
 			return handleAttributePostPutType(attributeType, true);
-		} else {
+		}
+		else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing type.", "Make sure type exists before call PUT");
 		}
 	}
@@ -334,13 +342,15 @@ public class AttributeResource
 			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeType(attributeType, false);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).entity(attributeTypeCreated).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -390,7 +400,8 @@ public class AttributeResource
 		AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (existing != null) {
 			return handleAttributePostPutCode(attributeCode, true);
-		} else {
+		}
+		else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing code.", "Make sure type exists before call PUT");
 		}
 	}
@@ -405,7 +416,8 @@ public class AttributeResource
 			attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeCode(attributeCode, false);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -414,7 +426,8 @@ public class AttributeResource
 					+ attributeCode.getAttributeCodePk().getAttributeType()
 					+ "/attributecodes/"
 					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -454,7 +467,6 @@ public class AttributeResource
 			model.setAttributeName(attType.getDescription());
 			model.setAttributeType(type.getAttributeType());
 			model.setFieldName(type.getFieldName());
-			model.setFieldKey(type.getFieldKey());
 			model.setFieldId(type.getFieldId());
 			model.setIssueType(type.getIssueType());
 			model.setProjectType(type.getProjectType());
@@ -468,6 +480,29 @@ public class AttributeResource
 		}
 
 		return attributeXrefMapViews;
+	}
+	
+	@GET
+	@APIDescription("Gets the list of mapping for attributes to fields")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeXrefMapView.class)
+	@Path("/attributexreftypes/detail/distinct")
+	public List<AttributeXrefMapView> getDistinctProjectMappings()
+	{
+		Set<AttributeXrefMapView> attributeXrefMapViews = new HashSet<>();
+
+		AttributeXRefType example = new AttributeXRefType();
+		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+
+		for (AttributeXRefType type : types) {
+			AttributeXrefMapView model = new AttributeXrefMapView();
+			model.setIssueType(type.getIssueType());
+			model.setProjectType(type.getProjectType());
+			attributeXrefMapViews.add(model);
+		}
+
+		return new ArrayList<AttributeXrefMapView>(attributeXrefMapViews);
 	}
 
 	@GET
@@ -491,7 +526,6 @@ public class AttributeResource
 			model.setAttributeName(attType.getDescription());
 			model.setAttributeType(attributeXRefType.getAttributeType());
 			model.setFieldName(attributeXRefType.getFieldName());
-			model.setFieldKey(attributeXRefType.getFieldKey());
 			model.setFieldId(attributeXRefType.getFieldId());
 			model.setIssueType(attributeXRefType.getIssueType());
 			model.setProjectType(attributeXRefType.getProjectType());
@@ -537,8 +571,29 @@ public class AttributeResource
 			service.getAttributeService().saveAttributeXrefMap(attributeXref);
 
 			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/" + attributeXref.getType().getAttributeType() + "/detail")).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@Path("/attributexreftypes/{attributeType}")
+	public void deleteMappingType(
+			@PathParam("attributeType")
+			@RequiredParam String type)
+	{
+		AttributeXRefType temp = service.getPersistenceService().findById(AttributeXRefType.class, type);
+		if (temp != null){
+			AttributeXRefMap example = new AttributeXRefMap();
+			example.setAttributeType(type);
+			List<AttributeXRefMap> maps = service.getPersistenceService().queryByExample(AttributeXRefMap.class, new QueryByExample(example));
+			for(AttributeXRefMap map: maps){
+				service.getPersistenceService().delete(map);
+			}
+			service.getPersistenceService().delete(temp);
 		}
 	}
 

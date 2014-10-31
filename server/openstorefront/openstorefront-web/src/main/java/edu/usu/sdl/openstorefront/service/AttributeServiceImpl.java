@@ -746,7 +746,6 @@ public class AttributeServiceImpl
 			type.setAttributeType(attributeXRefView.getType().getAttributeType());
 			type.setActiveStatus(attributeXRefView.getType().getActiveStatus());
 			type.setFieldId(attributeXRefView.getType().getFieldId());
-			type.setFieldKey(attributeXRefView.getType().getFieldKey());
 			type.setFieldName(attributeXRefView.getType().getFieldName());
 			type.setIntegrationType(attributeXRefView.getType().getIntegrationType());
 			type.setIssueType(attributeXRefView.getType().getIssueType());

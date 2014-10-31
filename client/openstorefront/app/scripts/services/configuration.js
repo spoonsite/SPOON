@@ -90,7 +90,8 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'componentId': '67', 
         'overRideRefreshRate': '0 4 4 * * *',
         'status': 'error',
-        'errorMessage': 'The ticket was not found' 
+        'errorMessage': 'The ticket was not found',
+        'componentName': 'Central Authentication Service (CAS)' 
       });
     } else {
       deferred.resolve(false);
@@ -114,7 +115,8 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'componentId': '67', 
         'overRideRefreshRate': '0 4 4 * * *',
         'status': 'error',
-        'errorMessage': 'The ticket was not found' 
+        'errorMessage': 'The ticket was not found',
+        'componentName': 'Central Authentication Service (CAS)'
       }]);
     } else {
       deferred.reject(false);
@@ -262,7 +264,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
 
   service.saveMappingConf = function(mapping) {
     var deferred = $q.defer();
-    var url = 'api/v1/resource/integration/mapping';
+    var url = 'api/v1/resource/attributes/attributexreftypes/detail';
     $http({
       'method': 'POST',
       'url': url,
@@ -275,7 +277,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         deferred.reject(false);
       }
     }).error(function(data, status, headers, config){
-      
       if (status !== 201) {
         deferred.reject(false);
       } else {
@@ -285,9 +286,13 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     return deferred.promise;
   }
 
-  service.getMappingTypes = function() {
+  service.getMappingTypes = function(distinct) {
     var deferred = $q.defer();
-    var url = 'api/v1/resource/integration/mapping/types';
+    if (distinct) {
+      var url = 'api/v1/resource/attributes/attributexreftypes/detail/distinct';
+    } else {
+      var url = 'api/v1/resource/attributes/attributexreftypes/detail';
+    }
     var value = null; /*checkExpire('previousMappings', minute * 1440);*/
     if (value) {
       deferred.resolve(value);
@@ -305,6 +310,53 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       }).error(function(data, status, headers, config){
         deferred.reject(false);
       });
+    }
+    return deferred.promise;
+  }
+
+  service.deleteMapping = function(attributeType) {
+    var deferred = $q.defer();
+    if (attributeType || typeof attributeType !== 'string') {
+      var url = 'api/v1/resource/attributes/attributexreftypes/'+attributeType;
+      $http({
+        'method': 'DELETE',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (isNotRequestError(data)) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+
+  service.checkTicket = function(ticketId) {
+    var deferred = $q.defer();
+    if (ticketId) {
+      var url = 'api/v1/service/jira/getTicket/'+ticketId;
+      $http({
+        'method': 'GET',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && data.response !== 'false' && isNotRequestError(data) ) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
     }
     return deferred.promise;
   }

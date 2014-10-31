@@ -1,56 +1,45 @@
 <loader trigger="editLoad"></loader>
 <div style="display:inline-block" ng-controller="SavecompconfCtrl">
-  <form ng-submit="((!componentId || componentId === -1) || (!issueId || issueId === -1)) || saveComponentConf()" role="form">
-    <div ng-show="projects.length" class="form-group form-group-md col-md-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
-      <label style="padding-left:0px; padding-right:0px;" class="control-label" for="projectSelect">Select a Jira Project:&nbsp;</label>
-      <div class="" style="padding: 0;">
-        <select ng-model="jiraProject" class="form-control" style="min-width: 350px;" id="projectSelect" ng-options="option as option.description for option in projects"></select>
+  <div ng-show="noProjects" class="form-group form-group-md col-md-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+    There are no mapping project to issue-type pairs. You must enter a mapping before you can add a configuration.
+  </div>
+  <div ng-show="!noProjects">
+    <form ng-submit="((!componentId || componentId === -1) || (!issueId || issueId === -1)) || saveComponentConf()" role="form">
+
+      <div ng-show="projects.length" class="form-group form-group-md col-md-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <label style="padding-left:0px; padding-right:0px;" class="control-label" for="projectSelect">Select a Jira Project:&nbsp;</label>
+        <div class="" style="padding: 0;">
+          <select ng-model="jiraProject" class="form-control" style="min-width: 350px;" id="projectSelect" ng-options="option as option | formatOption for option in projects"></select>
+        </div>
       </div>
-    </div>
-    <div ng-show="issueOptions.length" class="form-group form-group-md col-md-12" style="margin: 0 auto; padding: 0; min-height: 50px;">
-      <label style="padding-left:0px; padding-right:0px;" class="control-label" for="issueSelect">Select a Jira Project Issue Type:&nbsp;</label>
-      <div class="" style="padding: 0;">
-        <select ng-model="jiraIssue" class="form-control" style="min-width: 350px;" id="issueSelect" ng-options="option as option.name for option in issueOptions"></select>
+      <div class="form-group form-group-sm col-sm-12" ng-class="(componentId && componentId !== -1)? ' has-success has-feedback ': componentId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <label style="padding-left:0px; padding-right:0px;" class="control-label" for="componentSearch">Search For Component:&nbsp;</label>
+        <div class="" style="padding: 0;">
+          <input type="text" class="form-control searchBar" id="componentSearch" ng-model="component" ng-options="key as key.name for key in typeahead" placeholder="Search For Component" bs-typeahead>
+          <span ng-class="(componentId && componentId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': componentId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
+        </div>
       </div>
-    </div>
-    <div class="form-group form-group-sm col-sm-12" ng-class="(componentId && componentId !== -1)? ' has-success has-feedback ': componentId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
-      <label style="padding-left:0px; padding-right:0px;" class="control-label" for="componentSearch">Search For Component:&nbsp;</label>
-      <div class="" style="padding: 0;">
-        <input type="text" class="form-control searchBar" id="componentSearch" ng-model="component" ng-options="key as key.name for key in typeahead" placeholder="Search For Component" bs-typeahead>
-        <span ng-class="(componentId && componentId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': componentId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
+      <div class="col-sm-12">
+        <small>If you're using IE 9, click on the component selection once you've found it.</small>
       </div>
-    </div>
-    <div class="col-sm-12">
-      <small>If you're using IE 9, click on the component selection once you've found it.</small>
-    </div>
-    <div class="col-sm-12">&nbsp;</div>
-    <div class="form-group form-group-sm col-sm-12" ng-class="(issueId && issueId !== -1)? ' has-success has-feedback ': issueId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
-      <label style="padding-left:0px; padding-right:0px;" class="control-label" for="jiraTicketNum">Jira Issue Number:&nbsp;</label>
-      <div class="" style="padding: 0;">
-        <input type="text" class="form-control searchBar" id="jiraTicketNum" ng-model="issue" placeholder="Type in Jira Issue Number">
-        <span ng-class="(issueId && issueId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': issueId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
+      <div class="col-sm-12">&nbsp;</div>
+      <div class="form-group form-group-sm col-sm-12" ng-class="(issueId && issueId !== -1)? ' has-success has-feedback ': issueId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
+        <label style="padding-left:0px; padding-right:0px;" class="control-label" for="jiraTicketNum">Jira Issue Number:&nbsp;</label>
+        <div class="" style="padding: 0;">
+          <input type="text" class="form-control searchBar" id="jiraTicketNum" ng-model="issue" placeholder="Type in Jira Issue Number">
+          <span ng-class="(issueId && issueId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': issueId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
+        </div>
       </div>
-    </div>
-    <div class="col-sm-12">&nbsp;</div>
-    <div class="checkbox col-sm-12" style="padding-right:0px;">
-      <label>
-        <input type="checkbox" ng-model="overRideDefault" ng-checked="overRideDefault"> Override Default Refresh Rate
-      </label>
-    </div>
-    <div ng-show="overRideDefault === true" class="col-sm-12" style="padding-left:0px; padding-right:0px; min-height:50px;">
-      <label style="padding-left:0px; padding-right:0px;" class="control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
-      <div class="" style="padding-left:0px; padding-right: 0;">
-        <cron ng-model="componentCron" id="cmpRefreshRate"></cron>
+      <div ng-show="loading || ticketContents" style="min-height:150px;">
+        <loader trigger="ticketContLoad"></loader>
+        <div ng-show="ticketContents">Ticket Found for: {{ticketContents}}</div>
       </div>
-    </div>
-    <div class="col-sm-12" style="padding-left:0px; padding-right:0px; min-height:50px; margin-top:10px;">
-      <button type="button" class="btn btn-default" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1) )" ng-click="forceRefresh()">Force&nbsp;Component&nbsp;Refresh&nbsp;<i class="fa fa-refresh"></i></button>
-    </div>
-    <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
-      <div class="">
-        <button class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1)) ">Save&nbsp;<i class="fa fa-save"></i></button>
-        <button ng-show="id" class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1)) ">Delete&nbsp;<i class="fa fa-trash-o"></i></button>
+      <div class="col-sm-12">&nbsp;</div>
+      <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
+        <div class="">
+          <button class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1) && jiraProject) ">Save&nbsp;<i class="fa fa-save"></i></button>
+        </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
