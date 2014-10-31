@@ -101,11 +101,14 @@ public class JobManager
 					.build();
 
 			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, integration.getComponentId());
-
+			String cron = integration.getRefreshRate();
+			if (cron == null){
+				cron = serviceProxy.getSystemService().getGlobalIntegrationConfig().getJiraRefreshRate();
+			}
 			Trigger trigger = newTrigger()
 					.withIdentity("ComponentTrigger-" + integration.getComponentId(), JOB_GROUP_SYSTEM)
 					.startNow()
-					.withSchedule(cronSchedule("0 " + integration.getRefreshRate()))
+					.withSchedule(cronSchedule("0 " + cron))
 					.build();
 
 			scheduler.scheduleJob(job, trigger);

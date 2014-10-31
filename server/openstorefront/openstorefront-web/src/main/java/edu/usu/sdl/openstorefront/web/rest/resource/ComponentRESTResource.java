@@ -52,6 +52,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.RunStatus;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -60,6 +61,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
@@ -2056,7 +2058,7 @@ public class ComponentRESTResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentIntegration.class)
 	@Path("/integration")
-	public List<ComponentIntegration> getIntegrations(
+	public List<ComponentIntegrationView> getIntegrations(
 			@QueryParam("status")
 			@DefaultValue("A")
 			@APIDescription("Pass 'ALL' to view active and inactive") String status)
@@ -2065,7 +2067,11 @@ public class ComponentRESTResource
 			status = null;
 		}
 		List<ComponentIntegration> integrationModels = service.getComponentService().getComponentIntegrationModels(status);
-		return integrationModels;
+		List<ComponentIntegrationView> views = new ArrayList<>();
+		for(ComponentIntegration temp : integrationModels){
+			views.add(ComponentIntegrationView.toView(temp));
+		}
+		return views;
 	}
 
 	@GET
@@ -2078,7 +2084,8 @@ public class ComponentRESTResource
 			@QueryParam("id") String componentId)
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
-		return sendSingleEnityResponse(integration);
+		ComponentIntegrationView view = ComponentIntegrationView.toView(integration);
+		return sendSingleEnityResponse(view);
 	}
 
 	@POST
@@ -2219,10 +2226,20 @@ public class ComponentRESTResource
 			ComponentIntegrationConfig integrationConfig)
 	{
 		integrationConfig.setComponentId(componentId);
-
+		
 		ValidationModel validationModel = new ValidationModel(integrationConfig);
+		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		
 		if (validationResult.valid()) {
+			ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+			if(componentIntegration == null){
+				componentIntegration = new ComponentIntegration();
+				componentIntegration.populateBaseCreateFields();
+				componentIntegration.setComponentId(componentId);
+				componentIntegration.setStatus(RunStatus.COMPLETE);
+				service.getPersistenceService().persist(componentIntegration);
+			}
 			integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
 			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
 		} else {
