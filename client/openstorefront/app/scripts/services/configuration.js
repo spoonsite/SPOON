@@ -427,6 +427,144 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     return deferred.promise;
   }
 
+  service.deactivateJob = function(componentId) {
+    var deferred = $q.defer();
+    if (componentId) {
+      var url = 'api/v1/resource/components/'+componentId+'/integration/inactivate';
+      $http({
+        'method': 'PUT',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.activateJob = function(componentId) {
+    var deferred = $q.defer();
+    if (componentId) {
+      var url = 'api/v1/resource/components/'+componentId+'/integration/activate';
+      $http({
+        'method': 'PUT',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.deleteJob = function(componentId) {
+    var deferred = $q.defer();
+    if (componentId) {
+      var url = 'api/v1/resource/components/'+componentId+'/integration';
+      $http({
+        'method': 'DELETE',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.deactivateConfig = function(componentId, configId) {
+    var deferred = $q.defer();
+    if (componentId && configId) {
+      var url = 'api/v1/resource/components/'+componentId+'/integration/configs/'+configId+'/inactivate';
+      $http({
+        'method': 'PUT',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.activateConfig = function(componentId, configId) {
+    var deferred = $q.defer();
+    if (componentId && configId) {
+      var url = 'api/v1/resource/components/'+componentId+'/integration/configs/'+configId+'/activate';
+      $http({
+        'method': 'PUT',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.deleteConfig = function(componentId, configId) {
+    var deferred = $q.defer();
+    if (componentId && configId) {
+      var url = 'api/v1/resource/components/'+componentId+'/integration/configs/'+configId;
+      $http({
+        'method': 'DELETE',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
 
   return service;
 

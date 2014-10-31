@@ -68,12 +68,14 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }, function() {
   });
 
-  Business.configurationservice.getAllJobs().then(function(result){
-    console.log('result', result);
-    $scope.allJobs = result? result: [];
-  }, function(){
-    $scope.allJobs = [];
-  });
+  $scope.getAllJobs = function(){
+    Business.configurationservice.getAllJobs().then(function(result){
+      console.log('result', result);
+      $scope.allJobs = result? result: [];
+    }, function(){
+      $scope.allJobs = [];
+    });
+  }
 
   $scope.getMappingTypes = function(){
     Business.configurationservice.getMappingTypes().then(function(result){
@@ -189,6 +191,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
 
   (function(){
     $scope.loading++;
+    $scope.getAllJobs();
     $scope.getMappingTypes();
     $scope.getProjects();
     $scope.getRefTypes();
@@ -435,22 +438,39 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
 
 
   $scope.deactivateJob = function(componentId) {
-    console.log('deactivateJob ComponentId', componentId);
+    Business.configurationservice.deactivateJob(componentId).then(function(){
+      $scope.getAllJobs();
+    });
+  }
+  $scope.activateJob = function(componentId) {
+    Business.configurationservice.activateJob(componentId).then(function(){
+      $scope.getAllJobs();
+    });
   }
   $scope.deleteJob = function(componentId) {
-    console.log('deleteJob ComponentId', componentId);
+    Business.configurationservice.deleteJob(componentId).then(function(){
+      $scope.getAllJobs();
+      $scope.compId = '';
+      $scope.selectCompConf = true;
+    });
+  }
+  $scope.deactivateConfig = function(componentId, configId) {
+    Business.configurationservice.deactivateConfig(componentId).then(function(){
+    });
+  }
+  $scope.activateConfig = function(componentId, configId) {
+    Business.configurationservice.activateConfig(componentId).then(function(){
+    });
+  }
+  $scope.deleteConfig = function(componentId, configId) {
+    Business.configurationservice.deleteConfig(componentId).then(function(){
+    });
   }
   $scope.refreshJob = function(componentId) {
     console.log('deactivateJob ComponentId', componentId);
   }
   $scope.refreshConfig = function(componentId) {
     console.log('deleteJob ComponentId', componentId);
-  }
-  $scope.deactivateConfig = function(componentId) {
-    console.log('deactivateConfig ComponentId', componentId);
-  }
-  $scope.deleteConfig = function(componentId) {
-    console.log('deleteConfig ComponentId', componentId);
   }
 
   $scope.calcStatus = function(val)
