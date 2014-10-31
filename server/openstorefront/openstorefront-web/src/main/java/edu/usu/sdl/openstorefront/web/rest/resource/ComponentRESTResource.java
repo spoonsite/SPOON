@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
@@ -2148,17 +2149,30 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Runs a full component integration")
 	@Path("/{componentId}/integration/run")
-	public Response runComponentIntegrationConfig(
+	public Response runComponentIntegration(
 			@PathParam("componentId")
 			@RequiredParam String componentId)
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		if (integration != null) {
-			service.getComponentService().processComponentIntegration(componentId, null);
+			JobManager.runComponentIntegrationNow(componentId, null);
 			return Response.ok().build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Runs all active component integrations")
+	@Path("/integrations/run")
+	public Response runAllComponentIntegration()
+	{
+		List<ComponentIntegration> componentIntegrations = service.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
+		for (ComponentIntegration componentIntegration : componentIntegrations) {
+			JobManager.runComponentIntegrationNow(componentIntegration.getComponentId(), null);
+		}
+		return Response.ok().build();
 	}
 
 	@GET
@@ -2292,7 +2306,7 @@ public class ComponentRESTResource
 		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
 
 		if (integrationConfig != null) {
-			service.getComponentService().processComponentIntegration(componentId, configId);
+			JobManager.runComponentIntegrationNow(componentId, configId);
 			return Response.ok().build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
