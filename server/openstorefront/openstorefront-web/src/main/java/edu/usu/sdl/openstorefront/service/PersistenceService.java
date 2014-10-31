@@ -24,6 +24,7 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.query.ComplexFieldStack;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -383,7 +384,7 @@ public class PersistenceService
 			mappedParams.putAll(mapParameters(queryByExample.getExample()));
 		}
 		if (queryByExample.getLikeExample() != null) {
-			String likeClause = generateWhereClause(queryByExample.getLikeExample(), "", "LIKE");
+			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), "LIKE");
 			if (StringUtils.isNotBlank(likeClause)) {
 				if (StringUtils.isNotBlank(whereClause)) {
 					queryString.append(" AND ");
@@ -426,10 +427,10 @@ public class PersistenceService
 
 	private <T> String generateWhereClause(T example)
 	{
-		return generateWhereClause(example, "", null);
+		return generateWhereClause(example, new ComplexFieldStack(), null);
 	}
 
-	private <T> String generateWhereClause(T example, String parentFieldName, String operator)
+	private <T> String generateWhereClause(T example, ComplexFieldStack complexFieldStack, String operator)
 	{
 		StringBuilder where = new StringBuilder();
 
@@ -445,10 +446,7 @@ public class PersistenceService
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
 						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
-							if (StringUtils.isNotBlank(parentFieldName)) {
-								parentFieldName = parentFieldName + ".";
-							}
-							parentFieldName = parentFieldName + field;
+							complexFieldStack.getFieldStack().push(field.toString());
 							if (addAnd) {
 								where.append(" AND ");
 							} else {
@@ -456,7 +454,8 @@ public class PersistenceService
 								where.append(" ");
 							}
 
-							where.append(generateWhereClause(returnObj, parentFieldName, operator));
+							where.append(generateWhereClause(returnObj, complexFieldStack, operator));
+							complexFieldStack.getFieldStack().pop();
 						} else {
 							if (addAnd) {
 								where.append(" AND ");
@@ -465,10 +464,7 @@ public class PersistenceService
 								where.append(" ");
 							}
 
-							String fieldName = field.toString();
-							if (StringUtils.isNotBlank(parentFieldName)) {
-								fieldName = parentFieldName + "." + fieldName;
-							}
+							String fieldName = complexFieldStack.getQueryFieldName() + field.toString();
 
 							String operatorLocal = "=";
 							if (StringUtils.isNotBlank(operator)) {
@@ -488,10 +484,10 @@ public class PersistenceService
 
 	private <T> String generateExampleNames(T example)
 	{
-		return generateExampleNames(example, "");
+		return generateExampleNames(example, new ComplexFieldStack());
 	}
 
-	private <T> String generateExampleNames(T example, String parentFieldName)
+	private <T> String generateExampleNames(T example, ComplexFieldStack complexFieldStack)
 	{
 		StringBuilder where = new StringBuilder();
 
@@ -507,10 +503,7 @@ public class PersistenceService
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
 						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
-							if (StringUtils.isNotBlank(parentFieldName)) {
-								parentFieldName = parentFieldName + ".";
-							}
-							parentFieldName = parentFieldName + field;
+							complexFieldStack.getFieldStack().push(field.toString());
 							if (addAnd) {
 								where.append(",");
 							} else {
@@ -518,7 +511,8 @@ public class PersistenceService
 								where.append(" ");
 							}
 
-							where.append(generateExampleNames(returnObj, parentFieldName));
+							where.append(generateExampleNames(returnObj, complexFieldStack));
+							complexFieldStack.getFieldStack().pop();
 						} else {
 							if (addAnd) {
 								where.append(",");
@@ -526,11 +520,7 @@ public class PersistenceService
 								addAnd = true;
 								where.append(" ");
 							}
-
-							String fieldName = field.toString();
-							if (StringUtils.isNotBlank(parentFieldName)) {
-								fieldName = parentFieldName + "." + fieldName;
-							}
+							String fieldName = complexFieldStack.getQueryFieldName() + field.toString();
 
 							where.append(fieldName);
 						}
@@ -545,10 +535,10 @@ public class PersistenceService
 
 	private <T> Map<String, Object> mapParameters(T example)
 	{
-		return mapParameters(example, "");
+		return mapParameters(example, new ComplexFieldStack(PARAM_NAME_SEPARATOR));
 	}
 
-	private <T> Map<String, Object> mapParameters(T example, String parentFieldName)
+	private <T> Map<String, Object> mapParameters(T example, ComplexFieldStack complexFieldStack)
 	{
 		Map<String, Object> parameterMap = new HashMap<>();
 		try {
@@ -562,16 +552,11 @@ public class PersistenceService
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
 						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
-							if (StringUtils.isNotBlank(parentFieldName)) {
-								parentFieldName = parentFieldName + PARAM_NAME_SEPARATOR;
-							}
-							parentFieldName = parentFieldName + field;
-							parameterMap.putAll(mapParameters(returnObj, parentFieldName));
+							complexFieldStack.getFieldStack().push(field.toString());
+							parameterMap.putAll(mapParameters(returnObj, complexFieldStack));
+							complexFieldStack.getFieldStack().pop();
 						} else {
-							String fieldName = field.toString();
-							if (StringUtils.isNotBlank(parentFieldName)) {
-								fieldName = parentFieldName + PARAM_NAME_SEPARATOR + fieldName;
-							}
+							String fieldName = complexFieldStack.getQueryFieldName() + field.toString();
 							parameterMap.put(fieldName + "Param", value);
 						}
 					}

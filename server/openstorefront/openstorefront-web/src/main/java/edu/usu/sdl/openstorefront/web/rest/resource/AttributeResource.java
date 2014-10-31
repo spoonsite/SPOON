@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
+import edu.usu.sdl.openstorefront.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
@@ -172,7 +173,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attribute code base on filter")
+	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/attributetypes/{type}/attributecodes")
@@ -189,6 +190,7 @@ public class AttributeResource
 
 		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
 		attributeCodes = filterQueryParams.filter(attributeCodes);
+		attributeCodes.sort(new AttributeCodeComparator<>());
 
 		return attributeCodes;
 	}

@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.sort;
 
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import java.util.Comparator;
 
 /**
@@ -23,7 +23,7 @@ import java.util.Comparator;
  * @author dshurtleff
  * @param <T>
  */
-public class AttributeCodeViewComparator<T extends AttributeCodeView>
+public class AttributeCodeComparator<T extends AttributeCode>
 		implements Comparator<T>
 {
 

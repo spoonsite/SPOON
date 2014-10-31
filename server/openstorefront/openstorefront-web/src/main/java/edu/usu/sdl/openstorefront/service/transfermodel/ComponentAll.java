@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.transfermodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
@@ -33,6 +34,7 @@ import java.util.List;
  *
  * @author dshurtleff
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ComponentAll
 {
 

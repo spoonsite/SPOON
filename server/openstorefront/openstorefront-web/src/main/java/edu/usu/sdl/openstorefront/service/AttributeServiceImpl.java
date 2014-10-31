@@ -216,6 +216,8 @@ public class AttributeServiceImpl
 			existing.setDescription(attributeCode.getDescription());
 			existing.setDetailUrl(attributeCode.getDetailUrl());
 			existing.setLabel(attributeCode.getLabel());
+			existing.setGroupCode(attributeCode.getGroupCode());
+			existing.setSortOrder(attributeCode.getSortOrder());
 			persistenceService.persist(existing);
 		} else {
 			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
@@ -414,6 +416,8 @@ public class AttributeServiceImpl
 										existingCode.setDescription(attributeCode.getDescription());
 										existingCode.setDetailUrl(attributeCode.getDetailUrl());
 										existingCode.setLabel(attributeCode.getLabel());
+										existingCode.setGroupCode(attributeCode.getGroupCode());
+										existingCode.setSortOrder(attributeCode.getSortOrder());
 										existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 										existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
@@ -448,6 +452,9 @@ public class AttributeServiceImpl
 				log.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
 			}
 		});
+		//Clear cache
+		OSFCacheManager.getAttributeTypeCache().removeAll();
+		OSFCacheManager.getAttributeCache().removeAll();
 
 		getSearchService().saveAll();
 	}
@@ -616,7 +623,7 @@ public class AttributeServiceImpl
 	public List<ComponentSearchView> getArticlesSearchView()
 	{
 		List<ComponentSearchView> list = new ArrayList<>();
-		List<AttributeCode> codes = this.getAttributeService().findRecentlyAddedArticles(null);
+		List<AttributeCode> codes = findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
 			list.add(ComponentSearchView.toView(Article.toView(code)));
 		});
@@ -662,7 +669,7 @@ public class AttributeServiceImpl
 	public List<Article> getArticles()
 	{
 		List<Article> list = new ArrayList<>();
-		List<AttributeCode> codes = this.getAttributeService().findRecentlyAddedArticles(null);
+		List<AttributeCode> codes = findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
 			String content = getArticle(code.getAttributeCodePk());
 			list.add(Article.toViewHtml(code, content));
