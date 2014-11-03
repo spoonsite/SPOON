@@ -34,11 +34,6 @@ public abstract class BaseResource
 
 	protected Response sendSingleEntityResponse(Object entity, Response.StatusType status)
 	{
-		return sendSingleEnityResponse(entity, Response.Status.NOT_FOUND);
-	}
-
-	protected Response sendSingleEnityResponse(Object entity, Response.StatusType status)
-	{
 		if (entity == null) {
 			return Response.status(status).build();
 		} else {
