@@ -39,6 +39,12 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   $scope.previousMappings;
   $scope.overRideDefault = false;
   $scope.componentCron = '0 0 * * *';
+  $scope.component = {};
+  $scope.component.compId;
+  $scope.integrationConfs = null;
+  $scope.show = {
+    'selectCompConf': true
+  };
 
   $scope.loading = 0;
 
@@ -61,6 +67,15 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     });
   }, function() {
   });
+
+  $scope.getAllJobs = function(){
+    Business.configurationservice.getAllJobs().then(function(result){
+      console.log('result', result);
+      $scope.allJobs = result? result: [];
+    }, function(){
+      $scope.allJobs = [];
+    });
+  }
 
   $scope.getMappingTypes = function(){
     Business.configurationservice.getMappingTypes().then(function(result){
@@ -163,133 +178,140 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       $scope.loading--;
       $scope.storeCodes = [];
     });
-};
+  }; //
 
-$scope.getRefTypes = function(){
-  Business.configurationservice.getXRefTypes().then(function(result){
-    if (result && result.length > 0) {
-      $scope.xRefTypes = result;
-      $scope.selectedMapping = result[0];
-    }
-  });
-};
-
-(function(){
-  $scope.loading++;
-  $scope.getMappingTypes();
-  $scope.getProjects();
-  $scope.getRefTypes();
-}());
-
-$scope.sendToModal = function(mapping) {
-  $scope.getConfigId(mapping).then(function(result){
-    if (result && result.type) {
-      $scope.setupModal(result); 
-      $scope.openModal('compConf');
-    }
-  }, function(result){
-
-    return false;
-  })
-}
-
-$scope.getConfigId = function(mapping) {
-  var deferred = $q.defer();
-  if(!mapping) {
-    deferred.reject(false);
-  } else {
-    Business.configurationservice.getConfigId(mapping).then(function(result){
-      if (result) {
-        deferred.resolve(result);
+  $scope.getRefTypes = function(){
+    Business.configurationservice.getXRefTypes().then(function(result){
+      if (result && result.length > 0) {
+        $scope.xRefTypes = result;
+        $scope.selectedMapping = result[0];
       }
-    }, function(){
-      deferred.reject(false);
     });
-  }
-  return deferred.promise
-}
-
-
-$scope.setupModal = function(config) {
-
-  if (config) {
-    Business.saveLocal('configId', config)
-  }
-  var deferred = $q.defer();
-  $scope.modal.classes = '';
-  $scope.modal.nav = {
-    'current': 'Save New Configuration',
-    'bars': [
-    {
-      'title': 'Save New Configuration',
-      'include': 'views/admin/configuration/savecompconf.html'
-    }
-    ]
   };
-  console.log('we hit the modal', $scope.modal);
-  $scope.$emit('$TRIGGEREVENT', 'updateBody');
-  deferred.resolve();
-  return deferred.promise;
-};
 
-$scope.deleteMapping = function(mapping) {
-  var response = window.confirm("Are you sure you want to delete this Mapping?");
-  if (mapping && response){
-    Business.configurationservice.deleteMapping(mapping.attributeType).then(function(result) {
-      triggerAlert('The mapping has been deleted', 'mappingFields', 'body', 6000);
-      $scope.getMappingTypes();
+  (function(){
+    $scope.loading++;
+    $scope.getAllJobs();
+    $scope.getMappingTypes();
+    $scope.getProjects();
+    $scope.getRefTypes();
+  }());
+
+  $scope.sendToModal = function(mapping) {
+    $scope.getConfigId(mapping).then(function(result){
+      if (result && result.type) {
+        $scope.setupModal(result); 
+        $scope.openModal('compConf');
+      }
+    }, function(result){
+
+      return false;
     })
   }
-}
+
+  $scope.getConfigId = function(mapping) {
+    var deferred = $q.defer();
+    if(!mapping) {
+      deferred.reject(false);
+    } else {
+      Business.configurationservice.getConfigId(mapping).then(function(result){
+        if (result) {
+          deferred.resolve(result);
+        }
+      }, function(){
+        deferred.reject(false);
+      });
+    }
+    return deferred.promise
+  }
+
+
+  $scope.setupModal = function(config) {
+
+    if (config) {
+      Business.saveLocal('configId', config)
+    }
+    var deferred = $q.defer();
+    $scope.modal.classes = '';
+    $scope.modal.nav = {
+      'current': 'Save New Configuration',
+      'bars': [
+      {
+        'title': 'Save New Configuration',
+        'include': 'views/admin/configuration/savecompconf.html'
+      }
+      ]
+    };
+    console.log('we hit the modal', $scope.modal);
+    $scope.$emit('$TRIGGEREVENT', 'updateBody');
+    deferred.resolve();
+    return deferred.promise;
+  };
+
+  $scope.deleteMapping = function(mapping) {
+    var response = window.confirm("Are you sure you want to delete this Mapping?");
+    if (mapping && response){
+      Business.configurationservice.deleteMapping(mapping.attributeType).then(function(result) {
+        triggerAlert('The mapping has been deleted', 'mappingFields', 'body', 6000);
+        $scope.getMappingTypes();
+      })
+    }
+  }
 
 
 
-$scope.saveMappingConf = function(){
-  if ($scope.storeCodes.length && $scope.watch.jiraField) {
+  $scope.saveMappingConf = function(){
+    if ($scope.storeCodes.length && $scope.watch.jiraField) {
 
-    var xRefMaps = [];
-    var type = $scope.storeCodes[0].attributeCodePk.attributeType;
-    _.each($scope.storeCodes, function(localCode){
-      _.each(localCode.selected, function(externalCode){
-        xRefMaps.push({
-          'attributeType': type,
-          'localCode': localCode.attributeCodePk.attributeCode,
-          'externalCode': externalCode.label
+      var xRefMaps = [];
+      var type = $scope.storeCodes[0].attributeCodePk.attributeType;
+      _.each($scope.storeCodes, function(localCode){
+        _.each(localCode.selected, function(externalCode){
+          xRefMaps.push({
+            'attributeType': type,
+            'localCode': localCode.attributeCodePk.attributeCode,
+            'externalCode': externalCode.label
+          });
         });
       });
-    });
-    var body = {};
-    body.type = {
-      'attributeType': type,
-      'fieldName': $scope.watch.jiraField.name,
-      'fieldId': $scope.watch.jiraField.id,
-      'projectType': $scope.jira.jiraProject.code,
-      'issueType': $scope.jira.jiraIssue.name,
-      'integrationType': 'JIRA'
-    };
-    body.map = xRefMaps;
+      var body = {};
+      body.type = {
+        'attributeType': type,
+        'fieldName': $scope.watch.jiraField.name,
+        'fieldId': $scope.watch.jiraField.id,
+        'projectType': $scope.jira.jiraProject.code,
+        'issueType': $scope.jira.jiraIssue.name,
+        'integrationType': 'JIRA'
+      };
+      body.map = xRefMaps;
 
-    Business.configurationservice.saveMappingConf(body).then(function(result){
-      if ($scope.masterSelected.length) {
-        triggerAlert('<i class="fa fa-warning"></i>&nbsp;There are unmapped codes. This could lead to an error.<br>The mapping was saved successfully', 'mappingFields', 'body', 8000);
-      } else {
-        triggerAlert('The mapping was saved successfully', 'mappingFields', 'body', 6000);
-      }
-      $scope.getMappingTypes();
+      Business.configurationservice.saveMappingConf(body).then(function(result){
+        if ($scope.masterSelected.length) {
+          triggerAlert('<i class="fa fa-warning"></i>&nbsp;There are unmapped codes. This could lead to an error.<br>The mapping was saved successfully', 'mappingFields', 'body', 8000);
+        } else {
+          triggerAlert('The mapping was saved successfully', 'mappingFields', 'body', 6000);
+        }
+        $scope.getMappingTypes();
         // console.log('result', result);
       }, function(){
         // triggerAlert('There was an error saving the mapping', 'mappingFields', 'body', 6000);
       })
 
+    }
+    return false;
   }
-  return false;
-}
 
-$scope.saveGlobalConf = function(){
-  var conf = {};
-  conf.componentId = $scope.componentId;
-  conf.issueId = $scope.issueId;
-  conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
+  $scope.saveGlobalConf = function(){
+    var conf = {};
+    conf.componentId = $scope.componentId;
+    conf.issueId = $scope.issueId;
+    conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
+    //save the object;
+    return false;
+  }
+
+  $scope.saveCompRefresh = function(){
+    //var cron = $scope.overRideDefault;
     //save the object;
     return false;
   }
@@ -394,6 +416,105 @@ $scope.saveGlobalConf = function(){
     }
   };
 
+  $scope.getIntegrationConf = function(compId) {
+    if (compId) {
+      console.log('Inside getIntegrationConf compId', compId);
+      Business.configurationservice.getIntegrationConf(compId).then(function(result){
+        console.log('result', result);
+        
+        $scope.integrationConfs = result? result: [];
+        if ($scope.integrationConfs.length){
+          _.each($scope.integrationConfs, function(conf){
+            conf.component = _.find($scope.typeahead, {'componentId': conf.componentId});
+          })
+        }
+        $scope.show.selectCompConf = false;
+      }, function(){
+        triggerAlert('There were no configurations found for that component', 'integrationConfs', 'body', 5000);
+        $scope.show.selectCompConf = true;
+      });
+    }
+  };
+
+
+  $scope.deactivateJob = function(componentId) {
+    Business.configurationservice.deactivateJob(componentId).then(function(){
+      $scope.getAllJobs();
+    });
+  }
+  $scope.activateJob = function(componentId) {
+    Business.configurationservice.activateJob(componentId).then(function(){
+      $scope.getAllJobs();
+    });
+  }
+  $scope.deleteJob = function(componentId) {
+    Business.configurationservice.deleteJob(componentId).then(function(){
+      $scope.getAllJobs();
+      $scope.compId = '';
+      $scope.selectCompConf = true;
+    }, function(){
+      $scope.getAllJobs();
+      $scope.compId = '';
+      $scope.selectCompConf = true;
+    });
+  }
+  $scope.deactivateConfig = function(componentId, configId) {
+    Business.configurationservice.deactivateConfig(componentId).then(function(){
+      $scope.getIntegrationConf(comonentId);
+    });
+  }
+  $scope.activateConfig = function(componentId, configId) {
+    Business.configurationservice.activateConfig(componentId).then(function(){
+      $scope.getIntegrationConf(comonentId);
+    });
+  }
+  $scope.deleteConfig = function(componentId, configId) {
+    Business.configurationservice.deleteConfig(componentId).then(function(){
+      $scope.getIntegrationConf(comonentId);
+    }, function(){
+      $scope.getIntegrationConf(comonentId);
+    });
+  }
+  $scope.refreshJob = function(componentId) {
+    console.log('deactivateJob ComponentId', componentId);
+  }
+  $scope.refreshConfig = function(componentId) {
+    console.log('deleteJob ComponentId', componentId);
+  }
+
+  $scope.calcStatus = function(val)
+  {
+    switch(val){
+      case 'C':
+      return 'Complete'
+      break;
+      case 'E':
+      return 'Error'
+      break;
+      case 'W':
+      return 'Working'
+      break;
+      default:
+      return 'Error'
+      break;
+    }
+  }
+
+
+  $scope.$on('$UPDATECONFFORID', function(event, id){
+    $scope.getIntegrationConf(id);
+    $scope.getAllJobs();
+  })
+
+  $scope.tabs = [{
+    'title': 'All jobs',
+    'loc': 'views/admin/configuration/jobs.html'
+  },{
+    'title': 'Component Job Configurations',
+    'loc': 'views/admin/configuration/configuration.html'
+  }]
+
+
   $scope.$watch('componentConfMap', function(value) {
     if (value && typeof value === 'object') {
       if (value.componentId){
@@ -446,6 +567,13 @@ $scope.saveGlobalConf = function(){
       $scope.storeCodes = [];
     } 
   }, true);
+
+  $scope.$watch('component', function(value){
+    if (value && value.compId && !isNaN(parseInt(value.compId))){
+      console.log('$scope.compId2', value.compId);
+      $scope.getIntegrationConf(value.compId);
+    } 
+  }, true)
 
   $scope.$watch('watch', function(value, oldvalue) { //
     if (value && value.storeField && typeof value.storeField === 'object' && !angular.equals(value.storeField, oldvalue.storeField)) {

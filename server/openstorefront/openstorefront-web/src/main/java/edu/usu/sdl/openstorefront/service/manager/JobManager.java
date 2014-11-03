@@ -101,16 +101,22 @@ public class JobManager
 
 	private static void addComponentIntegrationJob(ComponentIntegration componentIntegration) throws SchedulerException
 	{
+		ServiceProxy serviceProxy = new ServiceProxy();
 		JobDetail job = JobBuilder.newJob(IntegrationJob.class)
 				.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
 				.build();
 
 		job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
 
+		job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
+		String cron = componentIntegration.getRefreshRate();
+		if (cron == null) {
+			cron = serviceProxy.getSystemService().getGlobalIntegrationConfig().getJiraRefreshRate();
+		}
 		Trigger trigger = newTrigger()
 				.withIdentity("ComponentTrigger-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
 				.startNow()
-				.withSchedule(cronSchedule("0 " + componentIntegration.getRefreshRate()))
+				.withSchedule(cronSchedule("0 " + cron))
 				.build();
 
 		scheduler.scheduleJob(job, trigger);

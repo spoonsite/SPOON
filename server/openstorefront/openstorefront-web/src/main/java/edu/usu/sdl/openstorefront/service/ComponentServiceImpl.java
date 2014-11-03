@@ -1511,7 +1511,6 @@ public class ComponentServiceImpl
 			} else {
 				JobManager.removeComponentIntegrationJob(componentId);
 			}
-
 		} else {
 			throw new OpenStorefrontRuntimeException("Component Integration doesn't exist", "Check input");
 		}
@@ -1643,6 +1642,7 @@ public class ComponentServiceImpl
 		} else {
 			integrationConfig.setIntegrationConfigId(persistenceService.generateId());
 			integrationConfig.populateBaseCreateFields();
+			integrationConfig.setStatus(RunStatus.COMPLETE);
 			persistenceService.persist(integrationConfig);
 		}
 		return integrationConfig;
