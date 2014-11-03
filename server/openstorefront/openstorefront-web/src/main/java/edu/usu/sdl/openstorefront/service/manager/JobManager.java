@@ -95,20 +95,51 @@ public class JobManager
 		ServiceProxy serviceProxy = new ServiceProxy();
 		List<ComponentIntegration> integrations = serviceProxy.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
 		for (ComponentIntegration integration : integrations) {
+			addComponentIntegrationJob(integration);
+		}
+	}
 
-			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
-					.withIdentity("ComponentJob-" + integration.getComponentId(), JOB_GROUP_SYSTEM)
-					.build();
+	private static void addComponentIntegrationJob(ComponentIntegration componentIntegration) throws SchedulerException
+	{
+		JobDetail job = JobBuilder.newJob(IntegrationJob.class)
+				.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
+				.build();
 
-			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, integration.getComponentId());
+		job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
 
-			Trigger trigger = newTrigger()
-					.withIdentity("ComponentTrigger-" + integration.getComponentId(), JOB_GROUP_SYSTEM)
-					.startNow()
-					.withSchedule(cronSchedule("0 " + integration.getRefreshRate()))
-					.build();
+		Trigger trigger = newTrigger()
+				.withIdentity("ComponentTrigger-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(cronSchedule("0 " + componentIntegration.getRefreshRate()))
+				.build();
 
-			scheduler.scheduleJob(job, trigger);
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	/**
+	 * Add or Update job
+	 *
+	 * @param componentIntegration
+	 */
+	public static void updateComponentIntegrationJob(ComponentIntegration componentIntegration)
+	{
+		try {
+			removeComponentIntegrationJob(componentIntegration.getComponentId());
+			addComponentIntegrationJob(componentIntegration);
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable update Job: " + componentIntegration.getComponentId(), ex);
+		}
+	}
+
+	public static void removeComponentIntegrationJob(String componentId)
+	{
+		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
+		try {
+			if (scheduler.checkExists(jobKey)) {
+				scheduler.deleteJob(jobKey);
+			}
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable remove Job.", ex);
 		}
 	}
 
@@ -116,27 +147,26 @@ public class JobManager
 	{
 		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
 		try {
+			JobDataMap jobDataMap = new JobDataMap();
+			jobDataMap.put(IntegrationJob.COMPONENT_ID, componentId);
 			if (StringUtils.isNotBlank(integrationConfigId)) {
-				JobDataMap jobDataMap = new JobDataMap();
 				jobDataMap.put(IntegrationJob.CONFIG_ID, integrationConfigId);
-				scheduler.triggerJob(jobKey, jobDataMap);
-			} else {
-				scheduler.triggerJob(jobKey);
 			}
+			scheduler.triggerJob(jobKey, jobDataMap);
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable run Job.", ex);
 		}
 	}
 
-	public static void unscheduleSystemJob(String job)
+	public static void unscheduleSystemJob(String triggerName)
 	{
 		try {
-			TriggerKey triggerKey = TriggerKey.triggerKey(job, JOB_GROUP_SYSTEM);
+			TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, JOB_GROUP_SYSTEM);
 			if (scheduler.checkExists(triggerKey)) {
 				scheduler.unscheduleJob(triggerKey);
 			}
 		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable schedule Job.", ex);
+			throw new OpenStorefrontRuntimeException("Unable unschedule Job.", ex);
 		}
 	}
 
