@@ -1502,7 +1502,7 @@ public class ComponentServiceImpl
 			component.setActiveStatus(status);
 			component.setUpdateDts(TimeUtil.currentDate());
 			component.setUpdateUser(SecurityUtil.getCurrentUserName());
-			persistenceService.persist(status);
+			persistenceService.persist(component);
 		} else {
 			throw new OpenStorefrontRuntimeException("Component Integration doesn't exist", "Check input");
 		}
