@@ -148,7 +148,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
-		return sendSingleEnityResponse(view);
+		return sendSingleEntityResponse(view);
 	}
 
 	@POST
@@ -211,7 +211,7 @@ public class ComponentRESTResource
 		if (view != null) {
 			view = service.getComponentService().activateComponent(componentId);
 		}
-		return sendSingleEnityResponse(view);
+		return sendSingleEntityResponse(view);
 	}
 
 	@DELETE
@@ -248,7 +248,7 @@ public class ComponentRESTResource
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
-		return sendSingleEnityResponse(componentDetail);
+		return sendSingleEntityResponse(componentDetail);
 	}
 
 	// ComponentRESTResource ATTRIBUTE Section
@@ -983,7 +983,7 @@ public class ComponentRESTResource
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
 		}
-		return sendSingleEnityResponse(componentQuestion);
+		return sendSingleEntityResponse(componentQuestion);
 	}
 
 	@DELETE
@@ -1105,7 +1105,7 @@ public class ComponentRESTResource
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
-		return sendSingleEnityResponse(questionResponse);
+		return sendSingleEntityResponse(questionResponse);
 	}
 
 	@DELETE
@@ -1234,7 +1234,7 @@ public class ComponentRESTResource
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
 		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
-		return sendSingleEnityResponse(componentResource);
+		return sendSingleEntityResponse(componentResource);
 	}
 
 	@DELETE
@@ -1548,7 +1548,7 @@ public class ComponentRESTResource
 		componentReviewConExample.setComponentId(componentId);
 
 		ComponentReviewCon reviewCon = service.getPersistenceService().queryOneByExample(ComponentReviewCon.class, new QueryByExample(componentReviewConExample));
-		return sendSingleEnityResponse(reviewCon);
+		return sendSingleEntityResponse(reviewCon);
 	}
 
 	@DELETE
@@ -1672,7 +1672,7 @@ public class ComponentRESTResource
 		componentReviewProPk.setReviewPro(proId);
 		componentReviewProExample.setComponentReviewProPk(componentReviewProPk);
 		ComponentReviewPro componentReviewPro = service.getPersistenceService().queryOneByExample(ComponentReviewPro.class, new QueryByExample(componentReviewProExample));
-		return sendSingleEnityResponse(componentReviewPro);
+		return sendSingleEntityResponse(componentReviewPro);
 	}
 
 	@DELETE
@@ -1796,7 +1796,7 @@ public class ComponentRESTResource
 		componentTagExample.setComponentId(componentId);
 		componentTagExample.setTagId(tagId);
 		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(componentTagExample));
-		return sendSingleEnityResponse(componentTag);
+		return sendSingleEntityResponse(componentTag);
 	}
 
 	@DELETE
@@ -1989,7 +1989,7 @@ public class ComponentRESTResource
 		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(ComponentTracking.class, queryByExample);
 
 		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
-		return sendSingleEnityResponse(new ComponentTrackingWrapper(componentTrackings, total));
+		return sendSingleEntityResponse(new ComponentTrackingWrapper(componentTrackings, total));
 	}
 
 	@GET
@@ -2008,7 +2008,7 @@ public class ComponentRESTResource
 		componentTrackingExample.setComponentId(componentId);
 		componentTrackingExample.setComponentTrackingId(trackingId);
 		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, componentTrackingExample);
-		return sendSingleEnityResponse(componentTracking);
+		return sendSingleEntityResponse(componentTracking);
 	}
 
 	@DELETE
@@ -2085,7 +2085,7 @@ public class ComponentRESTResource
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		ComponentIntegrationView view = ComponentIntegrationView.toView(integration);
-		return sendSingleEnityResponse(view);
+		return sendSingleEntityResponse(view);
 	}
 
 	@POST
@@ -2122,7 +2122,7 @@ public class ComponentRESTResource
 		if (componentIntegration != null) {
 			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.ACTIVE_STATUS);
 		}
-		return sendSingleEnityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
+		return sendSingleEntityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
 	}
 
 	@PUT
@@ -2138,7 +2138,7 @@ public class ComponentRESTResource
 		if (componentIntegration != null) {
 			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
 		}
-		return sendSingleEnityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
+		return sendSingleEntityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
 	}
 
 	@DELETE
@@ -2212,7 +2212,7 @@ public class ComponentRESTResource
 		integrationConfigExample.setComponentId(componentId);
 		integrationConfigExample.setIntegrationConfigId(configId);
 		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
-		return sendSingleEnityResponse(integrationConfig);
+		return sendSingleEntityResponse(integrationConfig);
 	}
 
 	@POST
@@ -2265,7 +2265,7 @@ public class ComponentRESTResource
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.ACTIVE_STATUS);
 		}
-		return sendSingleEnityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
+		return sendSingleEntityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
 	}
 
 	@PUT
@@ -2286,7 +2286,7 @@ public class ComponentRESTResource
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.INACTIVE_STATUS);
 		}
-		return sendSingleEnityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
+		return sendSingleEntityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
 	}
 
 	@DELETE
