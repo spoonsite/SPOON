@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.io.integration.BaseIntegrationHandler;
 import static edu.usu.sdl.openstorefront.service.io.integration.JiraIntegrationHandler.STATUS_FIELD;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
@@ -1492,17 +1493,24 @@ public class ComponentServiceImpl
 			integration.populateBaseCreateFields();
 			persistenceService.persist(integration);
 		}
+		JobManager.updateComponentIntegrationJob(componentIntegration);
 	}
 
 	@Override
 	public void setStatusOnComponentIntegration(String componentId, String status)
 	{
-		ComponentIntegration component = persistenceService.findById(ComponentIntegration.class, componentId);
-		if (component != null) {
-			component.setActiveStatus(status);
-			component.setUpdateDts(TimeUtil.currentDate());
-			component.setUpdateUser(SecurityUtil.getCurrentUserName());
-			persistenceService.persist(component);
+		ComponentIntegration componentIntegration = persistenceService.findById(ComponentIntegration.class, componentId);
+		if (componentIntegration != null) {
+			componentIntegration.setActiveStatus(status);
+			componentIntegration.setUpdateDts(TimeUtil.currentDate());
+			componentIntegration.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(componentIntegration);
+
+			if (Component.ACTIVE_STATUS.equals(status)) {
+				JobManager.updateComponentIntegrationJob(componentIntegration);
+			} else {
+				JobManager.removeComponentIntegrationJob(componentId);
+			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Component Integration doesn't exist", "Check input");
 		}
@@ -1665,6 +1673,8 @@ public class ComponentServiceImpl
 			integrationConfigExample.setComponentId(componentId);
 			persistenceService.deleteByExample(integrationConfigExample);
 			persistenceService.delete(componentIntegration);
+
+			JobManager.removeComponentIntegrationJob(componentId);
 		}
 	}
 
