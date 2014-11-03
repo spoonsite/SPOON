@@ -134,7 +134,7 @@ service tomcat restart
 Copy openstorefront.war to /usr/local/tomcat/latest/webapps
 
 ##Application Configuration
-Configuration and data is stored in /var/openstorefront/  (make sure user running the application has r/w permission for that directory)  All directories are created upon application startup.
+Configuration and data is stored in /var/openstorefront/  **(make sure user running the application has r/w permission for that directory)**  All directories are created upon application startup.
 
 High level directory map under /var/openstorefront/
 
