@@ -1497,7 +1497,7 @@ public class ComponentServiceImpl
 	@Override
 	public void setStatusOnComponentIntegration(String componentId, String status)
 	{
-		Component component = persistenceService.findById(Component.class, componentId);
+		ComponentIntegration component = persistenceService.findById(ComponentIntegration.class, componentId);
 		if (component != null) {
 			component.setActiveStatus(status);
 			component.setUpdateDts(TimeUtil.currentDate());

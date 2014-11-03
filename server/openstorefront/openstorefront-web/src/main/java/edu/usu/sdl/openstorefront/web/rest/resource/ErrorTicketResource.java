@@ -64,7 +64,7 @@ public class ErrorTicketResource
 
 		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(ErrorTicket.class, queryByExample);
 		long total = service.getPersistenceService().countClass(ErrorTicket.class);
-		return sendSingleEnityResponse(new ErrorTicketWrapper(errorTickets, total));
+		return sendSingleEntityResponse(new ErrorTicketWrapper(errorTickets, total));
 	}
 
 	@GET
@@ -77,7 +77,7 @@ public class ErrorTicketResource
 			@RequiredParam String id)
 	{
 		ErrorTicket errorTicket = service.getPersistenceService().findById(ErrorTicket.class, id);
-		return sendSingleEnityResponse(errorTicket);
+		return sendSingleEntityResponse(errorTicket);
 	}
 
 	@GET
@@ -94,6 +94,6 @@ public class ErrorTicketResource
 			ticketData = ticketData.replace("\n", "<br>");
 			ticketData = ticketData.replace("edu.usu.sdl.openstorefront", "<span style='background: yellow;'>edu.usu.sdl.openstorefront</span>");
 		}
-		return sendSingleEnityResponse(ticketData);
+		return sendSingleEntityResponse(ticketData);
 	}
 }
