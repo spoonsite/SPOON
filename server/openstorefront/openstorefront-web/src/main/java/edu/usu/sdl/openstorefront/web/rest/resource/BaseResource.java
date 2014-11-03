@@ -29,8 +29,13 @@ public abstract class BaseResource
 
 	protected Response sendSingleEnityResponse(Object entity)
 	{
+		return sendSingleEnityResponse(entity, Response.Status.NOT_FOUND);
+	}
+
+	protected Response sendSingleEnityResponse(Object entity, Response.StatusType status)
+	{
 		if (entity == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
+			return Response.status(status).build();
 		} else {
 			return Response.ok(entity).build();
 		}

@@ -2122,7 +2122,7 @@ public class ComponentRESTResource
 		if (componentIntegration != null) {
 			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.ACTIVE_STATUS);
 		}
-		return sendSingleEnityResponse(componentIntegration);
+		return sendSingleEnityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
 	}
 
 	@PUT
@@ -2138,7 +2138,7 @@ public class ComponentRESTResource
 		if (componentIntegration != null) {
 			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
 		}
-		return sendSingleEnityResponse(componentIntegration);
+		return sendSingleEnityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
 	}
 
 	@DELETE
@@ -2265,7 +2265,7 @@ public class ComponentRESTResource
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.ACTIVE_STATUS);
 		}
-		return sendSingleEnityResponse(integrationConfig);
+		return sendSingleEnityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
 	}
 
 	@PUT
@@ -2286,7 +2286,7 @@ public class ComponentRESTResource
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.INACTIVE_STATUS);
 		}
-		return sendSingleEnityResponse(integrationConfig);
+		return sendSingleEnityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
 	}
 
 	@DELETE
