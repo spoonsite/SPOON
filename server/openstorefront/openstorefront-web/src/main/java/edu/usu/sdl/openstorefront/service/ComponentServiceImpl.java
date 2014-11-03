@@ -1497,12 +1497,12 @@ public class ComponentServiceImpl
 	@Override
 	public void setStatusOnComponentIntegration(String componentId, String status)
 	{
-		Component component = persistenceService.findById(Component.class, componentId);
+		ComponentIntegration component = persistenceService.findById(ComponentIntegration.class, componentId);
 		if (component != null) {
 			component.setActiveStatus(status);
 			component.setUpdateDts(TimeUtil.currentDate());
 			component.setUpdateUser(SecurityUtil.getCurrentUserName());
-			persistenceService.persist(status);
+			persistenceService.persist(component);
 		} else {
 			throw new OpenStorefrontRuntimeException("Component Integration doesn't exist", "Check input");
 		}

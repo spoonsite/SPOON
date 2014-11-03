@@ -452,18 +452,27 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       $scope.getAllJobs();
       $scope.compId = '';
       $scope.selectCompConf = true;
+    }, function(){
+      $scope.getAllJobs();
+      $scope.compId = '';
+      $scope.selectCompConf = true;
     });
   }
   $scope.deactivateConfig = function(componentId, configId) {
     Business.configurationservice.deactivateConfig(componentId).then(function(){
+      $scope.getIntegrationConf(comonentId);
     });
   }
   $scope.activateConfig = function(componentId, configId) {
     Business.configurationservice.activateConfig(componentId).then(function(){
+      $scope.getIntegrationConf(comonentId);
     });
   }
   $scope.deleteConfig = function(componentId, configId) {
     Business.configurationservice.deleteConfig(componentId).then(function(){
+      $scope.getIntegrationConf(comonentId);
+    }, function(){
+      $scope.getIntegrationConf(comonentId);
     });
   }
   $scope.refreshJob = function(componentId) {
@@ -494,6 +503,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
 
   $scope.$on('$UPDATECONFFORID', function(event, id){
     $scope.getIntegrationConf(id);
+    $scope.getAllJobs();
   })
 
   $scope.tabs = [{

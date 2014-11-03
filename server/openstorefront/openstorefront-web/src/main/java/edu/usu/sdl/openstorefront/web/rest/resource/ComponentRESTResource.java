@@ -70,7 +70,6 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
-import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
 import java.util.ArrayList;
@@ -2123,10 +2122,10 @@ public class ComponentRESTResource
 		if (integration != null) {
 			ComponentIntegrationView view = ComponentIntegrationView.toView(integration);
 			return sendSingleEntityResponse(view);
-		}
-		else {
+		} else {
 			return Response.ok().build();
 		}
+
 	}
 
 	@POST
@@ -2164,7 +2163,7 @@ public class ComponentRESTResource
 		if (componentIntegration != null) {
 			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.ACTIVE_STATUS);
 		}
-		return sendSingleEntityResponse(componentIntegration);
+		return sendSingleEntityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
 	}
 
 	@PUT
@@ -2180,7 +2179,7 @@ public class ComponentRESTResource
 		if (componentIntegration != null) {
 			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
 		}
-		return sendSingleEntityResponse(componentIntegration);
+		return sendSingleEntityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
 	}
 
 	@DELETE
@@ -2188,7 +2187,7 @@ public class ComponentRESTResource
 	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
 	public void deleteComponentConfig(
-			@PathParam("id")
+			@PathParam("componentId")
 			@RequiredParam String componentId)
 	{
 		service.getComponentService().deleteComponentIntegration(componentId);
@@ -2309,7 +2308,7 @@ public class ComponentRESTResource
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.ACTIVE_STATUS);
 		}
-		return sendSingleEntityResponse(integrationConfig);
+		return sendSingleEntityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
 	}
 
 	@PUT
@@ -2330,7 +2329,7 @@ public class ComponentRESTResource
 		if (integrationConfig != null) {
 			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.INACTIVE_STATUS);
 		}
-		return sendSingleEntityResponse(integrationConfig);
+		return sendSingleEntityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
 	}
 
 	@DELETE
