@@ -98,7 +98,7 @@ describe('user-tools_User logged in drop-down', function() {
         element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
         //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         element.all(by.css('.dropdown-menu a')).get(3).click();
-        browser.driver.sleep(1000);
+        browser.driver.sleep(1800);
         expect(element.all(by.css('.btn')).count()).toEqual(7);
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(5000);
