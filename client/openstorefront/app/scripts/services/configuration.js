@@ -410,7 +410,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
 
   service.getAllJobs = function() {
     var deferred = $q.defer();
-    var url = 'api/v1/resource/components/integration';
+    var url = 'api/v1/resource/components/integration?status=ALL';
     $http({
       'method': 'GET',
       'url': url,

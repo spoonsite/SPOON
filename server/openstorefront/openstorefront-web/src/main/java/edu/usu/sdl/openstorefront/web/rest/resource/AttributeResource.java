@@ -216,7 +216,7 @@ public class AttributeResource
 		if (attributeType != null) {
 			architecture = service.getAttributeService().generateArchitecture(type);
 		}
-		return sendSingleEnityResponse(architecture);
+		return sendSingleEntityResponse(architecture);
 	}
 
 	@GET
@@ -235,7 +235,7 @@ public class AttributeResource
 		attributeCodePk.setAttributeType(type);
 		AttributeCode attributeCode = service.getPersistenceService().detach(service.getPersistenceService().findById(AttributeCode.class, attributeCodePk));
 
-		return sendSingleEnityResponse(attributeCode);
+		return sendSingleEntityResponse(attributeCode);
 	}
 
 	@GET
@@ -535,7 +535,7 @@ public class AttributeResource
 			tempMap.setAttributeType(attributeXRefType.getAttributeType());
 			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
 		}
-		return sendSingleEnityResponse(model);
+		return sendSingleEntityResponse(model);
 	}
 
 	@POST

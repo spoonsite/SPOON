@@ -27,7 +27,12 @@ public abstract class BaseResource
 
 	protected final edu.usu.sdl.openstorefront.service.ServiceProxy service = new edu.usu.sdl.openstorefront.service.ServiceProxy();
 
-	protected Response sendSingleEnityResponse(Object entity)
+	protected Response sendSingleEntityResponse(Object entity)
+	{
+		return sendSingleEntityResponse(entity, Response.Status.NOT_FOUND);
+	}
+
+	protected Response sendSingleEntityResponse(Object entity, Response.StatusType status)
 	{
 		return sendSingleEnityResponse(entity, Response.Status.NOT_FOUND);
 	}

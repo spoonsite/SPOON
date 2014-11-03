@@ -67,7 +67,7 @@ public class JobService
 	{
 		JobSchedulerStatus jobSchedulerStatus = new JobSchedulerStatus();
 		jobSchedulerStatus.setStatus(JobManager.status());
-		return sendSingleEnityResponse(jobSchedulerStatus);
+		return sendSingleEntityResponse(jobSchedulerStatus);
 	}
 
 	@GET
@@ -87,7 +87,7 @@ public class JobService
 				jobFound = job;
 			}
 		}
-		return sendSingleEnityResponse(jobFound);
+		return sendSingleEntityResponse(jobFound);
 	}
 
 	@POST
