@@ -34,7 +34,7 @@ describe('reviews_Q-n-A', function() {
     //element.all(by.css('star-off-png')).get(4).click();
 
     element(by.id('title')).sendKeys('A sweet suite of products!');
-    element(by.id('lastUsed')).sendKeys('10-2014');
+    element(by.id('lastUsed')).sendKeys('10-2014'); // WATCH this, it failed the first run!?!?
     element(by.id('comment')).sendKeys('A really great suite for tie fighter squadrons.');
     element(by.id('organization')).clear();
     element(by.id('organization')).sendKeys('9999th Wing of the Death Star Tie Fighters', protractor.Key.ENTER);
@@ -63,6 +63,8 @@ describe('reviews_Q-n-A', function() {
 
     // Answer Question
     element.all(by.css('.btn.btn-sm.btn-default')).get(0).click();
+    browser.driver.sleep(1000);
+
     element(by.id('1response')).sendKeys('Just like me, they long to be, close to you.  Whoooaaaooaoaoa, close to you!',
       protractor.Key.TAB, protractor.Key.ENTER);
     browser.driver.sleep(1000);
