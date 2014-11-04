@@ -38,7 +38,7 @@ describe('reviews_Q-n-A', function() {
     element(by.id('comment')).sendKeys('A really great suite for tie fighter squadrons.');
     element(by.id('organization')).clear();
     element(by.id('organization')).sendKeys('9999th Wing of the Death Star Tie Fighters', protractor.Key.ENTER);
-    browser.driver.sleep(1500);
+    browser.driver.sleep(2500);
 
     expect(element.all(by.repeater('btn-primary')).count()).toEqual(0);
     browser.driver.sleep(3500);
@@ -56,18 +56,18 @@ describe('reviews_Q-n-A', function() {
 
     element(by.id('1question')).sendKeys('Why do birds, suddenly appear, every time you are near?',
       protractor.Key.TAB, protractor.Key.ENTER);
-    browser.driver.sleep(1000);
+    browser.driver.sleep(2000);
 
     element(by.css('.form-control.ng-pristine.ng-animate.ng-valid-maxlength.ng-valid.ng-valid-required')).sendKeys(protractor.Key.ENTER);
     browser.driver.sleep(5000);
 
     // Answer Question
     element.all(by.css('.btn.btn-sm.btn-default')).get(0).click();
-    browser.driver.sleep(1000);
+    browser.driver.sleep(2000);
 
     element(by.id('1response')).sendKeys('Just like me, they long to be, close to you.  Whoooaaaooaoaoa, close to you!',
       protractor.Key.TAB, protractor.Key.ENTER);
-    browser.driver.sleep(1000);
+    browser.driver.sleep(2000);
 
     element(by.css('.form-control.ng-pristine.ng-valid-maxlength.ng-valid.ng-valid-required')).sendKeys(protractor.Key.ENTER);
     //element(by.css('.form-control.ng-pristine.ng-valid-maxlength.ng-invalid.ng-invalid-required')).sendKeys('Cupid', protractor.Key.ENTER);

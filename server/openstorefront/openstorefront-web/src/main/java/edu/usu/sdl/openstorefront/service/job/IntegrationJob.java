@@ -34,10 +34,10 @@ public class IntegrationJob
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		Object componentIdObj = context.get(COMPONENT_ID);
+		Object componentIdObj = context.getMergedJobDataMap().get(COMPONENT_ID);
 		if (componentIdObj != null) {
 			String componentId = componentIdObj.toString();
-			Object configIdObj = context.get(CONFIG_ID);
+			Object configIdObj = context.getMergedJobDataMap().get(CONFIG_ID);
 			String configId = null;
 			if (configIdObj != null) {
 				configId = configIdObj.toString();

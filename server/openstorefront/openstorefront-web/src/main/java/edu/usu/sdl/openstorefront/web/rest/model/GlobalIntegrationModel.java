@@ -30,13 +30,15 @@ public class GlobalIntegrationModel
 {
 
 	//10 am server time (UTC) every day
-	public static final String DEFAULT_REFRESH_RATE = "0 10 * * ?";
+	public static final String DEFAULT_REFRESH_RATE = "0 0 10 * * ?";
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String jiraRefreshRate;
+
+	private String cronExpressionDescription;
 
 	public GlobalIntegrationModel()
 	{
@@ -51,6 +53,16 @@ public class GlobalIntegrationModel
 	public void setJiraRefreshRate(String jiraRefreshRate)
 	{
 		this.jiraRefreshRate = jiraRefreshRate;
+	}
+
+	public String getCronExpressionDescription()
+	{
+		return cronExpressionDescription;
+	}
+
+	public void setCronExpressionDescription(String cronExpressionDescription)
+	{
+		this.cronExpressionDescription = cronExpressionDescription;
 	}
 
 }

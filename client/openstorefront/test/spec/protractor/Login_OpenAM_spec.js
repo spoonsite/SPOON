@@ -14,7 +14,7 @@ theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
 openAM = false; other = true;
 
 
-// Leave OUTSIDE of describe, it, expect as it is NOT an Angular website page.
+// Leave OUTSIDE of describe, it, expect-- as it is NOT an Angular website page.
 if (openAM) {
     // For non-Angular page turn OFF synchronization
     browser.ignoreSynchronization = true;
