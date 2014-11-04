@@ -30,7 +30,7 @@ public class GlobalIntegrationModel
 {
 
 	//10 am server time (UTC) every day
-	public static final String DEFAULT_REFRESH_RATE = "0 10 * * ?";
+	public static final String DEFAULT_REFRESH_RATE = "0 0 10 * * ?";
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CRON)

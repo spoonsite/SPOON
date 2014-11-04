@@ -357,7 +357,8 @@ public interface ComponentService
 	public void saveComponentIntegration(ComponentIntegration integration);
 
 	/**
-	 * Saves an Component Integration config
+	 * Saves an Component Integration config Note: this will create a component
+	 * integration if it doesn't exist.
 	 *
 	 * @param integrationConfig
 	 * @return

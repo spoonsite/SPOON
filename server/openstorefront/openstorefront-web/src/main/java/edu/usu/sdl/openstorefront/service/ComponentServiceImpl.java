@@ -99,6 +99,8 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 /**
  * Handles all component related entities
@@ -1339,7 +1341,17 @@ public class ComponentServiceImpl
 			} else {
 				IssueField jiraField = issue.getField(xrefAttributeType.getFieldId());
 				if (jiraField != null) {
-					jiraValue = jiraField.getValue().toString();
+					if (jiraField.getValue() instanceof JSONObject) {
+						JSONObject json = (JSONObject) jiraField.getValue();
+						try {
+							jiraValue = json.getString("value");
+						} catch (JSONException ex) {
+							throw new OpenStorefrontRuntimeException("Unable to get field value from: " + jiraField.getValue());
+						}
+					} else {
+						jiraValue = jiraField.getValue().toString();
+					}
+
 				} else {
 					throw new OpenStorefrontRuntimeException("Unable to find Jira Field: " + xrefAttributeType.getFieldName());
 				}
@@ -1488,12 +1500,13 @@ public class ComponentServiceImpl
 			componentIntegration.setUpdateUser(SecurityUtil.getCurrentUserName());
 			componentIntegration.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(componentIntegration);
+			integration = componentIntegration;
 		} else {
 			integration.setStatus(RunStatus.COMPLETE);
 			integration.populateBaseCreateFields();
 			persistenceService.persist(integration);
 		}
-		JobManager.updateComponentIntegrationJob(componentIntegration);
+		JobManager.updateComponentIntegrationJob(integration);
 	}
 
 	@Override
@@ -1532,8 +1545,7 @@ public class ComponentServiceImpl
 		integrationExample.setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
 		integrationExample.setComponentId(componentId);
 		ComponentIntegration integration = persistenceService.queryOneByExample(ComponentIntegration.class, integrationExample);
-		if (integration
-				!= null) {
+		if (integration != null) {
 
 			boolean run = true;
 			if (RunStatus.WORKING.equals(integration.getStatus())) {
@@ -1543,7 +1555,7 @@ public class ComponentServiceImpl
 					LocalDateTime maxLocalDateTime = LocalDateTime.ofInstant(integration.getLastStartTime().toInstant(), ZoneId.systemDefault());
 					maxLocalDateTime.plusMinutes(Convert.toLong(overrideTime));
 					if (maxLocalDateTime.compareTo(LocalDateTime.now()) <= 0) {
-						log.log(Level.FINE, "Overriding the working it assume it was stuck.");
+						log.log(Level.FINE, "Overriding the working state...assume it was stuck.");
 						run = true;
 					} else {
 						run = false;
@@ -1554,12 +1566,16 @@ public class ComponentServiceImpl
 			}
 
 			if (run) {
+				Component component = persistenceService.findById(Component.class, integration.getComponentId());
+				ComponentIntegration liveIntegration = persistenceService.findById(ComponentIntegration.class, integration.getComponentId());
 
-				integration.setStatus(RunStatus.WORKING);
-				integration.setLastStartTime(TimeUtil.currentDate());
-				integration.setUpdateDts(TimeUtil.currentDate());
-				integration.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-				persistenceService.persist(integration);
+				log.log(Level.FINE, MessageFormat.format("Processing Integration for: {0}", component.getName()));
+
+				liveIntegration.setStatus(RunStatus.WORKING);
+				liveIntegration.setLastStartTime(TimeUtil.currentDate());
+				liveIntegration.setUpdateDts(TimeUtil.currentDate());
+				liveIntegration.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+				persistenceService.persist(liveIntegration);
 
 				ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 				integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
@@ -1568,14 +1584,17 @@ public class ComponentServiceImpl
 
 				List<ComponentIntegrationConfig> integrationConfigs = persistenceService.queryByExample(ComponentIntegrationConfig.class, integrationConfigExample);
 				boolean errorConfig = false;
-				if (integrationConfigs.isEmpty()) {
+				if (integrationConfigs.isEmpty() == false) {
 					for (ComponentIntegrationConfig integrationConfig : integrationConfigs) {
+						ComponentIntegrationConfig liveConfig = persistenceService.findById(ComponentIntegrationConfig.class, integrationConfig.getIntegrationConfigId());
 						try {
-							integrationConfig.setStatus(RunStatus.WORKING);
-							integrationConfig.setLastStartTime(TimeUtil.currentDate());
-							integrationConfig.setUpdateDts(TimeUtil.currentDate());
-							integrationConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-							persistenceService.persist(integrationConfig);
+							log.log(Level.FINE, MessageFormat.format("Working on {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()));
+
+							liveConfig.setStatus(RunStatus.WORKING);
+							liveConfig.setLastStartTime(TimeUtil.currentDate());
+							liveConfig.setUpdateDts(TimeUtil.currentDate());
+							liveConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							persistenceService.persist(liveConfig);
 
 							BaseIntegrationHandler baseIntegrationHandler = BaseIntegrationHandler.getIntegrationHandler(integrationConfig);
 							if (baseIntegrationHandler != null) {
@@ -1584,11 +1603,13 @@ public class ComponentServiceImpl
 								throw new OpenStorefrontRuntimeException("Intergration handler not supported for " + integrationConfig.getIntegrationType(), "Add handler");
 							}
 
-							integrationConfig.setStatus(RunStatus.COMPLETE);
-							integrationConfig.setLastEndTime(TimeUtil.currentDate());
-							integrationConfig.setUpdateDts(TimeUtil.currentDate());
-							integrationConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-							persistenceService.persist(integrationConfig);
+							liveConfig.setStatus(RunStatus.COMPLETE);
+							liveConfig.setLastEndTime(TimeUtil.currentDate());
+							liveConfig.setUpdateDts(TimeUtil.currentDate());
+							liveConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							persistenceService.persist(liveConfig);
+
+							log.log(Level.FINE, MessageFormat.format("Completed {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()));
 						} catch (Exception e) {
 							errorConfig = true;
 							//This is a critical loop
@@ -1596,38 +1617,50 @@ public class ComponentServiceImpl
 							SystemErrorModel errorModel = getSystemService().generateErrorTicket(errorInfo);
 
 							//put in fail state
-							integrationConfig.setStatus(RunStatus.ERROR);
-							integrationConfig.setErrorMessage(errorModel.getMessage());
-							integrationConfig.setErrorTicketNumber(errorModel.getErrorTicketNumber());
-							integrationConfig.setLastEndTime(TimeUtil.currentDate());
-							integrationConfig.setUpdateDts(TimeUtil.currentDate());
-							integrationConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-							persistenceService.persist(integrationConfig);
+							liveConfig.setStatus(RunStatus.ERROR);
+							liveConfig.setErrorMessage(errorModel.getMessage());
+							liveConfig.setErrorTicketNumber(errorModel.getErrorTicketNumber());
+							liveConfig.setLastEndTime(TimeUtil.currentDate());
+							liveConfig.setUpdateDts(TimeUtil.currentDate());
+							liveConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							persistenceService.persist(liveConfig);
+
+							log.log(Level.FINE, MessageFormat.format("Failed on {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()), e);
 						}
 					}
+				} else {
+					log.log(Level.WARNING, MessageFormat.format("No Active Integration configs for: {0} (Integration is doing nothing)", component.getName()));
 				}
 
 				if (errorConfig) {
-					integration.setStatus(RunStatus.ERROR);
+					liveIntegration.setStatus(RunStatus.ERROR);
 				} else {
-					integration.setStatus(RunStatus.COMPLETE);
+					liveIntegration.setStatus(RunStatus.COMPLETE);
 				}
-				integration.setLastEndTime(TimeUtil.currentDate());
-				integration.setUpdateDts(TimeUtil.currentDate());
-				integration.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-				persistenceService.persist(integration);
+				liveIntegration.setLastEndTime(TimeUtil.currentDate());
+				liveIntegration.setUpdateDts(TimeUtil.currentDate());
+				liveIntegration.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+				persistenceService.persist(liveIntegration);
 
+				log.log(Level.FINE, MessageFormat.format("Completed Integration for: {0}", component.getName()));
 			} else {
 				log.log(Level.FINE, MessageFormat.format("Not time to run integration or the system is currently working on the integration. Component Id: {0}", componentId));
 			}
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("There are no active integration for this component. Id: {0}", componentId));
+			log.log(Level.WARNING, MessageFormat.format("There is no active integration for this component. Id: {0}", componentId));
 		}
 	}
 
 	@Override
 	public ComponentIntegrationConfig saveComponentIntegrationConfig(ComponentIntegrationConfig integrationConfig)
 	{
+		ComponentIntegration componentIntegration = persistenceService.findById(ComponentIntegration.class, integrationConfig.getComponentId());
+		if (componentIntegration == null) {
+			componentIntegration = new ComponentIntegration();
+			componentIntegration.setComponentId(integrationConfig.getComponentId());
+			saveComponentIntegration(componentIntegration);
+		}
+
 		ComponentIntegrationConfig componentIntegrationConfig = persistenceService.findById(ComponentIntegrationConfig.class, integrationConfig.getIntegrationConfigId());
 		if (componentIntegrationConfig != null) {
 			componentIntegrationConfig.setActiveStatus(integrationConfig.getActiveStatus());
