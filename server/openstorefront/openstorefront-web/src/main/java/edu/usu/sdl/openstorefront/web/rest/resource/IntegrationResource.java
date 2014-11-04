@@ -19,11 +19,13 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import java.net.URI;
+import java.text.ParseException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -31,6 +33,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.redhogs.cronparser.CronExpressionDescriptor;
 
 /**
  *
@@ -51,11 +54,12 @@ public class IntegrationResource
 	public Response getGlobalConfig()
 	{
 		GlobalIntegrationModel model = service.getSystemService().getGlobalIntegrationConfig();
-		if (model != null) {
-			return Response.ok(model).build();
-		} else {
-			return Response.serverError().build();
+		try {
+			model.setCronExpressionDescription(CronExpressionDescriptor.getDescription(model.getJiraRefreshRate()));
+		} catch (ParseException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
 		}
+		return sendSingleEntityResponse(model);
 	}
 
 	@POST
