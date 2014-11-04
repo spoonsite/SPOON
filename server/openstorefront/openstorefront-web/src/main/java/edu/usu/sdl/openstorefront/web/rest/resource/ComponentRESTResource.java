@@ -2146,7 +2146,7 @@ public class ComponentRESTResource
 	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
 	public void deleteComponentConfig(
-			@PathParam("id")
+			@PathParam("componentId")
 			@RequiredParam String componentId)
 	{
 		service.getComponentService().deleteComponentIntegration(componentId);

@@ -270,7 +270,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       'url': url,
       'data': mapping
     }).success(function(data, status, headers, config){
-      console.log('-------------------status---------------', status, headers, config);
       if (isNotRequestError(data)) {
         deferred.resolve(data);
       } else {
@@ -302,7 +301,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data)) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(data);
@@ -323,7 +321,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (isNotRequestError(data)) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -347,7 +344,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (data && data.response !== 'false' && isNotRequestError(data) ) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -371,7 +367,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'data': conf
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -394,7 +389,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -416,7 +410,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       'url': url,
     }).success(function(data, status, headers, config){
       if (data && isNotRequestError(data) ) {
-        console.log('data', data);
         deferred.resolve(data);
       } else {
         deferred.reject(false);
@@ -427,6 +420,27 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     return deferred.promise;
   }
 
+  service.runJob = function(componentId) {
+    var deferred = $q.defer();
+    if (componentId) {
+      var url = 'api/v1/resource/components/'+componentId+'/integration/run';
+      $http({
+        'method': 'POST',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
   service.deactivateJob = function(componentId) {
     var deferred = $q.defer();
     if (componentId) {
@@ -436,7 +450,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -459,7 +472,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -482,7 +494,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -505,7 +516,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -528,7 +538,6 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
-          console.log('data', data);
           deferred.resolve(data);
         } else {
           deferred.reject(false);
@@ -549,6 +558,71 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       $http({
         'method': 'DELETE',
         'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.runConfig = function(componentId, configId) {
+    var deferred = $q.defer();
+    if (componentId && configId) {
+      var url = 'api/v1/resource/components/'+componentId+'/integration/configs/'+configId+'/run';
+      $http({
+        'method': 'POST',
+        'url': url,
+      }).success(function(data, status, headers, config){
+        if (data && isNotRequestError(data) ) {
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
+  service.getGlobalConfig = function() {
+    var deferred = $q.defer();
+    var url = 'api/v1/resource/integrations/global';
+    $http({
+      'method': 'GET',
+      'url': url,
+    }).success(function(data, status, headers, config){
+      if (data && isNotRequestError(data) ) {
+        deferred.resolve(data);
+      } else {
+        deferred.reject(false);
+      }
+    }).error(function(data, status, headers, config){
+      deferred.reject(false);
+    });
+    return deferred.promise;
+  }
+
+  service.saveGlobalConf = function(cron) {
+    var deferred = $q.defer();
+    if (cron) {
+      var url = 'api/v1/resource/integrations/global';
+      $http({
+        'method': 'POST',
+        'url': url,
+        'data':{
+          'jiraRefreshRate': cron
+        }
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
           console.log('data', data);

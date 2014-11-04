@@ -38,7 +38,9 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   $scope.typeahead;
   $scope.previousMappings;
   $scope.overRideDefault = false;
-  $scope.componentCron = '0 0 * * *';
+  $scope.cron = {};
+  $scope.cron.componentCron = '0 0 0 1/1 * ? *';
+  $scope.cron.global_cron = '0 0 0 1/1 * ? *';
   $scope.component = {};
   $scope.component.compId;
   $scope.integrationConfs = null;
@@ -67,6 +69,14 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     });
   }, function() {
   });
+
+  $scope.getGlobalConfig = function(){
+    Business.configurationservice.getGlobalConfig().then(function(result) {
+      $scope.cron.global_cron = result? result.jiraRefreshRate? result.jiraRefreshRate: null: null;
+    }, function() {
+      $scope.cron.global_cron = null;
+    });
+  };
 
   $scope.getAllJobs = function(){
     Business.configurationservice.getAllJobs().then(function(result){
@@ -191,6 +201,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
 
   (function(){
     $scope.loading++;
+    $scope.getGlobalConfig();
     $scope.getAllJobs();
     $scope.getMappingTypes();
     $scope.getProjects();
@@ -302,11 +313,10 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }
 
   $scope.saveGlobalConf = function(){
-    var conf = {};
-    conf.componentId = $scope.componentId;
-    conf.issueId = $scope.issueId;
-    conf.refreshRate = $scope.componentCron? $scope.componentCron: '';
-    //save the object;
+    console.log('$scope.global_cron', $scope.cron.global_cron);
+    Business.configurationservice.saveGlobalConf($scope.cron.global_cron).then(function(result){
+      // do something if you want to after you save the global conf
+    });
     return false;
   }
 
@@ -459,27 +469,31 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     });
   }
   $scope.deactivateConfig = function(componentId, configId) {
-    Business.configurationservice.deactivateConfig(componentId).then(function(){
-      $scope.getIntegrationConf(comonentId);
+    Business.configurationservice.deactivateConfig(componentId, configId).then(function(){
+      $scope.getIntegrationConf(componentId);
     });
   }
   $scope.activateConfig = function(componentId, configId) {
-    Business.configurationservice.activateConfig(componentId).then(function(){
-      $scope.getIntegrationConf(comonentId);
+    Business.configurationservice.activateConfig(componentId, configId).then(function(){
+      $scope.getIntegrationConf(componentId);
     });
   }
   $scope.deleteConfig = function(componentId, configId) {
-    Business.configurationservice.deleteConfig(componentId).then(function(){
-      $scope.getIntegrationConf(comonentId);
+    Business.configurationservice.deleteConfig(componentId, configId).then(function(){
+      $scope.getIntegrationConf(componentId);
     }, function(){
-      $scope.getIntegrationConf(comonentId);
+      $scope.getIntegrationConf(componentId);
     });
   }
   $scope.refreshJob = function(componentId) {
-    console.log('deactivateJob ComponentId', componentId);
+    Business.configurationservice.runJob(componentId).then(function(){
+      $scope.getAllJobs();
+    });
   }
-  $scope.refreshConfig = function(componentId) {
-    console.log('deleteJob ComponentId', componentId);
+  $scope.refreshConfig = function(componentId, configId) {
+    Business.configurationservice.runConfig(componentId, configId).then(function(){
+      $scope.getIntegrationConf(componentId);
+    });
   }
 
   $scope.calcStatus = function(val)

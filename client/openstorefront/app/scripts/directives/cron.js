@@ -21,44 +21,22 @@ app.directive('cron', ['$timeout', function ($timeout) {
     template: '<div></div>',
     restrict: 'E',
     scope: {
-      ngModel: '='
+      ngModel: '=',
+      callback: '&'
     },
     link: function postLink(scope, element, attrs) {
-      var flag = false;
-
-      if (!scope.ngModel) {
-        scope.ngModel = '0 0 * * *';
-      }
-
-      var cleanNgModel = function(value) {
-        var check = value.trim().split(' ');
-        if (check.length === 6) {
-          check.shift();
-          return check.join(' ');
-        } else if (check.length === 5) {
-          return check.join(' ');
-        } else {
-          return '0 0 * * *';
-        }
-      }
-
-      $timeout(function() {
-        var c = $(element).cron({
-          initial: cleanNgModel(scope.ngModel), // Initial value. default = "* * * * *"
-          onChange: function() {
-            // console.log('cron value', $(this).cron('value'));
-            scope.ngModel = $(this).cron('value');
-            flag = true;
-          }
-        });
-        scope.$watch('ngModel', function(value){
-          if (value && !flag){
-            $(element).cron('value', cleanNgModel(value));
-          }
-          flag = false;
-        })
-      })
-
+      $(function () {
+        var cron = $(element).cronGen();
+        cron[0].addEventListener("cronChange", function(data){
+          console.log('cronChange', data);
+          scope.ngModel = data.detail.cron;
+          scope.$apply(function() {
+            $timeout(function() {
+              scope.callback();
+            })
+          });
+        }, false);
+      });
     }
   };
 }]);
