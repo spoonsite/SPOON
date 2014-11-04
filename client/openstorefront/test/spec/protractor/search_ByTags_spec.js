@@ -20,8 +20,8 @@ describe('Search by TAGS', function() {
 
 
     it ('Add a new tag iAddedThis to iSpatial', function() {
-        element.all(by.css('.input.ng-pristine.ng-valid')).get(1).sendKeys('iAddedThis', protractor.Key.ENTER);
-        browser.driver.sleep(2500);
+        element.all(by.css('.input.ng-pristine.ng-valid')).get(1).sendKeys('iAddedThis', protractor.Key.DOWN, protractor.Key.ENTER);
+        browser.driver.sleep(3500);
     }, 44000);
 
 
