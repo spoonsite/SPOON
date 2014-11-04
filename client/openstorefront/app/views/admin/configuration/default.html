@@ -6,7 +6,9 @@
           <div class="form-group form-group-md col-md-8" style="margin:0px; margin-top: 20px; padding:0px;">
             <label style="padding-left:0px; padding-right:0px; text-align:left;" class="col-md-12 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
             <div class="col-md-12" style="padding: 0;">
-              <cron ng-model="global_cron" id="glbRefreshRate"></cron>
+              {{cron.global_cron}}
+              {{cron.global_cron.cronExpressionDescription}}
+              <cron ng-model="cron.global_cron" id="glbRefreshRate" callback="saveGlobalConf()"></cron>
             </div>
           </div>
         </div>
@@ -14,10 +16,10 @@
           <div class="" style="padding-left:0px; padding-right:0px;">
             <button class="btn btn-default">Refresh&nbsp;All&nbsp;Jira&nbsp;<i class="fa fa-refresh"></i></button>
           </div>
-          <br>
+<!--           <br>
           <div class="">
             <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
-          </div>
+          </div> -->
         </div>
       </form>
     </tab>

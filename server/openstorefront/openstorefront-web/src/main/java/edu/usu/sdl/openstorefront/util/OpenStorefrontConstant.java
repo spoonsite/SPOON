@@ -38,7 +38,7 @@ public class OpenStorefrontConstant
 	public static final String STATUS_VIEW_ALL = "ALL";
 
 	//Field Max Sizes
-	public static final int FIELD_SIZE_CRON = 15;
+	public static final int FIELD_SIZE_CRON = 250;
 	public static final int FIELD_SIZE_USERNAME = 80;
 	public static final int FIELD_SIZE_FIRSTNAME = 80;
 	public static final int FIELD_SIZE_LASTNAME = 80;

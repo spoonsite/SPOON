@@ -18,47 +18,77 @@
 
 app.directive('cron', ['$timeout', function ($timeout) {
   return {
-    template: '<div></div>',
+    templateUrl: 'views/admin/configuration/cron.html',
     restrict: 'E',
     scope: {
-      ngModel: '='
+      ngModel: '=',
+      callback: '&'
     },
     link: function postLink(scope, element, attrs) {
-      var flag = false;
 
-      if (!scope.ngModel) {
-        scope.ngModel = '0 0 * * *';
-      }
-
-      var cleanNgModel = function(value) {
-        var check = value.trim().split(' ');
-        if (check.length === 6) {
-          check.shift();
-          return check.join(' ');
-        } else if (check.length === 5) {
-          return check.join(' ');
-        } else {
-          return '0 0 * * *';
+      scope.generate = function () {
+        var activeTab = $(element).find('li.active').attr('heading');
+        var results = "";
+        switch (activeTab) {
+          case "Minutes":
+          results = "0 0/" + $(element).find("#MinutesInput").val() + " * 1/1 * ? *";
+          break;
+          case "Hourly":
+          switch ($(element).find("input:radio[name=HourlyRadio]:checked").val()) {
+            case "1":
+            results = "0 0 0/" + $(element).find("#HoursInput").val() + " 1/1 * ? *";
+            break;
+            case "2":
+            results = "0 " + Number($(element).find("#AtMinutes").val()) + " " + Number($(element).find("#AtHours").val()) + " 1/1 * ? *";
+            break;
+          }
+          break;
+          case "Daily":
+          switch ($(element).find("input:radio[name=DailyRadio]:checked").val()) {
+            case "1":
+            results = "0 " + Number($(element).find("#DailyMinutes").val()) + " " + Number($(element).find("#DailyHours").val()) + " 1/" + $(element).find("#DaysInput").val() + " * ? *";
+            break;
+            case "2":
+            results = "0 " + Number($(element).find("#DailyMinutes").val()) + " " + Number($(element).find("#DailyHours").val()) + " ? * MON-FRI *";
+            break;
+          }
+          break;
+          case "Weekly":
+          var selectedDays = "";
+          $(element).find("#Weekly input:checkbox:checked").each(function () { selectedDays += $(this).val() + ","; });
+          if (selectedDays.length > 0)
+            selectedDays = selectedDays.substr(0, selectedDays.length - 1);
+          results = "0 " + Number($(element).find("#WeeklyMinutes").val()) + " " + Number($(element).find("#WeeklyHours").val()) + " ? * " + selectedDays + " *";
+          break;
+          case "Monthly":
+          switch ($(element).find("input:radio[name=MonthlyRadio]:checked").val()) {
+            case "1":
+            results = "0 " + Number($(element).find("#MonthlyMinutes").val()) + " " + Number($(element).find("#MonthlyHours").val()) + " " + $(element).find("#DayOfMOnthInput").val() + " 1/" + $(element).find("#MonthInput").val() + " ? *";
+            break;
+            case "2":
+            results = "0 " + Number($(element).find("#MonthlyMinutes").val()) + " " + Number($(element).find("#MonthlyHours").val()) + " ? 1/" + Number($(element).find("#EveryMonthInput").val()) + " " + $(element).find("#DayInWeekOrder").val() + "#" + $(element).find("#WeekDay").val() + " *";
+            break;
+          }
+          break;
+          case "Yearly":
+          switch ($(element).find("input:radio[name=YearlyRadio]:checked").val()) {
+            case "1":
+            results = "0 " + Number($(element).find("#YearlyMinutes").val()) + " " + Number($(element).find("#YearlyHours").val()) + " " + $(element).find("#YearInput").val() + " " + $(element).find("#MonthsOfYear").val() + " ? *";
+            break;
+            case "2":
+            results = "0 " + Number($(element).find("#YearlyMinutes").val()) + " " + Number($(element).find("#YearlyHours").val()) + " ? " + $(element).find("#MonthsOfYear2").val() + " " + $(element).find("#DayWeekForYear").val() + "#" + $(element).find("#DayOrderInYear").val() + " *";
+            break;
+          }
+          break;
         }
-      }
 
-      $timeout(function() {
-        var c = $(element).cron({
-          initial: cleanNgModel(scope.ngModel), // Initial value. default = "* * * * *"
-          onChange: function() {
-            // console.log('cron value', $(this).cron('value'));
-            scope.ngModel = $(this).cron('value');
-            flag = true;
-          }
+        // console.log('results', results);
+        
+        scope.ngModel = results;
+        $timeout(function(){
+          scope.callback();
         });
-        scope.$watch('ngModel', function(value){
-          if (value && !flag){
-            $(element).cron('value', cleanNgModel(value));
-          }
-          flag = false;
-        })
-      })
-
+      };
     }
   };
 }]);
