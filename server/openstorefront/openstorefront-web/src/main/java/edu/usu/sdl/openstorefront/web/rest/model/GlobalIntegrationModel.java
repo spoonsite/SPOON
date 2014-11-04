@@ -38,6 +38,8 @@ public class GlobalIntegrationModel
 	@ConsumeField
 	private String jiraRefreshRate;
 
+	private String cronExpressionDescription;
+
 	public GlobalIntegrationModel()
 	{
 
@@ -51,6 +53,16 @@ public class GlobalIntegrationModel
 	public void setJiraRefreshRate(String jiraRefreshRate)
 	{
 		this.jiraRefreshRate = jiraRefreshRate;
+	}
+
+	public String getCronExpressionDescription()
+	{
+		return cronExpressionDescription;
+	}
+
+	public void setCronExpressionDescription(String cronExpressionDescription)
+	{
+		this.cronExpressionDescription = cronExpressionDescription;
 	}
 
 }

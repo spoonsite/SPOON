@@ -303,6 +303,12 @@
 			<artifactId>antisamy</artifactId>
 			<version>1.5.3</version>
 		</dependency>
+		<dependency>
+			<groupId>net.redhogs.cronparser</groupId>
+			<artifactId>cron-parser</artifactId>
+			<version>2.5</version>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 
 	<build>
