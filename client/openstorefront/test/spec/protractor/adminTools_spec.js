@@ -28,15 +28,29 @@ describe('adminTools', function() {
         element.all(by.css('.indented')).get(5).click();
         expect(element.all(by.css('.ng-scope')).count()).toEqual(33);
 
-        // Manage Components
-        element.all(by.css('.indented')).get(7).click();
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(37);
-
         // Manage Branding
         element.all(by.css('.indented')).get(8).click();
         expect(element.all(by.css('.ng-scope')).count()).toEqual(30);
-
     });
+
+
+    it('Click on Manage Components and each tab under VANTAGE Software', function() {
+      // Manage Components
+      element.all(by.css('.indented')).get(7).click();
+      expect(element.all(by.css('.ng-scope')).count()).toEqual(37);
+
+      // Search components for "vantage" should have 2 results
+      element(by.id('editComponent')).sendKeys('Vantage', protractor.Key.TAB);
+      expect(element.all(by.repeater('thing in search track by $index')).count()).toEqual(2);
+
+      // Click on first result, Vantage Software Suite
+      element.all(by.repeater('thing in search track by $index')).get(0).click();
+
+      // Click on the tabs
+      for (var z=0; z <= 5; z++) {
+        element.all(by.repeater('bar in nav.bars')).get(z).click();
+      }
+    })
 
 });
 
