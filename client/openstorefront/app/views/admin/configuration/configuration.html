@@ -9,9 +9,12 @@
   <div ng-show="overRideDefault === true" class="col-sm-12" style="padding-left:0px; padding-right:0px; min-height:50px; margin-bottom: 20px;">
     <label style="padding-left:0px; padding-right:0px;" class="control-label" for="cmpRefreshRate">Component Refresh Rate:&nbsp;</label>
     <div class="" style="padding-left:0px; padding-right: 0; position: relative;">
-      <cron ng-model="cron.componentCron" id="cmpRefreshRate" callback="saveCompRefresh"></cron>
+      {{cron.componentCron}}
+      {{cron.componentCron.cronExpressionDescription}}
+      <cron ng-model="cron.componentCron" id="cmpRefreshRate" callback="saveCompRefresh()"></cron>
     </div>
     <!-- <button class="btn btn-default" ng-click="saveCompRefresh();">Save Refresh Rate&nbsp;<i class="fa fa-save"></i></button> -->
+    <button class="btn btn-danger" ng-click="removeCompRefresh(); cron.componentCron = ''">Delete Custom Refresh Rate&nbsp;<i class="fa fa-trash-o"></i></button>
   </div>
   <form class="form-horizontal" role="form">
     <div class="form-group form-group-md col-md-12" style="margin:0px;  padding:0px;">

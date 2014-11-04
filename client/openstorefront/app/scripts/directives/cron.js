@@ -82,7 +82,7 @@ app.directive('cron', ['$timeout', function ($timeout) {
           break;
         }
 
-        console.log('results', results);
+        // console.log('results', results);
         
         scope.ngModel = results;
         $timeout(function(){

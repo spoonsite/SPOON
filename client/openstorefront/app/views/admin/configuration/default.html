@@ -7,6 +7,7 @@
             <label style="padding-left:0px; padding-right:0px; text-align:left;" class="col-md-12 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
             <div class="col-md-12" style="padding: 0;">
               {{cron.global_cron}}
+              {{cron.global_cron.cronExpressionDescription}}
               <cron ng-model="cron.global_cron" id="glbRefreshRate" callback="saveGlobalConf()"></cron>
             </div>
           </div>
