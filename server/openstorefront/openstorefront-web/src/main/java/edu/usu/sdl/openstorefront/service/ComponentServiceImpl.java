@@ -1120,6 +1120,7 @@ public class ComponentServiceImpl
 		persistenceService.delete(component);
 
 		getUserService().removeAllWatchesForComponent(componentId);
+		getSearchService().deleteById(componentId);
 	}
 
 	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId)

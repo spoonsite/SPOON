@@ -107,10 +107,10 @@ public interface AttributeService
 	public String getArticle(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Grabs the article for a give code or type with content
+	 * Grabs the article for a give code and type with the content
 	 *
 	 * @param attributeCodePk
-	 * @return article data or null for no article.
+	 * @return the full article
 	 */
 	public Article getArticleView(AttributeCodePk attributeCodePk);
 

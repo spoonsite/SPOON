@@ -16,10 +16,13 @@
 package edu.usu.sdl.openstorefront.web.test.search;
 
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import edu.usu.sdl.openstorefront.web.test.attribute.ArticleTest;
 import edu.usu.sdl.openstorefront.web.test.component.ComponentTest;
 import java.util.List;
 
@@ -41,10 +44,10 @@ public class IndexTest
 	{
 		ComponentAll componentAll = ComponentTest.createTestComponent();
 		try {
-			results.append("Adding Component Index...");
+			results.append("Adding Component Index...<br>");
 			service.getSearchService().addIndex(componentAll.getComponent());
 
-			results.append("Searching Component Index...");
+			results.append("Searching Component Index...<br>");
 			SearchQuery query = new SearchQuery();
 			query.setQuery(componentAll.getComponent().getName());
 			List<ComponentSearchView> searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
@@ -53,12 +56,41 @@ public class IndexTest
 				results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
 			});
 			if (searchViews.size() < 1) {
-				failureReason.append("Unable able to find added component");
+				failureReason.append("Unable able to find added component<br>");
 			}
 
 		} finally {
 			ComponentTest.deleteComponent(componentAll.getComponent().getComponentId());
 		}
+
+		try {
+			results.append("Save attribute code").append("<br>");
+			AttributeCode attributeCode = ArticleTest.createTestAttributeCode();
+
+			results.append("Save Article").append("<br>");
+			service.getAttributeService().saveArticle(attributeCode.getAttributeCodePk(), "DUMMY-TEST");
+
+			results.append("Adding Article Index...<br>");
+			Article article = service.getAttributeService().getArticleView(attributeCode.getAttributeCodePk());
+			service.getSearchService().addIndex(article);
+
+			results.append("Searching Article Index...<br>");
+			SearchQuery query = new SearchQuery();
+			query.setQuery("DUMMY-TEST");
+
+			List<ComponentSearchView> searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
+			results.append("Results...").append("<br><br>");
+			searchViews.forEach(view -> {
+				results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
+			});
+			if (searchViews.size() < 1) {
+				failureReason.append("Unable able to find added article<br>");
+			}
+
+		} finally {
+			ArticleTest.deleteTestAttributeCode();
+		}
+
 	}
 
 }
