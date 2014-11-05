@@ -686,6 +686,25 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     return deferred.promise;
   }
 
+  service.runAllJobs = function() {
+    var deferred = $q.defer();
+    var url = 'api/v1/resource/components/integrations/run';
+    $http({
+      'method': 'POST',
+      'url': url,
+    }).success(function(data, status, headers, config){
+      if (data && isNotRequestError(data) ) {
+        console.log('data', data);
+        deferred.resolve(data);
+      } else {
+        deferred.reject(false);
+      }
+    }).error(function(data, status, headers, config){
+      deferred.reject(false);
+    });
+    return deferred.promise;
+  }
+
 
   return service;
 
