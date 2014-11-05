@@ -506,6 +506,21 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       }, 500);
     });
   }
+  $scope.runAllJobs = function() {
+    Business.configurationservice.runAllJobs().then(function(){
+      $timeout(function(){
+        $scope.getAllJobs();
+        $scope.component.compId = '';
+        $scope.show.selectCompConf = true;
+      }, 500);
+    }, function(){
+      $timeout(function(){
+        $scope.getAllJobs();
+        $scope.component.compId = '';
+        $scope.show.selectCompConf = true;
+      }, 500);
+    });
+  }
 
   $scope.calcStatus = function(val)
   {

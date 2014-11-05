@@ -31,7 +31,7 @@
           <td>{{config.projectType}}</td>
           <td>{{config.issueType}}</td>
           <td>{{config.issueNumber}}</td>
-          <td ng-show="config.status === 'E' && !config.errorMessage">{{calcStatus(config.status)}}</td>
+          <td ng-show="config.status !== 'E' || !config.errorMessage">{{calcStatus(job.status)}}</td>
           <td ng-show="config.status === 'E' && config.errorMessage" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Error message:" data-container="body" data-content="<p class='dd'>{{config.errorMessage}}</p>">{{calcStatus(config.status)}}</td>
           <td style="padding:0px;">&nbsp;<button class="btn btn-primary" ng-click="refreshJob(config.componentId, config.integrationConfigId)">Run Configuration&nbsp;<i class="fa fa-refresh"></i></button>&nbsp;<button class="btn btn-default" ng-click="setupModal(config); openModal('compConf');">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button ng-show="config.activeStatus === 'A'" class="btn btn-warning" ng-click="deactivateConfig(config.componentId, config.integrationConfigId)">Deactivate&nbsp;<i class="fa fa-ban"></i></button><button ng-show="config.activeStatus !== 'A'" class="btn btn-warning" ng-click="activateConfig(config.componentId, config.integrationConfigId)">Activate&nbsp;<i class="glyphicon glyphicon-off"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteConfig(config.componentId, config.integrationConfigId)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
         </tr>

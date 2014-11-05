@@ -7,6 +7,7 @@
       </div>
     </div>
     <div class="form-group form-group-md col-md-12" style="margin:0px;  padding:0px;">
+      <button class="btn btn-default" ng-click="runAllJobs()">Run&nbsp;All&nbsp;Jobs&nbsp;<i class="fa fa-refresh"></i></button>
       <button class="btn btn-default" ng-click="getAllJobs()">Refresh Table&nbsp;<i class="fa fa-refresh"></i></button>
       <table class="table table-striped table-bordered">
         <tr>
@@ -20,7 +21,7 @@
           <td>{{job.componentName}}</td>
           <td>{{job.lastStartTime}}</td>
           <td>{{job.lastEndTime}}</td>
-          <td ng-show="job.status === 'E' && !job.errorMessage">{{calcStatus(job.status)}}</td>
+          <td ng-show="job.status !== 'E' || !job.errorMessage">{{calcStatus(job.status)}}</td>
           <td ng-show="job.status === 'E' && job.errorMessage" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Error message:" data-container="body" data-content="<p class='dd'>{{job.errorMessage}}</p>">{{calcStatus(job.status)}}</td>
           <td style="padding:0px;">&nbsp;<button class="btn btn-primary" ng-click="refreshJob(job.componentId)">Run Job&nbsp;<i class="fa fa-refresh"></i></button>&nbsp;<button class="btn btn-default" ng-click="component.compId = job.componentId; tabs[1].active = true; cron.componentCron = job.refreshRate? job.refreshRate: ''">Edit&nbsp;<i class="fa fa-edit"></i></button>&nbsp;<button ng-show="job.activeStatus === 'A'" class="btn btn-warning" ng-click="deactivateJob(job.componentId)">Deactivate&nbsp;<i class="fa fa-ban"></i></button><button ng-show="job.activeStatus !== 'A'" class="btn btn-warning" ng-click="activateJob(job.componentId)">Activate&nbsp;<i class="glyphicon glyphicon-off"></i></button>&nbsp;<button class="btn btn-danger" ng-click="deleteJob(job.componentId)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
         </tr>
