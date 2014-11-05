@@ -55,6 +55,17 @@ public class FilterQueryParams
 	{
 	}
 
+	public static FilterQueryParams defaultFilter()
+	{
+		FilterQueryParams filterQueryParams = new FilterQueryParams();
+		filterQueryParams.setMax(Integer.MAX_VALUE);
+		filterQueryParams.setOffset(0);
+		filterQueryParams.setStatus(BaseEntity.ACTIVE_STATUS);
+		filterQueryParams.setSortField("description");
+		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_DESCENDING);
+		return filterQueryParams;
+	}
+
 	/**
 	 * This will apply everything but status it assume that was applied all
 	 * ready
