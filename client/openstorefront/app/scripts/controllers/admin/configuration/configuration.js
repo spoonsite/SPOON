@@ -87,6 +87,28 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     });
   }
 
+  $scope.getIntegrationConf = function(compId) {
+    if (compId) {
+      // console.log('Inside getIntegrationConf compId', compId);
+      Business.configurationservice.getIntegrationConf(compId).then(function(result){
+        // console.log('result', result);
+        
+        $scope.integrationConfs = result? result: [];
+        if ($scope.integrationConfs.length){
+          _.each($scope.integrationConfs, function(conf){
+            conf.component = _.find($scope.typeahead, {'componentId': conf.componentId});
+          })
+        }
+        $scope.show.selectCompConf = false;
+      }, function(){
+        triggerAlert('There were no configurations found for that component', 'integrationConfs', 'body', 5000);
+        $scope.integrationConfs = [];
+        $scope.show.selectCompConf = true;
+      });
+    }
+  };
+
+
   $scope.getMappingTypes = function(){
     Business.configurationservice.getMappingTypes().then(function(result){
       if (result) {
@@ -433,25 +455,6 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     }
   };
 
-  $scope.getIntegrationConf = function(compId) {
-    if (compId) {
-      // console.log('Inside getIntegrationConf compId', compId);
-      Business.configurationservice.getIntegrationConf(compId).then(function(result){
-        // console.log('result', result);
-        
-        $scope.integrationConfs = result? result: [];
-        if ($scope.integrationConfs.length){
-          _.each($scope.integrationConfs, function(conf){
-            conf.component = _.find($scope.typeahead, {'componentId': conf.componentId});
-          })
-        }
-        $scope.show.selectCompConf = false;
-      }, function(){
-        triggerAlert('There were no configurations found for that component', 'integrationConfs', 'body', 5000);
-        $scope.show.selectCompConf = true;
-      });
-    }
-  };
 
 
   $scope.deactivateJob = function(componentId) {
@@ -496,14 +499,14 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     Business.configurationservice.runJob(componentId).then(function(){
       $timeout(function(){
         $scope.getAllJobs();
-      }, 500);
+      }, 2000);
     });
   }
   $scope.refreshConfig = function(componentId, configId) {
     Business.configurationservice.runConfig(componentId, configId).then(function(){
       $timeout(function(){
         $scope.getIntegrationConf(componentId);
-      }, 500);
+      }, 2000);
     });
   }
   $scope.runAllJobs = function() {
@@ -512,13 +515,13 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
         $scope.getAllJobs();
         $scope.component.compId = '';
         $scope.show.selectCompConf = true;
-      }, 500);
+      }, 2000);
     }, function(){
       $timeout(function(){
         $scope.getAllJobs();
         $scope.component.compId = '';
         $scope.show.selectCompConf = true;
-      }, 500);
+      }, 2000);
     });
   }
 
