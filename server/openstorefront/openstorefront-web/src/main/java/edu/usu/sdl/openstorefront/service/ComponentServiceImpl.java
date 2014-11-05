@@ -1453,7 +1453,7 @@ public class ComponentServiceImpl
 			List<ComponentTag> componentTags = persistenceService.query(componentTagQuery.toString(), new HashMap<>(), ComponentTag.class, true);
 			Map<String, List<ComponentTag>> tagMap = new HashMap<>();
 			for (ComponentTag componentTag : componentTags) {
-				if (attributeMap.containsKey(componentTag.getComponentId())) {
+				if (tagMap.containsKey(componentTag.getComponentId())) {
 					tagMap.get(componentTag.getComponentId()).add(componentTag);
 				} else {
 					List<ComponentTag> tags = new ArrayList<>();
