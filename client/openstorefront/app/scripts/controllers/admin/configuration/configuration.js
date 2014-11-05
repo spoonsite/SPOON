@@ -328,7 +328,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }
   $scope.removeCompRefresh = function(){
     Business.configurationservice.removeCompRefresh($scope.component.compId).then(function(result){
-      // do something if you want to after you save the component's cron
+      $scope.getAllJobs();
     });
     return false;
   }
@@ -494,12 +494,16 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }
   $scope.refreshJob = function(componentId) {
     Business.configurationservice.runJob(componentId).then(function(){
-      $scope.getAllJobs();
+      $timeout(function(){
+        $scope.getAllJobs();
+      }, 500);
     });
   }
   $scope.refreshConfig = function(componentId, configId) {
     Business.configurationservice.runConfig(componentId, configId).then(function(){
-      $scope.getIntegrationConf(componentId);
+      $timeout(function(){
+        $scope.getIntegrationConf(componentId);
+      }, 500);
     });
   }
 

@@ -35,6 +35,7 @@ public class ComponentIntegrationView
 	private Date lastStartTime;
 	private Date lastEndTime;
 	private String activeStatus;
+	private String errorMessage;
 
 	public ComponentIntegrationView()
 	{
@@ -54,6 +55,7 @@ public class ComponentIntegrationView
 		view.setLastEndTime(integration.getLastEndTime());
 		view.setLastStartTime(integration.getLastStartTime());
 		view.setActiveStatus(integration.getActiveStatus());
+		view.setErrorMessage(integrationConfig.getErrorMessage());
 
 		return view;
 	}
@@ -161,6 +163,22 @@ public class ComponentIntegrationView
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+
+	/**
+	 * @return the errorMessage
+	 */
+	public String getErrorMessage()
+	{
+		return errorMessage;
+	}
+
+	/**
+	 * @param errorMessage the errorMessage to set
+	 */
+	public void setErrorMessage(String errorMessage)
+	{
+		this.errorMessage = errorMessage;
 	}
 
 }
