@@ -37,9 +37,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -142,11 +144,25 @@ public class SearchServiceImpl
 				componentIds.add(result.getId());
 			}
 		}
-		views.addAll(getComponentService().getSearchComponentList(componentIds));
 
-		List<ComponentSearchView> componentSearchViews = getAttributeService().getArticlesSearchView();
+		//remove bad indexes, if any
+		List<ComponentSearchView> componentSearchViews = getComponentService().getSearchComponentList(componentIds);
+		Set<String> goodComponentIdSet = new HashSet<>();
+		for (ComponentSearchView view : componentSearchViews) {
+			goodComponentIdSet.add(view.getComponentId());
+		}
+
+		for (String componentId : componentIds) {
+			if (goodComponentIdSet.contains(componentId) == false) {
+				log.log(Level.FINE, "Removing bad index: " + componentId);
+				deleteById(componentId);
+			}
+		}
+		views.addAll(componentSearchViews);
+
+		List<ComponentSearchView> articleViews = getAttributeService().getArticlesSearchView();
 		Map<String, ComponentSearchView> allViews = new HashMap<>();
-		for (ComponentSearchView componentSearchView : componentSearchViews) {
+		for (ComponentSearchView componentSearchView : articleViews) {
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(componentSearchView.getArticleAttributeType());
 			attributeCodePk.setAttributeCode(componentSearchView.getArticleAttributeCode());
@@ -155,7 +171,13 @@ public class SearchServiceImpl
 		for (SolrComponentModel result : resultsList) {
 
 			if (result.getIsComponent() == false) {
-				views.add(allViews.get(result.getId()));
+				ComponentSearchView view = allViews.get(result.getId());
+				if (view != null) {
+					views.add(view);
+				} else {
+					log.log(Level.FINE, "Removing bad index: " + result.getId());
+					deleteById(result.getId());
+				}
 			}
 		}
 

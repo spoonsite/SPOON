@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.test.attribute;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -39,7 +40,34 @@ public class ArticleTest
 	protected void runInternalTest()
 	{
 
-		results.append("<br>Save attribute type").append("<br>");
+		results.append("Save attribute code").append("<br>");
+		AttributeCode attributeCode = ArticleTest.createTestAttributeCode();
+
+		List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeCode.getAttributeCodePk().getAttributeType());
+		results.append("<br>Found Codes (New Type)").append("<br>");
+		attributeCodes.forEach(code -> {
+			results.append(code.getAttributeCodePk().getAttributeType()).append(" - ").append(code.getAttributeCodePk().getAttributeCode());
+		});
+
+		results.append("Save Article").append("<br>");
+		service.getAttributeService().saveArticle(attributeCode.getAttributeCodePk(), "This is an article.");
+
+		results.append("Get Article").append("<br>");
+		String content = service.getAttributeService().getArticle(attributeCode.getAttributeCodePk());
+		if ("This is an article.".equals(content) == false) {
+			failureReason.append("Article content doesn't match");
+		}
+
+		results.append("Remove Article").append("<br>");
+		service.getAttributeService().deleteArticle(attributeCode.getAttributeCodePk());
+
+		results.append("<br>Remove attribute").append("<br>");
+		ArticleTest.deleteTestAttributeCode();
+	}
+
+	public static AttributeCode createTestAttributeCode()
+	{
+		ServiceProxy serviceProxy = new ServiceProxy();
 		AttributeType attributeType = new AttributeType();
 		attributeType.setAttributeType("TEST-CASE-TMP");
 		attributeType.setDescription("This is a temp test attribute");
@@ -50,9 +78,8 @@ public class ArticleTest
 		attributeType.setVisibleFlg(true);
 		attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
-		service.getAttributeService().saveAttributeType(attributeType, false);
+		serviceProxy.getAttributeService().saveAttributeType(attributeType, false);
 
-		results.append("Save attribute code").append("<br>");
 		AttributeCode attributeCode = new AttributeCode();
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode("A");
@@ -62,29 +89,18 @@ public class ArticleTest
 		attributeCode.setLabel("A");
 		attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
-		service.getAttributeService().saveAttributeCode(attributeCode, false);
-
-		List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
-		results.append("<br>Found Codes (New Type)").append("<br>");
-		attributeCodes.forEach(code -> {
-			results.append(code.getAttributeCodePk().getAttributeType()).append(" - ").append(code.getAttributeCodePk().getAttributeCode());
-		});
-
-		results.append("Save Article").append("<br>");
-		service.getAttributeService().saveArticle(attributeCodePk, "This is an article.");
-
-		results.append("Get Article").append("<br>");
-		String content = service.getAttributeService().getArticle(attributeCodePk);
-		if ("This is an article.".equals(content) == false) {
-			failureReason.append("Article content doesn't match");
-		}
-
-		results.append("Remove Article").append("<br>");
-		service.getAttributeService().deleteArticle(attributeCodePk);
-
-		results.append("<br>Remove attribute").append("<br>");
-		service.getAttributeService().removeAttributeCode(attributeCodePk);
-		service.getAttributeService().removeAttributeType(attributeType.getAttributeType());
+		return attributeCode;
 	}
 
+	public static void deleteTestAttributeCode()
+	{
+		ServiceProxy serviceProxy = new ServiceProxy();
+
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode("A");
+		attributeCodePk.setAttributeType("TEST-CASE-TMP");
+		serviceProxy.getAttributeService().removeAttributeCode(attributeCodePk);
+		serviceProxy.getAttributeService().removeAttributeType(attributeCodePk.getAttributeType());
+
+	}
 }
