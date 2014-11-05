@@ -15,7 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.test.search;
 
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import edu.usu.sdl.openstorefront.web.test.component.ComponentTest;
+import java.util.List;
 
 /**
  *
@@ -33,7 +39,26 @@ public class IndexTest
 	@Override
 	protected void runInternalTest()
 	{
+		ComponentAll componentAll = ComponentTest.createTestComponent();
+		try {
+			results.append("Adding Component Index...");
+			service.getSearchService().addIndex(componentAll.getComponent());
 
+			results.append("Searching Component Index...");
+			SearchQuery query = new SearchQuery();
+			query.setQuery(componentAll.getComponent().getName());
+			List<ComponentSearchView> searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
+			results.append("Results...").append("<br><br>");
+			searchViews.forEach(view -> {
+				results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
+			});
+			if (searchViews.size() < 1) {
+				failureReason.append("Unable able to find added component");
+			}
+
+		} finally {
+			ComponentTest.deleteComponent(componentAll.getComponent().getComponentId());
+		}
 	}
 
 }
