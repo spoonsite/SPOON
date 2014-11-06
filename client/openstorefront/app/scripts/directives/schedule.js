@@ -18,16 +18,56 @@
 
 app.directive('schedule', ['business', function (Business) {
   return {
-    template: '<div>{{ngModel}}</div>',
+    templateUrl: 'views/details/schedule.html',
     restrict: 'EA',
     scope:{
       ngModel: '='
     },
     link: function postLink(scope, element, attrs) {
-      Business.lookupservice.getEvalLevels().then(function(result){
-        console.log('Eval Levels', result);
-        
-      });
+      console.log('scope.ngModel', scope.ngModel);
+      
+      scope.getDate = function(date){
+        if (date)
+        {
+          var d = new Date(date);
+          var currDate = d.getDate();
+          var currMonth = d.getMonth();
+          var currYear = d.getFullYear();
+          return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+        }
+        return null;
+      };
+
+      if (scope.ngModel && scope.ngModel.code) {
+        Business.lookupservice.getEvalLevels().then(function(result){
+          scope.levels = result? result: [];
+          scope.display = _.find(scope.levels, function(item){
+            if (!item) {
+              return false
+            }
+            if (item.attributeCodePk) {
+              if (item.attributeCodePk.attributeCode === scope.ngModel.code) {
+                item.current = true;
+                scope.group = item.groupCode;
+                return true;
+              } else {
+                item.current = false;
+                return false;
+              }
+            } else {
+              item.current = false;
+              return false;
+            }
+          });
+          for( var i = 0; i < scope.levels.length; i++) {
+            if (scope.levels[i].current){
+              break;
+            } else {
+              scope.levels[i].finished = true;
+            }
+          }
+        });
+      }
     }
   };
 }]);
