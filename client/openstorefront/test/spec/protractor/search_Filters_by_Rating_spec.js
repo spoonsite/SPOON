@@ -44,7 +44,7 @@ describe('search_Filters_by_Rating', function() {
        // Click on "More Filters"
        element.all(by.css('.btn.btn-default')).get(0).click();
 
-       // Click all fa fa-caret-down buttons  //TODO:  Get this dynamically
+       // Click all fa fa-caret-down buttons
        var carrotsDown = 21;
        for (var i=0; i <= carrotsDown; i++) {
            element.all(by.css('.fa.fa-caret-down')).get(i).click();
