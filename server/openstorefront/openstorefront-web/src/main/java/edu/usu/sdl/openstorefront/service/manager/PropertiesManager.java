@@ -72,9 +72,20 @@ public class PropertiesManager
 		return getProperties().getProperty(key);
 	}
 
+	/**
+	 * Note: this will trim the value....the extra spaces can cause issues
+	 *
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	public static String getValue(String key, String defaultValue)
 	{
-		return getProperties().getProperty(key, defaultValue);
+		String value = getProperties().getProperty(key, defaultValue);
+		if (value != null) {
+			value = value.trim();
+		}
+		return value;
 	}
 
 	public static void setProperty(String key, String value)

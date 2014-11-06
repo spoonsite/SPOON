@@ -316,10 +316,12 @@ public class JobManager
 
 	public static void cleanup()
 	{
-		try {
-			scheduler.shutdown();
-		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Failed to init quartz.", ex);
+		if (scheduler != null) {
+			try {
+				scheduler.shutdown();
+			} catch (SchedulerException ex) {
+				throw new OpenStorefrontRuntimeException("Failed to init quartz.", ex);
+			}
 		}
 	}
 
