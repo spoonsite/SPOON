@@ -492,6 +492,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       Business.componentservice.getComponentDetails(id, true).then( function (result){
         if (result)
         {
+
+          // grab the evaluation schedule.
+
           $scope.sendPageView(result.name);
           $scope.details.details = result;
 
@@ -500,7 +503,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           // Code here will be linted with ignored by JSHint.
 
           if ($scope.details.details.attributes[0] !== undefined) {
-
+            var foundEvaluation = null;
             _.each($scope.details.details.attributes, function(attribute) {
               if (attribute.type === 'DI2E-SVCV4-A') {
 
@@ -513,8 +516,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
                 } else {
                   attribute.svcv4 = null;
                 }
+              } else if (attribute.type === 'DI2ELEVEL') {
+                foundEvaluation = attribute;
               }
             });
+            $scope.details.details.evaluation = foundEvaluation;
           }
           if ($scope.details.details.lastActivityDts && $scope.details.details.lastViewedDts)
           {

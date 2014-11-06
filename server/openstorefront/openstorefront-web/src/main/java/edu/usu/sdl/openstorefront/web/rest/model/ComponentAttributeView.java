@@ -44,6 +44,8 @@ public class ComponentAttributeView
 	private boolean architectureFlg;
 	private boolean importantFlg;
 	private Date updateDts;
+	private Integer sortOrder;
+	private String groupCode;
 
 	public ComponentAttributeView()
 	{
@@ -71,6 +73,10 @@ public class ComponentAttributeView
 		view.setArchitectureFlg(type.getArchitectureFlg());
 		view.setVisibleFlg(type.getVisibleFlg());
 		view.setUpdateDts(article.getUpdateDts());
+
+		view.setSortOrder(0);
+		view.setGroupCode("Article");
+
 		return view;
 	}
 
@@ -97,6 +103,8 @@ public class ComponentAttributeView
 		view.setArchitectureFlg(type.getArchitectureFlg());
 		view.setVisibleFlg(type.getVisibleFlg());
 		view.setUpdateDts(attribute.getUpdateDts());
+		view.setSortOrder(code.getSortOrder());
+		view.setGroupCode(code.getGroupCode());
 
 		return view;
 	}
@@ -292,6 +300,38 @@ public class ComponentAttributeView
 	public void setExternalLink(String externalLink)
 	{
 		this.externalLink = externalLink;
+	}
+
+	/**
+	 * @return the sortOrder
+	 */
+	public Integer getSortOrder()
+	{
+		return sortOrder;
+	}
+
+	/**
+	 * @param sortOrder the sortOrder to set
+	 */
+	public void setSortOrder(Integer sortOrder)
+	{
+		this.sortOrder = sortOrder;
+	}
+
+	/**
+	 * @return the groupCode
+	 */
+	public String getGroupCode()
+	{
+		return groupCode;
+	}
+
+	/**
+	 * @param groupCode the groupCode to set
+	 */
+	public void setGroupCode(String groupCode)
+	{
+		this.groupCode = groupCode;
 	}
 
 }
