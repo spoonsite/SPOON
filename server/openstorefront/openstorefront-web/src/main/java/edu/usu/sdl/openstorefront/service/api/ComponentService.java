@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
@@ -199,13 +198,6 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentEvaluationSection(ComponentEvaluationSection section);
-
-	/**
-	 *
-	 * @param schedule
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule);
 
 	/**
 	 *

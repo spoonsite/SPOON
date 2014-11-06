@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
@@ -41,7 +40,6 @@ public class ComponentAll
 	private Component component;
 	private List<ComponentAttribute> attributes = new ArrayList<>();
 	private List<ComponentContact> contacts = new ArrayList<>();
-	private List<ComponentEvaluationSchedule> evaluationSchedules = new ArrayList<>();
 	private List<ComponentEvaluationSection> evaluationSections = new ArrayList<>();
 	private List<ComponentExternalDependency> externalDependencies = new ArrayList<>();
 	private List<ComponentMedia> media = new ArrayList<>();
@@ -83,16 +81,6 @@ public class ComponentAll
 	public void setContacts(List<ComponentContact> contacts)
 	{
 		this.contacts = contacts;
-	}
-
-	public List<ComponentEvaluationSchedule> getEvaluationSchedules()
-	{
-		return evaluationSchedules;
-	}
-
-	public void setEvaluationSchedules(List<ComponentEvaluationSchedule> evaluationSchedules)
-	{
-		this.evaluationSchedules = evaluationSchedules;
 	}
 
 	public List<ComponentEvaluationSection> getEvaluationSections()
