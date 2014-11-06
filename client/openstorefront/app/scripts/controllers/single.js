@@ -78,6 +78,9 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     Business.componentservice.getComponentDetails(id, true).then(function(result){
       if (result)
       {
+
+        // grab evaluation schedule.
+
         $scope.sendPageView(result.name);
         $scope.details.details = result;
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
@@ -87,7 +90,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
         // Code here will be linted with ignored by JSHint.
 
         if ($scope.details.details.attributes[0] !== undefined) {
-
+          var foundEvaluation = null;
           _.each($scope.details.details.attributes, function(attribute) {
             if (attribute.type === 'DI2E-SVCV4-A') {
 
@@ -100,8 +103,11 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
               } else {
                 attribute.svcv4 = null;
               }
+            } else if (attribute.type === 'DI2ELEVEL') {
+              foundEvaluation = attribute;
             }
           });
+          $scope.details.details.evaluation = foundEvaluation;
         }
 
         /* jshint ignore:end */
