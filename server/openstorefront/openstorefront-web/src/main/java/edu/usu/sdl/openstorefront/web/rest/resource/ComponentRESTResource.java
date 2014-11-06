@@ -31,8 +31,6 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedulePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
@@ -68,7 +66,6 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
@@ -107,7 +104,7 @@ public class ComponentRESTResource
 	@Context
 	HttpServletRequest request;
 
-	// COMPONENT GENERAL FUNCTIONS
+	// <editor-fold defaultstate="collapsed"  desc="COMPONENT GENERAL FUNCTIONS">
 	@GET
 	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -166,8 +163,7 @@ public class ComponentRESTResource
 			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.created(URI.create("v1/resource/components/" + service.getComponentService().saveComponent(component).getComponent().getComponentId())).entity(component).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -195,8 +191,7 @@ public class ComponentRESTResource
 			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.ok(service.getComponentService().saveComponent(component)).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -253,7 +248,19 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(componentDetail);
 	}
 
-	// ComponentRESTResource ATTRIBUTE Section
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete component and all related entities")
+	@Path("/{id}/cascade")
+	public void deleteComponentTag(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		service.getComponentService().cascadeDeleteOfComponent(componentId);
+	}
+	// </editor-fold>
+
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -373,14 +380,14 @@ public class ComponentRESTResource
 			attribute.setCreateUser(SecurityUtil.getCurrentUserName());
 			attribute.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentAttribute(attribute);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create("v1/resource/components/" + attribute.getComponentAttributePk().getComponentId() + "/attributes/" + attribute.getComponentAttributePk().getAttributeType() + "/" + attribute.getComponentAttributePk().getAttributeCode())).entity(attribute).build();
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource DEPENDENCY section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource DEPENDENCY section">
 	@GET
 	@APIDescription("Get the dependencies from the entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -459,19 +466,18 @@ public class ComponentRESTResource
 			dependency.setCreateUser(SecurityUtil.getCurrentUserName());
 			dependency.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentDependency(dependency);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + dependency.getComponentId() + "/dependency/" + dependency.getDependencyId())).entity(dependency).build();
-		}
-		else {
+		} else {
 			return Response.ok(dependency).build();
 		}
 	}
+	//</editor-fold>
 
-	// ComponentRESTResource CONTACT section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource CONTACT section">
 	@GET
 	@APIDescription("Gets all contact for a component")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -551,19 +557,18 @@ public class ComponentRESTResource
 			contact.setCreateUser(SecurityUtil.getCurrentUserName());
 			contact.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentContact(contact);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + contact.getComponentId() + "/contacts/" + contact.getContactId())).entity(contact).build();
-		}
-		else {
+		} else {
 			return Response.ok(contact).build();
 		}
 	}
+	//</editor-fold>
 
-	// ComponentRESTResource Evaluation Section section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Evaluation Section section">
 	@GET
 	@APIDescription("Gets an evaluation section associated to the component")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -656,113 +661,18 @@ public class ComponentRESTResource
 			section.setCreateUser(SecurityUtil.getCurrentUserName());
 			section.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSection(section);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + section.getComponentId() + "/sections/" + section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
-		}
-		else {
+		} else {
 			return Response.ok(section).build();
 		}
 	}
+	//</editor-fold>
 
-	// ComponentRESTResource Evaluation Schedule section
-	@GET
-	@APIDescription("Gets a list of evaluation schedules associated to the component")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentEvaluationSchedule.class)
-	@Path("/{id}/schedules")
-	public List<ComponentEvaluationSchedule> getComponentEvaluationSchedule(
-			@PathParam("id")
-			@RequiredParam String componentId)
-	{
-		return service.getComponentService().getBaseComponent(ComponentEvaluationSchedule.class, componentId);
-	}
-
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Removes the specified evaluation schedule from the component")
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/schedules/{evalLevel}")
-	public void deleteComponentEvaluationSchedule(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("evalLevel")
-			@RequiredParam String evalLevel)
-	{
-		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
-		pk.setComponentId(componentId);
-		pk.setEvaluationLevelCode(evalLevel);
-		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSchedule.class, pk);
-	}
-
-	@POST
-	@RequireAdmin
-	@APIDescription("Adds a component evaluation schedule to the component")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentEvaluationSchedule.class)
-	@Path("/{id}/schedules")
-	public Response addComponentEvaluationSchedule(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@RequiredParam ComponentEvaluationSchedule schedule)
-	{
-		schedule.setComponentId(componentId);
-		schedule.getComponentEvaluationSchedulePk().setComponentId(componentId);
-		return saveSchedule(schedule, true);
-	}
-
-	@PUT
-	@RequireAdmin
-	@APIDescription("Updates a component evaluation schedule associated to the entity")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/schedules/{evalLevel}")
-	public Response updateComponentEvaluationSchedule(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("evalLevel")
-			@RequiredParam String evalLevel,
-			@RequiredParam ComponentEvaluationSchedule schedule)
-	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
-		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
-		pk.setComponentId(componentId);
-		pk.setEvaluationLevelCode(evalLevel);
-		ComponentEvaluationSection componentEvaluationSection = service.getPersistenceService().findById(ComponentEvaluationSection.class, pk);
-		if (componentEvaluationSection != null) {
-			schedule.setComponentId(componentId);
-			schedule.setComponentEvaluationSchedulePk(pk);
-			response = saveSchedule(schedule, false);
-		}
-		return response;
-	}
-
-	private Response saveSchedule(ComponentEvaluationSchedule schedule, Boolean post)
-	{
-		ValidationModel validationModel = new ValidationModel(schedule);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
-			schedule.setCreateUser(SecurityUtil.getCurrentUserName());
-			schedule.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getComponentService().saveComponentEvaluationSchedule(schedule);
-		}
-		else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-		if (post) {
-
-			return Response.created(URI.create("v1/resource/components/" + schedule.getComponentId() + "/schedules/" + schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).entity(schedule).build();
-		}
-		else {
-			return Response.ok(schedule).build();
-		}
-	}
-
-	// ComponentRESTResource MEDIA section
+	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource MEDIA section">
 	@GET
 	@APIDescription("Gets the list of media associated to an entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -844,19 +754,18 @@ public class ComponentRESTResource
 			media.setCreateUser(SecurityUtil.getCurrentUserName());
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMedia(media);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + media.getComponentId() + "/media/" + media.getComponentMediaId())).entity(media).build();
-		}
-		else {
+		} else {
 			return Response.ok(media).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource METADATA section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -935,20 +844,19 @@ public class ComponentRESTResource
 			metadata.setCreateUser(SecurityUtil.getCurrentUserName());
 			metadata.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMetadata(metadata);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 
 			return Response.created(URI.create("v1/resource/components/" + metadata.getComponentId() + "/media/" + metadata.getMetadataId())).build();
-		}
-		else {
+		} else {
 			return Response.ok(metadata).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource QUESTION section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource QUESTION section">
 	@GET
 	@APIDescription("Get the questions associated with the specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1073,19 +981,18 @@ public class ComponentRESTResource
 			question.setCreateUser(SecurityUtil.getCurrentUserName());
 			question.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + question.getComponentId() + "/questions/" + question.getQuestionId())).entity(question).build();
-		}
-		else {
+		} else {
 			return Response.ok(question).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource QUESTION RESPONSE section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource QUESTION RESPONSE section">
 	@GET
 	@APIDescription("Gets the responses for a given question associated to the specified v ")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1212,20 +1119,19 @@ public class ComponentRESTResource
 			response.setCreateUser(SecurityUtil.getCurrentUserName());
 			response.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 
 			return Response.created(URI.create("v1/resource/components/" + response.getComponentId() + "/questions/" + response.getQuestionId() + "/responses/" + response.getResponseId())).entity(response).build();
-		}
-		else {
+		} else {
 			return Response.ok(response).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource RESOURCE section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource RESOURCE section">
 	@GET
 	@APIDescription("Get the resources associated to the given component")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1328,19 +1234,18 @@ public class ComponentRESTResource
 			resource.setCreateUser(SecurityUtil.getCurrentUserName());
 			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentResource(resource);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + resource.getComponentId() + "/resources/" + resource.getResourceId())).entity(resource).build();
-		}
-		else {
+		} else {
 			return Response.ok(resource).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource REVIEW section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW section">
 	@GET
 	@APIDescription("Get the reviews for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1435,14 +1340,12 @@ public class ComponentRESTResource
 			review.setCreateUser(SecurityUtil.getCurrentUserName());
 			review.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReview(review);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + review.getComponentId() + "/review/" + review.getComponentReviewId())).entity(review).build();
-		}
-		else {
+		} else {
 			return Response.ok(review).build();
 		}
 	}
@@ -1525,13 +1428,13 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + componentReview.getComponentId() + "/review/" + componentReview.getComponentReviewId())).entity(review).build();
-		}
-		else {
+		} else {
 			return Response.ok(review).build();
 		}
 	}
+	//</editor-fold>
 
-	// ComponentRESTResource REVIEW CON section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW CON section">
 	@GET
 	@APIDescription("Get the cons associated to a review")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1627,12 +1530,10 @@ public class ComponentRESTResource
 					conCode = service.getLookupService().getLookupEnityByDesc(ReviewCon.class, text);
 					if (conCode == null) {
 						pk.setReviewCon(null);
-					}
-					else {
+					} else {
 						pk.setReviewCon(conCode.getCode());
 					}
-				}
-				else {
+				} else {
 					pk.setReviewCon(conCode.getCode());
 				}
 				con.setComponentReviewConPk(pk);
@@ -1650,16 +1551,16 @@ public class ComponentRESTResource
 							+ "/reviews/" + con.getComponentReviewConPk().getComponentReviewId()
 							+ "/cons/" + con.getComponentReviewConPk().getReviewCon())).entity(con).build();
 
-				}
-				else {
+				} else {
 					response = Response.ok(validationResult.toRestError()).build();
 				}
 			}
 		}
 		return response;
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource REVIEW PRO section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW PRO section">
 	@GET
 	@APIDescription("Get the pros for a review associated with the given entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1757,12 +1658,10 @@ public class ComponentRESTResource
 					proCode = service.getLookupService().getLookupEnityByDesc(ReviewPro.class, text);
 					if (proCode == null) {
 						pk.setReviewPro(null);
-					}
-					else {
+					} else {
 						pk.setReviewPro(proCode.getCode());
 					}
-				}
-				else {
+				} else {
 					pk.setReviewPro(proCode.getCode());
 				}
 				pro.setComponentReviewProPk(pk);
@@ -1779,16 +1678,16 @@ public class ComponentRESTResource
 					response = Response.created(URI.create("v1/resource/components/" + pro.getComponentId()
 							+ "/reviews/" + pro.getComponentReviewProPk().getComponentReviewId()
 							+ "/pros/" + pro.getComponentReviewProPk().getReviewPro())).entity(pro).build();
-				}
-				else {
+				} else {
 					response = Response.ok(validationResult.toRestError()).build();
 				}
 			}
 		}
 		return response;
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource TAG section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TAG section">
 	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1925,8 +1824,7 @@ public class ComponentRESTResource
 					tag.setCreateUser(SecurityUtil.getCurrentUserName());
 					tag.setUpdateUser(SecurityUtil.getCurrentUserName());
 					verified.add(tag);
-				}
-				else {
+				} else {
 					valid = Boolean.FALSE;
 					unVerified.add(validationResult.toRestError());
 				}
@@ -1940,19 +1838,16 @@ public class ComponentRESTResource
 					{
 					};
 					return Response.created(URI.create("v1/resource/components/" + verified.get(0).getComponentId() + "/tags/" + verified.get(0).getTagId())).entity(entity).build();
-				}
-				else {
+				} else {
 					return Response.notAcceptable(null).build();
 				}
-			}
-			else {
+			} else {
 				GenericEntity<List<RestErrorModel>> entity = new GenericEntity<List<RestErrorModel>>(Lists.newArrayList(unVerified))
 				{
 				};
 				return Response.ok(entity).build();
 			}
-		}
-		else {
+		} else {
 			return Response.notAcceptable(null).build();
 		}
 	}
@@ -1989,14 +1884,14 @@ public class ComponentRESTResource
 			if (cont) {
 				service.getComponentService().saveComponentTag(tag);
 			}
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create("v1/resource/components/" + tag.getComponentId() + "/tags/" + tag.getTagId())).entity(tag).build();
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource TRACKING section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
@@ -2075,18 +1970,9 @@ public class ComponentRESTResource
 	{
 		service.getComponentService().deleteAllBaseComponent(ComponentTracking.class, componentId);
 	}
+	// </editor-fold>
 
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Delete component and all related entities")
-	@Path("/{id}/cascade")
-	public void deleteComponentTag(
-			@PathParam("id")
-			@RequiredParam String componentId)
-	{
-		service.getComponentService().cascadeDeleteOfComponent(componentId);
-	}
-
+	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets all integration models from the database.")
@@ -2139,8 +2025,7 @@ public class ComponentRESTResource
 		if (validationResult.valid()) {
 			service.getComponentService().saveComponentIntegration(integration);
 			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -2164,12 +2049,10 @@ public class ComponentRESTResource
 			if (validationResult.valid()) {
 				service.getComponentService().saveComponentIntegration(integration);
 				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
-			}
-			else {
+			} else {
 				return Response.ok(validationResult.toRestError()).build();
 			}
-		}
-		else {
+		} else {
 			return Response.ok().build();
 		}
 
@@ -2194,12 +2077,10 @@ public class ComponentRESTResource
 			if (validationResult.valid()) {
 				service.getComponentService().saveComponentIntegration(integration);
 				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
-			}
-			else {
+			} else {
 				return Response.ok(validationResult.toRestError()).build();
 			}
-		}
-		else {
+		} else {
 			return Response.ok().build();
 		}
 	}
@@ -2259,8 +2140,7 @@ public class ComponentRESTResource
 		if (integration != null) {
 			JobManager.runComponentIntegrationNow(componentId, null);
 			return Response.ok().build();
-		}
-		else {
+		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
@@ -2330,8 +2210,7 @@ public class ComponentRESTResource
 		if (validationResult.valid()) {
 			integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
 			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -2414,12 +2293,13 @@ public class ComponentRESTResource
 		if (integrationConfig != null) {
 			JobManager.runComponentIntegrationNow(componentId, configId);
 			return Response.ok().build();
-		}
-		else {
+		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
+	// </editor-fold>
 
+	// <editor-fold defaultstate="collapsed"  desc="Private Utils">
 	private void checkBaseComponentBelongsToComponent(BaseComponent component, String componentId)
 	{
 		if (component.getComponentId().equals(componentId) == false) {
@@ -2432,13 +2312,13 @@ public class ComponentRESTResource
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
 				|| SecurityUtil.isAdminUser()) {
 			return null;
-		}
-		else {
+		} else {
 			return Response.status(Response.Status.FORBIDDEN)
 					.type(MediaType.TEXT_PLAIN)
 					.entity("User cannot modify resource.")
 					.build();
 		}
 	}
+	// </editor-fold>
 
 }

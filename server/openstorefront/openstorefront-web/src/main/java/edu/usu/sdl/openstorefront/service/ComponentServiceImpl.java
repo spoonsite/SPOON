@@ -38,7 +38,6 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
@@ -372,9 +371,8 @@ public class ComponentServiceImpl
 		});
 		result.setQuestions(questionViews);
 
-		List<ComponentEvaluationSchedule> evaluationSchedules = getBaseComponent(ComponentEvaluationSchedule.class, componentId);
 		List<ComponentEvaluationSection> evaluationSections = getBaseComponent(ComponentEvaluationSection.class, componentId);
-		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSchedules, evaluationSections));
+		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSections));
 
 		result.setToday(new Date());
 
@@ -539,49 +537,6 @@ public class ComponentServiceImpl
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(section.getComponentId());
-		}
-	}
-
-	@Override
-	public void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule)
-	{
-		saveComponentEvaluationSchedule(schedule, true);
-	}
-
-	private void saveComponentEvaluationSchedule(ComponentEvaluationSchedule schedule, boolean updateLastActivity)
-	{
-		//check schedule code vs level attribute
-		boolean levelMatches = false;
-		List<AttributeCode> levelCodes = getAttributeService().findCodesForType(AttributeType.DI2ELEVEL);
-		for (AttributeCode levelCode : levelCodes) {
-			if (levelCode.getAttributeCodePk().getAttributeCode().equals(schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())) {
-				levelMatches = true;
-				break;
-			}
-		}
-
-		if (levelMatches == false) {
-			throw new OpenStorefrontRuntimeException("The evaluation level code doesn't match level in the attributes.", " Check data and the attribute code for type: " + AttributeType.DI2ELEVEL);
-		}
-
-		ComponentEvaluationSchedule oldSchedule = persistenceService.findById(ComponentEvaluationSchedule.class, schedule.getComponentEvaluationSchedulePk());
-		if (oldSchedule != null) {
-			oldSchedule.setCompletionDate(schedule.getCompletionDate());
-			oldSchedule.setLevelStatus(schedule.getLevelStatus());
-			oldSchedule.setActiveStatus(schedule.getActiveStatus());
-			oldSchedule.setUpdateDts(TimeUtil.currentDate());
-			oldSchedule.setUpdateUser(schedule.getUpdateUser());
-			persistenceService.persist(oldSchedule);
-		} else {
-			schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
-			schedule.getComponentEvaluationSchedulePk().setComponentId(schedule.getComponentId());
-			schedule.setCreateDts(TimeUtil.currentDate());
-			schedule.setUpdateDts(TimeUtil.currentDate());
-			persistenceService.persist(schedule);
-		}
-
-		if (updateLastActivity) {
-			updateComponentLastActivity(schedule.getComponentId());
 		}
 	}
 
@@ -1010,7 +965,6 @@ public class ComponentServiceImpl
 		}
 
 		handleBaseComponetSave(ComponentContact.class, componentAll.getContacts(), component.getComponentId());
-		handleBaseComponetSave(ComponentEvaluationSchedule.class, componentAll.getEvaluationSchedules(), component.getComponentId());
 		handleBaseComponetSave(ComponentEvaluationSection.class, componentAll.getEvaluationSections(), component.getComponentId());
 		handleBaseComponetSave(ComponentExternalDependency.class, componentAll.getExternalDependencies(), component.getComponentId());
 		handleBaseComponetSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId());
@@ -1066,8 +1020,6 @@ public class ComponentServiceImpl
 		for (T baseComponent : baseComponents) {
 			if (baseComponent instanceof ComponentContact) {
 				saveComponentContact((ComponentContact) baseComponent, false);
-			} else if (baseComponent instanceof ComponentEvaluationSchedule) {
-				saveComponentEvaluationSchedule((ComponentEvaluationSchedule) baseComponent, false);
 			} else if (baseComponent instanceof ComponentEvaluationSection) {
 				saveComponentEvaluationSection((ComponentEvaluationSection) baseComponent, false);
 			} else if (baseComponent instanceof ComponentExternalDependency) {

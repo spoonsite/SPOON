@@ -29,12 +29,9 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedulePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ContactType;
-import edu.usu.sdl.openstorefront.storage.model.LevelStatus;
 import edu.usu.sdl.openstorefront.storage.model.MediaType;
 import edu.usu.sdl.openstorefront.storage.model.ResourceType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -464,50 +461,6 @@ public class DataConvertUseCase
 
 			attribute = mapAttribute(componentDetail, AttributeType.DI2ELEVEL, stateLabel);
 			componentAll.getAttributes().add(attribute);
-
-			ComponentEvaluationSchedule componentEvaluationSchedule = new ComponentEvaluationSchedule();
-			ComponentEvaluationSchedulePk componentEvaluationSchedulePk = new ComponentEvaluationSchedulePk();
-			componentEvaluationSchedulePk.setEvaluationLevelCode(attribute.getComponentAttributePk().getAttributeCode());
-			componentEvaluationSchedulePk.setComponentId(componentDetail.getComponentId());
-			componentEvaluationSchedule.setComponentEvaluationSchedulePk(componentEvaluationSchedulePk);
-			componentEvaluationSchedule.setComponentId(componentDetail.getComponentId());
-			componentEvaluationSchedule.setCompletionDate(TimeUtil.currentDate());
-			componentEvaluationSchedule.setLevelStatus(LevelStatus.COMPLETE);
-			componentEvaluationSchedule.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			componentEvaluationSchedule.setCreateUser(componentDetail.getCreateUser());
-			componentEvaluationSchedule.setUpdateUser(componentDetail.getUpdateUser());
-			componentEvaluationSchedule.setCreateDts(componentDetail.getCreateDts());
-			componentEvaluationSchedule.setUpdateDts(componentDetail.getUpdateDts());
-			componentAll.getEvaluationSchedules().add(componentEvaluationSchedule);
-
-			//fill in the Evaluation Schedules
-			for (String evalState : stateCodeSet) {
-				componentEvaluationSchedule = new ComponentEvaluationSchedule();
-				componentEvaluationSchedulePk = new ComponentEvaluationSchedulePk();
-				componentEvaluationSchedulePk.setEvaluationLevelCode(evalState);
-				componentEvaluationSchedulePk.setComponentId(componentDetail.getComponentId());
-
-				componentEvaluationSchedule.setComponentEvaluationSchedulePk(componentEvaluationSchedulePk);
-				componentEvaluationSchedule.setComponentId(componentDetail.getComponentId());
-
-				if (AttributeCode.DI2ELEVEL_NA.equals(evalState)) {
-					componentEvaluationSchedule.setCompletionDate(TimeUtil.currentDate());
-					componentEvaluationSchedule.setLevelStatus(LevelStatus.COMPLETE);
-				} else if (AttributeCode.DI2ELEVEL_LEVEL0.equals(evalState)
-						&& AttributeCode.DI2ELEVEL_LEVEL1.equals(stateLabel)) {
-					componentEvaluationSchedule.setCompletionDate(TimeUtil.currentDate());
-					componentEvaluationSchedule.setLevelStatus(LevelStatus.COMPLETE);
-				} else {
-					componentEvaluationSchedule.setLevelStatus(LevelStatus.NOT_STARTED);
-				}
-
-				componentEvaluationSchedule.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-				componentEvaluationSchedule.setCreateUser(componentDetail.getCreateUser());
-				componentEvaluationSchedule.setUpdateUser(componentDetail.getUpdateUser());
-				componentEvaluationSchedule.setCreateDts(componentDetail.getCreateDts());
-				componentEvaluationSchedule.setUpdateDts(componentDetail.getUpdateDts());
-				componentAll.getEvaluationSchedules().add(componentEvaluationSchedule);
-			}
 
 			for (OldAssetCategory category : oldAsset.getCategories()) {
 				ComponentAttribute catAttribute = new ComponentAttribute();
