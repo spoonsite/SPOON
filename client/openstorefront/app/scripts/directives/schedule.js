@@ -24,8 +24,6 @@ app.directive('schedule', ['business', function (Business) {
       ngModel: '='
     },
     link: function postLink(scope, element, attrs) {
-      console.log('scope.ngModel', scope.ngModel);
-      
       scope.getDate = function(date){
         if (date)
         {
