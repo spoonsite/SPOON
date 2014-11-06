@@ -95,7 +95,7 @@ describe('user-tools_User logged in drop-down', function() {
 
 
   it('Click on UserName then Watches', function() {
-        // Sets the .get(x) indexes back, otherwise they become 'dirty' and off!
+        // .refresh()-- Sets the .get(x) indexes back, otherwise they become 'dirty' and off!
         browser.refresh();
         browser.driver.sleep(4000);
         element.all(by.css('.nav.navbar-nav.navbar-right')).get(0).click();
