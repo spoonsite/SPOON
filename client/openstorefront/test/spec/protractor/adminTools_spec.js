@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /* 03 Oct 2014:  Admin tools not available on storefront1.di2e.net.  Devin says it is not expected for IOC?
                   Would have to request privileges from the di2e help desk.
-   28 Oct 2014:  Put this back in as Admin Tools are available on store-accept
+   28 Oct 2014:  Put this back in as Admin Tools are available on store-accept.
+   07 Nov 2014:  Admin Tools updated with v1.1 of Storefront.  Deleting old tests, adding new ones.
 */
 describe('adminTools', function() {
     it('Admin Tools Menu is available from the drop-down under username', function () {
@@ -27,45 +27,43 @@ describe('adminTools', function() {
         // Click on the first dropdown menu item which is "Admin Tools"
         element.all(by.css('.dropdown-menu a')).get(0).click();
 
-
         expect(element.all(by.css('.adminTools')).count()).toEqual(1);
     });
 
-/*  THIS HAS BEEN REMOVED AND CHANGED
-    it('Click left menus of Admin Tools and check for resulting right pane data', function() {
-        // TODO:  Fill this in when coding is complete, look for more specific info on "expect"
 
-        // Manage Attributes (highest level no sub-trees)
-        element.all(by.css('.indented')).get(3).click();
-        expect(element.all(by.css('.ngHeaderContainer')).count()).toEqual(1);
+    it('TODO-  Change a few values under Global Configuration then change back', function() {
+        /*
+        // Hourly Tab
+        browser.driver.sleep(2000);
+        element.all(by.css('.ng-isolate-scope')).get(0).click();
+        element(by.id('HoursInput')).sendKeys('99');
+        browser.driver.sleep(500);
 
-        // Manage Lookups (highest level no sub-trees)
-        element.all(by.css('.indented')).get(5).click();
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(33);
+        element(by.id('AtMinutes')).click();
+        element(by.id('AtMinutes')).sendKeys(protractor.Key.DOWN);
+        element(by.id('AtMinutes')).sendKeys(protractor.Key.ENTER);
 
-        // Manage Branding
-        element.all(by.css('.indented')).get(8).click();
-        expect(element.all(by.css('.ng-scope')).count()).toEqual(30);
+        element(by.css('.btn.btn-default')).click();
+        */
+
     });
 
+    it('TODO-  Component Configuration Tab', function() {
 
-    it('Click on Manage Components and each tab under VANTAGE Software', function() {
-      // Manage Components
-      element.all(by.css('.indented')).get(7).click();
-      expect(element.all(by.css('.ng-scope')).count()).toEqual(37);
-
-      // Search components for "vantage" should have 2 results
-      element(by.id('editComponent')).sendKeys('Vantage', protractor.Key.TAB);
-      expect(element.all(by.repeater('thing in search track by $index')).count()).toEqual(2);
-
-      // Click on first result, Vantage Software Suite
-      element.all(by.repeater('thing in search track by $index')).get(0).click();
-
-      // Click on the tabs
-      for (var z=0; z <= 5; z++) {
-        element.all(by.repeater('bar in nav.bars')).get(z).click();
-      }
-    })
-*/
+    });
 });
 
+
+describe('TODO-  adminTools_Jira Configuration Tab', function() {
+    it('TODO-  Add a new mapping', function() {
+
+    });
+
+    it('TODO-  Edit the mapping', function() {
+
+    });
+
+    it('TODO-  Delete the mapping', function() {
+
+    });
+});
