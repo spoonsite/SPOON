@@ -46,7 +46,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   $scope.integrationConfs = null;
   $scope.show = {
     'selectCompConf': true,
-    'showCodeSelection': false
+    'showCodeSelection': true
   };
 
   $scope.loading = 0;
@@ -186,7 +186,6 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
         
         if (found) {
           $timeout(function() {
-            $scope.show.showCodeSelection = false;
             _.each(found.mapping, function(map){
               // console.log('map', map);
               var code = _.find($scope.masterSelected, {'label': map.externalCode});
@@ -207,10 +206,15 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
             });
             $scope.jiraCodes.masterSelect = null;
             $('.codeSelection:selected').removeAttr("selected");
-            $scope.show.showCodeSelection = true;
+            $timeout(function(){
+              $('.codeSelection').each(function(){
+                var width = $(this).width();
+                $(this).width(0);
+                $(this).width(width);
+              })
+            });
           }, 200);
         } else { //
-          $scope.show.showCodeSelection = true;
         }
       }
     }, function() {
@@ -428,50 +432,61 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     // console.log('code - move Left', code);
     // console.log('masterSelected', $scope.masterSelected);
     // console.log('$scope.masterSelect', $scope.jiraCodes.masterSelect);
-    $scope.show.showCodeSelection = false;
     if(!code.selected){
       code.selected = [];
     }
-    var right = $scope.jiraCodes.masterSelect;
-    for (var i = 0; i < right.length; i++) {
-      var el = right[i];
-      // console.log('code.selected.indexOf(el) should be < 0', code.selected.indexOf(el));
-      if (code.selected.indexOf(el) < 0) {
-        code.selected.push(el);
+    if ($scope.jiraCodes.masterSelect) {
+
+      var right = $scope.jiraCodes.masterSelect;
+      for (var i = 0; i < right.length; i++) {
+        var el = right[i];
+        // console.log('code.selected.indexOf(el) should be < 0', code.selected.indexOf(el));
+        if (code.selected.indexOf(el) < 0) {
+          code.selected.push(el);
+        }
+        // console.log('masterselected index should be > -1', $scope.masterSelected.indexOf(el));
+        var indexOf = $scope.masterSelected.indexOf(el);
+        $scope.masterSelected.splice(indexOf, 1);
       }
-      // console.log('masterselected index should be > -1', $scope.masterSelected.indexOf(el));
-      var indexOf = $scope.masterSelected.indexOf(el);
-      $scope.masterSelected.splice(indexOf, 1);
     }
     $scope.jiraCodes.masterSelect = null;
-    $('.codeSelection:selected').each(function(){
-      $(this).removeAttr("selected");
-    });
-    $scope.show.showCodeSelection = true;
+    $('.codeSelection:selected').removeAttr("selected");
+    $timeout(function(){
+      $('.codeSelection').each(function(){
+        var width = $(this).width();
+        $(this).width(0);
+        $(this).width(width);
+      });
+    }, 10);
   };
 
   $scope.moveRight = function(code) {
     // console.log('code - move Right', code);
     // console.log('masterSelected', $scope.masterSelected);
-    $scope.show.showCodeSelection = false;
     if(!code.selected){
       code.selected = [];
     }
-    var toRemove = code.toRemove;
-    for (var i = 0; i < toRemove.length; i++) {
-      var el = toRemove[i];
-      if ($scope.masterSelected.indexOf(el) < 0) {
-        $scope.masterSelected.push(el);
+    if (code.toRemove)
+    {
+      var toRemove = code.toRemove;
+      for (var i = 0; i < toRemove.length; i++) {
+        var el = toRemove[i];
+        if ($scope.masterSelected.indexOf(el) < 0) {
+          $scope.masterSelected.push(el);
+        }
+        var indexOf = code.selected.indexOf(el);
+        code.selected.splice(indexOf, 1);
       }
-      var indexOf = code.selected.indexOf(el);
-      code.selected.splice(indexOf, 1);
     }
-
     code.toRemove = null;
-    $('.codeSelection:selected').each(function(){
-      $(this).removeAttr("selected");
-    });
-    $scope.show.showCodeSelection = true;
+    $('.codeSelection:selected').removeAttr("selected");
+    $timeout(function(){
+      $('.codeSelection').each(function(){
+        var width = $(this).width();
+        $(this).width(0);
+        $(this).width(width);
+      });
+    }, 10);
   };
 
 
