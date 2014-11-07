@@ -207,11 +207,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
             });
             $scope.jiraCodes.masterSelect = null;
             $('.codeSelection:selected').removeAttr("selected");
-            $('.codeSelection').multiselect("clearSelection");
-            $(".codeSelection").multiselect( 'refresh' );
-            $timeout(function() {
-              $scope.show.showCodeSelection = true;
-            }, 100);
+            $scope.show.showCodeSelection = true;
           }, 200);
         }
       }
@@ -448,11 +444,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     $scope.jiraCodes.masterSelect = null;
     code.toRemove = null;
     $('.codeSelection:selected').removeAttr("selected");
-    $('.codeSelection').multiselect("clearSelection");
-    $(".codeSelection").multiselect( 'refresh' );
-    $timeout(function() {
-      $scope.show.showCodeSelection = true;
-    }, 100);
+    $scope.show.showCodeSelection = true;
   };
 
   $scope.moveRight = function(code) {
@@ -475,11 +467,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     $scope.jiraCodes.masterSelect = null;
     code.toRemove = null;
     $('.codeSelection:selected').removeAttr("selected");
-    $('.codeSelection').multiselect("clearSelection");
-    $(".codeSelection").multiselect( 'refresh' );
-    $timeout(function() {
-      $scope.show.showCodeSelection = true;
-    }, 100);
+    $scope.show.showCodeSelection = true;
   };
 
 

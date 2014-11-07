@@ -321,11 +321,16 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'url': url,
       }).success(function(data, status, headers, config){
         if (isNotRequestError(data)) {
+          console.log('data', data);
+          
           deferred.resolve(data);
         } else {
+          console.log('data', data);
           deferred.reject(false);
         }
       }).error(function(data, status, headers, config){
+        console.log('data', data);
+        
         deferred.reject(false);
       });
     } else {
