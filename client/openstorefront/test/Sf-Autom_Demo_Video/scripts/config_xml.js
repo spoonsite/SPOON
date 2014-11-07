@@ -2,8 +2,8 @@ var TSC = TSC || {};
 
 TSC.embedded_config_xml = '<x:xmpmeta xmlns:x="adobe:ns:meta/">\
    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xmp="http://ns.adobe.com/xap/1.0/" xmlns:xmpDM="http://ns.adobe.com/xmp/1.0/DynamicMedia/" xmlns:xmpG="http://ns.adobe.com/xap/1.0/g/" xmlns:tsc="http://www.techsmith.com/xmp/tsc/" xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/" xmlns:tscDM="http://www.techsmith.com/xmp/tscDM/" xmlns:tscIQ="http://www.techsmith.com/xmp/tscIQ/" xmlns:tscHS="http://www.techsmith.com/xmp/tscHS/" xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#" xmlns:stFnt="http://ns.adobe.com/xap/1.0/sType/Font#" xmlns:exif="http://ns.adobe.com/exif/1.0" xmlns:dc="http://purl.org/dc/elements/1.1/">\
-      <rdf:Description tsc:version="2.0.1" dc:date="2014-11-04 11:42:44 AM" dc:source="Camtasia Studio,8.4.3,enu" dc:title="Sf-Autom_Demo_Video" tscDM:firstFrame="Sf-Autom_Demo_Video_First_Frame.png" tscDM:originId="EE7A08D4-5305-4B0A-910B-9CE01CF684A5" tscDM:project="DI2E-autom">\
-         <xmpDM:duration xmpDM:scale="1/1000" xmpDM:value="197033"/>\
+      <rdf:Description tsc:version="2.0.1" dc:date="2014-11-07 10:55:32 AM" dc:source="Camtasia Studio,8.4.3,enu" dc:title="DI2E-autom-NO-audio" tscDM:firstFrame="DI2E-autom-NO-audio_First_Frame.png" tscDM:originId="EE7A08D4-5305-4B0A-910B-9CE01CF684A5" tscDM:project="DI2E-autom-NO-music">\
+         <xmpDM:duration xmpDM:scale="1/1000" xmpDM:value="196233"/>\
          <xmpDM:videoFrameSize stDim:unit="pixel" stDim:h="720" stDim:w="1152"/>\
          <tsc:langName>\
             <rdf:Bag>\
@@ -29,7 +29,7 @@ TSC.embedded_config_xml = '<x:xmpmeta xmlns:x="adobe:ns:meta/">\
             <rdf:Description>\
                <tscDM:files>\
                   <rdf:Seq>\
-                     <rdf:li xmpDM:name="0" xmpDM:value="Sf-Autom_Demo_Video.mp4"/><rdf:li xmpDM:name="1" xmpDM:value="Sf-Autom_Demo_Video_First_Frame.png"/><rdf:li xmpDM:name="2" xmpDM:value="Sf-Autom_Demo_Video_Thumbnails.png"/></rdf:Seq>\
+                     <rdf:li xmpDM:name="0" xmpDM:value="DI2E-autom-NO-audio.mp4"/><rdf:li xmpDM:name="1" xmpDM:value="DI2E-autom-NO-audio_First_Frame.png"/><rdf:li xmpDM:name="2" xmpDM:value="DI2E-autom-NO-audio_Thumbnails.png"/></rdf:Seq>\
                </tscDM:files>\
             </rdf:Description>\
          </tscDM:contentList>\
