@@ -102,7 +102,7 @@
                 </div>
                 <div ng-show="storeCodes.length && watch.jiraField" style="height:300px; margin-left: -30px; margin-right: -15px;" class="col-md-4">
                   <strong style="height:20px;">Jira Codes</strong>
-                  <select ng-model="jiraCodes.masterSelect" id="jiraCodeSelect" ng-options="item as item.label for item in masterSelected" multiple style="height: 280px" class="form-control codeSelection"></select>
+                  <select ng-show="show.showCodeSelection" ng-model="jiraCodes.masterSelect" id="jiraCodeSelect" ng-options="item as item.label for item in masterSelected" multiple style="height: 280px" class="form-control codeSelection"></select>
                 </div>
               </div>
             </div>
