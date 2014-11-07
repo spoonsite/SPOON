@@ -209,6 +209,8 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
             $('.codeSelection:selected').removeAttr("selected");
             $scope.show.showCodeSelection = true;
           }, 200);
+        } else { //
+          $scope.show.showCodeSelection = true;
         }
       }
     }, function() {
@@ -330,7 +332,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
           triggerAlert('The mapping was saved successfully', 'mappingFields', 'body', 6000);
         }
         $scope.getMappingTypes();
-        console.log('result', result);
+        // console.log('result', result);
       }, function(){
         // triggerAlert('There was an error saving the mapping', 'mappingFields', 'body', 6000);
       })
@@ -442,8 +444,9 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       $scope.masterSelected.splice(indexOf, 1);
     }
     $scope.jiraCodes.masterSelect = null;
-    code.toRemove = null;
-    $('.codeSelection:selected').removeAttr("selected");
+    $('.codeSelection:selected').each(function(){
+      $(this).removeAttr("selected");
+    });
     $scope.show.showCodeSelection = true;
   };
 
@@ -464,9 +467,10 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       code.selected.splice(indexOf, 1);
     }
 
-    $scope.jiraCodes.masterSelect = null;
     code.toRemove = null;
-    $('.codeSelection:selected').removeAttr("selected");
+    $('.codeSelection:selected').each(function(){
+      $(this).removeAttr("selected");
+    });
     $scope.show.showCodeSelection = true;
   };
 
