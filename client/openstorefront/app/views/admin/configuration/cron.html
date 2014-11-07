@@ -6,7 +6,7 @@
 
 
           <div class="tab-pane active" id="Minutes">Every&nbsp;
-            <input id="MinutesInput" type="text" value="1" style="width: 40px">&nbsp;minute(s)
+            <input id="MinutesInput" type="number" min="0" value="1" style="width: 40px">&nbsp;minute(s)
           </div>
         </div>
       </tab>
@@ -18,7 +18,7 @@
           <div class="tab-pane" id="Hourly">
             <div class="well well-small">
               <input type="radio" value="1" name="HourlyRadio" checked="checked">&nbsp;Every&nbsp;
-              <input id="HoursInput" type="text" value="1" style="width: 40px">&nbsp;hour(s)
+              <input id="HoursInput" type="number" min="0" value="1" style="width: 40px">&nbsp;hour(s)
             </div>
             <div class="well well-small">
               <input type="radio" value="2" name="HourlyRadio">&nbsp;At&nbsp;
@@ -206,7 +206,7 @@
           <div class="tab-pane" id="Daily">
             <div class="well well-small">
               <input type="radio" value="1" name="DailyRadio" checked="checked">&nbsp;Every&nbsp;
-              <input id="DaysInput" type="text" value="1" style="width: 40px">&nbsp;day(s)
+              <input id="DaysInput" type="number" min="0" value="1" style="width: 40px">&nbsp;day(s)
             </div>
             <div class="well well-small">
               <input type="radio" value="2" name="DailyRadio">&nbsp;Every week day&nbsp;
@@ -592,8 +592,8 @@
           <div class="tab-pane" id="Monthly">
             <div class="well well-small">
               <input type="radio" value="1" name="MonthlyRadio" checked="checked">&nbsp;Day&nbsp;
-              <input id="DayOfMOnthInput" type="text" value="1" style="width: 40px">&nbsp;of every&nbsp;
-              <input id="MonthInput" type="text" value="1" style="width: 40px">&nbsp;month(s)
+              <input id="DayOfMOnthInput" type="number" min="0" value="1" style="width: 40px">&nbsp;of every&nbsp;
+              <input id="MonthInput" type="number" min="0" value="1" style="width: 40px">&nbsp;month(s)
             </div>
             <div class="well well-small">
               <input type="radio" value="2" name="MonthlyRadio">&nbsp;
@@ -623,7 +623,7 @@
                 <option value="SAT">Saturday</option>
                 <option value="SUN">Sunday</option>
               </select>&nbsp;of every&nbsp;
-              <input id="EveryMonthInput" type="text" value="1" style="width: 40px">&nbsp;month(s)
+              <input id="EveryMonthInput" type="number" min="0" value="1" style="width: 40px">&nbsp;month(s)
             </div>Start time&nbsp;
             <select id="MonthlyHours" class="hours" style="width: 60px">
               <option id="0">00</option>
