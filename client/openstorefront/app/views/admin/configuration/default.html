@@ -91,7 +91,7 @@
                     <div ng-repeat="code in storeCodes" style="display:flex; ">
                       <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; padding-left:5px; padding-right:5px;">
                         <label style="padding-left:0px; padding-right:0px; width: 100%; text-align: left; color: #F2D42E" class="control-label">{{code.label}}:&nbsp;</label>
-                        <select ng-model="code.toRemove" ng-options="item as item.label for item in code.selected" class="form-control codeSelection" style="width: calc(100% - 100px); display:inline-block;" size="2" multiple></select>
+                        <select ng-show="show.showCodeSelection" ng-model="code.toRemove" ng-options="item as item.label for item in code.selected" class="form-control codeSelection" style="width: calc(100% - 100px); display:inline-block;" multiple></select>
                         <div style="display: inline-block; margin: 5px;">
                           <button ng-click="moveLeft(code)" type="button" class="btn btn-small btn-default" style="">&#60;&#60;</button>
                           <button ng-click="moveRight(code)" type="button" class="btn btn-small btn-default" style="">&#62;&#62;</button>
