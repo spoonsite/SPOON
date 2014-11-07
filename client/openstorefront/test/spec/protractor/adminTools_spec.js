@@ -31,7 +31,7 @@ describe('adminTools', function() {
         expect(element.all(by.css('.adminTools')).count()).toEqual(1);
     });
 
-
+/*  THIS HAS BEEN REMOVED AND CHANGED
     it('Click left menus of Admin Tools and check for resulting right pane data', function() {
         // TODO:  Fill this in when coding is complete, look for more specific info on "expect"
 
@@ -66,6 +66,6 @@ describe('adminTools', function() {
         element.all(by.repeater('bar in nav.bars')).get(z).click();
       }
     })
-
+*/
 });
 
