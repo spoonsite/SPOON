@@ -26,6 +26,7 @@
   <!-- <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" /> -->
   <!-- <link href="styles/bootstrap-override.css" rel="stylesheet" type="text/css"/>  -->
   <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css" />
+  <link rel="stylesheet" href="styles/print.css">
   <!-- build:css({.tmp,app}) styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/abn_tree.css" />
@@ -51,7 +52,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 </head>
-<body ng-app="openstorefrontApp">
+<body ng-app="openstorefrontApp" class="printMe">
   <loader trigger="bodyLoad"></loader>
 
   
@@ -68,7 +69,7 @@ limitations under the License.
 <div ng-include="'views/nav.html'" style="position: relative; z-index: 1011"></div>
 
 <!-- Add your site or application content here -->
-<div class="container-fluid fullHeight" ng-view="">
+<div class="container-fluid fullHeight printMe" ng-view="">
   <!-- Nothing goes here!!! -->
 </div>
 
@@ -176,6 +177,7 @@ limitations under the License.
   <script type="text/javascript" src="scripts/directives/questions_reviews/response.js"></script>
   <script type="text/javascript" src="scripts/directives/cron.js"></script>
   <script type="text/javascript" src="scripts/directives/schedule.js"></script>
+  <script type="text/javascript" src="scripts/directives/print.js"></script>
   
   <!-- Grab our Controller -->
   <script type="text/javascript" src="scripts/controllers/main.js"></script>
