@@ -61,6 +61,8 @@ app.directive('cron', ['$timeout', function ($timeout) {
           } else if(value.dayOfMonth < scope.check.minDay) {
             value.dayOfMonth = scope.check.minDay;
           }
+        } else {
+          value.dayOfMonth = 1;
         }
       }, true);
       scope.generate = function () {
