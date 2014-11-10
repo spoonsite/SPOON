@@ -77,6 +77,10 @@ var app = angular
     templateUrl: 'views/compare.html',
     controller: 'CompareCtrl'
   })
+  .when('/print', {
+    templateUrl: 'views/print.html',
+    controller: 'PrintCtrl'
+  })
   .otherwise({
     redirectTo: '/'
   });
@@ -498,6 +502,14 @@ var app = angular
 
       $rootScope.logout = function() {
         window.location.replace('/openstorefront/Login.action?Logout');
+      }
+
+      $rootScope.print = function(type, id) {
+        $location.search({
+          'type': type,
+          'id': id
+        });
+        $location.path('/print');
       }
 
       $rootScope.$on('$idleStart', function() {
