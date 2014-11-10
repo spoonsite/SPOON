@@ -52,6 +52,16 @@ app.directive('cron', ['$timeout', function ($timeout) {
           scope.check.minDay = min;
           scope.check.maxDay = max;
         }
+        if (value && value.dayOfMonth) {
+          if (isNaN(value.dayOfMonth)) {
+            value.dayOfMonth = 1;
+          }
+          if (value.dayOfMonth > scope.check.maxDay) {
+            value.dayOfMonth = scope.check.maxDay;
+          } else if(value.dayOfMonth < scope.check.minDay) {
+            value.dayOfMonth = scope.check.minDay;
+          }
+        }
       }, true);
       scope.generate = function () {
         var activeTab = $(element).find('li.active').attr('heading');
