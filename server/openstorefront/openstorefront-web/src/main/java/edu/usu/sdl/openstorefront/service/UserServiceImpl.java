@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
+import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
@@ -32,6 +33,7 @@ import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -374,6 +376,24 @@ public class UserServiceImpl
 		UserWatch userWatchExample = new UserWatch();
 		userWatchExample.setComponentId(componentId);
 		persistenceService.deleteByExample(userWatchExample);
+	}
+
+	@Override
+	public boolean checkEmail(String username)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void checkComponentWatches(String componentId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public List<UserMessage> findUserMessages(FilterQueryParams filter)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }

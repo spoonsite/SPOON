@@ -64,6 +64,19 @@ public class PropertiesManager
 	public static final String KEY_JIRA_URL = "jira.server.url";
 	public static final String KEY_JOB_WORKING_STATE_OVERRIDE = "job.working.state.override.minutes";
 
+	public static final String KEY_MAIL_SERVER = "mail.smtp.url";
+	public static final String KEY_MAIL_SERVER_USER = "mail.server.user";
+	public static final String KEY_MAIL_SERVER_PW = "mail.server.pw";
+	public static final String KEY_MAIL_SERVER_PORT = "mail.smtp.port";
+	public static final String KEY_MAIL_USE_SSL = "mail.use.ssl";
+	public static final String KEY_MAIL_USE_TLS = "mail.use.tls";
+	public static final String KEY_MAIL_FROM_NAME = "mail.from.name";
+	public static final String KEY_MAIL_FROM_ADDRESS = "mail.from.address";
+	public static final String KEY_MAIL_REPLY_NAME = "mail.reply.name";
+	public static final String KEY_MAIL_REPLY_ADDRESS = "mail.reply.address";
+	public static final String KEY_MESSAGE_KEEP_DAYS = "message.archive.days";
+	public static final String KEY_MESSAGE_MIN_QUEUE_MINUTES = "message.minqueue.mintues";
+
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
