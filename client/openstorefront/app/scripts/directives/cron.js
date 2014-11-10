@@ -26,9 +26,49 @@ app.directive('cron', ['$timeout', function ($timeout) {
     },
     link: function postLink(scope, element, attrs) {
 
+      scope.check = {};
+      scope.check.dayOfMonth = 1;
+      scope.check.month = 1;
+      scope.check.minDay = 1;
+      scope.check.maxDay = 31;
+      scope.$watch('check', function(value) {
+        console.log('value', value);
+        if (value && value.month) {
+          var min = 1;
+          var max = 31;
+          switch(value.month){
+            case "2":
+            max = 29;
+            break;
+            case "4":
+            case "6":
+            case "9":
+            case "11":
+            max = 30;
+            break;
+            default:
+            break;
+          }
+          scope.check.minDay = min;
+          scope.check.maxDay = max;
+        }
+        if (value && value.dayOfMonth) {
+          if (isNaN(value.dayOfMonth)) {
+            value.dayOfMonth = 1;
+          }
+          if (value.dayOfMonth > scope.check.maxDay) {
+            value.dayOfMonth = scope.check.maxDay;
+          } else if(value.dayOfMonth < scope.check.minDay) {
+            value.dayOfMonth = scope.check.minDay;
+          }
+        } else {
+          value.dayOfMonth = 1;
+        }
+      }, true);
       scope.generate = function () {
         var activeTab = $(element).find('li.active').attr('heading');
         var results = "";
+
         switch (activeTab) {
           case "Minutes":
           results = "0 0/" + $(element).find("#MinutesInput").val() + " * 1/1 * ? *";

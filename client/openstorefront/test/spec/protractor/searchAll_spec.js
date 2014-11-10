@@ -60,7 +60,7 @@ describe('searchAll_Search entire database', function() {
     it('Global search for TH(qm)(qm)r returned ' + resNum4 + ' expected results. ', function () {
         searchAll(searchFor4, resNum4);
     }, 20000);
-    searchFor5 = 't*i?';    resNum5 = 45;
+    searchFor5 = 't*i?';    resNum5 = 44;
     it('Global search for t(star)i(qm) returned ' + resNum5 + ' expected results. ', function () {
         searchAll(searchFor5, resNum5);
     }, 20000);

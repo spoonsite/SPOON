@@ -45,7 +45,8 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   $scope.component.compId;
   $scope.integrationConfs = null;
   $scope.show = {
-    'selectCompConf': true
+    'selectCompConf': true,
+    'showCodeSelection': true
   };
 
   $scope.loading = 0;
@@ -203,12 +204,17 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
                 }
               }
             });
-            $('.codeSelection').width($('.codeSelection').width());
             $scope.jiraCodes.masterSelect = null;
             $('.codeSelection:selected').removeAttr("selected");
-            $('.codeSelection').multiselect("clearSelection");
-            $(".codeSelection").multiselect( 'refresh' );
+            $timeout(function(){
+              $('.codeSelection').each(function(){
+                var width = $(this).width();
+                $(this).width(0);
+                $(this).width(width);
+              })
+            });
           }, 200);
+        } else { //
         }
       }
     }, function() {
@@ -330,7 +336,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
           triggerAlert('The mapping was saved successfully', 'mappingFields', 'body', 6000);
         }
         $scope.getMappingTypes();
-        console.log('result', result);
+        // console.log('result', result);
       }, function(){
         // triggerAlert('There was an error saving the mapping', 'mappingFields', 'body', 6000);
       })
@@ -426,51 +432,61 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     // console.log('code - move Left', code);
     // console.log('masterSelected', $scope.masterSelected);
     // console.log('$scope.masterSelect', $scope.jiraCodes.masterSelect);
-
     if(!code.selected){
       code.selected = [];
     }
-    var right = $scope.jiraCodes.masterSelect;
-    for (var i = 0; i < right.length; i++) {
-      var el = right[i];
-      // console.log('code.selected.indexOf(el) should be < 0', code.selected.indexOf(el));
-      if (code.selected.indexOf(el) < 0) {
-        code.selected.push(el);
+    if ($scope.jiraCodes.masterSelect) {
+
+      var right = $scope.jiraCodes.masterSelect;
+      for (var i = 0; i < right.length; i++) {
+        var el = right[i];
+        // console.log('code.selected.indexOf(el) should be < 0', code.selected.indexOf(el));
+        if (code.selected.indexOf(el) < 0) {
+          code.selected.push(el);
+        }
+        // console.log('masterselected index should be > -1', $scope.masterSelected.indexOf(el));
+        var indexOf = $scope.masterSelected.indexOf(el);
+        $scope.masterSelected.splice(indexOf, 1);
       }
-      // console.log('masterselected index should be > -1', $scope.masterSelected.indexOf(el));
-      var indexOf = $scope.masterSelected.indexOf(el);
-      $scope.masterSelected.splice(indexOf, 1);
     }
-    $('.codeSelection').width($('.codeSelection').width());
     $scope.jiraCodes.masterSelect = null;
-    code.toRemove = null;
     $('.codeSelection:selected').removeAttr("selected");
-    $('.codeSelection').multiselect("clearSelection");
-    $(".codeSelection").multiselect( 'refresh' );
+    $timeout(function(){
+      $('.codeSelection').each(function(){
+        var width = $(this).width();
+        $(this).width(0);
+        $(this).width(width);
+      });
+    }, 10);
   };
 
   $scope.moveRight = function(code) {
     // console.log('code - move Right', code);
     // console.log('masterSelected', $scope.masterSelected);
-
     if(!code.selected){
       code.selected = [];
     }
-    var toRemove = code.toRemove;
-    for (var i = 0; i < toRemove.length; i++) {
-      var el = toRemove[i];
-      if ($scope.masterSelected.indexOf(el) < 0) {
-        $scope.masterSelected.push(el);
+    if (code.toRemove)
+    {
+      var toRemove = code.toRemove;
+      for (var i = 0; i < toRemove.length; i++) {
+        var el = toRemove[i];
+        if ($scope.masterSelected.indexOf(el) < 0) {
+          $scope.masterSelected.push(el);
+        }
+        var indexOf = code.selected.indexOf(el);
+        code.selected.splice(indexOf, 1);
       }
-      var indexOf = code.selected.indexOf(el);
-      code.selected.splice(indexOf, 1);
     }
-    $('.codeSelection').width($('.codeSelection').width());
-    $scope.jiraCodes.masterSelect = null;
     code.toRemove = null;
     $('.codeSelection:selected').removeAttr("selected");
-    $('.codeSelection').multiselect("clearSelection");
-    $(".codeSelection").multiselect( 'refresh' );
+    $timeout(function(){
+      $('.codeSelection').each(function(){
+        var width = $(this).width();
+        $(this).width(0);
+        $(this).width(width);
+      });
+    }, 10);
   };
 
 
