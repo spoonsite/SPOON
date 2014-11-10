@@ -340,8 +340,8 @@
           <div class="tab-pane" id="Monthly">
             <div class="well well-small">
               <input type="radio" value="1" name="MonthlyRadio" checked="checked">&nbsp;Day&nbsp;
-              <input id="DayOfMOnthInput" type="number" min="0" value="1" style="width: 40px">&nbsp;of every&nbsp;
-              <input id="MonthInput" type="number" min="0" value="1" style="width: 40px">&nbsp;month(s)
+              <input ng-model="check.dayPerMonth" id="DayOfMOnthInput" type="number" min="0" value="1" style="width: 40px">&nbsp;of every&nbsp;
+              <input ng-model="check.perMonth" id="MonthInput" type="number" min="0" value="1" style="width: 40px">&nbsp;month(s)
             </div>
             <div class="well well-small">
               <input type="radio" value="2" name="MonthlyRadio">&nbsp;
