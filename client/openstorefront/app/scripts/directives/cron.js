@@ -64,7 +64,36 @@ app.directive('cron', ['$timeout', function ($timeout) {
         } else {
           value.dayOfMonth = 1;
         }
+        if (value && value.dayPerMonth) {
+          if (isNaN(value.dayPerMonth)) {
+            value.dayPerMonth = 1;
+          }
+          if (value.dayPerMonth > 31) {
+            value.dayPerMonth = 31;
+          } else if(value.dayPerMonth < 1) {
+            value.dayPerMonth = 1;
+          }
+        } else {
+          value.dayPerMonth = 1;
+        }
+        if (value && value.perMonth) {
+          if (isNaN(value.perMonth)) {
+            value.perMonth = 1;
+          }
+          if (value.perMonth > 120) {
+            value.perMonth = 120;
+          } else if(value.perMonth < 1) {
+            value.perMonth = 1;
+          }
+        } else {
+          value.perMonth = 1;
+        }
       }, true);
+
+
+
+
+
       scope.generate = function () {
         var activeTab = $(element).find('li.active').attr('heading');
         var results = "";
