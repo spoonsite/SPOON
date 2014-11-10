@@ -203,6 +203,11 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
                 }
               }
             });
+            $('.codeSelection').width($('.codeSelection').width());
+            $scope.jiraCodes.masterSelect = null;
+            $('.codeSelection:selected').removeAttr("selected");
+            $('.codeSelection').multiselect("clearSelection");
+            $(".codeSelection").multiselect( 'refresh' );
           }, 200);
         }
       }
@@ -421,7 +426,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     // console.log('code - move Left', code);
     // console.log('masterSelected', $scope.masterSelected);
     // console.log('$scope.masterSelect', $scope.jiraCodes.masterSelect);
-    
+
     if(!code.selected){
       code.selected = [];
     }
@@ -436,11 +441,18 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       var indexOf = $scope.masterSelected.indexOf(el);
       $scope.masterSelected.splice(indexOf, 1);
     }
+    $('.codeSelection').width($('.codeSelection').width());
+    $scope.jiraCodes.masterSelect = null;
+    code.toRemove = null;
+    $('.codeSelection:selected').removeAttr("selected");
+    $('.codeSelection').multiselect("clearSelection");
+    $(".codeSelection").multiselect( 'refresh' );
   };
 
   $scope.moveRight = function(code) {
     // console.log('code - move Right', code);
     // console.log('masterSelected', $scope.masterSelected);
+
     if(!code.selected){
       code.selected = [];
     }
@@ -453,6 +465,12 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       var indexOf = code.selected.indexOf(el);
       code.selected.splice(indexOf, 1);
     }
+    $('.codeSelection').width($('.codeSelection').width());
+    $scope.jiraCodes.masterSelect = null;
+    code.toRemove = null;
+    $('.codeSelection:selected').removeAttr("selected");
+    $('.codeSelection').multiselect("clearSelection");
+    $(".codeSelection").multiselect( 'refresh' );
   };
 
 
@@ -623,7 +641,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       var found = _.find($scope.previousMappings, {'attributeType': value.storeField.attributeType, 'projectType': $scope.jira.jiraProject.code, 'issueType': $scope.jira.jiraIssue.name});
       if (found) {
         $scope.jiraField = null;
-        triggerAlert('This attribute has previously been mapped. The fields have been prepopulated with the old values.', 'mappingFields', 'body', 6000);
+        triggerAlert('This attribute has previously been mapped. The fields have been prepopulated with the old values. If you save this mapping, it will override the old values.', 'mappingFields', 'body', 8000);
         var field = _.find($scope.fields, {'id': found.fieldId});
         if (field) {
           $scope.watch.jiraField = field;
