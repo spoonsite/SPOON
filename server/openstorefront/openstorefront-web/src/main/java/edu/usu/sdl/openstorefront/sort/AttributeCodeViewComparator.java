@@ -21,6 +21,7 @@ import java.util.Comparator;
 /**
  *
  * @author dshurtleff
+ * @param <T>
  */
 public class AttributeCodeViewComparator<T extends AttributeCodeView>
 		implements Comparator<T>
@@ -29,7 +30,11 @@ public class AttributeCodeViewComparator<T extends AttributeCodeView>
 	@Override
 	public int compare(T o1, T o2)
 	{
-		return o1.getLabel().compareTo(o2.getLabel());
+		if (o1.getSortOrder() != null && o2.getSortOrder() != null) {
+			return o1.getSortOrder().compareTo(o2.getSortOrder());
+		} else {
+			return o1.getLabel().compareTo(o2.getLabel());
+		}
 	}
 
 }

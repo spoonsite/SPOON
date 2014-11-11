@@ -41,6 +41,7 @@ public class ApplicationProperty
 	public static final String ARTICLE_IMPORTER_LAST_SYNC_DTS = "ARTICLESYNCDTS";
 	public static final String HIGHLIGHT_IMPORTER_LAST_SYNC_DTS = "HIGHLIGHTSYNCDTS";
 	public static final String COMPONENT_IMPORTER_LAST_SYNC_DTS = "COMPONENTSYNCDTS";
+	public static final String GLOBAL_INTEGRATION_REFRESH = "GLOBALINTREF";
 
 	public ApplicationProperty()
 	{

@@ -15,7 +15,7 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice',  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -56,6 +56,10 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     localCache.save(name+'-time', new Date());
   };
 
+  var get = function(key) {
+    return localCache.get(key, 'object');
+  }
+
   var updateCache = function(name, value) {
     save(name, value);
   };
@@ -66,6 +70,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.componentservice = componentservice;
   business.highlightservice = highlightservice;
   business.articleservice = articleservice;
+  business.configurationservice = configurationservice;
 
   business.updateCache = function(name, value) {
     var deferred = $q.defer();
@@ -245,6 +250,19 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     return deferred.promise;
   };
 
+
+  business.saveLocal = function(key, value){
+    save(key, value);
+  }
+
+  business.getLocal = function(key){
+    if (key) {
+      var result = get(key);
+      return result? result: null;
+    } else {
+      return null;
+    }
+  }
 
 
 

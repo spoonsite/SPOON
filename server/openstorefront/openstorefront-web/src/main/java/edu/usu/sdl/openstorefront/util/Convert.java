@@ -86,4 +86,32 @@ public class Convert
 		return null;
 	}
 
+	/**
+	 * Attempts to convert object to an Long
+	 *
+	 * @param data
+	 * @return the long or null if it can't convert.
+	 */
+	public static Long toLong(Object data)
+	{
+		if (data != null) {
+			try {
+				if (data instanceof Integer) {
+					return (Long) data;
+				} else if (data instanceof String) {
+					return Long.parseLong(data.toString());
+				} else if (data instanceof BigDecimal) {
+					return ((BigDecimal) data).longValue();
+				} else if (data instanceof BigInteger) {
+					return ((BigInteger) data).longValue();
+				} else if (data instanceof Number) {
+					return ((Number) data).longValue();
+				}
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
 }

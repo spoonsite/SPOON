@@ -38,7 +38,9 @@ public class UserAgentManager
 
 	public static void cleanup()
 	{
-		parser.shutdown();
+		if (parser != null) {
+			parser.shutdown();
+		}
 	}
 
 	public static String getDataVersion()

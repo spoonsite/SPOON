@@ -365,7 +365,10 @@ module.exports = function (grunt) {
           'styles/*.css',
           'scripts/esapi4js/**/*',
           'scripts/common-min/*.js',
-          'scripts/common/data.js'
+          'scripts/common/data.js',
+          'scripts/common/jquery-cron.js',
+          'scripts/common/angular-multi-select.js',
+          'scripts/common/cronGen.js'
           ]
         }, {
           expand: true,
@@ -377,6 +380,11 @@ module.exports = function (grunt) {
           'bower_components/typicons/fonts/*'
           ],
           flatten: true  
+        }, {
+          expand: true,
+          cwd: '.tmp/styles/',
+          dest: '<%= yeoman.dist %>/styles',
+          src:'print.css'
         }]
       },
       styles: {

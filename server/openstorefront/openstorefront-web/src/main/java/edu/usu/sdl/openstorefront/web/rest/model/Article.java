@@ -49,6 +49,18 @@ public class Article
 		return article;
 	}
 
+	public static Article toViewHtml(AttributeCode code, String html)
+	{
+		Article article = new Article();
+		article.setAttributeCode(code.getAttributeCodePk().getAttributeCode());
+		article.setAttributeType(code.getAttributeCodePk().getAttributeType());
+		article.setAttributeCodeLabel(code.getLabel());
+		article.setAttributeCodeDescription(code.getDescription());
+		article.setUpdateDts(code.getUpdateDts());
+		article.setHtml(html);
+		return article;
+	}
+
 	public String getAttributeCode()
 	{
 		return attributeCode;

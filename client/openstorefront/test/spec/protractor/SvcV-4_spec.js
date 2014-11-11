@@ -1,45 +1,36 @@
-// GLOBAL Variable for the tests
-//theSite = 'http://di2e.github.io/openstorefront/index.html';
-//openAM = false;
-
-theSite = 'https://storefront1.di2e.net/openstorefront/index.html';
-openAM = true;
-
-
-//theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
-//openAM = true;
-
-// Leave OUTSIDE of describe, it, expect as it is NOT an Angular website page.
-if (openAM) {
-    // For non-Angular page turn OFF synchronization
-    browser.ignoreSynchronization = true;
-    browser.get(theSite, 3500);
-    browser.driver.sleep(1000);
-    browser.driver.findElement(by.id('IDToken1')).sendKeys('amadmin'); // (amadmin) Set to valid account
-    browser.driver.findElement(by.id('IDToken2')).sendKeys('password', protractor.Key.ENTER);
-    browser.driver.sleep(1000);
-}
+/* Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the 'License');
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an 'AS IS' BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 describe('SvcV-4_button from the home page', function() {
     it('Expand the buttons in the categories', function () {
         // Navigate to the site
-        browser.ignoreSyncronization = false;
-        browser.get(theSite, 4000);
+        browser.ignoreSynchronization = false;
+        browser.get(theSite, 8000);
 
         // Click the SvcV-4 button
         element.all(by.css('.btn.btn-primary.pull-right')).get(1).click();
-
-        browser.driver.sleep(8000);
+        browser.driver.sleep(5000);
 
         // Expand
-        numNow = 15;  // Couldn't get this dynamically, could change?
+        numNow = 17;  // Couldn't get this dynamically, could change?
         // loop get(0).click();
         for (var i = 0; i <= numNow; i++) {
             element.all(by.css('.diagram-toggle-btn')).get(i).click();
-            browser.driver.sleep(1);
+            browser.driver.sleep(100);
         }
-
         // Brittle
         expect(element.all(by.css('.btn')).count()).toEqual(7);
-    });
+    }, 63000);
 });

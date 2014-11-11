@@ -56,6 +56,14 @@ public class PropertiesManager
 	public static final String KEY_OPENAM_HEADER_ORGANIZATION = "openam.header.organization";
 	public static final String KEY_OPENAM_HEADER_ADMIN_GROUP = "openam.header.admingroupname";
 
+	public static final String KEY_TOOLS_USER = "tools.login.user";
+	public static final String KEY_TOOLS_CREDENTIALS = "tools.login.pw";
+
+	public static final String KEY_JIRA_POOL_SIZE = "jira.connectionpool.size";
+	public static final String KEY_JIRA_CONNECTION_WAIT_TIME = "jira.connection.wait.seconds";
+	public static final String KEY_JIRA_URL = "jira.server.url";
+	public static final String KEY_JOB_WORKING_STATE_OVERRIDE = "job.working.state.override.minutes";
+
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
@@ -64,9 +72,20 @@ public class PropertiesManager
 		return getProperties().getProperty(key);
 	}
 
+	/**
+	 * Note: this will trim the value....the extra spaces can cause issues
+	 *
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	public static String getValue(String key, String defaultValue)
 	{
-		return getProperties().getProperty(key, defaultValue);
+		String value = getProperties().getProperty(key, defaultValue);
+		if (value != null) {
+			value = value.trim();
+		}
+		return value;
 	}
 
 	public static void setProperty(String key, String value)

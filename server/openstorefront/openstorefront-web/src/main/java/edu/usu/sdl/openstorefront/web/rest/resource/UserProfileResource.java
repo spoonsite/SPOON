@@ -90,7 +90,7 @@ public class UserProfileResource
 			userProfileView = UserProfileView.toView(userContext.getUserProfile());
 			userProfileView.setAdmin(SecurityUtil.isAdminUser());
 		}
-		return sendSingleEnityResponse(userProfileView);
+		return sendSingleEntityResponse(userProfileView);
 	}
 
 	@GET
@@ -310,7 +310,7 @@ public class UserProfileResource
 
 		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(UserTracking.class, queryByExample);
 		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, userTrackingExample));
-		return sendSingleEnityResponse(new UserTrackingWrapper(userTrackings, total));
+		return sendSingleEntityResponse(new UserTrackingWrapper(userTrackings, total));
 	}
 
 	@GET
@@ -330,7 +330,7 @@ public class UserProfileResource
 		userTrackingExample.setTrackingId(trackingId);
 
 		UserTracking userTracking = service.getPersistenceService().queryOneByExample(UserTracking.class, userTrackingExample);
-		return sendSingleEnityResponse(userTracking);
+		return sendSingleEntityResponse(userTracking);
 	}
 
 	@DELETE

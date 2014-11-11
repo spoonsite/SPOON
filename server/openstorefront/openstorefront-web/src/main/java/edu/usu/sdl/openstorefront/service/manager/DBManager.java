@@ -38,7 +38,7 @@ public class DBManager
 
 	private static OServer server;
 	private static OObjectDatabasePool globalInstance;
-	
+
 	@Override
 	public void initialize()
 	{
@@ -95,10 +95,14 @@ public class DBManager
 	 */
 	public static void cleanup()
 	{
-		log.info("Shutting down Orient DB...");
-		globalInstance.close();
-		server.shutdown();
 
+		log.info("Shutting down Orient DB...");
+		if (globalInstance != null) {
+			globalInstance.close();
+		}
+		if (server != null) {
+			server.shutdown();
+		}
 		log.info("Finished.");
 	}
 

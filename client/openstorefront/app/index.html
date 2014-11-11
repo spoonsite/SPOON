@@ -26,10 +26,12 @@
   <!-- <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" /> -->
   <!-- <link href="styles/bootstrap-override.css" rel="stylesheet" type="text/css"/>  -->
   <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css" />
+  <link rel="stylesheet" href="styles/print.css">
   <!-- build:css({.tmp,app}) styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/abn_tree.css" />
   <link rel="stylesheet" href="styles/common/angular-lightbox.css" />
+  <link rel="stylesheet" href="styles/common/angular-multi-select.css">
   <!-- endbuild -->
   <!-- These stylesheets will be copied over directly (the sass compiler won't touch them) -->
   <!-- end section -->
@@ -50,7 +52,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 </head>
-<body ng-app="openstorefrontApp">
+<body ng-app="openstorefrontApp" class="printMe">
   <loader trigger="bodyLoad"></loader>
 
   
@@ -67,7 +69,7 @@ limitations under the License.
 <div ng-include="'views/nav.html'" style="position: relative; z-index: 1011"></div>
 
 <!-- Add your site or application content here -->
-<div class="container-fluid fullHeight" ng-view="">
+<div class="container-fluid fullHeight printMe" ng-view="">
   <!-- Nothing goes here!!! -->
 </div>
 
@@ -127,6 +129,9 @@ limitations under the License.
   <script src="bower_components/ckeditor/ckeditor.js"></script>
   <script src="bower_components/ng-ckeditor/ng-ckeditor.js"></script>  
   <script type="text/javascript" src="scripts/common/angular-lightbox.js"></script>
+  <script type="text/javascript" src="scripts/common/jquery-cron.js"></script>
+  <script type="text/javascript" src="scripts/common/angular-multi-select.js"></script>
+  <script type="text/javascript" src="scripts/common/cronGen.js"></script>
 
   <!-- esapi4js dependencies -->
   <script type="text/javascript" language="JavaScript" src="scripts/esapi4js/lib/log4js.js"></script>
@@ -152,6 +157,7 @@ limitations under the License.
   <script type="text/javascript" src="scripts/services/auth.js"></script>
   <script type="text/javascript" src="scripts/services/highlights.js"></script>
   <script type="text/javascript" src="scripts/services/articleservice.js"></script>
+  <script type="text/javascript" src="scripts/services/configuration.js"></script>
 
   <!-- Grab our Directives -->
   <script type="text/javascript" src="scripts/directives/raty.js"></script>
@@ -169,6 +175,9 @@ limitations under the License.
   <script type="text/javascript" src="scripts/directives/ngfocus.js"></script>
   <script type="text/javascript" src="scripts/directives/questions_reviews/question.js"></script>
   <script type="text/javascript" src="scripts/directives/questions_reviews/response.js"></script>
+  <script type="text/javascript" src="scripts/directives/cron.js"></script>
+  <script type="text/javascript" src="scripts/directives/schedule.js"></script>
+  <script type="text/javascript" src="scripts/directives/print.js"></script>
   
   <!-- Grab our Controller -->
   <script type="text/javascript" src="scripts/controllers/main.js"></script>
@@ -185,7 +194,10 @@ limitations under the License.
   <script type="text/javascript" src="scripts/controllers/login.js"></script>
   <script type="text/javascript" src="scripts/controllers/compare.js"></script>
   <script type="text/javascript" src="scripts/controllers/admin/editcomponent.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/configuration/configuration.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/configuration/savecompconf.js"></script>
   <script type="text/javascript" src="scripts/controllers/details/review.js"></script>
+  <script type="text/javascript" src="scripts/controllers/base.js"></script>
   
 
 

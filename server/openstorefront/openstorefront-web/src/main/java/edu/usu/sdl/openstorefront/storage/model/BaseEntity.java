@@ -17,11 +17,14 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -57,6 +60,30 @@ public abstract class BaseEntity
 
 	public BaseEntity()
 	{
+	}
+
+	public void populateBaseUpdateFields()
+	{
+		setUpdateDts(TimeUtil.currentDate());
+		if (StringUtils.isBlank(getUpdateUser())) {
+			setUpdateUser(SecurityUtil.getCurrentUserName());
+		}
+	}
+
+	public void populateBaseCreateFields()
+	{
+		if (StringUtils.isBlank(getActiveStatus())) {
+			setActiveStatus(ACTIVE_STATUS);
+		}
+		setCreateDts(TimeUtil.currentDate());
+		setUpdateDts(TimeUtil.currentDate());
+
+		if (StringUtils.isBlank(getCreateUser())) {
+			setCreateUser(SecurityUtil.getCurrentUserName());
+		}
+		if (StringUtils.isBlank(getUpdateUser())) {
+			setUpdateUser(SecurityUtil.getCurrentUserName());
+		}
 	}
 
 	public String getActiveStatus()

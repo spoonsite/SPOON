@@ -9,7 +9,7 @@ exports.config = {
   ],
   onPrepare: function() {
     browser.driver.manage().window().setSize(1180,1180);
-    browser.driver.manage().window().setPosition(400,0);  // Get off of left corner where IDE usually is
+    browser.driver.manage().window().setPosition(550,0);  // Get off of left corner where IDE usually is
 
     // For the HTML Reporter
     require('../node_modules/jasmine-reporters');
@@ -39,7 +39,7 @@ exports.config = {
     isVerbose: true,
     showColors: true,
     includeStackTrace: true,
-    defaultTimeoutInterval: 30000,
+    defaultTimeoutInterval: 61000,
     allScriptsTimeout: 18000
   },
 
@@ -48,18 +48,16 @@ exports.config = {
         // Options:  'chrome', 'firefox', 'internet explorer', 'opera', 'safari'
         //{browserName: 'firefox'},
         {browserName: 'chrome'}
-    ]
+  ]
+
         // 8 Aug '14 Firefox QUIT WORKING
+        // http://stackoverflow.com/questions/25676328/protractor-with-firefox-32-latest-browser-not-loading
+        // FIX:  Downgrade to Firefox 31 or less OR upgrade to Selenium 2.43 or newer
+
+
         //browserName: 'internet explorer',
         //version: '11'
 
-    /*  Changed to "multiCapabilities" 8/30/14
-     capabilities : {
-     browserName : 'chrome',
-     'chromeOptions': {
-     args: ['--test-type']
-     }
-     },
-     */
+
 
 };

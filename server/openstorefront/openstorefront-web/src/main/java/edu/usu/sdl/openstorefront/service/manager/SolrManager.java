@@ -37,6 +37,35 @@ public class SolrManager
 
 	private static final Logger log = Logger.getLogger(SolrManager.class.getName());
 
+	public static final String SOLR_ALL_QUERY = "*:*";
+	public static final String SOLR_QUERY_SEPERATOR = ":";
+
+	public static enum SolrAndOr
+	{
+
+		AND,
+		OR
+	}
+
+	public static enum SolrEquals
+	{
+
+		EQUAL(""),
+		NOTEQUAL("-");
+
+		private final String solrOperator;
+
+		private SolrEquals(String solrOperator)
+		{
+			this.solrOperator = solrOperator;
+		}
+
+		public String getSolrOperator()
+		{
+			return solrOperator;
+		}
+	}
+
 	//Should reuse server to avoid leaks according to docs.
 	private static SolrServer solrServer;
 

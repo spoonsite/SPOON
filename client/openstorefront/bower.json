@@ -33,6 +33,7 @@
   },
   "resolutions": {
     "angular": "1.2.23",
+    "moment": "2.8.3",
     "jquery": "2.1.1"
   }
 }
