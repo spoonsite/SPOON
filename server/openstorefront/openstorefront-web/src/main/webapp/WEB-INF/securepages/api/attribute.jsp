@@ -23,7 +23,7 @@ limitations under the License.
         <script src="script/reference.js" type="text/javascript"></script>
     </head>
     <body>
-        <h2>Attribute Table Reference</h2>
+        <h2>Attribute Table Reference</h2>        		
         <div class='wrapper'>
             <table id="tableOfContents"></table>
             <div id="content"></div>

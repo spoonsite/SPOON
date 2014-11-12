@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
@@ -23,21 +22,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  *
  * @author dshurtleff
  */
 public class ComponentEvaluationSectionView
 {
-	private String name;	
+
+	private String name;
 	private Integer score;
 	private Date updateDts;
 
 	public ComponentEvaluationSectionView()
 	{
 	}
-	
+
 	public static ComponentEvaluationSectionView toView(ComponentEvaluationSection section)
 	{
 		ComponentEvaluationSectionView view = new ComponentEvaluationSectionView();
@@ -46,11 +45,11 @@ public class ComponentEvaluationSectionView
 		view.setUpdateDts(section.getUpdateDts());
 		return view;
 	}
-		
+
 	public static List<ComponentEvaluationSectionView> toViewList(List<ComponentEvaluationSection> sections)
 	{
 		List<ComponentEvaluationSectionView> viewList = new ArrayList();
-		sections.forEach(section->{
+		sections.forEach(section -> {
 			viewList.add(ComponentEvaluationSectionView.toView(section));
 		});
 		return viewList;
@@ -76,17 +75,11 @@ public class ComponentEvaluationSectionView
 		this.score = score;
 	}
 
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;

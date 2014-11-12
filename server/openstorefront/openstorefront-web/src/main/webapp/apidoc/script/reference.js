@@ -19,8 +19,13 @@ var doAttributes = function() {
 
     $.get("/openstorefront/api/v1/resource/attributes", function(data) {
         if (data && data.length > 0){
-            setupAttributes(data);
+            if (data[0].codes !== undefined) {
+              setupAttributes(data);
+            } else {
+              $('#content').append('(requires login to view)');
+            }
         }
+        
     });
 };
 
@@ -30,9 +35,9 @@ var setupAttributes = function(types) {
         var codes = types[i].codes;
         if (codes && codes.length > 0) {
             $('#tableOfContents').append('<tr><td><span goTo="' + types[i].type + '" class="imitateLink">' + types[i].description + '</span></td></tr>');
-            $('#content').append('<div id="' + types[i].type + '" style="margin-top: 50px;"><h3>' + types[i].description + '</h3><div style="margin-left: 20px;"><table><tr><th>Label</th><th>Code</th><th>Description</th></tr></table></div></div>');
+            $('#content').append('<div id="' + types[i].type + '" style="margin-top: 50px;"><h3>' + types[i].description + ' (' + types[i].type + ')</h3><div style="margin-left: 20px;"><table><tr><th>Code</th><th>Label</th><th>Description</th></tr></table></div></div>');
             for (var j = 0; codes && j < codes.length; j++) {
-                $('#' + types[i].type).find('table').append('<tr><td>' + codes[j].label + '</td><td>' + codes[j].code + '</td><td>' + codes[j].description + '</td></tr></div>');
+                $('#' + types[i].type).find('table').append('<tr><td>' + codes[j].code + '</td><td>' + codes[j].label + '</td><td>' + codes[j].description + '</td></tr></div>');
             }
         }
     }
@@ -52,11 +57,15 @@ var setupAttributes = function(types) {
 var doLookups = function() {
     $.get("/openstorefront/api/v1/resource/lookuptypes", function(data) {
         if (data && data.length > 0) {
-            console.log('data', data);
+            //console.log('data', data);
+          if (data[0].code !== undefined) {
             var types = data;
             for (var i = 0; i < types.length; i++) {
-                setupLookups(types[i]);
+              setupLookups(types[i]);
             }
+          } else {            
+            $('#content').append('(requires login to view)');            
+          }
         }
     });
 };

@@ -87,7 +87,7 @@ public class LookupImporter
 							{
 								File files[] = new File[1];
 								files[0] = newFile;
-								filesUpdatedOrAdded(files);
+								filesUpdatedOrAdded(files, true);
 							}
 						});
 					}

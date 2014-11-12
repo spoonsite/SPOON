@@ -380,6 +380,11 @@ module.exports = function (grunt) {
           'bower_components/typicons/fonts/*'
           ],
           flatten: true  
+        }, {
+          expand: true,
+          cwd: '.tmp/styles/',
+          dest: '<%= yeoman.dist %>/styles',
+          src:'print.css'
         }]
       },
       styles: {
