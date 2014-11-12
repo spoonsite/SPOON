@@ -57,6 +57,14 @@ public class AttributeCode
 	@ConsumeField
 	private String detailUrl;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String groupCode;
+
+	@ConsumeField
+	private Integer sortOrder;
+
 	public static final String DI2ELEVEL_NA = "NA";
 	public static final String DI2ELEVEL_LEVEL0 = "LEVEL0";
 	public static final String DI2ELEVEL_LEVEL1 = "LEVEL1";
@@ -115,6 +123,26 @@ public class AttributeCode
 	public void setArticleFilename(String articleFilename)
 	{
 		this.articleFilename = articleFilename;
+	}
+
+	public Integer getSortOrder()
+	{
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder)
+	{
+		this.sortOrder = sortOrder;
+	}
+
+	public String getGroupCode()
+	{
+		return groupCode;
+	}
+
+	public void setGroupCode(String groupCode)
+	{
+		this.groupCode = groupCode;
 	}
 
 }

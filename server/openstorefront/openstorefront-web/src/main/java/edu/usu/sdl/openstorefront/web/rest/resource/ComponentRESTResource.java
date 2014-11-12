@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
@@ -30,11 +31,11 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedule;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSchedulePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
@@ -57,6 +58,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
@@ -73,6 +75,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -101,7 +104,7 @@ public class ComponentRESTResource
 	@Context
 	HttpServletRequest request;
 
-	// COMPONENT GENERAL FUNCTIONS
+	// <editor-fold defaultstate="collapsed"  desc="COMPONENT GENERAL FUNCTIONS">
 	@GET
 	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -142,7 +145,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
-		return sendSingleEnityResponse(view);
+		return sendSingleEntityResponse(view);
 	}
 
 	@POST
@@ -205,7 +208,7 @@ public class ComponentRESTResource
 		if (view != null) {
 			view = service.getComponentService().activateComponent(componentId);
 		}
-		return sendSingleEnityResponse(view);
+		return sendSingleEntityResponse(view);
 	}
 
 	@DELETE
@@ -242,10 +245,22 @@ public class ComponentRESTResource
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
-		return sendSingleEnityResponse(componentDetail);
+		return sendSingleEntityResponse(componentDetail);
 	}
 
-	// ComponentRESTResource ATTRIBUTE Section
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete component and all related entities")
+	@Path("/{id}/cascade")
+	public void deleteComponentTag(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		service.getComponentService().cascadeDeleteOfComponent(componentId);
+	}
+	// </editor-fold>
+
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -370,8 +385,9 @@ public class ComponentRESTResource
 		}
 		return Response.created(URI.create("v1/resource/components/" + attribute.getComponentAttributePk().getComponentId() + "/attributes/" + attribute.getComponentAttributePk().getAttributeType() + "/" + attribute.getComponentAttributePk().getAttributeCode())).entity(attribute).build();
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource DEPENDENCY section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource DEPENDENCY section">
 	@GET
 	@APIDescription("Get the dependencies from the entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -459,8 +475,9 @@ public class ComponentRESTResource
 			return Response.ok(dependency).build();
 		}
 	}
+	//</editor-fold>
 
-	// ComponentRESTResource CONTACT section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource CONTACT section">
 	@GET
 	@APIDescription("Gets all contact for a component")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -549,8 +566,9 @@ public class ComponentRESTResource
 			return Response.ok(contact).build();
 		}
 	}
+	//</editor-fold>
 
-	// ComponentRESTResource Evaluation Section section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Evaluation Section section">
 	@GET
 	@APIDescription("Gets an evaluation section associated to the component")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -652,100 +670,9 @@ public class ComponentRESTResource
 			return Response.ok(section).build();
 		}
 	}
+	//</editor-fold>
 
-	// ComponentRESTResource Evaluation Schedule section
-	@GET
-	@APIDescription("Gets a list of evaluation schedules associated to the component")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentEvaluationSchedule.class)
-	@Path("/{id}/schedules")
-	public List<ComponentEvaluationSchedule> getComponentEvaluationSchedule(
-			@PathParam("id")
-			@RequiredParam String componentId)
-	{
-		return service.getComponentService().getBaseComponent(ComponentEvaluationSchedule.class, componentId);
-	}
-
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Removes the specified evaluation schedule from the component")
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/schedules/{evalLevel}")
-	public void deleteComponentEvaluationSchedule(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("evalLevel")
-			@RequiredParam String evalLevel)
-	{
-		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
-		pk.setComponentId(componentId);
-		pk.setEvaluationLevelCode(evalLevel);
-		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSchedule.class, pk);
-	}
-
-	@POST
-	@RequireAdmin
-	@APIDescription("Adds a component evaluation schedule to the component")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentEvaluationSchedule.class)
-	@Path("/{id}/schedules")
-	public Response addComponentEvaluationSchedule(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@RequiredParam ComponentEvaluationSchedule schedule)
-	{
-		schedule.setComponentId(componentId);
-		schedule.getComponentEvaluationSchedulePk().setComponentId(componentId);
-		return saveSchedule(schedule, true);
-	}
-
-	@PUT
-	@RequireAdmin
-	@APIDescription("Updates a component evaluation schedule associated to the entity")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/schedules/{evalLevel}")
-	public Response updateComponentEvaluationSchedule(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("evalLevel")
-			@RequiredParam String evalLevel,
-			@RequiredParam ComponentEvaluationSchedule schedule)
-	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
-		ComponentEvaluationSchedulePk pk = new ComponentEvaluationSchedulePk();
-		pk.setComponentId(componentId);
-		pk.setEvaluationLevelCode(evalLevel);
-		ComponentEvaluationSection componentEvaluationSection = service.getPersistenceService().findById(ComponentEvaluationSection.class, pk);
-		if (componentEvaluationSection != null) {
-			schedule.setComponentId(componentId);
-			schedule.setComponentEvaluationSchedulePk(pk);
-			response = saveSchedule(schedule, false);
-		}
-		return response;
-	}
-
-	private Response saveSchedule(ComponentEvaluationSchedule schedule, Boolean post)
-	{
-		ValidationModel validationModel = new ValidationModel(schedule);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			schedule.setActiveStatus(ComponentEvaluationSchedule.ACTIVE_STATUS);
-			schedule.setCreateUser(SecurityUtil.getCurrentUserName());
-			schedule.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getComponentService().saveComponentEvaluationSchedule(schedule);
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-		if (post) {
-
-			return Response.created(URI.create("v1/resource/components/" + schedule.getComponentId() + "/schedules/" + schedule.getComponentEvaluationSchedulePk().getEvaluationLevelCode())).entity(schedule).build();
-		} else {
-			return Response.ok(schedule).build();
-		}
-	}
-
-	// ComponentRESTResource MEDIA section
+	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource MEDIA section">
 	@GET
 	@APIDescription("Gets the list of media associated to an entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -836,8 +763,9 @@ public class ComponentRESTResource
 			return Response.ok(media).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource METADATA section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -926,8 +854,9 @@ public class ComponentRESTResource
 			return Response.ok(metadata).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource QUESTION section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource QUESTION section">
 	@GET
 	@APIDescription("Get the questions associated with the specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -977,7 +906,7 @@ public class ComponentRESTResource
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
 		}
-		return sendSingleEnityResponse(componentQuestion);
+		return sendSingleEntityResponse(componentQuestion);
 	}
 
 	@DELETE
@@ -1061,8 +990,9 @@ public class ComponentRESTResource
 			return Response.ok(question).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource QUESTION RESPONSE section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource QUESTION RESPONSE section">
 	@GET
 	@APIDescription("Gets the responses for a given question associated to the specified v ")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1099,7 +1029,7 @@ public class ComponentRESTResource
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
-		return sendSingleEnityResponse(questionResponse);
+		return sendSingleEntityResponse(questionResponse);
 	}
 
 	@DELETE
@@ -1199,8 +1129,9 @@ public class ComponentRESTResource
 			return Response.ok(response).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource RESOURCE section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource RESOURCE section">
 	@GET
 	@APIDescription("Get the resources associated to the given component")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1228,7 +1159,7 @@ public class ComponentRESTResource
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
 		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
-		return sendSingleEnityResponse(componentResource);
+		return sendSingleEntityResponse(componentResource);
 	}
 
 	@DELETE
@@ -1312,8 +1243,9 @@ public class ComponentRESTResource
 			return Response.ok(resource).build();
 		}
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource REVIEW section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW section">
 	@GET
 	@APIDescription("Get the reviews for a specified entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1500,8 +1432,9 @@ public class ComponentRESTResource
 			return Response.ok(review).build();
 		}
 	}
+	//</editor-fold>
 
-	// ComponentRESTResource REVIEW CON section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW CON section">
 	@GET
 	@APIDescription("Get the cons associated to a review")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1542,7 +1475,7 @@ public class ComponentRESTResource
 		componentReviewConExample.setComponentId(componentId);
 
 		ComponentReviewCon reviewCon = service.getPersistenceService().queryOneByExample(ComponentReviewCon.class, new QueryByExample(componentReviewConExample));
-		return sendSingleEnityResponse(reviewCon);
+		return sendSingleEntityResponse(reviewCon);
 	}
 
 	@DELETE
@@ -1625,8 +1558,9 @@ public class ComponentRESTResource
 		}
 		return response;
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource REVIEW PRO section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW PRO section">
 	@GET
 	@APIDescription("Get the pros for a review associated with the given entity")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1666,7 +1600,7 @@ public class ComponentRESTResource
 		componentReviewProPk.setReviewPro(proId);
 		componentReviewProExample.setComponentReviewProPk(componentReviewProPk);
 		ComponentReviewPro componentReviewPro = service.getPersistenceService().queryOneByExample(ComponentReviewPro.class, new QueryByExample(componentReviewProExample));
-		return sendSingleEnityResponse(componentReviewPro);
+		return sendSingleEntityResponse(componentReviewPro);
 	}
 
 	@DELETE
@@ -1751,8 +1685,9 @@ public class ComponentRESTResource
 		}
 		return response;
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource TAG section
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TAG section">
 	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1790,7 +1725,7 @@ public class ComponentRESTResource
 		componentTagExample.setComponentId(componentId);
 		componentTagExample.setTagId(tagId);
 		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(componentTagExample));
-		return sendSingleEnityResponse(componentTag);
+		return sendSingleEntityResponse(componentTag);
 	}
 
 	@DELETE
@@ -1954,8 +1889,9 @@ public class ComponentRESTResource
 		}
 		return Response.created(URI.create("v1/resource/components/" + tag.getComponentId() + "/tags/" + tag.getTagId())).entity(tag).build();
 	}
+	// </editor-fold>
 
-	// ComponentRESTResource TRACKING section
+	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
@@ -1983,7 +1919,7 @@ public class ComponentRESTResource
 		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(ComponentTracking.class, queryByExample);
 
 		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
-		return sendSingleEnityResponse(new ComponentTrackingWrapper(componentTrackings, total));
+		return sendSingleEntityResponse(new ComponentTrackingWrapper(componentTrackings, total));
 	}
 
 	@GET
@@ -2002,7 +1938,7 @@ public class ComponentRESTResource
 		componentTrackingExample.setComponentId(componentId);
 		componentTrackingExample.setComponentTrackingId(trackingId);
 		ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, componentTrackingExample);
-		return sendSingleEnityResponse(componentTracking);
+		return sendSingleEntityResponse(componentTracking);
 	}
 
 	@DELETE
@@ -2034,18 +1970,336 @@ public class ComponentRESTResource
 	{
 		service.getComponentService().deleteAllBaseComponent(ComponentTracking.class, componentId);
 	}
+	// </editor-fold>
+
+	// <editor-fold defaultstate="collapsed"  desc="Integrations">
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all integration models from the database.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentIntegration.class)
+	@Path("/integration")
+	public List<ComponentIntegrationView> getIntegrations(
+			@QueryParam("status")
+			@DefaultValue("A")
+			@APIDescription("Pass 'ALL' to view active and inactive") String status)
+	{
+		if (OpenStorefrontConstant.STATUS_VIEW_ALL.equals(status)) {
+			status = null;
+		}
+		List<ComponentIntegration> integrationModels = service.getComponentService().getComponentIntegrationModels(status);
+		List<ComponentIntegrationView> views = new ArrayList<>();
+		for (ComponentIntegration temp : integrationModels) {
+			views.add(ComponentIntegrationView.toView(temp));
+		}
+		return views;
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets a integration model")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentIntegration.class)
+	@Path("/{id}/integration")
+	public Response getIntegration(
+			@QueryParam("id") String componentId)
+	{
+		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		ComponentIntegrationView view = ComponentIntegrationView.toView(integration);
+		return sendSingleEntityResponse(view);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration")
+	public Response saveIntegration(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			ComponentIntegration integration)
+	{
+		ValidationModel validationModel = new ValidationModel(integration);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			service.getComponentService().saveComponentIntegration(integration);
+			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/cron")
+	public Response saveRefreshRate(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			String cron)
+	{
+		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (integration != null) {
+			integration.setRefreshRate(cron);
+			ValidationModel validationModel = new ValidationModel(integration);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				service.getComponentService().saveComponentIntegration(integration);
+				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
+			} else {
+				return Response.ok(validationResult.toRestError()).build();
+			}
+		} else {
+			return Response.ok().build();
+		}
+
+	}
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Delete component and all related entities")
-	@Path("/{id}/cascade")
-	public void deleteComponentTag(
-			@PathParam("id")
-			@RequiredParam String componentId)
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/cron")
+	public Response deleteRefreshRate(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			String cron)
 	{
-		service.getComponentService().cascadeDeleteOfComponent(componentId);
+		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (integration != null) {
+			integration.setRefreshRate(null);
+			ValidationModel validationModel = new ValidationModel(integration);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				service.getComponentService().saveComponentIntegration(integration);
+				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
+			} else {
+				return Response.ok(validationResult.toRestError()).build();
+			}
+		} else {
+			return Response.ok().build();
+		}
 	}
 
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates  a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/activate")
+	public Response activateIntegration(
+			@PathParam("componentId")
+			@RequiredParam String componentId)
+	{
+		ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (componentIntegration != null) {
+			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.ACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Inactivates a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/inactivate")
+	public Response inactiveIntegration(
+			@PathParam("componentId")
+			@RequiredParam String componentId)
+	{
+		ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (componentIntegration != null) {
+			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Removes component integration and all child configs.")
+	@Path("/{componentId}/integration")
+	public void deleteComponentConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId)
+	{
+		service.getComponentService().deleteComponentIntegration(componentId);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Runs a full component integration")
+	@Path("/{componentId}/integration/run")
+	public Response runComponentIntegration(
+			@PathParam("componentId")
+			@RequiredParam String componentId)
+	{
+		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (integration != null) {
+			JobManager.runComponentIntegrationNow(componentId, null);
+			return Response.ok().build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Runs all active component integrations")
+	@Path("/integrations/run")
+	public Response runAllComponentIntegration()
+	{
+		List<ComponentIntegration> componentIntegrations = service.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
+		for (ComponentIntegration componentIntegration : componentIntegrations) {
+			JobManager.runComponentIntegrationNow(componentIntegration.getComponentId(), null);
+		}
+		return Response.ok().build();
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all component integration configs")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentIntegrationConfig.class)
+	@Path("/{componentId}/integration/configs")
+	public List<ComponentIntegrationConfig> getIntegrationConfigs(
+			@PathParam("componentId") String componentId)
+	{
+		List<ComponentIntegrationConfig> configs;
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		configs = service.getPersistenceService().queryByExample(null, integrationConfigExample);
+		return configs;
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all component integration configs")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentIntegrationConfig.class)
+	@Path("/{componentId}/integration/configs/{configId}")
+	public Response getIntegrationConfigs(
+			@PathParam("componentId") String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		return sendSingleEntityResponse(integrationConfig);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/configs")
+	public Response saveIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			ComponentIntegrationConfig integrationConfig)
+	{
+		integrationConfig.setComponentId(componentId);
+
+		ValidationModel validationModel = new ValidationModel(integrationConfig);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		if (validationResult.valid()) {
+			integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
+			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates a component integration config")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/configs/{configId}/activate")
+	public Response activateIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+
+		if (integrationConfig != null) {
+			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.ACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Saves a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/configs/{configId}/inactivate")
+	public Response inactiveIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+
+		if (integrationConfig != null) {
+			service.getComponentService().setStatusOnComponentIntegrationConfig(configId, ComponentIntegrationConfig.INACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(integrationConfig, Response.Status.NOT_MODIFIED);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Removes component integration config")
+	@Path("/{componentId}/integration/configs/{configId}")
+	public void deleteComponentIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+
+		if (integrationConfig != null) {
+			service.getComponentService().deleteComponentIntegrationConfig(configId);
+		}
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Runs a component integration config.")
+	@Path("/{componentId}/integration/configs/{configId}/run")
+	public Response runComponentIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("configId") String configId)
+	{
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setComponentId(componentId);
+		integrationConfigExample.setIntegrationConfigId(configId);
+		ComponentIntegrationConfig integrationConfig = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+
+		if (integrationConfig != null) {
+			JobManager.runComponentIntegrationNow(componentId, configId);
+			return Response.ok().build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+	// </editor-fold>
+
+	// <editor-fold defaultstate="collapsed"  desc="Private Utils">
 	private void checkBaseComponentBelongsToComponent(BaseComponent component, String componentId)
 	{
 		if (component.getComponentId().equals(componentId) == false) {
@@ -2065,5 +2319,6 @@ public class ComponentRESTResource
 					.build();
 		}
 	}
+	// </editor-fold>
 
 }

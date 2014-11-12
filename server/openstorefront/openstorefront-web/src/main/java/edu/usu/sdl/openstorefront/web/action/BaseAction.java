@@ -42,147 +42,151 @@ import org.apache.commons.beanutils.BeanUtils;
  * @author dshurtleff
  */
 public abstract class BaseAction
-	implements ActionBean, ValidationErrorHandler
+		implements ActionBean, ValidationErrorHandler
 {
+
 	private static final Logger log = Logger.getLogger(BaseAction.class.getName());
-	
-	protected ObjectMapper objectMapper =  StringProcessor.defaultObjectMapper();
-	
+
+	protected ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+
 	protected ActionBeanContext context;
 	protected String projectId;
-		
+
 	protected final ServiceProxy service = new ServiceProxy();
-	
+
 	protected void mapFields(Map<String, Object> fields, Object data, String propertyRoot)
 	{
-		try
-		{
-			Map fieldMap = BeanUtils.describe(data);			
-			for (Object field :  fieldMap.keySet())
-			{
-				if ("class".equalsIgnoreCase(field.toString()) == false)
-				{
-					fields.put(propertyRoot + "." + field,  fieldMap.get(field));
+		try {
+			Map fieldMap = BeanUtils.describe(data);
+			for (Object field : fieldMap.keySet()) {
+				if ("class".equalsIgnoreCase(field.toString()) == false) {
+					fields.put(propertyRoot + "." + field, fieldMap.get(field));
 				}
 			}
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-		{
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 			log.log(Level.SEVERE, null, ex);
 		}
-	}	
-	
+	}
+
 	protected Resolution streamFormLoad(Map<String, Object> fields)
 	{
 		JsonFormLoad jsonFormLoad = new JsonFormLoad();
 		jsonFormLoad.setData(fields);
-		return formLoadResults(jsonFormLoad);		
-	}	
-	
+		return formLoadResults(jsonFormLoad);
+	}
+
 	protected Resolution formLoadResults(final JsonFormLoad data)
 	{
-		return new StreamingResolution(MediaType.APPLICATION_JSON) {
+		return new StreamingResolution(MediaType.APPLICATION_JSON)
+		{
 
 			@Override
 			protected void stream(HttpServletResponse response) throws Exception
 			{
-				objectMapper.writeValue(response.getOutputStream(), data);				
-			}			
-		};		
-	}	
-	
+				objectMapper.writeValue(response.getOutputStream(), data);
+			}
+		};
+	}
+
 	protected <T> Resolution streamResults(List<T> data)
 	{
 		JsonResponse jsonResponse = new JsonResponse();
 		jsonResponse.setData(data);
 		jsonResponse.setTotalResults(data.size());
 		jsonResponse.setResults(data.size());
-		
+
 		return streamResults(jsonResponse);
 	}
-	
-	protected Resolution  streamResults(final JsonResponse jsonResponse)
+
+	protected Resolution streamResults(Object data)
 	{
-		return new StreamingResolution(MediaType.APPLICATION_JSON) {
+		return new StreamingResolution(MediaType.APPLICATION_JSON)
+		{
 
 			@Override
 			protected void stream(HttpServletResponse response) throws Exception
 			{
-				objectMapper.writeValue(response.getOutputStream(), jsonResponse);				
-			}			
+				objectMapper.writeValue(response.getOutputStream(), data);
+			}
 		};
 	}
-	
-	protected Resolution streamErrorResponse(Map<String, String> errors )
+
+	protected Resolution streamResults(final JsonResponse jsonResponse)
 	{
-		return  streamErrorResponse(errors, false);
+		return new StreamingResolution(MediaType.APPLICATION_JSON)
+		{
+
+			@Override
+			protected void stream(HttpServletResponse response) throws Exception
+			{
+				objectMapper.writeValue(response.getOutputStream(), jsonResponse);
+			}
+		};
 	}
 
-	protected Resolution streamUploadResponse(Map<String, String> errors )
+	protected Resolution streamErrorResponse(Map<String, String> errors)
 	{
-		return  streamErrorResponse(errors, true);
-	}	
-	
+		return streamErrorResponse(errors, false);
+	}
+
+	protected Resolution streamUploadResponse(Map<String, String> errors)
+	{
+		return streamErrorResponse(errors, true);
+	}
+
 	protected Resolution streamErrorResponse(Map<String, String> errors, boolean upload)
 	{
 		JsonResponse jsonResponse = new JsonResponse();
-		if  (errors != null && errors.size() > 0)
-		{
+		if (errors != null && errors.size() > 0) {
 			jsonResponse.setSuccess(false);
-			jsonResponse.setErrors(errors);			
+			jsonResponse.setErrors(errors);
 		}
 		return handleErrorResponse(jsonResponse, upload);
-	}	
-	
-	private Resolution handleErrorResponse(final JsonResponse  jsonResponse, boolean upload)
+	}
+
+	private Resolution handleErrorResponse(final JsonResponse jsonResponse, boolean upload)
 	{
 		String contentType = MediaType.APPLICATION_JSON;
-		if (upload)
-		{
+		if (upload) {
 			contentType = MediaType.TEXT_HTML;
 		}
-		
-		return new StreamingResolution(contentType) {
+
+		return new StreamingResolution(contentType)
+		{
 
 			@Override
 			protected void stream(HttpServletResponse response) throws Exception
 			{
-				objectMapper.writeValue(response.getOutputStream(), jsonResponse);				
-			}			
-		};			
+				objectMapper.writeValue(response.getOutputStream(), jsonResponse);
+			}
+		};
 	}
-	
+
 	@Override
 	public Resolution handleValidationErrors(ValidationErrors ve) throws Exception
 	{
 		Map<String, String> errors = new HashMap<>();
-		
-		if (ve.hasFieldErrors())
-		{
-			for (String errorkey : ve.keySet())
-			{
-				List<ValidationError> validationErrors =  ve.get(errorkey);
-				for (ValidationError validationError : validationErrors)
-				{
+
+		if (ve.hasFieldErrors()) {
+			for (String errorkey : ve.keySet()) {
+				List<ValidationError> validationErrors = ve.get(errorkey);
+				for (ValidationError validationError : validationErrors) {
 					errors.put(validationError.getFieldName(), "Field is required or Format not accepted.");
 				}
-			}			
-		}
-		else
-		{
+			}
+		} else {
 			//only global?
-			for (String errorkey : ve.keySet())
-			{
-				List<ValidationError> validationErrors =  ve.get(errorkey);
-				for (ValidationError validationError : validationErrors)
-				{
+			for (String errorkey : ve.keySet()) {
+				List<ValidationError> validationErrors = ve.get(errorkey);
+				for (ValidationError validationError : validationErrors) {
 					log.log(Level.INFO, "(Validation) Global Error Key: {0} Message: {1} Action Path: {2}", new Object[]{errorkey, validationError.toString(), validationError.getActionPath()});
 				}
 			}
-		}	
-		
+		}
+
 		return streamErrorResponse(errors);
 	}
-	
+
 	@Override
 	public void setContext(ActionBeanContext abc)
 	{
@@ -204,5 +208,5 @@ public abstract class BaseAction
 	{
 		this.projectId = projectId;
 	}
-	
+
 }

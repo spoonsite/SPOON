@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -263,6 +264,26 @@ public class SystemServiceImpl
 				persistenceService.delete(errorTicket);
 			});
 		}
+	}
+
+	@Override
+	public GlobalIntegrationModel getGlobalIntegrationConfig()
+	{
+		GlobalIntegrationModel globalIntegrationModel = new GlobalIntegrationModel();
+
+		String refreshTime = getPropertyValue(ApplicationProperty.GLOBAL_INTEGRATION_REFRESH);
+		if (refreshTime == null) {
+			refreshTime = GlobalIntegrationModel.DEFAULT_REFRESH_RATE;
+		}
+		globalIntegrationModel.setJiraRefreshRate(refreshTime);
+
+		return globalIntegrationModel;
+	}
+
+	@Override
+	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel)
+	{
+		saveProperty(ApplicationProperty.GLOBAL_INTEGRATION_REFRESH, globalIntegrationModel.getJiraRefreshRate());
 	}
 
 }

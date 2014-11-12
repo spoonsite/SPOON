@@ -22,11 +22,14 @@ import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.sort.ArchitectureComparator;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefMap;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -40,6 +43,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.io.File;
 import java.io.IOException;
@@ -113,22 +117,31 @@ public class AttributeServiceImpl
 		getAttributeServicePrivate().performSaveAttributeType(attributeType);
 
 		if (!updateIndexes) {
-			ComponentAttributePk pk = new ComponentAttributePk();
-			pk.setAttributeType(attributeType.getAttributeType());
-			ComponentAttribute example = new ComponentAttribute();
-			example.setComponentAttributePk(pk);
-
-			List<ComponentAttribute> attrs = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(attributeType.getAttributeType());
+			ComponentAttribute componentAttribute = new ComponentAttribute();
+			componentAttribute.setComponentAttributePk(componentAttributePk);
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, componentAttribute);
 
 			List<Article> articles = new ArrayList<>();
-			List<Component> components = new ArrayList<>();
 
-			attrs.stream().forEach((attr) -> {
-				AttributeCodePk codePk = new AttributeCodePk();
-				articles.add(getArticleView(codePk));
+			AttributeCode attributeCodeExample = new AttributeCode();
+			AttributeCodePk codePk = new AttributeCodePk();
+			codePk.setAttributeType(attributeType.getAttributeType());
+			attributeCodeExample.setAttributeCodePk(codePk);
+			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, attributeCodeExample);
+			for (AttributeCode attributeCode : attributeCodes) {
+				if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
+					String articleContext = getArticle(attributeCode.getAttributeCodePk());
+					articles.add(Article.toViewHtml(attributeCode, articleContext));
+				}
+			}
+
+			List<Component> components = new ArrayList<>();
+			componentAttributes.stream().forEach((attr) -> {
 				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
 			});
-			saveArticlesAndComponents(articles, components);
+			getSearchService().indexArticlesAndComponents(articles, components);
 		}
 	}
 
@@ -174,18 +187,19 @@ public class AttributeServiceImpl
 			ComponentAttribute example = new ComponentAttribute();
 			example.setComponentAttributePk(pk);
 
-			List<ComponentAttribute> attrs = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
 
 			List<Article> articles = new ArrayList<>();
-			List<Component> components = new ArrayList<>();
+			if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
+				String articleContext = getArticle(attributeCode.getAttributeCodePk());
+				articles.add(Article.toViewHtml(attributeCode, articleContext));
+			}
 
-			attrs.stream().forEach((attr) -> {
-				AttributeCodePk codePk = new AttributeCodePk();
-				articles.add(getArticleView(codePk));
+			List<Component> components = new ArrayList<>();
+			componentAttributes.stream().forEach((attr) -> {
 				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
 			});
-
-			saveArticlesAndComponents(articles, components);
+			getSearchService().indexArticlesAndComponents(articles, components);
 		}
 	}
 
@@ -202,6 +216,8 @@ public class AttributeServiceImpl
 			existing.setDescription(attributeCode.getDescription());
 			existing.setDetailUrl(attributeCode.getDetailUrl());
 			existing.setLabel(attributeCode.getLabel());
+			existing.setGroupCode(attributeCode.getGroupCode());
+			existing.setSortOrder(attributeCode.getSortOrder());
 			persistenceService.persist(existing);
 		} else {
 			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
@@ -241,7 +257,9 @@ public class AttributeServiceImpl
 		getAttributeServicePrivate().performSaveArticle(attributeCodePk, article);
 		AttributeCode code = new AttributeCode();
 		code.setAttributeCodePk(attributeCodePk);
-		getSearchService().addIndex(Article.toView(code));
+
+		getSearchService().addIndex(Article.toViewHtml(code, article));
+
 	}
 
 	@Override
@@ -283,7 +301,7 @@ public class AttributeServiceImpl
 
 		// currently articles don't have an 'id' so we're indexing them with
 		// a composite ID made from the type and code like so:
-		getSearchService().deleteById(attributeCodePk.getAttributeType() + "#" + attributeCodePk.getAttributeCode());
+		getSearchService().deleteById(attributeCodePk.toKey());
 	}
 
 	@Override
@@ -398,6 +416,8 @@ public class AttributeServiceImpl
 										existingCode.setDescription(attributeCode.getDescription());
 										existingCode.setDetailUrl(attributeCode.getDetailUrl());
 										existingCode.setLabel(attributeCode.getLabel());
+										existingCode.setGroupCode(attributeCode.getGroupCode());
+										existingCode.setSortOrder(attributeCode.getSortOrder());
 										existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 										existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
@@ -432,6 +452,9 @@ public class AttributeServiceImpl
 				log.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
 			}
 		});
+		//Clear cache
+		OSFCacheManager.getAttributeTypeCache().removeAll();
+		OSFCacheManager.getAttributeCache().removeAll();
 
 		getSearchService().saveAll();
 	}
@@ -597,10 +620,10 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<ComponentSearchView> getAllArticles()
+	public List<ComponentSearchView> getArticlesSearchView()
 	{
 		List<ComponentSearchView> list = new ArrayList<>();
-		List<AttributeCode> codes = this.getAttributeService().findRecentlyAddedArticles(null);
+		List<AttributeCode> codes = findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
 			list.add(ComponentSearchView.toView(Article.toView(code)));
 		});
@@ -646,9 +669,10 @@ public class AttributeServiceImpl
 	public List<Article> getArticles()
 	{
 		List<Article> list = new ArrayList<>();
-		List<AttributeCode> codes = this.getAttributeService().findRecentlyAddedArticles(null);
+		List<AttributeCode> codes = findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
-			list.add(Article.toView(code));
+			String content = getArticle(code.getAttributeCodePk());
+			list.add(Article.toViewHtml(code, content));
 		});
 		return list;
 	}
@@ -656,23 +680,109 @@ public class AttributeServiceImpl
 	@Override
 	public Article getArticleView(AttributeCodePk attributeCodePk)
 	{
+		Article article = null;
+
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
-		Article article = Article.toView(attributeCode);
+		if (attributeCode.getArticleFilename() != null) {
+			String content = getArticle(attributeCodePk);
+			article = Article.toViewHtml(attributeCode, content);
+		}
 		return article;
 	}
 
 	@Override
-	public void saveArticlesAndComponents(List<Article> articles, List<Component> components)
+	public List<AttributeXRefType> getAttributeXrefTypes(AttributeXrefModel attributeXrefModel)
 	{
-		components.stream().forEach((component) -> {
-			getSearchService().addIndex(component);
-		});
-		articles.stream().forEach((article) -> {
-			getSearchService().addIndex(article);
-		});
+		AttributeXRefType xrefAttributeTypeExample = new AttributeXRefType();
+		xrefAttributeTypeExample.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		xrefAttributeTypeExample.setIntegrationType(attributeXrefModel.getIntegrationType());
+		xrefAttributeTypeExample.setProjectType(attributeXrefModel.getProjectKey());
+		xrefAttributeTypeExample.setIssueType(attributeXrefModel.getIssueType());
+		List<AttributeXRefType> xrefAttributeTypes = persistenceService.queryByExample(AttributeXRefType.class, xrefAttributeTypeExample);
+		return xrefAttributeTypes;
 	}
+
+	@Override
+	public Map<String, Map<String, String>> getAttributeXrefMapFieldMap()
+	{
+		Map<String, Map<String, String>> attributeCodeMap = new HashMap<>();
+
+		AttributeXRefMap xrefAttributeMapExample = new AttributeXRefMap();
+		xrefAttributeMapExample.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+
+		List<AttributeXRefMap> xrefAttributeMaps = persistenceService.queryByExample(AttributeXRefMap.class, xrefAttributeMapExample);
+		for (AttributeXRefMap xrefAttributeMap : xrefAttributeMaps) {
+
+			if (attributeCodeMap.containsKey(xrefAttributeMap.getAttributeType())) {
+				Map<String, String> codeMap = attributeCodeMap.get(xrefAttributeMap.getAttributeType());
+				if (codeMap.containsKey(xrefAttributeMap.getExternalCode())) {
+
+					//should only have one external code if there's a dup will only use one.
+					//(however, which  code  is used dependa on the order that came in.  which is not  determinate)
+					//First one we hit wins
+					log.log(Level.WARNING, MessageFormat.format("Duplicate external code for attribute type: {0} Code: {1}", new Object[]{xrefAttributeMap.getAttributeType(), xrefAttributeMap.getExternalCode()}));
+				} else {
+					codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
+				}
+			} else {
+				Map<String, String> codeMap = new HashMap<>();
+				codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
+				attributeCodeMap.put(xrefAttributeMap.getAttributeType(), codeMap);
+			}
+		}
+
+		return attributeCodeMap;
+	}
+
+	@Override
+	public void saveAttributeXrefMap(AttributeXRefView attributeXRefView)
+	{
+		AttributeXRefType type = persistenceService.findById(AttributeXRefType.class, attributeXRefView.getType().getAttributeType());
+		if (type != null) {
+			type.setAttributeType(attributeXRefView.getType().getAttributeType());
+			type.setActiveStatus(attributeXRefView.getType().getActiveStatus());
+			type.setFieldId(attributeXRefView.getType().getFieldId());
+			type.setFieldName(attributeXRefView.getType().getFieldName());
+			type.setIntegrationType(attributeXRefView.getType().getIntegrationType());
+			type.setIssueType(attributeXRefView.getType().getIssueType());
+			type.setProjectType(attributeXRefView.getType().getProjectType());
+			persistenceService.persist(type);
+			AttributeXRefMap mapTemp = new AttributeXRefMap();
+			mapTemp.setAttributeType(type.getAttributeType());
+			List<AttributeXRefMap> tempMaps = persistenceService.queryByExample(AttributeXRefMap.class, new QueryByExample(mapTemp));
+			for (AttributeXRefMap tempMap : tempMaps) {
+				mapTemp = persistenceService.findById(AttributeXRefMap.class, tempMap.getXrefId());
+				persistenceService.delete(mapTemp);
+			}
+
+			for (AttributeXRefMap map : attributeXRefView.getMap()) {
+				AttributeXRefMap temp = persistenceService.queryOneByExample(AttributeXRefMap.class, map);
+				if (temp != null) {
+					temp.setActiveStatus(map.getActiveStatus());
+					temp.setAttributeType(map.getAttributeType());
+					temp.setExternalCode(map.getExternalCode());
+					temp.setLocalCode(map.getLocalCode());
+					persistenceService.persist(temp);
+				} else {
+					map.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+					map.setXrefId(persistenceService.generateId());
+					persistenceService.persist(map);
+				}
+			}
+		} else {
+			attributeXRefView.getType().setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+			persistenceService.persist(attributeXRefView.getType());
+			for (AttributeXRefMap map : attributeXRefView.getMap()) {
+				map.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+				map.setXrefId(persistenceService.generateId());
+				persistenceService.persist(map);
+			}
+		}
+
+	}
+
 }

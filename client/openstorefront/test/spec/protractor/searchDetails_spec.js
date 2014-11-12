@@ -1,5 +1,20 @@
+/* Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the 'License');
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an 'AS IS' BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 describe('searchDetails_Search for VANTAGE', function() {
-  it('keyword search for VANTAGE returns x results', function() {
+  it('Global search for VANTAGE returns 2 results', function() {
     // Open the main site
     browser.get(theSite, 9000);
 
@@ -22,7 +37,7 @@ describe('searchDetails_Click on the results', function() {
     browser.driver.sleep(12000);
 
     // Verify tabs (Summary, Details, Reviews, Q&A) on the page
-    var list = element.all(by.css('.nav-tabs li')); 
+    var list = element.all(by.css('.nav-tabs li'));
     expect(list.count()).toBe(7);
 
     // Click on the tabs from search results details page

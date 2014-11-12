@@ -67,6 +67,19 @@ public class ComponentSearchView
 	public static ComponentSearchView toView(Component component)
 	{
 		ServiceProxy service = new ServiceProxy();
+		ComponentAttribute example = new ComponentAttribute();
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setComponentId(component.getComponentId());
+		example.setComponentAttributePk(pk);
+		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
+		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
+		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
+		return toView(component, attributes, reviews, tags);
+	}
+
+	public static ComponentSearchView toView(Component component, List<ComponentAttribute> attributes, List<ComponentReview> reviews, List<ComponentTag> tags)
+	{
+
 		ComponentSearchView view = new ComponentSearchView();
 		view.setListingType(OpenStorefrontConstant.ListingType.COMPONENT.getDescription());
 		view.setComponentId(component.getComponentId());
@@ -82,19 +95,13 @@ public class ComponentSearchView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
 
-		ComponentAttribute example = new ComponentAttribute();
-		ComponentAttributePk pk = new ComponentAttributePk();
-		pk.setComponentId(component.getComponentId());
-		example.setComponentAttributePk(pk);
-		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
 		List<SearchResultAttribute> addMes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
 			addMes.add(SearchResultAttribute.toView(attribute));
 		}
 		view.setAttributes(addMes);
 
-		view.setTags(service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId()));
-		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
+		view.setTags(tags);
 		Integer total = 0;
 		for (ComponentReview review : reviews) {
 			total = total + review.getRating();

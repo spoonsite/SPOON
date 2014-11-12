@@ -15,10 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 
 /**
@@ -27,6 +29,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
  */
 public interface ComponentServicePrivate
 {
+
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity);
 
@@ -35,8 +38,18 @@ public interface ComponentServicePrivate
 
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public RequiredForComponent saveComponent(RequiredForComponent component, boolean test);
-	
+
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deactivateComponent(String componentId, boolean test);
+
+	/**
+	 * This will handle all the mapping for the component attributes based on a
+	 * config and jira issue. Then this will sync index and last activity
+	 *
+	 * @param issue
+	 * @param integrationConfig
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void mapComponentAttributes(Issue issue, ComponentIntegrationConfig integrationConfig);
 
 }

@@ -23,12 +23,16 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
+import edu.usu.sdl.openstorefront.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefMap;
+import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -38,10 +42,16 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -93,7 +103,8 @@ public class AttributeResource
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 			if (attributeTypeView.getArchitectureFlg()) {
 				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
-			} else {
+			}
+			else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
 		}
@@ -139,7 +150,8 @@ public class AttributeResource
 		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
 		if (attributeType == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
-		} else {
+		}
+		else {
 			return Response.ok(attributeType).build();
 		}
 	}
@@ -161,13 +173,14 @@ public class AttributeResource
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, pk);
 		if (attributeCode == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
-		} else {
+		}
+		else {
 			return Response.ok(attributeCode).build();
 		}
 	}
 
 	@GET
-	@APIDescription("Gets attribute code base on filter")
+	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/attributetypes/{type}/attributecodes")
@@ -184,6 +197,7 @@ public class AttributeResource
 
 		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
 		attributeCodes = filterQueryParams.filter(attributeCodes);
+		attributeCodes.sort(new AttributeCodeComparator<>());
 
 		return attributeCodes;
 	}
@@ -202,7 +216,7 @@ public class AttributeResource
 		if (attributeType != null) {
 			architecture = service.getAttributeService().generateArchitecture(type);
 		}
-		return sendSingleEnityResponse(architecture);
+		return sendSingleEntityResponse(architecture);
 	}
 
 	@GET
@@ -221,7 +235,7 @@ public class AttributeResource
 		attributeCodePk.setAttributeType(type);
 		AttributeCode attributeCode = service.getPersistenceService().detach(service.getPersistenceService().findById(AttributeCode.class, attributeCodePk));
 
-		return sendSingleEnityResponse(attributeCode);
+		return sendSingleEntityResponse(attributeCode);
 	}
 
 	@GET
@@ -312,7 +326,8 @@ public class AttributeResource
 		if (existing != null) {
 			attributeType.setAttributeType(type.toUpperCase());
 			return handleAttributePostPutType(attributeType, true);
-		} else {
+		}
+		else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing type.", "Make sure type exists before call PUT");
 		}
 	}
@@ -327,13 +342,15 @@ public class AttributeResource
 			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeType(attributeType, false);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).entity(attributeTypeCreated).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -383,7 +400,8 @@ public class AttributeResource
 		AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (existing != null) {
 			return handleAttributePostPutCode(attributeCode, true);
-		} else {
+		}
+		else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing code.", "Make sure type exists before call PUT");
 		}
 	}
@@ -398,7 +416,8 @@ public class AttributeResource
 			attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeCode(attributeCode, false);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -407,7 +426,8 @@ public class AttributeResource
 					+ attributeCode.getAttributeCodePk().getAttributeType()
 					+ "/attributecodes/"
 					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -426,6 +446,155 @@ public class AttributeResource
 		attributeCodePk.setAttributeCode(code.toUpperCase());
 		attributeCodePk.setAttributeType(type.toUpperCase());
 		service.getAttributeService().removeAttributeCode(attributeCodePk);
+	}
+
+	@GET
+	@APIDescription("Gets the list of mapping for attributes to fields")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeXrefMapView.class)
+	@Path("/attributexreftypes/detail")
+	public List<AttributeXrefMapView> getMappingTypes()
+	{
+		List<AttributeXrefMapView> attributeXrefMapViews = new ArrayList<>();
+
+		AttributeXRefType example = new AttributeXRefType();
+		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+
+		for (AttributeXRefType type : types) {
+			AttributeXrefMapView model = new AttributeXrefMapView();
+			AttributeType attType = service.getPersistenceService().findById(AttributeType.class, type.getAttributeType());
+			model.setAttributeName(attType.getDescription());
+			model.setAttributeType(type.getAttributeType());
+			model.setFieldName(type.getFieldName());
+			model.setFieldId(type.getFieldId());
+			model.setIssueType(type.getIssueType());
+			model.setProjectType(type.getProjectType());
+
+			AttributeXRefMap tempMap = new AttributeXRefMap();
+			tempMap.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+			tempMap.setAttributeType(type.getAttributeType());
+			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
+
+			attributeXrefMapViews.add(model);
+		}
+
+		return attributeXrefMapViews;
+	}
+	
+	@GET
+	@APIDescription("Gets the list of mapping for attributes to fields")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeXrefMapView.class)
+	@Path("/attributexreftypes/detail/distinct")
+	public List<AttributeXrefMapView> getDistinctProjectMappings()
+	{
+		Set<AttributeXrefMapView> attributeXrefMapViews = new HashSet<>();
+
+		AttributeXRefType example = new AttributeXRefType();
+		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		List<AttributeXRefType> types = service.getPersistenceService().queryByExample(AttributeXRefType.class, new QueryByExample(example));
+
+		for (AttributeXRefType type : types) {
+			AttributeXrefMapView model = new AttributeXrefMapView();
+			model.setIssueType(type.getIssueType());
+			model.setProjectType(type.getProjectType());
+			attributeXrefMapViews.add(model);
+		}
+
+		return new ArrayList<AttributeXrefMapView>(attributeXrefMapViews);
+	}
+
+	@GET
+	@APIDescription("Gets the list of mapping for attributes to fields")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeXrefMapView.class)
+	@Path("/attributexreftypes/{attributeType}/detail")
+	public Response getMappingType(
+			@PathParam("attributeType") String attributeType)
+	{
+		AttributeXrefMapView model = null;
+
+		AttributeXRefType example = new AttributeXRefType();
+		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
+		example.setAttributeType(attributeType);
+		AttributeXRefType attributeXRefType = service.getPersistenceService().queryOneByExample(AttributeXRefType.class, example);
+
+		if (attributeXRefType != null) {
+			model = new AttributeXrefMapView();
+			AttributeType attType = service.getPersistenceService().findById(AttributeType.class, attributeXRefType.getAttributeType());
+			model.setAttributeName(attType.getDescription());
+			model.setAttributeType(attributeXRefType.getAttributeType());
+			model.setFieldName(attributeXRefType.getFieldName());
+			model.setFieldId(attributeXRefType.getFieldId());
+			model.setIssueType(attributeXRefType.getIssueType());
+			model.setProjectType(attributeXRefType.getProjectType());
+
+			AttributeXRefMap tempMap = new AttributeXRefMap();
+			tempMap.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
+			tempMap.setAttributeType(attributeXRefType.getAttributeType());
+			model.setMapping(service.getPersistenceService().queryByExample(AttributeXRefMap.class, tempMap));
+		}
+		return sendSingleEntityResponse(model);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Save a attribute cross-ref mapping")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/attributexreftypes/detail")
+	public Response saveMapping(
+			@RequiredParam AttributeXRefView attributeXref)
+	{
+		attributeXref.getType().setCreateDts(TimeUtil.currentDate());
+		attributeXref.getType().setUpdateDts(TimeUtil.currentDate());
+		attributeXref.getType().setCreateUser(SecurityUtil.getCurrentUserName());
+		attributeXref.getType().setUpdateUser(SecurityUtil.getCurrentUserName());
+		attributeXref.getType().setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
+		ValidationModel validationModel = new ValidationModel(attributeXref.getType());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		for (AttributeXRefMap map : attributeXref.getMap()) {
+			map.setCreateDts(TimeUtil.currentDate());
+			map.setUpdateDts(TimeUtil.currentDate());
+			map.setCreateUser(SecurityUtil.getCurrentUserName());
+			map.setUpdateUser(SecurityUtil.getCurrentUserName());
+			map.setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
+
+			validationModel = new ValidationModel(map);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult mapValidationResult = ValidationUtil.validate(validationModel);
+			validationResult.merge(mapValidationResult);
+		}
+		if (validationResult.valid()) {
+			service.getAttributeService().saveAttributeXrefMap(attributeXref);
+
+			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/" + attributeXref.getType().getAttributeType() + "/detail")).build();
+		}
+		else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@Path("/attributexreftypes/{attributeType}")
+	public void deleteMappingType(
+			@PathParam("attributeType")
+			@RequiredParam String type)
+	{
+		AttributeXRefType temp = service.getPersistenceService().findById(AttributeXRefType.class, type);
+		if (temp != null){
+			AttributeXRefMap example = new AttributeXRefMap();
+			example.setAttributeType(type);
+			List<AttributeXRefMap> maps = service.getPersistenceService().queryByExample(AttributeXRefMap.class, new QueryByExample(example));
+			for(AttributeXRefMap map: maps){
+				service.getPersistenceService().delete(map);
+			}
+			service.getPersistenceService().delete(temp);
+		}
 	}
 
 }

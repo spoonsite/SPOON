@@ -1,0 +1,22 @@
+<div>
+  <ul class="scheduleUl">
+    <li ng-class="level.current? 'current': (level.groupCode === group)? (level.finished? 'finished': '') : 'disabled'" class="scheduleLevel" ng-repeat="level in levels" popover data-trigger="hover" data-placement="right" data-html="true"  data-original-title="<b>{{level.label}}</b>" data-container="body" data-content="{{level.description}}" >
+      <span ng-show="!level.current &&  (!(level.groupCode === group) || !level.finished)">{{level.label}}
+      </span>
+      <span ng-show="!level.current && level.groupCode === group && level.finished">
+        <span style="width: 13px; float:right;"><i class="fa fa-check"></i></span>
+        <span style="float:left; width: 280px;">{{level.label}}</span>
+        <div style="clear:both;"></div>
+      </span>
+      <span ng-show="level.current">
+        <span style="width: 13px; float:right;"><i class="fa fa-spinner fa-spin"></i></span>
+        <span style="float:left; width: 280px;">{{level.label}}</span>
+        <div style="clear:both;"></div>
+      </span>
+    </li>
+  </ul>
+  <div style="margin-left:315px;">
+    <h4 style="margin-top:0px; padding: 5px; padding-left:0px;">Current&nbsp;{{ngModel.typeDescription}}&mdash;{{ngModel.codeDescription}}</h4>
+    <div>{{ngModel.codeLongDescription}}</div><span style="font-size: 11px; color: #858585;">Updated&mdash;{{getDate(ngModel.updateDts)}}</span>
+  </div>
+</div>

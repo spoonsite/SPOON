@@ -16,23 +16,36 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.io.ArticleImporter;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
+import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
+import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.newTrigger;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.jobs.DirectoryScanJob;
 import org.quartz.jobs.DirectoryScanListener;
 
@@ -57,7 +70,6 @@ public class JobManager
 			scheduler = factory.getScheduler();
 			initSystemJobs();
 			scheduler.start();
-
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Failed to init quartz.", ex);
 		}
@@ -73,7 +85,100 @@ public class JobManager
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 
 		addCleanUpErrorsJob();
+		addComponentIntegrationJobs();
+	}
 
+	private static void addComponentIntegrationJobs() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Integration Jobs");
+
+		ServiceProxy serviceProxy = new ServiceProxy();
+		List<ComponentIntegration> integrations = serviceProxy.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
+		for (ComponentIntegration integration : integrations) {
+			addComponentIntegrationJob(integration);
+		}
+	}
+
+	private static void addComponentIntegrationJob(ComponentIntegration componentIntegration) throws SchedulerException
+	{
+		ServiceProxy serviceProxy = new ServiceProxy();
+		String jobName = "ComponentJob-" + componentIntegration.getComponentId();
+
+		JobKey jobKey = JobKey.jobKey(jobName, JOB_GROUP_SYSTEM);
+		if (scheduler.checkExists(jobKey)) {
+			log.log(Level.WARNING, MessageFormat.format("Job already Exist: {0} check data", jobName));
+		} else {
+			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
+					.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
+					.build();
+
+			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
+			String cron = componentIntegration.getRefreshRate();
+			if (cron == null) {
+				cron = serviceProxy.getSystemService().getGlobalIntegrationConfig().getJiraRefreshRate();
+			}
+			Trigger trigger = newTrigger()
+					.withIdentity("ComponentTrigger-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
+					.startNow()
+					.withSchedule(cronSchedule(cron))
+					.build();
+
+			scheduler.scheduleJob(job, trigger);
+		}
+	}
+
+	/**
+	 * Add or Update job
+	 *
+	 * @param componentIntegration
+	 */
+	public static void updateComponentIntegrationJob(ComponentIntegration componentIntegration)
+	{
+		try {
+			removeComponentIntegrationJob(componentIntegration.getComponentId());
+			addComponentIntegrationJob(componentIntegration);
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable update Job: " + componentIntegration.getComponentId(), ex);
+		}
+	}
+
+	public static void removeComponentIntegrationJob(String componentId)
+	{
+		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
+		try {
+			if (scheduler.checkExists(jobKey)) {
+				scheduler.deleteJob(jobKey);
+			}
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable remove Job.", ex);
+		}
+	}
+
+	public static void runComponentIntegrationNow(String componentId, String integrationConfigId)
+	{
+		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
+		try {
+			JobDataMap jobDataMap = new JobDataMap();
+			jobDataMap.put(IntegrationJob.COMPONENT_ID, componentId);
+			if (StringUtils.isNotBlank(integrationConfigId)) {
+				jobDataMap.put(IntegrationJob.CONFIG_ID, integrationConfigId);
+			}
+			scheduler.triggerJob(jobKey, jobDataMap);
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable run Job.", ex);
+		}
+	}
+
+	public static void unscheduleSystemJob(String triggerName)
+	{
+		try {
+			TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, JOB_GROUP_SYSTEM);
+			if (scheduler.checkExists(triggerKey)) {
+				scheduler.unscheduleJob(triggerKey);
+			}
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable unschedule Job.", ex);
+		}
 	}
 
 	private static void addCleanUpErrorsJob() throws SchedulerException
@@ -119,12 +224,104 @@ public class JobManager
 		scheduler.scheduleJob(job, trigger);
 	}
 
-	public static void cleanup()
+	public static void pauseSystemJob(String jobName)
 	{
 		try {
-			scheduler.shutdown();
+			scheduler.pauseJob(JobKey.jobKey(jobName, JOB_GROUP_SYSTEM));
 		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Failed to init quartz.", ex);
+			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
+		}
+	}
+
+	public static void resumeSystemJob(String jobName)
+	{
+		try {
+			scheduler.resumeJob(JobKey.jobKey(jobName, JOB_GROUP_SYSTEM));
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
+		}
+	}
+
+	public static void pauseScheduler()
+	{
+		try {
+			scheduler.standby();
+			log.info("Job Manager in Standby");
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to pause scheduler", ex);
+		}
+	}
+
+	public static void resumeScheduler()
+	{
+		try {
+			scheduler.start();
+			log.info("Job Manager restarted");
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to resume scheduler", ex);
+		}
+	}
+
+	public static String status()
+	{
+		String status = "Running";
+		try {
+			if (scheduler.isInStandbyMode()) {
+				status = "In Standby";
+			}
+		} catch (SchedulerException ex) {
+			Logger.getLogger(JobManager.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return status;
+	}
+
+	public static List<JobModel> getAllJobs()
+	{
+		List<JobModel> jobs = new ArrayList<>();
+		try {
+			Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.anyGroup());
+			for (JobKey jobKey : jobKeys) {
+				JobModel jobModel = new JobModel();
+
+				JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+				jobModel.setJobName(jobKey.getName());
+				jobModel.setGroupName(jobKey.getGroup());
+				jobModel.setDescription(jobDetail.getDescription());
+				jobModel.setConcurrentExectionDisallowed(jobDetail.isConcurrentExectionDisallowed());
+				jobModel.setDurable(jobDetail.isDurable());
+				jobModel.setPersistJobDataAfterExecution(jobDetail.isPersistJobDataAfterExecution());
+				jobModel.setRequestsRecovery(jobDetail.requestsRecovery());
+				StringBuilder dataMap = new StringBuilder();
+				for (String dataKey : jobDetail.getJobDataMap().getKeys()) {
+					dataMap.append(dataKey).append(" : ").append(jobDetail.getJobDataMap().get(dataKey)).append(" | ");
+				}
+				jobModel.setJobData(dataMap.toString());
+
+				List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+				if (triggers.isEmpty() == false) {
+					//just grab the first trigger as we should only have one
+					Trigger trigger = triggers.get(0);
+					jobModel.setPrimaryTrigger(trigger.getKey().getName() + " - " + trigger.getKey().getGroup());
+					jobModel.setPerviousFiredTime(trigger.getPreviousFireTime());
+					jobModel.setNextFiredTime(trigger.getNextFireTime());
+					jobModel.setStatus(scheduler.getTriggerState(trigger.getKey()).toString());
+				}
+				jobs.add(jobModel);
+			}
+		} catch (SchedulerException ex) {
+			Logger.getLogger(JobManager.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return jobs;
+	}
+
+	public static void cleanup()
+	{
+		if (scheduler != null) {
+			try {
+				scheduler.shutdown();
+			} catch (SchedulerException ex) {
+				throw new OpenStorefrontRuntimeException("Failed to init quartz.", ex);
+			}
 		}
 	}
 

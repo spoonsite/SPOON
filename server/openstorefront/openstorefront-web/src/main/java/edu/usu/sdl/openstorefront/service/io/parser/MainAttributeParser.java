@@ -48,6 +48,8 @@ public class MainAttributeParser
 	private static final int CODE_LABEL = 7;
 	private static final int CODE_DESCRIPTION = 8;
 	private static final int EXTERNAL_LINK = 9;
+	private static final int GROUP = 10;
+	private static final int SORT_ORDER = 11;
 
 	private static final String HEADER = "Attribute Type";
 
@@ -58,7 +60,7 @@ public class MainAttributeParser
 		String data[] = reader.readNext();
 		while (data != null) {
 			if (data.length > EXTERNAL_LINK
-					&& HEADER.equals(data[TYPE]) == false) {
+					&& HEADER.equals(data[TYPE].trim()) == false) {
 
 				AttributeType attributeType = new AttributeType();
 				attributeType.setAttributeType(data[TYPE].trim().toUpperCase());
@@ -79,6 +81,14 @@ public class MainAttributeParser
 				attributeCode.setDescription(StringProcessor.stripeExtendedChars(data[CODE_DESCRIPTION].trim()));
 				attributeCode.setLabel(StringProcessor.stripeExtendedChars(data[CODE_LABEL].trim()));
 				attributeCode.setDetailUrl(data[EXTERNAL_LINK].trim());
+
+				if (data.length > GROUP) {
+					attributeCode.setGroupCode(data[GROUP].trim());
+				}
+
+				if (data.length > SORT_ORDER) {
+					attributeCode.setSortOrder(Convert.toInteger(data[SORT_ORDER].trim()));
+				}
 
 				if (attributeMap.containsKey(attributeType)) {
 					attributeMap.get(attributeType).add(attributeCode);

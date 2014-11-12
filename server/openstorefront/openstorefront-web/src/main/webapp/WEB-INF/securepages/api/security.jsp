@@ -22,6 +22,6 @@ limitations under the License.
       
     </head>
     <body>
-        <b>Security: </b> Currently required login.  Routed through a external auth system or though a login form.<br>
+        <b>Security: </b> Currently requires a login.  Routed through a external auth system or though a login form.<br>
     </body>
 </html>

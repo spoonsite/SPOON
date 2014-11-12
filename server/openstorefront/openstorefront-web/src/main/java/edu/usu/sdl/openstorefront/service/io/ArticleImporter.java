@@ -59,6 +59,7 @@ public class ArticleImporter
 					AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(key);
 					String articleText = new String(Files.readAllBytes(Paths.get(file.getPath())));
 					serviceProxy.getAttributeService().saveArticle(attributeCodePk, articleText);
+
 				} else {
 					log.log(Level.WARNING, MessageFormat.format("Invalid filename: {0} make sure to follow this format.  <TYPE>" + ServiceUtil.COMPOSITE_KEY_SEPERATOR + "<CODE>.htm", file.getName()));
 				}

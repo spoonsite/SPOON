@@ -1,0 +1,12 @@
+.printMe.hide, .printMeBody, .printMeBody *{
+  display: none;
+}
+
+@media print {
+  :not(.printMe), :not(.printMeBody), :not(.printMeBody *){
+    display:none;
+  }
+  .printMe.hide, .printMeBody, .printMeBody *{
+    display: block;
+  }
+}

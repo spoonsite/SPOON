@@ -42,33 +42,45 @@ public abstract class BaseDirImporter
 	@Override
 	public void filesUpdatedOrAdded(File[] updatedFiles)
 	{
-		String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(getSyncProperty());
-		log.log(Level.FINER, MessageFormat.format("{0} Last Sync time:  {1}", new Object[]{getSyncProperty(), lastSyncDts}));
+		filesUpdatedOrAdded(updatedFiles, false);
+	}
 
-		for (File file : updatedFiles) {
-
-			if (file.getName().toLowerCase().endsWith(SKIP_README)) {
-				continue;
-			}
-
-			boolean process = true;
-			Date lastSyncDate = null;
-			if (lastSyncDts != null) {
-				lastSyncDate = TimeUtil.fromString(lastSyncDts);
-			}
-			if (lastSyncDate != null) {
-				long fileTime = file.lastModified();
-				long syncTime = lastSyncDate.getTime();
-				if (fileTime <= syncTime) {
-					process = false;
-				}
-			}
-
-			if (process) {
+	public void filesUpdatedOrAdded(File[] updatedFiles, boolean forceProcess)
+	{
+		if (forceProcess) {
+			for (File file : updatedFiles) {
 				processFile(file);
 			}
+		} else {
+
+			String lastSyncDts = serviceProxy.getSystemService().getPropertyValue(getSyncProperty());
+			log.log(Level.FINER, MessageFormat.format("{0} Last Sync time:  {1}", new Object[]{getSyncProperty(), lastSyncDts}));
+
+			for (File file : updatedFiles) {
+
+				if (file.getName().toLowerCase().endsWith(SKIP_README)) {
+					continue;
+				}
+
+				boolean process = true;
+				Date lastSyncDate = null;
+				if (lastSyncDts != null) {
+					lastSyncDate = TimeUtil.fromString(lastSyncDts);
+				}
+				if (lastSyncDate != null) {
+					long fileTime = file.lastModified();
+					long syncTime = lastSyncDate.getTime();
+					if (fileTime <= syncTime) {
+						process = false;
+					}
+				}
+
+				if (process) {
+					processFile(file);
+				}
+			}
+			serviceProxy.getSystemService().saveProperty(getSyncProperty(), TimeUtil.dateToString(TimeUtil.currentDate()));
 		}
-		serviceProxy.getSystemService().saveProperty(getSyncProperty(), TimeUtil.dateToString(TimeUtil.currentDate()));
 	}
 
 	protected abstract String getSyncProperty();

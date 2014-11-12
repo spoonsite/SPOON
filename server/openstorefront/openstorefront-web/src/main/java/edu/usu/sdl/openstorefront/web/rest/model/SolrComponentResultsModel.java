@@ -1,12 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-//import java.math.BigDecimal;
-//import java.util.ArrayList;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
@@ -19,186 +27,205 @@ import org.apache.solr.client.solrj.beans.Field;
  * @author gbagley * This model is to be populated and consumed by Solr for
  * inserts/updates
  */
-//public class SolrComponentResultsModel {
-public class SolrComponentResultsModel {
-// private variables
+public class SolrComponentResultsModel
+{
 
-    @Field
-    private String id;
+	@Field
+	private String id;
 
-    @Field
-    private String componentId;
+	@Field
+	private String componentId;
 
-    @Field("title")
-    private String name;
+	@Field("title")
+	private String name;
 
-    @Field("content_text")
-    private String description;
+	@Field("content_text")
+	private String description;
 
-    @Field("content_tags")
-    private String tagsText;
-    
-    @Field("content_raw")
-    private String attributesText;
+	@Field("content_tags")
+	private String tagsText;
 
-    @Field("isComponentSearch_b_is")
-    private Boolean componentSearch;
-       
-    @Field("tags_s_ims")
-    @DataType(ComponentTag.class)
-    private List<ComponentTag> tags = new ArrayList<>();
+	@Field("content_raw")
+	private String attributesText;
 
-    @Field("attributes_s_ims")
-    @DataType(SolrAttributeCodeTypeModel.class)
-    private List<SolrAttributeCodeTypeModel> attributes = new ArrayList<>();
+	@Field("isComponentSearch_b_is")
+	private Boolean componentSearch;
 
-    @Field
-    private String queryString;
+	@Field("tags_s_ims")
+	@DataType(ComponentTag.class)
+	private List<ComponentTag> tags = new ArrayList<>();
 
-    @Field
-    private String guid;
+	@Field("attributes_s_ims")
+	@DataType(SolrAttributeCodeTypeModel.class)
+	private List<SolrAttributeCodeTypeModel> attributes = new ArrayList<>();
 
-    @Field
-    private String organization;
+	@Field
+	private String queryString;
 
-    @Field
-    private Date releaseDate;
+	@Field
+	private String guid;
 
-    @Field
-    private Date updateDate_dt_is;
+	@Field
+	private String organization;
 
-    @Field
-    private String version;
+	@Field
+	private Date releaseDate;
 
-    // constructor 
-    public SolrComponentResultsModel() {
-    }
+	@Field
+	private Date updateDate_dt_is;
 
-    // public methods
-    public String getId() {
-        return id;
-    }
+	@Field
+	private String version;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	// constructor
+	public SolrComponentResultsModel()
+	{
+	}
 
-    public String getName() {
-        return name;
-    }
+	// public methods
+	public String getId()
+	{
+		return id;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setId(String id)
+	{
+		this.id = id;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getName()
+	{
+		return name;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
-    public String getTagsText() {
-        return tagsText;
-    }
+	public String getDescription()
+	{
+		return description;
+	}
 
-    public void setTagsText(String tagsText) {
-        this.tagsText = tagsText;
-    }
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 
-    public boolean isComponentSearch() {
-        return componentSearch;
-    }
+	public String getTagsText()
+	{
+		return tagsText;
+	}
 
-    public void setComponentSearch(boolean componentSearch) {
-        this.componentSearch = componentSearch;
-    }  
-    
-    public String getComponentID() {
-        return componentId;
-    }
+	public void setTagsText(String tagsText)
+	{
+		this.tagsText = tagsText;
+	}
 
-    public void setComponentID(String componentId) {
-        this.componentId = componentId;
-    }
+	public boolean isComponentSearch()
+	{
+		return componentSearch;
+	}
 
-    public String getGuid() {
-        return guid;
-    }
+	public void setComponentSearch(boolean componentSearch)
+	{
+		this.componentSearch = componentSearch;
+	}
 
-    public void setGuid(String guid) {
-        this.guid = guid;
-    }
+	public String getComponentID()
+	{
+		return componentId;
+	}
 
-    public String getOrganization() {
-        return organization;
-    }
+	public void setComponentID(String componentId)
+	{
+		this.componentId = componentId;
+	}
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
+	public String getGuid()
+	{
+		return guid;
+	}
 
-    public Date getReleaseDate() {
-        return releaseDate;
-    }
+	public void setGuid(String guid)
+	{
+		this.guid = guid;
+	}
 
-    public void setReleaseDate(Date releaseDate) {
-        this.releaseDate = releaseDate;
-    }
+	public String getOrganization()
+	{
+		return organization;
+	}
 
-    public Date getUpdateDate() {
-        return updateDate_dt_is;
-    }
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
 
-    public void setUpdateDate(Date updateDate_dt_is) {
-        this.updateDate_dt_is = updateDate_dt_is;
-    }
+	public Date getReleaseDate()
+	{
+		return releaseDate;
+	}
 
-    public String getQueryString() {
-        return queryString;
-    }
+	public void setReleaseDate(Date releaseDate)
+	{
+		this.releaseDate = releaseDate;
+	}
 
-    public void setQueryString(String queryString) {
-        this.queryString = queryString;
-    }
+	public Date getUpdateDate()
+	{
+		return updateDate_dt_is;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	public void setUpdateDate(Date updateDate_dt_is)
+	{
+		this.updateDate_dt_is = updateDate_dt_is;
+	}
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	public String getQueryString()
+	{
+		return queryString;
+	}
 
-    void setID(String toString) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+	public void setQueryString(String queryString)
+	{
+		this.queryString = queryString;
+	}
 
-    public List<ComponentTag> getTags() {
-        return tags;
-    }
+	public String getVersion()
+	{
+		return version;
+	}
 
-    public void setTags(List<ComponentTag> tags) {
-        this.tags = tags;
-    }
+	public void setVersion(String version)
+	{
+		this.version = version;
+	}
 
+	void setID(String toString)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
-    public List<SolrAttributeCodeTypeModel> getAttributes() {
-        return attributes;
-    }
+	public List<ComponentTag> getTags()
+	{
+		return tags;
+	}
 
-    public void setAttributes(List<SolrAttributeCodeTypeModel> attributes) {
-        this.attributes = attributes;
-    }
+	public void setTags(List<ComponentTag> tags)
+	{
+		this.tags = tags;
+	}
 
-    
-//    public List<SearchResultAttribute> getAttributes() {
-//        return attributes;
-//    }
-//
-//    public void setAttributes(List<SearchResultAttribute> attributes) {
-//        this.attributes = attributes;
-//    }
-//    
+	public List<SolrAttributeCodeTypeModel> getAttributes()
+	{
+		return attributes;
+	}
+
+	public void setAttributes(List<SolrAttributeCodeTypeModel> attributes)
+	{
+		this.attributes = attributes;
+	}
+
 }
