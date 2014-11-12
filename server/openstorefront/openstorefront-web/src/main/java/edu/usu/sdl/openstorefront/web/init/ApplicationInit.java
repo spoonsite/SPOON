@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
@@ -60,6 +61,7 @@ public class ApplicationInit
 		startupManager(new AttributeImporter());
 		startupManager(new JobManager());
 		startupManager(new UserAgentManager());
+		startupManager(new MailManager());
 
 	}
 
@@ -73,6 +75,7 @@ public class ApplicationInit
 	public void contextDestroyed(ServletContextEvent sce)
 	{
 		//Shutdown in reverse order to make sure the dependancies are good.
+		shutdownManager(new MailManager());
 		shutdownManager(new UserAgentManager());
 		shutdownManager(new JobManager());
 		shutdownManager(new JiraManager());

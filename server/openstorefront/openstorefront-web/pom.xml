@@ -309,6 +309,19 @@
 			<version>2.5</version>
 			<type>jar</type>
 		</dependency>
+		<!--		
+		 <dependency>
+			 <groupId>com.sun.mail</groupId>
+			 <artifactId>javax.mail</artifactId>
+			 <version>1.5.2</version>
+			 <type>jar</type>
+		 </dependency>
+		 -->
+		<dependency>
+			<groupId>org.codemonkey.simplejavamail</groupId>
+			<artifactId>simple-java-mail</artifactId>
+			<version>2.1</version>
+		</dependency>		 
 	</dependencies>
 
 	<build>
