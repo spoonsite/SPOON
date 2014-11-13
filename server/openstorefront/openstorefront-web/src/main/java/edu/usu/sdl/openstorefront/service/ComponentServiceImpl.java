@@ -1368,13 +1368,13 @@ public class ComponentServiceImpl
 			inQuery.deleteCharAt(inQuery.length() - 1);
 			inQuery.append("]");
 
-			//get all data
+			//get all active data
 			StringBuilder componentQuery = new StringBuilder();
-			componentQuery.append("select from Component where componentId in ").append(inQuery);
+			componentQuery.append("select from Component where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId in ").append(inQuery);
 			List<Component> components = persistenceService.query(componentQuery.toString(), new HashMap<>(), Component.class, true);
 
 			StringBuilder componentAttributeQuery = new StringBuilder();
-			componentAttributeQuery.append("select from ComponentAttribute where componentId in ").append(inQuery);
+			componentAttributeQuery.append("select from ComponentAttribute where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId in ").append(inQuery);
 			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery.toString(), new HashMap<>(), ComponentAttribute.class, true);
 			Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 			for (ComponentAttribute componentAttribute : componentAttributes) {
@@ -1388,7 +1388,7 @@ public class ComponentServiceImpl
 			}
 
 			StringBuilder componentReviewQuery = new StringBuilder();
-			componentReviewQuery.append("select from ComponentReview where componentId in ").append(inQuery);
+			componentReviewQuery.append("select from ComponentReview where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId in ").append(inQuery);
 			List<ComponentReview> componentReviews = persistenceService.query(componentReviewQuery.toString(), new HashMap<>(), ComponentReview.class, true);
 			Map<String, List<ComponentReview>> reviewMap = new HashMap<>();
 			for (ComponentReview componentReview : componentReviews) {
@@ -1402,7 +1402,7 @@ public class ComponentServiceImpl
 			}
 
 			StringBuilder componentTagQuery = new StringBuilder();
-			componentTagQuery.append("select from ComponentTag where componentId in ").append(inQuery);
+			componentTagQuery.append("select from ComponentTag where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId in ").append(inQuery);
 			List<ComponentTag> componentTags = persistenceService.query(componentTagQuery.toString(), new HashMap<>(), ComponentTag.class, true);
 			Map<String, List<ComponentTag>> tagMap = new HashMap<>();
 			for (ComponentTag componentTag : componentTags) {
