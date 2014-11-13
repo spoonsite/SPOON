@@ -16,10 +16,6 @@
 
 'use strict';
 
-app.controller('PrintCtrl', function ($scope) {
-  $scope.awesomeThings = [
-  'HTML5 Boilerplate',
-  'AngularJS',
-  'Karma'
-  ];
-});
+app.controller('PrintCtrl', [ '$scope', 'business', '$timeout', '$location', function ($scope, Business, $timeout, $location) {
+  $scope.search = $location.search()? $location.search(): {'type':'component', 'id': null};
+}]);

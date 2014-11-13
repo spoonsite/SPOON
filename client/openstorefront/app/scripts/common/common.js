@@ -134,6 +134,12 @@ function isEmpty(obj) {
   return true;
 }
 
+var camelToSentence = function (string) {
+  return string.replace(/^[a-z]|[A-Z]/g, function(v, i) {
+    return i === 0 ? v.toUpperCase() : " " + v.toUpperCase();
+  });
+}
+
 /***************************************************************
 * Hide an alert
 * params: uid -- the unique id of the alert box
