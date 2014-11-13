@@ -111,7 +111,9 @@ public class FileSystemManager
 			}
 
 			if (newFileHandler != null) {
-				newFileHandler.handleNewFile(configFile);
+				if (configFile.exists()) {
+					newFileHandler.handleNewFile(configFile);
+				}
 			}
 		}
 		return configFile;
