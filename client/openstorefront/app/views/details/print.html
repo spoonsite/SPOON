@@ -7,10 +7,16 @@
       <strong>-Custom menu-</strong>
       <div class="checkbox" ng-repeat="detail in details">
         <label>
-          <input type="checkbox" ng-model="detail.checked"> {{detail.checkedLabel}}
+          <input type="checkbox" ng-model="detail.checked" ng-checked="detail.checked"> {{detail.checkedLabel}}
         </label>
       </div>
     </div>
   </div>
 </div>
-<div class="printMeBody" style="margin-top: 10px; position:absolute; margin-left: 205px;">This is a test!</div>
+<div class="printMeBody" style="margin-top: 10px; position:absolute; margin-left: 205px;">This is a test!
+  <div ng-repeat="detail in details" ng-show="detail.checked === true">
+    <br>
+    {{detail}}
+    <br>
+  </div>
+</div>

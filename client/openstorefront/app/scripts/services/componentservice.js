@@ -389,6 +389,42 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   };
 
+  componentservice.getComponentPrint = function(id, override) {
+    var result = $q.defer();
+    if (id)
+    {
+      var url = 'api/v1/resource/components/'+id+'/detail?type=print';
+      var value = null;
+      // if they don't give me an ID I send them back the whole list.
+      value = checkExpire('component_print_'+id, minute * 2);
+      if (value && !override) {
+        result.resolve(value);
+      } else {
+        $http({
+          method: 'GET',
+          url: url
+        })
+        .success(function(data, status, headers, config) { /*jshint unused:false*/          
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            // console.log('data', data);
+            save('component_print_'+id, data);
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function(data, status, headers, config){
+          result.reject('There was an error');
+        });
+      }
+    } else{
+      result.reject('A unique ID is required to retrieve component details');
+    }
+    return result.promise;
+  };
+
   componentservice.getComponentList = function() {
     var result = $q.defer();
     var url = 'api/v1/resource/components';
