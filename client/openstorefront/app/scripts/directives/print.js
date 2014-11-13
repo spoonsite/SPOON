@@ -39,14 +39,28 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
       console.log('scope.id', scope.id);
       
       scope.getObjectContent = function(details) {
+        var temp = {};
+        temp.value = [];
+        var keys = Object.keys(details);
+        _.each(keys, function(prop){
+          var property = {};
+          property.checkedLabel = camelToSentence(prop);
+          property.data = details[prop];
+          property.checked = false;
+          temp[prop] = property;
+        })
+        if (temp.value){
+          delete temp.value;
+        }
         // details.checkedLabel = camelToSentence();
-        return details;
+        return temp;
       }
 
       if (scope.id){
-        Business.componentservice.getComponentDetails(scope.id, true).then(function(result){
+        Business.componentservice.getComponentPrint(scope.id, true).then(function(result){
           console.log('Details', result);
           scope.details = result? scope.getObjectContent(result): [];
+          console.log('Details', scope.details);
         }, function() {
           scope.details = [];
         })

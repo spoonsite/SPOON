@@ -59,6 +59,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
@@ -229,11 +230,21 @@ public class ComponentRESTResource
 	@Path("/{id}/detail")
 	public Response getComponentDetails(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam String componentId,
+			@QueryParam("type")
+			@DefaultValue("default")
+			@APIDescription("Pass 'Print' to retrieve special print view") String type)
 	{
-		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+		ComponentPrintView componentPrint = null;
+		ComponentDetailView componentDetail = null;
+		if (type.equals("print")){
+			ComponentDetailView temp = service.getComponentService().getComponentDetails(componentId);
+			componentPrint = ComponentPrintView.toView(temp);
+		} else {
+			componentDetail = service.getComponentService().getComponentDetails(componentId);
+		}
 		//Track Views
-		if (componentDetail != null) {
+		if (componentDetail != null || componentPrint != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
 			componentTracking.setClientIp(request.getRemoteAddr());
 			componentTracking.setComponentId(componentId);
@@ -245,7 +256,13 @@ public class ComponentRESTResource
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
-		return sendSingleEntityResponse(componentDetail);
+		if (componentDetail != null){
+			return sendSingleEntityResponse(componentDetail);
+		} else if (componentPrint != null){
+			return sendSingleEntityResponse(componentPrint);
+		} else {
+			return Response.ok().build();
+		}
 	}
 
 	@DELETE
