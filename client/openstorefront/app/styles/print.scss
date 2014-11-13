@@ -1,8 +1,19 @@
+.printMeBody .left{
+  overflow: hidden;
+}
+.printMeBody .right{
+  float: right;
+  width: 200px;
+}
 @media print {
   #nav, #nav * {
     display: none;
   }
   .hideme, .hideme * {
     display: none;
+  }
+  .printMeBody{
+    margin-top: 0px;
+    padding-left: 0px;
   }
 }
