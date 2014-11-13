@@ -36,6 +36,7 @@ public class OpenStorefrontConstant
 	public static final String ERROR_LOGGER = "edu.usu.sdl.openstorefront.SYSTEM-ERROR-LOGGER";
 	public static final String HEADER_USER_AGENT = "User-Agent";
 	public static final String STATUS_VIEW_ALL = "ALL";
+	public static final String DEFAULT_FROM_ADDRESS = "noreply@storefront.net";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_CRON = 250;

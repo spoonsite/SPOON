@@ -19,9 +19,11 @@ import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -193,6 +195,30 @@ public interface UserService
 	 * @return
 	 */
 	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean admin);
+
+	/**
+	 * This will send a test email to the address on the user profile.
+	 *
+	 * @param username
+	 * @return true the system was able to send an email.
+	 */
+	public boolean checkEmail(String username);
+
+	/**
+	 * Pulls active watches for the component and create messages for 'notfiy'
+	 * watches.
+	 *
+	 * @param componentId
+	 */
+	public void checkComponentWatches(String componentId);
+
+	/**
+	 * Finds the messages based on filter
+	 *
+	 * @param filter
+	 * @return
+	 */
+	public List<UserMessage> findUserMessages(FilterQueryParams filter);
 
 //  This will be fleshed out more later
 //	/**
