@@ -1,12 +1,8 @@
-.printMe.hide, .printMeBody, .printMeBody *{
-  display: none;
-}
-
 @media print {
-  :not(.printMe), :not(.printMeBody), :not(.printMeBody *){
-    display:none;
+  #nav, #nav * {
+    display: none;
   }
-  .printMe.hide, .printMeBody, .printMeBody *{
-    display: block;
+  .hideme, .hideme * {
+    display: none;
   }
 }

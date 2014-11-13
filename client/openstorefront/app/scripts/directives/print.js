@@ -16,21 +16,39 @@
 
 'use strict';
 
-app.directive('print', ['business', '$timeout', function (Business, $timeout) {
+app.directive('print', ['business', '$timeout', '$location', function (Business, $timeout, $location) {
+  var getTemplateUrl = function(element, attrs) {
+    var type = attrs.type || null;
+    console.log('type', type);
+    
+    if (type && type === 'component') {
+      return 'views/details/print.html';
+    } else {
+      return 'views/details/print.html';
+    }
+  };
+
   return {
-    templateUrl: 'views/details/print.html',
+    templateUrl: getTemplateUrl,
     restrict: 'EA',
     scope:{
-      componentId: "@"
+      id: "="
     },
     link: function postLink(scope, element, attrs) {
-      if (scope.componentId){
-        Business.componentservice.getComponentDetails(scope.componentId, true).then(function(result){
+      scope.details;
+      console.log('scope.id', scope.id);
+      
+      scope.getObjectContent = function(details) {
+        // details.checkedLabel = camelToSentence();
+        return details;
+      }
+
+      if (scope.id){
+        Business.componentservice.getComponentDetails(scope.id, true).then(function(result){
           console.log('Details', result);
-          
-          scope.details = result? result: {};
+          scope.details = result? scope.getObjectContent(result): [];
         }, function() {
-          scope.details = {};
+          scope.details = [];
         })
       }
     }

@@ -77,6 +77,10 @@ var app = angular
     templateUrl: 'views/compare.html',
     controller: 'CompareCtrl'
   })
+  .when('/print', {
+    templateUrl: 'views/print.html',
+    controller: 'PrintCtrl'
+  })
   .otherwise({
     redirectTo: '/'
   });
@@ -274,7 +278,7 @@ var app = angular
       * This funciton resets the search query when we don't want to be showing it
       ***************************************************************/
       $rootScope.$on('$locationChangeStart', function (event, next, current) {
-        if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing' && $location.path() !== '/compare')) {
+        if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing' && $location.path() !== '/compare' && $location.path() !== '/print')) {
           $location.search({});
         }
       });
@@ -498,6 +502,14 @@ var app = angular
 
       $rootScope.logout = function() {
         window.location.replace('/openstorefront/Login.action?Logout');
+      }
+
+      $rootScope.print = function(type, id) {
+        $location.search({
+          'type': type,
+          'id': id
+        });
+        $location.path('/print');
       }
 
       $rootScope.$on('$idleStart', function() {

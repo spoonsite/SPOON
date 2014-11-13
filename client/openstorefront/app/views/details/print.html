@@ -1,1 +1,16 @@
-<div class="printMeBody">This is a test!</div>
+<div class="hideme" style="width: 200px; position: absolute;">
+  <button class="btn btn-default" ng-click="mode = 'default'" style="width: 200px; margin-top:10px; margin-bottom:10px;">Default Template</button>
+  <button class="btn btn-default" ng-click="mode = 'custom'" style="width: 200px;">Custom Template</button>
+  <div class="col-12-sm"></div>
+  <div ng-show="mode === 'custom'" style="position:relative">
+    <div >
+      <strong>-Custom menu-</strong>
+      <div class="checkbox" ng-repeat="detail in details">
+        <label>
+          <input type="checkbox" ng-model="detail.checked"> {{detail.checkedLabel}}
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="printMeBody" style="margin-top: 10px; position:absolute; margin-left: 205px;">This is a test!</div>
