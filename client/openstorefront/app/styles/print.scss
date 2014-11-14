@@ -2,8 +2,26 @@
   overflow: hidden;
 }
 .printMeBody .right{
+  position: relative;
+  left: -1px;
+  border: 1px solid darkgray;
   float: right;
-  width: 200px;
+  width: 250px;
+  padding: 5px;
+}
+
+.paper {
+  padding:5px;
+  background: white;
+}
+
+.liners{
+  border:1px solid darkgray;
+  margin-right: 5px;
+  padding:5px;
+}
+.liners .line{
+  position: relative;
 }
 @media print {
   #nav, #nav * {
@@ -13,7 +31,7 @@
     display: none;
   }
   .printMeBody{
-    margin-top: 0px;
-    padding-left: 0px;
+    margin-top: 0px !important;
+    padding-left: 0px !important;
   }
 }

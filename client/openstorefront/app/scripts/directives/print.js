@@ -46,7 +46,7 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
           var property = {};
           property.checkedLabel = camelToSentence(prop);
           property.data = details[prop];
-          property.checked = false;
+          property.checked = true;
           temp[prop] = property;
         })
         if (temp.value){
