@@ -70,8 +70,12 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   * @param  entityName to lookup
   * @param  success function
   */
-  var loadLookupTable = function(entityName, successFunc, errorFunc) {
-    $http.get('api/v1/resource/lookuptypes/' + entityName + '/view').success(successFunc).error(errorFunc);
+  var loadLookupTable = function(entityName, successFunc, errorFunc, view) {
+    if (view) {
+      $http.get('api/v1/resource/lookuptypes/' + entityName + '/view').success(successFunc).error(errorFunc);
+    } else {
+      $http.get('api/v1/resource/lookuptypes/' + entityName).success(successFunc).error(errorFunc);
+    }
   };
 
 
@@ -100,7 +104,38 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
       }, function(data, status, headers, config){
         showServerError(data, 'body');
         deferred.reject('There was an error');
-      });
+      }, true);
+    }
+
+    return deferred.promise;
+  };
+
+  var getContactTypeCodes = function() {
+    var deferred = $q.defer();
+
+    if (refreshData.contactType) {
+      localCache.clear('ContactType');
+      refreshData.contactType = false;
+    }
+
+    var contactType = checkExpire('ContactType', minute * 1440);
+    if (contactType) {
+      deferred.resolve(contactType);
+    } else {
+      loadLookupTable('ContactType', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          save('ContactType', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      }, false);
     }
 
     return deferred.promise;
@@ -179,7 +214,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
       }, function(data, status, headers, config){
         showServerError(data, 'body');
         deferred.reject('There was an error');
-      });
+      }, true);
     }
     return deferred.promise;
   };
@@ -203,13 +238,14 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
       }, function(data, status, headers, config){
         showServerError(data, 'body');
         deferred.reject('There was an error');
-      });
+      }, true);
     }
     return deferred.promise;
   };
 
   //Public API
   return {
+    getContactTypeCodes: getContactTypeCodes,
     getUserTypeCodes: getUserTypeCodes,
     getEvalLevels: getEvalLevels,
     getExpertise: getExpertise,
