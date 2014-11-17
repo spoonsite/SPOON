@@ -16,14 +16,27 @@
 </div>
 <div class="printMeBody" style="margin-top: 10px; position:absolute; padding-left: 205px; width: 100%;">
   <div class="paper">
-    <div class="border" style="border: 3px solid #343f54;">
+    <div class="border">
       <div ng-show="details.evaluation.checked || details.attributes.checked || details.contacts.checked" class="right">
-        <div ng-show="details.evaluation.checked">
-          <h4>Component Vitals</h4>
-          {{details.evaluation.data}}
+        <div ng-show="details.evaluation.checked" class="section" style="padding-bottom: 80px;">
+          <h4>Reusability Factors (5=best)</h4>
+          <table class="table table-bordered table-hover" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
+            <!-- Currently this table only shows if there is a start date -->
+            <tr data-ng-repeat="col in details.evaluation.data.evaluationSections">
+              <td class="valign" style="padding: 0px;" colspan="2">
+                <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px 5px; border-left: 1px solid lightgray; margin-left: -1px; width:65px; float: right;" ng-class="col.score > 0? '':'shadeME'">
+                  <i ng-if="col.score > 0" ng-repeat="t in getTimes(col.score) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
+                  </i>
+                  <span ng-if="col.score <= 0">&nbsp;</span>
+                </div>
+                <div  ng-class="getIsUpdated('evaluationSections')? 'updatedForUser': ''" class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;">
+                  <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
+                </div>
+              </td>
+            </tr>
+          </table>
         </div>
-        <hr>
-        <div ng-show="details.attributes.checked">
+        <div ng-show="details.attributes.checked" class="section">
           <h4>Component Vitals</h4>
           <table class="table table-striped table-bordered" style="table-layout:fixed">
             <tr ng-repeat="attribute in details.attributes.data">
@@ -36,14 +49,13 @@
             </tr>
           </table>
         </div>
-        <hr>
-        <div ng-show="details.contacts.checked">
+        <div ng-show="details.contacts.checked" class="section">
           <h4>Points of Contact</h4>
           <div ng-repeat="contact in details.contacts.data">
             {{contact.positionDescription}}
             <table class="table table-striped table-bordered" style="table-layout:fixed">
               <col width="60px" />
-              <col width="180px" />
+              <col width="175px" />
               <tr>
                 <td>Name</td>
                 <td>{{contact.name}}</td>

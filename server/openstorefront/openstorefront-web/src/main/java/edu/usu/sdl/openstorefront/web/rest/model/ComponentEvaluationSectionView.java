@@ -40,7 +40,7 @@ public class ComponentEvaluationSectionView
 	public static ComponentEvaluationSectionView toView(ComponentEvaluationSection section)
 	{
 		ComponentEvaluationSectionView view = new ComponentEvaluationSectionView();
-		view.setName(TranslateUtil.translate(EvaluationSection.class, section.getComponentEvaluationSectionPk().getEvaulationSection()));
+		view.setName(TranslateUtil.translate(EvaluationSection.class, section.getComponentEvaluationSectionPk().getEvaluationSection()));
 		view.setScore(section.getScore());
 		view.setUpdateDts(section.getUpdateDts());
 		return view;

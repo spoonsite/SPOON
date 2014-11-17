@@ -1,13 +1,19 @@
 .printMeBody .left{
+  padding:5px;
   overflow: hidden;
 }
 .printMeBody .right{
   position: relative;
   left: -1px;
-  border: 1px solid darkgray;
   float: right;
   width: 250px;
+}
+.printMeBody .right .section{
+  border: 1px solid darkgray;
   padding: 5px;
+}
+.printMeBody .right table{
+  font-size: 11px;
 }
 
 .paper {
@@ -23,7 +29,12 @@
 .liners .line{
   position: relative;
 }
+
 @media print {
+
+  *{
+    float: none;
+  }
   #nav, #nav * {
     display: none;
   }
@@ -33,5 +44,10 @@
   .printMeBody{
     margin-top: 0px !important;
     padding-left: 0px !important;
+  }
+  .printMeBody .right .section {
+    display: block; /* unhide all tabs */
+    break-before: always;
+    page-break-before: always;
   }
 }
