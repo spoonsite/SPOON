@@ -611,7 +611,7 @@ public class ComponentRESTResource
 	{
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
-		pk.setEvaulationSection(evalSection);
+		pk.setEvaluationSection(evalSection);
 		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, pk);
 	}
 
@@ -658,7 +658,7 @@ public class ComponentRESTResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
-		pk.setEvaulationSection(evalSectionId);
+		pk.setEvaluationSection(evalSectionId);
 		ComponentEvaluationSection componentEvaluationSection = service.getPersistenceService().findById(ComponentEvaluationSection.class, pk);
 		if (componentEvaluationSection != null) {
 			section.setComponentId(componentId);
@@ -682,7 +682,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + section.getComponentId() + "/sections/" + section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
+			return Response.created(URI.create("v1/resource/components/" + section.getComponentId() + "/sections/" + section.getComponentEvaluationSectionPk().getEvaluationSection())).entity(section).build();
 		} else {
 			return Response.ok(section).build();
 		}

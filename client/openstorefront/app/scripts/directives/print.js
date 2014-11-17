@@ -56,6 +56,25 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
         return temp;
       }
 
+      /***************************************************************
+      * This function converts a timestamp to a displayable date
+      ***************************************************************/
+      scope.getDate = function(date){
+        if (date)
+        {
+          var d = new Date(date);
+          var currDate = d.getDate();
+          var currMonth = d.getMonth();
+          var currYear = d.getFullYear();
+          return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+        }
+        return null;
+      };
+
+      scope.getTimes = function(n){
+        return new Array(parseInt(n));
+      };
+
       if (scope.id){
         Business.componentservice.getComponentPrint(scope.id, true).then(function(result){
           console.log('Details', result);
