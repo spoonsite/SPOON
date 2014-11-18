@@ -20,10 +20,9 @@
 .printMeBody .right .section:first-child{
   margin-top: 0px;
 }
-.printMeBody .right table{
+.printMeBody .right table, .printMeBody .left table{
   font-size: 11px;
 }
-
 .paper {
   padding:5px;
   background: white;
@@ -56,6 +55,9 @@
   .printMeBody .right .section {
     display: block; /* unhide all tabs */
     break-before: always;
+    page-break-before: always;
+  }
+  .pageBreak{
     page-break-before: always;
   }
 }
