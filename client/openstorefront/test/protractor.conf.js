@@ -5,7 +5,7 @@ var path = require('path');
 exports.config = {
   //seleniumAddress: 'http://localhost:4444/wd/hub',
   specs: [
-    'spec/protractor/*_spec.js'
+    'spec/protractor/*_run.js'
   ],
   onPrepare: function() {
     browser.driver.manage().window().setSize(1180,1180);
