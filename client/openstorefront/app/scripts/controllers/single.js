@@ -103,11 +103,12 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
               } else {
                 attribute.svcv4 = null;
               }
-            } else if (attribute.type === 'DI2ELEVEL') {
+            } 
+            else if (attribute.type === 'DI2ELEVEL') {
               foundEvaluation = attribute;
             }
           });
-          $scope.details.details.evaluation = foundEvaluation;
+          $scope.details.details.evaluationAttribute = foundEvaluation;
         }
 
         /* jshint ignore:end */
