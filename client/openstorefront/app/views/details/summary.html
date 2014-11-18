@@ -2,7 +2,7 @@
 <div class="leftCol hideTheExtra">
   <div ng-if="details.details.evaluation.startDate !== null" class="rightCol">
     <table class="table table-bordered table-hover" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
-      <tbody ng-if="details.details.evaluation.startDate">
+      <tbody ng-if="details.details.evaluation && details.details.evaluation.evaluationSections && details.details.evaluation.evaluationSections.length">
         <!-- Currently this table only shows if there is a start date -->
         <tr>
           <th ng-if="details.details.evaluation.evaluationSections.length" class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>

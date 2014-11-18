@@ -3,7 +3,7 @@
   <button class="btn btn-default" ng-click="mode = 'default'" style="width: 200px; margin-top:10px; margin-bottom:10px;">Default Template</button>
   <button class="btn btn-default" ng-click="mode = 'custom'" style="width: 200px;">Custom Template</button>
   <div class="col-12-sm"></div>
-  <div ng-show="mode === 'custom'" style="position:relative">
+  <div ng-if="mode === 'custom'" style="position:relative">
     <div >
       <strong>-Custom menu-</strong>
       <div class="checkbox" ng-repeat="detail in details">
@@ -17,8 +17,8 @@
 <div class="printMeBody" style="margin-top: 10px; position:absolute; padding-left: 205px; width: 100%;">
   <div class="paper">
     <div class="border">
-      <div ng-show="details.evaluation.checked || details.attributes.checked || details.contacts.checked" class="right">
-        <div ng-show="details.evaluation.checked" class="section" style="padding-bottom: 80px;">
+      <div ng-if="details.evaluation.checked || details.attributes.checked || details.contacts.checked" class="right">
+        <div ng-if="details.evaluation.checked && details.evaluation.data && details.evaluation.data.evaluationSections && details.evaluation.data.evaluationSections.length" class="section" style="padding-bottom: 80px;">
           <h4>Reusability Factors (5=best)</h4>
           <table class="table table-bordered table-striped" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
             <!-- Currently this table only shows if there is a start date -->
@@ -36,7 +36,7 @@
             </tr>
           </table>
         </div>
-        <div ng-show="details.attributes.checked" class="section">
+        <div ng-if="details.attributes.checked" class="section">
           <h4>Component Vitals</h4>
           <table class="table table-striped table-bordered" style="table-layout:fixed">
             <tr ng-repeat="attribute in details.attributes.data">
@@ -49,7 +49,7 @@
             </tr>
           </table>
         </div>
-        <div ng-show="details.contacts.checked" class="section">
+        <div ng-if="details.contacts.checked" class="section">
           <h4>Points of Contact</h4>
           <div ng-repeat="contact in details.contacts.data">
             {{contact.positionDescription}}
@@ -68,23 +68,23 @@
           </div>
         </div>
       </div>
-      <div class="left liners" ng-show="details.componentName.checked || details.organization.checked || details.version.checked || details.organization.checked || details.lastActivityDate.checked || details.lastViewedDate.checked || details.componentViews.checked">
-        <div class="line" ng-show="details.componentName.checked">Name: {{details.componentName.data}}</div>
-        <div class="line" ng-show="details.version.checked">Version: {{details.version.data}}</div>
-        <div class="line" ng-show="details.organization.checked">Organization: {{details.organization.data}}</div>
-        <div class="line" ng-show="details.lastActivityDate.checked">Last Activity Date: {{getDate(details.lastActivityDate.data)}}</div>
-        <div class="line" ng-show="details.lastViewedDate.checked">Last View Date: {{getDate(details.lastViewedDate.data)}}</div>
-        <div class="line" ng-show="details.componentViews.checked">Views: {{details.componentViews.data}}</div>
+      <div class="left liners" ng-if="details.componentName.checked || details.organization.checked || details.version.checked || details.organization.checked || details.lastActivityDate.checked || details.lastViewedDate.checked || details.componentViews.checked">
+        <div class="line" ng-if="details.componentName.checked">Name: {{details.componentName.data}}</div>
+        <div class="line" ng-if="details.version.checked">Version: {{details.version.data}}</div>
+        <div class="line" ng-if="details.organization.checked">Organization: {{details.organization.data}}</div>
+        <div class="line" ng-if="details.lastActivityDate.checked">Last Activity Date: {{getDate(details.lastActivityDate.data)}}</div>
+        <div class="line" ng-if="details.lastViewedDate.checked">Last View Date: {{getDate(details.lastViewedDate.data)}}</div>
+        <div class="line" ng-if="details.componentViews.checked">Views: {{details.componentViews.data}}</div>
       </div>
-      <div class="left border" ng-show="details.tags.checked">Tags: {{formatTags(details.tags.data)}}</div>
-      <div class="left" ng-show="details.description.checked">{{details.description.data}}</div>
-      <div class="left" ng-show="details.metadata.checked">{{details.metadata.data}}</div>
-      <div class="left" ng-show="details.resources.checked">{{details.resources.data}}</div>
-      <div class="left" ng-show="details.subComponents.checked">{{details.subComponents.data}}</div>
-      <div class="left" ng-show="details.dependencies.checked">{{details.dependencies.data}}</div>
-      <div class="left" ng-show="details.reviews.checked">{{details.reviews.data}}</div>
-      <div class="left" ng-show="details.questions.checked">{{details.questions.data}}</div>
-      <div class="left" ng-show="details.componentMedia.checked">{{details.componentMedia.data}}</div>
+      <div class="left border" ng-if="details.tags.checked">Tags: {{formatTags(details.tags.data)}}</div>
+      <div class="left" ng-if="details.description.checked">{{details.description.data}}</div>
+      <div class="left" ng-if="details.metadata.checked">{{details.metadata.data}}</div>
+      <div class="left" ng-if="details.resources.checked">{{details.resources.data}}</div>
+      <div class="left" ng-if="details.subComponents.checked">{{details.subComponents.data}}</div>
+      <div class="left" ng-if="details.dependencies.checked">{{details.dependencies.data}}</div>
+      <div class="left" ng-if="details.reviews.checked">{{details.reviews.data}}</div>
+      <div class="left" ng-if="details.questions.checked">{{details.questions.data}}</div>
+      <div class="left" ng-if="details.componentMedia.checked">{{details.componentMedia.data}}</div>
       <div style="clear:both;"></div>
     </div>
   </div>
