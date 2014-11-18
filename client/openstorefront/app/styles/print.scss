@@ -2,6 +2,10 @@
   padding:5px;
   overflow: hidden;
 }
+.printMeBody .left.border {
+  border: 1px solid darkgray;
+  margin-top: -1px;
+}
 .printMeBody .right{
   position: relative;
   left: -1px;
@@ -11,6 +15,10 @@
 .printMeBody .right .section{
   border: 1px solid darkgray;
   padding: 5px;
+  margin-top: -1px;
+}
+.printMeBody .right .section:first-child{
+  margin-top: 0px;
 }
 .printMeBody .right table{
   font-size: 11px;
