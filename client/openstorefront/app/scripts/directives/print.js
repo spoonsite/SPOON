@@ -71,6 +71,18 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
         return null;
       };
 
+      scope.formatTags = function(tags) {
+        var result = '';
+        _.each(tags, function(tag){
+          if (result.length > 0) {
+            result = result + ", " + tag.text;
+          } else {
+            result = tag.text;
+          }
+        });
+        return result;
+      }
+
       scope.getTimes = function(n){
         return new Array(parseInt(n));
       };

@@ -20,7 +20,7 @@
       <div ng-show="details.evaluation.checked || details.attributes.checked || details.contacts.checked" class="right">
         <div ng-show="details.evaluation.checked" class="section" style="padding-bottom: 80px;">
           <h4>Reusability Factors (5=best)</h4>
-          <table class="table table-bordered table-hover" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
+          <table class="table table-bordered table-striped" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
             <!-- Currently this table only shows if there is a start date -->
             <tr data-ng-repeat="col in details.evaluation.data.evaluationSections">
               <td class="valign" style="padding: 0px;" colspan="2">
@@ -72,11 +72,11 @@
         <div class="line" ng-show="details.componentName.checked">Name: {{details.componentName.data}}</div>
         <div class="line" ng-show="details.version.checked">Version: {{details.version.data}}</div>
         <div class="line" ng-show="details.organization.checked">Organization: {{details.organization.data}}</div>
-        <div class="line" ng-show="details.lastActivityDate.checked">Last Activity Date: {{details.lastActivityDate.data}}</div>
-        <div class="line" ng-show="details.lastViewedDate.checked">Last View Date: {{details.lastViewedDate.data}}</div>
+        <div class="line" ng-show="details.lastActivityDate.checked">Last Activity Date: {{getDate(details.lastActivityDate.data)}}</div>
+        <div class="line" ng-show="details.lastViewedDate.checked">Last View Date: {{getDate(details.lastViewedDate.data)}}</div>
         <div class="line" ng-show="details.componentViews.checked">Views: {{details.componentViews.data}}</div>
       </div>
-      <div class="left" ng-show="details.tags.checked">{{details.tags.data}}</div>
+      <div class="left border" ng-show="details.tags.checked">Tags: {{formatTags(details.tags.data)}}</div>
       <div class="left" ng-show="details.description.checked">{{details.description.data}}</div>
       <div class="left" ng-show="details.metadata.checked">{{details.metadata.data}}</div>
       <div class="left" ng-show="details.resources.checked">{{details.resources.data}}</div>
