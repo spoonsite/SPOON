@@ -3,7 +3,7 @@
   overflow: hidden;
 }
 .printMeBody .left.border {
-  border: 1px solid darkgray;
+  border: 1px solid #555;
   margin-top: -1px;
 }
 .printMeBody .right{
@@ -13,7 +13,7 @@
   width: 250px;
 }
 .printMeBody .right .section{
-  border: 1px solid darkgray;
+  border: 1px solid #555;
   padding: 5px;
   margin-top: -1px;
 }
@@ -29,12 +29,20 @@
 }
 
 .liners{
-  border:1px solid darkgray;
+  border:1px solid #555;
   margin-right: 5px;
   padding:5px;
 }
 .liners .line{
   position: relative;
+}
+
+.pageBreak {
+  padding: 5px;
+}
+
+.printMeBody table {
+  margin-bottom: 0px;
 }
 
 @media print {
@@ -53,11 +61,11 @@
     padding-left: 0px !important;
   }
   .printMeBody .right .section {
+  }
+  .pageBreak{
     display: block; /* unhide all tabs */
     break-before: always;
     page-break-before: always;
-  }
-  .pageBreak{
-    page-break-before: always;
+    page-break-inside: avoid;
   }
 }

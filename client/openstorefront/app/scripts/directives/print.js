@@ -56,6 +56,14 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
         return temp;
       }
 
+      scope.reset = function() {
+        if (scope.details) {
+          _.each(scope.details, function(detail){
+            detail.checked = true;
+          });
+        }
+      }
+
       /***************************************************************
       * This function converts a timestamp to a displayable date
       ***************************************************************/
@@ -71,6 +79,10 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
         return null;
       };
 
+      scope.print = function() {
+        window.print();
+      }
+
       scope.formatTags = function(tags) {
         var result = '';
         _.each(tags, function(tag){
@@ -81,6 +93,23 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
           }
         });
         return result;
+      }
+
+      scope.isEvaluationPresent = function() {
+        if (scope.details) {
+          var details = scope.details;
+          return details.evaluation.checked && details.evaluation.data && details.evaluation.data.evaluationSections && details.evaluation.data.evaluationSections.length;
+        } else {
+          return false;
+        }
+      }
+
+      scope.getFullRating = function(num) {
+        return new Array(num);   
+      }
+      scope.getEmptyRating = function(num) {
+        var length = ((5 - num) > 0)? (5 - num):0; 
+        return new Array(length);
       }
 
       scope.getTimes = function(n){
