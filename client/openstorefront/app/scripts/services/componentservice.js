@@ -465,13 +465,23 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
 
   componentservice.batchGetComponentDetails = function(list) {
     var result = $q.defer();
-    // var url = '/api/v1/resource/component/list=?'
-    var total = _.filter(MOCKDATA2.componentList, function(item){
-      return _.some(list, function(id){
-        return parseInt(id) === item.componentId;
-      });
+    var url = 'api/v1/resource/components/list';
+    $http({
+      method: 'GET',
+      url: url,
+      params: { 'idList': list}
+    }).success(function(data, status, headers, config){
+      if (data && !isEmpty(data) && isNotRequestError(data)) {
+          removeError();
+          result.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          result.reject(false);
+        }
+    }).error(function(data, status, headers, config){
+      result.reject(false);
     });
-    result.resolve(total);
     return result.promise;
   };
 
