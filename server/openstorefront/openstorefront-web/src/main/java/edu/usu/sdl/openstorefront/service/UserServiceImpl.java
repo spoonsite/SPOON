@@ -18,15 +18,29 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.api.UserService;
+import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
+import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
+import edu.usu.sdl.openstorefront.service.message.MessageContext;
+import edu.usu.sdl.openstorefront.service.message.RecentChangeMessage;
+import edu.usu.sdl.openstorefront.service.message.RecentChangeMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.TestMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.WatchMessageGenerator;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
+import edu.usu.sdl.openstorefront.sort.UserMessageComparator;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
@@ -34,13 +48,25 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.Message;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.uadetector.ReadableUserAgent;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.MailException;
 
 /**
  * Handles all user business logic
@@ -49,7 +75,7 @@ import org.apache.shiro.SecurityUtils;
  */
 public class UserServiceImpl
 		extends ServiceProxy
-		implements UserService
+		implements UserService, UserServicePrivate
 {
 
 	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
@@ -193,6 +219,7 @@ public class UserServiceImpl
 			userProfile.setEmail(user.getEmail());
 			userProfile.setFirstName(user.getFirstName());
 			userProfile.setLastName(user.getLastName());
+			userProfile.setNotifyOfNew(user.getNotifyOfNew());
 			userProfile.setOrganization(user.getOrganization());
 			userProfile.setUserTypeCode(user.getUserTypeCode());
 			userProfile.setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -379,21 +406,290 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public boolean checkEmail(String username)
+	public void sendTestEmail(String username)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		UserProfile userProfile = getUserProfile(username);
+		if (userProfile != null) {
+			if (StringUtils.isNotBlank(userProfile.getEmail())) {
+				TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
+				Email email = testMessageGenerator.generateMessage();
+				MailManager.send(email);
+			} else {
+				throw new OpenStorefrontRuntimeException("User is missing email.", "Add a valid email address.");
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+		}
 	}
 
 	@Override
 	public void checkComponentWatches(String componentId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		UserWatch userWatchExample = new UserWatch();
+		userWatchExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
+		userWatchExample.setNotifyFlg(Boolean.TRUE);
+		userWatchExample.setComponentId(componentId);
+
+		List<UserWatch> userWatches = persistenceService.queryByExample(UserWatch.class, userWatchExample);
+		for (UserWatch userWatch : userWatches) {
+			UserMessage userMessage = new UserMessage();
+			userMessage.setUsername(userWatch.getUsername());
+			userMessage.setComponentId(componentId);
+			userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+			userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+			getUserService().queueUserMessage(userMessage);
+		}
+	}
+
+	@Override
+	public void queueUserMessage(UserMessage userMessage)
+	{
+		UserMessage userMessageExample = new UserMessage();
+		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
+		userMessageExample.setUsername(userMessage.getUsername());
+		userMessageExample.setComponentId(userMessage.getComponentId());
+
+		//Duplicate check;
+		UserMessage userMessageExisting = persistenceService.queryOneByExample(UserMessage.class, userMessageExample);
+		if (userMessageExisting == null) {
+			userMessage.setUserMessageId(persistenceService.generateId());
+			userMessage.setRetryCount(0);
+			userMessage.populateBaseCreateFields();
+			persistenceService.persist(userMessage);
+		}
 	}
 
 	@Override
 	public List<UserMessage> findUserMessages(FilterQueryParams filter)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		UserMessage userMessageExample = new UserMessage();
+		userMessageExample.setActiveStatus(filter.getStatus());
+
+		List<UserMessage> userMessages = persistenceService.queryByExample(UserMessage.class, userMessageExample);
+		filter.setSortField(null);
+		userMessages = filter.filter(userMessages);
+		userMessages.sort(new UserMessageComparator<>());
+		return userMessages;
+	}
+
+	@Override
+	public void cleanupOldUserMessages()
+	{
+		int maxDays = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_KEEP_DAYS, "30"));
+
+		LocalDateTime archiveTime = LocalDateTime.now();
+		archiveTime.minusDays(maxDays);
+		archiveTime.truncatedTo(ChronoUnit.DAYS);
+		String deleteQuery = "updateDts < :maxUpdateDts AND activeStatus = :activeStatusParam";
+
+		ZonedDateTime zdt = archiveTime.atZone(ZoneId.systemDefault());
+		Date archiveDts = Date.from(zdt.toInstant());
+
+		Map<String, Object> queryParams = new HashMap<>();
+		queryParams.put("maxUpdateDts", archiveDts);
+		queryParams.put("activeStatusParam", UserMessage.INACTIVE_STATUS);
+
+		persistenceService.deleteByQuery(UserMessage.class, deleteQuery, queryParams);
+	}
+
+	@Override
+	public void sendAdminMessage(AdminMessage adminMessage)
+	{
+		String appTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront");
+		Email email = MailManager.newEmail();
+		email.setSubject(appTitle + " - " + adminMessage.getSubject());
+		email.setTextHTML(adminMessage.getMessage());
+
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
+
+		//Sending messages one at a time as BCC may leak adresses to other users.
+		log.log(Level.FINE, "Sending email to all users");
+		List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
+		int emailCount = 0;
+		for (UserProfile userProfile : userProfiles) {
+			if (StringUtils.isNotBlank(userProfile.getEmail())) {
+				String name = userProfile.getFirstName() + " " + userProfile.getLastName();
+				email.addRecipient(name, userProfile.getEmail(), Message.RecipientType.TO);
+				MailManager.send(email);
+				emailCount++;
+			}
+		}
+		log.log(Level.FINE, "{0} email sent", emailCount);
+	}
+
+	@Override
+	public void processAllUserMessages()
+	{
+		cleanupOldUserMessages();
+
+		UserMessage userMessageExample = new UserMessage();
+		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
+
+		List<UserMessage> userMessages = persistenceService.queryByExample(UserMessage.class, userMessageExample);
+		int minQueueMinutes = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MIN_QUEUE_MINUTES, "10"));
+		int maxRetries = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MAX_RETRIES, "5"));
+		if (minQueueMinutes < 0) {
+			minQueueMinutes = 0;
+		}
+		long queueMills = System.currentTimeMillis() - (minQueueMinutes * 60000);
+		for (UserMessage userMessage : userMessages) {
+
+			if (userMessage.getCreateDts().getTime() <= queueMills) {
+
+				boolean updateUserMessage = false;
+				UserMessage userMessageExisting = persistenceService.findById(UserMessage.class, userMessage.getUserMessageId());
+				if (userMessage.getRetryCount() < maxRetries) {
+					try {
+						getUserServicePrivate().sendUserMessage(userMessage);
+					} catch (MailException mailException) {
+						log.log(Level.FINE, "Unable to send message.", mailException);
+						userMessageExisting.setBodyOfMessage("Unable to send message to user.  Mail Server down? " + mailException.getMessage());
+						userMessageExisting.setRetryCount(userMessage.getRetryCount() + 1);
+						updateUserMessage = true;
+					} catch (Exception e) {
+						log.log(Level.SEVERE, "Unexpected error.  Failed sending message. (Halt sending of " + userMessage.getUserMessageId() + " message.)", e);
+						userMessageExisting.setActiveStatus(UserMessage.INACTIVE_STATUS);
+						userMessageExisting.setBodyOfMessage("System expection occured while sending message. See logs for details");
+						updateUserMessage = true;
+					}
+				} else {
+					userMessageExisting.setActiveStatus(UserMessage.INACTIVE_STATUS);
+					userMessageExisting.setBodyOfMessage("Exceed max reties.  Inactivated  message.");
+					updateUserMessage = true;
+				}
+
+				if (updateUserMessage) {
+
+					userMessageExisting.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+					userMessageExisting.setUpdateDts(TimeUtil.currentDate());
+					persistenceService.persist(userMessageExisting);
+				}
+
+			} else {
+				log.log(Level.FINEST, MessageFormat.format("Not time yet to send email to user: {0}", userMessage.getUsername()));
+			}
+
+		}
+
+	}
+
+	@Override
+	public void sendUserMessage(UserMessage userMessage)
+	{
+		UserProfile userProfile = getUserProfile(userMessage.getUsername());
+		UserMessage userMessageExisting = persistenceService.findById(UserMessage.class, userMessage.getUserMessageId());
+		if (StringUtils.isNotBlank(userProfile.getEmail())) {
+			MessageContext messageContext = new MessageContext(userProfile);
+			messageContext.setUserMessage(userMessage);
+			WatchMessageGenerator watchMessageGenerator = new WatchMessageGenerator(messageContext);
+			Email email = watchMessageGenerator.generateMessage();
+			MailManager.send(email);
+
+			userMessageExisting.setBodyOfMessage(email.getTextHTML());
+			userMessageExisting.setSentEmailAddress(userProfile.getUsername());
+		} else {
+			userMessageExisting.setBodyOfMessage("No email address set for user");
+		}
+
+		userMessageExisting.setActiveStatus(UserMessage.INACTIVE_STATUS);
+		userMessageExisting.setUpdateDts(TimeUtil.currentDate());
+		userMessageExisting.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+		persistenceService.persist(userMessageExisting);
+	}
+
+	@Override
+	public void sendRecentChangeEmail(Date lastRunDts)
+	{
+		sendRecentChangeEmail(lastRunDts, null);
+	}
+
+	@Override
+	public void sendRecentChangeEmail(Date lastRunDts, String emailAddress)
+	{
+		Objects.requireNonNull(lastRunDts, "Last Run Dts is required");
+
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
+		userProfileExample.setNotifyOfNew(Boolean.TRUE);
+
+		List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
+		RecentChangeMessage recentChangeMessage = new RecentChangeMessage();
+		recentChangeMessage.setLastRunDts(lastRunDts);
+
+		String componentQuery = "select from " + Component.class.getSimpleName() + " where lastActivityDts > :lastActivityParam and activeStatus = :activeStatusParam";
+
+		Map<String, Object> queryParams = new HashMap<>();
+		queryParams.put("lastActivityParam", lastRunDts);
+		queryParams.put("activeStatusParam", Component.ACTIVE_STATUS);
+		List<Component> components = persistenceService.query(componentQuery, queryParams);
+		for (Component component : components) {
+			if (component.getApprovedDts().after(lastRunDts)) {
+				recentChangeMessage.getComponentsAdded().add(component);
+			} else {
+				recentChangeMessage.getComponentsUpdated().add(component);
+			}
+		}
+
+		String articleQuery = "select from " + AttributeCode.class.getSimpleName() + " where updateDts > :updateDtsParam and articleFilename is not null and activeStatus = :activeStatusParam";
+		queryParams = new HashMap<>();
+		queryParams.put("updateDtsParam", lastRunDts);
+		queryParams.put("activeStatusParam", AttributeCode.ACTIVE_STATUS);
+		List<AttributeCode> attributeCodes = persistenceService.query(articleQuery, queryParams);
+		for (AttributeCode attributeCode : attributeCodes) {
+			if (attributeCode.getCreateDts().after(lastRunDts)) {
+				recentChangeMessage.getArticlesAdded().add(attributeCode);
+			} else {
+				recentChangeMessage.getArticlesUpdated().add(attributeCode);
+			}
+		}
+
+		String highlightQuery = "select from " + Highlight.class.getSimpleName() + " where updateDts > :updateDtsParam and activeStatus = :activeStatusParam";
+		queryParams = new HashMap<>();
+		queryParams.put("updateDtsParam", lastRunDts);
+		queryParams.put("activeStatusParam", AttributeCode.ACTIVE_STATUS);
+		List<Highlight> highLights = persistenceService.query(highlightQuery, queryParams);
+		for (Highlight highLight : highLights) {
+			if (highLight.getCreateDts().after(lastRunDts)) {
+				recentChangeMessage.getHighlightsAdded().add(highLight);
+			} else {
+				recentChangeMessage.getHighlightsUpdated().add(highLight);
+			}
+		}
+
+		if (StringUtils.isNotBlank(emailAddress)) {
+			MessageContext messageContext = new MessageContext(null);
+			messageContext.setRecentChangeMessage(recentChangeMessage);
+
+			RecentChangeMessageGenerator messageGenerator = new RecentChangeMessageGenerator(messageContext);
+			Email email = messageGenerator.generateMessage();
+			email.addRecipient("", emailAddress, Message.RecipientType.TO);
+			MailManager.send(email);
+
+		} else {
+			for (UserProfile userProfile : userProfiles) {
+				if (StringUtils.isNotBlank(userProfile.getEmail())) {
+					MessageContext messageContext = new MessageContext(userProfile);
+					messageContext.setRecentChangeMessage(recentChangeMessage);
+
+					RecentChangeMessageGenerator messageGenerator = new RecentChangeMessageGenerator(messageContext);
+					Email email = messageGenerator.generateMessage();
+					MailManager.send(email);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void removeUserMessage(String userMessageId)
+	{
+		UserMessage userMessage = persistenceService.findById(UserMessage.class, userMessageId);
+		if (userMessage != null) {
+			userMessage.setActiveStatus(UserMessage.INACTIVE_STATUS);
+			userMessage.populateBaseUpdateFields();
+			persistenceService.persist(userMessage);
+		}
 	}
 
 }

@@ -33,7 +33,7 @@ public class ComponentContact
 		extends BaseComponent
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String contactId;
 

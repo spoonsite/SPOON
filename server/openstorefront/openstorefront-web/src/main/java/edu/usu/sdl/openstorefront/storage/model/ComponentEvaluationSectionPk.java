@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -38,6 +40,37 @@ public class ComponentEvaluationSectionPk
 
 	public ComponentEvaluationSectionPk()
 	{
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null || (obj instanceof ComponentEvaluationSectionPk == false)) {
+			return false;
+		}
+		ComponentEvaluationSectionPk compareObj = (ComponentEvaluationSectionPk) obj;
+		return pkValue().equals(compareObj.pkValue());
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 7;
+		hash = 23 * hash + Objects.hashCode(getComponentId());
+		hash = 23 * hash + Objects.hashCode(getEvaulationSection());
+		return hash;
+	}
+
+	@Override
+	public String pkValue()
+	{
+		return getComponentId() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getEvaulationSection();
+	}
+
+	@Override
+	public String toString()
+	{
+		return pkValue();
 	}
 
 	public String getComponentId()

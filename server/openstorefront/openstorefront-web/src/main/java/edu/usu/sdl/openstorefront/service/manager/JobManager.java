@@ -85,6 +85,8 @@ public class JobManager
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 
 		addCleanUpErrorsJob();
+		addNotificationJob();
+		addRecentChangeNotifyJob();
 		addComponentIntegrationJobs();
 	}
 
@@ -194,6 +196,44 @@ public class JobManager
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInMinutes(5)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addNotificationJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Notification Job");
+
+		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+				.withIdentity("NotificationJob", JOB_GROUP_SYSTEM)
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("NotificationJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInMinutes(1)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addRecentChangeNotifyJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Recent Change Job");
+
+		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+				.withIdentity("RecentChangeJob", JOB_GROUP_SYSTEM)
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("RecentChangeJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInHours(24)
 						.repeatForever())
 				.build();
 

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -90,7 +91,9 @@ public class FilterQueryParams
 			}
 		}
 		//sort
-		Collections.sort(results, new BeanComparator<>(sortOrder, sortField));
+		if (StringUtils.isNotBlank(sortField)) {
+			Collections.sort(results, new BeanComparator<>(sortOrder, sortField));
+		}
 		return results;
 	}
 

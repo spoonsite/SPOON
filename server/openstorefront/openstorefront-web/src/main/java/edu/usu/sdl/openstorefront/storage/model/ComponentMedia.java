@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -38,7 +39,7 @@ public class ComponentMedia
 		extends BaseComponent
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String componentMediaId;
 
@@ -69,6 +70,16 @@ public class ComponentMedia
 
 	public ComponentMedia()
 	{
+	}
+
+	@Override
+	public int compareTo(Object o)
+	{
+		int value = super.compareTo(o);
+		if (value == 0) {
+			value = ServiceUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());
+		}
+		return value;
 	}
 
 	/**

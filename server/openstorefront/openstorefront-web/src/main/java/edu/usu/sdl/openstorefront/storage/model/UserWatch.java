@@ -30,7 +30,7 @@ public class UserWatch
 		extends BaseEntity
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String userWatchId;
 

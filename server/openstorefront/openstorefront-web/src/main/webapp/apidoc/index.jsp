@@ -80,7 +80,10 @@ limitations under the License.
 				</li>
 				<li>
 					<a href="#../API.action?API&resourceClass=IntegrationResource">Integration</a>
-				</li>					
+				</li>
+				<li>
+					<a href="#../API.action?API&resourceClass=UserMessageResource">User Messages</a>
+				</li>				
 			</ul>
 			
 			<h4 title="Services are actions related that act across resources or apply behaviour to the system.">
@@ -92,7 +95,10 @@ limitations under the License.
 				</li>
 				<li>
 					<a href="#../API.action?API&resourceClass=JobService&classPath=service">Job</a>					
-				</li>		
+				</li>
+				<li>
+					<a href="#../API.action?API&resourceClass=NotificationService&classPath=service">Notification</a>					
+				</li>				
 				<li>
 					<a href="#../API.action?API&resourceClass=JiraService&classPath=service">Jira</a>					
 				</li>					

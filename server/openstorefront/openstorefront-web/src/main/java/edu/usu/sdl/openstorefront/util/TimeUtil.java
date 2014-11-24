@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.util;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,6 +51,18 @@ public class TimeUtil
 	public static Date currentDate()
 	{
 		return new Date(System.currentTimeMillis());
+	}
+
+	public static long daysToMillis(int days)
+	{
+		long daysInMillis = days * 24 * 60 * 60000;
+		return daysInMillis;
+	}
+
+	public static Date beginningOfDay(Date date)
+	{
+		Instant instant = Instant.ofEpochMilli(date.getTime()).truncatedTo(ChronoUnit.DAYS);
+		return new Date(instant.toEpochMilli());
 	}
 
 }

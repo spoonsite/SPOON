@@ -19,8 +19,8 @@ import com.atlassian.jira.rest.client.api.domain.Issue;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 
 /**
@@ -34,13 +34,13 @@ public interface ComponentServicePrivate
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity);
 
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentTag(ComponentTag tag, boolean test);
+	public void doSaveComponentTag(ComponentTag tag, boolean updateLastActivity);
 
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public RequiredForComponent saveComponent(RequiredForComponent component, boolean test);
+	public RequiredForComponent doSaveComponent(RequiredForComponent component);
 
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void deactivateComponent(String componentId, boolean test);
+	public void doDeactivateComponent(String componentId);
 
 	/**
 	 * This will handle all the mapping for the component attributes based on a

@@ -75,7 +75,11 @@ public class PropertiesManager
 	public static final String KEY_MAIL_REPLY_NAME = "mail.reply.name";
 	public static final String KEY_MAIL_REPLY_ADDRESS = "mail.reply.address";
 	public static final String KEY_MESSAGE_KEEP_DAYS = "message.archive.days";
-	public static final String KEY_MESSAGE_MIN_QUEUE_MINUTES = "message.minqueue.mintues";
+	public static final String KEY_MESSAGE_MIN_QUEUE_MINUTES = "message.queue.minmintues";
+	public static final String KEY_MESSAGE_MAX_RETRIES = "message.maxretires";
+	public static final String KEY_MESSAGE_RECENT_CHANGE_DAYS = "message.recentchanges.days";
+
+	public static final String KEY_APPLICATION_TITLE = "app.title";
 
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
