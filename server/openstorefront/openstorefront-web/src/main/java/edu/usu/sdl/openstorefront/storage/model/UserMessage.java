@@ -28,7 +28,9 @@ public class UserMessage
 		extends BaseEntity
 {
 
-	@PK
+	public static final String SORT_FIELD_USERNAME = "username";
+
+	@PK(generated = true)
 	@NotNull
 	private String userMessageId;
 
@@ -36,6 +38,11 @@ public class UserMessage
 	private String username;
 	private String componentId;
 	private String bodyOfMessage;
+	private String subject;
+	private String sentEmailAddress;
+
+	@NotNull
+	private Integer retryCount;
 
 	public UserMessage()
 	{
@@ -79,6 +86,36 @@ public class UserMessage
 	public void setBodyOfMessage(String bodyOfMessage)
 	{
 		this.bodyOfMessage = bodyOfMessage;
+	}
+
+	public String getSentEmailAddress()
+	{
+		return sentEmailAddress;
+	}
+
+	public void setSentEmailAddress(String sentEmailAddress)
+	{
+		this.sentEmailAddress = sentEmailAddress;
+	}
+
+	public String getSubject()
+	{
+		return subject;
+	}
+
+	public void setSubject(String subject)
+	{
+		this.subject = subject;
+	}
+
+	public Integer getRetryCount()
+	{
+		return retryCount;
+	}
+
+	public void setRetryCount(Integer retryCount)
+	{
+		this.retryCount = retryCount;
 	}
 
 }

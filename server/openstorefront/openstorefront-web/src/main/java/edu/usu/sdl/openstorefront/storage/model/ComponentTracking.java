@@ -30,7 +30,7 @@ public class ComponentTracking
 		extends BaseComponent
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String componentTrackingId;
 

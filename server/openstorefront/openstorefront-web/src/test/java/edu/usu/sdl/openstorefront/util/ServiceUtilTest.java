@@ -23,6 +23,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -184,6 +185,125 @@ public class ServiceUtilTest
 
 		expResult = false;
 		result = ServiceUtil.isFieldsDifferent("Test", "Test");
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of isObjectsDifferent method, of class ServiceUtil.
+	 */
+	@Test
+	public void testIsObjectsDifferent()
+	{
+		System.out.println("isObjectsDifferent");
+
+		Component component = new Component();
+		component.setName("Test");
+
+		boolean consumeFieldsOnly = true;
+		boolean expResult = false;
+		boolean result = ServiceUtil.isObjectsDifferent(component, component, consumeFieldsOnly);
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of isFieldsDifferent method, of class ServiceUtil.
+	 */
+	@Test
+	public void testIsFieldsDifferent()
+	{
+		System.out.println("isFieldsDifferent");
+		Object original = "Test";
+		Object newField = "Test2";
+		boolean expResult = true;
+		boolean result = ServiceUtil.isFieldsDifferent(original, newField);
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of getPKField method, of class ServiceUtil.
+	 */
+	@Test
+	public void testGetPKField() throws IllegalArgumentException, IllegalAccessException
+	{
+		System.out.println("getPKField");
+		Component entity = new Component();
+		entity.setComponentId("Test");
+
+		Field result = ServiceUtil.getPKField(entity);
+		result.setAccessible(true);
+		if ("Test".equals(result.get(entity)) == false) {
+			fail("Unable to get Id");
+		}
+
+	}
+
+	/**
+	 * Test of isPKFieldGenerated method, of class ServiceUtil.
+	 */
+	@Test
+	public void testIsPKFieldGenerated()
+	{
+		System.out.println("isPKFieldGenerated");
+		Component entity = new Component();
+		boolean expResult = true;
+		boolean result = ServiceUtil.isPKFieldGenerated(entity);
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of getPKFieldValue method, of class ServiceUtil.
+	 */
+	@Test
+	public void testGetPKFieldValue()
+	{
+		System.out.println("getPKFieldValue");
+		Component entity = new Component();
+		entity.setComponentId("Test");
+		String expResult = "Test";
+		String result = ServiceUtil.getPKFieldValue(entity);
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of updatePKFieldValue method, of class ServiceUtil.
+	 */
+	@Test
+	public void testUpdatePKFieldValue()
+	{
+		System.out.println("updatePKFieldValue");
+		Component entity = new Component();
+		String value = "Test";
+		ServiceUtil.updatePKFieldValue(entity, value);
+		assertEquals("Test", entity.getComponentId());
+	}
+
+	/**
+	 * Test of compareConsumeFields method, of class ServiceUtil.
+	 */
+	@Test
+	public void testCompareConsumeFields()
+	{
+		System.out.println("compareConsumeFields");
+		Component component = new Component();
+		component.setName("Test");
+		component.setActiveStatus(Component.ACTIVE_STATUS);
+
+		Component component2 = new Component();
+		component2.setName("Test");
+		component2.setActiveStatus(Component.ACTIVE_STATUS);
+		int expResult = 0;
+		int result = ServiceUtil.compareConsumeFields(component, component2);
+		assertEquals(expResult, result);
+
+		component2 = new Component();
+		component2.setName("Test2");
+		expResult = -1;
+		result = ServiceUtil.compareConsumeFields(component, component2);
 		assertEquals(expResult, result);
 
 	}

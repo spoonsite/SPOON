@@ -13,25 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
+package edu.usu.sdl.openstorefront.service.message;
 
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import org.quartz.JobExecutionContext;
+import org.codemonkey.simplejavamail.Email;
 
 /**
- * Handles Sending queued messages.
  *
  * @author dshurtleff
  */
-public class NotificationJob
-		extends BaseJob
+public class TestMessageGenerator
+		extends BaseMessageGenerator
 {
 
-	@Override
-	protected void executeInternaljob(JobExecutionContext context)
+	public TestMessageGenerator(MessageContext messageContext)
 	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getUserService().processAllUserMessages();
+		super(messageContext);
+	}
+
+	@Override
+	protected String getSubject()
+	{
+		return "Email Check";
+	}
+
+	@Override
+	protected String generateMessageInternal(Email email)
+	{
+		StringBuilder message = new StringBuilder();
+		message.append("This is a test message to used to confirm the email was sent to you as intended.");
+		return message.toString();
+	}
+
+	@Override
+	protected String getUnsubscribe()
+	{
+		return "If you are not the intented user of this message.  Please delete this message. ";
 	}
 
 }

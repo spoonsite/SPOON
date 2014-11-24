@@ -162,6 +162,18 @@ public class UserProfileResource
 		return Response.ok(validationResult.toRestError()).build();
 	}
 
+	@POST
+	@APIDescription("Sends test email to user id")
+	@RequireAdmin(UserProfileRequireHandler.class)
+	@Path("/{id}/test-email")
+	public Response sendTestEmail(
+			@PathParam("id") String username
+	)
+	{
+		service.getUserService().sendTestEmail(username);
+		return Response.ok().build();
+	}
+
 	@GET
 	@APIDescription("Retrieves Active User Watches.")
 	@RequireAdmin(UserProfileRequireHandler.class)

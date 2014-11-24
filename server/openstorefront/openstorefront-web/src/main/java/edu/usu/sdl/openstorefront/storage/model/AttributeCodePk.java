@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class AttributeCodePk
-		extends BasePK
+		extends BasePK<AttributeCodePk>
 {
 
 	@NotNull
@@ -50,7 +50,7 @@ public class AttributeCodePk
 		if (!(obj instanceof AttributeCodePk)) {
 			return false;
 		}
-		return toKey().equals(((AttributeCodePk)obj).toKey());		
+		return toKey().equals(((AttributeCodePk) obj).toKey());
 	}
 
 	@Override
@@ -63,11 +63,17 @@ public class AttributeCodePk
 	}
 
 	@Override
+	public String pkValue()
+	{
+		return toKey();
+	}
+
+	@Override
 	public String toString()
 	{
 		return toKey();
 	}
-	
+
 	public String toKey()
 	{
 		return getAttributeType() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getAttributeCode();

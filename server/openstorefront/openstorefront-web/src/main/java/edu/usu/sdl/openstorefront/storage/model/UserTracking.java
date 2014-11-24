@@ -32,7 +32,7 @@ public class UserTracking
 		extends BaseEntity
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String trackingId;
 

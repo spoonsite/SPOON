@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import java.io.Serializable;
 import javax.persistence.Version;
 
@@ -22,9 +23,10 @@ import javax.persistence.Version;
  * This base class for PKs Version is needed for the transaction
  *
  * @author dshurtleff
+ * @param <T>
  */
-public class BasePK
-		implements Serializable
+public abstract class BasePK<T>
+		implements Serializable, Comparable<T>
 {
 
 	@Version
@@ -32,6 +34,22 @@ public class BasePK
 
 	public BasePK()
 	{
+	}
+
+	public abstract String pkValue();
+
+	@Override
+	public int compareTo(Object o)
+	{
+		if (o == null) {
+			return -1;
+		} else {
+			if (o instanceof BasePK) {
+				return ServiceUtil.compareObjects(this.pkValue(), ((BasePK) o).pkValue());
+			} else {
+				return -1;
+			}
+		}
 	}
 
 	public String getStorageVersion()

@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
+package edu.usu.sdl.openstorefront.service.api;
 
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import org.quartz.JobExecutionContext;
+import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
+import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 
 /**
- * Handles Sending queued messages.
  *
  * @author dshurtleff
  */
-public class NotificationJob
-		extends BaseJob
+public interface UserServicePrivate
 {
 
-	@Override
-	protected void executeInternaljob(JobExecutionContext context)
-	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getUserService().processAllUserMessages();
-	}
+	/**
+	 * Sends message and archives results
+	 *
+	 * @param userMessage
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void sendUserMessage(UserMessage userMessage);
 
 }

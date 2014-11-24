@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.openstorefront.service.transfermodel;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -25,61 +24,47 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
+ * Holds admin message information
  *
  * @author dshurtleff
  */
-public class ComponentMetadata
-		extends BaseComponent
+public class AdminMessage
 {
 
-	@PK(generated = true)
 	@NotNull
-	private String metadataId;
-
-	@NotNull
-	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
-	private String label;
+	@ConsumeField
+	private String subject;
 
 	@NotNull
-	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ADMIN_MESSAGE)
 	@Sanitize(BasicHTMLSanitizer.class)
-	private String value;
+	@ConsumeField
+	private String message;
 
-	public ComponentMetadata()
+	public AdminMessage()
 	{
 	}
 
-	public String getMetadataId()
+	public String getSubject()
 	{
-		return metadataId;
+		return subject;
 	}
 
-	public void setMetadataId(String metadataId)
+	public void setSubject(String subject)
 	{
-		this.metadataId = metadataId;
+		this.subject = subject;
 	}
 
-	public String getLabel()
+	public String getMessage()
 	{
-		return label;
+		return message;
 	}
 
-	public void setLabel(String label)
+	public void setMessage(String message)
 	{
-		this.label = label;
-	}
-
-	public String getValue()
-	{
-		return value;
-	}
-
-	public void setValue(String value)
-	{
-		this.value = value;
+		this.message = message;
 	}
 
 }

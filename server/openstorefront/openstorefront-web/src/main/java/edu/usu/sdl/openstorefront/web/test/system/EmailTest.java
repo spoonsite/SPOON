@@ -13,25 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
+package edu.usu.sdl.openstorefront.web.test.system;
 
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import org.quartz.JobExecutionContext;
+import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**
- * Handles Sending queued messages.
  *
  * @author dshurtleff
  */
-public class NotificationJob
-		extends BaseJob
+public class EmailTest
+		extends BaseTestCase
 {
 
-	@Override
-	protected void executeInternaljob(JobExecutionContext context)
+	public EmailTest()
 	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getUserService().processAllUserMessages();
+		this.description = "Email_Test";
+	}
+
+	@Override
+	protected void runInternalTest()
+	{
+		service.getUserService().sendTestEmail("admin");
 	}
 
 }

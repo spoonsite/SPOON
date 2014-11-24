@@ -58,6 +58,7 @@ public class UserProfileView
 	@NotNull
 	private String updateUser;
 	private String guid;
+	private Boolean notifyOfNew;
 
 	@NotNull
 	private boolean admin;
@@ -78,6 +79,7 @@ public class UserProfileView
 		view.setCreateDts(profile.getCreateDts());
 		view.setUpdateDts(profile.getUpdateDts());
 		view.setUpdateUser(profile.getUpdateUser());
+		view.setNotifyOfNew(profile.getNotifyOfNew());
 
 		if (StringUtils.isNotBlank(profile.getExternalGuid())) {
 			view.setGuid(profile.getExternalGuid());
@@ -205,6 +207,16 @@ public class UserProfileView
 	public void setGuid(String guid)
 	{
 		this.guid = guid;
+	}
+
+	public Boolean getNotifyOfNew()
+	{
+		return notifyOfNew;
+	}
+
+	public void setNotifyOfNew(Boolean notifyOfNew)
+	{
+		this.notifyOfNew = notifyOfNew;
 	}
 
 }

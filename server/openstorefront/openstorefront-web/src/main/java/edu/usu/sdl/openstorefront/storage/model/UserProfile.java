@@ -77,6 +77,9 @@ public class UserProfile
 	@ConsumeField
 	private String externalUserId;
 
+	@ConsumeField
+	private Boolean notifyOfNew;
+
 	public UserProfile()
 	{
 	}
@@ -169,6 +172,16 @@ public class UserProfile
 	public void setInternalGuid(String internalGuid)
 	{
 		this.internalGuid = internalGuid;
+	}
+
+	public Boolean getNotifyOfNew()
+	{
+		return notifyOfNew;
+	}
+
+	public void setNotifyOfNew(Boolean notifyOfNew)
+	{
+		this.notifyOfNew = notifyOfNew;
 	}
 
 }

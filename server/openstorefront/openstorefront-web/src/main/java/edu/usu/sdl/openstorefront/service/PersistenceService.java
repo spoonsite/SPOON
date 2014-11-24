@@ -229,7 +229,7 @@ public class PersistenceService
 				PK idAnnotation = field.getAnnotation(PK.class);
 				if (idAnnotation != null) {
 					if (id.getClass().getName().equals(field.getType().getName()) == false) {
-						//Manage PK is like been pull by the DB and passed back in ...let it through
+						//Manage PK  has likely been pull by the DB and passed back in ...let it through
 						if ((id instanceof Proxy) == false) {
 							pkValid = false;
 						}
@@ -306,6 +306,23 @@ public class PersistenceService
 		OObjectDatabaseTx db = getConnection();
 		try {
 			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(example));
+		} finally {
+			closeConnection(db);
+		}
+
+		return deleteCount;
+	}
+
+	public int deleteByQuery(Class entityClass, String whereClause, Map<String, Object> queryParams)
+	{
+		int deleteCount = 0;
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("delete from ").append(entityClass.getSimpleName());
+		queryString.append(" where ").append(whereClause);
+
+		OObjectDatabaseTx db = getConnection();
+		try {
+			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(queryParams);
 		} finally {
 			closeConnection(db);
 		}
@@ -629,11 +646,17 @@ public class PersistenceService
 		return results;
 	}
 
-	public <T> T persist(T entity)
+	public <T extends BaseEntity> T persist(T entity)
 	{
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {
+			String pkValue = ServiceUtil.getPKFieldValue(entity);
+			if (pkValue == null) {
+				if (ServiceUtil.isPKFieldGenerated(entity)) {
+					ServiceUtil.updatePKFieldValue(entity, generateId());
+				}
+			}
 			ValidationModel validationModel = new ValidationModel(entity);
 			validationModel.setSantize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
