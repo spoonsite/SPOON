@@ -93,7 +93,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           'id': list
         });
         $location.path('/compare');
-        console.log('list', encodeURI(list));
+        // console.log('list', encodeURI(list));
       };
 
       scope.addToCompare = function(id) {

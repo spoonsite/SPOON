@@ -16,18 +16,49 @@
 
 'use strict';
 
-app.directive('compareview', function () {
+app.directive('compareview', ['$timeout', function ($timeout) {
   return {
     templateUrl: 'views/details/compare.html',
     restrict: 'E',
     scope: {
-      details: '=data'
+      dataleft: '=',
+      dataright: '='
     },
     link: function postLink(scope, element, attrs) {
-      console.log('scope.details', scope.details);
-      scope.getDate = function(date){
-        if (date)
-        {
+
+      scope.getObjectContent = function(details) {
+        var temp = {};
+        temp.value = [];
+        var keys = Object.keys(details);
+        _.each(keys, function(prop){
+          var property = {};
+          property.checkedLabel = camelToSentence(prop);
+          property.data = details[prop];
+          property.checked = true;
+          temp[prop] = property;
+        })
+        if (temp.value){
+          delete temp.value;
+        }
+        // details.checkedLabel = camelToSentence();
+        return temp;
+      }
+
+      scope.reset = function() {
+        if (scope.detailsleft) {
+          _.each(scope.detailsleft, function(detail){
+            detail.checked = true;
+          });
+        }
+        if (scope.detailsright) {
+          _.each(scope.detailsright, function(detail){
+            detail.checked = true;
+          });
+        }
+      }
+
+      scope.getDate = function(date) {
+        if (date) {
           var d = new Date(date);
           var currDate = d.getDate();
           var currMonth = d.getMonth();
@@ -36,9 +67,14 @@ app.directive('compareview', function () {
         }
         return null;
       };
+
+      scope.print = function() {
+        window.print();
+      }
+
       scope.formatTags = function(tags) {
         var result = '';
-        _.each(tags, function(tag){
+        _.each(tags, function(tag) {
           if (result.length > 0) {
             result = result + ", " + tag.text;
           } else {
@@ -48,13 +84,8 @@ app.directive('compareview', function () {
         return result;
       }
 
-      scope.isEvaluationPresent = function() {
-        if (scope.details) {
-          var details = scope.details;
-          return details.evaluation.checked && details.evaluation.data && details.evaluation.data.evaluationSections && details.evaluation.data.evaluationSections.length;
-        } else {
-          return false;
-        }
+      scope.isEvaluationPresent = function(details) {
+        return details.evaluation.checked && details.evaluation.data && details.evaluation.data.evaluationSections && details.evaluation.data.evaluationSections.length;
       }
 
       scope.getFullRating = function(num) {
@@ -68,6 +99,73 @@ app.directive('compareview', function () {
       scope.getTimes = function(n){
         return new Array(parseInt(n));
       };
+
+      scope.$watch('dataleft', function(){
+        if (scope.dataleft){
+          scope.detailsleft = angular.copy(scope.getObjectContent(scope.dataleft));
+          scope.resetHeights();
+        };
+      });
+
+      scope.$watch('dataright', function(){
+        if (scope.dataright){
+          scope.detailsright = angular.copy(scope.getObjectContent(scope.dataright));
+          scope.resetHeights();
+        };
+      });
+
+
+      var resetHeight = function(idleft, idright) {
+        var left = $('#' + idleft).outerHeight();
+        var right = $('#' + idright).outerHeight();
+
+        // console.log('left', left);
+        // console.log('right', right);
+
+        if (left > right) {
+          element.find('#' + idright).css('height', left + 'px');
+        } else {
+          element.find('#' + idleft).css('height', right + 'px');
+        }
+      }
+
+      /***************************************************************
+      * This function saves a component's tags
+      ***************************************************************/
+      scope.getEvalDescription = function(name){
+        return MOCKDATA.evalSectionDescriptionMap[name];
+      };
+
+      var timeout;
+      $(window).resize(function() {
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+          scope.resetHeights();
+        }, 500)
+      })
+
+      scope.resetHeights = function() {
+        if (scope.detailsright && scope.detailsleft) {
+          $timeout(function(){
+            console.log('scope.detailsright', scope.detailsright);
+            console.log('scope.detailsleft', scope.detailsleft);
+            
+            element.find('*').css('height', 'auto');
+            resetHeight('linersleft', 'linersright');
+            resetHeight('tagsleft', 'tagsright');
+            resetHeight('detailsleft', 'detailsright');
+            resetHeight('factorsleft', 'factorsright');
+            resetHeight('resourcesleft', 'resourcesright');
+            resetHeight('attributesleft', 'attributesright');
+            resetHeight('contactsleft', 'contactsright');
+            resetHeight('subcomponentsleft', 'subcomponentsright');
+            resetHeight('dependenciesleft', 'dependenciesright');
+            resetHeight('reviewsleft', 'reviewsright');
+            resetHeight('questionsleft', 'questionsright');
+          }, 100);
+        }
+      }
+
     }
-  };
-});
+  }
+}]);

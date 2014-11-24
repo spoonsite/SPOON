@@ -32,6 +32,7 @@ import javax.validation.constraints.NotNull;
 public class ComponentPrintView
 {
 
+	private String componentId;
 	private String componentName;
 	private String description;
 	private ComponentRelationshipView parentComponent;
@@ -60,6 +61,7 @@ public class ComponentPrintView
 
 	public void setComponentDetails(Component component, Component parentComponent)
 	{
+		setComponentId(component.getComponentId());
 		setComponentName(component.getName());
 		setDescription(component.getDescription());
 		setVersion(component.getVersion());
@@ -74,6 +76,7 @@ public class ComponentPrintView
 	public static ComponentPrintView toView(ComponentDetailView component){
 		ComponentPrintView view = new ComponentPrintView();
 		
+		view.setComponentId(component.getComponentId());
 		view.setComponentName(component.getName());
 		view.setDescription(component.getDescription());
 		view.setVersion(component.getVersion());
@@ -414,5 +417,21 @@ public class ComponentPrintView
 	public void setComponentViews(Integer componentViews)
 	{
 		this.componentViews = componentViews;
+	}
+
+	/**
+	 * @return the componentId
+	 */
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	/**
+	 * @param componentId the componentId to set
+	 */
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
 	}
 }
