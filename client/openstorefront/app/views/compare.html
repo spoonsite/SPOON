@@ -12,9 +12,7 @@
 </div>
 
 <div class="container-fluid" style="overflow: hidden; width: 100%;">
-  <div ng-repeat="item in pair" class="col-md-6" style="padding: 0px;">
-    <compareview data='item'></compareview>
-  </div>
+  <compareview dataleft="pair[0]" dataright="pair[1]"></compareview>
 </div>
 
 

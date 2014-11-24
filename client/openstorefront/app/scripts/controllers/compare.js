@@ -62,16 +62,29 @@ app.controller('CompareCtrl', ['$scope', 'business', '$location', function ($sco
 
 
   $scope.setCompare = function(id, item){
+    console.log('id', id);
+    console.log('$scope.pair', $scope.pair);
+    
     if (item.type === 'component' && !$scope.showChoices) {
       if (!$scope.pair[0] && !$scope.pair[1]) {
-        $scope.pair[0] = _.find($scope.data, {'componentId': id});
-        // console.log('$scope.pair[0]', $scope.pair[0]);
+        Business.componentservice.getComponentPrint(id, true).then(function(result){
+          $scope.pair[0] = result;
+        }, function() {
+          $scope.pair[0] = {};
+        })
       } else if(!$scope.pair[1] && $scope.pair[0] && id !== $scope.pair[0].componentId) {
-        $scope.pair[1] = _.find($scope.data, {'componentId': id});
+        Business.componentservice.getComponentPrint(id, true).then(function(result){
+          $scope.pair[1] = result;
+        }, function() {
+          $scope.pair[1] = {};
+        })
         // console.log('$scope.pair[1]', $scope.pair[1]);
       } else if(!$scope.pair[0] && $scope.pair[1] && id !== $scope.pair[1].componentId) {
-        $scope.pair[0] = _.find($scope.data, {'componentId': id});
-        // console.log('$scope.pair[0]', $scope.pair[0]);
+        Business.componentservice.getComponentPrint(id, true).then(function(result){
+          $scope.pair[0] = result;
+        }, function() {
+          $scope.pair[0] = {};
+        })
       } else {
         requestChange(id, item);
       }
