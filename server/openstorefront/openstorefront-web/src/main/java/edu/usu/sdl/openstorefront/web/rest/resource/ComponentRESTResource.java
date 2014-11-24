@@ -59,6 +59,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
@@ -229,11 +230,21 @@ public class ComponentRESTResource
 	@Path("/{id}/detail")
 	public Response getComponentDetails(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam String componentId,
+			@QueryParam("type")
+			@DefaultValue("default")
+			@APIDescription("Pass 'Print' to retrieve special print view") String type)
 	{
-		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+		ComponentPrintView componentPrint = null;
+		ComponentDetailView componentDetail = null;
+		if (type.equals("print")){
+			ComponentDetailView temp = service.getComponentService().getComponentDetails(componentId);
+			componentPrint = ComponentPrintView.toView(temp);
+		} else {
+			componentDetail = service.getComponentService().getComponentDetails(componentId);
+		}
 		//Track Views
-		if (componentDetail != null) {
+		if (componentDetail != null || componentPrint != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
 			componentTracking.setClientIp(request.getRemoteAddr());
 			componentTracking.setComponentId(componentId);
@@ -245,7 +256,13 @@ public class ComponentRESTResource
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
-		return sendSingleEntityResponse(componentDetail);
+		if (componentDetail != null){
+			return sendSingleEntityResponse(componentDetail);
+		} else if (componentPrint != null){
+			return sendSingleEntityResponse(componentPrint);
+		} else {
+			return Response.ok().build();
+		}
 	}
 
 	@DELETE
@@ -594,7 +611,7 @@ public class ComponentRESTResource
 	{
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
-		pk.setEvaulationSection(evalSection);
+		pk.setEvaluationSection(evalSection);
 		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, pk);
 	}
 
@@ -641,7 +658,7 @@ public class ComponentRESTResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
-		pk.setEvaulationSection(evalSectionId);
+		pk.setEvaluationSection(evalSectionId);
 		ComponentEvaluationSection componentEvaluationSection = service.getPersistenceService().findById(ComponentEvaluationSection.class, pk);
 		if (componentEvaluationSection != null) {
 			section.setComponentId(componentId);
@@ -665,7 +682,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + section.getComponentId() + "/sections/" + section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
+			return Response.created(URI.create("v1/resource/components/" + section.getComponentId() + "/sections/" + section.getComponentEvaluationSectionPk().getEvaluationSection())).entity(section).build();
 		} else {
 			return Response.ok(section).build();
 		}

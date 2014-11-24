@@ -31,6 +31,9 @@
             </button>
             <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
             </button>
+            <button class='btn btn-default detailsTitleButton' id="printLink" ng-click="goTo('/print', {'type':'component', 'id': details.details.componentId})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Print View" data-trigger="hover">
+              <i class="fa fa-print imitateLink"></i>
+            </button>
             <button ng-show="!single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goToFullPage(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
               <i class="fa fa-copy imitateLink"></i>
             </button>

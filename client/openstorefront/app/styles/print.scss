@@ -1,8 +1,71 @@
+.printMeBody .left{
+  padding:5px;
+  overflow: hidden;
+}
+.printMeBody .left.border {
+  border: 1px solid #555;
+  margin-top: -1px;
+}
+.printMeBody .right{
+  position: relative;
+  left: -1px;
+  float: right;
+  width: 250px;
+}
+.printMeBody .right .section{
+  border: 1px solid #555;
+  padding: 5px;
+  margin-top: -1px;
+}
+.printMeBody .right .section:first-child{
+  margin-top: 0px;
+}
+.printMeBody .right table, .printMeBody .left table{
+  font-size: 11px;
+}
+.paper {
+  padding:5px;
+  background: white;
+}
+
+.liners{
+  border:1px solid #555;
+  margin-right: 5px;
+  padding:5px;
+}
+.liners .line{
+  position: relative;
+}
+
+.pageBreak {
+  padding: 5px;
+}
+
+.printMeBody table {
+  margin-bottom: 0px;
+}
+
 @media print {
+
+  *{
+    float: none;
+  }
   #nav, #nav * {
     display: none;
   }
   .hideme, .hideme * {
     display: none;
+  }
+  .printMeBody{
+    margin-top: 0px !important;
+    padding-left: 0px !important;
+  }
+  .printMeBody .right .section {
+  }
+  .pageBreak{
+    display: block; /* unhide all tabs */
+    break-before: always;
+    page-break-before: always;
+    page-break-inside: avoid;
   }
 }

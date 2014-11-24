@@ -12,9 +12,9 @@
       </span>
     </label>
     <br />
-    <div ng-class="listOfClasses">
+    <div ng-class="listOfClasses" style="overflow:hidden;">
       <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
-      <ul rn-carousel rn-carousel-control rn-carousel-swipe="false" rn-carousel-indicator="true" style="height: 300px">
+      <ul rn-carousel rn-carousel-control rn-carousel-swipe="false" rn-carousel-indicator="true" style="height: 300px;">
         <li ng-repeat="row in data | partition:3" class="moreSection" style="margin-bottom: 20px;">
           <div ng-repeat="item in row" ng-class="$first? 'componentAddLeft': ''" style="width: 30%; display:inline-block; vertical-align: top; height: 300px; overflow:hidden;" ng-click="clickCallback(item.componentId, item)">
             <div style="white-space: inherit;">

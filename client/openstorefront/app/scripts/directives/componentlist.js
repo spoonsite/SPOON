@@ -89,10 +89,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       }
 
       scope.goToCompare = function() {
-        // $location.search({
-        //   'id': list
-        // });
-        // $location.path('/compare');
+        $location.search({
+          'id': list
+        });
+        $location.path('/compare');
         // console.log('list', encodeURI(list));
       };
 
@@ -197,7 +197,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         scope.title = attrs.title;
       }
       if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
-        // scope.showCompare = true;
+        scope.showCompare = true;
       }
 
       /***************************************************************

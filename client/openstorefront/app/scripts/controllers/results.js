@@ -516,11 +516,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
                 } else {
                   attribute.svcv4 = null;
                 }
-              } else if (attribute.type === 'DI2ELEVEL') {
+              } 
+              else if (attribute.type === 'DI2ELEVEL') {
                 foundEvaluation = attribute;
               }
             });
-            $scope.details.details.evaluation = foundEvaluation;
+            $scope.details.details.evaluationAttribute = foundEvaluation;
           }
           if ($scope.details.details.lastActivityDts && $scope.details.details.lastViewedDts)
           {

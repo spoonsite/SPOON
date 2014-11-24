@@ -370,9 +370,47 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         })
         .success(function(data, status, headers, config) { /*jshint unused:false*/          
           if (data && !isEmpty(data) && isNotRequestError(data)) {
+            console.log('data', data);
+            
             removeError();
             // console.log('data', data);
             save('component_'+id, data);
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function(data, status, headers, config){
+          result.reject('There was an error');
+        });
+      }
+    } else{
+      result.reject('A unique ID is required to retrieve component details');
+    }
+    return result.promise;
+  };
+
+  componentservice.getComponentPrint = function(id, override) {
+    var result = $q.defer();
+    if (id)
+    {
+      var url = 'api/v1/resource/components/'+id+'/detail?type=print';
+      var value = null;
+      // if they don't give me an ID I send them back the whole list.
+      value = checkExpire('component_print_'+id, minute * 2);
+      if (value && !override) {
+        result.resolve(value);
+      } else {
+        $http({
+          method: 'GET',
+          url: url
+        })
+        .success(function(data, status, headers, config) { /*jshint unused:false*/          
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            // console.log('data', data);
+            save('component_print_'+id, data);
             result.resolve(data);
           } else {
             removeError();
@@ -427,13 +465,23 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
 
   componentservice.batchGetComponentDetails = function(list) {
     var result = $q.defer();
-    // var url = '/api/v1/resource/component/list=?'
-    var total = _.filter(MOCKDATA2.componentList, function(item){
-      return _.some(list, function(id){
-        return parseInt(id) === item.componentId;
-      });
+    var url = 'api/v1/resource/components/list';
+    $http({
+      method: 'GET',
+      url: url,
+      params: { 'idList': list}
+    }).success(function(data, status, headers, config){
+      if (data && !isEmpty(data) && isNotRequestError(data)) {
+          removeError();
+          result.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          result.reject(false);
+        }
+    }).error(function(data, status, headers, config){
+      result.reject(false);
     });
-    result.resolve(total);
     return result.promise;
   };
 

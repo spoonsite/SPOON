@@ -36,7 +36,7 @@ public class ComponentEvaluationSectionPk
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = EvaluationSection.class)
-	private String evaulationSection;
+	private String evaluationSection;
 
 	public ComponentEvaluationSectionPk()
 	{
@@ -83,14 +83,14 @@ public class ComponentEvaluationSectionPk
 		this.componentId = componentId;
 	}
 
-	public String getEvaulationSection()
+	public String getEvaluationSection()
 	{
-		return evaulationSection;
+		return evaluationSection;
 	}
 
-	public void setEvaulationSection(String evaulationSection)
+	public void setEvaluationSection(String evaluationSection)
 	{
-		this.evaulationSection = evaulationSection;
+		this.evaluationSection = evaluationSection;
 	}
 
 }

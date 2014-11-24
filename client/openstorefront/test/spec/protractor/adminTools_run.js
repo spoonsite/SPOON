@@ -32,8 +32,8 @@ describe('adminTools', function() {
 
 
     it('TODO-  Change a few values under Global Configuration then change back', function() {
-        /*
-        // Hourly Tab
+
+        // Hourly Tab *
         browser.driver.sleep(2000);
         element.all(by.css('.ng-isolate-scope')).get(0).click();
         element(by.id('HoursInput')).sendKeys('99');
@@ -44,7 +44,7 @@ describe('adminTools', function() {
         element(by.id('AtMinutes')).sendKeys(protractor.Key.ENTER);
 
         element(by.css('.btn.btn-default')).click();
-        */
+
 
     });
 

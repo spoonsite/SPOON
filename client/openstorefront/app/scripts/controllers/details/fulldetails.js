@@ -669,6 +669,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.$watch('details', function () {
     if ($scope.details){
       if ($scope.details.details) {
+        console.log('$scope.details.details', $scope.details.details);
+        
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
         if (found) {
           $scope.details.details.watched = true;
