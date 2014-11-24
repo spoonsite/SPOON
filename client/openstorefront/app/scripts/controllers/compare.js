@@ -62,9 +62,6 @@ app.controller('CompareCtrl', ['$scope', 'business', '$location', function ($sco
 
 
   $scope.setCompare = function(id, item){
-    console.log('id', id);
-    console.log('$scope.pair', $scope.pair);
-    
     if (item.type === 'component' && !$scope.showChoices) {
       if (!$scope.pair[0] && !$scope.pair[1]) {
         Business.componentservice.getComponentPrint(id, true).then(function(result){
