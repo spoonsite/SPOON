@@ -33,7 +33,7 @@ public class ComponentIntegrationConfig
 		extends BaseEntity
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String integrationConfigId;
 

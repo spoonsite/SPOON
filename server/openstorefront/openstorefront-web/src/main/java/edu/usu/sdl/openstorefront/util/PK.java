@@ -32,4 +32,5 @@ import java.lang.annotation.Target;
 public @interface PK
 {
 
+	boolean generated() default false;
 }

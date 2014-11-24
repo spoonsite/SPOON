@@ -274,8 +274,15 @@ public interface ComponentService
 	 * @return
 	 */
 	public RequiredForComponent saveComponent(RequiredForComponent component);
-	// Todo: Make an object that we can pass in to this function, or figure out which
-	// combination we'll need...
+
+	/**
+	 * Get all component full entities Note: this uses a cache to avoid
+	 * expensive query for use case where pulling the same is frequent.
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	public ComponentAll getFullComponent(String componentId);
 
 	/**
 	 * This save the full component; this meant for use in the importer. It will

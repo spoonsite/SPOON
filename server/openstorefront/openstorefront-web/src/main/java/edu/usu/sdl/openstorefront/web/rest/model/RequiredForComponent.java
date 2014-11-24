@@ -45,6 +45,9 @@ public class RequiredForComponent
 	@DataType(ComponentAttribute.class)
 	private List<ComponentAttribute> attributes = new ArrayList<>();
 
+	private boolean componentChanged;
+	private boolean attributeChanged;
+
 	public RequiredForComponent()
 	{
 	}
@@ -99,6 +102,26 @@ public class RequiredForComponent
 	public void setAttributes(List<ComponentAttribute> attributes)
 	{
 		this.attributes = attributes;
+	}
+
+	public boolean isComponentChanged()
+	{
+		return componentChanged;
+	}
+
+	public void setComponentChanged(boolean componentChanged)
+	{
+		this.componentChanged = componentChanged;
+	}
+
+	public boolean isAttributeChanged()
+	{
+		return attributeChanged;
+	}
+
+	public void setAttributeChanged(boolean attributeChanged)
+	{
+		this.attributeChanged = attributeChanged;
 	}
 
 }

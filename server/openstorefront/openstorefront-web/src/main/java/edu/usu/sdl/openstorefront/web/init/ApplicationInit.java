@@ -59,9 +59,9 @@ public class ApplicationInit
 		startupManager(new JiraManager());
 		startupManager(new LookupImporter());
 		startupManager(new AttributeImporter());
+		startupManager(new MailManager());
 		startupManager(new JobManager());
 		startupManager(new UserAgentManager());
-		startupManager(new MailManager());
 
 	}
 
@@ -75,9 +75,9 @@ public class ApplicationInit
 	public void contextDestroyed(ServletContextEvent sce)
 	{
 		//Shutdown in reverse order to make sure the dependancies are good.
-		shutdownManager(new MailManager());
 		shutdownManager(new UserAgentManager());
 		shutdownManager(new JobManager());
+		shutdownManager(new MailManager());
 		shutdownManager(new JiraManager());
 		shutdownManager(new OSFCacheManager());
 		shutdownManager(new SolrManager());

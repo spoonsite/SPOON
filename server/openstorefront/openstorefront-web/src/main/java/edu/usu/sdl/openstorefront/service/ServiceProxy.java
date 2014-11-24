@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.api.LookupService;
 import edu.usu.sdl.openstorefront.service.api.SearchService;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.api.UserService;
+import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 
 /**
  * Entry point to the service layer; Expecting one Service Proxy per thread. Not
@@ -41,6 +42,7 @@ public class ServiceProxy
 	protected ComponentServicePrivate componentServicePrivate;
 	protected SearchService searchService;
 	protected UserService userService;
+	protected UserServicePrivate userServicePrivate;
 	protected SystemService systemService;
 
 	public ServiceProxy()
@@ -98,6 +100,14 @@ public class ServiceProxy
 			userService = DynamicProxy.newInstance(new UserServiceImpl());
 		}
 		return userService;
+	}
+
+	public UserServicePrivate getUserServicePrivate()
+	{
+		if (userService == null) {
+			userServicePrivate = DynamicProxy.newInstance(new UserServiceImpl());
+		}
+		return userServicePrivate;
 	}
 
 	public SystemService getSystemService()

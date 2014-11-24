@@ -30,7 +30,7 @@ public class Highlight
 		extends BaseEntity
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String highlightId;
 

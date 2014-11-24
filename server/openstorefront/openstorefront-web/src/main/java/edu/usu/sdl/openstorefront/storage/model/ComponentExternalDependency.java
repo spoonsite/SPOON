@@ -32,7 +32,7 @@ public class ComponentExternalDependency
 		extends BaseComponent
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String dependencyId;
 

@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,7 +27,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class ComponentAttributePk
-		extends BasePK
+		extends BasePK<ComponentAttributePk>
 {
 
 	@NotNull
@@ -46,9 +48,37 @@ public class ComponentAttributePk
 	}
 
 	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null || (obj instanceof ComponentAttributePk == false)) {
+			return false;
+		}
+		ComponentAttributePk compareObj = (ComponentAttributePk) obj;
+		return pkValue().equals(compareObj.pkValue());
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 5;
+		hash = 37 * hash + Objects.hashCode(getComponentId());
+		hash = 37 * hash + Objects.hashCode(getAttributeType());
+		hash = 37 * hash + Objects.hashCode(getAttributeCode());
+		return hash;
+	}
+
+	@Override
+	public String pkValue()
+	{
+		return getComponentId() + ServiceUtil.COMPOSITE_KEY_SEPERATOR
+				+ getAttributeType() + ServiceUtil.COMPOSITE_KEY_SEPERATOR
+				+ getAttributeCode() + ServiceUtil.COMPOSITE_KEY_SEPERATOR;
+	}
+
+	@Override
 	public String toString()
 	{
-		return attributeType + "-" + attributeCode;
+		return pkValue();
 	}
 
 	public String getComponentId()

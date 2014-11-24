@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
+package edu.usu.sdl.openstorefront.sort;
 
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import org.quartz.JobExecutionContext;
+import edu.usu.sdl.openstorefront.storage.model.UserMessage;
+import java.util.Comparator;
 
 /**
- * Handles Sending queued messages.
+ * Sorts User Messages
  *
  * @author dshurtleff
  */
-public class NotificationJob
-		extends BaseJob
+public class UserMessageComparator<T extends UserMessage>
+		implements Comparator<T>
 {
 
 	@Override
-	protected void executeInternaljob(JobExecutionContext context)
+	public int compare(T o1, T o2)
 	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getUserService().processAllUserMessages();
+		return o2.getUpdateDts().compareTo(o1.getUpdateDts());
 	}
 
 }

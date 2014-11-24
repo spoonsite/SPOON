@@ -18,12 +18,14 @@ package edu.usu.sdl.openstorefront.service.api;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -200,9 +202,8 @@ public interface UserService
 	 * This will send a test email to the address on the user profile.
 	 *
 	 * @param username
-	 * @return true the system was able to send an email.
 	 */
-	public boolean checkEmail(String username);
+	public void sendTestEmail(String username);
 
 	/**
 	 * Pulls active watches for the component and create messages for 'notfiy'
@@ -213,12 +214,63 @@ public interface UserService
 	public void checkComponentWatches(String componentId);
 
 	/**
+	 * Queue messaged will be delayed thus allowing for duplicate handling and
+	 * reduce spam.
+	 *
+	 * @param userMessage
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void queueUserMessage(UserMessage userMessage);
+
+	/**
 	 * Finds the messages based on filter
 	 *
 	 * @param filter
 	 * @return
 	 */
 	public List<UserMessage> findUserMessages(FilterQueryParams filter);
+
+	/**
+	 * This will inactivate a user message
+	 *
+	 * @param userMessageId
+	 */
+	public void removeUserMessage(String userMessageId);
+
+	/**
+	 * This will remove old user messages
+	 */
+	public void cleanupOldUserMessages();
+
+	/**
+	 * Sends AdminMessages to all uses of the storefront with emails
+	 *
+	 * @param adminMessage
+	 */
+	public void sendAdminMessage(AdminMessage adminMessage);
+
+	/**
+	 * This handles processing all user messages. Cleanup old message, sending
+	 * out queued messages.
+	 */
+	public void processAllUserMessages();
+
+	/**
+	 * Sends an email to all user bases on what has changed since the date.
+	 * Components, Articles, Hightlights
+	 *
+	 * @param lastRunDts
+	 */
+	public void sendRecentChangeEmail(Date lastRunDts);
+
+	/**
+	 * Sends an email to all user bases on what has changed since the date.
+	 * Components, Articles, Hightlights
+	 *
+	 * @param lastRunDts
+	 * @param emailAddress (Only sends to this email if set)
+	 */
+	public void sendRecentChangeEmail(Date lastRunDts, String emailAddress);
 
 //  This will be fleshed out more later
 //	/**

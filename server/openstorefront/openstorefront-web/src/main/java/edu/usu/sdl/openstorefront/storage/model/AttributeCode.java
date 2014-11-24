@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -73,6 +74,54 @@ public class AttributeCode
 
 	public AttributeCode()
 	{
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 7;
+		hash = 79 * hash + Objects.hashCode(this.attributeCodePk);
+		hash = 79 * hash + Objects.hashCode(this.label);
+		hash = 79 * hash + Objects.hashCode(this.description);
+		hash = 79 * hash + Objects.hashCode(this.articleFilename);
+		hash = 79 * hash + Objects.hashCode(this.detailUrl);
+		hash = 79 * hash + Objects.hashCode(this.groupCode);
+		hash = 79 * hash + Objects.hashCode(this.sortOrder);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final AttributeCode other = (AttributeCode) obj;
+		if (!Objects.equals(this.attributeCodePk, other.attributeCodePk)) {
+			return false;
+		}
+		if (!Objects.equals(this.label, other.label)) {
+			return false;
+		}
+		if (!Objects.equals(this.description, other.description)) {
+			return false;
+		}
+		if (!Objects.equals(this.articleFilename, other.articleFilename)) {
+			return false;
+		}
+		if (!Objects.equals(this.detailUrl, other.detailUrl)) {
+			return false;
+		}
+		if (!Objects.equals(this.groupCode, other.groupCode)) {
+			return false;
+		}
+		if (!Objects.equals(this.sortOrder, other.sortOrder)) {
+			return false;
+		}
+		return true;
 	}
 
 	public String getDescription()

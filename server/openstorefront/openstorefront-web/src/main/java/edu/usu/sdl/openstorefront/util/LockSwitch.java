@@ -13,25 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
-
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import org.quartz.JobExecutionContext;
+package edu.usu.sdl.openstorefront.util;
 
 /**
- * Handles Sending queued messages.
+ * Once switched on it doesn't switch off
  *
  * @author dshurtleff
  */
-public class NotificationJob
-		extends BaseJob
+public class LockSwitch
 {
 
-	@Override
-	protected void executeInternaljob(JobExecutionContext context)
+	private boolean switched;
+
+	public LockSwitch()
 	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getUserService().processAllUserMessages();
+	}
+
+	public boolean isSwitched()
+	{
+		return switched;
+	}
+
+	public void setSwitched(boolean switched)
+	{
+		if (this.switched == false) {
+			this.switched = switched;
+		}
 	}
 
 }

@@ -29,7 +29,7 @@ public class AttributeXRefMap
 		extends BaseEntity
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String xrefId;
 

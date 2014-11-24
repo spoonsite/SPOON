@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,6 +26,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("This is used for system managed properties")
 public class ApplicationProperty
 		extends BaseEntity
 {
@@ -42,9 +45,38 @@ public class ApplicationProperty
 	public static final String HIGHLIGHT_IMPORTER_LAST_SYNC_DTS = "HIGHLIGHTSYNCDTS";
 	public static final String COMPONENT_IMPORTER_LAST_SYNC_DTS = "COMPONENTSYNCDTS";
 	public static final String GLOBAL_INTEGRATION_REFRESH = "GLOBALINTREF";
+	public static final String RECENT_CHANGE_EMAIL_LAST_DTS = "REMAILLASTDTS";
 
 	public ApplicationProperty()
 	{
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 7;
+		hash = 23 * hash + Objects.hashCode(this.key);
+		hash = 23 * hash + Objects.hashCode(this.value);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ApplicationProperty other = (ApplicationProperty) obj;
+		if (!Objects.equals(this.key, other.key)) {
+			return false;
+		}
+		if (!Objects.equals(this.value, other.value)) {
+			return false;
+		}
+		return true;
 	}
 
 	public String getKey()
