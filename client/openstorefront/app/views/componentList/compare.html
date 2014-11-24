@@ -16,7 +16,7 @@
       <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
       <ul rn-carousel rn-carousel-control rn-carousel-swipe="false" rn-carousel-indicator="true" style="height: 300px;">
         <li ng-repeat="row in data | partition:3" class="moreSection" style="margin-bottom: 20px;">
-          <div ng-repeat="item in row" ng-class="$first? 'componentAddLeft': ''" style="width: 30%; display:inline-block; vertical-align: top; height: 300px; overflow:hidden;" ng-click="clickCallback(item.componentId, item)">
+          <div class="imitateLink" ng-repeat="item in row" ng-class="$first? 'componentAddLeft': ''" style="width: 30%; display:inline-block; vertical-align: top; height: 300px; overflow:hidden;" ng-click="clickCallback(item.componentId, item)">
             <div style="white-space: inherit;">
               <div class="container-fluid">
                 <div class="row" style="margin-left: 0px; margin-right: 0px">
