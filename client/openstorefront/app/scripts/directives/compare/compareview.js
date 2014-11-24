@@ -119,9 +119,6 @@ app.directive('compareview', ['$timeout', function ($timeout) {
         var left = $('#' + idleft).outerHeight();
         var right = $('#' + idright).outerHeight();
 
-        // console.log('left', left);
-        // console.log('right', right);
-
         if (left > right) {
           element.find('#' + idright).css('height', left + 'px');
         } else {
@@ -147,9 +144,6 @@ app.directive('compareview', ['$timeout', function ($timeout) {
       scope.resetHeights = function() {
         if (scope.detailsright && scope.detailsleft) {
           $timeout(function(){
-            console.log('scope.detailsright', scope.detailsright);
-            console.log('scope.detailsleft', scope.detailsleft);
-            
             element.find('*').css('height', 'auto');
             resetHeight('linersleft', 'linersright');
             resetHeight('tagsleft', 'tagsright');
