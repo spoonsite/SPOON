@@ -48,27 +48,27 @@
           <th class="valign" colspan="2"><h4>External Dependencies</h4></th>
         </tr>             
         <tr id="dependencies{{$index}}Update" data-ng-repeat="row in details.details.dependencies">
-          <td ng-class="getIsUpdated('dependencies'+$index)? 'updatedForUser': ''" class="text-left-bold">{{row.dependency}}</td>
-          <td class="text-left">{{row.comment}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('dependencies'+$index)? 'updatedForUser': ''" class="text-left-bold">{{row.dependency}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" class="text-left">{{row.comment}}</td>
         </tr>
       </tbody>
     </table>  
     <table ng-if="details.details.resources[0] !== undefined" class="table table-bordered table-hover" style="table-layout:fixed">
       <tbody>
         <tr>
-          <th class="valign"  colspan="18"><h4>Location of Component Artifacts</h4></th>
+          <th class="valign"  colspan="13"><h4>Location of Component Artifacts</h4></th>
         </tr>             
         <tr>
           <th class="valign"  colspan="5">Name</th>
-          <th class="valign"  colspan="5">Description</th>
+          <!-- <th class="valign"  colspan="5">Description</th> -->
           <th class="valign"  colspan="8">Link</th>
         </tr>             
         <tr id="resources{{$index}}Update" data-ng-repeat="row in details.details.resources">
-          <td ng-class="getIsUpdated('resources'+$index)? 'updatedForUser': ''" colspan="5" class="text-left-bold hasLinks" style="overflow:hidden;">{{row.resourceTypeDesc}}</td>
-          <td ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td>
-          <td ng-if="!row.description" colspan="5" class="text-left">&mdash;</td>
-          <!-- <td colspan="8" class="text-left hasLinks" ng-bind-html="{{row.link}}">{{row.link}}</td> -->
-          <td colspan="8" class="text-left hasLinks"><span ng-bind-html="row.link"></span></td>
+          <td ng-class="getIsUpdated('resources'+$index)? 'updatedForUser': ''" colspan="5" class="text-left-bold hasLinks" style="overflow:hidden; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;">{{row.resourceTypeDesc}}</td>
+          <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td> -->
+          <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.description" colspan="5" class="text-left">&mdash;</td> -->
+          <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks" ng-bind-html="{{row.link}}">{{row.link}}</td> -->
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks"><span dynamichtml="row.link"></span></td>
         </tr>
       </tbody>
     </table>                  
@@ -88,12 +88,12 @@
           <th class="valign"  colspan="6">Email</th>
         </tr>             
         <tr id="contacts{{$index}}Update" data-ng-repeat="row in details.details.contacts">
-          <td ng-class="getIsUpdated('contacts'+$index)? 'updatedForUser': ''" colspan="4" class="text-left">{{row.name}}</td>
-          <td colspan="4" class="text-left">{{row.positionDescription}}<span ng-if="row.organization && row.organization !== 'NA'">&nbsp;&mdash;&nbsp;{{row.organization}}</span></td>
-          <td ng-if="row.phone" colspan="4" class="text-left">{{row.phone}}</td>
-          <td ng-if="!row.phone" colspan="4" class="text-left">&mdash;</td>
-          <td ng-if="row.email" colspan="6" class="text-left">{{row.email}}</td>
-          <td ng-if="!row.email" colspan="6" class="text-left">&mdash;</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('contacts'+$index)? 'updatedForUser': ''" colspan="4" class="text-left">{{row.name}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="4" class="text-left">{{row.positionDescription}}<span ng-if="row.organization && row.organization !== 'NA'">&nbsp;&mdash;&nbsp;{{row.organization}}</span></td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.phone" colspan="4" class="text-left">{{row.phone}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.phone" colspan="4" class="text-left">&mdash;</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.email" colspan="6" class="text-left">{{row.email}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.email" colspan="6" class="text-left">&mdash;</td>
         </tr>
       </tbody>
     </table>  
@@ -131,13 +131,13 @@
           <th class="valign" colspan="16"><h4>Component Vitals</h4></th>
         </tr>             
         <tr id="attributes{{$index}}Update" ng-repeat="row in details.details.attributes">
-          <td ng-class="getIsUpdated('attributes'+$index)? 'updatedForUser': ''" colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
-          <td ng-if="row.codeLongDescription" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>
-          <td ng-if="!row.codeLongDescription" colspan="11" class="text-left">{{row.codeDescription}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('attributes'+$index)? 'updatedForUser': ''" colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.codeLongDescription" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.codeLongDescription" colspan="11" class="text-left">{{row.codeDescription}}</td>
         </tr>
         <tr ng-repeat="row in details.details.metadata">
-          <td colspan="5" class="text-left-bold">{{row.label}}</td>
-          <td colspan="11" class="text-left">{{row.value}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="5" class="text-left-bold">{{row.label}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="11" class="text-left">{{row.value}}</td>
         </tr>
       </tbody>
     </table>

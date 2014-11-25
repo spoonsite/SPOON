@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.directive('schedule', ['business', function (Business) {
+app.directive('schedule', ['business', '$timeout', function (Business, $timeout) {
   return {
     templateUrl: 'views/details/schedule.html',
     restrict: 'EA',
@@ -35,6 +35,31 @@ app.directive('schedule', ['business', function (Business) {
         }
         return null;
       };
+
+      var updateColumns = function(){
+        if (element.width() <= 693) {
+          element.find('#scheduleUl').css('width', '100%');
+          element.find('#scheduleDiv').css('margin-left', '0px');
+        } else {
+          element.find('#scheduleUl').css('width', '335px');
+          element.find('#scheduleDiv').css('margin-left', '315px');
+        }
+      }
+
+
+      scope.$on('$UPDATESCHEDULECOLUMNS', function() {
+        $timeout(function(){
+          updateColumns();
+        })
+      })
+
+      element.find('#scheduleHolder').on('resize', function() {
+        updateColumns();
+      })
+      $(window).resize(function() {
+        updateColumns();
+      })
+      updateColumns();
 
       if (scope.ngModel && scope.ngModel.code) {
         Business.lookupservice.getEvalLevels().then(function(result){

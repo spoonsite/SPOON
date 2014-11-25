@@ -36,13 +36,12 @@ setupParallax, triggerAlert, triggerError, removeError, initiateClick*/
   while (length--) {
     method = methods[length];
 
-        // Only stub undefined methods.
-        if (!console[method]) {
-          console[method] = noop;
-        }
-      }
-    }());
-
+    // Only stub undefined methods.
+    if (!console[method]) {
+      console[method] = noop;
+    }
+  }
+}());
 
 /*****************************
 * This function sets up the popovers for the results page, but could be 
@@ -337,7 +336,7 @@ var initiateClick = function(id) {
 //     container = _.find(popovers, function(item){
 //       return $(item).find('.popover-title').html() === name;
 //     });
-    
+
 //     timeout = self.timeout;
 //     $(container).on('mouseenter', function(){
 //       //We entered the actual popover – call off the dogs

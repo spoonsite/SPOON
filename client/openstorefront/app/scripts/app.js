@@ -339,8 +339,6 @@ var app = angular
       // Functions
       //////////////////////////////////////////////////////////////////////////////
       $rootScope.sendPageView = function(view) {
-        // console.log('we got a page view', view);
-        
         $analytics.pageTrack($location.url()+'/'+view);
       };
 
