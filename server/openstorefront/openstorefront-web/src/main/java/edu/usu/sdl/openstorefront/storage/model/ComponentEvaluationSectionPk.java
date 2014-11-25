@@ -57,14 +57,14 @@ public class ComponentEvaluationSectionPk
 	{
 		int hash = 7;
 		hash = 23 * hash + Objects.hashCode(getComponentId());
-		hash = 23 * hash + Objects.hashCode(getEvaulationSection());
+		hash = 23 * hash + Objects.hashCode(getEvaluationSection());
 		return hash;
 	}
 
 	@Override
 	public String pkValue()
 	{
-		return getComponentId() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getEvaulationSection();
+		return getComponentId() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getEvaluationSection();
 	}
 
 	@Override

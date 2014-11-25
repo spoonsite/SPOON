@@ -21,6 +21,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
 
   $scope.user                          = {};
   $scope.editQuestion                  = [];
+  $scope.currentTab                    = null;
 
   resetUpdateNotify();
 
@@ -660,6 +661,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   }
 
+  $scope.changeTab = function(tab) {
+    $scope.currentTab = tab.id;
+  }
+
+  $scope.$watch('currentTab', function() {
+    if ($scope.currentTab && $scope.currentTab === 'detailsTab') {
+      $scope.$emit('$TRIGGEREVENT', '$UPDATESCHEDULECOLUMNS');
+    }
+  });
+
 
   var onlyOnce = null;
 
@@ -669,8 +680,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.$watch('details', function () {
     if ($scope.details){
       if ($scope.details.details) {
-        console.log('$scope.details.details', $scope.details.details);
-        
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
         if (found) {
           $scope.details.details.watched = true;
@@ -699,7 +708,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           //
           ];
           
-          $scope.tab = $scope.detailResultsTabs[0];
+          $scope.currentTab = $scope.detailResultsTabs[0].id;
           $scope.selectedTab = $scope.detailResultsTabs[0];
 
         }
