@@ -259,12 +259,11 @@ var app = angular
         if (current && current.loadedTemplateUrl === 'views/results.html') {
           resetAnimGlobals();
         }
-
-        setTimeout(function () {
-          $('.searchBar:input[type=\'text\']').on('click', function () {
-            $(this).select();
-          });
-        }, 500);
+        // setTimeout(function () {
+        //   $('.searchBar:input[type=\'text\']').on('click', function () {
+        //     $(this).select();
+        //   });
+        // }, 500);
         $rootScope.$broadcast('$LOAD', 'bodyLoad');
       });
 

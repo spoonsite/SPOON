@@ -108,39 +108,48 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         scope.list = list;
       };
 
-      scope.$watch('data', function() {
-        if (scope.data && scope.data.length) {
-          element.find('.hideMore').attr('id', item);
-          item = 'read_more' + uniqueId++;
-          element.find('input.read_more').attr('id', item);
-          element.find('label.read_more').attr('for', item);
-          // $timeout(function(){
-          //   // if (scope.filters && scope.setFilters) {
-          //   //   if (scope.setFilters.length && scope.$parent.filters.length) {
-          //   //     _.each(scope.setFilters, function(set) {
-          //   //       var filter = _.find(scope.$parent.filters, {'type': set.type});
-          //   //       if (filter && filter.codes.length) {
-          //   //         var code = _.find(filter.codes, {'code': set.code});
-          //   //         if (code) {
-          //   //           code.checked = true;
-          //   //         }
-          //   //       }
-          //   //     });
-          //   //   }
-          //   //   scope.data = scope.$parent.applyFilters(scope.data);
-          //   //   if (scope.data) {
-          //   //     if(scope.data.length > 3) {
-          //   //       scope.hasMoreThan3 = true;
-          //   //     } else {
-          //   //       scope.hasMoreThan3 = false;
-          //   //     }
-          //   //     scope.addMore();
-          //   //   }
-          //   //   scope.init();
-          //   // }
-          // }, 10);
-        } //
-      }, true);
+      scope.getComponentScroll = function(item) {
+        if (item.componentId) {
+          return 'componentScroll'+item.componentId.replace(/\W/g, '');
+        } else {
+          return 'componentScroll'+item.attributes[0].type.replace(/\W/g, '')+item.attributes[0].code.replace(/\W/g, '');
+        }
+      }
+
+      // scope.$watch('data', function() {
+      //
+      if (scope.data && scope.data.length) {
+        element.find('.hideMore').attr('id', item);
+        item = 'read_more' + uniqueId++;
+        element.find('input.read_more').attr('id', item);
+        element.find('label.read_more').attr('for', item);
+        // $timeout(function(){
+        //   // if (scope.filters && scope.setFilters) {
+        //   //   if (scope.setFilters.length && scope.$parent.filters.length) {
+        //   //     _.each(scope.setFilters, function(set) {
+        //   //       var filter = _.find(scope.$parent.filters, {'type': set.type});
+        //   //       if (filter && filter.codes.length) {
+        //   //         var code = _.find(filter.codes, {'code': set.code});
+        //   //         if (code) {
+        //   //           code.checked = true;
+        //   //         }
+        //   //       }
+        //   //     });
+        //   //   }
+        //   //   scope.data = scope.$parent.applyFilters(scope.data);
+        //   //   if (scope.data) {
+        //   //     if(scope.data.length > 3) {
+        //   //       scope.hasMoreThan3 = true;
+        //   //     } else {
+        //   //       scope.hasMoreThan3 = false;
+        //   //     }
+        //   //     scope.addMore();
+        //   //   }
+        //   //   scope.init();
+        //   // }
+        // }, 10);
+      } //
+      // }, true);
 
 
 

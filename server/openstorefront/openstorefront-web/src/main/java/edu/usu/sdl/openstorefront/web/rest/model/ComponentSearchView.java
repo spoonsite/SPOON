@@ -64,6 +64,7 @@ public class ComponentSearchView
 	{
 	}
 
+
 	public static ComponentSearchView toView(Component component)
 	{
 		ServiceProxy service = new ServiceProxy();
