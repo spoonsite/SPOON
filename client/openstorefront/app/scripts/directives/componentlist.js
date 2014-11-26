@@ -108,6 +108,14 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         scope.list = list;
       };
 
+      scope.getComponentScroll = function(item) {
+        if (item.componentId) {
+          return 'componentScroll'+item.componentId.replace(/\W/g, '');
+        } else {
+          return 'componentScroll'+item.attributes[0].type.replace(/\W/g, '')+item.attributes[0].code.replace(/\W/g, '');
+        }
+      }
+
       // scope.$watch('data', function() {
       //
       if (scope.data && scope.data.length) {

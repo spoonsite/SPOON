@@ -26,7 +26,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //////////////////////////////////////////////////////////////////////////////
   // set the page height so the loading masks look good.
   setPageHeight($('.page1'), 52);
-
+  $scope.scrollTo = $rootScope.scrollTo;
   // start the loading masks
   $scope.$emit('$TRIGGERLOAD', 'mainLoader');
   // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
@@ -495,6 +495,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       if (!openClick) {
         buttonOpen();
       }
+      $timeout(function(){
+        $('.page1').focus();
+        $scope.scrollTo('componentScroll'+article.attributes[0].type.replace(/\W/g, '')+article.attributes[0].code.replace(/\W/g, ''));
+      }, 500);
     } else {
       $scope.isArticle = false;
 
@@ -553,10 +557,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           }
 
           /* jshint ignore:end */
-
         }
         // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
         $scope.showDetails = true;
+        $timeout(function(){
+          $('.page1').focus();
+          $scope.scrollTo('componentScroll'+$scope.details.details.componentId.replace(/\W/g, ''));
+        }, 500);
       });
     } //
   }; //
