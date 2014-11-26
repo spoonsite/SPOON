@@ -420,6 +420,17 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     })
   }); //
 
+  $scope.resetSearch = function() {
+    var type = 'search';
+    var code = 'all';
+    $rootScope.searchKey = 'all';
+    $location.search({
+      'type': type,
+      'code': code
+    });
+    $scope.reAdjust([{ 'key': type, 'code': code }]);
+  }
+
   /***************************************************************
   * This function is used by the reviews section in the details to remove
   * and add the ellipsis

@@ -30,6 +30,8 @@ import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -55,6 +57,16 @@ public class Search
 		extends BaseResource
 {
 
+	public class CustomComparator implements Comparator<ComponentSearchView>
+	{
+
+		@Override
+		public int compare(ComponentSearchView o1, ComponentSearchView o2)
+		{
+			return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+		}
+	}
+
 	@GET
 	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -63,9 +75,14 @@ public class Search
 			@BeanParam SearchQuery query,
 			@BeanParam FilterQueryParams filter)
 	{
-		List<ComponentSearchView> searchResults = service.getSearchService().getSearchItems(query, filter);
-
-		return searchResults;
+		List<ComponentSearchView> result = service.getSearchService().getSearchItems(query, filter);
+		if (result != null) {
+			Collections.sort(result, new CustomComparator());
+			return result;
+		}
+		else {
+			return null;
+		}
 	}
 
 	@DELETE
@@ -108,7 +125,15 @@ public class Search
 		pk.setAttributeCode(code);
 		pk.setAttributeType(type);
 
-		return service.getSearchService().architectureSearch(pk, filter);
+		List<ComponentSearchView> result = service.getSearchService().architectureSearch(pk, filter);
+		if (result != null) {
+			Collections.sort(result, new CustomComparator());
+			return result;
+		}
+		else {
+			return null;
+		}
+		
 	}
 
 	@GET
@@ -118,7 +143,14 @@ public class Search
 	@Path("/all")
 	public List<ComponentSearchView> getAllForSearch()
 	{
-		return service.getSearchService().getAll();
+		List<ComponentSearchView> result = service.getSearchService().getAll();
+		if (result != null) {
+			Collections.sort(result, new CustomComparator());
+			return result;
+		}
+		else {
+			return null;
+		}
 	}
 
 	@GET
