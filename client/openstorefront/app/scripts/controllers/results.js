@@ -245,6 +245,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             item.shortdescription = 'This is a temporary short description';
           }
         });
+        $scope.setupData();
         // var end = new Date().getTime();
         // var time = end - start;
         // console.log('Total Execution time ****: ' + time);
@@ -264,6 +265,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
         $scope.initializeData(key);
         $scope.showMessage = true;
+        $scope.setupData();
       });
 });
   }; //
@@ -421,6 +423,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   }); //
 
   $scope.resetSearch = function() {
+    $scope.$emit('$TRIGGERLOAD', 'mainLoader');
+    // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
+    $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
     var type = 'search';
     var code = 'all';
     $rootScope.searchKey = 'all';
@@ -593,6 +598,22 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
     $scope.applyFilters();
   };
+
+  /***************************************************************
+  * This function is used to watch filters in order to show the 'applied'
+  * message so that they won't forget one of the filters is applied.
+  ***************************************************************/
+  $scope.checkFilters = function() {
+    _.each($scope.filters, function(filter){
+      filter.hasChecked = _.some(filter.codes, function(item){
+        return item.checked;
+      });
+      if (!filter.hasChecked) {
+        filter.checked = false;
+      }
+    });
+    $scope.applyFilters();
+  }
 
   /***************************************************************
   * This function applies the filters that have been given to us to filter the
@@ -768,26 +789,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   });
 
   /***************************************************************
-  * This function is used to watch filters in order to show the 'applied'
-  * message so that they won't forget one of the filters is applied.
-  ***************************************************************/
-  $scope.$watch('filters',function(val, old){ /* jshint unused:false */
-    _.each($scope.filters, function(filter){
-      filter.hasChecked = _.some(filter.codes, function(item){
-        return item.checked;
-      });
-      if (!filter.hasChecked) {
-        filter.checked = false;
-      }
-    });
-  }, true);
-
-  /***************************************************************
   * This function is a deep watch on the data variable to see if 
   * data.data changes. When it does, we need to see if the result set
   * for the search results is larger than the 'max' displayed
   ***************************************************************/
-  $scope.$watch('data', function() {
+  $scope.setupData = function() {
     if ($scope.data && $scope.data.data) {
       // max needs to represent the total number of results you want to load
       // on the initial search.
@@ -801,7 +807,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.moreThan200 = false;
       }
     }
-  }, true);
+  }
 
   callSearch();
   

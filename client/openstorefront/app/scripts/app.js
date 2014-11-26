@@ -260,11 +260,11 @@ var app = angular
           resetAnimGlobals();
         }
 
-        setTimeout(function () {
-          $('.searchBar:input[type=\'text\']').on('click', function () {
-            $(this).select();
-          });
-        }, 500);
+        // setTimeout(function () {
+        //   $('.searchBar:input[type=\'text\']').on('click', function () {
+        //     $(this).select();
+        //   });
+        // }, 500);
         $rootScope.$broadcast('$LOAD', 'bodyLoad');
       });
 

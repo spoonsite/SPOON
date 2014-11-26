@@ -59,7 +59,7 @@ limitations under the License.
                     </span>
                     <span class="overflow-pair-left" style="text-align: left;">{{filter.description}}</span>
                   </span>
-                  <selectall label="filter.description" checkboxes="filter.codes" all-selected="filter.allChecked" all-clear="filter.noChecked" toggle-callback="applyFilters"></selectall>
+                  <selectall label="filter.description" checkboxes="filter.codes" all-selected="filter.allChecked" all-clear="filter.noChecked" toggle-callback="checkFilters"></selectall>
                   <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
                 </span>
               </th>
@@ -69,7 +69,7 @@ limitations under the License.
               <tr  class="filtersTr" data-ng-repeat="type in filter.codes" >
                 <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
                   <div class="checkbox filterCheckbox">
-                    <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{filter.description}}_{{type.code}}" ng-change="applyFilters(); sendEvent('Filter Checked', filter.description+'-'+type.code, type.checked)"/>
+                    <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{filter.description}}_{{type.code}}" ng-change="checkFilters(); sendEvent('Filter Checked', filter.description+'-'+type.code, type.checked)"/>
                     <label for="{{filter.description}}_{{type.code}}">{{type.label}}</label>
                   </div>
                 </td>
@@ -91,7 +91,7 @@ limitations under the License.
                       </span>
                       <span class="overflow-pair-left" style="text-align: left;">{{filter.description}}</span>
                     </span>
-                    <selectall checkboxes="filter.codes" all-selected="filter.allChecked" all-clear="filter.noChecked" toggle-callback="applyFilters"></selectall>
+                    <selectall checkboxes="filter.codes" all-selected="filter.allChecked" all-clear="filter.noChecked" toggle-callback="checkFilters"></selectall>
                     <small ng-show="filter.hasChecked" style="position: relative; bottom: -3px;">&nbsp;(applied)</small>
                   </span>
                 </th>
@@ -101,7 +101,7 @@ limitations under the License.
                 <tr  class="filtersTr" data-ng-repeat="type in filter.codes" >
                   <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
                     <div class="checkbox filterCheckbox">
-                      <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{filter.description}}_{{type.code}}" ng-change="applyFilters(); sendEvent('Filter Checked', filter.description+'-'+type.code, type.checked)"/>
+                      <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{filter.description}}_{{type.code}}" ng-change="checkFilters(); sendEvent('Filter Checked', filter.description+'-'+type.code, type.checked)"/>
                       <label for="{{filter.description}}_{{type.code}}">{{type.label}}</label>
                     </div>
                   </td>
