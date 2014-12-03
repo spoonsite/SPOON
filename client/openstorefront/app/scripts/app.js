@@ -264,8 +264,8 @@ var app = angular
         //     $(this).select();
         //   });
         // }, 500);
-        $rootScope.$broadcast('$LOAD', 'bodyLoad');
-      });
+      $rootScope.$broadcast('$LOAD', 'bodyLoad');
+    });
 
       $rootScope.$on('$routeChangeSuccess', function (event, next, current){
         $rootScope.$broadcast('$UNLOAD', 'bodyLoad');
@@ -385,6 +385,18 @@ var app = angular
       $rootScope.goTo = function(path, search) {
         $location.search(search);
         $location.path(path);
+      };
+
+      /***************************************************************
+      * This function sends the route to whatever path and search are passed in.
+      ***************************************************************/
+      $rootScope.goToPrint = function(path, search) {
+        var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
+        var oldSearch = $location.search();
+        $location.search(search);
+        url = url + path + '?' + $.param($location.search());
+        $location.search(oldSearch);
+        window.open(url, 'Component_Print_' + search.id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
       };
 
       /***************************************************************
