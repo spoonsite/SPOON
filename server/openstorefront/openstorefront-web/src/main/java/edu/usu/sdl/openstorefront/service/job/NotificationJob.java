@@ -31,7 +31,7 @@ public class NotificationJob
 	protected void executeInternaljob(JobExecutionContext context)
 	{
 		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getUserService().processAllUserMessages();
+		serviceProxy.getUserService().processAllUserMessages(false);
 	}
 
 }

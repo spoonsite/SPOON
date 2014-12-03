@@ -88,6 +88,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -210,6 +211,7 @@ public class ComponentServiceImpl
 	public void deactivateComponent(String componentId)
 	{
 		doDeactivateComponent(componentId);
+		getUserService().removeAllWatchesForComponent(componentId);
 		getSearchService().deleteById(componentId);
 	}
 
@@ -284,6 +286,7 @@ public class ComponentServiceImpl
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setComponentId(componentId);
 		example.setComponentAttributePk(pk);
+		example.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 		return persistenceService.queryByExample(ComponentAttribute.class, new QueryByExample(example));
 	}
 
@@ -390,7 +393,6 @@ public class ComponentServiceImpl
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
 		getComponentServicePrivate().saveComponentAttribute(attribute, true);
-		getSearchService().addIndex(persistenceService.findById(Component.class, attribute.getComponentId()));
 	}
 
 	@Override
@@ -452,7 +454,8 @@ public class ComponentServiceImpl
 		if (component != null) {
 			component.setLastActivityDts(TimeUtil.currentDate());
 			persistenceService.persist(component);
-			getUserService().checkComponentWatches(componentId);
+			getUserService().checkComponentWatches(component);
+			getSearchService().addIndex(persistenceService.findById(Component.class, componentId));
 		} else {
 			throw new OpenStorefrontRuntimeException("Component not found to update last Activity", "Check component Id: " + componentId);
 		}
@@ -796,7 +799,6 @@ public class ComponentServiceImpl
 	public void saveComponentTag(ComponentTag tag)
 	{
 		getComponentServicePrivate().doSaveComponentTag(tag, true);
-		getSearchService().addIndex(persistenceService.findById(Component.class, tag.getComponentId()));
 	}
 
 	@Override
@@ -958,7 +960,7 @@ public class ComponentServiceImpl
 			requiredForComponent.setComponent(component);
 			requiredForComponent.getAttributes().addAll(componentAll.getAttributes());
 
-			requiredForComponent = saveComponent(requiredForComponent);
+			requiredForComponent = doSaveComponent(requiredForComponent);
 			lockSwitch.setSwitched(requiredForComponent.isComponentChanged());
 			lockSwitch.setSwitched(requiredForComponent.isAttributeChanged());
 		} else {
@@ -990,10 +992,12 @@ public class ComponentServiceImpl
 //		}
 		if (Component.INACTIVE_STATUS.equals(component.getActiveStatus())) {
 			getUserService().removeAllWatchesForComponent(component.getComponentId());
+			getSearchService().deleteById(component.getComponentId());
 		}
 
 		if (lockSwitch.isSwitched()) {
-			getUserService().checkComponentWatches(component.getComponentId());
+			getUserService().checkComponentWatches(component);
+			getSearchService().addIndex(component);
 		}
 
 		return componentAll;
@@ -1021,6 +1025,7 @@ public class ComponentServiceImpl
 			if (validationResult.valid() == false) {
 				throw new OpenStorefrontRuntimeException(validationResult.toString());
 			}
+			inputMap.add(ServiceUtil.getPKFieldValue(baseComponent));
 
 			//Look for match
 			boolean match = false;
@@ -1064,14 +1069,24 @@ public class ComponentServiceImpl
 				} else {
 					throw new OpenStorefrontRuntimeException("Save not supported for this base component: " + baseComponent.getClass().getName(), "Add support (Developement task)");
 				}
-				inputMap.add(ServiceUtil.getPKFieldValue(baseComponent));
 			}
 		}
 
 		//remove old existing records
 		for (String existing : existingMap.keySet()) {
 			if (inputMap.contains(existing) == false) {
-				deactivateBaseComponent(baseComponentClass, existingMap.get(existing), false);
+				BaseComponent oldEnity = existingMap.get(existing);
+				try {
+					Field pkField = ServiceUtil.getPKField(oldEnity);
+					if (pkField != null) {
+						pkField.setAccessible(true);
+						deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false);
+					} else {
+						throw new OpenStorefrontRuntimeException("Unable to find PK field on entity.", "Check enity: " + oldEnity.getClass().getName());
+					}
+				} catch (IllegalArgumentException | IllegalAccessException ex) {
+					throw new OpenStorefrontRuntimeException(ex);
+				}
 				changed = true;
 			}
 		}
@@ -1317,6 +1332,7 @@ public class ComponentServiceImpl
 		List<AttributeXRefType> xrefAttributeTypes = getAttributeService().getAttributeXrefTypes(attributeXrefModel);
 		Map<String, Map<String, String>> xrefAttributeMaps = getAttributeService().getAttributeXrefMapFieldMap();
 
+		boolean componentChanged = false;
 		for (AttributeXRefType xrefAttributeType : xrefAttributeTypes) {
 
 			String jiraValue = null;
@@ -1358,20 +1374,28 @@ public class ComponentServiceImpl
 
 				AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 				if (attributeCode != null) {
-					ComponentAttributePk deleteComponentAttributePKExample = new ComponentAttributePk();
-					deleteComponentAttributePKExample.setAttributeType(componentAttributePk.getAttributeType());
-					deleteComponentAttributePKExample.setComponentId(componentAttributePk.getComponentId());
-					ComponentAttribute componentAttributeExample = new ComponentAttribute();
-					componentAttributeExample.setComponentAttributePk(deleteComponentAttributePKExample);
-					persistenceService.deleteByExample(componentAttributeExample);
 
-					ComponentAttribute componentAttribute = new ComponentAttribute();
-					componentAttribute.setComponentAttributePk(componentAttributePk);
-					componentAttribute.setComponentId(componentAttributePk.getComponentId());
-					componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-					componentAttribute.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
-					componentAttribute.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-					saveComponentAttribute(componentAttribute, false);
+					ComponentAttribute existingAttribute = persistenceService.findById(ComponentAttribute.class, componentAttributePk);
+					if (existingAttribute == null) {
+
+						ComponentAttributePk deleteComponentAttributePKExample = new ComponentAttributePk();
+						deleteComponentAttributePKExample.setAttributeType(componentAttributePk.getAttributeType());
+						deleteComponentAttributePKExample.setComponentId(componentAttributePk.getComponentId());
+						ComponentAttribute componentAttributeExample = new ComponentAttribute();
+						componentAttributeExample.setComponentAttributePk(deleteComponentAttributePKExample);
+						persistenceService.deleteByExample(componentAttributeExample);
+
+						ComponentAttribute componentAttribute = new ComponentAttribute();
+						componentAttribute.setComponentAttributePk(componentAttributePk);
+						componentAttribute.setComponentId(componentAttributePk.getComponentId());
+						componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+						componentAttribute.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+						componentAttribute.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+						saveComponentAttribute(componentAttribute, false);
+						componentChanged = true;
+					} else {
+						log.log(Level.FINEST, "Attibute already exists in that state...skipping");
+					}
 				} else {
 					throw new OpenStorefrontRuntimeException("Unable to find attribute code.  Attribute Type: " + componentAttributePk.getAttributeType() + " Code: " + componentAttributePk.getAttributeCode(),
 							"Check data (Attributes and Input)");
@@ -1381,8 +1405,9 @@ public class ComponentServiceImpl
 			}
 		}
 
-		updateComponentLastActivity(integrationConfig.getComponentId());
-		getSearchService().addIndex(persistenceService.findById(Component.class, integrationConfig.getComponentId()));
+		if (componentChanged) {
+			updateComponentLastActivity(integrationConfig.getComponentId());
+		}
 	}
 
 	@Override
@@ -1713,7 +1738,7 @@ public class ComponentServiceImpl
 			componentAll = (ComponentAll) element.getObjectValue();
 		} else {
 			componentAll = new ComponentAll();
-			componentAll.setComponent(persistenceService.find(Component.class, componentId));
+			componentAll.setComponent(persistenceService.findById(Component.class, componentId));
 			componentAll.setAttributes(getAttributesByComponentId(componentId));
 			componentAll.setContacts(getBaseComponent(ComponentContact.class, componentId));
 			componentAll.setEvaluationSections(getBaseComponent(ComponentEvaluationSection.class, componentId));

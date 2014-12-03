@@ -81,12 +81,12 @@ public class UserMessageResource
 	}
 
 	@POST
-	@APIDescription("Processes all active user messages")
+	@APIDescription("Processes all active user messages now")
 	@RequireAdmin
 	@Path("/processnow")
 	public Response processUserMessages()
 	{
-		service.getUserService().processAllUserMessages();
+		service.getUserService().processAllUserMessages(true);
 		return Response.ok().build();
 	}
 

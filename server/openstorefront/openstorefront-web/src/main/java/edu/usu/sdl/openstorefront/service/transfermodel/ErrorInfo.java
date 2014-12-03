@@ -49,6 +49,19 @@ public class ErrorInfo
 			requestMethod = request.getMethod();
 			clientIp = request.getRemoteAddr();
 
+			//Check for header ip it may be forwarded by a proxy
+			String clientIpFromHeader = request.getHeader("x-forwarded-for");
+			if (StringUtils.isNotBlank(clientIpFromHeader)) {
+				clientIp = " Forward for: " + clientIpFromHeader;
+			} else {
+				clientIpFromHeader = request.getHeader("x-real-ip");
+				if (StringUtils.isNotBlank(clientIpFromHeader)) {
+					clientIp = clientIp = " X-real IP: " + clientIpFromHeader;
+				} else {
+					clientIp = request.getRemoteAddr();
+				}
+			}
+
 			StringBuilder input = new StringBuilder();
 			if (StringUtils.isNotBlank(request.getQueryString())) {
 				input.append("Query: ").append(request.getQueryString()).append("\n");

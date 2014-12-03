@@ -21,6 +21,9 @@ import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -49,8 +52,16 @@ public class NotificationService
 	public Response adminMessage(
 			@RequiredParam AdminMessage adminMessage)
 	{
-		service.getUserService().sendAdminMessage(adminMessage);
-		return Response.ok().build();
+		ValidationModel validationModel = new ValidationModel(adminMessage);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+
+			service.getUserService().sendAdminMessage(adminMessage);
+			return Response.ok().build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 	@POST
