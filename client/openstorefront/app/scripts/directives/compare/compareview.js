@@ -160,6 +160,24 @@ app.directive('compareview', ['$timeout', function ($timeout) {
         }
       }
 
+      $(window).scroll(function(){
+        var scrollTop     = $(window).scrollTop();
+        var elementOffset = $('#detailChecklist').offset().top;
+        var distance      = (elementOffset - scrollTop);
+
+        if (scrollTop > 337) {
+          $('#detailChecklist').css({
+            'position': 'fixed',
+            'top': '54px'
+          })
+        } else {
+          $('#detailChecklist').css({
+            'position': 'absolute',
+            'top': '392px'
+          })
+        }
+
+      })
     }
   }
 }]);
