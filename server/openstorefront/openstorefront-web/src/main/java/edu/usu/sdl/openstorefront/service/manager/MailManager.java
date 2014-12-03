@@ -97,7 +97,7 @@ public class MailManager
 				log.log(Level.FINE, MessageFormat.format("(Mock Email Handler) Sending Message Subject: {0} To {1}", new Object[]{email.getSubject(), sb.toString()}));
 			}
 		} else {
-			log.log(Level.FINE, "Unable to send NULL email message.");
+			log.log(Level.FINE, "Unable to send NULL email message. No message to send.");
 		}
 	}
 

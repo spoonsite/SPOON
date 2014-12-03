@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.exception;
 
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This the base class for runtime exception
@@ -85,6 +86,22 @@ public class OpenStorefrontRuntimeException
 	public void setErrorTypeCode(String errorTypeCode)
 	{
 		this.errorTypeCode = errorTypeCode;
+	}
+
+	@Override
+	public String getLocalizedMessage()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.getLocalizedMessage());
+
+		if (StringUtils.isNotBlank(potentialResolution)) {
+			sb.append("  Potential Resolution: ").append(potentialResolution);
+		}
+
+		if (StringUtils.isNotBlank(errorTypeCode)) {
+			sb.append("  Error Type Code: ").append(errorTypeCode);
+		}
+		return sb.toString();
 	}
 
 }

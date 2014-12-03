@@ -46,28 +46,39 @@ public class RecentChangeMessageGenerator
 		String lastRunDate = sdf.format(messageContext.getRecentChangeMessage().getLastRunDts());
 
 		message.append("Changes since: <b>").append(lastRunDate).append("</b><br><br>");
+		boolean changes = false;
 		if (messageContext.getRecentChangeMessage().getComponentsAdded().isEmpty() == false) {
 			message.append(messageContext.getRecentChangeMessage().getComponentsAdded().size()).append(" component(s) added.");
+			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getComponentsUpdated().isEmpty() == false) {
 			message.append(messageContext.getRecentChangeMessage().getComponentsUpdated().size()).append(" component(s) updated.");
+			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getArticlesAdded().isEmpty() == false) {
 			message.append(messageContext.getRecentChangeMessage().getArticlesAdded().size()).append(" artilcle(s) added.");
+			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getArticlesUpdated().isEmpty() == false) {
 			message.append(messageContext.getRecentChangeMessage().getArticlesUpdated().size()).append(" artilcle(s) updated.");
+			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getHighlightsAdded().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getHighlightsAdded().size()).append(" hightlight(s) updated.");
+			message.append(messageContext.getRecentChangeMessage().getHighlightsAdded().size()).append(" hightlight(s) added.");
+			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getHighlightsUpdated().isEmpty() == false) {
 			message.append(messageContext.getRecentChangeMessage().getHighlightsUpdated().size()).append(" hightlight(s) updated.");
+			changes = true;
+		}
+
+		if (changes == false) {
+			message.append("There has been no recent changes.");
 		}
 
 		return message.toString();

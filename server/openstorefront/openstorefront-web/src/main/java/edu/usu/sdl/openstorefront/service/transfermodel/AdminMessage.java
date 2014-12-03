@@ -15,11 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.service.transfermodel;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.ArrayList;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,6 +35,16 @@ import javax.validation.constraints.Size;
  */
 public class AdminMessage
 {
+
+	@APIDescription("List of usernames")
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL_LIST_SIZE)
+	@ConsumeField
+	private List<String> usersToEmail = new ArrayList<>();
+
+	@APIDescription("Sends messages to only user of a specific type. Defaults: to all users  (Setting this overrides any specfic users specified.")
+	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
+	@ConsumeField
+	private String userTypeCode;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -65,6 +80,26 @@ public class AdminMessage
 	public void setMessage(String message)
 	{
 		this.message = message;
+	}
+
+	public String getUserTypeCode()
+	{
+		return userTypeCode;
+	}
+
+	public void setUserTypeCode(String userTypeCode)
+	{
+		this.userTypeCode = userTypeCode;
+	}
+
+	public List<String> getUsersToEmail()
+	{
+		return usersToEmail;
+	}
+
+	public void setUsersToEmail(List<String> usersToEmail)
+	{
+		this.usersToEmail = usersToEmail;
 	}
 
 }

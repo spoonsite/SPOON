@@ -145,13 +145,12 @@ public class UserProfileResource
 	@APIDescription("Update user profile returns updated profile.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}")
-	public Response updateProile(
-			@PathParam("id")
+	@Path("/{username}")
+	public Response updateProfile(
+			@PathParam("username")
 			@RequiredParam String userId,
 			@RequiredParam UserProfile inputProfile)
 	{
-		inputProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		inputProfile.setUsername(userId);
 		ValidationModel validationModel = new ValidationModel(inputProfile);
 		validationModel.setConsumeFieldsOnly(true);
@@ -160,6 +159,35 @@ public class UserProfileResource
 			return Response.ok(service.getUserService().saveUserProfile(inputProfile)).build();
 		}
 		return Response.ok(validationResult.toRestError()).build();
+	}
+
+	@DELETE
+	@APIDescription("Inactivates a user profile.  Note: if the user logs in their profile will be reactivated.")
+	@RequireAdmin
+	@Path("/{username}")
+	public void deleteUserProfile(
+			@PathParam("username")
+			@RequiredParam String username)
+	{
+		service.getUserService().deleteProfile(username);
+	}
+
+	@PUT
+	@APIDescription("Reactives a user profile.")
+	@RequireAdmin
+	@Path("/{username}/reactivate")
+	public Response reactivateUserProfile(
+			@PathParam("username")
+			@RequiredParam String username)
+	{
+		Response response = Response.ok().build();
+		UserProfile userProfile = service.getPersistenceService().findById(UserProfile.class, username);
+		if (userProfile != null) {
+			service.getUserService().reactiveProfile(username);
+		} else {
+			response = Response.status(Response.Status.NOT_FOUND).build();
+		}
+		return response;
 	}
 
 	@POST

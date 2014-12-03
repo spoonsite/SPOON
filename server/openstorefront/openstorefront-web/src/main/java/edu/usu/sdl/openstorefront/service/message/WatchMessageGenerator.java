@@ -63,40 +63,50 @@ public class WatchMessageGenerator
 
 		message.append("The following items on <b>").append(componentAll.getComponent().getName()).append("</b> were updated:<br><br>");
 
+		boolean changes = false;
 		if (componentAll.getComponent().getUpdateDts().after(userWatch.getLastViewDts())) {
 			message.append(" - Component Summary<br>");
+			changes = true;
 		}
 
 		if (changed(componentAll.getAttributes(), userWatch.getLastViewDts())) {
 			message.append(" - Component Vitals<br>");
+			changes = true;
 		}
 
 		if (changed(componentAll.getContacts(), userWatch.getLastViewDts())) {
 			message.append(" - Contacts<br>");
+			changes = true;
 		}
 
 		if (changed(componentAll.getResources(), userWatch.getLastViewDts())) {
 			message.append(" - Resources<br>");
+			changes = true;
 		}
 
 		if (changed(componentAll.getExternalDependencies(), userWatch.getLastViewDts())) {
 			message.append(" - Dependancies<br>");
+			changes = true;
 		}
 
 		if (changed(componentAll.getMedia(), userWatch.getLastViewDts())) {
 			message.append(" - Media<br>");
+			changes = true;
 		}
 
 		if (changed(componentAll.getMetadata(), userWatch.getLastViewDts())) {
 			message.append(" - Metadata<br>");
+			changes = true;
 		}
 
 		if (changed(componentAll.getTags(), userWatch.getLastViewDts())) {
 			message.append(" - Tags<br>");
+			changes = true;
 		}
 
 		if (changed(componentAll.getEvaluationSections(), userWatch.getLastViewDts())) {
 			message.append(" - Evaluation Information<br>");
+			changes = true;
 		}
 		message.append("<br>");
 
@@ -120,16 +130,25 @@ public class WatchMessageGenerator
 			}
 		}
 
-		message.append("There has also been: <br> <b>").append(newReviews).append(" review(s)</b><br> <b>")
-				.append(newQuestions).append(" questions</b><br>")
-				.append(newResponds).append(" questions responds</b><br>")
-				.append(" update since last viewed.");
+		if (newReviews > 0
+				|| newQuestions > 0
+				|| newResponds > 0) {
+			changes = true;
+		}
+
+		message.append("There has been: <br> <b>").append(newReviews).append(" review(s)</b><br> <b>")
+				.append(newQuestions).append(" question(s)</b><br>")
+				.append("<b>").append(newResponds).append(" question response(s)</b><br>")
+				.append(" updated since last viewed on: <b>").append(sdf.format(userWatch.getLastViewDts())).append("</b><br>");
 
 		message.append("<br>");
-		message.append("Last viewed on: ").append(sdf.format(userWatch.getLastViewDts())).append("<br>");
 		message.append("Please login to view the changes.<br>");
 
-		return message.toString();
+		if (changes) {
+			return message.toString();
+		} else {
+			return null;
+		}
 	}
 
 	@Override

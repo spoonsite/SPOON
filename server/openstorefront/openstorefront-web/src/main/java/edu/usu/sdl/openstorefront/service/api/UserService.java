@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
@@ -169,12 +170,20 @@ public interface UserService
 	public UserProfile saveUserProfile(UserProfile user, boolean refreshSession);
 
 	/**
-	 * Deletes the user profile
+	 * Deletes the user profile (Inactive)
 	 *
-	 * @param userId
-	 * @return
+	 * @param username
 	 */
-	public Boolean deleteProfile(String userId);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteProfile(String username);
+
+	/**
+	 * Reactivate a profile and restore user data
+	 *
+	 * @param username
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void reactiveProfile(String username);
 
 	/**
 	 *
@@ -209,9 +218,9 @@ public interface UserService
 	 * Pulls active watches for the component and create messages for 'notfiy'
 	 * watches.
 	 *
-	 * @param componentId
+	 * @param component
 	 */
-	public void checkComponentWatches(String componentId);
+	public void checkComponentWatches(Component component);
 
 	/**
 	 * Queue messaged will be delayed thus allowing for duplicate handling and
@@ -252,8 +261,10 @@ public interface UserService
 	/**
 	 * This handles processing all user messages. Cleanup old message, sending
 	 * out queued messages.
+	 *
+	 * @param sendNow set to true to force send the messages immediately
 	 */
-	public void processAllUserMessages();
+	public void processAllUserMessages(boolean sendNow);
 
 	/**
 	 * Sends an email to all user bases on what has changed since the date.

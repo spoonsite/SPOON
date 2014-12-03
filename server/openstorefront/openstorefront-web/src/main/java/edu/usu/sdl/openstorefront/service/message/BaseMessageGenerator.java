@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import javax.mail.Message.RecipientType;
+import org.apache.commons.lang.StringUtils;
 import org.codemonkey.simplejavamail.Email;
 import org.jsoup.Jsoup;
 import org.jsoup.examples.HtmlToPlainText;
@@ -40,6 +41,11 @@ public abstract class BaseMessageGenerator
 		this.messageContext = messageContext;
 	}
 
+	/**
+	 * Generates message to send
+	 *
+	 * @return email message to send or null if nothing to send.
+	 */
 	public Email generateMessage()
 	{
 		Email email = MailManager.newEmail();
@@ -47,7 +53,13 @@ public abstract class BaseMessageGenerator
 		addUserToEmail(email);
 
 		StringBuilder message = new StringBuilder();
-		message.append(generateMessageInternal(email));
+
+		String body = generateMessageInternal(email);
+		if (StringUtils.isNotBlank(body)) {
+			message.append(body);
+		} else {
+			return null;
+		}
 		message.append("<br><br>");
 		message.append(getUnsubscribe());
 

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager.model;
 import java.util.Date;
 
 /**
+ * Holds information on a job
  *
  * @author dshurtleff
  */
@@ -36,6 +37,7 @@ public class JobModel
 	private Date perviousFiredTime;
 	private Date nextFiredTime;
 	private String jobData;
+	private String jobClass;
 
 	public JobModel()
 	{
@@ -159,6 +161,16 @@ public class JobModel
 	public void setJobData(String jobData)
 	{
 		this.jobData = jobData;
+	}
+
+	public String getJobClass()
+	{
+		return jobClass;
+	}
+
+	public void setJobClass(String jobClass)
+	{
+		this.jobClass = jobClass;
 	}
 
 }

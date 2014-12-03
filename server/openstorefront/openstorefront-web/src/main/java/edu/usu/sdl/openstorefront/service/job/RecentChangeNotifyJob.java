@@ -68,7 +68,7 @@ public class RecentChangeNotifyJob
 				serviceProxy.getSystemService().saveProperty(PropertiesManager.KEY_MESSAGE_RECENT_CHANGE_DAYS, TimeUtil.dateToString(TimeUtil.currentDate()));
 			}
 
-			log.log(Level.FINE, MessageFormat.format("Not time yet to send recent change email.  Next send time: {0}", nextSendDate.getTime()));
+			log.log(Level.FINE, MessageFormat.format("Not time yet to send recent change email.  Next send time: {0}", nextSendDate));
 		}
 
 	}

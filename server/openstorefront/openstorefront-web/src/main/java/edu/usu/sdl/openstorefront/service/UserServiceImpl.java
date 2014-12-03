@@ -53,6 +53,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -215,7 +216,11 @@ public class UserServiceImpl
 	{
 		UserProfile userProfile = persistenceService.findById(UserProfile.class, user.getUsername());
 		if (userProfile != null) {
-			userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			if (StringUtils.isBlank(user.getActiveStatus())) {
+				userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			} else {
+				userProfile.setActiveStatus(user.getActiveStatus());
+			}
 			userProfile.setEmail(user.getEmail());
 			userProfile.setFirstName(user.getFirstName());
 			userProfile.setLastName(user.getLastName());
@@ -251,17 +256,62 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public Boolean deleteProfile(String userId)
+	public void deleteProfile(String username)
 	{
-		UserProfile profile = persistenceService.findById(UserProfile.class, userId);
+		UserProfile profile = persistenceService.findById(UserProfile.class, username);
 		if (profile != null) {
 			profile.setActiveStatus(UserProfile.INACTIVE_STATUS);
-			if (persistenceService.persist(profile) != null) {
-				return Boolean.TRUE;
+			profile.setUpdateDts(TimeUtil.currentDate());
+			profile.setUpdateUser(SecurityUtil.getCurrentUserName());
+			if (StringUtils.isBlank(profile.getInternalGuid())) {
+				//old profiles add missing info
+				profile.setInternalGuid((persistenceService.generateId()));
 			}
-			return Boolean.FALSE;
+			persistenceService.persist(profile);
+
+			UserWatch userwatchExample = new UserWatch();
+			userwatchExample.setUsername(username);
+
+			UserWatch userwatchSetExample = new UserWatch();
+			userwatchSetExample.setActiveStatus(UserWatch.INACTIVE_STATUS);
+			userwatchSetExample.setUpdateDts(TimeUtil.currentDate());
+			userwatchSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
+
+			persistenceService.updateByExample(UserWatch.class, userwatchSetExample, userwatchExample);
+
+			UserMessage userMessageExample = new UserMessage();
+			userMessageExample.setUsername(username);
+
+			UserMessage userMessageSetExample = new UserMessage();
+			userMessageSetExample.setActiveStatus(UserWatch.INACTIVE_STATUS);
+			userMessageSetExample.setUpdateDts(TimeUtil.currentDate());
+			userMessageSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.updateByExample(UserMessage.class, userMessageSetExample, userMessageExample);
 		}
-		return Boolean.TRUE;
+	}
+
+	@Override
+	public void reactiveProfile(String username)
+	{
+		UserProfile profile = persistenceService.findById(UserProfile.class, username);
+		if (profile != null) {
+			profile.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			profile.setUpdateDts(TimeUtil.currentDate());
+			profile.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(profile);
+
+			UserWatch userwatchExample = new UserWatch();
+			userwatchExample.setUsername(username);
+
+			UserWatch userwatchSetExample = new UserWatch();
+			userwatchSetExample.setActiveStatus(UserWatch.ACTIVE_STATUS);
+			userwatchSetExample.setUpdateDts(TimeUtil.currentDate());
+			userwatchSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
+
+			persistenceService.updateByExample(UserWatch.class, userwatchSetExample, userwatchExample);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to reactivate profile.  Userprofile not found: " + username, "Check userprofiles and username");
+		}
 	}
 
 	@Override
@@ -359,6 +409,12 @@ public class UserServiceImpl
 				}
 			}
 
+			//Activative profile on login
+			if (UserProfile.INACTIVE_STATUS.equals(profile.getActiveStatus())) {
+				log.log(Level.INFO, MessageFormat.format("User: {0} profile was INACTIVE reactivating it on login.", profile.getUsername()));
+				getUserService().reactiveProfile(userprofile.getUsername());
+			}
+
 			profile = persistenceService.deattachAll(profile);
 			userContext.setUserProfile(profile);
 			if (admin != null) {
@@ -388,7 +444,10 @@ public class UserServiceImpl
 				userTracking.setUserAgent(userAgent);
 
 				saveUserTracking(userTracking);
+			} else {
+				log.log(Level.INFO, MessageFormat.format("Login handled for user: {0} (Not a external client request...not tracking", profile.getUsername()));
 			}
+			log.log(Level.INFO, MessageFormat.format("User {0} sucessfully logged in.", profile.getUsername()));
 
 		} else {
 			throw new OpenStorefrontRuntimeException("Failed to validate the userprofile. Validation Message: " + validationResult.toString(), "Check data");
@@ -415,7 +474,7 @@ public class UserServiceImpl
 				Email email = testMessageGenerator.generateMessage();
 				MailManager.send(email);
 			} else {
-				throw new OpenStorefrontRuntimeException("User is missing email.", "Add a valid email address.");
+				throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
 			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
@@ -423,21 +482,23 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public void checkComponentWatches(String componentId)
+	public void checkComponentWatches(Component component)
 	{
 		UserWatch userWatchExample = new UserWatch();
 		userWatchExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 		userWatchExample.setNotifyFlg(Boolean.TRUE);
-		userWatchExample.setComponentId(componentId);
+		userWatchExample.setComponentId(component.getComponentId());
 
 		List<UserWatch> userWatches = persistenceService.queryByExample(UserWatch.class, userWatchExample);
 		for (UserWatch userWatch : userWatches) {
-			UserMessage userMessage = new UserMessage();
-			userMessage.setUsername(userWatch.getUsername());
-			userMessage.setComponentId(componentId);
-			userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
-			userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			getUserService().queueUserMessage(userMessage);
+			if (component.getLastActivityDts().after(userWatch.getLastViewDts())) {
+				UserMessage userMessage = new UserMessage();
+				userMessage.setUsername(userWatch.getUsername());
+				userMessage.setComponentId(component.getComponentId());
+				userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+				userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+				getUserService().queueUserMessage(userMessage);
+			}
 		}
 	}
 
@@ -478,8 +539,8 @@ public class UserServiceImpl
 		int maxDays = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_KEEP_DAYS, "30"));
 
 		LocalDateTime archiveTime = LocalDateTime.now();
-		archiveTime.minusDays(maxDays);
-		archiveTime.truncatedTo(ChronoUnit.DAYS);
+		archiveTime = archiveTime.minusDays(maxDays);
+		archiveTime = archiveTime.truncatedTo(ChronoUnit.DAYS);
 		String deleteQuery = "updateDts < :maxUpdateDts AND activeStatus = :activeStatusParam";
 
 		ZonedDateTime zdt = archiveTime.atZone(ZoneId.systemDefault());
@@ -496,30 +557,57 @@ public class UserServiceImpl
 	public void sendAdminMessage(AdminMessage adminMessage)
 	{
 		String appTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront");
-		Email email = MailManager.newEmail();
-		email.setSubject(appTitle + " - " + adminMessage.getSubject());
-		email.setTextHTML(adminMessage.getMessage());
 
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
 
 		//Sending messages one at a time as BCC may leak adresses to other users.
-		log.log(Level.FINE, "Sending email to all users");
-		List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
-		int emailCount = 0;
-		for (UserProfile userProfile : userProfiles) {
-			if (StringUtils.isNotBlank(userProfile.getEmail())) {
-				String name = userProfile.getFirstName() + " " + userProfile.getLastName();
-				email.addRecipient(name, userProfile.getEmail(), Message.RecipientType.TO);
-				MailManager.send(email);
-				emailCount++;
+		List<UserProfile> usersToSend = new ArrayList<>();
+
+		if (adminMessage.getUsersToEmail().isEmpty()
+				&& StringUtils.isBlank(adminMessage.getUserTypeCode())) {
+
+			log.log(Level.FINE, "Sending email to all users");
+			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
+			for (UserProfile userProfile : userProfiles) {
+				if (StringUtils.isNotBlank(userProfile.getEmail())) {
+					usersToSend.add(userProfile);
+				}
 			}
+		} else if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
+			log.log(Level.FINE, MessageFormat.format("Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
+			userProfileExample.setUserTypeCode(adminMessage.getUserTypeCode());
+			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
+			for (UserProfile userProfile : userProfiles) {
+				if (StringUtils.isNotBlank(userProfile.getEmail())) {
+					usersToSend.add(userProfile);
+				}
+			}
+		} else if (adminMessage.getUsersToEmail().isEmpty() == false) {
+			log.log(Level.FINE, "Sending email to specfic users");
+			StringBuilder query = new StringBuilder();
+			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList");
+			Map<String, Object> params = new HashMap<>();
+			params.put("userList", adminMessage.getUsersToEmail());
+			usersToSend = persistenceService.query(query.toString(), params);
 		}
-		log.log(Level.FINE, "{0} email sent", emailCount);
+
+		int emailCount = 0;
+		for (UserProfile userProfile : usersToSend) {
+			Email email = MailManager.newEmail();
+			email.setSubject(appTitle + " - " + adminMessage.getSubject());
+			email.setTextHTML(adminMessage.getMessage());
+
+			String name = userProfile.getFirstName() + " " + userProfile.getLastName();
+			email.addRecipient(name, userProfile.getEmail(), Message.RecipientType.TO);
+			MailManager.send(email);
+			emailCount++;
+		}
+		log.log(Level.FINE, "{0} email(s) sent", emailCount);
 	}
 
 	@Override
-	public void processAllUserMessages()
+	public void processAllUserMessages(boolean sendNow)
 	{
 		cleanupOldUserMessages();
 
@@ -535,7 +623,7 @@ public class UserServiceImpl
 		long queueMills = System.currentTimeMillis() - (minQueueMinutes * 60000);
 		for (UserMessage userMessage : userMessages) {
 
-			if (userMessage.getCreateDts().getTime() <= queueMills) {
+			if (sendNow || userMessage.getCreateDts().getTime() <= queueMills) {
 
 				boolean updateUserMessage = false;
 				UserMessage userMessageExisting = persistenceService.findById(UserMessage.class, userMessage.getUserMessageId());
@@ -584,10 +672,13 @@ public class UserServiceImpl
 			messageContext.setUserMessage(userMessage);
 			WatchMessageGenerator watchMessageGenerator = new WatchMessageGenerator(messageContext);
 			Email email = watchMessageGenerator.generateMessage();
-			MailManager.send(email);
-
-			userMessageExisting.setBodyOfMessage(email.getTextHTML());
-			userMessageExisting.setSentEmailAddress(userProfile.getUsername());
+			if (email != null) {
+				MailManager.send(email);
+				userMessageExisting.setBodyOfMessage(email.getTextHTML());
+				userMessageExisting.setSentEmailAddress(userProfile.getEmail());
+			} else {
+				userMessageExisting.setBodyOfMessage("Message was empty no email sent.");
+			}
 		} else {
 			userMessageExisting.setBodyOfMessage("No email address set for user");
 		}
@@ -663,8 +754,10 @@ public class UserServiceImpl
 
 			RecentChangeMessageGenerator messageGenerator = new RecentChangeMessageGenerator(messageContext);
 			Email email = messageGenerator.generateMessage();
-			email.addRecipient("", emailAddress, Message.RecipientType.TO);
-			MailManager.send(email);
+			if (email != null) {
+				email.addRecipient("", emailAddress, Message.RecipientType.TO);
+				MailManager.send(email);
+			}
 
 		} else {
 			for (UserProfile userProfile : userProfiles) {
@@ -674,7 +767,9 @@ public class UserServiceImpl
 
 					RecentChangeMessageGenerator messageGenerator = new RecentChangeMessageGenerator(messageContext);
 					Email email = messageGenerator.generateMessage();
-					MailManager.send(email);
+					if (email != null) {
+						MailManager.send(email);
+					}
 				}
 			}
 		}

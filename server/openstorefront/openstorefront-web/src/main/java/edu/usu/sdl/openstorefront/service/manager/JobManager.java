@@ -24,6 +24,8 @@ import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
+import edu.usu.sdl.openstorefront.service.job.NotificationJob;
+import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import java.text.MessageFormat;
@@ -206,7 +208,7 @@ public class JobManager
 	{
 		log.log(Level.INFO, "Adding Notification Job");
 
-		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+		JobDetail job = JobBuilder.newJob(NotificationJob.class)
 				.withIdentity("NotificationJob", JOB_GROUP_SYSTEM)
 				.build();
 
@@ -225,7 +227,7 @@ public class JobManager
 	{
 		log.log(Level.INFO, "Adding Recent Change Job");
 
-		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+		JobDetail job = JobBuilder.newJob(RecentChangeNotifyJob.class)
 				.withIdentity("RecentChangeJob", JOB_GROUP_SYSTEM)
 				.build();
 
@@ -324,6 +326,7 @@ public class JobManager
 				JobModel jobModel = new JobModel();
 
 				JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+				jobModel.setJobClass(jobDetail.getJobClass().getName());
 				jobModel.setJobName(jobKey.getName());
 				jobModel.setGroupName(jobKey.getGroup());
 				jobModel.setDescription(jobDetail.getDescription());

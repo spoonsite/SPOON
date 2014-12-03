@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
+ * Check value to make sure it's in a valid set of values
  *
  * @author dshurtleff
  */
@@ -44,21 +45,23 @@ public class ValidValueRule
 		if (validValueType != null) {
 			try {
 				String value = BeanUtils.getProperty(dataObject, field.getName());
-
-				Set<String> validValueSet = new HashSet<>();
-				ServiceProxy serviceProxy = new ServiceProxy();
-				if (validValueType.lookupClass().length > 0) {
-					for (Class lookupClass : validValueType.lookupClass()) {
-						List<LookupEntity> lookups = serviceProxy.getLookupService().findLookup(lookupClass);
-						lookups.forEach(item -> {
-							validValueSet.add(item.getCode());
-						});
+				//Note: null values are checked by a separate rule so null should be valid
+				if (value != null) {
+					Set<String> validValueSet = new HashSet<>();
+					ServiceProxy serviceProxy = new ServiceProxy();
+					if (validValueType.lookupClass().length > 0) {
+						for (Class lookupClass : validValueType.lookupClass()) {
+							List<LookupEntity> lookups = serviceProxy.getLookupService().findLookup(lookupClass);
+							lookups.forEach(item -> {
+								validValueSet.add(item.getCode());
+							});
+						}
 					}
-				}
-				validValueSet.addAll(Arrays.asList(validValueType.value()));
+					validValueSet.addAll(Arrays.asList(validValueType.value()));
 
-				if (validValueSet.contains(value) == false) {
-					valid = false;
+					if (validValueSet.contains(value) == false) {
+						valid = false;
+					}
 				}
 			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 				throw new OpenStorefrontRuntimeException("Unexpected error occur trying to get value from object.", ex);
