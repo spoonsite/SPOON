@@ -62,6 +62,8 @@ public abstract class BaseMessageGenerator
 		}
 		message.append("<br><br>");
 		message.append(getUnsubscribe());
+		message.append("<br>");
+		message.append(getContactLine());
 
 		email.setTextHTML(message.toString());
 		String textBased = message.toString().replace("<br>", "\n");
@@ -86,6 +88,20 @@ public abstract class BaseMessageGenerator
 	{
 		String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
 		return applicationTitle;
+	}
+
+	protected String getContactLine()
+	{
+		StringBuilder contactLine = new StringBuilder();
+		String replyName = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME);
+		String replyAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
+		if (StringUtils.isNotBlank(replyName) && StringUtils.isNotBlank(replyAddress)) {
+			contactLine.append("Contact ").append(replyName).append(" at ").append(replyAddress).append(" for questions.");
+		} else if (StringUtils.isNotBlank(replyAddress)) {
+			contactLine.append("Contact ").append(replyAddress).append(" for questions.");
+		}
+
+		return contactLine.toString();
 	}
 
 	/**
