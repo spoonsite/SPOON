@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -53,6 +54,8 @@ public class FileSystemManager
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
 	public static final String DB_DIR = "/var/openstorefront/db";
+
+	private static final int BUFFER_SIZE = 8192;
 
 	public static File getDir(String directory)
 	{
@@ -117,6 +120,27 @@ public class FileSystemManager
 			}
 		}
 		return configFile;
+	}
+
+	/**
+	 * copy from input to output Note: it doesn't close either stream
+	 *
+	 * @param source
+	 * @param sink
+	 * @return
+	 * @throws IOException
+	 */
+	public static long copy(InputStream source, OutputStream sink)
+			throws IOException
+	{
+		long nread = 0L;
+		byte[] buf = new byte[BUFFER_SIZE];
+		int n;
+		while ((n = source.read(buf)) > 0) {
+			sink.write(buf, 0, n);
+			nread += n;
+		}
+		return nread;
 	}
 
 }
