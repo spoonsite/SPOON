@@ -27,7 +27,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 /**
- * This use to login based on Request Header info
+ * This is used to login based on Request Header info
  *
  * @author dshurtleff
  */
@@ -73,7 +73,7 @@ public class HeaderRealm
 			ServiceProxy serviceProxy = new ServiceProxy();
 
 			if (StringUtils.isBlank(headerAuthToken.getUsername())) {
-				//They shouldn't get here unless open am is not confiured
+				//They shouldn't get here unless open am is not configured
 				throw new AuthenticationException("Unable to login.  No credentials passed.  Auth filter not set.");
 			}
 
