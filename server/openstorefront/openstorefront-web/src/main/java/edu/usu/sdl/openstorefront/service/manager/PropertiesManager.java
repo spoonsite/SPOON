@@ -125,7 +125,7 @@ public class PropertiesManager
 		lock.lock();
 		try {
 			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
-				log.log(Level.WARNING, "Open Catalog properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
+				log.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
 			}
 			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
 				properties = new Properties();
@@ -145,7 +145,7 @@ public class PropertiesManager
 		ReentrantLock lock = new ReentrantLock();
 		lock.lock();
 		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(PROPERTIES_FILENAME))) {
-			properties.store(bout, "openstorefront Properties");
+			properties.store(bout, "Open Storefront Properties");
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
 		} finally {

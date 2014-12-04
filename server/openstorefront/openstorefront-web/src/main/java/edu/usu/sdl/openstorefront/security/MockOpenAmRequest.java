@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
@@ -43,13 +45,30 @@ public class MockOpenAmRequest
 		fakeHeaders.put("givenname", "Test");
 		fakeHeaders.put("sn", "Account");
 		fakeHeaders.put("mail", "test@test.com");
-		fakeHeaders.put("memberOf", "CN=STORE-Admin, OU=USU");
+		//fakeHeaders.put("memberOf", "CN=STORE-Admin, OU=USU");
 		fakeHeaders.put("memberid", "55555");
 
 		if (fakeHeaders.containsKey(name)) {
 			return fakeHeaders.get(name);
 		}
 		return super.getHeader(name);
+	}
+
+	@Override
+	public Enumeration<String> getHeaders(String name)
+	{
+		StringTokenizer tokenizer = new StringTokenizer("CN=STORE-Admin,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab | "
+				+ "CN=VPN Users,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab |"
+				+ "CN=USU Users,OU=Groups,OU=USU,DC=basef,DC=dev,DC=lab | "
+				+ "CN=Atlassian Users,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab | "
+				+ "CN=USU SysAdmin,OU=Groups,OU=USU,DC=basef,DC=dev,DC=lab | "
+				+ "CN=Storefront SysAdmins,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab | "
+				+ "CN=SWASe_Eval-ReadWrite,OU=Groups,OU=SWASe,OU=ProjectGroups,OU=External,DC=basef,DC=dev,DC=lab |", "|");
+
+		if ("memberOf".equals(name)) {
+			return (Enumeration) tokenizer;
+		}
+		return super.getHeaders(name);
 	}
 
 }
