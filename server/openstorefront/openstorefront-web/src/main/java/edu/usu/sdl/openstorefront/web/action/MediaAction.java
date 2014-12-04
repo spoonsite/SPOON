@@ -16,16 +16,22 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
@@ -43,6 +49,8 @@ import net.sourceforge.stripes.validation.ValidateNestedProperties;
 public class MediaAction
 		extends BaseAction
 {
+
+	private static final Logger log = Logger.getLogger(MediaAction.class.getName());
 
 	@Validate(required = true, on = "LoadMedia")
 	private String mediaId;
@@ -73,7 +81,13 @@ public class MediaAction
 				if (path != null && path.toFile().exists()) {
 					Files.copy(path, response.getOutputStream());
 				} else {
-					throw new OpenStorefrontRuntimeException("Media not on disk", "Check media record: " + mediaId);
+					Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
+
+					log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{componentMedia.pathToMedia(), mediaId, component.getName(), component.getComponentId()}));
+
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream("/image/close-red.png")) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
 				}
 			}
 
