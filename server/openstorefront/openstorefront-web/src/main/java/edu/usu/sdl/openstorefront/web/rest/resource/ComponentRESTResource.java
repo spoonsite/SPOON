@@ -237,7 +237,7 @@ public class ComponentRESTResource
 	{
 		ComponentPrintView componentPrint = null;
 		ComponentDetailView componentDetail = null;
-		if (type.equals("print")){
+		if (type.equals("print")) {
 			ComponentDetailView temp = service.getComponentService().getComponentDetails(componentId);
 			componentPrint = ComponentPrintView.toView(temp);
 		} else {
@@ -256,9 +256,9 @@ public class ComponentRESTResource
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
-		if (componentDetail != null){
+		if (componentDetail != null) {
 			return sendSingleEntityResponse(componentDetail);
-		} else if (componentPrint != null){
+		} else if (componentPrint != null) {
 			return sendSingleEntityResponse(componentPrint);
 		} else {
 			return Response.ok().build();
@@ -408,7 +408,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Get the dependencies from the entity")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentContact.class)
+	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependency")
 	public List<ComponentExternalDependency> getComponentDependency(
 			@PathParam("id")
@@ -439,7 +439,7 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Add a dependency to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentContact.class)
+	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependency")
 	public Response addComponentDependency(
 			@PathParam("id")
@@ -454,6 +454,7 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Update a contact associated to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependency/{dependencyId}")
 	public Response updateComponentDependency(
 			@PathParam("id")
