@@ -833,14 +833,11 @@ public class ComponentServiceImpl
 			oldTracking.setEventDts(tracking.getEventDts());
 			oldTracking.setTrackEventTypeCode(tracking.getTrackEventTypeCode());
 			oldTracking.setActiveStatus(tracking.getActiveStatus());
-			oldTracking.setUpdateDts(TimeUtil.currentDate());
-			oldTracking.setUpdateUser(tracking.getUpdateUser());
+			oldTracking.populateBaseUpdateFields();
 			persistenceService.persist(oldTracking);
 		} else {
-			tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
+			tracking.populateBaseCreateFields();
 			tracking.setComponentTrackingId(persistenceService.generateId());
-			tracking.setCreateDts(TimeUtil.currentDate());
-			tracking.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(tracking);
 		}
 	}

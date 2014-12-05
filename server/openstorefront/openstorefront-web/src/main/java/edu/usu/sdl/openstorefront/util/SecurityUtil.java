@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
@@ -101,6 +103,32 @@ public class SecurityUtil
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Get the correct client ip from a request
+	 *
+	 * @param request
+	 * @return client ip or N/A if not found
+	 */
+	public static String getClientIp(HttpServletRequest request)
+	{
+		String clientIp = OpenStorefrontConstant.NOT_AVAILABLE;
+		if (request != null) {
+			clientIp = request.getRemoteAddr();
+
+			//Check for header ip it may be forwarded by a proxy
+			String clientIpFromHeader = request.getHeader("x-forwarded-for");
+			if (StringUtils.isNotBlank(clientIpFromHeader)) {
+				clientIp = clientIp + " Forward for: " + clientIpFromHeader;
+			} else {
+				clientIpFromHeader = request.getHeader("x-real-ip");
+				if (StringUtils.isNotBlank(clientIpFromHeader)) {
+					clientIp = clientIp + " X-real IP: " + clientIpFromHeader;
+				}
+			}
+		}
+		return clientIp;
 	}
 
 }

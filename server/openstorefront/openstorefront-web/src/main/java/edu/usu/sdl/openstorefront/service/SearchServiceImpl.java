@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.model.Article;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
@@ -51,8 +52,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.jsoup.Jsoup;
-import org.jsoup.examples.HtmlToPlainText;
 
 /**
  * Handles Searching the data set and sync the indexes
@@ -198,7 +197,7 @@ public class SearchServiceImpl
 		solrDocModel.setId(component.getComponentId());
 		solrDocModel.setNameString(component.getName());
 		solrDocModel.setName(component.getName());
-		String description = new HtmlToPlainText().getPlainText(Jsoup.parse(component.getDescription()));
+		String description = StringProcessor.stripHtml(component.getDescription());
 		solrDocModel.setDescription(description.replace("<>", "").replace("\n", ""));
 		solrDocModel.setUpdateDts(component.getUpdateDts());
 		solrDocModel.setOrganization(component.getOrganization());
@@ -274,7 +273,7 @@ public class SearchServiceImpl
 		solrDocModel.setAttributes(attributeList);
 
 		String htmlArticle = article.getHtml();
-		String plainText = new HtmlToPlainText().getPlainText(Jsoup.parse(htmlArticle));
+		String plainText = StringProcessor.stripHtml(htmlArticle);
 
 		solrDocModel.setArticleHtml(plainText.replace("<>", "").replace("\n", ""));
 

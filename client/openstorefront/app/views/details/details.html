@@ -34,7 +34,7 @@
 </div> -->
 <div ng-if="details.details.evaluationAttribute" class="row">
   <div class="col-md-12">
-    <div class="section-headers addBorders"><h4>DI2E Evaluation Schedule</h4></div>
+    <div class="section-headers addBorders"><h4>DI2E Evaluation Level</h4></div>
     <div schedule ng-model="details.details.evaluationAttribute"></div>
   </div>
 </div>
@@ -68,7 +68,7 @@
           <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td> -->
           <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.description" colspan="5" class="text-left">&mdash;</td> -->
           <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks" ng-bind-html="{{row.link}}">{{row.link}}</td> -->
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks"><span dynamichtml="row.link"></span></td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks"><a  href="{{row.actualLink}}" target="_blank" ng-click="sendPageView('External Link - ' + row.resourceTypeDesc + ' for  ' + details.details.name)"><span dynamichtml="row.link"></span></a><div>{{row.description}}</div></td>
         </tr>
       </tbody>
     </table>                  

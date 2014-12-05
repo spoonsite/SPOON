@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ResourceType;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,10 +34,12 @@ public class ComponentResourceView
 	private String resourceTypeDesc;
 	private String description;
 	private String link;
+	private String actualLink;
 	private Boolean restricted;
 	private Date updateDts;
 
 	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
+	private static final String ACTUAL_RESOURCE_URL = "Resource.action?Redirect&resourceId=";
 
 	public ComponentResourceView()
 	{
@@ -60,10 +63,13 @@ public class ComponentResourceView
 		componentResourceView.setRestricted(componentResource.getRestricted());
 		componentResourceView.setUpdateDts(componentResource.getUpdateDts());
 		String link = componentResource.getLink();
+		link = StringProcessor.stripHtml(link);
 		if (componentResource.getFileName() != null) {
 			link = LOCAL_RESOURCE_URL + componentResource.getResourceId();
 		}
 		componentResourceView.setLink(link);
+		componentResourceView.setActualLink(ACTUAL_RESOURCE_URL + componentResource.getResourceId());
+
 		return componentResourceView;
 	}
 
@@ -117,20 +123,24 @@ public class ComponentResourceView
 		this.resourceTypeDesc = resourceTypeDesc;
 	}
 
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getActualLink()
+	{
+		return actualLink;
+	}
+
+	public void setActualLink(String actualLink)
+	{
+		this.actualLink = actualLink;
 	}
 
 }

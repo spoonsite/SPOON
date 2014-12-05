@@ -225,4 +225,19 @@ public class StringProcessorTest
 
 	}
 
+	/**
+	 * Test of stripHtml method, of class StringProcessor.
+	 */
+	@Test
+	public void testStripHtml()
+	{
+		System.out.println("stripHtml");
+		String text = "<a href=\"http://clavin.bericotechnologies.com\" rel=\"nofollow\"> http://clavin.bericotechnologies.com</a>";
+		String expResult = "http://clavin.bericotechnologies.com";
+		String result = StringProcessor.stripHtml(text);
+		System.out.println(result);
+		assertEquals(expResult, result);
+
+	}
+
 }

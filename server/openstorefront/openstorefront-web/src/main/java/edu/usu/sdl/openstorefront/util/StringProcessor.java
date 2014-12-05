@@ -30,6 +30,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  * String processing methods and JSON handling.
@@ -232,6 +234,15 @@ public class StringProcessor
 		} else {
 			return text.toString();
 		}
+	}
+
+	public static String stripHtml(String text)
+	{
+		if (StringUtils.isNotBlank(text)) {
+			Document doc = Jsoup.parse(text);
+			return doc.text().trim();
+		}
+		return text;
 	}
 
 }
