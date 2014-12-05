@@ -121,7 +121,30 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   };
 
 
-
+  var sendTestEmail = function(userId) {
+    var deferred = $q.defer();
+    if (userId) {
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/userprofiles/'+ userId + '/test-email',
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        // console.log('data', data);
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject('It Failed');
+    }
+    return deferred.promise;
+  }
 
 
   /**
@@ -327,13 +350,14 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   //Public API
   return {
     getCurrentUserProfile: getCurrentUserProfile,
-    saveCurrentUserProfile: saveCurrentUserProfile,
     getReviews: getReviews,
     getWatches: getWatches,
     initializeUser: initializeUser,
-    setWatches: setWatches,
+    removeWatch: removeWatch,
+    saveCurrentUserProfile: saveCurrentUserProfile,
     saveWatch: saveWatch,
-    removeWatch: removeWatch
+    sendTestEmail: sendTestEmail,
+    setWatches: setWatches
   };
 
 }]);

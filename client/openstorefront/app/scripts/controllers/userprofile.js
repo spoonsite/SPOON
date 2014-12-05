@@ -40,11 +40,16 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     ]
   };
 
+  $scope.validateEmail = function(email) { 
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
+
 
   Business.userservice.getCurrentUserProfile().then(function(result){
     if (result) {
       $scope.user.info = result;
-      // console.log('result', result);
+      console.log('result', result);
       
     }
   });
@@ -207,6 +212,10 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     loadUserProfile();
     $scope.userProfileForm.mySwitch = false;
   };
+
+  $scope.sendTestEmail = function() {
+    Business.userservice.sendTestEmail($scope.user.info.username)
+  }
 
   /***************************************************************
   * Save the user profile
