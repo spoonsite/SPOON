@@ -869,6 +869,8 @@ public class ComponentServiceImpl
 					oldComponent.setOrganization(component.getComponent().getOrganization());
 					oldComponent.setParentComponentId(component.getComponent().getParentComponentId());
 					oldComponent.setReleaseDate(component.getComponent().getReleaseDate());
+					oldComponent.setApprovedDts(component.getComponent().getApprovedDts());
+					oldComponent.setVersion(component.getComponent().getVersion());
 					oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
 					oldComponent.setUpdateDts(TimeUtil.currentDate());
 					oldComponent.setUpdateUser(component.getComponent().getUpdateUser());
