@@ -98,7 +98,7 @@ limitations under the License.
                       <p ng-show="userForm.email.$error.required && !userForm.email.$focused" class="help-block">Email is required.</p>	
                       <p ng-show="userForm.email.$invalid && !userForm.email.$focused" class="help-block">Email is invalid and not formatted properly.</p>                    
                     </div>
-                    <p ng-show="!(userForm.email.$error.minlength && !userForm.email.$focused && userForm.email.$error.required && userForm.email.$invalid) && validateEmail(userProfileForm.email)" class="help-block" style="margin-top: 0px;"><button class="btn btn-default" type="button" ng-click="">Send Test Email&nbsp;<i class="fa fa-envelope"></i></button></p>
+                    <p ng-show="!userProfileForm.mySwitch && !(userForm.email.$error.minlength && !userForm.email.$focused && userForm.email.$error.required && userForm.email.$invalid) && validateEmail(userProfileForm.email)" class="help-block" style="margin-top: 0px;"><button class="btn btn-default" type="button" ng-click="sendTestEmail()">Send Test Email&nbsp;<i class="fa fa-envelope"></i></button></p>
                   </div>	
                   <div class="form-group" show-errors>
                     <label class="col-sm-3 control-label">Organization:</label>
