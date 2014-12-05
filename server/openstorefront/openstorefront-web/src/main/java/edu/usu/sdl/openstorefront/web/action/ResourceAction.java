@@ -16,20 +16,27 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
+import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.Validate;
@@ -44,7 +51,7 @@ public class ResourceAction
 		extends BaseAction
 {
 
-	@Validate(required = true, on = "LoadResource")
+	@Validate(required = true, on = {"LoadResource", "Redirect"})
 	private String resourceId;
 
 	@ValidateNestedProperties({
@@ -60,7 +67,7 @@ public class ResourceAction
 	{
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
 		if (componentResource == null) {
-			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id");
+			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 		}
 
 		return new StreamingResolution(componentResource.getMimeType())
@@ -73,7 +80,9 @@ public class ResourceAction
 				if (path != null && path.toFile().exists()) {
 					Files.copy(path, response.getOutputStream());
 				} else {
-					throw new OpenStorefrontRuntimeException("Resource not on disk", "Check resource record: " + resourceId);
+					Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
+					String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{componentResource.pathToResource(), resourceId, component.getName(), component.getComponentId()});
+					throw new OpenStorefrontRuntimeException(message);
 				}
 			}
 
@@ -108,6 +117,34 @@ public class ResourceAction
 			return streamUploadResponse(errors);
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denyed");
+	}
+
+	@HandlesEvent("Redirect")
+	public Resolution redirect()
+	{
+		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
+		if (componentResource == null) {
+			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+		}
+
+		ComponentTracking componentTracking = new ComponentTracking();
+		componentTracking.setClientIp(SecurityUtil.getClientIp(getContext().getRequest()));
+		componentTracking.setComponentId(componentResource.getComponentId());
+		String link = StringProcessor.stripHtml(componentResource.getLink());
+		if (componentResource.getFileName() != null) {
+			componentTracking.setResourceLink(componentResource.pathToResource().toString());
+		} else {
+			componentTracking.setResourceLink(link);
+		}
+		componentTracking.setTrackEventTypeCode(TrackEventCode.EXTERNAL_LINK_CLICK);
+		componentTracking.setEventDts(TimeUtil.currentDate());
+		service.getComponentService().saveComponentTracking(componentTracking);
+
+		if (componentResource.getFileName() != null) {
+			return loadResource();
+		} else {
+			return new RedirectResolution(link, false);
+		}
 	}
 
 	public String getResourceId()

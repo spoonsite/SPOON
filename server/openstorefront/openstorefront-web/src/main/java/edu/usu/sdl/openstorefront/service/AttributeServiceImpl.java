@@ -721,8 +721,8 @@ public class AttributeServiceImpl
 				Map<String, String> codeMap = attributeCodeMap.get(xrefAttributeMap.getAttributeType());
 				if (codeMap.containsKey(xrefAttributeMap.getExternalCode())) {
 
-					//should only have one external code if there's a dup will only use one.
-					//(however, which  code  is used dependa on the order that came in.  which is not  determinate)
+					//should only have one external code if there's a dup we'll only use one.
+					//(however, which  code  is used depends on the order that came in.  which is not  determinate)
 					//First one we hit wins
 					log.log(Level.WARNING, MessageFormat.format("Duplicate external code for attribute type: {0} Code: {1}", new Object[]{xrefAttributeMap.getAttributeType(), xrefAttributeMap.getExternalCode()}));
 				} else {
