@@ -40,7 +40,7 @@ public class TestMessageGenerator
 	protected String generateMessageInternal(Email email)
 	{
 		StringBuilder message = new StringBuilder();
-		message.append("This is a test message to used to confirm the email was sent to you as intended.");
+		message.append("This is a test message used to confirm that emails can be sent to you as intended.");
 		return message.toString();
 	}
 

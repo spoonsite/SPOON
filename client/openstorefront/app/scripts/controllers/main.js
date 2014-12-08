@@ -27,7 +27,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.typeahead  = null;
   $scope.goToLand   = false;
   $scope.searchKey  = $rootScope.searchKey;
-
+  $scope.openAdminMessage = $rootScope.openAdminMessage;
   // Business.componentservice.getComponentDetails('ce453c31-679f-4061-b1b3-2ef2d15a9925');
 
 
