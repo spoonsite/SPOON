@@ -238,6 +238,7 @@ public class ComponentServiceImpl
 			component.setUpdateDts(TimeUtil.currentDate());
 			component.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(component);
+			getSearchService().addIndex(component);
 		}
 		return component;
 	}
@@ -423,9 +424,7 @@ public class ComponentServiceImpl
 						throw new OpenStorefrontRuntimeException("Attribute Type doesn't allow multiple codes.  Type: " + type.getAttributeType(), "Check data passed in.");
 					}
 				}
-				attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-				attribute.setCreateDts(TimeUtil.currentDate());
-				attribute.setUpdateDts(TimeUtil.currentDate());
+				attribute.populateBaseCreateFields();
 				persistenceService.persist(attribute);
 			}
 			if (updateLastActivity) {

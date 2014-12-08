@@ -233,4 +233,12 @@ public interface AttributeService
 	 */
 	public void saveAttributeXrefMap(AttributeXRefView attributeXRefView);
 
+	/**
+	 * This removes the type and all mappings
+	 *
+	 * @param attributeType
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteAttributeXrefType(String attributeType);
+
 }

@@ -785,4 +785,17 @@ public class AttributeServiceImpl
 
 	}
 
+	@Override
+	public void deleteAttributeXrefType(String attributeType)
+	{
+		AttributeXRefMap example = new AttributeXRefMap();
+		example.setAttributeType(attributeType);
+		persistenceService.deleteByExample(example);
+
+		AttributeXRefType attributeXRefType = persistenceService.findById(AttributeXRefType.class, attributeType);
+		if (attributeXRefType != null) {
+			persistenceService.delete(attributeXRefType);
+		}
+	}
+
 }
