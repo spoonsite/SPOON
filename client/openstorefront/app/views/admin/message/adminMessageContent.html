@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <h3 class="modal-title">Send an Admin Message</h3>
+</div>
+<div class="modal-body">
+  <form ng-submit="ok()">
+    <contact-list></contact-list>
+    <h5 style="display:inline-block">Subject:&nbsp;</h5><span style="width: calc(100% - 58px); display: inline-block; float:right;"><input class="form-control" style="display:inline-block;" ng-model="subjectField"></input></span>
+    <textarea ckeditor="editorOptions" ng-model="editorContent"></textarea>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ok()">Send</button>
+  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
