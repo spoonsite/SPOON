@@ -1,0 +1,16 @@
+<div class="modal-header">
+  <h3 ng-if="type === 'type'" class="modal-title">Select which user type</h3>
+  <h3 ng-if="type === 'users'" class="modal-title">Select your contacts</h3>
+</div>
+<div class="modal-body">
+  <div ng-if="type === 'type'">
+    <button ng-click="ok(user);" ng-repeat="user in userTypes.types" class="btn btn-default">{{user.description}}</button>
+  </div>
+  <div ng-if="type === 'users'">
+    User list selection:
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ok()">Send</button>
+  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
