@@ -351,6 +351,10 @@ var app = angular
         $analytics.eventTrack(name,{'category': category, 'label': label});
       };
 
+      $rootScope.openAdminMessage = function() {
+        $rootScope.$broadcast('$OPENADMINMESSAGE');
+      }
+
 
       $rootScope.openModal = function(id, current) {
         $rootScope.current = current;

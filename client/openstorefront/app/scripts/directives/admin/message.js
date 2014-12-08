@@ -20,37 +20,58 @@
 //     <img src='img/content/car.png'/>
 // </message>
 
-app.directive('message', function () {
+app.directive('message', ['$modal', function ($modal) {
   return {
     transclude: true,
     restrict: 'EA',
-    template: '<a ng-click='open()' ng-transclude></a>',
+    template: '<div></div>',
     scope: {
       useCtrl: '@',
       email: '@'
     },
     link: function(scope, element, attrs) {
-      scope.open = function(){
+      scope.$on('$OPENADMINMESSAGE', function() {
+        console.log('We got a click on the button');
+        
+        scope.open('lg');
+      })
+      scope.items = ['item1', 'item2', 'item3'];
+
+      scope.open = function (size) {
 
         var modalInstance = $modal.open({
-          templateUrl: templateDir+attrs.instanceTemplate +'.tpl.html',
-          controller:  scope.useCtrl,
-          size: 'lg',
-          windowClass: 'app-modal-window',
-          backdrop: true,
+          templateUrl: 'myModalContent.html',
+          controller: 'adminMessageCtrl',
+          size: size,
           resolve: {
-            custEmail: function(){
-              return {email: scope.email};
+            items: function () {
+              return scope.items;
             }
           }
         });
-        modalInstance.result.then(function(){
-          console.log('Finished');
-        }, function(){
-          console.log('Modal dismissed at : ' + new Date());
+
+        modalInstance.result.then(function (selectedItem) {
+          scope.selected = selectedItem;
+        }, function () {
+          $log.info('Modal dismissed at: ' + new Date());
         });
       };
     }
   };
-});
+}]);
 
+app.controller('adminMessageCtrl', function ($scope, $modalInstance, items) {
+
+  $scope.items = items;
+  $scope.selected = {
+    item: $scope.items[0]
+  };
+
+  $scope.ok = function () {
+    $modalInstance.close($scope.selected.item);
+  };
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+});
