@@ -27,22 +27,27 @@ app.directive('message', ['$uiModal', 'business', function ($uiModal, Business) 
     template: '<div></div>',
     scope: {},
     link: function(scope, element, attrs) {
-      scope.$on('$OPENADMINMESSAGE', function() {
-        scope.open('lg');
-
+      scope.$on('$OPENADMINMESSAGE', function(event, type, contacts, subject, message) {
+        scope.open('lg', type, contacts, subject, message);
       })
-      scope.items = ['item1', 'item2', 'item3'];
 
-      scope.open = function (size) {
-        console.log('size', size);
-        
+      scope.open = function (size, type, contacts, subject, message) {
         var modalInstance = $uiModal.open({
           templateUrl: 'views/admin/message/adminMessageContent.html',
           controller: 'adminMessageCtrl',
           size: size,
           resolve: {
-            items: function () {
-              return scope.items;
+            type: function () {
+              return type;
+            },
+            contacts: function () {
+              return contacts;
+            },
+            subject: function () {
+              return subject;
+            },
+            message: function () {
+              return message;
             }
           }
         });
@@ -60,9 +65,14 @@ app.directive('message', ['$uiModal', 'business', function ($uiModal, Business) 
 app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, Business, $q) {
   return {
     restrict: 'EA',
-    template: '<h5 style="display:inline-block">To:&nbsp;</h5><span style="width: calc(100% - 28px); display: inline-block; float:right"><select class="form-control" style="display:inline-block;" ng-change="checkForToContacts()" ng-model="toField"><option ng-repeat="(key,val) in toOptions">{{val.title}}<button style="float:right;" ng-click="checkForToContacts()" class="btn btn-default btn-small" ng-if="val.refresh"><i class="fa fa-refresh"></i><button></option></select></span>',
-    scope: {},
+    templateUrl: 'views/admin/message/contactTemplate.html',
+    scope: {
+      type: '=',
+      contacts: '='
+    },
     link: function(scope, element, attrs) {
+
+      scope.disableTo = true;
       scope.getContactList = function() {
         var deferred = $q.defer();
         Business.userservice.getAllUserProfiles().then(function(result){
@@ -74,6 +84,7 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
         }) 
         return deferred.promise;
       }
+
       scope.getContactList();
       scope.toOptions = [
         //
@@ -81,19 +92,25 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
           'title': 'All',
           'value': 'all'
         }, {
-          'title': 'Specific User Group',
-          'value': 'type',
-          'refresh': true
+          'title': 'User Group',
+          'value': 'group'
         }, {
           'title': 'Select Users',
-          'value': 'users',
-          'refresh': true
+          'value': 'users'
         }
       //
       ]
-      scope.toField = scope.toOptions[0];
+      if (scope.type && (scope.type === 'all' || scope.type === 'group' || scope.type === 'users')) {
+        scope.toField = _.find(scope.toOptions, {'value': scope.type});
+        if (scope.toField) {
+          scope.oldField = scope.toField;
+          scope.to = scope.contacts.description;
+        }
+      } else {
+        scope.toField = scope.toOptions[0];
+      }
       scope.checkForToContacts = function() {
-        if (scope.toField && (scope.toField.value === 'users' || scope.toField.value === 'type')) {
+        if (scope.toField && (scope.toField.value === 'users' || scope.toField.value === 'group')) {
           scope.getContactList().then(function(result) {
             var modalInstance = $uiModal.open({
               templateUrl: 'views/admin/message/contact.html',
@@ -107,29 +124,90 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
             });
 
             modalInstance.result.then(function (selectedItem) {
+              if (scope.toField.value === 'group') {
+                scope.disableTo = true;
+                scope.to = selectedItem.description;
+                scope.contacts = selectedItem;
+              } else {
+                scope.disableTo = true;
+                scope.to = selectedItem.description;
+                scope.contacts = selectedItem;
+              }
+              scope.oldField = scope.toField;
               console.log('selected', selectedItem);
             }, function () {
+              //return to old selection.
+              scope.toField = scope.oldField;
               console.log('Modal dismissed at: ' + new Date());
             });
           }, function(){
             console.log('we clicked on the contact list, but the list failed');
           });
+          //
+        } else {
+          scope.oldField = scope.toField;
         }
       }
     }
   };
 }]);
 
-app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'items', 'business', function ($scope, $uiModalInstance, items, Business) {
+app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'type', 'contacts', 'subject', 'message', 'business', function ($scope, $uiModalInstance, type, contacts, subject, message, Business) {
+  $scope.type = type;
+  $scope.contacts = contacts;
+  $scope.form = {};
+  $scope.form.subjectField = subject? subject: '';
+  $scope.editorContent = message? message: '';
+  $scope.editorContentWatch;
 
-  $scope.items = items;
-  $scope.selected = {
-    item: $scope.items[0]
-  };
+  var getUserList = function(uers) {
+    if (users && user.length) {
+
+    }
+    else return [];
+  }
 
   $scope.ok = function () {
-    $uiModalInstance.close($scope.selected.item);
-    console.log('we sent an email', $scope.emails);
+    var messageObj = {};
+    messageObj.usersToEmail = [];
+    messageObj.userTypeCode = null;
+
+    if ($scope.form.subjectField !== '') {
+      removeError();
+      messageObj.subject = $scope.form.subjectField;
+    } else {
+      var errorObj = {};
+      errorObj.errors = {};
+      errorObj.errors.entry = [];
+      errorObj.errors.entry[0] = {
+        'key': 'subjectField',
+        'value': 'The subject field is required!'
+      };
+      errorObj.success = false;
+      triggerError(errorObj);
+      return;
+    }
+
+    messageObj.message = $scope.editorContentWatch;
+
+    
+
+    if ($scope.type === 'group' && $scope.contacts && $scope.contacts.code) {
+      messageObj.userTypeCode = $scope.contacts.code;
+    } else if ($scope.type === 'users' && $scope.contacts && $scope.contacts.length){
+      messageObj.usersToEmail = getUserList($scope.contacts);
+    } else {
+      // $uiModalInstance.dismiss('error');
+    }
+    // send message here
+    console.log('messageObj', messageObj);
+    Business.userservice.sendAdminMessage(messageObj).then(function(result){
+      console.log('result', result);
+      $uiModalInstance.close(messageObj);
+      console.log('we sent an email', messageObj);
+    }, function(result){
+      console.log('result', result);
+    });
   };
 
   $scope.cancel = function () {
@@ -139,16 +217,23 @@ app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'items', 'busin
 
 app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type', 'business', function ($scope, $uiModalInstance, type, Business) {
   $scope.userTypes = {};
-  $scope.userTypes.types = [];
+  $scope.userTypes.groups = [];
   $scope.type = type;
-  if ($scope.type === 'type') {
+  if ($scope.type === 'group') {
     Business.lookupservice.getUserTypeCodes().then(function(result){
-      $scope.userTypes.types = result? result : [];
-      console.log('usertypes', result);
+      $scope.userTypes.groups = result? result : [];
+      // console.log('usertypes', result);
     }, function(){
-      $scope.userTypes.types = [];
-      console.log('There was an error getting the user profiles');
+      $scope.userTypes.groups = [];
+      // console.log('There was an error getting the user profiles');
     }) 
+  } else if ($scope.type === 'users') {
+    Business.userservice.getAllUserProfiles().then(function(result) {
+      $scope.userProfiles = result? result: [];
+      console.log('userProfiles', result);
+    }, function(){
+      //there were no profiles?
+    })
   }
 
   $scope.ok = function (result) {
