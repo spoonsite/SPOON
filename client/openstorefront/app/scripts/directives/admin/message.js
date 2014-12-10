@@ -103,6 +103,7 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
       if (scope.type && (scope.type === 'all' || scope.type === 'group' || scope.type === 'users')) {
         scope.toField = _.find(scope.toOptions, {'value': scope.type});
         if (scope.toField) {
+          scope.oldField = scope.toField;
           scope.to = scope.contacts.description;
         }
       } else {
@@ -143,6 +144,8 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
             console.log('we clicked on the contact list, but the list failed');
           });
           //
+        } else {
+          scope.oldField = scope.toField;
         }
       }
     }
