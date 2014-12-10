@@ -194,6 +194,8 @@ var app = angular
     function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
 
       // initialization stuff.
+      $rootScope.messageType = '';
+      $rootScope.messageContacts = null;
       $rootScope.ieVersionCheck = false;
       $rootScope.loaded = false;
 
@@ -264,8 +266,9 @@ var app = angular
         //     $(this).select();
         //   });
         // }, 500);
-      $rootScope.$broadcast('$LOAD', 'bodyLoad');
-    });
+        //
+        $rootScope.$broadcast('$LOAD', 'bodyLoad');
+      });
 
       $rootScope.$on('$routeChangeSuccess', function (event, next, current){
         $rootScope.$broadcast('$UNLOAD', 'bodyLoad');
@@ -351,8 +354,15 @@ var app = angular
         $analytics.eventTrack(name,{'category': category, 'label': label});
       };
 
-      $rootScope.openAdminMessage = function() {
-        $rootScope.$broadcast('$OPENADMINMESSAGE');
+      $rootScope.openAdminMessage = function(type, contacts, subject, message) {
+        type = 'group';
+        contacts = {
+          'code': "DEV",
+          'description': "Developer"
+        }
+        subject = 'This is a test';
+        message = 'This is the test message';
+        $rootScope.$broadcast('$OPENADMINMESSAGE', type, contacts, subject, message);
       }
 
 

@@ -69,6 +69,35 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   /**
   *  Loads the current user
   */
+  var sendAdminMessage = function(messageObj) {
+    var deferred = $q.defer();
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    if (messageObj) {
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/service/notification/admin-message',
+        'data': messageObj
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (isNotRequestError(data)) {
+          deferred.resolve('The message was sent');
+        } else {
+          deferred.reject(data);
+        }
+      }, function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+
+    return deferred.promise;
+  };
+
+
+  /**
+  *  Loads the current user
+  */
   var getAllUserProfiles = function(forceReload) {
     var deferred = $q.defer();
     // getting rid of caching here
@@ -388,6 +417,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     removeWatch: removeWatch,
     saveCurrentUserProfile: saveCurrentUserProfile,
     saveWatch: saveWatch,
+    sendAdminMessage:sendAdminMessage,
     sendTestEmail: sendTestEmail,
     setWatches: setWatches
   };

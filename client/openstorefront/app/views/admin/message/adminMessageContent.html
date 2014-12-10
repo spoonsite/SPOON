@@ -3,9 +3,10 @@
 </div>
 <div class="modal-body">
   <form ng-submit="ok()">
-    <contact-list></contact-list>
-    <h5 style="display:inline-block">Subject:&nbsp;</h5><span style="width: calc(100% - 58px); display: inline-block; float:right;"><input class="form-control" style="display:inline-block;" ng-model="subjectField"></input></span>
-    <textarea ckeditor="editorOptions" ng-model="editorContent"></textarea>
+    <contact-list type="type" contacts="contacts"></contact-list>
+    <span style="width: calc(100% - 71px); display: inline-block; float:right;"><input class="form-control" id="subjectField" style="display:inline-block;" type="text" ng-model="form.subjectField"/></span>
+    <h5 style="display:inline-block; float:right; text-align: right;">Subject:&nbsp;</h5>
+    <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
   </form>
 </div>
 <div class="modal-footer">
