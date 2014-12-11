@@ -233,7 +233,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     $scope.data.push({'label': 'System', 'location':'views/admin/manageSystem.html', 'toolTitle': 'System Management', 'key': 'SYSTEM' });
     
     // $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });
-    // $scope.data.push(attributes);
+    $scope.data.push(attributes);
     // $scope.data.push(lookupTables);
 
     // $scope.data.push({'label': 'Manage Components', 'location':'views/admin/editcomponents.html', 'toolTitle': 'Manage Components', 'key': 'components' });
