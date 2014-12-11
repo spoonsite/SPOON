@@ -175,7 +175,6 @@ module.exports = function (grunt) {
       all: [
       'Gruntfile.js',
       '<%= yeoman.app %>/scripts/common/*.js',
-      '<%= yeoman.app %>/scripts/common-min/*.js',
       '<%= yeoman.app %>/scripts/controllers/*.js',
       '<%= yeoman.app %>/scripts/directives/*.js',
       '<%= yeoman.app %>/scripts/filters/*.js',
@@ -364,7 +363,6 @@ module.exports = function (grunt) {
           'bower_components/ckeditor/**/*',
           'styles/*.css',
           'scripts/esapi4js/**/*',
-          'scripts/common-min/*.js',
           'scripts/common/data.js',
           'scripts/common/jquery-cron.js',
           'scripts/common/angular-multi-select.js',

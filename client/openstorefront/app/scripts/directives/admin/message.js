@@ -71,7 +71,6 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
       contacts: '='
     },
     link: function(scope, element, attrs) {
-
       scope.disableTo = true;
       scope.getContactList = function() {
         var deferred = $q.defer();
@@ -84,6 +83,7 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
         }) 
         return deferred.promise;
       }
+
 
       scope.getContactList();
       scope.toOptions = [
@@ -243,7 +243,19 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
   $scope.data = {};
   $scope.data.selectedUsers = contacts? contacts: [];
 
+  $scope.reverse = false;
 
+  Business.lookupservice.getUserTypeCodes().then(function(result) {
+    $scope.userTypeCodes = result;
+  })
+
+  $scope.getUserType = function(userCode) {
+    var description = _.find($scope.userTypeCodes, {'code': userCode});
+    if (description) {
+      return description.description;
+    }
+    return 'End User';
+  }
 
   $scope.data.tempTags = [];
 
