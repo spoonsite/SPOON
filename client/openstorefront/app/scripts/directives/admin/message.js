@@ -109,8 +109,17 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
       } else {
         scope.toField = scope.toOptions[0];
       }
+
+      var oldContacts;
+
       scope.checkForToContacts = function() {
+        console.log('oldContacts', oldContacts);
+        
         if (scope.toField && (scope.toField.value === 'users' || scope.toField.value === 'group')) {
+          if (scope.toField.value !== scope.oldField.value) {
+            oldContacts = scope.contacts;
+            scope.contacts = null;
+          }
           scope.getContactList().then(function(result) {
             var modalInstance = $uiModal.open({
               templateUrl: 'views/admin/message/contact.html',
@@ -119,6 +128,9 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
               resolve: {
                 type: function () {
                   return scope.toField.value;
+                },
+                contacts: function () {
+                  return scope.contacts;
                 }
               }
             });
@@ -130,14 +142,18 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
                 scope.contacts = selectedItem;
               } else {
                 scope.disableTo = true;
-                scope.to = selectedItem.description;
+                scope.to = selectedItem;
                 scope.contacts = selectedItem;
               }
               scope.oldField = scope.toField;
-              console.log('selected', selectedItem);
+              oldContacts = scope.contacts;
+              scope.type = scope.toField.value;
+              console.log('selected', scope.contacts);
             }, function () {
               //return to old selection.
               scope.toField = scope.oldField;
+              scope.contacts = oldContacts;
+              scope.type = scope.toField.value;
               console.log('Modal dismissed at: ' + new Date());
             });
           }, function(){
@@ -146,6 +162,7 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
           //
         } else {
           scope.oldField = scope.toField;
+          scope.type = scope.toField.value;
         }
       }
     }
@@ -153,18 +170,19 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
 }]);
 
 app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'type', 'contacts', 'subject', 'message', 'business', function ($scope, $uiModalInstance, type, contacts, subject, message, Business) {
-  $scope.type = type;
-  $scope.contacts = contacts;
   $scope.form = {};
   $scope.form.subjectField = subject? subject: '';
+  $scope.form.type = type;
+  $scope.form.contacts = contacts;
   $scope.editorContent = message? message: '';
   $scope.editorContentWatch;
 
-  var getUserList = function(uers) {
-    if (users && user.length) {
-
-    }
-    else return [];
+  var getUsernames = function(users) {
+    var result = [];
+    _.each(users, function(user) {
+      result.push(user.username);
+    })
+    return result;
   }
 
   $scope.ok = function () {
@@ -192,11 +210,14 @@ app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'type', 'contac
 
     
 
-    if ($scope.type === 'group' && $scope.contacts && $scope.contacts.code) {
-      messageObj.userTypeCode = $scope.contacts.code;
-    } else if ($scope.type === 'users' && $scope.contacts && $scope.contacts.length){
-      messageObj.usersToEmail = getUserList($scope.contacts);
+    if ($scope.form.type === 'group' && $scope.form.contacts && $scope.form.contacts.code) {
+      messageObj.userTypeCode = $scope.form.contacts.code;
+      messageObj.usersToEmail = [];
+    } else if ($scope.form.type === 'users' && $scope.form.contacts && $scope.form.contacts.length){
+      messageObj.usersToEmail = getUsernames($scope.form.contacts);
+      messageObj.userTypeCode = null;
     } else {
+      // we're sending to all, or there is an error
       // $uiModalInstance.dismiss('error');
     }
     // send message here
@@ -215,10 +236,17 @@ app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'type', 'contac
   };
 }]);
 
-app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type', 'business', function ($scope, $uiModalInstance, type, Business) {
+app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', 'business', '$q', function ($scope, $uiModalInstance, type, contacts, Business, $q) {
   $scope.userTypes = {};
   $scope.userTypes.groups = [];
   $scope.type = type;
+  $scope.data = {};
+  $scope.data.selectedUsers = contacts? contacts: [];
+
+
+
+  $scope.data.tempTags = [];
+
   if ($scope.type === 'group') {
     Business.lookupservice.getUserTypeCodes().then(function(result){
       $scope.userTypes.groups = result? result : [];
@@ -230,6 +258,20 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type', 'business', 
   } else if ($scope.type === 'users') {
     Business.userservice.getAllUserProfiles().then(function(result) {
       $scope.userProfiles = result? result: [];
+      _.each($scope.userProfiles, function(user){
+        user.text = user.firstName + ' ' + user.lastName + ' (' + user.organization + ')';
+      });
+      if ($scope.data.selectedUsers) {
+        _.each ($scope.data.selectedUsers, function(user){
+          var found = _.find($scope.userProfiles, {'username': tag.username});
+          if (found) {
+            var index = _.indexOf($scope.userProfiles, found);
+            if (index > -1) {
+              $scope.userProfiles.splice(index, 1);
+            }
+          }
+        })
+      }
       console.log('userProfiles', result);
     }, function(){
       //there were no profiles?
@@ -237,10 +279,73 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type', 'business', 
   }
 
   $scope.ok = function (result) {
+    if (!result && $scope.type === 'users') {
+      result = $scope.data.selectedUsers;
+    }
     $uiModalInstance.close(result);
   };
 
   $scope.cancel = function () {
     $uiModalInstance.dismiss('cancel');
   };
+
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.saveTags = function(tags, tag){
+  };
+  
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.addTag = function(tag, tags){
+    var found;
+    if ($scope.data.selectedUsers.length) {
+      found = _.find($scope.data.selectedUsers, {'username': tag.username});
+    } else {
+      found = false;
+    }
+    if (!found) {
+      var found = _.find($scope.userProfiles, {'username': tag.username});
+      if (found) {
+        var index = _.indexOf($scope.userProfiles, found);
+        if (index > -1) {
+          $scope.userProfiles.splice(index, 1);
+        }
+      }
+      $scope.data.selectedUsers.push(tag);
+      $scope.data.tempTags = [];
+    }
+  };
+  
+  /***************************************************************
+  * This function saves a component's tags
+  ***************************************************************/
+  $scope.removeTag = function(tag, tags){
+    var found = _.find($scope.data.selectedUsers, {'username': tag.username});
+    if (found) {
+      $scope.userProfiles.push(found);
+      var index = _.indexOf($scope.data.selectedUsers, found);
+      if (index > -1) {
+        $scope.data.selectedUsers.splice(index, 1);
+      }
+    }
+  };
+
+  $scope.checkTagsList = function(query, list, source) {
+    var deferred = $q.defer();
+    var subList = null;
+    if (query === ' ') {
+      subList = _.reject(source, function(item) {
+        return !!(_.find(list, {'text': item}));
+      });
+    } else {
+      subList = _.filter(source, function(item) {
+        return item.text.toLowerCase().indexOf(query.toLowerCase()) > -1;
+      });
+    }
+    deferred.resolve(subList);
+    return deferred.promise;
+  };
+
 }]);
