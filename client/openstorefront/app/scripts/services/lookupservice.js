@@ -141,6 +141,37 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     return deferred.promise;
   };
 
+  var getEvaluationSections = function() {
+    var deferred = $q.defer();
+
+    if (refreshData.evaluationSection) {
+      localCache.clear('EvaluationSection');
+      refreshData.evaluationSection = false;
+    }
+
+    var evaluationSection = checkExpire('EvaluationSection', minute * 1440);
+    if (evaluationSection) {
+      deferred.resolve(evaluationSection);
+    } else {
+      loadLookupTable('EvaluationSection', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          save('EvaluationSection', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      }, false);
+    }
+
+    return deferred.promise;
+  };
+
 
   
   var getEvalLevels = function() {
@@ -154,6 +185,32 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
         if (data && data != "false" && isNotRequestError(data)) {
           removeError();
           save('evalLevels', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    }
+
+    return deferred.promise;
+  };
+
+  var getSvcv4 = function() {
+    var deferred = $q.defer();
+
+    var evalLevels = checkExpire('DI2E-SVCV4-A', minute * 0.5);
+    if (evalLevels) {
+      deferred.resolve(evalLevels);
+    } else {
+      $http.get('api/v1/resource/attributes/attributetypes/DI2E-SVCV4-A/architecture').success(function(data, status, headers, config){
+        if (data && data != "false" && isNotRequestError(data)) {
+          removeError();
+          save('DI2E-SVCV4-A', data);
           deferred.resolve(data);
         } else {
           removeError();
@@ -245,6 +302,8 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
 
   //Public API
   return {
+    getSvcv4: getSvcv4,
+    getEvaluationSections: getEvaluationSections,
     getContactTypeCodes: getContactTypeCodes,
     getUserTypeCodes: getUserTypeCodes,
     getEvalLevels: getEvalLevels,

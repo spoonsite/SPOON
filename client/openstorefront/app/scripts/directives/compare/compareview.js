@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.directive('compareview', ['$timeout', function ($timeout) {
+app.directive('compareview', ['$timeout', 'business', function ($timeout, Business) {
   return {
     templateUrl: 'views/details/compare.html',
     restrict: 'E',
@@ -25,6 +25,12 @@ app.directive('compareview', ['$timeout', function ($timeout) {
       dataright: '='
     },
     link: function postLink(scope, element, attrs) {
+
+      Business.lookupservice.getEvaluationSections().then(function(result) {
+        scope.evalSectionDescriptionMap = result? result : [];
+        console.log('sections', result);
+        
+      })
 
       scope.getObjectContent = function(details) {
         var temp = {};
@@ -129,8 +135,9 @@ app.directive('compareview', ['$timeout', function ($timeout) {
       /***************************************************************
       * This function saves a component's tags
       ***************************************************************/
-      scope.getEvalDescription = function(name){
-        return MOCKDATA.evalSectionDescriptionMap[name];
+      scope.getEvalDescription = function(col){
+        var section = _.find(scope.evalSectionDescriptionMap, {'description': col.name});
+        return section? section.detailedDecription: '';
       };
 
       var timeout;

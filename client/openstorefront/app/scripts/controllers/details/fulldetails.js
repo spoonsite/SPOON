@@ -15,7 +15,6 @@
 */
 'use strict';
 
-/*global MOCKDATA2*/
 
 app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
 
@@ -52,6 +51,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       $scope.user.info = result;
     }
   });
+
+  Business.lookupservice.getEvaluationSections().then(function(result) {
+    $scope.evalSectionDescriptionMap = result? result : [];
+    console.log('section', result);
+    
+  })
 
   $scope.resetWatches = function(hard) {
     if ($scope.user.info) {
@@ -307,8 +312,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   /***************************************************************
   * This function saves a component's tags
   ***************************************************************/
-  $scope.getEvalDescription = function(name){
-    return MOCKDATA.evalSectionDescriptionMap[name];
+  $scope.getEvalDescription = function(col){
+    var section = _.find($scope.evalSectionDescriptionMap, {'description': col.name});
+    return section? section.detailedDecription: '';
   };
 
   /***************************************************************

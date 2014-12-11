@@ -28,7 +28,22 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.goToLand   = false;
   $scope.searchKey  = $rootScope.searchKey;
   $scope.openAdminMessage = $rootScope.openAdminMessage;
-  // Business.componentservice.getComponentDetails('ce453c31-679f-4061-b1b3-2ef2d15a9925');
+
+
+  // $scope.type = 'group';
+  // $scope.contacts = {
+  //   'code': "DEV",
+  //   'description': "Developer"
+  // }
+  // $scope.subject = 'This is a test';
+  // $scope.message = 'This is the test message';
+  // Business.userservice.getAllUserProfiles().then(function(result) {
+  //   $scope.type = 'users';
+  //   var newList = result;
+  //   $scope.contacts = newList;
+  // })
+
+
 
 
   Business.getFilters().then(function(result){
