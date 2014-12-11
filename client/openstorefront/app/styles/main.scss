@@ -48,6 +48,10 @@ body {
   background: image-url('squared_metal.png');
 }
 
+.toField {
+  height: 100px !important;
+  overflow: auto !important;
+}
 
 
 .detailsTitleButton {
