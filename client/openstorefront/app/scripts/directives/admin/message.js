@@ -71,6 +71,7 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
       contacts: '='
     },
     link: function(scope, element, attrs) {
+      var oldContacts;
       scope.disableTo = true;
       scope.getContactList = function() {
         var deferred = $q.defer();
@@ -83,7 +84,6 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
         }) 
         return deferred.promise;
       }
-
 
       scope.getContactList();
       scope.toOptions = [
@@ -102,15 +102,16 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
       ]
       if (scope.type && (scope.type === 'all' || scope.type === 'group' || scope.type === 'users')) {
         scope.toField = _.find(scope.toOptions, {'value': scope.type});
-        if (scope.toField) {
-          scope.oldField = scope.toField;
+        if (scope.toField && scope.toField.value === 'group') {
           scope.to = scope.contacts.description;
+        } else if (scope.toField && scope.toField.value === 'users') {
+          scope.to = scope.contacts;
         }
+        scope.oldField = scope.toField;
       } else {
         scope.toField = scope.toOptions[0];
       }
 
-      var oldContacts;
 
       scope.checkForToContacts = function() {
         console.log('oldContacts', oldContacts);
@@ -275,7 +276,8 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
       });
       if ($scope.data.selectedUsers) {
         _.each ($scope.data.selectedUsers, function(user){
-          var found = _.find($scope.userProfiles, {'username': tag.username});
+          user.text = user.firstName + ' ' + user.lastName + ' (' + user.organization + ')';
+          var found = _.find($scope.userProfiles, {'username': user.username});
           if (found) {
             var index = _.indexOf($scope.userProfiles, found);
             if (index > -1) {

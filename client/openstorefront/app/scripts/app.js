@@ -355,13 +355,6 @@ var app = angular
       };
 
       $rootScope.openAdminMessage = function(type, contacts, subject, message) {
-        type = 'group';
-        contacts = {
-          'code': "DEV",
-          'description': "Developer"
-        }
-        subject = 'This is a test';
-        message = 'This is the test message';
         $rootScope.$broadcast('$OPENADMINMESSAGE', type, contacts, subject, message);
       }
 
