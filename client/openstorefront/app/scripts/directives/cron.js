@@ -32,7 +32,7 @@ app.directive('cron', ['$timeout', function ($timeout) {
       scope.check.minDay = 1;
       scope.check.maxDay = 31;
       scope.$watch('check', function(value) {
-        console.log('value', value);
+        // console.log('value', value);
         if (value && value.month) {
           var min = 1;
           var max = 31;

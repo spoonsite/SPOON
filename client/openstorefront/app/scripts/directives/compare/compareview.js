@@ -28,8 +28,7 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
 
       Business.lookupservice.getEvaluationSections().then(function(result) {
         scope.evalSectionDescriptionMap = result? result : [];
-        console.log('sections', result);
-        
+        // console.log('sections', result);
       })
 
       scope.getObjectContent = function(details) {

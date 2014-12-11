@@ -47,8 +47,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   Business.userservice.getCurrentUserProfile().then(function(result){
     if (result) {
       $scope.user.info = result;
-      console.log('result', result);
-      
+      // console.log('result', result);
     }
   });
 

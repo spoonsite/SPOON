@@ -19,7 +19,7 @@
 app.directive('print', ['business', '$timeout', '$location', function (Business, $timeout, $location) {
   var getTemplateUrl = function(element, attrs) {
     var type = attrs.type || null;
-    console.log('type', type);
+    // console.log('type', type);
     
     if (type && type === 'component') {
       return 'views/details/print.html';
@@ -36,7 +36,7 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
     },
     link: function postLink(scope, element, attrs) {
       scope.details;
-      console.log('scope.id', scope.id);
+      // console.log('scope.id', scope.id);
       
       scope.getObjectContent = function(details) {
         var temp = {};
@@ -118,9 +118,9 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
 
       if (scope.id){
         Business.componentservice.getComponentPrint(scope.id, true).then(function(result){
-          console.log('Details', result);
+          // console.log('Details', result);
           scope.details = result? scope.getObjectContent(result): [];
-          console.log('Details', scope.details);
+          // console.log('Details', scope.details);
         }, function() {
           scope.details = [];
         })

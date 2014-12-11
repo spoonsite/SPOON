@@ -21,7 +21,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.user                          = {};
   $scope.editQuestion                  = [];
   $scope.currentTab                    = null;
-
+  $scope.sendAdminMessage              = $rootScope.openAdminMessage;
   resetUpdateNotify();
 
   $scope.setComponentId = function(id) {
@@ -54,7 +54,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
 
   Business.lookupservice.getEvaluationSections().then(function(result) {
     $scope.evalSectionDescriptionMap = result? result : [];
-    console.log('section', result);
+    // console.log('section', result);
     
   })
 
@@ -306,8 +306,24 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   };
 
-
-
+  //Thing needs an property called 'username' that contains the userID for whoever
+  // you want to send the message to.
+  $scope.messageUser = function(thing) {
+    // console.log('thing', thing);
+    Business.userservice.getUserByUsername(thing.username).then(function(result){
+      // console.log('User Profile', result);
+      if (result && typeof result !== 'array') {
+        var temp = [];
+        temp.push(result);
+        result = temp;
+      }
+      if (result && result.length) {
+        $scope.sendAdminMessage('users', result, '', '');
+      } else {
+        triggerAlert('You are unable to send a message to this user. (They could be deactivated or without an email address)', 'failedMessage', 'body', '8000')
+      }
+    })
+  }
 
   /***************************************************************
   * This function saves a component's tags

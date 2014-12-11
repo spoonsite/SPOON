@@ -296,7 +296,7 @@ var triggerError = function(errorObj) {
   if (isRequestError(errorObj)) {
     var errors = errorObj.errors;
     _.each(errors.entry, function(item) {
-      console.log('item', item);
+      // console.log('item', item);
       
       var i = item.key;
       $('#'+i).addClass('errorOnInput');
