@@ -31,6 +31,7 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
         // console.log('sections', result);
       })
 
+      scope.checked = {};
       scope.getObjectContent = function(details) {
         var temp = {};
         temp.value = [];
@@ -40,26 +41,23 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
           property.checkedLabel = camelToSentence(prop);
           property.data = details[prop];
           property.checked = true;
+          scope.checked[prop] = scope.checked[prop]? scope.checked[prop]: property;
           temp[prop] = property;
         })
         if (temp.value){
           delete temp.value;
         }
         // details.checkedLabel = camelToSentence();
+        console.log('scope.checked', scope.checked);
+        
         return temp;
       }
 
+
       scope.reset = function() {
-        if (scope.detailsleft) {
-          _.each(scope.detailsleft, function(detail){
-            detail.checked = true;
-          });
-        }
-        if (scope.detailsright) {
-          _.each(scope.detailsright, function(detail){
-            detail.checked = true;
-          });
-        }
+        _.each(scope.checked, function(detail){
+          detail.checked = true;
+        });
       }
 
       scope.getDate = function(date) {
