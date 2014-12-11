@@ -26,6 +26,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public interface LookupService
+		extends AsyncService
 {
 
 	/**
@@ -95,19 +96,19 @@ public interface LookupService
 	public LookupEntity getLookupEnity(String lookClassName, String code);
 
 	/**
-	 * 
+	 *
 	 * @param <T>
 	 * @param lookupClass
 	 * @param description
-	 * @return 
+	 * @return
 	 */
 	public <T extends LookupEntity> T getLookupEnityByDesc(Class<T> lookupClass, String description);
-	
+
 	/**
-	 * 
+	 *
 	 * @param lookClassName
 	 * @param description
-	 * @return 
+	 * @return
 	 */
 	public LookupEntity getLookupEnityByDesc(String lookClassName, String description);
 

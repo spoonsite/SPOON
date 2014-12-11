@@ -357,7 +357,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       var url = 'api/v1/resource/userprofiles/'+userId+'/watches/'+watchId;
       $http({
         'method': 'DELETE',
-        'url': url,
+        'url': url
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
@@ -406,6 +406,73 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
 
     return deferred.promise;
   };
+  
+  var getUserMessages = function(queryParamFilter) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/usermessages?' + queryParamFilter.toQuery()
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();          
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject('There was an error grabbing the usemessages');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var processUserMessagesNow = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/usermessages/processnow'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var cleanoldUserMessagesNow = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/usermessages/cleanold'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);        
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+  
+  var removeUserMessages = function(id) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/usermessages/' + id
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
 
   //Public API
   return {
@@ -419,7 +486,11 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     saveWatch: saveWatch,
     sendAdminMessage:sendAdminMessage,
     sendTestEmail: sendTestEmail,
-    setWatches: setWatches
+    setWatches: setWatches,
+    getUserMessages: getUserMessages,
+    processUserMessagesNow: processUserMessagesNow,
+    cleanoldUserMessagesNow: cleanoldUserMessagesNow,
+    removeUserMessages: removeUserMessages
   };
 
 }]);

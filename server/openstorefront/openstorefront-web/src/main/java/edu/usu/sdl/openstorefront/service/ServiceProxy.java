@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.service.api.AsyncService;
 import edu.usu.sdl.openstorefront.service.api.AttributeService;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
@@ -24,6 +25,7 @@ import edu.usu.sdl.openstorefront.service.api.SearchService;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.api.UserService;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
+import java.util.Objects;
 
 /**
  * Entry point to the service layer; Expecting one Service Proxy per thread. Not
@@ -124,6 +126,18 @@ public class ServiceProxy
 			attributeServicePrivate = DynamicProxy.newInstance(new AttributeServiceImpl());
 		}
 		return attributeServicePrivate;
+	}
+
+	public <T extends AsyncService> T getAyncProxy(T originalProxy)
+	{
+		return getAyncProxy(originalProxy, true, "Aync Service Call");
+	}
+
+	public <T extends AsyncService> T getAyncProxy(T originalProxy, boolean allowMultiple, String taskName)
+	{
+		Objects.requireNonNull(originalProxy, "Original Service is required");
+		T asyncService = AsyncProxy.newInstance(originalProxy, allowMultiple, taskName);
+		return asyncService;
 	}
 
 }

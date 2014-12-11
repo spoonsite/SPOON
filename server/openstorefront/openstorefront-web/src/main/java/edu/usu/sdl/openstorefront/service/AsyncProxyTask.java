@@ -13,14 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.api;
+package edu.usu.sdl.openstorefront.service;
+
+import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 
 /**
+ * Callable for aync Proxy
  *
  * @author dshurtleff
  */
-public interface ReportService
-		extends AsyncService
+public class AsyncProxyTask
+		implements Callable<Object>
 {
+
+	private Object originalObject;
+	private Object proxy;
+	private Method method;
+	private Object[] args;
+
+	public AsyncProxyTask(Object originalObject, Object proxy, Method method, Object[] args)
+	{
+		this.originalObject = originalObject;
+		this.proxy = proxy;
+		this.method = method;
+		this.args = args;
+	}
+
+	@Override
+	public Object call() throws Exception
+	{
+		Object result = method.invoke(originalObject, args);
+		return result;
+	}
 
 }

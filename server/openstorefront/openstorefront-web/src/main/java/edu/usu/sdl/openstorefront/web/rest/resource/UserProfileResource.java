@@ -100,7 +100,7 @@ public class UserProfileResource
 	@DataType(UserProfileView.class)
 	@Path("/{id}")
 	public UserProfileView userProfile(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId)
 	{
 		UserProfileView userProfileView = null;
@@ -145,9 +145,9 @@ public class UserProfileResource
 	@APIDescription("Update user profile returns updated profile.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{username}")
+	@Path("/{id}")
 	public Response updateProfile(
-			@PathParam("username")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@RequiredParam UserProfile inputProfile)
 	{
@@ -195,7 +195,7 @@ public class UserProfileResource
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Path("/{id}/test-email")
 	public Response sendTestEmail(
-			@PathParam("id") String username
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username
 	)
 	{
 		service.getUserService().sendTestEmail(username);
@@ -209,7 +209,7 @@ public class UserProfileResource
 	@Path("/{id}/watches")
 	@DataType(UserWatchView.class)
 	public List<UserWatchView> getWatches(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId)
 	{
 		List<UserWatch> watches = service.getUserService().getWatches(userId);
@@ -228,7 +228,7 @@ public class UserProfileResource
 	@DataType(UserWatchView.class)
 	@Path("/{id}/watches/{watchId}")
 	public UserWatchView getWatch(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId)
@@ -244,7 +244,7 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches")
 	public Response addWatch(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@RequiredParam UserWatch userWatch)
 	{
@@ -278,7 +278,7 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId,
@@ -314,7 +314,7 @@ public class UserProfileResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId)
@@ -394,7 +394,7 @@ public class UserProfileResource
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
 	public Response addComponentTracking(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@RequiredParam UserTracking tracking)
 	{
@@ -409,7 +409,7 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
 	public Response updateComponentTracking(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("trackingId")
 			@RequiredParam String trackingId,

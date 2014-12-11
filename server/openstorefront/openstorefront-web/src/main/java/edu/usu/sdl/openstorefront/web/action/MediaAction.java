@@ -99,6 +99,7 @@ public class MediaAction
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			if (componentMedia != null) {
 				componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 				componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());

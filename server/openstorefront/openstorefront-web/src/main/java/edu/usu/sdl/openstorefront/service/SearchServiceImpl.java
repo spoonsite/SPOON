@@ -375,4 +375,11 @@ public class SearchServiceImpl
 			addIndex(article);
 		});
 	}
+
+	@Override
+	public void resetIndexer()
+	{
+		deleteAll();
+		saveAll();
+	}
 }

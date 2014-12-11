@@ -51,6 +51,7 @@ import java.util.List;
  * @author jlaw
  */
 public interface ComponentService
+		extends AsyncService
 {
 
 	/**

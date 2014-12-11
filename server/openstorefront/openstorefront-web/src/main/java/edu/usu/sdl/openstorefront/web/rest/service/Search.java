@@ -57,7 +57,8 @@ public class Search
 		extends BaseResource
 {
 
-	public class CustomComparator implements Comparator<ComponentSearchView>
+	public class CustomComparator
+			implements Comparator<ComponentSearchView>
 	{
 
 		@Override
@@ -79,8 +80,7 @@ public class Search
 		if (result != null) {
 			Collections.sort(result, new CustomComparator());
 			return result;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -102,8 +102,7 @@ public class Search
 	@Path("/resetSolr")
 	public Response resetSolr()
 	{
-		service.getSearchService().deleteAll();
-		service.getSearchService().saveAll();
+		service.getAyncProxy(service.getSearchService(), false, "Reseting Indexer").resetIndexer();
 		return Response.ok().build();
 	}
 
@@ -129,11 +128,10 @@ public class Search
 		if (result != null) {
 			Collections.sort(result, new CustomComparator());
 			return result;
-		}
-		else {
+		} else {
 			return null;
 		}
-		
+
 	}
 
 	@GET
@@ -147,8 +145,7 @@ public class Search
 		if (result != null) {
 			Collections.sort(result, new CustomComparator());
 			return result;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}

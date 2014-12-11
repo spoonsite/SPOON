@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.init;
 
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
+import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
@@ -62,7 +63,7 @@ public class ApplicationInit
 		startupManager(new MailManager());
 		startupManager(new JobManager());
 		startupManager(new UserAgentManager());
-
+		startupManager(new AsyncTaskManager());
 	}
 
 	private void startupManager(Initializable initializable)
@@ -75,6 +76,7 @@ public class ApplicationInit
 	public void contextDestroyed(ServletContextEvent sce)
 	{
 		//Shutdown in reverse order to make sure the dependancies are good.
+		shutdownManager(new AsyncTaskManager());
 		shutdownManager(new UserAgentManager());
 		shutdownManager(new JobManager());
 		shutdownManager(new MailManager());

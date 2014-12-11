@@ -86,7 +86,7 @@ public class UserMessageResource
 	@Path("/processnow")
 	public Response processUserMessages()
 	{
-		service.getUserService().processAllUserMessages(true);
+		service.getAyncProxy(service.getUserService(), false, "Process All User Messages Now").processAllUserMessages(true);
 		return Response.ok().build();
 	}
 

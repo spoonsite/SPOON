@@ -35,6 +35,7 @@ import java.util.Map;
  * @author dshurtleff
  */
 public interface AttributeService
+		extends AsyncService
 {
 
 	/**

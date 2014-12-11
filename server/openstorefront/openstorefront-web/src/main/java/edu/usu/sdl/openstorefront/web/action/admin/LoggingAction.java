@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.action.admin;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.action.BaseAction;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,7 @@ import net.sourceforge.stripes.validation.Validate;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * Runtime Access to log levels.
  *
  * @author dshurtleff
  */
@@ -87,6 +89,7 @@ public class LoggingAction
 			} else {
 				localLogger.setLevel(null);
 			}
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find logger", "Check name");
 		}
@@ -109,6 +112,7 @@ public class LoggingAction
 					}
 				}
 			}
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find logger", "Check name");
 		}
