@@ -9,8 +9,8 @@
 		</button>     
 		<button class="btn btn-default" ng-click="refreshData()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
 		<span style="position: absolute; right: 0px; padding-right: 20px;">
-			<button class="btn btn-default" ng-click="processUserMessageNow()">Process Now&nbsp;<i class="fa fa-bolt"></i></button>
-			<button class="btn btn-default" ng-click="cleanoldUserMessagesNow()">Cleanup Old Message Now&nbsp;<i class="fa fa-trash-o"></i></button>
+			<button class="btn btn-default" ng-click="processUserMessageNow()" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="" data-container="body" data-content="Processes all active message and sends them immediately">Process Now&nbsp;<i class="fa fa-bolt"></i></button>
+			<button class="btn btn-default" ng-click="cleanoldUserMessagesNow()" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="" data-container="body" data-content="Removes old archive message according to configuration (default is older than 28 days)">Cleanup Old Message Now&nbsp;<i class="fa fa-trash-o"></i></button>
 		</span>		
 	</div>
 
