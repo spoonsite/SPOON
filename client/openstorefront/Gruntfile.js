@@ -202,7 +202,23 @@ module.exports = function (grunt) {
           ]
         }]
       },
-      server: '.tmp'      
+      server: '.tmp',
+      serverweb: {
+        options: { 
+          force: true 
+        },
+        files: [{
+          dot: true,          
+          src: [                  
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/bower_components',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/fonts',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/images',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/scripts',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/styles',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/views'
+          ]
+        }]
+      }      
     },
 
     // Add vendor prefixed styles
@@ -556,7 +572,8 @@ grunt.registerTask('buildprod', function (target) {
   grunt.option('appPath', '/openstorefront');
   grunt.task.run([ 
     'build',
-   'copy:server'  
+    'clean:serverweb',
+    'copy:server'  
   ]);
 });  
 
@@ -564,6 +581,7 @@ grunt.registerTask('build-debug', function (target) {
   grunt.option('appPath', '/openstorefront');
   grunt.task.run([
     'clean:dist',
+    'clean:serverweb',
     'bowerInstall',
     'copy:all',
     'concurrent:dist',
