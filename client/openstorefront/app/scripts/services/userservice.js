@@ -14,7 +14,6 @@
 * limitations under the License.
 */
 
-/*global MOCKDATA2*/
 
 'use strict';
 app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $http, $q) {

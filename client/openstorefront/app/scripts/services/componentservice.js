@@ -16,8 +16,6 @@
 
 'use strict';
 
-/*global isEmpty, MOCKDATA2*/
-
 app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q, localCache) {
 
   // default to 60 second expire time.

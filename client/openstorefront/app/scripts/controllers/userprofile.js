@@ -15,8 +15,6 @@
 */
 'use strict';
 
-/*global MOCKDATA2, jQuery, confirm, triggerError*/
-
 app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', '$q', function($scope, Business, $rootScope, $location, $timeout, $q) {
 
   //////////////////////////////////////////////////////////////////////////////
