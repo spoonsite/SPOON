@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -198,6 +199,17 @@ public class LoginAction
 		} catch (ServletException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
+
+		//For now invalidate all cookies; in the future there may be some that should persist.
+		Cookie[] cookies = getContext().getRequest().getCookies();
+		if (cookies != null && cookies.length > 0) {
+			for (Cookie cookie : cookies) {
+				cookie.setValue("-");
+				cookie.setMaxAge(0);
+				getContext().getResponse().addCookie(cookie);
+			}
+		}
+
 		if (OpenStorefrontConstant.ANONYMOUS_USER.equals(userLoggedIn)) {
 			log.log(Level.INFO, "User was not logged when the logut was called.");
 		} else {
