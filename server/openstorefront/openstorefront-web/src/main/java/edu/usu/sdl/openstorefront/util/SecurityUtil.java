@@ -131,4 +131,26 @@ public class SecurityUtil
 		return clientIp;
 	}
 
+	/**
+	 * Constructs an Admin Audit Log Message
+	 *
+	 * @param request
+	 * @return message
+	 */
+	public static String adminAuditLogMessage(HttpServletRequest request)
+	{
+		StringBuilder message = new StringBuilder();
+
+		message.append("User: ")
+				.append(getCurrentUserName())
+				.append(" (").append(getClientIp(request)).append(") ")
+				.append(" Called Admin API: ");
+		if (request != null) {
+			message.append(request.getMethod()).append(" ");
+			message.append(request.getRequestURL()).append("?").append(request.getQueryString());
+		}
+
+		return message.toString();
+	}
+
 }

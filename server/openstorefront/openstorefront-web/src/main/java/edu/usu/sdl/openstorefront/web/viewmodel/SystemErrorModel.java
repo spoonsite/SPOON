@@ -13,22 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.viewmodel;
 
 /**
- *  This represent an system error (typically unexpected) that we will pass back to the client
- *  UI form/validation error should be more friendly and integrated into the UI 
+ * This represent an system error (typically unexpected) that we will pass back
+ * to the client UI form/validation error should be more friendly and integrated
+ * into the UI
+ *
  * @author dshurtleff
  */
 public class SystemErrorModel
 {
+
 	private String message;
 	private String errorTicketNumber;
 	private String potentialResolution;
 
 	public SystemErrorModel()
 	{
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Message: " + message + " Potential Resolution: " + potentialResolution + " Error ticket: " + errorTicketNumber;
 	}
 
 	public String getMessage()
@@ -60,5 +68,5 @@ public class SystemErrorModel
 	{
 		this.potentialResolution = potentialResolution;
 	}
-	
+
 }

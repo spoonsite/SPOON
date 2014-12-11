@@ -203,7 +203,7 @@ module.exports = function (grunt) {
           ]
         }]
       },
-      server: '.tmp'
+      server: '.tmp'      
     },
 
     // Add vendor prefixed styles
@@ -404,6 +404,29 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.dist %>',
         dest: '../../server/openstorefront/openstorefront-web/src/main/webapp',
         src: '**/*'        
+      },
+      compstyles: {
+        expand: true,
+        cwd: '.tmp/styles',
+        dest: '<%= yeoman.dist %>/styles',
+        src: '**/*.css'
+      },      
+      all: {
+          expand: true,
+          dot: true,
+          cwd: '<%= yeoman.app %>',
+          dest: '<%= yeoman.dist %>',
+          src: [
+            'bower_components/**/*',
+            'fonts/**/*',
+            'images/**/*',
+            'scripts/**/*',
+            'views/**/*',
+            '404.html',
+            'favicon.ico',
+            'index.html',
+            'robots.txt'
+          ]
       }
     },
 
@@ -539,6 +562,18 @@ grunt.registerTask('buildprod', function (target) {
   ]);
 });  
 
+grunt.registerTask('build-debug', function (target) {
+  grunt.option('appPath', '/openstorefront');
+  grunt.task.run([
+    'clean:dist',
+    'bowerInstall',
+    'copy:all',
+    'concurrent:dist',
+    'copy:compstyles',    
+    'cdnify',
+    'copy:server'
+    ]);
+});
 
 grunt.registerTask('default', [
   'newer:jshint',

@@ -57,7 +57,7 @@ public class NotificationService
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
-			service.getUserService().sendAdminMessage(adminMessage);
+			service.getAyncProxy(service.getUserService(), true, "Send Admin Message").sendAdminMessage(adminMessage);
 			return Response.ok().build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();

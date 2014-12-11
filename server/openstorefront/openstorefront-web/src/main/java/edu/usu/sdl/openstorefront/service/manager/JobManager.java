@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
+import edu.usu.sdl.openstorefront.service.job.BaseJob;
 import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
@@ -355,6 +356,24 @@ public class JobManager
 			Logger.getLogger(JobManager.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return jobs;
+	}
+
+	public static void runDynamicJob(BaseJob baseJob)
+	{
+//		String job
+//		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+//				.withIdentity("DynamicJob-" + UUID.randomUUID().toString(), JOB_GROUP_SYSTEM)
+//				.build();
+//
+//		Trigger trigger = newTrigger()
+//				.withIdentity("CleanUpErrorsJobTrigger", JOB_GROUP_SYSTEM)
+//				.startNow()
+//				.withSchedule(simpleSchedule()
+//						.withIntervalInMinutes(5)
+//						.repeatForever())
+//				.build();
+//
+//		scheduler.scheduleJob(job, trigger);
 	}
 
 	public static void cleanup()

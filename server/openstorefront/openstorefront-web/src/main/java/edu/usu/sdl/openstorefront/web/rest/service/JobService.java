@@ -19,8 +19,10 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskManagerStatus;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.JobSchedulerStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
@@ -132,6 +134,18 @@ public class JobService
 	{
 		JobManager.resumeScheduler();
 		return Response.ok().build();
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Retrieves task manager status")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(TaskManagerStatus.class)
+	@Path("/tasks/status")
+	public Response getTaskManagerStatus()
+	{
+		TaskManagerStatus taskManagerStatus = AsyncTaskManager.managerStatus();
+		return sendSingleEntityResponse(taskManagerStatus);
 	}
 
 }

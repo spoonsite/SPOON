@@ -24,11 +24,12 @@ import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import java.util.List;
 
 /**
- * Search Service Interface
+ * Search AsyncService Interface
  *
  * @author dshurtleff
  */
 public interface SearchService
+		extends AsyncService
 {
 
 	/**
@@ -94,5 +95,10 @@ public interface SearchService
 	 * This clears all records in the index CAUTION: deletes everything!
 	 */
 	public void deleteAll();
+
+	/**
+	 * This will do a complete refresh
+	 */
+	public void resetIndexer();
 
 }

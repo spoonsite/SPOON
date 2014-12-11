@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author dshurtleff
  */
 public interface UserService
+		extends AsyncService
 {
 
 	/**

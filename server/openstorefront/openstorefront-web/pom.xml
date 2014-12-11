@@ -114,7 +114,7 @@
 		<dependency>
 			<groupId>net.sourceforge.stripes</groupId>
 			<artifactId>stripes</artifactId>
-			<version>1.5.7</version>
+			<version>1.5.8</version>
 		</dependency>        
 		<dependency>
 			<groupId>com.servlets</groupId>
@@ -287,6 +287,7 @@
 			<artifactId>shiro-web</artifactId>
 			<version>${shiro.verison}</version>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.owasp.esapi</groupId>
 			<artifactId>esapi</artifactId>
@@ -303,6 +304,7 @@
 			<artifactId>antisamy</artifactId>
 			<version>1.5.3</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>net.redhogs.cronparser</groupId>
 			<artifactId>cron-parser</artifactId>
@@ -385,6 +387,37 @@
 									<type>jar</type>
 								</artifactItem>
 							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>default-cli</id> 
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+																							
+								<copy  todir="../../../client/openstorefront/app/scripts">
+									<fileset dir="src/main/webapp/scripts" >
+										<include name="**/*" />
+									</fileset>
+								</copy>
+								<copy  todir="../../../client/openstorefront/app/views">
+									<fileset dir="src/main/webapp//views">
+										<include name="**/*" />
+									</fileset>
+								</copy>								
+														
+							</target>
 						</configuration>
 					</execution>
 				</executions>

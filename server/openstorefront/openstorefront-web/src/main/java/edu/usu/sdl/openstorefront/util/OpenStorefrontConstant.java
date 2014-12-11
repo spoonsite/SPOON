@@ -132,4 +132,15 @@ public class OpenStorefrontConstant
 
 	}
 
+	public static enum TaskStatus
+	{
+
+		QUEUED,
+		WORKING,
+		DONE,
+		CANCELLED,
+		FAILED
+
+	}
+
 }

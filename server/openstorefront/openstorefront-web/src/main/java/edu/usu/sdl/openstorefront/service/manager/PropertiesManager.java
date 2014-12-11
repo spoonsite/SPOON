@@ -80,6 +80,7 @@ public class PropertiesManager
 	public static final String KEY_MESSAGE_RECENT_CHANGE_DAYS = "message.recentchanges.days";
 
 	public static final String KEY_APPLICATION_TITLE = "app.title";
+	public static final String KEY_MAX_TASK_POOL_SIZE = "task.pool.size";
 
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();

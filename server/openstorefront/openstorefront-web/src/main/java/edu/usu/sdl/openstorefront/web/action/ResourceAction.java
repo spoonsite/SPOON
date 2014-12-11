@@ -32,6 +32,8 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
@@ -50,6 +52,8 @@ import net.sourceforge.stripes.validation.ValidateNestedProperties;
 public class ResourceAction
 		extends BaseAction
 {
+
+	private static final Logger log = Logger.getLogger(ResourceAction.class.getName());
 
 	@Validate(required = true, on = {"LoadResource", "Redirect"})
 	private String resourceId;
@@ -94,6 +98,7 @@ public class ResourceAction
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			if (componentResource != null) {
 				componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 				componentResource.setUpdateUser(SecurityUtil.getCurrentUserName());

@@ -13,14 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.api;
+package edu.usu.sdl.openstorefront.service.manager.model;
+
+import java.util.concurrent.Callable;
 
 /**
  *
  * @author dshurtleff
  */
-public interface ReportService
-		extends AsyncService
+public class TaskRequest
 {
+
+	private String name;
+	private boolean allowMultiple;
+	private Callable task;
+
+	public TaskRequest()
+	{
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public boolean isAllowMultiple()
+	{
+		return allowMultiple;
+	}
+
+	public void setAllowMultiple(boolean allowMultiple)
+	{
+		this.allowMultiple = allowMultiple;
+	}
+
+	public Callable getTask()
+	{
+		return task;
+	}
+
+	public void setTask(Callable task)
+	{
+		this.task = task;
+	}
 
 }

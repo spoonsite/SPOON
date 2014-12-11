@@ -449,7 +449,12 @@ public class UserServiceImpl
 			} else {
 				log.log(Level.INFO, MessageFormat.format("Login handled for user: {0} (Not a external client request...not tracking", profile.getUsername()));
 			}
-			log.log(Level.INFO, MessageFormat.format("User {0} sucessfully logged in.", profile.getUsername()));
+			String adminLog = "";
+			if (userContext.isAdmin()) {
+				adminLog = "(Admin)";
+			}
+
+			log.log(Level.INFO, MessageFormat.format("User {0} sucessfully logged in. {1}", profile.getUsername(), adminLog));
 
 		} else {
 			throw new OpenStorefrontRuntimeException("Failed to validate the userprofile. Validation Message: " + validationResult.toString(), "Check data");
@@ -677,6 +682,7 @@ public class UserServiceImpl
 			Email email = watchMessageGenerator.generateMessage();
 			if (email != null) {
 				MailManager.send(email);
+				userMessageExisting.setSubject(email.getSubject());
 				userMessageExisting.setBodyOfMessage(email.getTextHTML());
 				userMessageExisting.setSentEmailAddress(userProfile.getEmail());
 			} else {
@@ -784,9 +790,7 @@ public class UserServiceImpl
 	{
 		UserMessage userMessage = persistenceService.findById(UserMessage.class, userMessageId);
 		if (userMessage != null) {
-			userMessage.setActiveStatus(UserMessage.INACTIVE_STATUS);
-			userMessage.populateBaseUpdateFields();
-			persistenceService.persist(userMessage);
+			persistenceService.delete(userMessage);
 		}
 	}
 
