@@ -580,27 +580,25 @@ public class PersistenceService
 	{
 		Map<String, Object> parameterMap = new HashMap<>();
 		try {
-			Map fieldMap = BeanUtils.describe(example);
-			for (Object field : fieldMap.keySet()) {
+			List<Field> fields = ServiceUtil.getAllFields(example.getClass());
+			for (Field field : fields) {
 
-				if ("class".equalsIgnoreCase(field.toString()) == false) {
-					Object value = fieldMap.get(field);
+				if ("class".equalsIgnoreCase(field.getName()) == false) {
+					field.setAccessible(true);
+					Object value = field.get(example);
 					if (value != null) {
-
-						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
-						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
-							complexFieldStack.getFieldStack().push(field.toString());
-							parameterMap.putAll(mapParameters(returnObj, complexFieldStack, generateStatementOption));
+						if (ServiceUtil.isComplexClass(value.getClass())) {
+							complexFieldStack.getFieldStack().push(field.getName());
+							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption));
 							complexFieldStack.getFieldStack().pop();
 						} else {
-							String fieldName = complexFieldStack.getQueryFieldName() + field.toString();
+							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
 							parameterMap.put(fieldName + generateStatementOption.getParamaterSuffix(), value);
 						}
 					}
 				}
 			}
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+		} catch (IllegalAccessException ex) {
 			throw new RuntimeException(ex);
 		}
 		return parameterMap;
