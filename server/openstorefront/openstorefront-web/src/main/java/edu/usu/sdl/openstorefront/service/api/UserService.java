@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -150,6 +151,15 @@ public interface UserService
 	 * @return
 	 */
 	public List<UserProfile> getAllProfiles();
+
+	/**
+	 * Get the last login for a group of users.
+	 *
+	 * @param userProfiles
+	 * @return username, last know login (if user is missing they don't have a
+	 * last login)
+	 */
+	public Map<String, Date> getLastLogin(List<UserProfile> userProfiles);
 
 	/**
 	 * Save any changes to the user profile (This will refresh the session) This
