@@ -131,7 +131,9 @@ public class SearchServiceImpl
 			DocumentObjectBinder binder = new DocumentObjectBinder();
 			resultsList = binder.getBeans(SolrComponentModel.class, results);
 		} catch (SolrServerException ex) {
-			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach Server Unavailable", ex);
+			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
+		} catch (Exception ex) {
+			log.log(Level.WARNING, "Solr query failed unexpectly; likely bad input.", ex);
 		}
 
 		//Pulling the full object on the return
