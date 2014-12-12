@@ -147,7 +147,11 @@ public class SecurityUtil
 				.append(" Called Admin API: ");
 		if (request != null) {
 			message.append(request.getMethod()).append(" ");
-			message.append(request.getRequestURL()).append("?").append(request.getQueryString());
+			if (StringUtils.isNotBlank(request.getQueryString())) {
+				message.append(request.getRequestURL()).append("?").append(request.getQueryString());
+			} else {
+				message.append(request.getRequestURL());
+			}
 		}
 
 		return message.toString();
