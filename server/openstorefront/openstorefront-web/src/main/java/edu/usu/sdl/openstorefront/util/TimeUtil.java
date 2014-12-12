@@ -53,9 +53,9 @@ public class TimeUtil
 		return new Date(System.currentTimeMillis());
 	}
 
-	public static long daysToMillis(int days)
+	public static long daysToMillis(long days)
 	{
-		long daysInMillis = days * 24 * 60 * 60000;
+		long daysInMillis = days * 24L * 60L * 60000L;
 		return daysInMillis;
 	}
 

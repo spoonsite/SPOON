@@ -465,6 +465,14 @@ var app = angular
         }
         return null;
       };
+      
+     /***************************************************************
+             * This function removes all tooltip from the display 
+             ***************************************************************/
+     $rootScope.removeAllTooltips = function () {
+       $('.popover').remove();
+     };
+      
 
       /***************************************************************
       * This is a local function used in the httpBackend functions

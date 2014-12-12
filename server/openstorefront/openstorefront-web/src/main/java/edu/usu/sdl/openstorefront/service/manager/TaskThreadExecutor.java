@@ -128,6 +128,7 @@ public class TaskThreadExecutor
 		if (runJob) {
 			Future future = submit(taskRequest.getTask());
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
+			taskFuture.setTaskName(taskRequest.getName());
 			tasks.add(taskFuture);
 		}
 		return taskFuture;

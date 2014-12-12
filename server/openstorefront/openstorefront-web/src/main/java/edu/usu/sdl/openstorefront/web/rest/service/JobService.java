@@ -22,17 +22,20 @@ import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskManagerStatus;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.JobSchedulerStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.List;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -118,6 +121,20 @@ public class JobService
 
 	@POST
 	@RequireAdmin
+	@APIDescription("Runs a job now")
+	@Path("/{jobname}/{groupname}/runnow")
+	public Response runJobNow(
+			@PathParam("jobname")
+			@RequiredParam String jobName,
+			@PathParam("groupname")
+			@RequiredParam String groupName)
+	{
+		JobManager.runJobNow(jobName, groupName);
+		return Response.ok().build();
+	}
+
+	@POST
+	@RequireAdmin
 	@APIDescription("Pauses Scheduler  (Note this is not persisted.  Restarting the application will restart the scheduler.)")
 	@Path("/pause")
 	public Response pauseScheduler()
@@ -146,6 +163,47 @@ public class JobService
 	{
 		TaskManagerStatus taskManagerStatus = AsyncTaskManager.managerStatus();
 		return sendSingleEntityResponse(taskManagerStatus);
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Retrieves task")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(TaskManagerStatus.class)
+	@Path("/tasks/{taskId}")
+	public Response getTask(
+			@PathParam("taskId")
+			@RequiredParam String taskId
+	)
+	{
+		TaskFuture taskFuture = null;
+		TaskManagerStatus taskManagerStatus = AsyncTaskManager.managerStatus();
+		for (TaskFuture taskFutureLocal : taskManagerStatus.getTasks()) {
+			if (taskFutureLocal.getTaskId().equals(taskId)) {
+				taskFuture = taskFutureLocal;
+			}
+		}
+
+		return sendSingleEntityResponse(taskFuture);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Attempts to cancel task. ")
+	@Path("/tasks/{taskId}/cancel")
+	public Response cancelTask(
+			@PathParam("taskId")
+			@RequiredParam String taskId,
+			@QueryParam("force")
+			@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
+			@DefaultValue("true") boolean force)
+	{
+		boolean cancelled = AsyncTaskManager.cancelTask(taskId, force);
+		if (cancelled) {
+			return Response.ok().build();
+		} else {
+			return Response.status(Response.Status.NOT_MODIFIED).build();
+		}
 	}
 
 }

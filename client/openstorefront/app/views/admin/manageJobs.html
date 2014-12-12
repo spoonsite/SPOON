@@ -1,1 +1,94 @@
-
+<div  ng-controller="AdminJobsCtrl" style="padding-left: 20px; padding-right: 20px;">
+	<tabset>
+		<tab heading="Jobs">			
+			<loader trigger="jobLoader"></loader>
+			<br><br>
+			<div class="text-danger" style="font-size: 16px;">Scheduler is state is not persist.  Upon application restart, the state will be reset.</div><br>
+			
+			Scheduler Status: <span style="font-size: 16px;"><b>{{schedulerStatus.status}}</b></span><br><br>
+			<div>
+				<input type="checkbox"   ng-model="showIntegrationJobs"   ng-checked="showIntegrationJobs" ng-change="refreshJobs(showIntegrationJobs)"/> Show Integration Jobs 
+				<button class="btn btn-default" ng-click="refreshJobs(showIntegrationJobs)">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				<span style="position: absolute; right: 0px; padding-right: 20px;">
+					<button class="btn btn-default" ng-click="removeAllTooltips(); pauseResumeScheduler(true)" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="" data-container="body" data-content="Pause All Scheduled Jobs"><i class="fa fa-pause"></i>&nbsp;Pause Scheduler</button>
+					<button class="btn btn-default" ng-click="removeAllTooltips(); pauseResumeScheduler(false)" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="" data-container="body" data-content="Resume Scheduler Jobs"><i class="fa fa-play"></i>&nbsp;Resume Scheduler</button>
+				</span>				
+			</div>
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th>Job Name</th>
+						<th>Group Name</th>
+						<th>Description</th>
+						<th >Status</th>						
+						<th>Pervious Fire Time</th>
+						<th>Next Fire time</th>
+						<th>Job Data</th>						
+						<th>Action</th>
+					</tr>
+					<tr ng-repeat="job in jobs" >
+						<td>{{job.jobName}}</td>
+						<td>{{job.groupName}}</td>
+						<td>{{job.description}}</td>
+						<td>{{job.status}}</td>
+						<td>{{job.perviousFiredTime}}</td>
+						<td>{{job.nextFiredTime}}</td>
+						<td>{{job.jobData}}</td>						
+						<td style="padding:0px; width: 200px;">&nbsp;
+							<button class="btn btn-danger" ng-click="removeAllTooltips(); pauseResumeJob(true, job.jobName)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Pause"><i class="fa fa-pause"></i></button>
+							<button class="btn btn-danger" ng-click="removeAllTooltips(); pauseResumeJob(false, job.jobName)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Resume"><i class="fa fa-play"></i></button>
+							<button class="btn btn-danger" ng-click="removeAllTooltips(); runJobNow(job.jobName, job.groupName)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Run"><i class="fa fa-bolt"></i></button>
+						</td>
+					</tr>
+			</table>			
+		</tab>
+		<tab heading="Tasks">
+			<loader trigger="taskLoader"></loader>
+			<div>
+				Statistics<br>
+				<table class="table table-striped table-bordered">
+					<tr>						
+						<td>Active Count</td>
+						<td>{{tasks.activeCount}}</td>
+						<td>Queued Count</td>
+						<td>{{tasks.queuedCount}}</td>						
+						<td>Complete Count</td>
+						<td>{{tasks.completedCount}}</td>
+						<td>Total Count</td>
+						<td>{{tasks.totalTaskCount}}</td>
+						<td>Thread Pool Size</td>
+						<td>{{tasks.threadPoolSize}}</td>
+						<td>Largest Pool Size</td>
+						<td>{{tasks.largestPoolSize}}</td>
+						<td>Max Pool Size</td>
+						<td>{{tasks.maxPoolSize}}</td>						
+					</tr>	
+				</table>
+				
+			</div>
+			<div>
+				<button class="btn btn-default" ng-click="refreshTasks()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+			</div>
+			Tasks automatically expire  and are removed.  Also, note state is not persist across application restarts.
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th>Task Name</th>
+						<th>Status</th>
+						<th>Submitted Date</th>
+						<th >Completion Date</th>						
+						<th>Error</th>
+						<th>Action</th>
+					</tr>
+					<tr ng-repeat="task in tasks.tasks" >
+						<td>{{task.taskName}}</td>
+						<td>{{task.status}}</td>
+						<td>{{task.submitedDts}}</td>
+						<td>{{task.completedDts}}</td>
+						<td>{{task.error}}</td>										
+						<td style="padding:0px; width: 200px;">&nbsp;
+							<button class="btn btn-danger" ng-show="task.status === 'WORKING'" ng-click="removeAllTooltips(); cancelTask(task.taskId)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Cancel task and Interrupt">Cancel&nbsp;<i class="fa fa-trash-o"></i></button>														
+						</td>
+					</tr>				
+			</table>			
+		</tab>		
+	</tabset>	
+</div>  
