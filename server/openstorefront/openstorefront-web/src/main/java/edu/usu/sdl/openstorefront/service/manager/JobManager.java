@@ -115,6 +115,7 @@ public class JobManager
 		} else {
 			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
 					.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
+					.withDescription("Component Integration Job")
 					.build();
 
 			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
@@ -192,6 +193,7 @@ public class JobManager
 
 		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
 				.withIdentity("CleanUpErrorsJob", JOB_GROUP_SYSTEM)
+				.withDescription("Removes old error tickets")
 				.build();
 
 		Trigger trigger = newTrigger()
@@ -211,6 +213,7 @@ public class JobManager
 
 		JobDetail job = JobBuilder.newJob(NotificationJob.class)
 				.withIdentity("NotificationJob", JOB_GROUP_SYSTEM)
+				.withDescription("User Message Notifications")
 				.build();
 
 		Trigger trigger = newTrigger()
@@ -230,6 +233,7 @@ public class JobManager
 
 		JobDetail job = JobBuilder.newJob(RecentChangeNotifyJob.class)
 				.withIdentity("RecentChangeJob", JOB_GROUP_SYSTEM)
+				.withDescription("Recent Change Notifications")
 				.build();
 
 		Trigger trigger = newTrigger()
@@ -250,6 +254,7 @@ public class JobManager
 
 		JobDetail job = JobBuilder.newJob(DirectoryScanJob.class)
 				.withIdentity(jobName, JOB_GROUP_SYSTEM)
+				.withDescription("Directory Watch Job")
 				.build();
 
 		FileSystemManager.getDir(dirToWatch);
@@ -265,6 +270,15 @@ public class JobManager
 				.build();
 
 		scheduler.scheduleJob(job, trigger);
+	}
+
+	public static void runJobNow(String jobName, String groupName)
+	{
+		try {
+			scheduler.triggerJob(JobKey.jobKey(jobName, groupName));
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
+		}
 	}
 
 	public static void pauseSystemJob(String jobName)
@@ -360,6 +374,8 @@ public class JobManager
 
 	public static void runDynamicJob(BaseJob baseJob)
 	{
+		//TODO: Add the ability to run a temp background job
+		throw new UnsupportedOperationException("Method is not supported yet");
 //		String job
 //		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
 //				.withIdentity("DynamicJob-" + UUID.randomUUID().toString(), JOB_GROUP_SYSTEM)

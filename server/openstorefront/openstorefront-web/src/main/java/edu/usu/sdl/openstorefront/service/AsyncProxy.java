@@ -55,7 +55,7 @@ public class AsyncProxy<T>
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
-		log.log(Level.FINE, MessageFormat.format("Calling Method (Asyncronously): {0} on {1}", new Object[]{method.getName(), proxy.getClass().getName()}));
+		log.log(Level.FINE, MessageFormat.format("Calling Method (Asyncronously): {0} on {1}", new Object[]{method.getName(), originalObject.getClass().getName()}));
 
 		AsyncProxyTask asyncProxyTask = new AsyncProxyTask(originalObject, proxy, method, args);
 		TaskRequest taskRequest = new TaskRequest();
