@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.api.UserService;
@@ -794,6 +795,32 @@ public class UserServiceImpl
 		if (userMessage != null) {
 			persistenceService.delete(userMessage);
 		}
+	}
+
+	@Override
+	public Map<String, Date> getLastLogin(List<UserProfile> userProfiles)
+	{
+		Map<String, Date> userLoginMap = new HashMap<>();
+
+		StringBuilder query = new StringBuilder();
+		query.append("select MAX(eventDts), createUser from ").append(UserTracking.class.getSimpleName());
+		query.append(" where activeStatus = :userTrackingActiveStatusParam  and  trackEventTypeCode = :trackEventCodeParam and createUser IN [");
+
+		List<String> usernames = new ArrayList<>();
+		userProfiles.stream().forEach((userProfile) -> {
+			usernames.add("'" + userProfile.getUsername() + "'");
+		});
+		query.append(StringUtils.join(usernames, ",")).append("] group by createUser");
+
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("userTrackingActiveStatusParam", UserTracking.ACTIVE_STATUS);
+		paramMap.put("trackEventCodeParam", TrackEventCode.LOGIN);
+		List<ODocument> documents = persistenceService.query(query.toString(), paramMap);
+		documents.stream().forEach((document) -> {
+			userLoginMap.put(document.field("createUser"), document.field("MAX"));
+		});
+
+		return userLoginMap;
 	}
 
 }

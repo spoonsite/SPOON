@@ -630,7 +630,7 @@ public class PersistenceService
 	}
 
 	/**
-	 * This will run the query but return the Proxy Objects
+	 * This will run the query and returns the Proxy Objects
 	 *
 	 * @param <T>
 	 * @param query

@@ -16,10 +16,12 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -64,6 +66,7 @@ public class UserProfileView
 
 	@NotNull
 	private boolean admin;
+	private Date lastLoginDts;
 
 	public UserProfileView()
 	{
@@ -98,6 +101,12 @@ public class UserProfileView
 		List<UserProfileView> views = new ArrayList<>();
 		profiles.forEach(profile -> {
 			views.add(UserProfileView.toView(profile));
+		});
+
+		Map<String, Date> loginMap = ServiceProxy.getProxy().getUserService().getLastLogin(profiles);
+		views.forEach(view -> {
+			Date loginDate = loginMap.get(view.getUsername());
+			view.setLastLoginDts(loginDate);
 		});
 		return views;
 	}
@@ -236,6 +245,16 @@ public class UserProfileView
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+	
+	public Date getLastLoginDts()
+	{
+		return lastLoginDts;
+	}
+
+	public void setLastLoginDts(Date lastLoginDts)
+	{
+		this.lastLoginDts = lastLoginDts;
 	}
 
 }
