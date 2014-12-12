@@ -97,7 +97,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   /**
   *  Loads the current user
   */
-  var getAllUserProfiles = function(forceReload) {
+  var getAllUserProfiles = function(all, forceReload) {
     var deferred = $q.defer();
     // getting rid of caching here
     // if we want to bring it back for the user profile delete this line
@@ -108,6 +108,9 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       $http({
         'method': 'GET',
         'url': 'api/v1/resource/userprofiles',
+        'params': {
+          'all': all
+        }
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && isNotRequestError(data)) {
           removeError();
@@ -120,6 +123,64 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       }, function(data, status, headers, config){
         deferred.reject('There was an error');
       });
+    }
+
+    return deferred.promise;
+  };
+
+  /**
+  *  Loads the current user
+  */
+  var deactivateUser = function(userId) {
+    var deferred = $q.defer();
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    if (userId) {
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/userprofiles/'+userId,
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject('There was no userId')
+    }
+
+    return deferred.promise;
+  };
+
+  /**
+  *  Loads the current user
+  */
+  var activateUser = function(userId) {
+    var deferred = $q.defer();
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    if (userId) {
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/resource/userprofiles/'+userId+'/reactivate',
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject('There was no userId')
     }
 
     return deferred.promise;
@@ -504,6 +565,8 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
 
   //Public API
   return {
+    deactivateUser:deactivateUser,
+    activateUser:activateUser,
     getCurrentUserProfile: getCurrentUserProfile,
     getUserByUsername:getUserByUsername,
     getAllUserProfiles: getAllUserProfiles,

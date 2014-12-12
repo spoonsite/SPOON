@@ -59,6 +59,8 @@ public class UserProfileView
 	private String updateUser;
 	private String guid;
 	private Boolean notifyOfNew;
+	
+	private String activeStatus;
 
 	@NotNull
 	private boolean admin;
@@ -80,6 +82,7 @@ public class UserProfileView
 		view.setUpdateDts(profile.getUpdateDts());
 		view.setUpdateUser(profile.getUpdateUser());
 		view.setNotifyOfNew(profile.getNotifyOfNew());
+		view.setActiveStatus(profile.getActiveStatus());
 
 		if (StringUtils.isNotBlank(profile.getExternalGuid())) {
 			view.setGuid(profile.getExternalGuid());
@@ -217,6 +220,22 @@ public class UserProfileView
 	public void setNotifyOfNew(Boolean notifyOfNew)
 	{
 		this.notifyOfNew = notifyOfNew;
+	}
+
+	/**
+	 * @return the activeStatus
+	 */
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	/**
+	 * @param activeStatus the activeStatus to set
+	 */
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }

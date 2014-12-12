@@ -29,7 +29,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   $scope.incLoc = '';
   $scope.saveContent = '';
   $scope.editedTopic = 'Types';
-  $scope.toolTitle = 'idAM Landing Page';
+  $scope.toolTitle = 'Admin Tools';
 
   Business.getFilters().then(function(result) {
     if (result) {

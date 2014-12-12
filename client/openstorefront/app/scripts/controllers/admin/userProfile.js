@@ -17,16 +17,57 @@
 'use strict';
 
 app.controller('AdminUserProfileCtrl', ['$scope', 'business', function ($scope, Business) {
-  Business.userservice.getAllUserProfiles().then(function(result){
-    $scope.userProfiles = result? result: []
-  }, function() {
-    $scope.userProfiles = [];
-  })
+  $scope.predicate = 'activeStatus';
+  $scope.deactivateButtons = false;
+  $scope.getUsers = function() {
+    Business.userservice.getAllUserProfiles(true).then(function(result){
+      console.log('result', result);
+
+      $scope.userProfiles = result? result: []
+    }, function() {
+      $scope.userProfiles = [];
+    })
+  }
+  $scope.getUsers();
   Business.lookupservice.getUserTypeCodes().then(function(result){
     $scope.userTypes = result? result: []
   }, function() {
     $scope.userTypes = [];
   })
+
+
+  $scope.setPredicate = function(predicate){
+    if ($scope.predicate === predicate){
+      $scope.reverse = !$scope.reverse;
+    } else {
+      $scope.predicate = predicate;
+      $scope.reverse = false;
+    }
+  }
+
+  $scope.changeActivity = function(user){
+    var cont = confirm("You are about to change the active status of a user (Enabled or disabled). Continue?");
+    if (cont) {
+      $scope.deactivateButtons = true;
+      if (user.activeStatus === 'A') {
+        Business.userservice.deactivateUser(user.username).then(function(){
+          $scope.getUsers();
+          $scope.deactivateButtons = false;
+        }, function(){
+          $scope.getUsers();
+          $scope.deactivateButtons = false;
+        })
+      } else {
+        Business.userservice.activateUser(user.username).then(function() {
+          $scope.getUsers();
+          $scope.deactivateButtons = false;
+        }, function(){
+          $scope.getUsers();
+          $scope.deactivateButtons = false;
+        })
+      }
+    }
+  }
 
   $scope.getUserType = function(code){
     var type = _.find($scope.userTypes, {'code': code});
@@ -36,5 +77,6 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', function ($scope, 
       return 'End User';
     }
   }
+
 
 }]);

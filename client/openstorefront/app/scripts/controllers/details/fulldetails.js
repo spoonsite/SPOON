@@ -18,11 +18,14 @@
 
 app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
 
+  $scope.sendEvent                     = $rootScope.sendEvent;
   $scope.user                          = {};
   $scope.editQuestion                  = [];
   $scope.currentTab                    = null;
   $scope.sendAdminMessage              = $rootScope.openAdminMessage;
   resetUpdateNotify();
+
+  
 
   $scope.setComponentId = function(id) {
     var deferred = $q.defer();

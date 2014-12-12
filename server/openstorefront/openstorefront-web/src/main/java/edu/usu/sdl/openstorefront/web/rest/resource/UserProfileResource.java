@@ -45,12 +45,14 @@ import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -71,9 +73,12 @@ public class UserProfileResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
-	public List<UserProfileView> userProfiles()
+	public List<UserProfileView> userProfiles(
+		@QueryParam("all")
+		@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
+		@DefaultValue("true") boolean all)
 	{
-		return UserProfileView.toViewList(service.getUserService().getAllProfiles());
+		return UserProfileView.toViewList(service.getUserService().getAllProfiles(all));
 	}
 
 	@GET
