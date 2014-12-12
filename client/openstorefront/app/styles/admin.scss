@@ -41,10 +41,23 @@
   clear: both;
 }
 
-#cke_editor1 {
+#editLandingPages #cke_editor1 {
   width: 100%;
   margin-left: -276px;
   padding-left: 275px;
+}
+
+tr.inactive{
+  color: rgb(150, 150, 150);
+  background: rgb(229, 229, 229);
+}
+td button.inverted{
+  background-color: dimgray;
+  color: white;
+}
+
+#adminUserProfile .table-bordered, #adminUserProfile .table-bordered>tbody>tr>td, #adminUserProfile .table-bordered>tbody>tr>th, #adminUserProfile .table-bordered>tfoot>tr>td, #adminUserProfile .table-bordered>tfoot>tr>th, #adminUserProfile .table-bordered>thead>tr>td, #adminUserProfile .table-bordered>thead>tr>th {
+  border: 1px solid darkgray;
 }
 
 html, body,

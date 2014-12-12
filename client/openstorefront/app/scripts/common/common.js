@@ -291,7 +291,7 @@ var showServerError = function(errorObj, id){
 *  };
 ***************************************************************/
 var triggerError = function(errorObj) {
-  console.log('errorObject', errorObj);
+  // console.log('errorObject', errorObj);
   
   if (isRequestError(errorObj)) {
     var errors = errorObj.errors;
