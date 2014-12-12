@@ -101,7 +101,12 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     var deferred = $q.defer();
     // getting rid of caching here
     // if we want to bring it back for the user profile delete this line
-    var allUserProfiles = checkExpire('allUserProfile', minute * 5);
+    var allUserProfiles;
+    if (all) {
+      allUserProfiles = checkExpire('all-allUserProfile', minute * 5);
+    } else {
+      allUserProfiles = checkExpire('allUserProfile', minute * 5);
+    }
     if (allUserProfiles && !forceReload) {
       deferred.resolve(allUserProfiles);
     } else {
@@ -114,7 +119,11 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && isNotRequestError(data)) {
           removeError();
-          save('allUserProfile', data);
+          if (all) {
+            save('all-allUserProfile', data);
+          } else {
+            save('allUserProfile', data);
+          }
           deferred.resolve(data);
         } else {
           triggerError(data);
@@ -169,6 +178,8 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'method': 'PUT',
         'url': 'api/v1/resource/userprofiles/'+userId+'/reactivate',
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        console.log('reactivate data', data);
+        
         if (data && isNotRequestError(data)) {
           removeError();
           deferred.resolve(data);
@@ -177,6 +188,8 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           deferred.reject(false);
         }
       }, function(data, status, headers, config){
+        console.log('reactivate error data', data);
+        
         deferred.reject('There was an error');
       });
     } else {
@@ -470,21 +483,21 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   var getUserMessages = function(queryParamFilter) {
     var deferred = $q.defer();
     
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/usermessages?' + queryParamFilter.toQuery()
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false' && isNotRequestError(data)) {
-          removeError();          
-          deferred.resolve(data);
-        } else {
-          removeError();
-          triggerError(data);
-          deferred.reject('There was an error grabbing the usemessages');
-        }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    $http({
+      'method': 'GET',
+      'url': 'api/v1/resource/usermessages?' + queryParamFilter.toQuery()
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      if (data && data !== 'false' && isNotRequestError(data)) {
+        removeError();          
+        deferred.resolve(data);
+      } else {
+        removeError();
+        triggerError(data);
+        deferred.reject('There was an error grabbing the usemessages');
+      }
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
     
     return deferred.promise;
   }; 
@@ -492,14 +505,14 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   var processUserMessagesNow = function() {
     var deferred = $q.defer();
     
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/resource/usermessages/processnow'
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);       
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/resource/usermessages/processnow'
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);       
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
     
     return deferred.promise;
   }; 
@@ -507,14 +520,14 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   var cleanoldUserMessagesNow = function() {
     var deferred = $q.defer();
     
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/resource/usermessages/cleanold'
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);        
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/resource/usermessages/cleanold'
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);        
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
     
     return deferred.promise;
   };   
@@ -522,14 +535,14 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   var removeUserMessages = function(id) {
     var deferred = $q.defer();
     
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/usermessages/' + id
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    $http({
+      'method': 'DELETE',
+      'url': 'api/v1/resource/usermessages/' + id
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
     
     return deferred.promise;
   };  

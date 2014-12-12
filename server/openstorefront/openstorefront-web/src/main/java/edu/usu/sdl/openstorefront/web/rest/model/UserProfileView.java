@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
@@ -61,7 +62,7 @@ public class UserProfileView
 	private String updateUser;
 	private String guid;
 	private Boolean notifyOfNew;
-	
+
 	private String activeStatus;
 
 	@NotNull
@@ -73,6 +74,22 @@ public class UserProfileView
 	}
 
 	public static UserProfileView toView(UserProfile profile)
+	{
+		return toView(profile, false);
+	}
+
+	public static UserProfileView toView(UserProfile profile, Boolean includeLogin)
+	{
+		Map<String, Date> loginMap = null;
+		if (includeLogin) {
+			List<UserProfile> temp = new ArrayList<>();
+			temp.add(profile);
+			 loginMap = ServiceProxy.getProxy().getUserService().getLastLogin(temp);
+		}
+		return toView(profile, loginMap);
+	}
+
+	private static UserProfileView toView(UserProfile profile, Map<String, Date> loginMap)
 	{
 		UserProfileView view = new UserProfileView();
 		view.setEmail(profile.getEmail());
@@ -89,25 +106,25 @@ public class UserProfileView
 
 		if (StringUtils.isNotBlank(profile.getExternalGuid())) {
 			view.setGuid(profile.getExternalGuid());
-		} else {
+		}
+		else {
 			view.setGuid(profile.getInternalGuid());
 		}
-
+		if (loginMap != null && !loginMap.isEmpty()) {
+			Date loginDate = loginMap.get(view.getUsername());
+			view.setLastLoginDts(loginDate);
+		}
 		return view;
 	}
 
 	public static List<UserProfileView> toViewList(List<UserProfile> profiles)
 	{
+		Map<String, Date> loginMap = ServiceProxy.getProxy().getUserService().getLastLogin(profiles);
 		List<UserProfileView> views = new ArrayList<>();
 		profiles.forEach(profile -> {
-			views.add(UserProfileView.toView(profile));
+			views.add(UserProfileView.toView(profile, loginMap));
 		});
 
-		Map<String, Date> loginMap = ServiceProxy.getProxy().getUserService().getLastLogin(profiles);
-		views.forEach(view -> {
-			Date loginDate = loginMap.get(view.getUsername());
-			view.setLastLoginDts(loginDate);
-		});
 		return views;
 	}
 
@@ -246,7 +263,7 @@ public class UserProfileView
 	{
 		this.activeStatus = activeStatus;
 	}
-	
+
 	public Date getLastLoginDts()
 	{
 		return lastLoginDts;

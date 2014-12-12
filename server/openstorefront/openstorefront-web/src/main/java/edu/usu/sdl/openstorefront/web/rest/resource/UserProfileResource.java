@@ -76,7 +76,7 @@ public class UserProfileResource
 	public List<UserProfileView> userProfiles(
 		@QueryParam("all")
 		@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
-		@DefaultValue("true") boolean all)
+		@DefaultValue("false") boolean all)
 	{
 		return UserProfileView.toViewList(service.getUserService().getAllProfiles(all));
 	}

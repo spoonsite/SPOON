@@ -16,11 +16,11 @@
 
 'use strict';
 
-app.controller('AdminUserProfileCtrl', ['$scope', 'business', function ($scope, Business) {
+app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiModal', function ($scope, Business, $timeout, $uiModal) {
   $scope.predicate = 'activeStatus';
   $scope.deactivateButtons = false;
-  $scope.getUsers = function() {
-    Business.userservice.getAllUserProfiles(true).then(function(result){
+  $scope.getUsers = function(override) {
+    Business.userservice.getAllUserProfiles(true, override).then(function(result){
       console.log('result', result);
 
       $scope.userProfiles = result? result: []
@@ -28,7 +28,7 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', function ($scope, 
       $scope.userProfiles = [];
     })
   }
-  $scope.getUsers();
+  $scope.getUsers(false);
   Business.lookupservice.getUserTypeCodes().then(function(result){
     $scope.userTypes = result? result: []
   }, function() {
@@ -45,25 +45,71 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', function ($scope, 
     }
   }
 
+  $scope.getDate = function(date){
+    if (date)
+    {
+      var d = new Date(date);
+      var currDate = d.getDate();
+      var currMonth = d.getMonth();
+      var currYear = d.getFullYear();
+      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+    }
+    return null;
+  };
+
+  $scope.editUserProfile = function(profile){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/userprofiletab.html',
+      controller: 'adminEditUserProfileCtrl',
+      size: 'sm',
+      resolve: {
+        profile: function () {
+          return profile;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (result) {
+      //do something
+    }, function () {
+      // cancled or failed
+    });
+  }
+
+
   $scope.changeActivity = function(user){
     var cont = confirm("You are about to change the active status of a user (Enabled or disabled). Continue?");
     if (cont) {
       $scope.deactivateButtons = true;
       if (user.activeStatus === 'A') {
+        $scope.$emit('$TRIGGERLOAD', 'adminUserProfile');
         Business.userservice.deactivateUser(user.username).then(function(){
-          $scope.getUsers();
-          $scope.deactivateButtons = false;
+          $timeout(function(){
+            $scope.getUsers(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminUserProfile');
+          }, 1000);
         }, function(){
-          $scope.getUsers();
-          $scope.deactivateButtons = false;
+          $timeout(function(){
+            $scope.getUsers(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminUserProfile');
+          }, 1000);
         })
       } else {
+        $scope.$emit('$TRIGGERLOAD', 'adminUserProfile');
         Business.userservice.activateUser(user.username).then(function() {
-          $scope.getUsers();
-          $scope.deactivateButtons = false;
+          $timeout(function(){
+            $scope.getUsers(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminUserProfile');
+          }, 1000);
         }, function(){
-          $scope.getUsers();
-          $scope.deactivateButtons = false;
+          $timeout(function(){
+            $scope.getUsers(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminUserProfile');
+          }, 1000);
         })
       }
     }
@@ -79,4 +125,16 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', function ($scope, 
   }
 
 
+}]);
+
+app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profile', 'business', function ($scope, $uiModalInstance, profile, Business) {
+  $scope.userProfileForm = profile;
+
+  $scope.ok = function () {
+    $uiModalInstance.close('success');
+  };
+
+  $scope.cancel = function () {
+    $uiModalInstance.dismiss('cancel');
+  };
 }]);
