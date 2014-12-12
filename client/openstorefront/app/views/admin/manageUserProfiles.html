@@ -1,20 +1,26 @@
 <div ng-controller="AdminUserProfileCtrl">
   This is the user profile controller.
   <button class="btn btn-default" ng-click="predicate=''">Turn off sort</button>
-  <table class="friend">
+  <table class="table table-bordered">
     <tr>
-      <th><a href="" ng-click="predicate = 'firstName'; reverse=false">First Name</a></th>
-      <th><a href="" ng-click="predicate = 'lastName'; reverse=!reverse">Last Name</a></th>
-      <th><a href="" ng-click="predicate = 'organization'; reverse=!reverse">Organization</a></th>
-      <th><a href="" ng-click="predicate = 'userTypeCode'; reverse=!reverse">User Type</a></th>
-      <th><a href="" ng-click="predicate = 'email'; reverse=!reverse">Email</a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="predicate = 'firstName'; reverse=false">First Name</a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="predicate = 'lastName'; reverse=!reverse">Last Name</a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="predicate = 'organization'; reverse=!reverse">Organization</a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="predicate = 'userTypeCode'; reverse=!reverse">User Type</a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="predicate = 'userTypeCode'; reverse=!reverse">Last Logged In</a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="predicate = 'email'; reverse=!reverse">Email</a></th>
+      <th style="padding: 8px 3px;"><a href="">Actions</a></th>
     </tr>
     <tr ng-repeat="user in userProfiles | orderBy:predicate:reverse">
-      <td>{{user.firstName}}</td>
-      <td>{{user.lastName}}</td>
-      <td>{{user.organization}}</td>
-      <td>{{getUserType(user.userTypeCode)}}</td>
-      <td>{{user.email}}</td>
+      <td style="padding:5px;">{{user.firstName}}</td>
+      <td style="padding:5px;">{{user.lastName}}</td>
+      <td style="padding:5px;">{{user.organization}}</td>
+      <td style="padding:5px;">{{getUserType(user.userTypeCode)}}</td>
+      <td style="padding:5px;">{{getUserType(user.userTypeCode)}}</td>
+      <td style="padding:5px;">{{user.email}}</td>
+      <td style="padding: 0px 3px;">
+        <button class="btn btn-default btn-sm" ng-click="openAdminMessage('users', [user], '', '')"><i class="fa fa-envelope"></i></button><button class="btn btn-default btn-sm" ng-click="openAdminMessage('users', [user], '', '')"><i class="fa fa-envelope"></i></button><button class="btn btn-default btn-sm" ng-click="openAdminMessage('users', [user], '', '')"><i class="fa fa-envelope"></i></button><button class="btn btn-default btn-sm" ng-click="openAdminMessage('users', [user], '', '')"><i class="fa fa-trash"></i></button>
+      </td>
     </tr>
   </table>
 </div>
