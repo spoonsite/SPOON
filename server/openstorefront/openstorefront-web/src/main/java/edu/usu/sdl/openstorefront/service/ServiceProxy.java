@@ -51,6 +51,11 @@ public class ServiceProxy
 	{
 	}
 
+	public static ServiceProxy getProxy()
+	{
+		return new ServiceProxy();
+	}
+
 	public PersistenceService getPersistenceService()
 	{
 		return persistenceService;
