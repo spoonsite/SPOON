@@ -15,8 +15,6 @@
 */
 'use strict';
 
-/*global MOCKDATA2, jQuery, confirm, triggerError*/
-
 app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', '$q', function($scope, Business, $rootScope, $location, $timeout, $q) {
 
   //////////////////////////////////////////////////////////////////////////////
@@ -49,8 +47,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   Business.userservice.getCurrentUserProfile().then(function(result){
     if (result) {
       $scope.user.info = result;
-      console.log('result', result);
-      
+      // console.log('result', result);
     }
   });
 

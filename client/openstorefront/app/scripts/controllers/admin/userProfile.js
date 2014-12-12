@@ -17,5 +17,24 @@
 'use strict';
 
 app.controller('AdminUserProfileCtrl', ['$scope', 'business', function ($scope, Business) {
-    
+  Business.userservice.getAllUserProfiles().then(function(result){
+    $scope.userProfiles = result? result: []
+  }, function() {
+    $scope.userProfiles = [];
+  })
+  Business.lookupservice.getUserTypeCodes().then(function(result){
+    $scope.userTypes = result? result: []
+  }, function() {
+    $scope.userTypes = [];
+  })
+
+  $scope.getUserType = function(code){
+    var type = _.find($scope.userTypes, {'code': code});
+    if (type) {
+      return type.description;
+    } else {
+      return 'End User';
+    }
+  }
+
 }]);

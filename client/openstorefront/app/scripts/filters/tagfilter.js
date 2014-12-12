@@ -16,8 +16,6 @@
 
 'use strict';
 
-/* global isEmpty, MOCKDATA2 */
-
 app.filter('tagFilter', function () {
   return function (input, filters) {
     // if our list of tags isn't empty

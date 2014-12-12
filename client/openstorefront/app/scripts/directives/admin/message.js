@@ -55,7 +55,7 @@ app.directive('message', ['$uiModal', 'business', function ($uiModal, Business) 
         modalInstance.result.then(function (selectedItem) {
           scope.selected = selectedItem;
         }, function () {
-          console.log('Modal dismissed at: ' + new Date());
+          // console.log('Modal dismissed at: ' + new Date());
         });
       };
     }
@@ -77,10 +77,10 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
         var deferred = $q.defer();
         Business.userservice.getAllUserProfiles().then(function(result){
           deferred.resolve(result);
-          console.log('result', result);
+          // console.log('result', result);
         }, function(){
           deferred.reject(false);
-          console.log('There was an error getting the user profiles');
+          // console.log('There was an error getting the user profiles');
         }) 
         return deferred.promise;
       }
@@ -114,7 +114,7 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
 
 
       scope.checkForToContacts = function() {
-        console.log('oldContacts', oldContacts);
+        // console.log('oldContacts', oldContacts);
         
         if (scope.toField && (scope.toField.value === 'users' || scope.toField.value === 'group')) {
           if (scope.toField.value !== scope.oldField.value) {
@@ -149,16 +149,16 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
               scope.oldField = scope.toField;
               oldContacts = scope.contacts;
               scope.type = scope.toField.value;
-              console.log('selected', scope.contacts);
+              // console.log('selected', scope.contacts);
             }, function () {
               //return to old selection.
               scope.toField = scope.oldField;
               scope.contacts = oldContacts;
               scope.type = scope.toField.value;
-              console.log('Modal dismissed at: ' + new Date());
+              // console.log('Modal dismissed at: ' + new Date());
             });
           }, function(){
-            console.log('we clicked on the contact list, but the list failed');
+            // console.log('we clicked on the contact list, but the list failed');
           });
           //
         } else {
@@ -222,13 +222,13 @@ app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'type', 'contac
       // $uiModalInstance.dismiss('error');
     }
     // send message here
-    console.log('messageObj', messageObj);
+    // console.log('messageObj', messageObj);
     Business.userservice.sendAdminMessage(messageObj).then(function(result){
-      console.log('result', result);
+      // console.log('result', result);
       $uiModalInstance.close(messageObj);
-      console.log('we sent an email', messageObj);
+      // console.log('we sent an email', messageObj);
     }, function(result){
-      console.log('result', result);
+      // console.log('result', result);
     });
   };
 
@@ -286,7 +286,7 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
           }
         })
       }
-      console.log('userProfiles', result);
+      // console.log('userProfiles', result);
     }, function(){
       //there were no profiles?
     })

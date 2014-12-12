@@ -16,8 +16,6 @@
 
 'use strict';
 
-/*global isEmpty, MOCKDATA2*/
-
 app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q, localCache) {
 
   // default to 60 second expire time.
@@ -370,7 +368,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
         })
         .success(function(data, status, headers, config) { /*jshint unused:false*/          
           if (data && !isEmpty(data) && isNotRequestError(data)) {
-            console.log('data', data);
+            // console.log('data', data);
             
             removeError();
             // console.log('data', data);

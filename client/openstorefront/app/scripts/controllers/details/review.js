@@ -151,12 +151,12 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
     var componentId = $rootScope.getComponentId();
     var reviewId = null;
     if (error) {
-      console.log('triggering errors');
+      // console.log('triggering errors');
       errorObjt.success = false;
       triggerError(errorObjt);
       return false;
     }
-    console.log('Saving Review.');
+    // console.log('Saving Review.');
 
     if (revs) {
       reviewId = revs.reviewId;

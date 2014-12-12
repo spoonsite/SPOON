@@ -1,16 +1,20 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-	<head>
-		<title>TODO supply a title</title>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	</head>
-	<body>
-		<div>TODO write content</div>
-	</body>
-</html>
+<div ng-controller="AdminUserProfileCtrl">
+  This is the user profile controller.
+  <button class="btn btn-default" ng-click="predicate=''">Turn off sort</button>
+  <table class="friend">
+    <tr>
+      <th><a href="" ng-click="predicate = 'firstName'; reverse=false">First Name</a></th>
+      <th><a href="" ng-click="predicate = 'lastName'; reverse=!reverse">Last Name</a></th>
+      <th><a href="" ng-click="predicate = 'organization'; reverse=!reverse">Organization</a></th>
+      <th><a href="" ng-click="predicate = 'userTypeCode'; reverse=!reverse">User Type</a></th>
+      <th><a href="" ng-click="predicate = 'email'; reverse=!reverse">Email</a></th>
+    </tr>
+    <tr ng-repeat="user in userProfiles | orderBy:predicate:reverse">
+      <td>{{user.firstName}}</td>
+      <td>{{user.lastName}}</td>
+      <td>{{user.organization}}</td>
+      <td>{{getUserType(user.userTypeCode)}}</td>
+      <td>{{user.email}}</td>
+    </tr>
+  </table>
+</div>

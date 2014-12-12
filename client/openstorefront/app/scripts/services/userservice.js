@@ -14,7 +14,6 @@
 * limitations under the License.
 */
 
-/*global MOCKDATA2*/
 
 'use strict';
 app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $http, $q) {
@@ -474,9 +473,39 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     return deferred.promise;
   };  
 
+  var getUserByUsername = function(username){
+    // console.log('user requested', username);
+    
+    var deferred = $q.defer();
+    var userInfo = checkExpire(username, minute * 1440);
+    if (userInfo) {
+      deferred.resolve(userInfo);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/userprofiles/' + username
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          save(username, data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject('There was an error grabbing the user profile');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    }
+
+    return deferred.promise;
+  }
+
   //Public API
   return {
     getCurrentUserProfile: getCurrentUserProfile,
+    getUserByUsername:getUserByUsername,
     getAllUserProfiles: getAllUserProfiles,
     getReviews: getReviews,
     getWatches: getWatches,

@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global resetAnimGlobals, initiateClick, MOCKDATA2 */
+/* global resetAnimGlobals, initiateClick */
 /* exported app */
 
 /***************************************************************

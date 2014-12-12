@@ -34,13 +34,13 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
 
 
   $scope.checkTicket = function(ticketId) {
-    console.log('we are checking a ticket');
+    // console.log('we are checking a ticket');
     
     if ($scope.checkTicketTimeout) {
       clearTimeout($scope.checkTicketTimeout);
     }
     $scope.checkTicketTimeout = setTimeout(function() {
-      console.log('We hit the timeout');
+      // console.log('We hit the timeout');
       $scope.loading++;
       Business.configurationservice.checkTicket(ticketId).then(function(result){
         $scope.ticketContents = result;
@@ -73,16 +73,16 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
       conf.issueType = $scope.jiraProject.issueType
       conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
 
-      console.log('conf', conf);
+      // console.log('conf', conf);
 
       Business.configurationservice.saveIntegrationConf($scope.componentId, conf).then(function(result){
-        console.log('conf result', result);
-        console.log('conf', conf);
+        // console.log('conf result', result);
+        // console.log('conf', conf);
         $scope.$emit('$TRIGGEREVENT', '$UPDATECONFFORID', $scope.componentId);
         triggerAlert('The configuration was saved', 'saveIntegrationConf','.modal-dialog', 5000);
       }, function(result){
         triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
-        console.log('Failed', result);
+        // console.log('Failed', result);
         
       });
     } else {
@@ -113,7 +113,7 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
 
     $scope.$watch('config', function() {
       if ($scope.config && $scope.typeahead) {
-        console.log('$scope.config', $scope.config);
+        // console.log('$scope.config', $scope.config);
         
         if ($scope.config.componentId) {
           $scope.component = _.find($scope.typeahead, {'componentId': $scope.config.componentId});
@@ -153,13 +153,13 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   Business.componentservice.getComponentList().then(function(result) {
     Business.typeahead(result, null).then(function(value){
       if (value) {
-        console.log('value', value);
+        // console.log('value', value);
         $scope.typeahead = value;
       } else {
         $scope.typeahead = null;
       }
       Business.configurationservice.getMappingTypes(true).then(function(result){
-        console.log('result', result);
+        // console.log('result', result);
         _.each(result, function(item){
           item.description = item.projectType + ' - ' + item.issueType;
         });

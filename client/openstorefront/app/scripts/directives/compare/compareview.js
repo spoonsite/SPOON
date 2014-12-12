@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.directive('compareview', ['$timeout', function ($timeout) {
+app.directive('compareview', ['$timeout', 'business', function ($timeout, Business) {
   return {
     templateUrl: 'views/details/compare.html',
     restrict: 'E',
@@ -26,6 +26,12 @@ app.directive('compareview', ['$timeout', function ($timeout) {
     },
     link: function postLink(scope, element, attrs) {
 
+      Business.lookupservice.getEvaluationSections().then(function(result) {
+        scope.evalSectionDescriptionMap = result? result : [];
+        // console.log('sections', result);
+      })
+
+      scope.checked = {};
       scope.getObjectContent = function(details) {
         var temp = {};
         temp.value = [];
@@ -35,26 +41,23 @@ app.directive('compareview', ['$timeout', function ($timeout) {
           property.checkedLabel = camelToSentence(prop);
           property.data = details[prop];
           property.checked = true;
+          scope.checked[prop] = scope.checked[prop]? scope.checked[prop]: property;
           temp[prop] = property;
         })
         if (temp.value){
           delete temp.value;
         }
         // details.checkedLabel = camelToSentence();
+        console.log('scope.checked', scope.checked);
+        
         return temp;
       }
 
+
       scope.reset = function() {
-        if (scope.detailsleft) {
-          _.each(scope.detailsleft, function(detail){
-            detail.checked = true;
-          });
-        }
-        if (scope.detailsright) {
-          _.each(scope.detailsright, function(detail){
-            detail.checked = true;
-          });
-        }
+        _.each(scope.checked, function(detail){
+          detail.checked = true;
+        });
       }
 
       scope.getDate = function(date) {
@@ -129,8 +132,9 @@ app.directive('compareview', ['$timeout', function ($timeout) {
       /***************************************************************
       * This function saves a component's tags
       ***************************************************************/
-      scope.getEvalDescription = function(name){
-        return MOCKDATA.evalSectionDescriptionMap[name];
+      scope.getEvalDescription = function(col){
+        var section = _.find(scope.evalSectionDescriptionMap, {'description': col.name});
+        return section? section.detailedDecription: '';
       };
 
       var timeout;
