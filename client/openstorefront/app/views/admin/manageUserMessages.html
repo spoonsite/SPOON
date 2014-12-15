@@ -30,7 +30,7 @@
 				<td>{{message.username}}</td>
 				<td>{{message.componentId}}</td>
 				<td align="center">{{message.activeStatus}}</td>
-				<td>{{message.updateDts}}</td>
+				<td>{{message.updateDts | date:'MM/dd/yyyy h:mm a'}}</td>
 				<td>{{message.subject}}</td>
 				<td style="width: 350px;" ><p ng-bind-html="message.bodyOfMessage"></p></td>
 				<td>{{message.sentEmailAddress}}</td>

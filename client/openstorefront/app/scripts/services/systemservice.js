@@ -18,6 +18,89 @@
 
 app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, localCache) {
     
+  var getErrorTickets = function(queryParamFilter) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/errortickets?' + queryParamFilter.toQuery()
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var resetIndexer = function () {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/service/search/resetSolr'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+  };
+  
+  var getErrorTicketInfo = function(ticketId) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/errortickets/' + ticketId + "/ticket" 
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var sendRecentChangesEmail = function (lastRunDts, emailAddress) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/service/notification/recent-changes?lastRunDts=' + lastRunDts +"&emailAddress=" + emailAddress
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+  }; 
+  
+  var getRecentChangeStatus = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/notification/recent-changes/status'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+    
+  return {
+      getErrorTickets: getErrorTickets,
+      resetIndexer: resetIndexer,
+      getErrorTicketInfo: getErrorTicketInfo,
+      sendRecentChangesEmail: sendRecentChangesEmail,
+      getRecentChangeStatus: getRecentChangeStatus
+  };
+    
 }]);
 
 

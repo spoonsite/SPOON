@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.util.Convert;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class RecentChangeNotifyJob
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		long days = Convert.toLong(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_RECENT_CHANGE_DAYS, "28"));
+		long days = Convert.toLong(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_RECENT_CHANGE_DAYS, OpenStorefrontConstant.DEFAULT_RECENT_CHANGE_EMAIL_INTERVAL));
 		long daysInMillis = TimeUtil.daysToMillis(days);
 		ServiceProxy serviceProxy = new ServiceProxy();
 		String lastRunDtsString = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS);

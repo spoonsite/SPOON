@@ -102,7 +102,7 @@ public class Search
 	@Path("/resetSolr")
 	public Response resetSolr()
 	{
-		service.getAyncProxy(service.getSearchService(), false, "Reseting Indexer").resetIndexer();
+		service.getAyncProxy(service.getSearchService(), false, "Resetting Indexer").resetIndexer();
 		return Response.ok().build();
 	}
 

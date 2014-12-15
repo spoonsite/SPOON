@@ -50,6 +50,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * Handles all interaction with the database
  *
  * @author dshurtleff
  */
@@ -585,6 +586,7 @@ public class PersistenceService
 
 				if ("class".equalsIgnoreCase(field.getName()) == false) {
 					field.setAccessible(true);
+					//Note: this may not work for proxy object....they may need to be call through a get method
 					Object value = field.get(example);
 					if (value != null) {
 						if (ServiceUtil.isComplexClass(value.getClass())) {
