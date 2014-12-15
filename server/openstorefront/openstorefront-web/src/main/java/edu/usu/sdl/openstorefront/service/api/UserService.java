@@ -148,9 +148,10 @@ public interface UserService
 	/**
 	 * Get the user profile based on the userID
 	 *
+	 * @param all
 	 * @return
 	 */
-	public List<UserProfile> getAllProfiles();
+	public List<UserProfile> getAllProfiles(Boolean all);
 
 	/**
 	 * Get the last login for a group of users.

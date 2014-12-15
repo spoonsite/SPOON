@@ -201,10 +201,12 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public List<UserProfile> getAllProfiles()
+	public List<UserProfile> getAllProfiles(Boolean all)
 	{
 		UserProfile example = new UserProfile();
-		example.setActiveStatus(UserProfile.ACTIVE_STATUS);
+		if (!all) {
+			example.setActiveStatus(UserProfile.ACTIVE_STATUS);
+		}
 		return persistenceService.queryByExample(UserProfile.class, new QueryByExample(example));
 	}
 
