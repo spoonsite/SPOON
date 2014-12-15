@@ -16,18 +16,25 @@
 package edu.usu.sdl.openstorefront.web.rest.service;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
+import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.util.Convert;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.RecentChangesStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -70,7 +77,7 @@ public class NotificationService
 	@Path("/recent-changes")
 	public Response recentChanges(
 			@QueryParam("lastRunDts")
-			@APIDescription("MM/dd/yyyy - (Defaults to the beginning of the current day in server time)") String lastRunDtsValue,
+			@APIDescription("MM/dd/yyyy or Unix Epoch - (Defaults to the beginning of the current day in server time)") String lastRunDtsValue,
 			@QueryParam("emailAddress")
 			@APIDescription("Set to send a preview email just to that address") String emailAddress)
 	{
@@ -81,14 +88,47 @@ public class NotificationService
 			lastRunDts = TimeUtil.beginningOfDay(TimeUtil.currentDate());
 		} else {
 			lastRunDts = simpleDateFormat.parse(lastRunDtsValue, new ParsePosition(0));
+			if (lastRunDts == null) {
+				if (StringUtils.isNumeric(lastRunDtsValue)) {
+					lastRunDts = new Date(Convert.toLong(lastRunDtsValue));
+				}
+			}
 		}
 
 		if (lastRunDts != null) {
-			service.getUserService().sendRecentChangeEmail(lastRunDts, emailAddress);
+			service.getAyncProxy(service.getUserService(), true, "Send Recent Change Email").sendRecentChangeEmail(lastRunDts, emailAddress);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to parse last run dts", "Check last run dts param format (MM/dd/yyyy) ");
 		}
 		return Response.ok().build();
+	}
+
+	@GET
+	@APIDescription("Gets the status of the recent change email.")
+	@RequireAdmin
+	@DataType(RecentChangesStatus.class)
+	@Path("/recent-changes/status")
+	public Response recentChangesStatus()
+	{
+		long days = Convert.toLong(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_RECENT_CHANGE_DAYS, OpenStorefrontConstant.DEFAULT_RECENT_CHANGE_EMAIL_INTERVAL));
+		long daysInMillis = TimeUtil.daysToMillis(days);
+
+		String lastRunDtsString = service.getSystemService().getPropertyValue(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS);
+		Date lastRunDts = null;
+		if (lastRunDtsString != null) {
+			lastRunDts = TimeUtil.fromString(lastRunDtsString);
+		}
+
+		Date nextSendDate = new Date(System.currentTimeMillis() + daysInMillis);
+		if (lastRunDts != null) {
+			nextSendDate = new Date(lastRunDts.getTime() + daysInMillis);
+		}
+
+		RecentChangesStatus recentChangesStatus = new RecentChangesStatus();
+		recentChangesStatus.setLastSentDts(lastRunDts);
+		recentChangesStatus.setNextSendDts(nextSendDate);
+
+		return sendSingleEntityResponse(recentChangesStatus);
 	}
 
 }

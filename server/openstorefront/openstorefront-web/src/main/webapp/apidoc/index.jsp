@@ -27,7 +27,7 @@ limitations under the License.
 	</head>
 	<body>
 		<header class="header">
-			<span class="api-title">Open Storefront API v1.0</span>
+			<span class="api-title">Open Storefront API v1.2</span>
 		</header>
 		
 		<div class="api-guide">
