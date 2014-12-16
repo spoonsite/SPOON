@@ -293,6 +293,11 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     return saveProfile(CURRENT_USER, userProfile);
   };
 
+
+  var saveThisProfile = function(profile){
+    return saveProfile(profile.username, profile);
+  }
+
   /**
   *  Save profile to the service and on success it reloads the profile
   * @param string usernamer
@@ -588,6 +593,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     initializeUser: initializeUser,
     removeWatch: removeWatch,
     saveCurrentUserProfile: saveCurrentUserProfile,
+    saveThisProfile: saveThisProfile,
     saveWatch: saveWatch,
     sendAdminMessage:sendAdminMessage,
     sendTestEmail: sendTestEmail,
