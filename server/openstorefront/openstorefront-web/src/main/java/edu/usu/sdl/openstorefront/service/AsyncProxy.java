@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -36,20 +37,18 @@ public class AsyncProxy<T>
 	private static final Logger log = Logger.getLogger(AsyncProxy.class.getName());
 
 	private final T originalObject;
-	private final boolean allowMultiple;
-	private final String name;
+	private final TaskRequest taskRequest;
 
-	public static <T> T newInstance(T obj, boolean allowMultiple, String name)
+	public static <T> T newInstance(T obj, TaskRequest taskRequest)
 	{
 		return (T) java.lang.reflect.Proxy.newProxyInstance(obj.getClass().getClassLoader(), obj
-				.getClass().getInterfaces(), new AsyncProxy(obj, allowMultiple, name));
+				.getClass().getInterfaces(), new AsyncProxy(obj, taskRequest));
 	}
 
-	private AsyncProxy(T obj, boolean allowMultiple, String name)
+	private AsyncProxy(T obj, TaskRequest taskRequest)
 	{
 		this.originalObject = obj;
-		this.allowMultiple = allowMultiple;
-		this.name = name;
+		this.taskRequest = taskRequest;
 	}
 
 	@Override
@@ -58,11 +57,13 @@ public class AsyncProxy<T>
 		log.log(Level.FINE, MessageFormat.format("Calling Method (Asyncronously): {0} on {1}", new Object[]{method.getName(), originalObject.getClass().getName()}));
 
 		AsyncProxyTask asyncProxyTask = new AsyncProxyTask(originalObject, proxy, method, args);
-		TaskRequest taskRequest = new TaskRequest();
-		taskRequest.setAllowMultiple(allowMultiple);
-		taskRequest.setName(name);
 		taskRequest.setTask(asyncProxyTask);
-		return AsyncTaskManager.submitTask(taskRequest);
+		TaskFuture taskFuture = AsyncTaskManager.submitTask(taskRequest);
+		if (TaskFuture.class.getSimpleName().equals(method.getReturnType().getSimpleName())) {
+			return taskFuture;
+		} else {
+			return null;
+		}
 	}
 
 }

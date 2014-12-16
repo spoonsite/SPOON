@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.service.api.SearchService;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.api.UserService;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import java.util.Objects;
 
 /**
@@ -135,13 +136,16 @@ public class ServiceProxy
 
 	public <T extends AsyncService> T getAyncProxy(T originalProxy)
 	{
-		return getAyncProxy(originalProxy, true, "Aync Service Call");
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(true);
+		taskRequest.setName("Aync Service Call");
+		return getAyncProxy(originalProxy, taskRequest);
 	}
 
-	public <T extends AsyncService> T getAyncProxy(T originalProxy, boolean allowMultiple, String taskName)
+	public <T extends AsyncService> T getAyncProxy(T originalProxy, TaskRequest taskRequest)
 	{
 		Objects.requireNonNull(originalProxy, "Original Service is required");
-		T asyncService = AsyncProxy.newInstance(originalProxy, allowMultiple, taskName);
+		T asyncService = AsyncProxy.newInstance(originalProxy, taskRequest);
 		return asyncService;
 	}
 

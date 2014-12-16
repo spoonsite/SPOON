@@ -15,9 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.service.manager.model;
 
+import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
 import java.util.concurrent.Callable;
 
 /**
+ * Sets options for the task
  *
  * @author dshurtleff
  */
@@ -27,6 +29,7 @@ public class TaskRequest
 	private String name;
 	private boolean allowMultiple;
 	private Callable task;
+	private AsyncTaskCallback callback;
 
 	public TaskRequest()
 	{
@@ -60,6 +63,16 @@ public class TaskRequest
 	public void setTask(Callable task)
 	{
 		this.task = task;
+	}
+
+	public AsyncTaskCallback getCallback()
+	{
+		return callback;
+	}
+
+	public void setCallback(AsyncTaskCallback callback)
+	{
+		this.callback = callback;
 	}
 
 }

@@ -71,6 +71,9 @@ public class TaskThreadExecutor
 						SystemErrorModel systemErrorModel = serviceProxy.getSystemService().generateErrorTicket(errorInfo);
 						taskFuture.setError("Task failed.  " + systemErrorModel.toString());
 					}
+					if (taskFuture.getCallback() != null) {
+						taskFuture.getCallback().afterExecute(taskFuture);
+					}
 				}
 			}
 		}
@@ -89,6 +92,10 @@ public class TaskThreadExecutor
 			for (TaskFuture taskFuture : getTasks()) {
 				if (taskFuture.getFuture().equals(future)) {
 					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.WORKING);
+
+					if (taskFuture.getCallback() != null) {
+						taskFuture.getCallback().beforeExecute(taskFuture);
+					}
 				}
 			}
 		}
@@ -129,6 +136,7 @@ public class TaskThreadExecutor
 			Future future = submit(taskRequest.getTask());
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
 			taskFuture.setTaskName(taskRequest.getName());
+			taskFuture.setCallback(taskRequest.getCallback());
 			tasks.add(taskFuture);
 		}
 		return taskFuture;

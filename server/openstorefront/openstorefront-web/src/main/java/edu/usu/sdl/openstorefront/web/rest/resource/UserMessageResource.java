@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.util.List;
@@ -86,7 +87,11 @@ public class UserMessageResource
 	@Path("/processnow")
 	public Response processUserMessages()
 	{
-		service.getAyncProxy(service.getUserService(), false, "Process All User Messages Now").processAllUserMessages(true);
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Process All User Messages Now");
+
+		service.getAyncProxy(service.getUserService(), taskRequest).processAllUserMessages(true);
 		return Response.ok().build();
 	}
 

@@ -67,6 +67,26 @@ public class AsyncTaskManager
 	}
 
 	/**
+	 * Gets the first task with the name...note there could be more than one. If
+	 * the exact task is needed than make sure to use a unique name.
+	 *
+	 * @param name
+	 * @return taskfuture or null
+	 */
+	public static TaskFuture getTaskByName(String name)
+	{
+		TaskFuture taskFuture = null;
+
+		for (TaskFuture taskFutureLocal : taskPool.getTasks()) {
+			if (taskFutureLocal.getTaskName().equals(name)) {
+				taskFuture = taskFutureLocal;
+				break;
+			}
+		}
+		return taskFuture;
+	}
+
+	/**
 	 * Attempts to cancel job
 	 *
 	 * @param taskId
