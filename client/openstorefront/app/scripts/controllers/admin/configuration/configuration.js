@@ -565,20 +565,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
 
   $scope.calcStatus = function(val)
   {
-    switch(val){
-      case 'C':
-      return 'Complete'
-      break;
-      case 'E':
-      return 'Error'
-      break;
-      case 'W':
-      return 'Working'
-      break;
-      default:
-      return 'Error'
-      break;
-    }
+    return utils.calcStatus(val);
   }
 
 

@@ -46,15 +46,7 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
   }
 
   $scope.getDate = function(date){
-    if (date)
-    {
-      var d = new Date(date);
-      var currDate = d.getDate();
-      var currMonth = d.getMonth();
-      var currYear = d.getFullYear();
-      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
-    }
-    return null;
+    return utils.getDate(date);
   };
 
   $scope.editUserProfile = function(profile){
@@ -71,6 +63,7 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
 
     modalInstance.result.then(function (result) {
       //do something
+      triggerAlert('Your edits were saved', 'editUserProfile', 'body', 6000);
     }, function () {
       // cancled or failed
     });
@@ -158,37 +151,34 @@ app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profil
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
     var error = false;
-    var errorObjt = {};
-    errorObjt.errors = {};
-    errorObjt.errors.entry = [];
+    var errorObjt = angular.copy(utils.errorObj);
 
     if (!$scope.userProfileForm.firstName){
-      errorObjt.errors.entry.push({'key':'firstName', 'value':'A first name is required.'});
+      errorObjt.add('firstName','A first name is required.');
     } else if ($scope.userProfileForm.firstName.length > 80){
-      errorObjt.errors.entry.push({'key':'firstName', 'value':'Your first name has exceeded the accepted input length'});
+      errorObjt.add('firstName','Your first name has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.lastName){
-      errorObjt.errors.entry.push({'key':'lastName', 'value':'A last name is required.'});
+      errorObjt.add('lastName','A last name is required.');
     } else if ($scope.userProfileForm.lastName.length > 80){
-      errorObjt.errors.entry.push({'key':'lastName', 'value':'Your last name has exceeded the accepted input length'});
+      errorObjt.add('lastName','Your last name has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.email){
-      errorObjt.errors.entry.push({'key':'email', 'value':'A valid email is required.'});
+      errorObjt.add('email','A valid email is required.');
     } else if ($scope.userProfileForm.email.length > 80){
-      errorObjt.errors.entry.push({'key':'email', 'value':'Your email has exceeded the accepted input length'});
+      errorObjt.add('email','Your email has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.organization){
-      errorObjt.errors.entry.push({'key':'organization', 'value':'An organization is required.'});
+      errorObjt.add('organization','An organization is required.');
     } else if ($scope.userProfileForm.organization.length > 120){
-      errorObjt.errors.entry.push({'key':'organization', 'value':'Your organization has exceeded the accepted input length'});
+      errorObjt.add('organization','Your organization has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.userTypeCode){
-      errorObjt.errors.entry.push({'key':'userRole', 'value':'A valid user type code is required.'});
+      errorObjt.add('userRole','A valid user type code is required.');
     }
 
 
     if (error) {
-      errorObjt.success = false;
       triggerError(errorObjt);
       return false;
     }

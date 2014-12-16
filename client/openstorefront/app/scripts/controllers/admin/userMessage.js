@@ -23,32 +23,8 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
      {code: 'A', desc: 'Active'},
      {code: 'I', desc: 'Archived'}
    ];
-   $scope.queryFilter = {
-      status: $scope.statusFilterOptions[0],
-      max: null,
-      sortField: null,
-      sortOrder: null,
-      offset: null,
-      toQuery: function () {
-        var queryParams = "";
-        if (this.status !== null){
-          queryParams += "status=" + this.status.code + "&";
-        }
-        if (this.max !== null){
-          queryParams += "max=" + this.max + "&";
-        }
-        if (this.sortField !== null){
-          queryParams += "sortField=" + this.sortField + "&";
-        }
-        if (this.sortOrder !== null){
-          queryParams += "sortOrder=" + this.sortOrder + "&";
-        }
-        if (this.offset !== null){
-          queryParams += "offset=" + this.offset + "&";
-        }
-        return queryParams;
-      }
-    };
+   $scope.queryFilter = angular.copy(utils.queryFilter);
+   $scope.queryFilter.status = $scope.statusFilterOptions[0];
     
     $scope.deleteUserMessage = function(username, userMessageId){     
       var response = window.confirm("Are you sure you want to delete this message for " + username + " ?");
