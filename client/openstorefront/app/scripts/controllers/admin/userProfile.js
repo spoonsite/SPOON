@@ -129,9 +129,81 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
 
 app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profile', 'business', function ($scope, $uiModalInstance, profile, Business) {
   $scope.userProfileForm = profile;
+  $scope.userProfileForm.mySwitch = true;
+  $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+  Business.lookupservice.getUserTypeCodes().then(function(result){
+    if (result) {
+      $scope.userTypeCodes = result;
+      $scope.userProfileForm.userRole = _.find($scope.userTypeCodes, {'code': $scope.userProfileForm.userTypeCode});
+    } else {
+      $scope.userTypeCodes = [];
+    }
+  });
+  $scope.saveUserProfile = function(){
+    console.log('$scope.userProfileForm', $scope.userProfileForm);
+    $scope.userProfileForm.mySwitch = false;
+    $scope.ok();
+  }
+
+  $scope.cancelUserProfile = function() {
+    $scope.cancel()
+  }
 
   $scope.ok = function () {
-    $uiModalInstance.close('success');
+    // myCheckValue
+    // mask form
+    $scope.$emit('$TRIGGERLOAD', 'userLoad');
+
+    //validate form
+    $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
+
+    var error = false;
+    var errorObjt = {};
+    errorObjt.errors = {};
+    errorObjt.errors.entry = [];
+
+    if (!$scope.userProfileForm.firstName){
+      errorObjt.errors.entry.push({'key':'firstName', 'value':'A first name is required.'});
+    } else if ($scope.userProfileForm.firstName.length > 80){
+      errorObjt.errors.entry.push({'key':'firstName', 'value':'Your first name has exceeded the accepted input length'});
+    }
+    if (!$scope.userProfileForm.lastName){
+      errorObjt.errors.entry.push({'key':'lastName', 'value':'A last name is required.'});
+    } else if ($scope.userProfileForm.lastName.length > 80){
+      errorObjt.errors.entry.push({'key':'lastName', 'value':'Your last name has exceeded the accepted input length'});
+    }
+    if (!$scope.userProfileForm.email){
+      errorObjt.errors.entry.push({'key':'email', 'value':'A valid email is required.'});
+    } else if ($scope.userProfileForm.email.length > 80){
+      errorObjt.errors.entry.push({'key':'email', 'value':'Your email has exceeded the accepted input length'});
+    }
+    if (!$scope.userProfileForm.organization){
+      errorObjt.errors.entry.push({'key':'organization', 'value':'An organization is required.'});
+    } else if ($scope.userProfileForm.organization.length > 120){
+      errorObjt.errors.entry.push({'key':'organization', 'value':'Your organization has exceeded the accepted input length'});
+    }
+    if (!$scope.userProfileForm.userTypeCode){
+      errorObjt.errors.entry.push({'key':'userRole', 'value':'A valid user type code is required.'});
+    }
+
+
+    if (error) {
+      errorObjt.success = false;
+      triggerError(errorObjt);
+      return false;
+    }
+
+    Business.userservice.saveThisProfile($scope.userProfileForm).then(function(result){
+      console.log('success', result);
+      $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+      $uiModalInstance.close('success');
+    }, function(){
+      // triggerAlert();
+      console.log('There was an error');
+      
+      $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+    })
+    // Business.userservice.saveCurrentUserProfile($scope.userProfileForm).then(
   };
 
   $scope.cancel = function () {

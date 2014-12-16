@@ -365,10 +365,10 @@ module.exports = function (grunt) {
           dest: '<%= yeoman.dist %>',
           src: [
           '*.{ico,txt}',
-          'images/idamCapabilityFunctionality.png',
           '.htaccess',
           '*.html',
           'views/**/*.html',
+          'images/**/*',
           'bower_components/fontawesome/css/font-awesome.css',
           'bower_components/fontawesome/fonts/*',
           'bower_components/bootstrap/dist/fonts/*',
