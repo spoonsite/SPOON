@@ -13,18 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service;
+package edu.usu.sdl.openstorefront.service.manager.resource;
 
-import edu.usu.sdl.openstorefront.service.api.ReportService;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 
 /**
- * Handles report workflow
  *
  * @author dshurtleff
  */
-public class ReportServiceImpl
-		extends ServiceProxy
-		implements ReportService
+public interface AsyncTaskCallback
 {
+
+	/**
+	 * Called before the task is worked on
+	 *
+	 * @param taskFuture
+	 */
+	public void beforeExecute(TaskFuture taskFuture);
+
+	/**
+	 * Called after the task completes
+	 *
+	 * @param taskFuture
+	 */
+	public void afterExecute(TaskFuture taskFuture);
 
 }

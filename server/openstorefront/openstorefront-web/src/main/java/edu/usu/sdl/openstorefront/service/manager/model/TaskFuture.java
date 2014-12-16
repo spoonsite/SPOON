@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.manager.model;
 
+import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.TaskStatus;
 import java.util.Date;
 import java.util.UUID;
@@ -38,6 +39,7 @@ public class TaskFuture
 	private boolean allowMultiple;
 	private String error;
 	private TaskStatus status = TaskStatus.QUEUED;
+	private AsyncTaskCallback callback;
 
 	public TaskFuture()
 	{
@@ -173,6 +175,16 @@ public class TaskFuture
 	public void setStatus(TaskStatus status)
 	{
 		this.status = status;
+	}
+
+	public AsyncTaskCallback getCallback()
+	{
+		return callback;
+	}
+
+	public void setCallback(AsyncTaskCallback callback)
+	{
+		this.callback = callback;
 	}
 
 }

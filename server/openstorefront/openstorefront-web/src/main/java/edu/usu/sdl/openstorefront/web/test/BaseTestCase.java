@@ -17,8 +17,8 @@ public abstract class BaseTestCase
 	protected static final String TEST_USER = "TEST-USER";
 
 	protected boolean success;
-	protected StringBuilder failureReason = new StringBuilder();
-	protected StringBuilder results = new StringBuilder();
+	protected StringBuffer failureReason = new StringBuffer();
+	protected StringBuffer results = new StringBuffer();
 	protected ServiceProxy service = new ServiceProxy();
 	protected String description;
 
@@ -61,22 +61,22 @@ public abstract class BaseTestCase
 		this.success = success;
 	}
 
-	public StringBuilder getFailureReason()
+	public StringBuffer getFailureReason()
 	{
 		return failureReason;
 	}
 
-	public void setFailureReason(StringBuilder failureReason)
+	public void setFailureReason(StringBuffer failureReason)
 	{
 		this.failureReason = failureReason;
 	}
 
-	public StringBuilder getResults()
+	public StringBuffer getResults()
 	{
 		return results;
 	}
 
-	public void setResults(StringBuilder results)
+	public void setResults(StringBuffer results)
 	{
 		this.results = results;
 	}

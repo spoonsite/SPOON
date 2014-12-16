@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.util.Convert;
@@ -63,8 +64,10 @@ public class NotificationService
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-
-			service.getAyncProxy(service.getUserService(), true, "Send Admin Message").sendAdminMessage(adminMessage);
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(true);
+			taskRequest.setName("Send Admin Message");
+			service.getAyncProxy(service.getUserService(), taskRequest).sendAdminMessage(adminMessage);
 			return Response.ok().build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -96,7 +99,10 @@ public class NotificationService
 		}
 
 		if (lastRunDts != null) {
-			service.getAyncProxy(service.getUserService(), true, "Send Recent Change Email").sendRecentChangeEmail(lastRunDts, emailAddress);
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(true);
+			taskRequest.setName("Send Recent Change Email");
+			service.getAyncProxy(service.getUserService(), taskRequest).sendRecentChangeEmail(lastRunDts, emailAddress);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to parse last run dts", "Check last run dts param format (MM/dd/yyyy) ");
 		}

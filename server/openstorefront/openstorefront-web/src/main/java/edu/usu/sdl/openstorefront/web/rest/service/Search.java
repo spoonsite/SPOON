@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -102,7 +103,11 @@ public class Search
 	@Path("/resetSolr")
 	public Response resetSolr()
 	{
-		service.getAyncProxy(service.getSearchService(), false, "Resetting Indexer").resetIndexer();
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Resetting Indexer");
+
+		service.getAyncProxy(service.getSearchService(), taskRequest).resetIndexer();
 		return Response.ok().build();
 	}
 
