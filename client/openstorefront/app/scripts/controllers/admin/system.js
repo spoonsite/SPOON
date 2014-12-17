@@ -99,8 +99,8 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
       $scope.refreshTickets(); 
     };    
     
-    $scope.setPageSize = function(){
-        $scope.pageNumber = 1;
+    $scope.setPageSize = function(){        
+        $scope.pageNumber = 1;        
         $scope.refreshTickets(); 
     };
     
