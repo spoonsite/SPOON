@@ -40,12 +40,19 @@ var app = angular
     'bootstrapLightbox',
     'angular-carousel',
     'angulartics.google.analytics',
-    'ngIdle',
+    'ngIdle',    
     'multi-select'
   // end of dependency injections
   ]
 // end of the module creation
 )
+.filter('moment', function () {
+  return function (input, momentFn) {
+    var args = Array.prototype.slice.call(arguments, 2),
+        momentObj = moment(input);
+    return momentObj[momentFn].apply(momentObj, args);
+  };
+})
 // Here we configure the route provider
 .config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', '$httpProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider, $httpProvider) {
   $routeProvider
