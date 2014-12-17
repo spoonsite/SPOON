@@ -93,7 +93,7 @@
 					</tr>
 					<tr ng-repeat-start="ticket in errorTickets.errorTickets" >
 						<td>{{ticket.errorTicketId}}</td>
-						<td>{{ticket.updateDts | date:'MM/dd/yyyy h:mm a'}}</td>
+						<td>{{ticket.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
 						<td>{{ticket.clientIp}}</td>
 						<td>{{ticket.calledAction}}</td>
 						<td >{{wrapString(ticket.input)}}</td>

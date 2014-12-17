@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
+import static edu.usu.sdl.openstorefront.service.manager.model.TaskFuture.MAX_ORPHAN_QUEUE_TIME;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
@@ -106,6 +107,12 @@ public class TaskThreadExecutor
 		for (int i = tasks.size() - 1; i >= 0; i--) {
 			TaskFuture taskFuture = tasks.get(i);
 			if (taskFuture.isExpired()) {
+				tasks.remove(i);
+			}
+			if (this.getQueue().isEmpty()
+					&& OpenStorefrontConstant.TaskStatus.QUEUED.equals(taskFuture.getStatus())
+					&& System.currentTimeMillis() > (taskFuture.getSubmitedDts().getTime() + MAX_ORPHAN_QUEUE_TIME)) {
+				//Remove rejected queued tasks or orphan tasks
 				tasks.remove(i);
 			}
 		}
