@@ -39,8 +39,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   };
 
   $scope.validateEmail = function(email) { 
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
+    return utils.RE.test(email);
   }
 
 
@@ -101,10 +100,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     }
   });
 
-
-
-  $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
-
+  $scope.EMAIL_REGEXP = utils.EMAIL_REGEXP;
 
   //////////////////////////////////////////////////////////////////////////////
   // Functions
@@ -114,15 +110,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   * This function converts a timestamp to a displayable date
   ***************************************************************/
   $scope.getDate = function(date){
-    if (date)
-    {
-      var d = new Date(date);
-      var currDate = d.getDate();
-      var currMonth = d.getMonth();
-      var currYear = d.getFullYear();
-      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
-    }
-    return null;
+    return utils.getDate(date);
   };
 
   /***************************************************************
@@ -226,37 +214,34 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
     var error = false;
-    var errorObjt = {};
-    errorObjt.errors = {};
-    errorObjt.errors.entry = [];
+    var errorObjt = angular.copy(utils.errorObj);
 
     if (!$scope.userProfileForm.firstName){
-      errorObjt.errors.entry.push({'key':'firstName', 'value':'A first name is required.'});
+      errorObjt.add('firstName','A first name is required.');
     } else if ($scope.userProfileForm.firstName.length > 80){
-      errorObjt.errors.entry.push({'key':'firstName', 'value':'Your first name has exceeded the accepted input length'});
+      errorObjt.add('firstName','Your first name has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.lastName){
-      errorObjt.errors.entry.push({'key':'lastName', 'value':'A last name is required.'});
+      errorObjt.add('lastName','A last name is required.');
     } else if ($scope.userProfileForm.lastName.length > 80){
-      errorObjt.errors.entry.push({'key':'lastName', 'value':'Your last name has exceeded the accepted input length'});
+      errorObjt.add('lastName','Your last name has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.email){
-      errorObjt.errors.entry.push({'key':'email', 'value':'A valid email is required.'});
+      errorObjt.add('email','A valid email is required.');
     } else if ($scope.userProfileForm.email.length > 80){
-      errorObjt.errors.entry.push({'key':'email', 'value':'Your email has exceeded the accepted input length'});
+      errorObjt.add('email','Your email has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.organization){
-      errorObjt.errors.entry.push({'key':'organization', 'value':'An organization is required.'});
+      errorObjt.add('organization','An organization is required.');
     } else if ($scope.userProfileForm.organization.length > 120){
-      errorObjt.errors.entry.push({'key':'organization', 'value':'Your organization has exceeded the accepted input length'});
+      errorObjt.add('organization','Your organization has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.userTypeCode){
-      errorObjt.errors.entry.push({'key':'userRole', 'value':'A valid user type code is required.'});
+      errorObjt.add('userRole','A valid user type code is required.');
     }
 
 
     if (error) {
-      errorObjt.success = false;
       triggerError(errorObjt);
       return false;
     }

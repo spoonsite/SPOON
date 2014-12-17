@@ -44,20 +44,18 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   $scope.component = {};
   $scope.component.compId;
   $scope.integrationConfs = null;
+  $scope.loading = 0;
+  $scope.type = 'jira';
   $scope.show = {
     'selectCompConf': true,
     'showCodeSelection': true
   };
-
-  $scope.loading = 0;
-
   $scope.types = [
   {
     'label': 'Jira Configuration',
     'code': 'jira'
   }
   ]
-  $scope.type = 'jira';
 
   Business.componentservice.getComponentList().then(function(result) {
     Business.typeahead(result, null).then(function(value){
@@ -110,7 +108,6 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       });
     }
   };
-
 
   $scope.getMappingTypes = function(){
     Business.configurationservice.getMappingTypes().then(function(result){
@@ -271,7 +268,6 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     return deferred.promise
   }
 
-
   $scope.setupModal = function(config) {
 
     if (config) {
@@ -303,8 +299,6 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       })
     }
   }
-
-
 
   $scope.saveMappingConf = function(){
     if ($scope.storeCodes.length && $scope.watch.jiraField) {

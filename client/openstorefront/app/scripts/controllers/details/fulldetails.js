@@ -18,21 +18,13 @@
 
 app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
 
-  $scope.sendEvent                     = $rootScope.sendEvent;
-  $scope.user                          = {};
-  $scope.editQuestion                  = [];
-  $scope.currentTab                    = null;
-  $scope.sendAdminMessage              = $rootScope.openAdminMessage;
+  $scope.sendEvent          = $rootScope.sendEvent;
+  $scope.user               = {};
+  $scope.editQuestion       = [];
+  $scope.currentTab         = null;
+  $scope.sendAdminMessage   = $rootScope.openAdminMessage;
+
   resetUpdateNotify();
-
-  
-
-  $scope.setComponentId = function(id) {
-    var deferred = $q.defer();
-    $rootScope.refId = id;
-    deferred.resolve();
-    return deferred.promise;
-  }
 
   Business.userservice.getWatches().then(function(result) {
     if (result) {
@@ -60,6 +52,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     // console.log('section', result);
     
   })
+
+  $scope.setComponentId = function(id) {
+    var deferred = $q.defer();
+    $rootScope.refId = id;
+    deferred.resolve();
+    return deferred.promise;
+  }
 
   $scope.resetWatches = function(hard) {
     if ($scope.user.info) {
@@ -96,11 +95,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
     $scope.resetWatches(true);
   });
-
-  var mNames = new Array('January', 'February', 'March',
-    'April', 'May', 'June', 'July', 'August', 'September',
-    'October', 'November', 'December');
-
 
   if ($scope.modal) {
     $scope.$watch('modal.modalBody', function() {
@@ -341,40 +335,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ***************************************************************/
   $scope.grabEvaluationMessage = function(statusCode, actual, estimated){
     var result = '';
-    switch(statusCode){
-      case 'C':
-      if (actual && actual !== 'null') {
-        result = 'COMPLETED ' + actual;
-      } else {
-        result = 'COMPLETED';
-      }
-      break;
-      case 'H':
-      result = 'HALTED ' + actual;
-      if (actual && actual !== 'null') {
-        result = 'HALTED ' + actual;
-      } else {
-        result = 'HALTED';
-      }
-      break;
-      case 'P':
-      if (estimated && estimated !== 'null') {
-        // result = 'IN PROGRESS (estimated complete ' + estimated + ')';
-        result = 'IN PROGRESS';
-      } else {
-        result = 'IN PROGRESS';
-      }
-      break;
-      default:
-      if (estimated && estimated !== 'null') {
-        // result = 'NOT STARTED (estimated complete ' + estimated + ')';
-        result = 'NOT STARTED';
-      } else {
-        result = 'NOT STARTED';
-      }
-      break;
-    }
-    return result;
+    return utils.calcEvalStatus(statusCode, actual, estimated);
   };
 
   /***************************************************************
@@ -419,15 +380,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function converts a timestamp to a displayable date
   ***************************************************************/
   $scope.getDate = function(date){
-    if (date)
-    {
-      var d = new Date(date);
-      var currDate = d.getDate();
-      var currMonth = d.getMonth();
-      var currYear = d.getFullYear();
-      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
-    }
-    return null;
+    return utils.getDate(date);
   };
 
   /***************************************************************
@@ -516,8 +469,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     });
     // reset the update list
     updateList = [];
-
-
     $scope.summaryUpdated = [];
     $scope.detailsUpdated = [];
     $scope.reviewsUpdated = [];

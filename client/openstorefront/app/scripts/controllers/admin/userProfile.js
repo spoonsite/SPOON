@@ -35,6 +35,10 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
     $scope.userTypes = [];
   })
 
+  $scope.$on('$RESETUSER', function(){
+    $scope.getUsers(true);
+  });
+
 
   $scope.setPredicate = function(predicate){
     if ($scope.predicate === predicate){
@@ -68,7 +72,6 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
       // cancled or failed
     });
   }
-
 
   $scope.changeActivity = function(user){
     var cont = confirm("You are about to change the active status of a user (Enabled or disabled). Continue?");
@@ -116,14 +119,12 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
       return 'End User';
     }
   }
-
-
 }]);
 
 app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profile', 'business', function ($scope, $uiModalInstance, profile, Business) {
-  $scope.userProfileForm = profile;
+  $scope.userProfileForm = angular.copy(profile);
   $scope.userProfileForm.mySwitch = true;
-  $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+  $scope.EMAIL_REGEXP = utils.EMAIL_REGEXP;
   Business.lookupservice.getUserTypeCodes().then(function(result){
     if (result) {
       $scope.userTypeCodes = result;
@@ -177,15 +178,15 @@ app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profil
       errorObjt.add('userRole','A valid user type code is required.');
     }
 
-
     if (error) {
       triggerError(errorObjt);
       return false;
     }
 
     Business.userservice.saveThisProfile($scope.userProfileForm).then(function(result){
-      console.log('success', result);
+      profile = $scope.userProfileForm;
       $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+      $scope.$emit('$TRIGGEREVENT', '$RESETUSER');
       $uiModalInstance.close('success');
     }, function(){
       // triggerAlert();
