@@ -20,14 +20,12 @@
 
 app.controller('CompareCtrl', ['$scope', 'business', '$location', function ($scope, Business, $location) {
 
-  $scope.list = $location.search().id;
+  $scope.list = $location.search().id? $location.search().id : [];
   $scope.pair = [];
   $scope.showChoices = false;
   $scope.data = null;
   $scope.id = null;
   $scope.article = null;
-
-  
 
   Business.componentservice.batchGetComponentDetails($scope.list).then(function(result){
     if (result && result.length > 0) {

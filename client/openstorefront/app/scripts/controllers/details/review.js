@@ -86,8 +86,6 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
   }));
 
 
-
-
   /***************************************************************
   * This function saves the profile changes in the scope by copying them from
   * the user variable into the backup variable (this function would be where
@@ -97,50 +95,48 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
     removeError();
     var body = {};
     var error = false;
-    var errorObjt = {};
-    errorObjt.errors = {};
-    errorObjt.errors.entry = [];
+    var errorObjt = angular.copy(utils.errorObj);
     if (review.role && !review.role.code) {
       error = true;
-      errorObjt.errors.entry.push({'key': 'userTypeCode', 'value': 'You must select a user role.'})
+      errorObjt.add('userTypeCode', 'You must select a user role.');
     } else {
       body.userTypeCode = review.role.code;
     }
     if (!review.comment) {
       error = true;
-      errorObjt.errors.entry.push({'key': 'comment', 'value': 'A comment is required.'});
+      errorObjt.add('comment', 'A comment is required.');
     } else if (review.comment.length > 4096) {
       error = true;
-      errorObjt.errors.entry.push({'key': 'comment', 'value': 'Your comment has exceeded the accepted length.'});
+      errorObjt.add('comment', 'Your comment has exceeded the accepted length.');
     } else {
       body.comment = review.comment? review.comment : '';
     }
     if (!review.title) {
       error = true;
-      errorObjt.errors.entry.push({'key': 'title', 'value': 'A title is required.'});
+      errorObjt.add('title', 'A title is required.');
     } else if (review.title.length > 255) {
       error = true;
-      errorObjt.errors.entry.push({'key': 'title', 'value': 'Your title has exceeded the accepted length.'});
+      errorObjt.add('title', 'Your title has exceeded the accepted length.');
     } else {
       body.title = review.title;
     }
     body.rating = $scope.rating? $scope.rating: 0;
     if (!review.lastUsed) {
       error = true;
-      errorObjt.errors.entry.push({'key': 'lastUsed', 'value': 'You must included the last time you used this component.'});
+      errorObjt.add('lastUsed', 'You must included the last time you used this component.');
     } else {
       body.lastUsed = new Date(review.lastUsed).toISOString();
     }
     body.recommend = review.recommend? true: false;
     if (!review.organization) {
       error = true;
-      errorObjt.errors.entry.push({'key': 'organization', 'value': 'You must included your organization'});
+      errorObjt.add('organization', 'You must included your organization');
     } else {
       body.organization = review.organization;
     }
     if (!review.timeCode) {
       error = true;
-      errorObjt.errors.entry.push({'key': 'userTimeCode', 'value': 'You must included your how long you\'ve used this component.'});
+      errorObjt.add('userTimeCode', 'You must included your how long you\'ve used this component.');
     } else {
       body.userTimeCode = review.timeCode.code;
     }
@@ -152,7 +148,6 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
     var reviewId = null;
     if (error) {
       // console.log('triggering errors');
-      errorObjt.success = false;
       triggerError(errorObjt);
       return false;
     }
