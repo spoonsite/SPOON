@@ -35,6 +35,9 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
     $scope.userTypes = [];
   })
 
+  $scope.$on('$RESETUSER', function(){
+    $scope.getUsers(true);
+  })
 
   $scope.setPredicate = function(predicate){
     if ($scope.predicate === predicate){
@@ -196,6 +199,7 @@ app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profil
     Business.userservice.saveThisProfile($scope.userProfileForm).then(function(result){
       console.log('success', result);
       $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+      $scope.$emit('$triggerEvent', '$RESETUSER');
       $uiModalInstance.close('success');
     }, function(){
       // triggerAlert();
