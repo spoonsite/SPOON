@@ -41,7 +41,8 @@
 										class="form-control" 
 										ng-model="recentChangesForm.emailAddress" 
 										ng-minlength=6 
-										ng-maxlength=200 
+                    ng-maxlength=200 
+										maxlength=200 
 										required 
 										ng-focus />	
 								&nbsp;
@@ -75,7 +76,7 @@
 					  <span class="glyphicon glyphicon-chevron-right imitateLink" ng-click="nextPage()">&nbsp;</span>
 					  <span class="glyphicon glyphicon-fast-forward imitateLink"  ng-click="lastPage()">&nbsp;</span>          
 					  <span class="imitateLink"> 
-						  <input type="text"  ng-model="errorTicketsQueryFilter.max" ng-blur="setPageSize()"  style="width:35px" min="1" max="500"> Per page
+						  <input type="text"  ng-model="errorTicketsQueryFilter.max" onkeypress='return event.charCode >= 48 && event.charCode <= 57' ng-blur="setPageSize()"  style="width:35px" min="1" max="500"  maxlength="3"> Per page
 					  </span> 					
 					</div>					
 				  </div>
@@ -93,7 +94,7 @@
 					</tr>
 					<tr ng-repeat-start="ticket in errorTickets.errorTickets" >
 						<td>{{ticket.errorTicketId}}</td>
-						<td>{{ticket.updateDts | date:'MM/dd/yyyy h:mm a'}}</td>
+						<td>{{ticket.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
 						<td>{{ticket.clientIp}}</td>
 						<td>{{ticket.calledAction}}</td>
 						<td >{{wrapString(ticket.input)}}</td>

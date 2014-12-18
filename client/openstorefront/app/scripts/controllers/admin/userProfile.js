@@ -39,7 +39,6 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
     $scope.getUsers(true);
   });
 
-
   $scope.setPredicate = function(predicate){
     if ($scope.predicate === predicate){
       $scope.reverse = !$scope.reverse;

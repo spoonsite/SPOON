@@ -28,6 +28,7 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
   $scope.EMAIL_REGEXP = utils.EMAIL_REGEXP;
   $scope.queryFilter = angular.copy(utils.queryFilter);
   $scope.queryFilter.max = 100;
+  $scope.untilDate = new Date();
 
   $scope.refreshTickets = function(){
     $scope.$emit('$TRIGGERLOAD', 'ticketLoader');       

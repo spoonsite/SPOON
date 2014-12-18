@@ -29,7 +29,7 @@ limitations under the License.
           <div ng-class="isNewer(item.lastUpdateDts, item.lastViewDts)? 'newer':''" class="col-sm-4 watchesList" ng-repeat="item in watches">
             <div id="div{{item.componentId}}" >
               <span class="item_bold overflow-pair-left">
-                <a href="#/results"> 
+                <a href="#/single?id={{item.componentId}}" target="_blank"> 
                   <span class="title">{{item.componentName}}</span>
                 </a>
               </span>

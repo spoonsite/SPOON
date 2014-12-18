@@ -30,6 +30,7 @@ public class TaskFuture
 {
 
 	public static int EXPIRED_TIME = 60000 * 5;
+	public static int MAX_ORPHAN_QUEUE_TIME = 60000;
 
 	private transient Future future;
 	private Date submitedDts;
