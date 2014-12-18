@@ -46,6 +46,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
@@ -94,12 +95,17 @@ public class LookupTypeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}")
-	public List<LookupEntity> getEntityValues(
+	public Response getEntityValues(
 			@PathParam("entity")
 			@RequiredParam String entityName,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
 		checkEntity(entityName);
+
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
 
 		List<LookupEntity> lookups = new ArrayList<>();
 		try {
@@ -109,7 +115,11 @@ public class LookupTypeResource
 			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
 		}
 		lookups = filterQueryParams.filter(lookups);
-		return lookups;
+
+		GenericEntity<List<LookupEntity>> entity = new GenericEntity<List<LookupEntity>>(lookups)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -117,12 +127,17 @@ public class LookupTypeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}/view")
-	public List<LookupModel> getEntityValuesView(
+	public Response getEntityValuesView(
 			@PathParam("entity")
 			@RequiredParam String entityName,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
 		checkEntity(entityName);
+
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
 
 		List<LookupModel> lookupViews = new ArrayList<>();
 		try {
@@ -138,7 +153,11 @@ public class LookupTypeResource
 			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
 		}
 		lookupViews = filterQueryParams.filter(lookupViews);
-		return lookupViews;
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupViews)
+		{
+		};
+
+		return sendSingleEntityResponse(entity);
 	}
 
 	@POST

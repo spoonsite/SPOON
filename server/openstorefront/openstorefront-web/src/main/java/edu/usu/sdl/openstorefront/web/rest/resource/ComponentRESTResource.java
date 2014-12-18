@@ -1418,8 +1418,8 @@ public class ComponentRESTResource
 		componentReview.setRating(review.getRating());
 		componentReview.setRecommend(review.isRecommend());
 		componentReview.setTitle(review.getTitle());
-		componentReview.setUserTimeCode(review.getUsedTimeCode());
-		componentReview.setUserTypeCode(review.getUserType());
+		componentReview.setUserTimeCode(review.getUserTimeCode());
+		componentReview.setUserTypeCode(review.getUserTypeCode());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {
@@ -1622,7 +1622,6 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Removes all pros from the review associated with a specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/reviews/{reviewId}/pros")
@@ -1650,7 +1649,6 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Add a pro to the review associated with the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewPro.class)
@@ -1914,13 +1912,18 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentTracking.class)
+	@DataType(ComponentTrackingWrapper.class)
 	@Path("/{id}/tracking")
 	public Response getActiveComponentTracking(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		ComponentTracking trackingExample = new ComponentTracking();
 		trackingExample.setComponentId(componentId);
 		trackingExample.setActiveStatus(filterQueryParams.getStatus());

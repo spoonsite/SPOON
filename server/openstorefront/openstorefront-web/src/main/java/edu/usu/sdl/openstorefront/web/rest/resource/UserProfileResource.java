@@ -74,9 +74,9 @@ public class UserProfileResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	public List<UserProfileView> userProfiles(
-		@QueryParam("all")
-		@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
-		@DefaultValue("false") boolean all)
+			@QueryParam("all")
+			@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
+			@DefaultValue("false") boolean all)
 	{
 		return UserProfileView.toViewList(service.getUserService().getAllProfiles(all));
 	}
@@ -333,13 +333,18 @@ public class UserProfileResource
 	@RequireAdmin
 	@APIDescription("Gets the list of tracking details on a specified user. Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(UserTracking.class)
+	@DataType(UserTrackingWrapper.class)
 	@Path("/{id}/tracking")
 	public Response getComponentTracking(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		UserTracking userTrackingExample = new UserTracking();
 		userTrackingExample.setCreateUser(userId);
 		userTrackingExample.setActiveStatus(filterQueryParams.getStatus());

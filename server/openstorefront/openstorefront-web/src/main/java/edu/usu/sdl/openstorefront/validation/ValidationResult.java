@@ -64,7 +64,7 @@ public class ValidationResult
 		for (RuleResult ruleResult : ruleResults) {
 			if (restErrorModel.getErrors().containsKey(ruleResult.getFieldName())) {
 				String message = restErrorModel.getErrors().get(ruleResult.getFieldName());
-				message = ", " + ruleResult.getMessage();
+				message += ", " + ruleResult.getMessage();
 				restErrorModel.getErrors().put(ruleResult.getFieldName(), message);
 			} else {
 				restErrorModel.getErrors().put(ruleResult.getFieldName(), ruleResult.getMessage());

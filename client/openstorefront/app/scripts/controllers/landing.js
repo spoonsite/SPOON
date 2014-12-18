@@ -71,7 +71,8 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
         type = localCache.get('type');
         code = localCache.get('code');
       }
-      $scope.landingRoute = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article';      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+      $scope.landingRoute = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article';
+      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
       $scope.loaded = true;
     } else {
       $scope.landingRoute = data;

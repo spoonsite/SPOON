@@ -60,28 +60,25 @@ app.directive('response', ['business', '$timeout', function (Business, $timeout)
         event.preventDefault();
         
         var error = false;
-        var errorObjt = {};
-        errorObjt.errors = {};
-        errorObjt.errors.entry = [];
+        var errorObjt = angular.copy(utils.errorObj);
 
         if (!scope.post.response){
-          errorObjt.errors.entry.push({'key': scope.id+'response', 'value':'A response is required.'});
+          errorObjt.add(scope.id+'response', 'A response is required.');
           error = true;
         } else if (scope.post.response.length > 1024){
-          errorObjt.errors.entry.push({'key':scope.id+'response', 'value':'Your response has exceeded the accepted input length'});
+          errorObjt.add(cope.id+'response', 'Your response has exceeded the accepted input length');
           error = true;
         }        
         if (!scope.post.organization){
-          errorObjt.errors.entry.push({'key': scope.id+'org', 'value':'An organization is required.'});
+          errorObjt.add(scope.id+'org', 'An organization is required.');
           error = true;
         } else if (scope.post.organization.length > 120){
-          errorObjt.errors.entry.push({'key':scope.id+'org', 'value':'Your organization has exceeded the accepted input length'});
+          errorObjt.add(cope.id+'org', 'Your organization has exceeded the accepted input length');
           error = true;
         }
 
 
         if (error) {
-          errorObjt.success = false;
           triggerError(errorObjt);
           return false;
         }
@@ -96,11 +93,10 @@ app.directive('response', ['business', '$timeout', function (Business, $timeout)
             var request = angular.copy(scope.post);
             request.userTypeCode = request.userTypeCode.code;
             if (!request.userTypeCode){
-              errorObjt.errors.entry.push({'key': scope.id+'role', 'value':'A valid user type code is required.'});
+              errorObjt.add(scope.id+'role', 'A valid user type code is required.');
               error = true;
             }
             if (error) {
-              errorObjt.success = false;
               triggerError(errorObjt);
               return false;
             }

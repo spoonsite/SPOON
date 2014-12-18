@@ -25,15 +25,7 @@ app.directive('schedule', ['business', '$timeout', function (Business, $timeout)
     },
     link: function postLink(scope, element, attrs) {
       scope.getDate = function(date){
-        if (date)
-        {
-          var d = new Date(date);
-          var currDate = d.getDate();
-          var currMonth = d.getMonth();
-          var currYear = d.getFullYear();
-          return ((currMonth + 1) + '/' + currDate + '/' + currYear);
-        }
-        return null;
+        return utils.getDate(date);
       };
 
       var updateColumns = function(){

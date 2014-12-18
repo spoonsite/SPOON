@@ -88,6 +88,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     } else {
       $scope.prosConsList   = null;
     }
+  }, function(){
+    $scope.prosConsList   = null;
   });
   Business.userservice.getWatches().then(function(result) {
     if (result) {
@@ -95,6 +97,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     } else {
       $scope.watches        = null;
     }
+  }, function(){
+    $scope.watches        = null;
   });
   Business.lookupservice.getExpertise().then(function(result) {
     if (result) {
@@ -102,6 +106,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     } else {
       $scope.expertise      = [];
     }
+  }, function(){
+    $scope.expertise      = [];
   });
   Business.lookupservice.getUserTypeCodes().then(function(result) {
     if (result) {
@@ -109,6 +115,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     } else {
       $scope.userTypeCodes  = [];
     }
+  }, function(){
+    $scope.userTypeCodes  = [];
   });
   Business.componentservice.getComponentDetails().then(function(result) {
     Business.typeahead(result, 'name').then(function(value){
@@ -117,6 +125,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       } else {
         $scope.typeahead    = [];
       }
+    }, function(){
+      $scope.typeahead    = [];
     });
   });
 

@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ErrorTicketWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.util.List;
@@ -47,9 +48,14 @@ public class ErrorTicketResource
 	@RequireAdmin
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ErrorTicket.class)
+	@DataType(ErrorTicketWrapper.class)
 	public Response getErrorTickets(@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		ErrorTicket errorTicketExample = new ErrorTicket();
 		errorTicketExample.setActiveStatus(filterQueryParams.getStatus());
 

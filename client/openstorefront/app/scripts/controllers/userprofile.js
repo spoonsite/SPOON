@@ -165,6 +165,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
+  var loadReviews = function(override) {
+    Business.userservice.getReviews($scope.user.info.username, override).then(function(result){
+      if (result) {
+        $scope.reviews = result;
+      } else {
+        $scope.reviews = null;
+      }
+    });  
+  }
+
+
   /***************************************************************
   * Load the User profile 
   ***************************************************************/
@@ -181,19 +192,22 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         // console.log('found', _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode}));
         $scope.userProfileForm.userRole = _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode});
         if ($scope.user.info && $scope.user.info.username) {
-          Business.userservice.getReviews($scope.user.info.username).then(function(result){
-            if (result) {
-              $scope.reviews = result;
-            } else {
-              $scope.reviews = null;
-            }
-          });  
+          loadReviews(false);
         }
       }
       //hide load mask
     });
   };
 
+  $scope.$on('$detailsUpdated', function(){
+    if ($scope.user.info && $scope.user.info.username){
+      loadReviews(true);
+    } else {
+      loadUserProfile();
+    }
+  })
+
+  
   $scope.cancelUserProfile = function() {
     loadUserProfile();
     $scope.userProfileForm.mySwitch = false;

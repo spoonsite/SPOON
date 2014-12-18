@@ -51,7 +51,7 @@ public class WatchMessageGenerator
 	{
 		StringBuilder message = new StringBuilder();
 
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm z");
 
 		UserMessage userMessage = messageContext.getUserMessage();
 		ComponentAll componentAll = serviceProxy.getComponentService().getFullComponent(userMessage.getComponentId());
@@ -61,7 +61,7 @@ public class WatchMessageGenerator
 		userWatchExample.setComponentId(userMessage.getComponentId());
 		UserWatch userWatch = serviceProxy.getPersistenceService().queryOneByExample(UserWatch.class, userWatchExample);
 
-		message.append("The following items on <b>").append(componentAll.getComponent().getName()).append("</b> were updated:<br><br>");
+		message.append("The following item(s) on <b>").append(componentAll.getComponent().getName()).append("</b> were updated:<br><br>");
 
 		boolean changes = false;
 		if (componentAll.getComponent().getUpdateDts().after(userWatch.getLastViewDts())) {
@@ -136,10 +136,16 @@ public class WatchMessageGenerator
 			changes = true;
 		}
 
-		message.append("There has been: <br> <b>").append(newReviews).append(" review(s)</b><br> <b>")
-				.append(newQuestions).append(" question(s)</b><br>")
-				.append("<b>").append(newResponds).append(" question response(s)</b><br>")
-				.append(" updated since last viewed on: <b>").append(sdf.format(userWatch.getLastViewDts())).append("</b><br>");
+		if (newReviews > 0) {
+			message.append("<b>").append(newReviews).append(" review(s) added/updated</b><br>");
+		}
+		if (newQuestions > 0) {
+			message.append("<b>").append(newQuestions).append(" question(s) added/updated</b><br>");
+		}
+		if (newResponds > 0) {
+			message.append("<b>").append(newResponds).append(" question response(s) added/updated</b><br>");
+		}
+		message.append("<br>Last viewed on: <b>").append(sdf.format(userWatch.getLastViewDts())).append("</b><br>");
 
 		message.append("<br>");
 		message.append("Please login to view the changes.<br>");
