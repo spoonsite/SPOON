@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskManagerStatus;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.JobSchedulerStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
@@ -36,6 +37,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -55,11 +57,19 @@ public class JobService
 	@APIDescription("Retrieves all jobs in scheduler")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JobModel.class)
-	public List<JobModel> getJobs(@BeanParam FilterQueryParams filter)
+	public Response getJobs(@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		List<JobModel> jobModels = JobManager.getAllJobs();
-		jobModels = filter.filter(jobModels);
-		return jobModels;
+		jobModels = filterQueryParams.filter(jobModels);
+		GenericEntity<List<JobModel>> entity = new GenericEntity<List<JobModel>>(jobModels)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET

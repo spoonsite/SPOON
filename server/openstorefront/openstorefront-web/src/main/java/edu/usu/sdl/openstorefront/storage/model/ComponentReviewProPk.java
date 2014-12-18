@@ -30,7 +30,6 @@ public class ComponentReviewProPk
 {
 
 	@NotNull
-	@ConsumeField
 	private String componentReviewId;
 
 	@NotNull

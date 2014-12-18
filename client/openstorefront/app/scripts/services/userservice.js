@@ -458,10 +458,10 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   /**
   *
   */
-  var getReviews = function(username) {
+  var getReviews = function(username, override) {
     var deferred = $q.defer();
     var reviews = checkExpire('reviews'+username, minute * 0.5);
-    if (reviews) {
+    if (reviews && !override) {
       deferred.resolve(reviews);
     } else {
       $http({
