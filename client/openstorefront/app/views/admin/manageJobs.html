@@ -30,8 +30,8 @@
 						<td>{{job.groupName}}</td>
 						<td>{{job.description}}</td>
 						<td>{{job.status}}</td>
-						<td>{{job.perviousFiredTime | moment: 'format': 'MM/DD/YYYY h:mm:ss A ZZ '}}</td>
-						<td>{{job.nextFiredTime | date:'MM/dd/yyyy h:mm:ss a Z'}}</td>
+						<td>{{job.perviousFiredTime | date:'MM/dd/yyyy h:mm:ss a'}}</td>
+						<td>{{job.nextFiredTime | date:'MM/dd/yyyy h:mm:ss a'}}</td>
 						<td>{{job.jobData}}</td>						
 						<td style="padding:0px; width: 200px;" nowrap>&nbsp;
 							<button class="btn btn-danger" ng-click="removeAllTooltips(); pauseResumeJob(true, job.jobName)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Pause"><i class="fa fa-pause"></i></button>
