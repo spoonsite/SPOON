@@ -163,31 +163,23 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
       reviewId = revs.reviewId;
       componentId = revs.componentId;
     }
-    Business.componentservice.saveReview(componentId, body, reviewId).then(function(result){
-      // console.log('result', result);
-      if (result && result.componentReviewId)
-      {
-        var reviewId = result.componentReviewId;
-        _.each(review.pros, function(pro){
-          Business.componentservice.saveReviewPros(componentId, reviewId, pro.text).then(function(result){
-            // console.log('result', result);
-          })
-        });
-        _.each(review.cons, function(con){
-          Business.componentservice.saveReviewCons(componentId, reviewId, con.text).then(function(result){
-            // console.log('result', result);
-          })
-        });
-        if (!revs) {
-          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
-          $scope.$emit('$TRIGGEREVENT', '$newReview');
-          $scope.$emit('$hideModal', 'descModal');
-        } else {
-          $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
-          revs.edit = false;
-        }
-        $rootScope.refId = null;
+
+    body.pros = review.pros;
+    body.cons = review.cons;
+    if (reviewId) {
+      body.componentReviewId = reviewId;
+    }
+    Business.componentservice.saveCompleteReview(componentId, body, reviewId).then(function(result){
+      console.log('result', result);
+      if (!revs) {
+        $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
+        $scope.$emit('$TRIGGEREVENT', '$newReview');
+        $scope.$emit('$hideModal', 'descModal');
+      } else {
+        $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
+        revs.edit = false;
       }
+      $rootScope.refId = null;
     });
     return false;
   };
