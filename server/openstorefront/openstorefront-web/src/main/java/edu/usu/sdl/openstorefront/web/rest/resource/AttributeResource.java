@@ -61,6 +61,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
@@ -114,11 +115,20 @@ public class AttributeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/allcodeswitharticles")
-	public List<AttributeCode> getAllCodesWithArticles(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getAllCodesWithArticles(@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		List<AttributeCode> attributeCodes = service.getAttributeService().findRecentlyAddedArticles(filterQueryParams.getMax(), filterQueryParams.getStatus());
 		attributeCodes = filterQueryParams.filter(attributeCodes);
-		return attributeCodes;
+
+		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -126,13 +136,21 @@ public class AttributeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes")
-	public List<AttributeType> getAttributeTypes(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getAttributeTypes(@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		AttributeType attributeTypeExample = new AttributeType();
 		attributeTypeExample.setActiveStatus(filterQueryParams.getStatus());
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
 		attributeTypes = filterQueryParams.filter(attributeTypes);
-		return attributeTypes;
+		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(attributeTypes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -179,11 +197,16 @@ public class AttributeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/attributetypes/{type}/attributecodes")
-	public List<AttributeCode> getAttributeCodes(
+	public Response getAttributeCodes(
 			@PathParam("type")
 			@RequiredParam String type,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		AttributeCode attributeCodeExample = new AttributeCode();
 		attributeCodeExample.setActiveStatus(filterQueryParams.getStatus());
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
@@ -194,7 +217,10 @@ public class AttributeResource
 		attributeCodes = filterQueryParams.filter(attributeCodes);
 		attributeCodes.sort(new AttributeCodeComparator<>());
 
-		return attributeCodes;
+		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET

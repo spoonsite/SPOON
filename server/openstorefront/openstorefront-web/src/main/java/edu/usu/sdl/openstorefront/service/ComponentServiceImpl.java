@@ -784,6 +784,7 @@ public class ComponentServiceImpl
 			oldPro.setUpdateUser(pro.getUpdateUser());
 			persistenceService.persist(oldPro);
 		} else {
+			pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 			pro.setCreateDts(TimeUtil.currentDate());
 			pro.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(pro);
@@ -1280,7 +1281,7 @@ public class ComponentServiceImpl
 			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			review.setCreateUser(SecurityUtil.getCurrentUserName());
 			review.setUpdateUser(SecurityUtil.getCurrentUserName());
-			saveComponentReview(review);
+			saveComponentReview(review, false);
 
 			//delete existing pros
 			ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
@@ -1310,6 +1311,7 @@ public class ComponentServiceImpl
 				saveComponentReviewCon(reviewCon, false);
 			}
 
+			updateComponentLastActivity(review.getComponentId());
 		}
 
 		return validationResult;
