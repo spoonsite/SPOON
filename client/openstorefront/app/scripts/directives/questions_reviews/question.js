@@ -57,28 +57,25 @@ app.directive('question', ['business', '$timeout', function (Business, $timeout)
         event.preventDefault();
         
         var error = false;
-        var errorObjt = {};
-        errorObjt.errors = {};
-        errorObjt.errors.entry = [];
+        var errorObjt = angular.copy(utils.errorObj);
 
         if (!scope.post.question){
-          errorObjt.errors.entry.push({'key': scope.id+'question', 'value':'A reqsponse is required.'});
+          errorObjt.add(scope.id+'question', 'A reqsponse is required.');
           error = true;
         } else if (scope.post.question.length > 1024){
-          errorObjt.errors.entry.push({'key':scope.id+'question', 'value':'Your question has exceeded the accepted input length'});
+          errorObjt.add(cope.id+'question', 'Your question has exceeded the accepted input length');
           error = true;
         }        
         if (!scope.post.organization){
-          errorObjt.errors.entry.push({'key': scope.id+'org', 'value':'An organization name is required.'});
+          errorObjt.add(scope.id+'org', 'An organization name is required.');
           error = true;
         } else if (scope.post.organization.length > 120){
-          errorObjt.errors.entry.push({'key':scope.id+'org', 'value':'Your organization has exceeded the accepted input length'});
+          errorObjt.add(cope.id+'org', 'Your organization has exceeded the accepted input length');
           error = true;
         }
 
 
         if (error) {
-          errorObjt.success = false;
           triggerError(errorObjt);
           return false;
         }
@@ -89,11 +86,10 @@ app.directive('question', ['business', '$timeout', function (Business, $timeout)
             var request = angular.copy(scope.post);
             request.userTypeCode = request.userTypeCode.code;
             if (!request.userTypeCode){
-              errorObjt.errors.entry.push({'key': scope.id+'role', 'value' :'A valid user type code is required.'});
+              errorObjt.add(scope.id+'role', 'A valid user type code is required.');
               error = true;
             }
             if (error) {
-              errorObjt.success = false;
               triggerError(errorObjt);
               return false;
             }

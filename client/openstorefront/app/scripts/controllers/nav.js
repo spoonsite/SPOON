@@ -150,7 +150,6 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   * search key saved in the localCache
   ***************************************************************/
   $scope.goToLogin = function(){ /*jshint unused:false*/
-
     $location.search({});
     $location.path('/login');
   };
@@ -211,7 +210,6 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   /***************************************************************
   * Automatically login the user for the demo... DELETE THIS LATER
   ***************************************************************/
-
   $scope.$emit('$TRIGGEREVENT','$beforeLogin', $location.path(), $location.search());
 
 }]);
