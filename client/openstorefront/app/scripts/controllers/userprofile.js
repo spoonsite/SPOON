@@ -177,8 +177,8 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
-  var loadReviews = function() {
-    Business.userservice.getReviews($scope.user.info.username).then(function(result){
+  var loadReviews = function(override) {
+    Business.userservice.getReviews($scope.user.info.username, override).then(function(result){
       if (result) {
         $scope.reviews = result;
       } else {
@@ -204,7 +204,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         // console.log('found', _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode}));
         $scope.userProfileForm.userRole = _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode});
         if ($scope.user.info && $scope.user.info.username) {
-          loadReviews();
+          loadReviews(false);
         }
       }
       //hide load mask
@@ -213,7 +213,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
 
   $scope.$on('$detailsUpdated', function(){
     if ($scope.user.info && $scope.user.info.username){
-      loadReviews();
+      loadReviews(true);
     } else {
       loadUserProfile();
     }
