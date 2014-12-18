@@ -25,7 +25,9 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
     $scope.errorTickets = {};
     $scope.maxPageNumber = 1;
     $scope.pageNumber = 1;
+    $scope.untilDate = new Date();
     
+
     $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
     
     $scope.errorTicketsQueryFilter = {
