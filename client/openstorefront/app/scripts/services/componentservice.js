@@ -254,6 +254,49 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
     return result.promise;
   }
 
+  componentservice.saveCompleteReview = function(id, review, reviewId) {
+    // console.log('id', id);
+    // console.log('review', review);
+    // console.log('review', reviewId);
+    var result = $q.defer();
+    if (id && review)
+    {
+      var url;
+      var methodString;
+      if (!reviewId) {
+        url = 'api/v1/resource/components/'+id+'/reviews/detail';
+        methodString = 'POST';
+      } else {
+        url = 'api/v1/resource/components/'+id+'/reviews/' + reviewId + '/detail';
+        methodString = 'PUT';
+      }
+      console.log('review', review);
+      
+      $http({
+        method: methodString,
+        url: url,
+        data: review
+      })
+      .success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)){
+          console.log('data', data);
+          removeError();
+          result.resolve(data);
+        } else {
+          console.log('fail data', data);
+          removeError();
+          triggerError(data);
+          result.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        result.reject('There was an error');
+      });
+    } else{
+      result.reject('A unique ID and review object is required to save a component review');
+    }
+    return result.promise;
+  }
+
   componentservice.saveReview = function(id, review, reviewId) {
     // console.log('id', id);
     // console.log('review', review);

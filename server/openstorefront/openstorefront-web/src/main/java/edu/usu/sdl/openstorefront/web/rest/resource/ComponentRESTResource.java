@@ -1418,8 +1418,8 @@ public class ComponentRESTResource
 		componentReview.setRating(review.getRating());
 		componentReview.setRecommend(review.isRecommend());
 		componentReview.setTitle(review.getTitle());
-		componentReview.setUserTimeCode(review.getUsedTimeCode());
-		componentReview.setUserTypeCode(review.getUserType());
+		componentReview.setUserTimeCode(review.getUserTimeCode());
+		componentReview.setUserTypeCode(review.getUserTypeCode());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {
