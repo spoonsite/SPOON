@@ -25,6 +25,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
+  $scope.untilDate = new Date();
   $scope.review           = null;
   $scope.user             = {};
   $scope.nav              = {
@@ -176,6 +177,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
+  var loadReviews = function() {
+    Business.userservice.getReviews($scope.user.info.username).then(function(result){
+      if (result) {
+        $scope.reviews = result;
+      } else {
+        $scope.reviews = null;
+      }
+    });  
+  }
+
+
   /***************************************************************
   * Load the User profile 
   ***************************************************************/
@@ -192,19 +204,22 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         // console.log('found', _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode}));
         $scope.userProfileForm.userRole = _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode});
         if ($scope.user.info && $scope.user.info.username) {
-          Business.userservice.getReviews($scope.user.info.username).then(function(result){
-            if (result) {
-              $scope.reviews = result;
-            } else {
-              $scope.reviews = null;
-            }
-          });  
+          loadReviews();
         }
       }
       //hide load mask
     });
   };
 
+  $scope.$on('$detailsUpdated', function(){
+    if ($scope.user.info && $scope.user.info.username){
+      loadReviews();
+    } else {
+      loadUserProfile();
+    }
+  })
+
+  
   $scope.cancelUserProfile = function() {
     loadUserProfile();
     $scope.userProfileForm.mySwitch = false;
