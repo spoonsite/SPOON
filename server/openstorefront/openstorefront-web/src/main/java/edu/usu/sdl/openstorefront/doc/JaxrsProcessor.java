@@ -330,13 +330,17 @@ public class JaxrsProcessor
 
 					APITypeModel typeModel = new APITypeModel();
 					typeModel.setName(fieldClass.getSimpleName());
-					mapValueField(typeModel.getFields(), fieldClass.getDeclaredFields(), onlyConsumeField);
+					Set<String> fieldList = mapValueField(typeModel.getFields(), fieldClass.getDeclaredFields(), onlyConsumeField);
 					if (fieldClass.isEnum()) {
 						typeModel.setObject(Arrays.toString(fieldClass.getEnumConstants()));
 					} else {
 						if (fieldClass.isInterface() == false) {
 							try {
 								typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
+
+								String cleanUpJson = StringProcessor.stripeFieldJSON(typeModel.getObject(), fieldList);
+								typeModel.setObject(cleanUpJson);
+
 							} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex) {
 								log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
 								typeModel.setObject("{ Unable to view }");

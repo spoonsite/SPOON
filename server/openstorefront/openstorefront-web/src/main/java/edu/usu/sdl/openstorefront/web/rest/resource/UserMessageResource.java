@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -30,6 +31,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -49,10 +51,18 @@ public class UserMessageResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserMessage.class)
-	public List<UserMessage> userMessages(@BeanParam FilterQueryParams filterQueryParams)
+	public Response userMessages(@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		List<UserMessage> userMessages = service.getUserService().findUserMessages(filterQueryParams);
-		return userMessages;
+		GenericEntity<List<UserMessage>> entity = new GenericEntity<List<UserMessage>>(userMessages)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET

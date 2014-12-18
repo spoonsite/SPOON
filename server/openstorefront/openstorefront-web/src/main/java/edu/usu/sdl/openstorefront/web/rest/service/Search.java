@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
@@ -44,6 +45,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -73,17 +75,21 @@ public class Search
 	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
-	public List<ComponentSearchView> searchListing(
+	public Response searchListing(
 			@BeanParam SearchQuery query,
-			@BeanParam FilterQueryParams filter)
+			@BeanParam FilterQueryParams filterQueryParams)
 	{
-		List<ComponentSearchView> result = service.getSearchService().getSearchItems(query, filter);
-		if (result != null) {
-			Collections.sort(result, new CustomComparator());
-			return result;
-		} else {
-			return null;
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
 		}
+
+		List<ComponentSearchView> result = service.getSearchService().getSearchItems(query, filterQueryParams);
+		Collections.sort(result, new CustomComparator());
+		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@DELETE
@@ -116,27 +122,29 @@ public class Search
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	@Path("/attribute/{type}/{code}")
-	public List<ComponentSearchView> searchListing(
+	public Response searchListing(
 			@PathParam("type")
 			@RequiredParam String type,
 			@PathParam("code")
 			@RequiredParam String code,
-			@BeanParam FilterQueryParams filter)
+			@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
 
 		AttributeCodePk pk = new AttributeCodePk();
 
 		pk.setAttributeCode(code);
 		pk.setAttributeType(type);
 
-		List<ComponentSearchView> result = service.getSearchService().architectureSearch(pk, filter);
-		if (result != null) {
-			Collections.sort(result, new CustomComparator());
-			return result;
-		} else {
-			return null;
-		}
-
+		List<ComponentSearchView> result = service.getSearchService().architectureSearch(pk, filterQueryParams);
+		Collections.sort(result, new CustomComparator());
+		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET

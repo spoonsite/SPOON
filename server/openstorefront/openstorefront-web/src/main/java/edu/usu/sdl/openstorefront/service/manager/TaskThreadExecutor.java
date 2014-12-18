@@ -125,7 +125,7 @@ public class TaskThreadExecutor
 	 * @param taskRequest
 	 * @return taskfuture or null if unable to be queued.
 	 */
-	public TaskFuture submitTask(TaskRequest taskRequest)
+	public synchronized TaskFuture submitTask(TaskRequest taskRequest)
 	{
 		boolean runJob = true;
 		if (taskRequest.isAllowMultiple() == false) {
