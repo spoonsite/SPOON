@@ -25,6 +25,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
+  $scope.untilDate = new Date();
   $scope.review           = null;
   $scope.user             = {};
   $scope.nav              = {
