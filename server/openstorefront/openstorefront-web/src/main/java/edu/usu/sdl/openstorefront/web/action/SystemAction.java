@@ -48,4 +48,10 @@ public class SystemAction
 		};
 	}
 
+	@HandlesEvent("AppVersion")
+	public Resolution appVersion()
+	{
+		return new StreamingResolution("text/plain", getApplicationVersion());
+	}
+
 }
