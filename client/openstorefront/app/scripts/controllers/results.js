@@ -196,30 +196,28 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   var setupFilters = function() {
-    $timeout(function(){
-      Business.getFilters().then(function(result) {
-        if (result) {
-          result = _.sortBy(result, function(item){
-            return item.description;
-          });
-          $scope.filters = angular.copy(result);
-        } else {
-          $scope.filters = null;
-        }
-        setupResults();      
-        var architecture = null;
+    Business.getFilters().then(function(result) {
+      if (result) {
+        result = _.sortBy(result, function(item){
+          return item.description;
+        });
+        $scope.filters = angular.copy(result);
+      } else {
+        $scope.filters = null;
+      }
+      setupResults();      
+      var architecture = null;
 
-        if ($scope.searchKey === 'attribute') {
-          if ($scope.searchCode.type) {
-            var filter = _.find($scope.filters, {'type': $scope.searchCode.type});
-            if (filter){
-              architecture = filter.architectureFlg;
-            }
+      if ($scope.searchKey === 'attribute') {
+        if ($scope.searchCode.type) {
+          var filter = _.find($scope.filters, {'type': $scope.searchCode.type});
+          if (filter){
+            architecture = filter.architectureFlg;
           }
         }
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-      });
-    })
+      }
+      $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+    });
   };
   /***************************************************************
   * This function is called once we have the search request from the business layer
