@@ -35,6 +35,7 @@ import java.util.Map;
  * @author dshurtleff
  */
 public interface AttributeService
+		extends AsyncService
 {
 
 	/**
@@ -232,5 +233,13 @@ public interface AttributeService
 	 * @param attributeXRefView
 	 */
 	public void saveAttributeXrefMap(AttributeXRefView attributeXRefView);
+
+	/**
+	 * This removes the type and all mappings
+	 *
+	 * @param attributeType
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteAttributeXrefType(String attributeType);
 
 }

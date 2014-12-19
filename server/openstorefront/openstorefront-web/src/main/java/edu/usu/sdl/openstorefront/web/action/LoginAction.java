@@ -20,13 +20,17 @@ import edu.usu.sdl.openstorefront.security.HeaderAuthToken;
 import edu.usu.sdl.openstorefront.security.HeaderRealm;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -86,7 +90,15 @@ public class LoginAction
 					headerAuthToken.setAdminGroupName(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ADMIN_GROUP));
 					headerAuthToken.setEmail(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, STUB_HEADER)));
 					headerAuthToken.setFirstname(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_FIRSTNAME, STUB_HEADER)));
-					headerAuthToken.setGroup(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_GROUP, STUB_HEADER)));
+
+					Enumeration<String> groupValues = getContext().getRequest().getHeaders(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_GROUP, STUB_HEADER));
+					StringBuilder group = new StringBuilder();
+					while (groupValues.hasMoreElements()) {
+						group.append(groupValues.nextElement());
+						group.append(" | ");
+					}
+
+					headerAuthToken.setGroup(group.toString());
 					headerAuthToken.setGuid(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LDAPGUID, STUB_HEADER)));
 					headerAuthToken.setLastname(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LASTNAME, STUB_HEADER)));
 					headerAuthToken.setOrganization(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, STUB_HEADER)));
@@ -168,6 +180,7 @@ public class LoginAction
 			service.getUserService().handleLogin(userProfile, getContext().getRequest(), null);
 			return handleLoginRedirect();
 		} catch (AuthenticationException uea) {
+			log.log(Level.WARNING, "Failed to login", uea);
 			errors.put("username", "Unable to login. Check username and password.");
 			errors.put("password", "Unable to login. Check username and password.");
 		}
@@ -178,12 +191,29 @@ public class LoginAction
 	public Resolution logout()
 	{
 		Subject currentUser = SecurityUtils.getSubject();
+		String userLoggedIn = SecurityUtil.getCurrentUserName();
 		currentUser.logout();
 		getContext().getRequest().getSession().invalidate();
 		try {
 			getContext().getRequest().logout();
 		} catch (ServletException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
+		}
+
+		//For now invalidate all cookies; in the future there may be some that should persist.
+		Cookie[] cookies = getContext().getRequest().getCookies();
+		if (cookies != null && cookies.length > 0) {
+			for (Cookie cookie : cookies) {
+				cookie.setValue("-");
+				cookie.setMaxAge(0);
+				getContext().getResponse().addCookie(cookie);
+			}
+		}
+
+		if (OpenStorefrontConstant.ANONYMOUS_USER.equals(userLoggedIn)) {
+			log.log(Level.INFO, "User was not logged when the logut was called.");
+		} else {
+			log.log(Level.INFO, MessageFormat.format("Logged off user: {0}", userLoggedIn));
 		}
 
 		String logoutUrl = PropertiesManager.getValue(PropertiesManager.KEY_LOGOUT_URL, "/login.jsp");

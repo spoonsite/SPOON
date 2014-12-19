@@ -26,7 +26,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //////////////////////////////////////////////////////////////////////////////
   // set the page height so the loading masks look good.
   setPageHeight($('.page1'), 52);
-
+  $scope.scrollTo = $rootScope.scrollTo;
   // start the loading masks
   $scope.$emit('$TRIGGERLOAD', 'mainLoader');
   // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
@@ -119,7 +119,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
     });
   });
-
 
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our Functions
@@ -245,6 +244,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
             item.shortdescription = 'This is a temporary short description';
           }
         });
+        $scope.setupData();
         // var end = new Date().getTime();
         // var time = end - start;
         // console.log('Total Execution time ****: ' + time);
@@ -264,6 +264,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
         $scope.initializeData(key);
         $scope.showMessage = true;
+        $scope.setupData();
       });
 });
   }; //
@@ -420,6 +421,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     })
   }); //
 
+  $scope.resetSearch = function() {
+    $scope.$emit('$TRIGGERLOAD', 'mainLoader');
+    // $scope.$emit('$TRIGGERLOAD', 'resultsLoad');
+    $scope.$emit('$TRIGGERLOAD', 'filtersLoad');
+    var type = 'search';
+    var code = 'all';
+    $rootScope.searchKey = 'all';
+    $location.search({
+      'type': type,
+      'code': code
+    });
+    $scope.reAdjust([{ 'key': type, 'code': code }]);
+  }
+
   /***************************************************************
   * This function is used by the reviews section in the details to remove
   * and add the ellipsis
@@ -479,6 +494,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       if (!openClick) {
         buttonOpen();
       }
+      $timeout(function(){
+        $('.page1').focus();
+        $scope.scrollTo('componentScroll'+article.attributes[0].type.replace(/\W/g, '')+article.attributes[0].code.replace(/\W/g, ''));
+      }, 500);
     } else {
       $scope.isArticle = false;
 
@@ -505,22 +524,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           if ($scope.details.details.attributes[0] !== undefined) {
             var foundEvaluation = null;
             _.each($scope.details.details.attributes, function(attribute) {
-              if (attribute.type === 'DI2E-SVCV4-A') {
-
-                var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
-                  return item.TagValue_Number === attribute.code;
-                });
-                if (svcv4) {
-                  attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
-                  attribute.svcv4 = svcv4;
-                } else {
-                  attribute.svcv4 = null;
-                }
-              } else if (attribute.type === 'DI2ELEVEL') {
+              if (attribute.type === 'DI2ELEVEL') {
                 foundEvaluation = attribute;
               }
             });
-            $scope.details.details.evaluation = foundEvaluation;
+            $scope.details.details.evaluationAttribute = foundEvaluation;
           }
           if ($scope.details.details.lastActivityDts && $scope.details.details.lastViewedDts)
           {
@@ -536,10 +544,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           }
 
           /* jshint ignore:end */
-
         }
         // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
         $scope.showDetails = true;
+        $timeout(function(){
+          $('.page1').focus();
+          $scope.scrollTo('componentScroll'+$scope.details.details.componentId.replace(/\W/g, ''));
+        }, 500);
       });
     } //
   }; //
@@ -581,6 +592,22 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     }
     $scope.applyFilters();
   };
+
+  /***************************************************************
+  * This function is used to watch filters in order to show the 'applied'
+  * message so that they won't forget one of the filters is applied.
+  ***************************************************************/
+  $scope.checkFilters = function() {
+    _.each($scope.filters, function(filter){
+      filter.hasChecked = _.some(filter.codes, function(item){
+        return item.checked;
+      });
+      if (!filter.hasChecked) {
+        filter.checked = false;
+      }
+    });
+    $scope.applyFilters();
+  }
 
   /***************************************************************
   * This function applies the filters that have been given to us to filter the
@@ -756,26 +783,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   });
 
   /***************************************************************
-  * This function is used to watch filters in order to show the 'applied'
-  * message so that they won't forget one of the filters is applied.
-  ***************************************************************/
-  $scope.$watch('filters',function(val, old){ /* jshint unused:false */
-    _.each($scope.filters, function(filter){
-      filter.hasChecked = _.some(filter.codes, function(item){
-        return item.checked;
-      });
-      if (!filter.hasChecked) {
-        filter.checked = false;
-      }
-    });
-  }, true);
-
-  /***************************************************************
   * This function is a deep watch on the data variable to see if 
   * data.data changes. When it does, we need to see if the result set
   * for the search results is larger than the 'max' displayed
   ***************************************************************/
-  $scope.$watch('data', function() {
+  $scope.setupData = function() {
     if ($scope.data && $scope.data.data) {
       // max needs to represent the total number of results you want to load
       // on the initial search.
@@ -789,7 +801,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.moreThan200 = false;
       }
     }
-  }, true);
+  }
 
   callSearch();
   

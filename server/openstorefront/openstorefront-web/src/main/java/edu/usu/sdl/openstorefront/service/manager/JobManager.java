@@ -22,8 +22,11 @@ import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
+import edu.usu.sdl.openstorefront.service.job.BaseJob;
 import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
+import edu.usu.sdl.openstorefront.service.job.NotificationJob;
+import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import java.text.MessageFormat;
@@ -85,6 +88,8 @@ public class JobManager
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 
 		addCleanUpErrorsJob();
+		addNotificationJob();
+		addRecentChangeNotifyJob();
 		addComponentIntegrationJobs();
 	}
 
@@ -110,6 +115,7 @@ public class JobManager
 		} else {
 			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
 					.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
+					.withDescription("Component Integration Job")
 					.build();
 
 			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
@@ -187,6 +193,7 @@ public class JobManager
 
 		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
 				.withIdentity("CleanUpErrorsJob", JOB_GROUP_SYSTEM)
+				.withDescription("Removes old error tickets")
 				.build();
 
 		Trigger trigger = newTrigger()
@@ -200,6 +207,46 @@ public class JobManager
 		scheduler.scheduleJob(job, trigger);
 	}
 
+	private static void addNotificationJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Notification Job");
+
+		JobDetail job = JobBuilder.newJob(NotificationJob.class)
+				.withIdentity("NotificationJob", JOB_GROUP_SYSTEM)
+				.withDescription("User Message Notifications")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("NotificationJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInMinutes(1)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addRecentChangeNotifyJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Recent Change Job");
+
+		JobDetail job = JobBuilder.newJob(RecentChangeNotifyJob.class)
+				.withIdentity("RecentChangeJob", JOB_GROUP_SYSTEM)
+				.withDescription("Recent Change Notifications")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("RecentChangeJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInHours(24)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
 	private static void addImportJob(DirectoryScanListener directoryScanListener, String dirToWatch) throws SchedulerException
 	{
 		String jobName = directoryScanListener.getClass().getName();
@@ -207,6 +254,7 @@ public class JobManager
 
 		JobDetail job = JobBuilder.newJob(DirectoryScanJob.class)
 				.withIdentity(jobName, JOB_GROUP_SYSTEM)
+				.withDescription("Directory Watch Job")
 				.build();
 
 		FileSystemManager.getDir(dirToWatch);
@@ -222,6 +270,15 @@ public class JobManager
 				.build();
 
 		scheduler.scheduleJob(job, trigger);
+	}
+
+	public static void runJobNow(String jobName, String groupName)
+	{
+		try {
+			scheduler.triggerJob(JobKey.jobKey(jobName, groupName));
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
+		}
 	}
 
 	public static void pauseSystemJob(String jobName)
@@ -284,6 +341,7 @@ public class JobManager
 				JobModel jobModel = new JobModel();
 
 				JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+				jobModel.setJobClass(jobDetail.getJobClass().getName());
 				jobModel.setJobName(jobKey.getName());
 				jobModel.setGroupName(jobKey.getGroup());
 				jobModel.setDescription(jobDetail.getDescription());
@@ -312,6 +370,26 @@ public class JobManager
 			Logger.getLogger(JobManager.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return jobs;
+	}
+
+	public static void runDynamicJob(BaseJob baseJob)
+	{
+		//TODO: Add the ability to run a temp background job
+		throw new UnsupportedOperationException("Method is not supported yet");
+//		String job
+//		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+//				.withIdentity("DynamicJob-" + UUID.randomUUID().toString(), JOB_GROUP_SYSTEM)
+//				.build();
+//
+//		Trigger trigger = newTrigger()
+//				.withIdentity("CleanUpErrorsJobTrigger", JOB_GROUP_SYSTEM)
+//				.startNow()
+//				.withSchedule(simpleSchedule()
+//						.withIntervalInMinutes(5)
+//						.repeatForever())
+//				.build();
+//
+//		scheduler.scheduleJob(job, trigger);
 	}
 
 	public static void cleanup()

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.service.api.AsyncService;
 import edu.usu.sdl.openstorefront.service.api.AttributeService;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
@@ -23,6 +24,9 @@ import edu.usu.sdl.openstorefront.service.api.LookupService;
 import edu.usu.sdl.openstorefront.service.api.SearchService;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.api.UserService;
+import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
+import java.util.Objects;
 
 /**
  * Entry point to the service layer; Expecting one Service Proxy per thread. Not
@@ -41,10 +45,16 @@ public class ServiceProxy
 	protected ComponentServicePrivate componentServicePrivate;
 	protected SearchService searchService;
 	protected UserService userService;
+	protected UserServicePrivate userServicePrivate;
 	protected SystemService systemService;
 
 	public ServiceProxy()
 	{
+	}
+
+	public static ServiceProxy getProxy()
+	{
+		return new ServiceProxy();
 	}
 
 	public PersistenceService getPersistenceService()
@@ -100,6 +110,14 @@ public class ServiceProxy
 		return userService;
 	}
 
+	public UserServicePrivate getUserServicePrivate()
+	{
+		if (userService == null) {
+			userServicePrivate = DynamicProxy.newInstance(new UserServiceImpl());
+		}
+		return userServicePrivate;
+	}
+
 	public SystemService getSystemService()
 	{
 		if (systemService == null) {
@@ -114,6 +132,21 @@ public class ServiceProxy
 			attributeServicePrivate = DynamicProxy.newInstance(new AttributeServiceImpl());
 		}
 		return attributeServicePrivate;
+	}
+
+	public <T extends AsyncService> T getAyncProxy(T originalProxy)
+	{
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(true);
+		taskRequest.setName("Aync Service Call");
+		return getAyncProxy(originalProxy, taskRequest);
+	}
+
+	public <T extends AsyncService> T getAyncProxy(T originalProxy, TaskRequest taskRequest)
+	{
+		Objects.requireNonNull(originalProxy, "Original Service is required");
+		T asyncService = AsyncProxy.newInstance(originalProxy, taskRequest);
+		return asyncService;
 	}
 
 }

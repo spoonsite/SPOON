@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.transfermodel;
 
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import java.io.Serializable;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class ErrorInfo
 		if (request != null) {
 			requestUrl = request.getRequestURI();
 			requestMethod = request.getMethod();
-			clientIp = request.getRemoteAddr();
+			clientIp = SecurityUtil.getClientIp(request);
 
 			StringBuilder input = new StringBuilder();
 			if (StringUtils.isNotBlank(request.getQueryString())) {

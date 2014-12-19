@@ -1,0 +1,31 @@
+<div ng-controller="AdminUserProfileCtrl" id="adminUserProfile" >
+  <loader trigger="adminUserProfile"></loader>
+  <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="predicate=''">Turn off sort</button>
+  <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="getUsers(true)">Refresh table <i class="fa fa-refresh"></i></button>
+  <table class="table table-bordered">
+    <tr>
+      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('activeStatus');">Status <span ng-show="predicate === 'activeStatus'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('username');">Username <span ng-show="predicate === 'username'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('firstName');">First Name <span ng-show="predicate === 'firstName'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('lastName');">Last Name <span ng-show="predicate === 'lastName'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('organization');">Organization <span ng-show="predicate === 'organization'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('userTypeCode');">User Type <span ng-show="predicate === 'userTypeCode'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('lastLoginDts');">Last Login <span ng-show="predicate === 'lastLoginDts'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('email');">Email <span ng-show="predicate === 'email'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th style="padding: 8px 3px;"><a href="">Actions</a></th>
+    </tr>
+    <tr ng-repeat="user in userProfiles | orderBy:predicate:reverse" ng-class="user.activeStatus === 'I'? 'inactive':''">
+      <td style="padding:5px;">{{user.activeStatus}}</td>
+      <td style="padding:5px;">{{user.username}}</td>
+      <td style="padding:5px;">{{user.firstName}}</td>
+      <td style="padding:5px;">{{user.lastName}}</td>
+      <td style="padding:5px;">{{user.organization}}</td>
+      <td style="padding:5px;">{{getUserType(user.userTypeCode)}}</td>
+      <td style="padding:5px;">{{getDate(user.lastLoginDts)}}</td>
+      <td style="padding:5px;">{{user.email}}</td>
+      <td style="padding: 0px 3px;">
+        <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editUserProfile(user)" ng-disabled="user.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button><button type="button" title="Message User" class="btn btn-default btn-sm" ng-click="openAdminMessage('users', [user], '', '')" ng-disabled="user.activeStatus === 'I' || deactivateButtons"><i class="fa fa-envelope"></i></button><!-- <button type="button" title="Tracking Data" class="btn btn-default btn-sm" ng-click="openAdminMessage('users', [user], '', '')" ng-disabled="deactivateButtons"><i class="fa fa-bar-chart"></i></button> --><button type="button" title="Activate/Deactivate user" class="btn btn-default btn-sm" ng-click="changeActivity(user)" ng-class="user.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
+      </td>
+    </tr>
+  </table>
+</div>

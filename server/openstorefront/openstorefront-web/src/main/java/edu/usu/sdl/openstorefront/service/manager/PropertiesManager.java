@@ -64,6 +64,24 @@ public class PropertiesManager
 	public static final String KEY_JIRA_URL = "jira.server.url";
 	public static final String KEY_JOB_WORKING_STATE_OVERRIDE = "job.working.state.override.minutes";
 
+	public static final String KEY_MAIL_SERVER = "mail.smtp.url";
+	public static final String KEY_MAIL_SERVER_USER = "mail.server.user";
+	public static final String KEY_MAIL_SERVER_PW = "mail.server.pw";
+	public static final String KEY_MAIL_SERVER_PORT = "mail.smtp.port";
+	public static final String KEY_MAIL_USE_SSL = "mail.use.ssl";
+	public static final String KEY_MAIL_USE_TLS = "mail.use.tls";
+	public static final String KEY_MAIL_FROM_NAME = "mail.from.name";
+	public static final String KEY_MAIL_FROM_ADDRESS = "mail.from.address";
+	public static final String KEY_MAIL_REPLY_NAME = "mail.reply.name";
+	public static final String KEY_MAIL_REPLY_ADDRESS = "mail.reply.address";
+	public static final String KEY_MESSAGE_KEEP_DAYS = "message.archive.days";
+	public static final String KEY_MESSAGE_MIN_QUEUE_MINUTES = "message.queue.minmintues";
+	public static final String KEY_MESSAGE_MAX_RETRIES = "message.maxretires";
+	public static final String KEY_MESSAGE_RECENT_CHANGE_DAYS = "message.recentchanges.days";
+
+	public static final String KEY_APPLICATION_TITLE = "app.title";
+	public static final String KEY_MAX_TASK_POOL_SIZE = "task.pool.size";
+
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
@@ -108,7 +126,7 @@ public class PropertiesManager
 		lock.lock();
 		try {
 			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
-				log.log(Level.WARNING, "Open Catalog properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
+				log.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
 			}
 			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
 				properties = new Properties();
@@ -128,7 +146,7 @@ public class PropertiesManager
 		ReentrantLock lock = new ReentrantLock();
 		lock.lock();
 		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(PROPERTIES_FILENAME))) {
-			properties.store(bout, "openstorefront Properties");
+			properties.store(bout, "Open Storefront Properties");
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
 		} finally {

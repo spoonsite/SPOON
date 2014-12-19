@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
@@ -24,38 +23,34 @@ import javax.validation.constraints.Max;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
+ * Checks value; Allows null to be allowed.
  *
  * @author dshurtleff
  */
 public class MaxValueRule
-	extends BaseRule
+		extends BaseRule
 {
 
 	@Override
 	protected boolean validate(Field field, Object dataObject)
 	{
 		boolean valid = true;
-		
+
 		Max max = field.getAnnotation(Max.class);
-		if (max != null)
-		{
-			try
-			{
+		if (max != null) {
+			try {
 				String value = BeanUtils.getProperty(dataObject, field.getName());
-				try
-				{
-					BigDecimal numberValue = new BigDecimal(value);
-					if (numberValue.compareTo(BigDecimal.valueOf(max.value())) == 1)
-					{
-						valid = false;		
+				if (value != null) {
+					try {
+						BigDecimal numberValue = new BigDecimal(value);
+						if (numberValue.compareTo(BigDecimal.valueOf(max.value())) == 1) {
+							valid = false;
+						}
+					} catch (NumberFormatException e) {
+						throw new OpenStorefrontRuntimeException("This annotation is for numbers only", "Programming error");
 					}
-				} 
-				catch (NumberFormatException e)
-				{
-					throw new OpenStorefrontRuntimeException("This annotation is for numbers only", "Programming error" );
-				}							
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
-			{
+				}
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 				throw new OpenStorefrontRuntimeException("Unexpected error occur trying to get value from object.", ex);
 			}
 		}
@@ -71,10 +66,10 @@ public class MaxValueRule
 	@Override
 	protected String getValidationRule(Field field)
 	{
-		StringBuilder sb = new StringBuilder();		
-		Max max = field.getAnnotation(Max.class);		
-		sb.append("Max value allowed: ").append(max.value());		
+		StringBuilder sb = new StringBuilder();
+		Max max = field.getAnnotation(Max.class);
+		sb.append("Max value allowed: ").append(max.value());
 		return sb.toString();
 	}
-	
+
 }

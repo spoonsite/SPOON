@@ -15,14 +15,17 @@
 */
 'use strict';
 
-/*global MOCKDATA2*/
 
 app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
 
+  $scope.sendEvent                     = $rootScope.sendEvent;
   $scope.user                          = {};
   $scope.editQuestion                  = [];
-
+  $scope.currentTab                    = null;
+  $scope.sendAdminMessage              = $rootScope.openAdminMessage;
   resetUpdateNotify();
+
+  
 
   $scope.setComponentId = function(id) {
     var deferred = $q.defer();
@@ -51,6 +54,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       $scope.user.info = result;
     }
   });
+
+  Business.lookupservice.getEvaluationSections().then(function(result) {
+    $scope.evalSectionDescriptionMap = result? result : [];
+    // console.log('section', result);
+    
+  })
 
   $scope.resetWatches = function(hard) {
     if ($scope.user.info) {
@@ -300,14 +309,31 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   };
 
-
-
+  //Thing needs an property called 'username' that contains the userID for whoever
+  // you want to send the message to.
+  $scope.messageUser = function(thing) {
+    // console.log('thing', thing);
+    Business.userservice.getUserByUsername(thing.username).then(function(result){
+      // console.log('User Profile', result);
+      if (result && typeof result !== 'array') {
+        var temp = [];
+        temp.push(result);
+        result = temp;
+      }
+      if (result && result.length) {
+        $scope.sendAdminMessage('users', result, '', '');
+      } else {
+        triggerAlert('You are unable to send a message to this user. (They could be deactivated or without an email address)', 'failedMessage', 'body', '8000')
+      }
+    })
+  }
 
   /***************************************************************
   * This function saves a component's tags
   ***************************************************************/
-  $scope.getEvalDescription = function(name){
-    return MOCKDATA.evalSectionDescriptionMap[name];
+  $scope.getEvalDescription = function(col){
+    var section = _.find($scope.evalSectionDescriptionMap, {'description': col.name});
+    return section? section.detailedDecription: '';
   };
 
   /***************************************************************
@@ -660,6 +686,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   }
 
+  $scope.changeTab = function(tab) {
+    $scope.currentTab = tab.id;
+  }
+
+  $scope.$watch('currentTab', function() {
+    if ($scope.currentTab && $scope.currentTab === 'detailsTab') {
+      $scope.$emit('$TRIGGEREVENT', '$UPDATESCHEDULECOLUMNS');
+    }
+  });
+
 
   var onlyOnce = null;
 
@@ -697,7 +733,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           //
           ];
           
-          $scope.tab = $scope.detailResultsTabs[0];
+          $scope.currentTab = $scope.detailResultsTabs[0].id;
           $scope.selectedTab = $scope.detailResultsTabs[0];
 
         }

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import edu.usu.sdl.openstorefront.sort.ApiMethodComparator;
+import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.RestConfiguration;
@@ -329,13 +330,17 @@ public class JaxrsProcessor
 
 					APITypeModel typeModel = new APITypeModel();
 					typeModel.setName(fieldClass.getSimpleName());
-					mapValueField(typeModel.getFields(), fieldClass.getDeclaredFields(), onlyConsumeField);
+					Set<String> fieldList = mapValueField(typeModel.getFields(), fieldClass.getDeclaredFields(), onlyConsumeField);
 					if (fieldClass.isEnum()) {
 						typeModel.setObject(Arrays.toString(fieldClass.getEnumConstants()));
 					} else {
 						if (fieldClass.isInterface() == false) {
 							try {
 								typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
+
+								String cleanUpJson = StringProcessor.stripeFieldJSON(typeModel.getObject(), fieldList);
+								typeModel.setObject(cleanUpJson);
+
 							} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex) {
 								log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
 								typeModel.setObject("{ Unable to view }");
@@ -409,6 +414,15 @@ public class JaxrsProcessor
 					validation.append(validationRequirement.value()).append("<br>");
 				}
 
+				PK pk = (PK) field.getAnnotation(PK.class);
+				if (pk != null) {
+					if (pk.generated()) {
+						validation.append("Primary Key (Generated)").append("<br>");
+					} else {
+						validation.append("Primary Key").append("<br>");
+					}
+				}
+
 				Min min = (Min) field.getAnnotation(Min.class);
 				if (min != null) {
 					validation.append("Min Value: ").append(min.value()).append("<br>");
@@ -432,6 +446,12 @@ public class JaxrsProcessor
 				ValidValueType validValueType = (ValidValueType) field.getAnnotation(ValidValueType.class);
 				if (validValueType != null) {
 					validation.append("Set of valid values: ").append(Arrays.toString(validValueType.value())).append("<br>");
+					if (validValueType.lookupClass().length > 0) {
+						validation.append("See Lookup table(s): <br>");
+						for (Class lookupClass : validValueType.lookupClass()) {
+							validation.append(lookupClass.getSimpleName());
+						}
+					}
 				}
 
 				fieldModel.setValidation(validation.toString());

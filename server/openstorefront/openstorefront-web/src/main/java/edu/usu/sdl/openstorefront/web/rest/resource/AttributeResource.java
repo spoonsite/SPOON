@@ -47,10 +47,8 @@ import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
@@ -63,6 +61,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
@@ -103,8 +102,7 @@ public class AttributeResource
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 			if (attributeTypeView.getArchitectureFlg()) {
 				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
-			}
-			else {
+			} else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
 		}
@@ -117,11 +115,20 @@ public class AttributeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/allcodeswitharticles")
-	public List<AttributeCode> getAllCodesWithArticles(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getAllCodesWithArticles(@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		List<AttributeCode> attributeCodes = service.getAttributeService().findRecentlyAddedArticles(filterQueryParams.getMax(), filterQueryParams.getStatus());
 		attributeCodes = filterQueryParams.filter(attributeCodes);
-		return attributeCodes;
+
+		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -129,13 +136,21 @@ public class AttributeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes")
-	public List<AttributeType> getAttributeTypes(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getAttributeTypes(@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		AttributeType attributeTypeExample = new AttributeType();
 		attributeTypeExample.setActiveStatus(filterQueryParams.getStatus());
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
 		attributeTypes = filterQueryParams.filter(attributeTypes);
-		return attributeTypes;
+		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(attributeTypes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -150,8 +165,7 @@ public class AttributeResource
 		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
 		if (attributeType == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-		else {
+		} else {
 			return Response.ok(attributeType).build();
 		}
 	}
@@ -173,8 +187,7 @@ public class AttributeResource
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, pk);
 		if (attributeCode == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-		else {
+		} else {
 			return Response.ok(attributeCode).build();
 		}
 	}
@@ -184,11 +197,16 @@ public class AttributeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/attributetypes/{type}/attributecodes")
-	public List<AttributeCode> getAttributeCodes(
+	public Response getAttributeCodes(
 			@PathParam("type")
 			@RequiredParam String type,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		AttributeCode attributeCodeExample = new AttributeCode();
 		attributeCodeExample.setActiveStatus(filterQueryParams.getStatus());
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
@@ -199,7 +217,10 @@ public class AttributeResource
 		attributeCodes = filterQueryParams.filter(attributeCodes);
 		attributeCodes.sort(new AttributeCodeComparator<>());
 
-		return attributeCodes;
+		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -326,8 +347,7 @@ public class AttributeResource
 		if (existing != null) {
 			attributeType.setAttributeType(type.toUpperCase());
 			return handleAttributePostPutType(attributeType, true);
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing type.", "Make sure type exists before call PUT");
 		}
 	}
@@ -342,15 +362,13 @@ public class AttributeResource
 			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeType(attributeType, false);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).entity(attributeTypeCreated).build();
-		}
-		else {
+		} else {
 			return Response.ok().build();
 		}
 	}
@@ -400,8 +418,7 @@ public class AttributeResource
 		AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (existing != null) {
 			return handleAttributePostPutCode(attributeCode, true);
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing code.", "Make sure type exists before call PUT");
 		}
 	}
@@ -416,8 +433,7 @@ public class AttributeResource
 			attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeCode(attributeCode, false);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -426,8 +442,7 @@ public class AttributeResource
 					+ attributeCode.getAttributeCodePk().getAttributeType()
 					+ "/attributecodes/"
 					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
-		}
-		else {
+		} else {
 			return Response.ok().build();
 		}
 	}
@@ -449,7 +464,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets the list of mapping for attributes to fields")
+	@APIDescription("Gets the list of active mapping for attributes to fields")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeXrefMapView.class)
 	@Path("/attributexreftypes/detail")
@@ -481,7 +496,7 @@ public class AttributeResource
 
 		return attributeXrefMapViews;
 	}
-	
+
 	@GET
 	@APIDescription("Gets the list of mapping for attributes to fields")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -502,11 +517,11 @@ public class AttributeResource
 			attributeXrefMapViews.add(model);
 		}
 
-		return new ArrayList<AttributeXrefMapView>(attributeXrefMapViews);
+		return new ArrayList<>(attributeXrefMapViews);
 	}
 
 	@GET
-	@APIDescription("Gets the list of mapping for attributes to fields")
+	@APIDescription("Gets the list of mapping for attributes to fields base on the type passed in.  It will show inactive types as well.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeXrefMapView.class)
 	@Path("/attributexreftypes/{attributeType}/detail")
@@ -516,7 +531,6 @@ public class AttributeResource
 		AttributeXrefMapView model = null;
 
 		AttributeXRefType example = new AttributeXRefType();
-		example.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
 		example.setAttributeType(attributeType);
 		AttributeXRefType attributeXRefType = service.getPersistenceService().queryOneByExample(AttributeXRefType.class, example);
 
@@ -571,30 +585,20 @@ public class AttributeResource
 			service.getAttributeService().saveAttributeXrefMap(attributeXref);
 
 			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/" + attributeXref.getType().getAttributeType() + "/detail")).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@APIDescription("Remove a type and all mapping")
 	@Path("/attributexreftypes/{attributeType}")
 	public void deleteMappingType(
 			@PathParam("attributeType")
 			@RequiredParam String type)
 	{
-		AttributeXRefType temp = service.getPersistenceService().findById(AttributeXRefType.class, type);
-		if (temp != null){
-			AttributeXRefMap example = new AttributeXRefMap();
-			example.setAttributeType(type);
-			List<AttributeXRefMap> maps = service.getPersistenceService().queryByExample(AttributeXRefMap.class, new QueryByExample(example));
-			for(AttributeXRefMap map: maps){
-				service.getPersistenceService().delete(map);
-			}
-			service.getPersistenceService().delete(temp);
-		}
+		service.getAttributeService().deleteAttributeXrefType(type);
 	}
 
 }

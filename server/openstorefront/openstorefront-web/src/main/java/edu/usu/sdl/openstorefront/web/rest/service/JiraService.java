@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.service;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
@@ -28,6 +29,7 @@ import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import edu.usu.sdl.openstorefront.web.viewmodel.JiraStats;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,23 @@ import javax.ws.rs.core.Response;
 public class JiraService
 		extends BaseResource
 {
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Get status on the jira resource manager")
+	@DataType(JiraStats.class)
+	@Path("/stats")
+	public Response getJiraManagerStatus()
+	{
+		JiraStats stats = new JiraStats();
+		try (JiraClient jiraClient = JiraManager.getClient()) {
+			ServerInfo serverInfo = jiraClient.getServerInfo();
+			stats.setServerInfo(serverInfo);
+		}
+		stats.setMaxConnections(JiraManager.getMaxConnections());
+		stats.setRemainingConnections(JiraManager.getAvavilableConnections());
+		return sendSingleEntityResponse(stats);
+	}
 
 	@GET
 	@RequireAdmin
@@ -105,8 +124,7 @@ public class JiraService
 			Issue issue = jiraClient.getTicket(ticketId);
 			if (issue != null) {
 				return Response.ok(issue.getSummary()).build();
-			}
-			else {
+			} else {
 				return Response.ok(response).build();
 			}
 		}

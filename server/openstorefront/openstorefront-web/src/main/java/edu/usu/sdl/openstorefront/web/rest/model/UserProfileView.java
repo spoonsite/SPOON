@@ -16,10 +16,13 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -58,15 +61,35 @@ public class UserProfileView
 	@NotNull
 	private String updateUser;
 	private String guid;
+	private Boolean notifyOfNew;
+
+	private String activeStatus;
 
 	@NotNull
 	private boolean admin;
+	private Date lastLoginDts;
 
 	public UserProfileView()
 	{
 	}
 
 	public static UserProfileView toView(UserProfile profile)
+	{
+		return toView(profile, false);
+	}
+
+	public static UserProfileView toView(UserProfile profile, Boolean includeLogin)
+	{
+		Map<String, Date> loginMap = null;
+		if (includeLogin) {
+			List<UserProfile> temp = new ArrayList<>();
+			temp.add(profile);
+			 loginMap = ServiceProxy.getProxy().getUserService().getLastLogin(temp);
+		}
+		return toView(profile, loginMap);
+	}
+
+	private static UserProfileView toView(UserProfile profile, Map<String, Date> loginMap)
 	{
 		UserProfileView view = new UserProfileView();
 		view.setEmail(profile.getEmail());
@@ -78,22 +101,30 @@ public class UserProfileView
 		view.setCreateDts(profile.getCreateDts());
 		view.setUpdateDts(profile.getUpdateDts());
 		view.setUpdateUser(profile.getUpdateUser());
+		view.setNotifyOfNew(profile.getNotifyOfNew());
+		view.setActiveStatus(profile.getActiveStatus());
 
 		if (StringUtils.isNotBlank(profile.getExternalGuid())) {
 			view.setGuid(profile.getExternalGuid());
-		} else {
+		}
+		else {
 			view.setGuid(profile.getInternalGuid());
 		}
-
+		if (loginMap != null && !loginMap.isEmpty()) {
+			Date loginDate = loginMap.get(view.getUsername());
+			view.setLastLoginDts(loginDate);
+		}
 		return view;
 	}
 
 	public static List<UserProfileView> toViewList(List<UserProfile> profiles)
 	{
+		Map<String, Date> loginMap = ServiceProxy.getProxy().getUserService().getLastLogin(profiles);
 		List<UserProfileView> views = new ArrayList<>();
 		profiles.forEach(profile -> {
-			views.add(UserProfileView.toView(profile));
+			views.add(UserProfileView.toView(profile, loginMap));
 		});
+
 		return views;
 	}
 
@@ -205,6 +236,42 @@ public class UserProfileView
 	public void setGuid(String guid)
 	{
 		this.guid = guid;
+	}
+
+	public Boolean getNotifyOfNew()
+	{
+		return notifyOfNew;
+	}
+
+	public void setNotifyOfNew(Boolean notifyOfNew)
+	{
+		this.notifyOfNew = notifyOfNew;
+	}
+
+	/**
+	 * @return the activeStatus
+	 */
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	/**
+	 * @param activeStatus the activeStatus to set
+	 */
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public Date getLastLoginDts()
+	{
+		return lastLoginDts;
+	}
+
+	public void setLastLoginDts(Date lastLoginDts)
+	{
+		this.lastLoginDts = lastLoginDts;
 	}
 
 }

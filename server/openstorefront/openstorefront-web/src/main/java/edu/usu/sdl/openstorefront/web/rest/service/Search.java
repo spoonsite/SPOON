@@ -19,17 +19,21 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -41,6 +45,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -55,17 +60,36 @@ public class Search
 		extends BaseResource
 {
 
+	public class CustomComparator
+			implements Comparator<ComponentSearchView>
+	{
+
+		@Override
+		public int compare(ComponentSearchView o1, ComponentSearchView o2)
+		{
+			return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+		}
+	}
+
 	@GET
 	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
-	public List<ComponentSearchView> searchListing(
+	public Response searchListing(
 			@BeanParam SearchQuery query,
-			@BeanParam FilterQueryParams filter)
+			@BeanParam FilterQueryParams filterQueryParams)
 	{
-		List<ComponentSearchView> searchResults = service.getSearchService().getSearchItems(query, filter);
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
 
-		return searchResults;
+		List<ComponentSearchView> result = service.getSearchService().getSearchItems(query, filterQueryParams);
+		Collections.sort(result, new CustomComparator());
+		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@DELETE
@@ -85,8 +109,11 @@ public class Search
 	@Path("/resetSolr")
 	public Response resetSolr()
 	{
-		service.getSearchService().deleteAll();
-		service.getSearchService().saveAll();
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Resetting Indexer");
+
+		service.getAyncProxy(service.getSearchService(), taskRequest).resetIndexer();
 		return Response.ok().build();
 	}
 
@@ -95,20 +122,29 @@ public class Search
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	@Path("/attribute/{type}/{code}")
-	public List<ComponentSearchView> searchListing(
+	public Response searchListing(
 			@PathParam("type")
 			@RequiredParam String type,
 			@PathParam("code")
 			@RequiredParam String code,
-			@BeanParam FilterQueryParams filter)
+			@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
 
 		AttributeCodePk pk = new AttributeCodePk();
 
 		pk.setAttributeCode(code);
 		pk.setAttributeType(type);
 
-		return service.getSearchService().architectureSearch(pk, filter);
+		List<ComponentSearchView> result = service.getSearchService().architectureSearch(pk, filterQueryParams);
+		Collections.sort(result, new CustomComparator());
+		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -118,7 +154,13 @@ public class Search
 	@Path("/all")
 	public List<ComponentSearchView> getAllForSearch()
 	{
-		return service.getSearchService().getAll();
+		List<ComponentSearchView> result = service.getSearchService().getAll();
+		if (result != null) {
+			Collections.sort(result, new CustomComparator());
+			return result;
+		} else {
+			return null;
+		}
 	}
 
 	@GET

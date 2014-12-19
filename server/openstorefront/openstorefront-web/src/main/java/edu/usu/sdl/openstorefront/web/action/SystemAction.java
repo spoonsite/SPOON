@@ -15,12 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
-import com.atlassian.jira.rest.client.api.domain.ServerInfo;
-import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
-import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.web.viewmodel.JiraStats;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sf.uadetector.ReadableUserAgent;
@@ -50,19 +46,6 @@ public class SystemAction
 				objectMapper.writeValue(response.getOutputStream(), readableUserAgent);
 			}
 		};
-	}
-
-	@HandlesEvent("JiraManagerStats")
-	public Resolution testJira()
-	{
-		JiraStats stats = new JiraStats();
-		try (JiraClient jiraClient = JiraManager.getClient()) {
-			ServerInfo serverInfo = jiraClient.getServerInfo();
-			stats.setServerInfo(serverInfo);
-		}
-		stats.setMaxConnections(JiraManager.getMaxConnections());
-		stats.setRemainingConnections(JiraManager.getAvavilableConnections());
-		return streamResults(stats);
 	}
 
 }

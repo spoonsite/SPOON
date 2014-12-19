@@ -39,7 +39,7 @@ public class ComponentReviewView
 
 	@NotNull
 	@ConsumeField
-	private String userType;
+	private String userTypeCode;
 
 	@NotNull
 	@ConsumeField
@@ -55,7 +55,7 @@ public class ComponentReviewView
 
 	@NotNull
 	@ConsumeField
-	private String usedTimeCode;
+	private String userTimeCode;
 
 	@NotNull
 	@ConsumeField
@@ -95,9 +95,9 @@ public class ComponentReviewView
 		view.setUsername(review.getCreateUser());
 		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, review.getUserTypeCode());
 		if (typeCode == null) {
-			view.setUserType(null);
+			view.setUserTypeCode(null);
 		} else {
-			view.setUserType(typeCode.getDescription());
+			view.setUserTypeCode(typeCode.getDescription());
 		}
 		view.setComment(review.getComment());
 		view.setRating(review.getRating());
@@ -107,9 +107,9 @@ public class ComponentReviewView
 		view.setName(service.getPersistenceService().findById(Component.class, review.getComponentId()).getName());
 		ExperienceTimeType timeCode = service.getLookupService().getLookupEnity(ExperienceTimeType.class, review.getUserTimeCode());
 		if (timeCode == null) {
-			view.setUsedTimeCode(null);
+			view.setUserTimeCode(null);
 		} else {
-			view.setUsedTimeCode(timeCode.getDescription());
+			view.setUserTimeCode(timeCode.getDescription());
 		}
 		view.setLastUsed(review.getLastUsed());
 		view.setUpdateDate(review.getUpdateDts());
@@ -148,14 +148,14 @@ public class ComponentReviewView
 		this.username = username;
 	}
 
-	public String getUserType()
+	public String getUserTypeCode()
 	{
-		return userType;
+		return userTypeCode;
 	}
 
-	public void setUserType(String userType)
+	public void setUserTypeCode(String userTypeCode)
 	{
-		this.userType = userType;
+		this.userTypeCode = userTypeCode;
 	}
 
 	public String getComment()
@@ -188,14 +188,14 @@ public class ComponentReviewView
 		this.title = title;
 	}
 
-	public String getUsedTimeCode()
+	public String getUserTimeCode()
 	{
-		return usedTimeCode;
+		return userTimeCode;
 	}
 
-	public void setUsedTimeCode(String usedTimeCode)
+	public void setUserTimeCode(String usedTimeCode)
 	{
-		this.usedTimeCode = usedTimeCode;
+		this.userTimeCode = usedTimeCode;
 	}
 
 	public Date getLastUsed()

@@ -1,0 +1,49 @@
+#carousel-1.rn-carousel-container {
+  left: -8px;
+}
+.compareMeBody .left{
+  padding:5px;
+  overflow: hidden;
+}
+.compareMeBody .left.border {
+  border: 1px solid #555;
+  margin-top: -1px;
+}
+.compareMeBody .right{
+  position: relative;
+  left: -1px;
+  float: right;
+  width: 250px;
+}
+.compareMeBody .right .section{
+  border: 1px solid #555;
+  padding: 5px;
+  margin-top: -1px;
+}
+.compareMeBody .right .section:first-child{
+  margin-top: 0px;
+}
+.compareMeBody .right table, .compareMeBody .left table{
+  font-size: 11px;
+}
+.paper {
+  padding:5px;
+  background: white;
+}
+
+.liners{
+  border:1px solid #555;
+  margin-right: 5px;
+  padding:5px;
+}
+.liners .line{
+  position: relative;
+}
+
+.pageBreak {
+  padding: 5px;
+}
+
+.compareMeBody table {
+  margin-bottom: 0px;
+}

@@ -92,22 +92,11 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
         if ($scope.details.details.attributes[0] !== undefined) {
           var foundEvaluation = null;
           _.each($scope.details.details.attributes, function(attribute) {
-            if (attribute.type === 'DI2E-SVCV4-A') {
-
-              var svcv4 = _.find(MOCKDATA2.svcv4, function(item) {
-                return item.TagValue_Number === attribute.code;
-              });
-              if (svcv4) {
-                attribute.codeDescription = svcv4.TagValue_Number + ' - ' + svcv4['TagValue_Service Name'];
-                attribute.svcv4 = svcv4;
-              } else {
-                attribute.svcv4 = null;
-              }
-            } else if (attribute.type === 'DI2ELEVEL') {
+            if (attribute.type === 'DI2ELEVEL') {
               foundEvaluation = attribute;
             }
           });
-          $scope.details.details.evaluation = foundEvaluation;
+          $scope.details.details.evaluationAttribute = foundEvaluation;
         }
 
         /* jshint ignore:end */

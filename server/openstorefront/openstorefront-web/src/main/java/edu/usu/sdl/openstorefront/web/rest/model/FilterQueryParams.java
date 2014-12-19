@@ -18,11 +18,20 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -33,26 +42,42 @@ public class FilterQueryParams
 
 	@QueryParam("max")
 	@DefaultValue("20000000")
+	@Min(0)
+	@Max(Integer.MAX_VALUE)
 	private int max;
 
 	@QueryParam("sortField")
 	@DefaultValue("description")
+	@Size(min = 0, max = 255)
+	@Sanitize(TextSanitizer.class)
 	private String sortField;
 
 	@QueryParam("sortOrder")
 	@DefaultValue(OpenStorefrontConstant.SORT_DESCENDING)
+	@Size(min = 0, max = 4)
+	@Sanitize(TextSanitizer.class)
 	private String sortOrder;
 
 	@QueryParam("offset")
 	@DefaultValue("0")
+	@Min(0)
+	@Max(Integer.MAX_VALUE)
 	private int offset;
 
 	@QueryParam("status")
 	@DefaultValue(BaseEntity.ACTIVE_STATUS)
+	@Size(min = 0, max = 3)
+	@Sanitize(TextSanitizer.class)
 	private String status;
 
 	public FilterQueryParams()
 	{
+	}
+
+	public ValidationResult validate()
+	{
+		ValidationModel validationModel = new ValidationModel(this);
+		return ValidationUtil.validate(validationModel);
 	}
 
 	public static FilterQueryParams defaultFilter()
@@ -90,7 +115,9 @@ public class FilterQueryParams
 			}
 		}
 		//sort
-		Collections.sort(results, new BeanComparator<>(sortOrder, sortField));
+		if (StringUtils.isNotBlank(sortField)) {
+			Collections.sort(results, new BeanComparator<>(sortOrder, sortField));
+		}
 		return results;
 	}
 

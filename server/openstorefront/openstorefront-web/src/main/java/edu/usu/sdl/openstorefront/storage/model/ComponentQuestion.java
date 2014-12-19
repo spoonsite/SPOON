@@ -35,7 +35,7 @@ public class ComponentQuestion
 		extends BaseComponent
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String questionId;
 

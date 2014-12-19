@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Handles DB Resource
  *
  * @author dshurtleff
  */

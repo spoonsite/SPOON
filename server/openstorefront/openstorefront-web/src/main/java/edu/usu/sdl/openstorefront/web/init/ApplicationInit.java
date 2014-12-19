@@ -17,11 +17,13 @@ package edu.usu.sdl.openstorefront.web.init;
 
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
+import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
@@ -58,9 +60,10 @@ public class ApplicationInit
 		startupManager(new JiraManager());
 		startupManager(new LookupImporter());
 		startupManager(new AttributeImporter());
+		startupManager(new MailManager());
 		startupManager(new JobManager());
 		startupManager(new UserAgentManager());
-
+		startupManager(new AsyncTaskManager());
 	}
 
 	private void startupManager(Initializable initializable)
@@ -73,8 +76,10 @@ public class ApplicationInit
 	public void contextDestroyed(ServletContextEvent sce)
 	{
 		//Shutdown in reverse order to make sure the dependancies are good.
+		shutdownManager(new AsyncTaskManager());
 		shutdownManager(new UserAgentManager());
 		shutdownManager(new JobManager());
+		shutdownManager(new MailManager());
 		shutdownManager(new JiraManager());
 		shutdownManager(new OSFCacheManager());
 		shutdownManager(new SolrManager());

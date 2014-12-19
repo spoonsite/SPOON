@@ -29,6 +29,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public interface SystemService
+		extends AsyncService
 {
 
 	/**

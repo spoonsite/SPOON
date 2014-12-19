@@ -16,21 +16,113 @@
 
 'use strict';
 
-app.directive('print', ['business', '$timeout', function (Business, $timeout) {
+app.directive('print', ['business', '$timeout', '$location', function (Business, $timeout, $location) {
+  var getTemplateUrl = function(element, attrs) {
+    var type = attrs.type || null;
+    // console.log('type', type);
+    
+    if (type && type === 'component') {
+      return 'views/details/print.html';
+    } else {
+      return 'views/details/print.html';
+    }
+  };
+
   return {
-    templateUrl: 'views/details/print.html',
+    templateUrl: getTemplateUrl,
     restrict: 'EA',
     scope:{
-      componentId: "@"
+      id: "="
     },
     link: function postLink(scope, element, attrs) {
-      if (scope.componentId){
-        Business.componentservice.getComponentDetails(scope.componentId, true).then(function(result){
-          console.log('Details', result);
-          
-          scope.details = result? result: {};
+      scope.details;
+      // console.log('scope.id', scope.id);
+      
+      scope.getObjectContent = function(details) {
+        var temp = {};
+        temp.value = [];
+        var keys = Object.keys(details);
+        _.each(keys, function(prop){
+          var property = {};
+          property.checkedLabel = camelToSentence(prop);
+          property.data = details[prop];
+          property.checked = true;
+          temp[prop] = property;
+        })
+        if (temp.value){
+          delete temp.value;
+        }
+        // details.checkedLabel = camelToSentence();
+        return temp;
+      }
+
+      scope.reset = function() {
+        if (scope.details) {
+          _.each(scope.details, function(detail){
+            detail.checked = true;
+          });
+        }
+      }
+
+      /***************************************************************
+      * This function converts a timestamp to a displayable date
+      ***************************************************************/
+      scope.getDate = function(date){
+        if (date)
+        {
+          var d = new Date(date);
+          var currDate = d.getDate();
+          var currMonth = d.getMonth();
+          var currYear = d.getFullYear();
+          return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+        }
+        return null;
+      };
+
+      scope.print = function() {
+        window.print();
+      }
+
+      scope.formatTags = function(tags) {
+        var result = '';
+        _.each(tags, function(tag){
+          if (result.length > 0) {
+            result = result + ", " + tag.text;
+          } else {
+            result = tag.text;
+          }
+        });
+        return result;
+      }
+
+      scope.isEvaluationPresent = function() {
+        if (scope.details) {
+          var details = scope.details;
+          return details.evaluation.checked && details.evaluation.data && details.evaluation.data.evaluationSections && details.evaluation.data.evaluationSections.length;
+        } else {
+          return false;
+        }
+      }
+
+      scope.getFullRating = function(num) {
+        return new Array(num);   
+      }
+      scope.getEmptyRating = function(num) {
+        var length = ((5 - num) > 0)? (5 - num):0; 
+        return new Array(length);
+      }
+
+      scope.getTimes = function(n){
+        return new Array(parseInt(n));
+      };
+
+      if (scope.id){
+        Business.componentservice.getComponentPrint(scope.id, true).then(function(result){
+          // console.log('Details', result);
+          scope.details = result? scope.getObjectContent(result): [];
+          // console.log('Details', scope.details);
         }, function() {
-          scope.details = {};
+          scope.details = [];
         })
       }
     }

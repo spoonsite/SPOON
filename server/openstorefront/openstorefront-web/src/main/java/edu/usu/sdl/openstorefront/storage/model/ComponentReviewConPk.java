@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -28,7 +30,6 @@ public class ComponentReviewConPk
 {
 
 	@NotNull
-	@ConsumeField
 	private String componentReviewId;
 
 	@NotNull
@@ -38,6 +39,37 @@ public class ComponentReviewConPk
 
 	public ComponentReviewConPk()
 	{
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null || (obj instanceof ComponentReviewConPk == false)) {
+			return false;
+		}
+		ComponentReviewConPk compareObj = (ComponentReviewConPk) obj;
+		return pkValue().equals(compareObj.pkValue());
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 5;
+		hash = 53 * hash + Objects.hashCode(getComponentReviewId());
+		hash = 53 * hash + Objects.hashCode(getReviewCon());
+		return hash;
+	}
+
+	@Override
+	public String pkValue()
+	{
+		return getComponentReviewId() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getReviewCon();
+	}
+
+	@Override
+	public String toString()
+	{
+		return pkValue();
 	}
 
 	public String getComponentReviewId()

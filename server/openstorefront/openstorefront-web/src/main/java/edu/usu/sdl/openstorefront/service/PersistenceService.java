@@ -25,10 +25,12 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.ComplexFieldStack;
+import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -48,6 +50,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * Handles all interaction with the database
  *
  * @author dshurtleff
  */
@@ -229,7 +232,7 @@ public class PersistenceService
 				PK idAnnotation = field.getAnnotation(PK.class);
 				if (idAnnotation != null) {
 					if (id.getClass().getName().equals(field.getType().getName()) == false) {
-						//Manage PK is like been pull by the DB and passed back in ...let it through
+						//Manage PK  has likely been pull by the DB and passed back in ...let it through
 						if ((id instanceof Proxy) == false) {
 							pkValid = false;
 						}
@@ -313,9 +316,46 @@ public class PersistenceService
 		return deleteCount;
 	}
 
-	public <T> void updateByExample(T exampleSet, T exampleWhere)
+	public int deleteByQuery(Class entityClass, String whereClause, Map<String, Object> queryParams)
 	{
-		throw new OpenStorefrontRuntimeException("Unsupported operation", "Add support");
+		int deleteCount = 0;
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("delete from ").append(entityClass.getSimpleName());
+		queryString.append(" where ").append(whereClause);
+
+		OObjectDatabaseTx db = getConnection();
+		try {
+			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(queryParams);
+		} finally {
+			closeConnection(db);
+		}
+
+		return deleteCount;
+	}
+
+	public <T> int updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere)
+	{
+		int updateCount = 0;
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("update ").append(entityClass.getSimpleName());
+
+		GenerateStatementOption generateStatementOption = new GenerateStatementOption();
+		generateStatementOption.setCondition(GenerateStatementOption.CONDITION_COMMA);
+		generateStatementOption.setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_SET);
+		queryString.append(" set ").append(generateWhereClause(exampleSet, new ComplexFieldStack(), generateStatementOption));
+		queryString.append(" where ").append(generateWhereClause(exampleWhere));
+
+		Map<String, Object> queryParams = new HashMap<>();
+		queryParams.putAll(mapParameters(exampleSet, new ComplexFieldStack(), generateStatementOption));
+		queryParams.putAll(mapParameters(exampleWhere));
+
+		OObjectDatabaseTx db = getConnection();
+		try {
+			updateCount = db.command(new OCommandSQL(queryString.toString())).execute(queryParams);
+		} finally {
+			closeConnection(db);
+		}
+		return updateCount;
 	}
 
 	public long countByExample(QueryByExample queryByExample)
@@ -384,7 +424,9 @@ public class PersistenceService
 			mappedParams.putAll(mapParameters(queryByExample.getExample()));
 		}
 		if (queryByExample.getLikeExample() != null) {
-			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), "LIKE");
+			GenerateStatementOption generateStatementOption = new GenerateStatementOption();
+			generateStatementOption.setOperation(GenerateStatementOption.OPERATION_LIKE);
+			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), generateStatementOption);
 			if (StringUtils.isNotBlank(likeClause)) {
 				if (StringUtils.isNotBlank(whereClause)) {
 					queryString.append(" AND ");
@@ -427,10 +469,10 @@ public class PersistenceService
 
 	private <T> String generateWhereClause(T example)
 	{
-		return generateWhereClause(example, new ComplexFieldStack(), null);
+		return generateWhereClause(example, new ComplexFieldStack(), new GenerateStatementOption());
 	}
 
-	private <T> String generateWhereClause(T example, ComplexFieldStack complexFieldStack, String operator)
+	private <T> String generateWhereClause(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption)
 	{
 		StringBuilder where = new StringBuilder();
 
@@ -448,30 +490,27 @@ public class PersistenceService
 						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
 							complexFieldStack.getFieldStack().push(field.toString());
 							if (addAnd) {
-								where.append(" AND ");
+								where.append(generateStatementOption.getCondition());
 							} else {
 								addAnd = true;
 								where.append(" ");
 							}
 
-							where.append(generateWhereClause(returnObj, complexFieldStack, operator));
+							where.append(generateWhereClause(returnObj, complexFieldStack, generateStatementOption));
 							complexFieldStack.getFieldStack().pop();
 						} else {
 							if (addAnd) {
-								where.append(" AND ");
+								where.append(generateStatementOption.getCondition());
 							} else {
 								addAnd = true;
 								where.append(" ");
 							}
 
 							String fieldName = complexFieldStack.getQueryFieldName() + field.toString();
-
-							String operatorLocal = "=";
-							if (StringUtils.isNotBlank(operator)) {
-								operatorLocal = operator;
-							}
-
-							where.append(fieldName).append(" ").append(operatorLocal).append(" :").append(fieldName.replace(".", PARAM_NAME_SEPARATOR)).append("Param");
+							where.append(fieldName)
+									.append(" ").append(generateStatementOption.getOperation()).append(" :")
+									.append(fieldName.replace(".", PARAM_NAME_SEPARATOR))
+									.append(generateStatementOption.getParamaterSuffix());
 						}
 					}
 				}
@@ -535,34 +574,33 @@ public class PersistenceService
 
 	private <T> Map<String, Object> mapParameters(T example)
 	{
-		return mapParameters(example, new ComplexFieldStack(PARAM_NAME_SEPARATOR));
+		return mapParameters(example, new ComplexFieldStack(PARAM_NAME_SEPARATOR), new GenerateStatementOption());
 	}
 
-	private <T> Map<String, Object> mapParameters(T example, ComplexFieldStack complexFieldStack)
+	private <T> Map<String, Object> mapParameters(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption)
 	{
 		Map<String, Object> parameterMap = new HashMap<>();
 		try {
-			Map fieldMap = BeanUtils.describe(example);
-			for (Object field : fieldMap.keySet()) {
+			List<Field> fields = ServiceUtil.getAllFields(example.getClass());
+			for (Field field : fields) {
 
-				if ("class".equalsIgnoreCase(field.toString()) == false) {
-					Object value = fieldMap.get(field);
+				if ("class".equalsIgnoreCase(field.getName()) == false) {
+					field.setAccessible(true);
+					//Note: this may not work for proxy object....they may need to be call through a get method
+					Object value = field.get(example);
 					if (value != null) {
-
-						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
-						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
-							complexFieldStack.getFieldStack().push(field.toString());
-							parameterMap.putAll(mapParameters(returnObj, complexFieldStack));
+						if (ServiceUtil.isComplexClass(value.getClass())) {
+							complexFieldStack.getFieldStack().push(field.getName());
+							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption));
 							complexFieldStack.getFieldStack().pop();
 						} else {
-							String fieldName = complexFieldStack.getQueryFieldName() + field.toString();
-							parameterMap.put(fieldName + "Param", value);
+							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
+							parameterMap.put(fieldName + generateStatementOption.getParamaterSuffix(), value);
 						}
 					}
 				}
 			}
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+		} catch (IllegalAccessException ex) {
 			throw new RuntimeException(ex);
 		}
 		return parameterMap;
@@ -592,7 +630,7 @@ public class PersistenceService
 	}
 
 	/**
-	 * This will run the query but return the Proxy Objects
+	 * This will run the query and returns the Proxy Objects
 	 *
 	 * @param <T>
 	 * @param query
@@ -629,19 +667,27 @@ public class PersistenceService
 		return results;
 	}
 
-	public <T> T persist(T entity)
+	public <T extends BaseEntity> T persist(T entity)
 	{
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {
+			String pkValue = ServiceUtil.getPKFieldValue(entity);
+			if (pkValue == null) {
+				if (ServiceUtil.isPKFieldGenerated(entity)) {
+					ServiceUtil.updatePKFieldValue(entity, generateId());
+				}
+			}
 			ValidationModel validationModel = new ValidationModel(entity);
 			validationModel.setSantize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				t = db.save(entity);
 			} else {
-				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules.");
+				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
 			}
+		} catch (Exception e) {
+			throw new OpenStorefrontRuntimeException("Unable to save record: " + StringProcessor.printObject(entity), e);
 		} finally {
 			closeConnection(db);
 		}

@@ -15,8 +15,6 @@
 */
 'use strict';
 
-/*global MOCKDATA2, jQuery, confirm, triggerError*/
-
 app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$location', '$timeout', '$q', function($scope, Business, $rootScope, $location, $timeout, $q) {
 
   //////////////////////////////////////////////////////////////////////////////
@@ -27,6 +25,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope._scopename       = 'userprofile';
   $scope.pageTitle        = 'DI2E Storefront Catalog';
   $scope.defaultTitle     = 'Browse Categories';
+  $scope.untilDate = new Date();
   $scope.review           = null;
   $scope.user             = {};
   $scope.nav              = {
@@ -40,12 +39,16 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     ]
   };
 
+  $scope.validateEmail = function(email) { 
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
+
 
   Business.userservice.getCurrentUserProfile().then(function(result){
     if (result) {
       $scope.user.info = result;
       // console.log('result', result);
-      
     }
   });
 
@@ -174,6 +177,17 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     });
   };
 
+  var loadReviews = function(override) {
+    Business.userservice.getReviews($scope.user.info.username, override).then(function(result){
+      if (result) {
+        $scope.reviews = result;
+      } else {
+        $scope.reviews = null;
+      }
+    });  
+  }
+
+
   /***************************************************************
   * Load the User profile 
   ***************************************************************/
@@ -190,23 +204,30 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         // console.log('found', _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode}));
         $scope.userProfileForm.userRole = _.find($scope.userTypeCodes, {'code': $scope.userProfile.userTypeCode});
         if ($scope.user.info && $scope.user.info.username) {
-          Business.userservice.getReviews($scope.user.info.username).then(function(result){
-            if (result) {
-              $scope.reviews = result;
-            } else {
-              $scope.reviews = null;
-            }
-          });  
+          loadReviews(false);
         }
       }
       //hide load mask
     });
   };
 
+  $scope.$on('$detailsUpdated', function(){
+    if ($scope.user.info && $scope.user.info.username){
+      loadReviews(true);
+    } else {
+      loadUserProfile();
+    }
+  })
+
+  
   $scope.cancelUserProfile = function() {
     loadUserProfile();
     $scope.userProfileForm.mySwitch = false;
   };
+
+  $scope.sendTestEmail = function() {
+    Business.userservice.sendTestEmail($scope.user.info.username)
+  }
 
   /***************************************************************
   * Save the user profile

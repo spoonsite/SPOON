@@ -19,6 +19,9 @@ import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
@@ -38,8 +41,13 @@ public class SecurityFilter
 		implements ContainerRequestFilter
 {
 
+	private static final Logger log = Logger.getLogger(SecurityFilter.class.getName());
+
 	@Context
 	ResourceInfo resourceInfo;
+
+	@Context
+	HttpServletRequest httpServletRequest;
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException
@@ -59,6 +67,8 @@ public class SecurityFilter
 						.type(MediaType.TEXT_PLAIN)
 						.entity("User cannot access the resource.")
 						.build());
+			} else {
+				log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(httpServletRequest));
 			}
 		}
 	}

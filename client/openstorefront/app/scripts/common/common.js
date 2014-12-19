@@ -36,13 +36,12 @@ setupParallax, triggerAlert, triggerError, removeError, initiateClick*/
   while (length--) {
     method = methods[length];
 
-        // Only stub undefined methods.
-        if (!console[method]) {
-          console[method] = noop;
-        }
-      }
-    }());
-
+    // Only stub undefined methods.
+    if (!console[method]) {
+      console[method] = noop;
+    }
+  }
+}());
 
 /*****************************
 * This function sets up the popovers for the results page, but could be 
@@ -132,6 +131,12 @@ function isEmpty(obj) {
   }
 
   return true;
+}
+
+var camelToSentence = function (string) {
+  return string.replace(/^[a-z]|[A-Z]/g, function(v, i) {
+    return i === 0 ? v.toUpperCase() : " " + v.toUpperCase();
+  });
 }
 
 /***************************************************************
@@ -286,12 +291,12 @@ var showServerError = function(errorObj, id){
 *  };
 ***************************************************************/
 var triggerError = function(errorObj) {
-  console.log('errorObject', errorObj);
+  // console.log('errorObject', errorObj);
   
   if (isRequestError(errorObj)) {
     var errors = errorObj.errors;
     _.each(errors.entry, function(item) {
-      console.log('item', item);
+      // console.log('item', item);
       
       var i = item.key;
       $('#'+i).addClass('errorOnInput');
@@ -316,32 +321,33 @@ var initiateClick = function(id) {
   }
 };
 
-var originalLeave = $.fn.popover.Constructor.prototype.leave;
-$.fn.popover.Constructor.prototype.leave = function(obj){
-  var self = obj instanceof this.constructor ?
-  obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type);
-  var popovers, name, container, timeout;
+// var currentLeave;
+// var originalLeave = $.fn.popover.Constructor.prototype.leave;
+// $.fn.popover.Constructor.prototype.leave = function(obj){
+//   var self = obj instanceof this.constructor ?
+//   obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type);
+//   var popovers, name, container, timeout;
 
-  originalLeave.call(this, obj);
+//   originalLeave.call(this, obj);
 
-  if(obj.currentTarget) {
-    popovers = $('.popover');
-    name = $(obj.currentTarget).attr('data-original-title');
-    container = _.find(popovers, function(item){
-      return $(item).find('.popover-title').html() === name;
-    });
-    
-    timeout = self.timeout;
-    $(container).on('mouseenter', function(){
-      //We entered the actual popover – call off the dogs
-      clearTimeout(timeout);
-      //Let's monitor popover content instead
-      $(container).on('mouseleave', function(){
-        $.fn.popover.Constructor.prototype.leave.call(self, self);
-      });
-    });
-  }
-};
+//   if(obj.currentTarget) {
+//     popovers = $('.popover');
+//     name = $(obj.currentTarget).attr('data-original-title');
+//     container = _.find(popovers, function(item){
+//       return $(item).find('.popover-title').html() === name;
+//     });
+
+//     timeout = self.timeout;
+//     $(container).on('mouseenter', function(){
+//       //We entered the actual popover – call off the dogs
+//       clearTimeout(timeout);
+//       //Let's monitor popover content instead
+//       $(container).on('mouseleave', function(){
+//         $.fn.popover.Constructor.prototype.leave.call(self, self);
+//       });
+//     });
+//   }
+// };
 
 /***************************************************************
 * This function translates an sqlDate (yyyy-mm-ddThh:mm:ss.ms)
@@ -392,24 +398,3 @@ var isNotRequestError = function(response){
 var notInCollection = function(collection, item){
   return _.contains(collection, item)? false: true;
 }
-
-// Base.esapi.properties.logging.ApplicationLogger = {
-//   Level: org.owasp.esapi.Logger.ALL,
-//   Appenders: [ new Log4js.ConsoleAppender() ],
-//   LogUrl: true,
-//   LogApplicationName: true,
-//   EncodingRequired: true
-// };
-
-// Base.esapi.properties.application.Name = 'My Application v1.0';
-// org.owasp.esapi.ESAPI.initialize();
-// $ESAPI.logger('ApplicationLogger').info(org.owasp.esapi.Logger.EventType.EVENT_SUCCESS, 'This is a test message');
-// document.writeln( $ESAPI.encoder().encodeForURL( "owasp-esapi-js.googlecode.com/this is awesome!\") );
-
-// Using the validator
-// var validateCreditCard = function() {
-  // return $ESAPI.validator().isValidCreditCard( $('CreditCard').value );
-// }
-
-// $ESAPI.validator().isValidDate('DateRangeValidator', '07-07-2014', DateFormat(''), false)
-// console.log("Valid Date: ", $ESAPI.validator().getValidDate( "Jun, 26 2014", "dateTest1", DateFormat.getDateInstance(), false) );

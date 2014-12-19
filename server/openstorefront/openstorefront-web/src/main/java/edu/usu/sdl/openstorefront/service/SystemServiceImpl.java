@@ -203,7 +203,9 @@ public class SystemServiceImpl
 			errorTicket.setErrorTicketId(ticketNumber);
 			errorTicket.setTicketFile(ticketNumber);
 			errorTicket.setClientIp(errorInfo.getClientIp());
-			errorTicket.setCalledAction(errorInfo.getRequestUrl() + " Method: " + errorInfo.getRequestMethod());
+			if (StringUtils.isNotBlank(errorInfo.getRequestUrl())) {
+				errorTicket.setCalledAction(errorInfo.getRequestUrl() + " Method: " + errorInfo.getRequestMethod());
+			}
 			errorTicket.setErrorTypeCode(errorInfo.getErrorTypeCode());
 			errorTicket.setInput(errorInfo.getInputData());
 			errorTicket.setActiveStatus(ErrorTicket.ACTIVE_STATUS);

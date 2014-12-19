@@ -30,7 +30,7 @@ public class ComponentTracking
 		extends BaseComponent
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String componentTrackingId;
 
@@ -44,6 +44,9 @@ public class ComponentTracking
 
 	@NotNull
 	private String clientIp;
+
+	private String componentResourceId;
+	private String resourceLink;
 
 	public ComponentTracking()
 	{
@@ -87,6 +90,26 @@ public class ComponentTracking
 	public void setClientIp(String clientIp)
 	{
 		this.clientIp = clientIp;
+	}
+
+	public String getComponentResourceId()
+	{
+		return componentResourceId;
+	}
+
+	public void setComponentResourceId(String componentResourceId)
+	{
+		this.componentResourceId = componentResourceId;
+	}
+
+	public String getResourceLink()
+	{
+		return resourceLink;
+	}
+
+	public void setResourceLink(String resourceLink)
+	{
+		this.resourceLink = resourceLink;
 	}
 
 }

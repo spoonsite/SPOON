@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.api.ReportService;
  * @author dshurtleff
  */
 public class ReportServiceImpl
+		extends ServiceProxy
 		implements ReportService
 {
 

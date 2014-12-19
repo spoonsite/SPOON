@@ -15,14 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author jlaw
+ * @param <T>
  */
-public abstract class BaseComponent
-		extends BaseEntity
+public abstract class BaseComponent<T>
+		extends BaseEntity<BaseComponent>
 {
 
 	@NotNull
@@ -30,6 +32,19 @@ public abstract class BaseComponent
 
 	public BaseComponent()
 	{
+	}
+
+	@Override
+	public int compareTo(BaseComponent o)
+	{
+		int value = super.compareTo(o);
+		if (value == 0) {
+			value = ServiceUtil.compareObjects(getComponentId(), ((BaseComponent) o).getComponentId());
+		}
+		if (value == 0) {
+			value = ServiceUtil.compareConsumeFields(this, o);
+		}
+		return value;
 	}
 
 	public String getComponentId()

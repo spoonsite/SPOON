@@ -20,6 +20,7 @@ package edu.usu.sdl.openstorefront.service.api;
  * @author dshurtleff
  */
 public interface ReportService
+		extends AsyncService
 {
 
 }

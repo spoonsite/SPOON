@@ -175,7 +175,6 @@ module.exports = function (grunt) {
       all: [
       'Gruntfile.js',
       '<%= yeoman.app %>/scripts/common/*.js',
-      '<%= yeoman.app %>/scripts/common-min/*.js',
       '<%= yeoman.app %>/scripts/controllers/*.js',
       '<%= yeoman.app %>/scripts/directives/*.js',
       '<%= yeoman.app %>/scripts/filters/*.js',
@@ -203,7 +202,23 @@ module.exports = function (grunt) {
           ]
         }]
       },
-      server: '.tmp'
+      server: '.tmp',
+      serverweb: {
+        options: { 
+          force: true 
+        },
+        files: [{
+          dot: true,          
+          src: [                  
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/bower_components',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/fonts',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/images',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/scripts',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/styles',
+            '../../server/openstorefront/openstorefront-web/src/main/webapp/views'
+          ]
+        }]
+      }      
     },
 
     // Add vendor prefixed styles
@@ -350,21 +365,20 @@ module.exports = function (grunt) {
           dest: '<%= yeoman.dist %>',
           src: [
           '*.{ico,txt}',
-          'images/idamCapabilityFunctionality.png',
           '.htaccess',
           '*.html',
           'views/**/*.html',
+          'images/**/*',
           'bower_components/fontawesome/css/font-awesome.css',
           'bower_components/fontawesome/fonts/*',
           'bower_components/bootstrap/dist/fonts/*',
           'bower_components/bootstrap/dist/css/bootstrap.css',
           'bower_components/angular-mocks/angular-mocks.js',
           'scripts/common/angular-lightbox.js',
+          'scripts/common/ng-ckeditor.js',
           'bower_components/ckeditor/**/*',
-          'bower_components/ng-ckeditor/ng-ckeditor.js',
           'styles/*.css',
           'scripts/esapi4js/**/*',
-          'scripts/common-min/*.js',
           'scripts/common/data.js',
           'scripts/common/jquery-cron.js',
           'scripts/common/angular-multi-select.js',
@@ -404,6 +418,29 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.dist %>',
         dest: '../../server/openstorefront/openstorefront-web/src/main/webapp',
         src: '**/*'        
+      },
+      compstyles: {
+        expand: true,
+        cwd: '.tmp/styles',
+        dest: '<%= yeoman.dist %>/styles',
+        src: '**/*.css'
+      },      
+      all: {
+          expand: true,
+          dot: true,
+          cwd: '<%= yeoman.app %>',
+          dest: '<%= yeoman.dist %>',
+          src: [
+            'bower_components/**/*',
+            'fonts/**/*',
+            'images/**/*',
+            'scripts/**/*',
+            'views/**/*',
+            '404.html',
+            'favicon.ico',
+            'index.html',
+            'robots.txt'
+          ]
       }
     },
 
@@ -535,10 +572,24 @@ grunt.registerTask('buildprod', function (target) {
   grunt.option('appPath', '/openstorefront');
   grunt.task.run([ 
     'build',
-   'copy:server'  
+    'clean:serverweb',
+    'copy:server'  
   ]);
 });  
 
+grunt.registerTask('build-debug', function (target) {
+  grunt.option('appPath', '/openstorefront');
+  grunt.task.run([
+    'clean:dist',
+    'clean:serverweb',
+    'bowerInstall',
+    'copy:all',
+    'concurrent:dist',
+    'copy:compstyles',    
+    'cdnify',
+    'copy:server'
+    ]);
+});
 
 grunt.registerTask('default', [
   'newer:jshint',

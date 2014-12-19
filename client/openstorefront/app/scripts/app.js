@@ -15,7 +15,7 @@
 */
 'use strict';
 
-/* global resetAnimGlobals, initiateClick, MOCKDATA2 */
+/* global resetAnimGlobals, initiateClick */
 /* exported app */
 
 /***************************************************************
@@ -40,12 +40,19 @@ var app = angular
     'bootstrapLightbox',
     'angular-carousel',
     'angulartics.google.analytics',
-    'ngIdle',
+    'ngIdle',    
     'multi-select'
   // end of dependency injections
   ]
 // end of the module creation
 )
+.filter('moment', function () {
+  return function (input, momentFn) {
+    var args = Array.prototype.slice.call(arguments, 2),
+        momentObj = moment(input);
+    return momentObj[momentFn].apply(momentObj, args);
+  };
+})
 // Here we configure the route provider
 .config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', '$httpProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider, $httpProvider) {
   $routeProvider
@@ -76,6 +83,10 @@ var app = angular
   .when('/compare', {
     templateUrl: 'views/compare.html',
     controller: 'CompareCtrl'
+  })
+  .when('/print', {
+    templateUrl: 'views/print.html',
+    controller: 'PrintCtrl'
   })
   .otherwise({
     redirectTo: '/'
@@ -190,6 +201,8 @@ var app = angular
     function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
 
       // initialization stuff.
+      $rootScope.messageType = '';
+      $rootScope.messageContacts = null;
       $rootScope.ieVersionCheck = false;
       $rootScope.loaded = false;
 
@@ -255,12 +268,12 @@ var app = angular
         if (current && current.loadedTemplateUrl === 'views/results.html') {
           resetAnimGlobals();
         }
-
-        setTimeout(function () {
-          $('.searchBar:input[type=\'text\']').on('click', function () {
-            $(this).select();
-          });
-        }, 500);
+        // setTimeout(function () {
+        //   $('.searchBar:input[type=\'text\']').on('click', function () {
+        //     $(this).select();
+        //   });
+        // }, 500);
+        //
         $rootScope.$broadcast('$LOAD', 'bodyLoad');
       });
 
@@ -274,7 +287,7 @@ var app = angular
       * This funciton resets the search query when we don't want to be showing it
       ***************************************************************/
       $rootScope.$on('$locationChangeStart', function (event, next, current) {
-        if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing' && $location.path() !== '/compare')) {
+        if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing' && $location.path() !== '/compare' && $location.path() !== '/print')) {
           $location.search({});
         }
       });
@@ -335,8 +348,6 @@ var app = angular
       // Functions
       //////////////////////////////////////////////////////////////////////////////
       $rootScope.sendPageView = function(view) {
-        // console.log('we got a page view', view);
-        
         $analytics.pageTrack($location.url()+'/'+view);
       };
 
@@ -349,6 +360,10 @@ var app = angular
         // console.log('we got an event', name, category, label);
         $analytics.eventTrack(name,{'category': category, 'label': label});
       };
+
+      $rootScope.openAdminMessage = function(type, contacts, subject, message) {
+        $rootScope.$broadcast('$OPENADMINMESSAGE', type, contacts, subject, message);
+      }
 
 
       $rootScope.openModal = function(id, current) {
@@ -384,6 +399,18 @@ var app = angular
       $rootScope.goTo = function(path, search) {
         $location.search(search);
         $location.path(path);
+      };
+
+      /***************************************************************
+      * This function sends the route to whatever path and search are passed in.
+      ***************************************************************/
+      $rootScope.goToPrint = function(path, search) {
+        var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
+        var oldSearch = $location.search();
+        $location.search(search);
+        url = url + path + '?' + $.param($location.search());
+        $location.search(oldSearch);
+        window.open(url, 'Component_Print_' + search.id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
       };
 
       /***************************************************************
@@ -445,6 +472,14 @@ var app = angular
         }
         return null;
       };
+      
+     /***************************************************************
+             * This function removes all tooltip from the display 
+             ***************************************************************/
+     $rootScope.removeAllTooltips = function () {
+       $('.popover').remove();
+     };
+      
 
       /***************************************************************
       * This is a local function used in the httpBackend functions
@@ -498,6 +533,14 @@ var app = angular
 
       $rootScope.logout = function() {
         window.location.replace('/openstorefront/Login.action?Logout');
+      }
+
+      $rootScope.print = function(type, id) {
+        $location.search({
+          'type': type,
+          'id': id
+        });
+        $location.path('/print');
       }
 
       $rootScope.$on('$idleStart', function() {

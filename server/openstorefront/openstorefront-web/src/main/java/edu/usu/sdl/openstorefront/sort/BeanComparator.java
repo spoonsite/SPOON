@@ -59,29 +59,31 @@ public class BeanComparator<T>
 		} else if (obj1 == null && obj2 != null) {
 			return -1;
 		} else if (obj1 != null && obj2 != null) {
-			try {
-				String value1 = BeanUtils.getProperty(obj1, sortField);
-				String value2 = BeanUtils.getProperty(obj2, sortField);
-				if (value1 != null && value2 == null) {
-					return 1;
-				} else if (value1 == null && value2 != null) {
-					return -1;
-				} else if (value1 != null && value2 != null) {
+			if (StringUtils.isNotBlank(sortField)) {
+				try {
+					String value1 = BeanUtils.getProperty(obj1, sortField);
+					String value2 = BeanUtils.getProperty(obj2, sortField);
+					if (value1 != null && value2 == null) {
+						return 1;
+					} else if (value1 == null && value2 != null) {
+						return -1;
+					} else if (value1 != null && value2 != null) {
 
-					if (StringUtils.isNotBlank(value1)
-							&& StringUtils.isNotBlank(value2)
-							&& StringUtils.isNumeric(value1)
-							&& StringUtils.isNumeric(value2)) {
+						if (StringUtils.isNotBlank(value1)
+								&& StringUtils.isNotBlank(value2)
+								&& StringUtils.isNumeric(value1)
+								&& StringUtils.isNumeric(value2)) {
 
-						BigDecimal numValue1 = new BigDecimal(value1);
-						BigDecimal numValue2 = new BigDecimal(value2);
-						return numValue1.compareTo(numValue2);
-					} else {
-						return value1.compareTo(value2);
+							BigDecimal numValue1 = new BigDecimal(value1);
+							BigDecimal numValue2 = new BigDecimal(value2);
+							return numValue1.compareTo(numValue2);
+						} else {
+							return value1.compareTo(value2);
+						}
 					}
+				} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+					log.log(Level.WARNING, "Sort field doesn't exist: " + sortField);
 				}
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-				log.log(Level.WARNING, "Sort field doesn't exist: " + sortField);
 			}
 		}
 

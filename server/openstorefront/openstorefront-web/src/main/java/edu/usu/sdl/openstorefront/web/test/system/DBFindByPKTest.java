@@ -37,7 +37,7 @@ public class DBFindByPKTest
 	protected void runInternalTest()
 	{
 		ComponentEvaluationSectionPk componentEvaluationSectionPk = new ComponentEvaluationSectionPk();
-		componentEvaluationSectionPk.setEvaulationSection("TEST");
+		componentEvaluationSectionPk.setEvaluationSection("TEST");
 		componentEvaluationSectionPk.setComponentId("883045");
 
 		ComponentEvaluationSection section = service.getPersistenceService().findById(ComponentEvaluationSection.class, componentEvaluationSectionPk);

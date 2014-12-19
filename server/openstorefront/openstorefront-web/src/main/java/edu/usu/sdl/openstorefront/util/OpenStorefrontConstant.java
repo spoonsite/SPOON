@@ -36,6 +36,7 @@ public class OpenStorefrontConstant
 	public static final String ERROR_LOGGER = "edu.usu.sdl.openstorefront.SYSTEM-ERROR-LOGGER";
 	public static final String HEADER_USER_AGENT = "User-Agent";
 	public static final String STATUS_VIEW_ALL = "ALL";
+	public static final String DEFAULT_FROM_ADDRESS = "noreply@storefront.net";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_CRON = 250;
@@ -43,6 +44,7 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_FIRSTNAME = 80;
 	public static final int FIELD_SIZE_LASTNAME = 80;
 	public static final int FIELD_SIZE_EMAIL = 250;
+	public static final int FIELD_SIZE_EMAIL_LIST_SIZE = 32000;
 	public static final int FIELD_SIZE_ORGANIZATION = 120;
 	public static final int FIELD_SIZE_CODE = 20;
 	public static final int FIELD_SIZE_DESCRIPTION = 255;
@@ -55,11 +57,13 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_RESPONSE = 4096;
 	public static final int FIELD_SIZE_REVIEW_COMMENT = 4096;
 	public static final int FIELD_SIZE_DETAILED_DESCRIPTION = 4096;
+	public static final int FIELD_SIZE_ADMIN_MESSAGE = 32000;
 	public static final int FIELD_SIZE_TAG = 60;
 
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 	public static final String ERRORS_MAX_COUNT_DEFAULT = "5000";
+	public static final String DEFAULT_RECENT_CHANGE_EMAIL_INTERVAL = "28";
 
 	private static final Map<String, String> mimeXref = loadMimeXref();
 
@@ -126,6 +130,17 @@ public class OpenStorefrontConstant
 		{
 			return description;
 		}
+
+	}
+
+	public static enum TaskStatus
+	{
+
+		QUEUED,
+		WORKING,
+		DONE,
+		CANCELLED,
+		FAILED
 
 	}
 

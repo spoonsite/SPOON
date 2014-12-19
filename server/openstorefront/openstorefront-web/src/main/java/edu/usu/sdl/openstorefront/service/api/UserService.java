@@ -18,11 +18,17 @@ package edu.usu.sdl.openstorefront.service.api;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -30,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author dshurtleff
  */
 public interface UserService
+		extends AsyncService
 {
 
 	/**
@@ -141,9 +148,19 @@ public interface UserService
 	/**
 	 * Get the user profile based on the userID
 	 *
+	 * @param all
 	 * @return
 	 */
-	public List<UserProfile> getAllProfiles();
+	public List<UserProfile> getAllProfiles(Boolean all);
+
+	/**
+	 * Get the last login for a group of users.
+	 *
+	 * @param userProfiles
+	 * @return username, last know login (if user is missing they don't have a
+	 * last login)
+	 */
+	public Map<String, Date> getLastLogin(List<UserProfile> userProfiles);
 
 	/**
 	 * Save any changes to the user profile (This will refresh the session) This
@@ -165,12 +182,20 @@ public interface UserService
 	public UserProfile saveUserProfile(UserProfile user, boolean refreshSession);
 
 	/**
-	 * Deletes the user profile
+	 * Deletes the user profile (Inactive)
 	 *
-	 * @param userId
-	 * @return
+	 * @param username
 	 */
-	public Boolean deleteProfile(String userId);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteProfile(String username);
+
+	/**
+	 * Reactivate a profile and restore user data
+	 *
+	 * @param username
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void reactiveProfile(String username);
 
 	/**
 	 *
@@ -193,6 +218,82 @@ public interface UserService
 	 * @return
 	 */
 	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean admin);
+
+	/**
+	 * This will send a test email to the address on the user profile.
+	 *
+	 * @param username
+	 */
+	public void sendTestEmail(String username);
+
+	/**
+	 * Pulls active watches for the component and create messages for 'notfiy'
+	 * watches.
+	 *
+	 * @param component
+	 */
+	public void checkComponentWatches(Component component);
+
+	/**
+	 * Queue messaged will be delayed thus allowing for duplicate handling and
+	 * reduce spam.
+	 *
+	 * @param userMessage
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void queueUserMessage(UserMessage userMessage);
+
+	/**
+	 * Finds the messages based on filter
+	 *
+	 * @param filter
+	 * @return
+	 */
+	public List<UserMessage> findUserMessages(FilterQueryParams filter);
+
+	/**
+	 * This will inactivate a user message
+	 *
+	 * @param userMessageId
+	 */
+	public void removeUserMessage(String userMessageId);
+
+	/**
+	 * This will remove old user messages
+	 */
+	public void cleanupOldUserMessages();
+
+	/**
+	 * Sends AdminMessages to all uses of the storefront with emails
+	 *
+	 * @param adminMessage
+	 */
+	public void sendAdminMessage(AdminMessage adminMessage);
+
+	/**
+	 * This handles processing all user messages. Cleanup old message, sending
+	 * out queued messages.
+	 *
+	 * @param sendNow set to true to force send the messages immediately
+	 */
+	public void processAllUserMessages(boolean sendNow);
+
+	/**
+	 * Sends an email to all user bases on what has changed since the date.
+	 * Components, Articles, Hightlights
+	 *
+	 * @param lastRunDts
+	 */
+	public void sendRecentChangeEmail(Date lastRunDts);
+
+	/**
+	 * Sends an email to all user bases on what has changed since the date.
+	 * Components, Articles, Hightlights
+	 *
+	 * @param lastRunDts
+	 * @param emailAddress (Only sends to this email if set)
+	 */
+	public void sendRecentChangeEmail(Date lastRunDts, String emailAddress);
 
 //  This will be fleshed out more later
 //	/**

@@ -73,7 +73,9 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
 
   $scope.getGlobalConfig = function(){
     Business.configurationservice.getGlobalConfig().then(function(result) {
+      // console.log('refreshRate', result);
       $scope.cron.global_cron = result? result.jiraRefreshRate? result.jiraRefreshRate: null: null;
+      $scope.cron.global_cron_display = result? result.cronExpressionDescription? result.cronExpressionDescription + ' (' + result.jiraRefreshRate + ')': null: null;
     }, function() {
       $scope.cron.global_cron = null;
     });
@@ -348,6 +350,8 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   $scope.saveGlobalConf = function(){
     // console.log('$scope.global_cron', $scope.cron.global_cron);
     Business.configurationservice.saveGlobalConf($scope.cron.global_cron).then(function(result){
+      // console.log('saved global config', result);
+      $scope.getGlobalConfig();
       // do something if you want to after you save the global conf
     });
     return false;

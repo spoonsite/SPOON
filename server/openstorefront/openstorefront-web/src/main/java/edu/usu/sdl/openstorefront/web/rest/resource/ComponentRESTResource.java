@@ -59,6 +59,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
@@ -229,11 +230,21 @@ public class ComponentRESTResource
 	@Path("/{id}/detail")
 	public Response getComponentDetails(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam String componentId,
+			@QueryParam("type")
+			@DefaultValue("default")
+			@APIDescription("Pass 'Print' to retrieve special print view") String type)
 	{
-		ComponentDetailView componentDetail = service.getComponentService().getComponentDetails(componentId);
+		ComponentPrintView componentPrint = null;
+		ComponentDetailView componentDetail = null;
+		if (type.equals("print")) {
+			ComponentDetailView temp = service.getComponentService().getComponentDetails(componentId);
+			componentPrint = ComponentPrintView.toView(temp);
+		} else {
+			componentDetail = service.getComponentService().getComponentDetails(componentId);
+		}
 		//Track Views
-		if (componentDetail != null) {
+		if (componentDetail != null || componentPrint != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
 			componentTracking.setClientIp(request.getRemoteAddr());
 			componentTracking.setComponentId(componentId);
@@ -245,7 +256,13 @@ public class ComponentRESTResource
 			service.getComponentService().saveComponentTracking(componentTracking);
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
-		return sendSingleEntityResponse(componentDetail);
+		if (componentDetail != null) {
+			return sendSingleEntityResponse(componentDetail);
+		} else if (componentPrint != null) {
+			return sendSingleEntityResponse(componentPrint);
+		} else {
+			return Response.ok().build();
+		}
 	}
 
 	@DELETE
@@ -391,7 +408,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Get the dependencies from the entity")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentContact.class)
+	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependency")
 	public List<ComponentExternalDependency> getComponentDependency(
 			@PathParam("id")
@@ -422,7 +439,7 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Add a dependency to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentContact.class)
+	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependency")
 	public Response addComponentDependency(
 			@PathParam("id")
@@ -437,6 +454,7 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Update a contact associated to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependency/{dependencyId}")
 	public Response updateComponentDependency(
 			@PathParam("id")
@@ -594,7 +612,7 @@ public class ComponentRESTResource
 	{
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
-		pk.setEvaulationSection(evalSection);
+		pk.setEvaluationSection(evalSection);
 		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, pk);
 	}
 
@@ -641,7 +659,7 @@ public class ComponentRESTResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
-		pk.setEvaulationSection(evalSectionId);
+		pk.setEvaluationSection(evalSectionId);
 		ComponentEvaluationSection componentEvaluationSection = service.getPersistenceService().findById(ComponentEvaluationSection.class, pk);
 		if (componentEvaluationSection != null) {
 			section.setComponentId(componentId);
@@ -665,7 +683,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + section.getComponentId() + "/sections/" + section.getComponentEvaluationSectionPk().getEvaulationSection())).entity(section).build();
+			return Response.created(URI.create("v1/resource/components/" + section.getComponentId() + "/sections/" + section.getComponentEvaluationSectionPk().getEvaluationSection())).entity(section).build();
 		} else {
 			return Response.ok(section).build();
 		}
@@ -1400,8 +1418,8 @@ public class ComponentRESTResource
 		componentReview.setRating(review.getRating());
 		componentReview.setRecommend(review.isRecommend());
 		componentReview.setTitle(review.getTitle());
-		componentReview.setUserTimeCode(review.getUsedTimeCode());
-		componentReview.setUserTypeCode(review.getUserType());
+		componentReview.setUserTimeCode(review.getUserTimeCode());
+		componentReview.setUserTypeCode(review.getUserTypeCode());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {
@@ -1604,7 +1622,6 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Removes all pros from the review associated with a specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/reviews/{reviewId}/pros")
@@ -1632,7 +1649,6 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Add a pro to the review associated with the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewPro.class)
@@ -1896,13 +1912,18 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentTracking.class)
+	@DataType(ComponentTrackingWrapper.class)
 	@Path("/{id}/tracking")
 	public Response getActiveComponentTracking(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		ComponentTracking trackingExample = new ComponentTracking();
 		trackingExample.setComponentId(componentId);
 		trackingExample.setActiveStatus(filterQueryParams.getStatus());

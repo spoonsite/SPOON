@@ -14,7 +14,6 @@
 * limitations under the License.
 */
 
-/*global MOCKDATA2*/
 
 'use strict';
 app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $http, $q) {
@@ -65,6 +64,140 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     save(name, value);
   };
 
+
+  /**
+  *  Loads the current user
+  */
+  var sendAdminMessage = function(messageObj) {
+    var deferred = $q.defer();
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    if (messageObj) {
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/service/notification/admin-message',
+        'data': messageObj
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (isNotRequestError(data)) {
+          deferred.resolve('The message was sent');
+        } else {
+          deferred.reject(data);
+        }
+      }, function(data, status, headers, config){
+        deferred.reject(false);
+      });
+    } else {
+      deferred.reject(false);
+    }
+
+    return deferred.promise;
+  };
+
+
+  /**
+  *  Loads the current user
+  */
+  var getAllUserProfiles = function(all, forceReload) {
+    var deferred = $q.defer();
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    var allUserProfiles;
+    if (all) {
+      allUserProfiles = checkExpire('all-allUserProfile', minute * 5);
+    } else {
+      allUserProfiles = checkExpire('allUserProfile', minute * 5);
+    }
+    if (allUserProfiles && !forceReload) {
+      deferred.resolve(allUserProfiles);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/userprofiles',
+        'params': {
+          'all': all
+        }
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          if (all) {
+            save('all-allUserProfile', data);
+          } else {
+            save('allUserProfile', data);
+          }
+          deferred.resolve(data);
+        } else {
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        deferred.reject('There was an error');
+      });
+    }
+
+    return deferred.promise;
+  };
+
+  /**
+  *  Loads the current user
+  */
+  var deactivateUser = function(userId) {
+    var deferred = $q.defer();
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    if (userId) {
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/userprofiles/'+userId,
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject('There was no userId')
+    }
+
+    return deferred.promise;
+  };
+
+  /**
+  *  Loads the current user
+  */
+  var activateUser = function(userId) {
+    var deferred = $q.defer();
+    // getting rid of caching here
+    // if we want to bring it back for the user profile delete this line
+    if (userId) {
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/resource/userprofiles/'+userId+'/reactivate',
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        console.log('reactivate data', data);
+        
+        if (data && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        console.log('reactivate error data', data);
+        
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject('There was no userId')
+    }
+
+    return deferred.promise;
+  };
 
   /**
   *  Loads the current user
@@ -121,7 +254,30 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   };
 
 
-
+  var sendTestEmail = function(userId) {
+    var deferred = $q.defer();
+    if (userId) {
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/userprofiles/'+ userId + '/test-email',
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        // console.log('data', data);
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject('It Failed');
+    }
+    return deferred.promise;
+  }
 
 
   /**
@@ -136,6 +292,11 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   var saveCurrentUserProfile = function(userProfile) { /*jshint unused:false*/
     return saveProfile(CURRENT_USER, userProfile);
   };
+
+
+  var saveThisProfile = function(profile){
+    return saveProfile(profile.username, profile);
+  }
 
   /**
   *  Save profile to the service and on success it reloads the profile
@@ -274,7 +435,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       var url = 'api/v1/resource/userprofiles/'+userId+'/watches/'+watchId;
       $http({
         'method': 'DELETE',
-        'url': url,
+        'url': url
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
@@ -297,10 +458,10 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   /**
   *
   */
-  var getReviews = function(username) {
+  var getReviews = function(username, override) {
     var deferred = $q.defer();
     var reviews = checkExpire('reviews'+username, minute * 0.5);
-    if (reviews) {
+    if (reviews && !override) {
       deferred.resolve(reviews);
     } else {
       $http({
@@ -323,17 +484,124 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
 
     return deferred.promise;
   };
+  
+  var getUserMessages = function(queryParamFilter) {
+    var deferred = $q.defer();
+    
+    $http({
+      'method': 'GET',
+      'url': 'api/v1/resource/usermessages?' + queryParamFilter.toQuery()
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      if (data && data !== 'false' && isNotRequestError(data)) {
+        removeError();          
+        deferred.resolve(data);
+      } else {
+        removeError();
+        triggerError(data);
+        deferred.reject('There was an error grabbing the usemessages');
+      }
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+    
+    return deferred.promise;
+  }; 
+  
+  var processUserMessagesNow = function() {
+    var deferred = $q.defer();
+    
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/resource/usermessages/processnow'
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);       
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+    
+    return deferred.promise;
+  }; 
+  
+  var cleanoldUserMessagesNow = function() {
+    var deferred = $q.defer();
+    
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/resource/usermessages/cleanold'
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);        
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+    
+    return deferred.promise;
+  };   
+  
+  var removeUserMessages = function(id) {
+    var deferred = $q.defer();
+    
+    $http({
+      'method': 'DELETE',
+      'url': 'api/v1/resource/usermessages/' + id
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+    
+    return deferred.promise;
+  };  
+
+  var getUserByUsername = function(username){
+    // console.log('user requested', username);
+    
+    var deferred = $q.defer();
+    var userInfo = checkExpire(username, minute * 1440);
+    if (userInfo) {
+      deferred.resolve(userInfo);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/userprofiles/' + username
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          save(username, data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject('There was an error grabbing the user profile');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    }
+
+    return deferred.promise;
+  }
 
   //Public API
   return {
+    deactivateUser:deactivateUser,
+    activateUser:activateUser,
     getCurrentUserProfile: getCurrentUserProfile,
-    saveCurrentUserProfile: saveCurrentUserProfile,
+    getUserByUsername:getUserByUsername,
+    getAllUserProfiles: getAllUserProfiles,
     getReviews: getReviews,
     getWatches: getWatches,
     initializeUser: initializeUser,
-    setWatches: setWatches,
+    removeWatch: removeWatch,
+    saveCurrentUserProfile: saveCurrentUserProfile,
+    saveThisProfile: saveThisProfile,
     saveWatch: saveWatch,
-    removeWatch: removeWatch
+    sendAdminMessage:sendAdminMessage,
+    sendTestEmail: sendTestEmail,
+    setWatches: setWatches,
+    getUserMessages: getUserMessages,
+    processUserMessagesNow: processUserMessagesNow,
+    cleanoldUserMessagesNow: cleanoldUserMessagesNow,
+    removeUserMessages: removeUserMessages
   };
 
 }]);

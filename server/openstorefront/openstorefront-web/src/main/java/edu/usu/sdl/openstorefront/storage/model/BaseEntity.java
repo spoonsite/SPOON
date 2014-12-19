@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.io.Serializable;
 import java.util.Date;
@@ -29,9 +30,10 @@ import org.apache.commons.lang3.StringUtils;
 /**
  *
  * @author dshurtleff
+ * @param <T>
  */
-public abstract class BaseEntity
-		implements Serializable
+public abstract class BaseEntity<T>
+		implements Serializable, Comparable<T>
 {
 
 	public static final String ACTIVE_STATUS = "A";
@@ -60,6 +62,20 @@ public abstract class BaseEntity
 
 	public BaseEntity()
 	{
+	}
+
+	@Override
+	public int compareTo(T o)
+	{
+		if (o != null) {
+			if (o instanceof BaseEntity) {
+				return ServiceUtil.compareObjects(getActiveStatus(), ((BaseEntity) o).getActiveStatus());
+			} else {
+				return -1;
+			}
+		} else {
+			return -1;
+		}
 	}
 
 	public void populateBaseUpdateFields()

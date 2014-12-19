@@ -49,7 +49,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<shiro.verison>1.2.3</shiro.verison>	
 		<jackson.verison>2.3.2</jackson.verison>	
-		<orientdb.verison>1.7.9</orientdb.verison>	
+		<orientdb.verison>1.7.10</orientdb.verison>	
 	</properties>
     
 	<dependencies>
@@ -114,7 +114,7 @@
 		<dependency>
 			<groupId>net.sourceforge.stripes</groupId>
 			<artifactId>stripes</artifactId>
-			<version>1.5.7</version>
+			<version>1.5.8</version>
 		</dependency>        
 		<dependency>
 			<groupId>com.servlets</groupId>
@@ -212,35 +212,35 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
-			<version>2.11</version>
+			<version>2.13</version>
 		</dependency>		
 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet-core</artifactId>
-			<version>2.11</version>
+			<version>2.13</version>
 		</dependency>		
 
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-server</artifactId>
-			<version>2.11</version>
+			<version>2.13</version>
 		</dependency>
 				  		  
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-common</artifactId>
-			<version>2.11</version>
+			<version>2.13</version>
 		</dependency>				
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>2.11</version>
+			<version>2.13</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-moxy</artifactId>
-			<version>2.11</version>
+			<version>2.13</version>
 		</dependency>		
 		<!--
 		<dependency>
@@ -257,7 +257,7 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-multipart</artifactId>
-			<version>2.11</version>			
+			<version>2.13</version>			
 		</dependency>		
 		
 		<dependency>
@@ -287,6 +287,7 @@
 			<artifactId>shiro-web</artifactId>
 			<version>${shiro.verison}</version>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.owasp.esapi</groupId>
 			<artifactId>esapi</artifactId>
@@ -303,11 +304,45 @@
 			<artifactId>antisamy</artifactId>
 			<version>1.5.3</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>net.redhogs.cronparser</groupId>
 			<artifactId>cron-parser</artifactId>
 			<version>2.5</version>
 			<type>jar</type>
+		</dependency>
+		<!--		
+		 <dependency>
+			 <groupId>com.sun.mail</groupId>
+			 <artifactId>javax.mail</artifactId>
+			 <version>1.5.2</version>
+			 <type>jar</type>
+		 </dependency>
+		 -->
+		<dependency>
+			<groupId>org.codemonkey.simplejavamail</groupId>
+			<artifactId>simple-java-mail</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.moxy</artifactId>
+			<version>2.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.core</artifactId>
+			<version>2.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.asm</artifactId>
+			<version>2.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.antlr</artifactId>
+			<version>2.5.2</version>
 		</dependency>
 	</dependencies>
 
@@ -372,6 +407,37 @@
 									<type>jar</type>
 								</artifactItem>
 							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>default-cli</id> 
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+																							
+								<copy  todir="../../../client/openstorefront/app/scripts">
+									<fileset dir="src/main/webapp/scripts" >
+										<include name="**/*" />
+									</fileset>
+								</copy>
+								<copy  todir="../../../client/openstorefront/app/views">
+									<fileset dir="src/main/webapp//views">
+										<include name="**/*" />
+									</fileset>
+								</copy>								
+														
+							</target>
 						</configuration>
 					</execution>
 				</executions>

@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,7 +32,7 @@ public class ArticleTracking
 		extends BaseEntity
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String articleTrackingId;
 
@@ -56,6 +57,50 @@ public class ArticleTracking
 
 	public ArticleTracking()
 	{
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 5;
+		hash = 67 * hash + Objects.hashCode(this.articleTrackingId);
+		hash = 67 * hash + Objects.hashCode(this.attributeType);
+		hash = 67 * hash + Objects.hashCode(this.attributeCode);
+		hash = 67 * hash + Objects.hashCode(this.trackEventTypeCode);
+		hash = 67 * hash + Objects.hashCode(this.eventDts);
+		hash = 67 * hash + Objects.hashCode(this.clientIp);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ArticleTracking other = (ArticleTracking) obj;
+		if (!Objects.equals(this.articleTrackingId, other.articleTrackingId)) {
+			return false;
+		}
+		if (!Objects.equals(this.attributeType, other.attributeType)) {
+			return false;
+		}
+		if (!Objects.equals(this.attributeCode, other.attributeCode)) {
+			return false;
+		}
+		if (!Objects.equals(this.trackEventTypeCode, other.trackEventTypeCode)) {
+			return false;
+		}
+		if (!Objects.equals(this.eventDts, other.eventDts)) {
+			return false;
+		}
+		if (!Objects.equals(this.clientIp, other.clientIp)) {
+			return false;
+		}
+		return true;
 	}
 
 	public String getTrackEventTypeCode()

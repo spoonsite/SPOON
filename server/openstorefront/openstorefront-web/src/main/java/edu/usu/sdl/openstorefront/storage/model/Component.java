@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -31,10 +32,10 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class Component
-		extends BaseEntity
+		extends BaseEntity<Component>
 {
 
-	@PK
+	@PK(generated = true)
 	@NotNull
 	private String componentId;
 
@@ -92,6 +93,24 @@ public class Component
 
 	public Component()
 	{
+	}
+
+	@Override
+	public int compareTo(Component o)
+	{
+		int value = super.compareTo(o);
+
+		if (value == 0) {
+			value = ServiceUtil.compareConsumeFields(this, o);
+		}
+		if (value == 0) {
+			value = ServiceUtil.compareObjects(this.getApprovedUser(), o.getApprovedUser());
+		}
+		if (value == 0) {
+			value = ServiceUtil.compareObjects(this.getApprovedDts(), o.getApprovedDts());
+		}
+
+		return value;
 	}
 
 	public String getName()

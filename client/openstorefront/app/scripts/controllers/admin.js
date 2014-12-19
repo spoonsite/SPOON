@@ -29,7 +29,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   $scope.incLoc = '';
   $scope.saveContent = '';
   $scope.editedTopic = 'Types';
-  $scope.toolTitle = 'idAM Landing Page';
+  $scope.toolTitle = 'Admin Tools';
 
   Business.getFilters().then(function(result) {
     if (result) {
@@ -225,7 +225,13 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     };
 
 
-    $scope.data.push({'label': 'Configuration Management', 'location':'views/admin/configuration/default.html', 'toolTitle': 'Configuration Management', 'key': 'configuration' });
+    $scope.data.push({'label': 'Integration Management', 'location':'views/admin/configuration/default.html', 'toolTitle': 'Integration Management', 'key': 'integration' });
+    
+    $scope.data.push({'label': 'User Profiles', 'location':'views/admin/manageUserProfiles.html', 'toolTitle': 'User Profile Management', 'key': 'USER_PROFILE' });
+    $scope.data.push({'label': 'User Messages', 'location':'views/admin/manageUserMessages.html', 'toolTitle': 'User Message Management', 'key': 'USER_MESSAGE' });
+    $scope.data.push({'label': 'Jobs', 'location':'views/admin/manageJobs.html', 'toolTitle': 'Job Management', 'key': 'JOBS' });
+    $scope.data.push({'label': 'System', 'location':'views/admin/manageSystem.html', 'toolTitle': 'System Management', 'key': 'SYSTEM' });
+    
     // $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });
     // $scope.data.push(attributes);
     // $scope.data.push(lookupTables);

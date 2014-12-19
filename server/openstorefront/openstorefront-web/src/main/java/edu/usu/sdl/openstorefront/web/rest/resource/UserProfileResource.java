@@ -45,12 +45,14 @@ import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -71,9 +73,12 @@ public class UserProfileResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
-	public List<UserProfileView> userProfiles()
+	public List<UserProfileView> userProfiles(
+			@QueryParam("all")
+			@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
+			@DefaultValue("false") boolean all)
 	{
-		return UserProfileView.toViewList(service.getUserService().getAllProfiles());
+		return UserProfileView.toViewList(service.getUserService().getAllProfiles(all));
 	}
 
 	@GET
@@ -100,7 +105,7 @@ public class UserProfileResource
 	@DataType(UserProfileView.class)
 	@Path("/{id}")
 	public UserProfileView userProfile(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId)
 	{
 		UserProfileView userProfileView = null;
@@ -146,12 +151,11 @@ public class UserProfileResource
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	public Response updateProile(
-			@PathParam("id")
+	public Response updateProfile(
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@RequiredParam UserProfile inputProfile)
 	{
-		inputProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		inputProfile.setUsername(userId);
 		ValidationModel validationModel = new ValidationModel(inputProfile);
 		validationModel.setConsumeFieldsOnly(true);
@@ -162,6 +166,47 @@ public class UserProfileResource
 		return Response.ok(validationResult.toRestError()).build();
 	}
 
+	@DELETE
+	@APIDescription("Inactivates a user profile.  Note: if the user logs in their profile will be reactivated.")
+	@RequireAdmin
+	@Path("/{username}")
+	public void deleteUserProfile(
+			@PathParam("username")
+			@RequiredParam String username)
+	{
+		service.getUserService().deleteProfile(username);
+	}
+
+	@PUT
+	@APIDescription("Reactives a user profile.")
+	@RequireAdmin
+	@Path("/{username}/reactivate")
+	public Response reactivateUserProfile(
+			@PathParam("username")
+			@RequiredParam String username)
+	{
+		Response response = Response.ok().build();
+		UserProfile userProfile = service.getPersistenceService().findById(UserProfile.class, username);
+		if (userProfile != null) {
+			service.getUserService().reactiveProfile(username);
+		} else {
+			response = Response.status(Response.Status.NOT_FOUND).build();
+		}
+		return response;
+	}
+
+	@POST
+	@APIDescription("Sends test email to user id")
+	@RequireAdmin(UserProfileRequireHandler.class)
+	@Path("/{id}/test-email")
+	public Response sendTestEmail(
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username
+	)
+	{
+		service.getUserService().sendTestEmail(username);
+		return Response.ok().build();
+	}
+
 	@GET
 	@APIDescription("Retrieves Active User Watches.")
 	@RequireAdmin(UserProfileRequireHandler.class)
@@ -169,7 +214,7 @@ public class UserProfileResource
 	@Path("/{id}/watches")
 	@DataType(UserWatchView.class)
 	public List<UserWatchView> getWatches(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId)
 	{
 		List<UserWatch> watches = service.getUserService().getWatches(userId);
@@ -188,7 +233,7 @@ public class UserProfileResource
 	@DataType(UserWatchView.class)
 	@Path("/{id}/watches/{watchId}")
 	public UserWatchView getWatch(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId)
@@ -204,7 +249,7 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches")
 	public Response addWatch(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@RequiredParam UserWatch userWatch)
 	{
@@ -238,7 +283,7 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId,
@@ -274,7 +319,7 @@ public class UserProfileResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("watchId")
 			@RequiredParam String watchId)
@@ -288,13 +333,18 @@ public class UserProfileResource
 	@RequireAdmin
 	@APIDescription("Gets the list of tracking details on a specified user. Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(UserTracking.class)
+	@DataType(UserTrackingWrapper.class)
 	@Path("/{id}/tracking")
 	public Response getComponentTracking(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		UserTracking userTrackingExample = new UserTracking();
 		userTrackingExample.setCreateUser(userId);
 		userTrackingExample.setActiveStatus(filterQueryParams.getStatus());
@@ -354,7 +404,7 @@ public class UserProfileResource
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
 	public Response addComponentTracking(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@RequiredParam UserTracking tracking)
 	{
@@ -369,7 +419,7 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
 	public Response updateComponentTracking(
-			@PathParam("id")
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("trackingId")
 			@RequiredParam String trackingId,

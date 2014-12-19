@@ -16,8 +16,6 @@
 
 'use strict';
 
-/*global MOCKDATA2*/
-
 app.controller('Svc4ArchDiagramController', ['$scope', 'business', function($scope, Business) {
 
   $scope.svcv4Mode = false;

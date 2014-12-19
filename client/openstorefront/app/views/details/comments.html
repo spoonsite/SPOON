@@ -16,6 +16,9 @@
           <button title="Delete" class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" ng-click="deleteQuestion(item.questionId)">
             <i class="fa fa-trash"></i>
           </button>
+          <button title="Message User" class="btn btn-sm btn-default" ng-if="user.info.admin === true" ng-click="messageUser(item)">
+            <i class="fa fa-envelope"></i>
+          </button>
         </div>
         <div ng-if="item.edit" style="position: relative">
           <question component-id="details.details.componentId" question-id="item.questionId" question="{{item.question}}" user-type-code="{{item.userTypeCode}}" organization="{{item.organization}}"></question>
@@ -30,7 +33,9 @@
           <div ng-if="!answer.edit">
             <div style="width: 20px; margin-right: -20px; clear: both; float: left;" class="qaLabel">A.</div> 
             <div style="display:block; margin-left: 10px; padding: 6px 10px 10px 14px; float: left;">
-              <strong>{{answer.response}}</strong>&nbsp;<small>{{answer.username}}&nbsp;({{answer.userType}})&nbsp;&mdash;&nbsp;{{getDate(answer.answeredDate)}}</small>&nbsp;&nbsp;<button class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" title="Edit" ng-click="answer.edit = true"><i class="fa fa-edit"></i></button><button title="Delete" class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" ng-click="deleteResponse(answer.responseId, item.questionId)"><i class="fa fa-trash"></i></button>
+              <strong>{{answer.response}}</strong>&nbsp;<small>{{answer.username}}&nbsp;({{answer.userType}})&nbsp;&mdash;&nbsp;{{getDate(answer.answeredDate)}}</small>&nbsp;&nbsp;<button class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" title="Edit" ng-click="answer.edit = true"><i class="fa fa-edit"></i></button><button title="Delete" class="btn btn-sm btn-default" ng-if="item.username === user.info.username || user.info.admin === true" ng-click="deleteResponse(answer.responseId, item.questionId)"><i class="fa fa-trash"></i></button><button title="Message User" class="btn btn-sm btn-default" ng-if="user.info.admin === true" ng-click="messageUser(item)">
+            <i class="fa fa-envelope"></i>
+          </button>
             </div>
           </div>
           <div ng-if="answer.edit" style="position: relative">

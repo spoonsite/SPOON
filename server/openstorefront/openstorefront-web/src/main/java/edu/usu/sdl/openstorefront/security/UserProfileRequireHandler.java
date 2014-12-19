@@ -29,11 +29,13 @@ public class UserProfileRequireHandler
 		implements CustomRequireHandler
 {
 
+	public static final String USERNAME_ID_PARAM = "id";
+
 	@Override
 	public boolean requireAdminCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext)
 	{
 		boolean doAdminCheck = true;
-		String useridPassIn = requestContext.getUriInfo().getPathParameters().getFirst("id");
+		String useridPassIn = requestContext.getUriInfo().getPathParameters().getFirst(USERNAME_ID_PARAM);
 		if (SecurityUtil.getCurrentUserName().equals(useridPassIn)) {
 			doAdminCheck = false;
 		}
