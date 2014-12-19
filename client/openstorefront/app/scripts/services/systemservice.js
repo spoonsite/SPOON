@@ -91,14 +91,30 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
       });
     
     return deferred.promise;
-  };   
+  };  
+  
+  var getAppVersion = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'System.action?AppVersion'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };
     
   return {
       getErrorTickets: getErrorTickets,
       resetIndexer: resetIndexer,
       getErrorTicketInfo: getErrorTicketInfo,
       sendRecentChangesEmail: sendRecentChangesEmail,
-      getRecentChangeStatus: getRecentChangeStatus
+      getRecentChangeStatus: getRecentChangeStatus,
+      getAppVersion: getAppVersion
   };
     
 }]);

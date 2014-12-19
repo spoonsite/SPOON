@@ -21,6 +21,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
@@ -85,6 +86,12 @@ public class PropertiesManager
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
+	public static String getApplicationVersion()
+	{
+		String key = "app.version";
+		return getValue(key);
+	}
+
 	public static String getValue(String key)
 	{
 		return getProperties().getProperty(key);
@@ -131,6 +138,14 @@ public class PropertiesManager
 			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
 				properties = new Properties();
 				properties.load(bin);
+			} catch (IOException e) {
+				throw new OpenStorefrontRuntimeException(e);
+			}
+
+			try (InputStream in = FileSystemManager.getApplicatioResourceFile("/filter/version.properties")) {
+				Properties versionProperties = new Properties();
+				versionProperties.load(in);
+				properties.putAll(versionProperties);
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException(e);
 			}
