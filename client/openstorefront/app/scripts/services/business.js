@@ -82,10 +82,10 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     return deferred.promise;
   };
 
-  business.getFilters = function() {
+  business.getFilters = function(override) {
     var deferred = $q.defer();
     var filters = checkExpire('filters', minute * 1440);
-    if (filters) {
+    if (filters && !override) {
       deferred.resolve(filters);
     } else {
       $http({

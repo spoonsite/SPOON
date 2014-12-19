@@ -1,12 +1,11 @@
 <!-- First make the selection for which attributes can be edited -->
-<div ng-controller="AdminEditcodesCtrl">
-  <label for="collection">Attribute Codes to edit:</label>
-  <select class="form-control" name="collection" id="collection" ng-model="collectionSelection" ng-change="grabCollection(collectionSelection.key)" ng-options="item.name for item in collection" style="width: auto; border-radius:0px;" >
-    <option value="">-- Choose an Attribute --</option>
-  </select>
+<!-- <label for="collection">Attribute Codes to edit:</label>
+<select class="form-control" name="collection" id="collection" ng-model="collectionSelection" ng-change="grabCollection(collectionSelection.key)" ng-options="item.name for item in collection" style="width: auto; border-radius:0px;" >
+  <option value="">-- Choose an Attribute --</option>
+</select> -->
 
-  <!-- Then when the selection has been made, put the content here to be edited -->
-  <!-- List the attributes in a table and provide the information to edit -->
-  <div class="gridStyle" ng-grid="gridOptions">
-  </div>
-</div>
+<!-- Then when the selection has been made, put the content here to be edited -->
+<!-- List the attributes in a table and provide the information to edit -->
+<!-- <div class="gridStyle" ng-grid="gridOptions">
+</div> -->
+{{type}}
