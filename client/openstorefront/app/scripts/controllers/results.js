@@ -195,6 +195,32 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     return deferred.promise;
   };
 
+  var setupFilters = function() {
+    $timeout(function(){
+      Business.getFilters().then(function(result) {
+        if (result) {
+          result = _.sortBy(result, function(item){
+            return item.description;
+          });
+          $scope.filters = angular.copy(result);
+        } else {
+          $scope.filters = null;
+        }
+        setupResults();      
+        var architecture = null;
+
+        if ($scope.searchKey === 'attribute') {
+          if ($scope.searchCode.type) {
+            var filter = _.find($scope.filters, {'type': $scope.searchCode.type});
+            if (filter){
+              architecture = filter.architectureFlg;
+            }
+          }
+        }
+        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
+      });
+    })
+  };
   /***************************************************************
   * This function is called once we have the search request from the business layer
   * The order and manner in which we do this call will most likely change once
@@ -212,71 +238,49 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       $scope.searchKey        = 'search';
       $scope.searchCode       = '';
     }
-    Business.getFilters().then(function(result) {
-      if (result) {
-        $scope.filters = result;
-        $scope.filters = angular.copy($scope.filters);
-        $scope.filters = _.sortBy($scope.filters, function(item){
-          return item.description;
-        });
+    var architecture = false;
+    Business.componentservice.doSearch($scope.searchKey, $scope.searchCode, architecture).then(function(result) {
+      if (result && result.data && result.data.length > 0)
+      {
+        $scope.total = result.data || [];
       } else {
-        $scope.filters = null;
+        $scope.total = [];
       }
-      setupResults();      
-      var architecture = null;
+      $scope.filteredTotal = $scope.total;
 
-      if ($scope.searchKey === 'attribute') {
-        if ($scope.searchCode.type) {
-          var filter = _.find($scope.filters, {'type': $scope.searchCode.type});
-          if (filter){
-            architecture = filter.architectureFlg;
-          }
-        }
-      }
-
-      Business.componentservice.doSearch($scope.searchKey, $scope.searchCode, architecture).then(function(result) {
-        if (result && result.data && result.data.length > 0)
-        {
-          $scope.total = result.data || [];
+      /*Simulate wait for the filters*/
+      /*This is simulating the wait time for building the data so that we get a loader*/
+      $scope.data.data = $scope.total;
+      _.each($scope.data.data, function(item){
+        if (item.description !== null && item.description !== undefined && item.description !== '') {
+          var desc = item.description.match(/^(.*?)[.?!]\s/);
+          item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
         } else {
-          $scope.total = [];
+          item.shortdescription = 'This is a temporary short description';
         }
-        $scope.filteredTotal = $scope.total;
-
-        /*Simulate wait for the filters*/
-        /*This is simulating the wait time for building the data so that we get a loader*/
-        $scope.data.data = $scope.total;
-        _.each($scope.data.data, function(item){
-          if (item.description !== null && item.description !== undefined && item.description !== '') {
-            var desc = item.description.match(/^(.*?)[.?!]\s/);
-            item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
-          } else {
-            item.shortdescription = 'This is a temporary short description';
-          }
-        });
-        $scope.setupData();
-        // var end = new Date().getTime();
-        // var time = end - start;
-        // console.log('Total Execution time ****: ' + time);
-        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-        $scope.initializeData(key);
-        adjustFilters();
-      }, function(result){
-        if (result && result.data && result.data.length > 0)
-        {
-          $scope.total = result.data || [];
-        } else {
-          $scope.total = [];
-        }
-        $scope.data.data = $scope.total;
-        $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
-        $scope.$emit('$TRIGGERUNLOAD', 'filtersLoad');
-        $scope.initializeData(key);
-        $scope.showMessage = true;
-        $scope.setupData();
       });
-});
+      $scope.setupData();
+      setupFilters();
+      // var end = new Date().getTime();
+      // var time = end - start;
+      // console.log('Total Execution time ****: ' + time);
+      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+      $scope.initializeData(key);
+      adjustFilters();
+    }, function(result){
+      if (result && result.data && result.data.length > 0)
+      {
+        $scope.total = result.data || [];
+      } else {
+        $scope.total = [];
+      }
+      $scope.data.data = $scope.total;
+      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+      $scope.initializeData(key);
+      $scope.showMessage = true;
+      $scope.setupData();
+      setupFilters();
+    });
   }; //
 
 
@@ -323,9 +327,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all' && foundFilter && foundCollection) {
-          $scope.filters = _.reject($scope.filters, function(filter) {
-            return filter.type === foundFilter.type;
-          });
+          var index = _.indexOf($scope.filters, foundFilter);
+          if (index){
+            $scope.filters.splice(index, 1);
+          }
           $scope.searchColItem      = foundCollection;
           $scope.searchTitle        = foundFilter.description + ', ' + foundCollection.label;
           $scope.modal.modalTitle   = foundFilter.description + ', ' + foundCollection.label;
@@ -458,9 +463,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   var adjustFilters = function() {
     if ($scope.searchGroup[0].key) {
-      $scope.filters = _.reject($scope.filters, function(item) {
-        return item.key === $scope.searchGroup[0].key;
-      });
+      var temp = _.find($scope.filters, {'key': $scope.searchGroup[0].key});
+      if (temp){
+        var index = _.indexOf($scope.filters, temp);
+        if (index){
+          $scope.filters.splice(index, 1);
+        }
+      }
     }
     $scope.resetFilters = JSON.parse(JSON.stringify($scope.filters));
   };
