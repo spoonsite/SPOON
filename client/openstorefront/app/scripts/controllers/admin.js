@@ -195,8 +195,8 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     attributes.key = 'attributes';
     attributes.parentKey = null;
     attributes.data = $scope.filters;
-    attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
-    attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
+    // attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
+    // attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
 
     var lookupTables = {
       label: 'Manage Lookups',
@@ -233,10 +233,11 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     $scope.data.push({'label': 'System', 'location':'views/admin/manageSystem.html', 'toolTitle': 'System Management', 'key': 'SYSTEM' });
     
     // $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });
-    // $scope.data.push(attributes);
+    $scope.data.push(attributes);
+    $scope.data.push({'label':'Manage Articles', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Articles', 'key': 'landing'});
+    $scope.data.push({'label': 'Manage Components', 'location':'views/admin/editcomponents.html', 'toolTitle': 'Manage Components', 'key': 'components' });
     // $scope.data.push(lookupTables);
 
-    // $scope.data.push({'label': 'Manage Components', 'location':'views/admin/editcomponents.html', 'toolTitle': 'Manage Components', 'key': 'components' });
     // $scope.data.push({'label': 'Manage Branding', 'location': 'views/admin/editbranding.html', 'toolTitle': 'Manage Branding', 'key': 'branding' });
   }());
 

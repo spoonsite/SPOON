@@ -47,7 +47,7 @@ public class AttributeTypeView
 	private boolean importantFlg;
 
 	@NotNull
-	private boolean allowMutlipleFlg;
+	private boolean allowMultipleFlg;
 
 	@DataType(AttributeCodeView.class)
 	private List<AttributeCodeView> codes = new ArrayList<>();
@@ -60,7 +60,7 @@ public class AttributeTypeView
 	{
 		AttributeTypeView attributeTypeView = new AttributeTypeView();
 		attributeTypeView.setType(attributeType.getAttributeType());
-		attributeTypeView.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
+		attributeTypeView.setAllowMultipleFlg(attributeType.getAllowMutlipleFlg());
 		attributeTypeView.setArchitectureFlg(attributeType.getArchitectureFlg());
 		attributeTypeView.setDescription(attributeType.getDescription());
 		attributeTypeView.setImportantFlg(attributeType.getImportantFlg());
@@ -140,14 +140,18 @@ public class AttributeTypeView
 		this.importantFlg = importantFlg;
 	}
 
-	public boolean isAllowMutlipleFlg()
+	public boolean getAllowMultipleFlg() {
+		return allowMultipleFlg;
+	}
+	
+	public boolean isAllowMultipleFlg()
 	{
-		return allowMutlipleFlg;
+		return allowMultipleFlg;
 	}
 
-	public void setAllowMutlipleFlg(boolean allowMutlipleFlg)
+	public void setAllowMultipleFlg(boolean allowMultipleFlg)
 	{
-		this.allowMutlipleFlg = allowMutlipleFlg;
+		this.allowMultipleFlg = allowMultipleFlg;
 	}
 
 }
