@@ -90,7 +90,7 @@ public class AttributeImport
 								attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 								attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 								attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
-								attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
+								attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
 								
 
 								attributeMap.put(type, attributeTypeView);
@@ -156,7 +156,7 @@ public class AttributeImport
 				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
-				attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
+				attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
 				
 								
 				List<String[]> allLines = reader.readAll();
@@ -219,7 +219,7 @@ public class AttributeImport
 				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
-				attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
+				attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
 				
 				for (int i=2; i<lines.size(); i++)				
 				{
@@ -283,7 +283,7 @@ public class AttributeImport
 				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
-				attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
+				attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
 				
 				for (int i=2; i<lines.size(); i++)				
 				{
@@ -342,7 +342,7 @@ public class AttributeImport
 				attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
-				attributeTypeView.setAllowMutlipleFlg(Convert.toBoolean(data[6].trim()));
+				attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
 				
 				for (int i=2; i<lines.size(); i++)				
 				{

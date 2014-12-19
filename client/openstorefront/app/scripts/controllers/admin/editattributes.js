@@ -16,41 +16,45 @@
 
 'use strict';
 
-app.controller('AdminEditattributesCtrl',['$scope','business',  function ($scope, Business) {
-  Business.getFilters().then(function(result){
-    if (result) {
-      $scope.filters = angular.copy(result);
+app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', function ($scope, Business, $uiModal) {
+  $scope.predicate = 'description';
+  $scope.reverse = false;
+  $scope.getFilters = function(override) {
+    Business.getFilters(override).then(function(result){
+      console.log('result', result);
+      $scope.filters = result? angular.copy(result): [];
+    }, function(){
+      $scope.filters = [];
+    });
+  }
+  $scope.getFilters(false);
+
+  $scope.setPredicate = function(predicate){
+    if ($scope.predicate === predicate){
+      $scope.reverse = !$scope.reverse;
     } else {
-      $scope.filters = null;
+      $scope.predicate = predicate;
+      $scope.reverse = false;
     }
-  });
+  }
 
-  $scope.gridOptions = {
-    data: 'filters',
-    enableCellSelection: true,
-    enableRowSelection: true,
-    enableCellEdit: true,
-    multiSelect: true,
-    selectWithCheckboxOnly: true,
-    showSelectionCheckbox: true,
-    // showGroupPanel: true,
-    columnDefs: [
-      //
-      {field: 'description', displayName: 'Name', enableCellEdit: true},
-      {field: 'type', displayName: 'Code', maxWidth: 150, enableCellEdit: true},
-      {field: 'visibleFlg', displayName: 'Visible Flag', enableCellEdit: true},
-      {field: 'requiredFlg', displayName: 'Required Flag', enableCellEdit: true},
-      {field: 'architectureFlg', displayName: 'Architecture Flag', enableCellEdit: true},
-      {field: 'importantFlg', displayName: 'Important Flag', enableCellEdit: true},
-      {field: 'allowMutlipleFlg', displayName: 'Allow Multiple Flag', enableCellEdit: true},
-      {field: 'type', displayName: 'Codes', maxWidth: 150, cellTemplate: '<div class="ngCellText" ng-click="editCollection(row.getProperty(col.field))"><a>Edit Code Collection</a></div>', enableCellEdit: false, groupable: false, sortable: false}
-    //
-    ]
-  };
+  $scope.editType = function(type){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/editcodes.html',
+      controller: 'AdminEditcodesCtrl',
+      size: 'sm',
+      resolve: {
+        type: function () {
+          return type;
+        }
+      }
+    });
 
-  // $scope.$watch('filters', function() {
-  //   // This is where we know something changed on the model for the collection that
-  //   // The user was editing. (Useful for inline editing, possibly useful for modal editing as well.)
-  //   // console.log('Checks', $scope.collectionContent[0].longDesc);
-  // }, true);
+    modalInstance.result.then(function (result) {
+      //do something
+      triggerAlert('Your edits were saved', 'editUserProfile', 'body', 6000);
+    }, function () {
+      // cancled or failed
+    });
+  }
 }]);
