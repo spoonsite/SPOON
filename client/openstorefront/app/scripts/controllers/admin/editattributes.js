@@ -29,12 +29,12 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', funct
   }
   $scope.getFilters(false);
 
-  $scope.setPredicate = function(predicate){
+  $scope.setPredicate = function(predicate, override){
     if ($scope.predicate === predicate){
       $scope.reverse = !$scope.reverse;
     } else {
       $scope.predicate = predicate;
-      $scope.reverse = false;
+      $scope.reverse = !!override;
     }
   }
 
