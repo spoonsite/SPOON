@@ -38,6 +38,10 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', funct
     }
   }
 
+  $scope.deleteAttribute = function(filter){
+    console.log('Deleted filter', filter);
+  }
+
   $scope.editType = function(type){
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editcodes.html',
