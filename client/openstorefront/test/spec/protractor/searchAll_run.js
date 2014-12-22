@@ -16,7 +16,7 @@
 describe('searchAll_Search entire database', function() {
 
     // *** varies, depending on what is in the sample database ***
-    var totalResults = 58; // No articles
+    var totalResults = 59; // Article present
 
     it('Global search (all blank) returns ' + totalResults + ' expected current db results', function() {
         // Open the main site
@@ -60,7 +60,7 @@ describe('searchAll_Search entire database', function() {
     it('Global search for TH(qm)(qm)r returned ' + resNum4 + ' expected results. ', function () {
         searchAll(searchFor4, resNum4);
     }, 20000);
-    searchFor5 = 't*i?';    resNum5 = 44;
+    searchFor5 = 't*i?';    resNum5 = 46;
     it('Global search for t(star)i(qm) returned ' + resNum5 + ' expected results. ', function () {
         searchAll(searchFor5, resNum5);
     }, 20000);

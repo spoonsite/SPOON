@@ -15,6 +15,7 @@
 
 'use strict';
 
+// Will change for v1.3 to ClearingHouse?
 var pageTitle = 'DI2E Storefront';
 
 describe('title__Page Title', function() {
