@@ -28,6 +28,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.goToLand   = false;
   $scope.searchKey  = $rootScope.searchKey;
   $scope.openAdminMessage = $rootScope.openAdminMessage;
+  $scope.appverison = '';
 
 
   // $scope.type = 'group';
@@ -42,9 +43,10 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   //   var newList = result;
   //   $scope.contacts = newList;
   // })
-
-
-
+  
+  Business.systemservice.getAppVersion().then(function(result){
+    $scope.appverison = result;
+  });
 
   Business.getFilters().then(function(result){
     if (result) {

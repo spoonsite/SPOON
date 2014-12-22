@@ -123,6 +123,25 @@ public class FileSystemManager
 	}
 
 	/**
+	 * Gets a resource from the application war
+	 *
+	 * @param resource
+	 * @return inputstream to resource (It's up to the caller to close the
+	 * stream)
+	 */
+	public static InputStream getApplicatioResourceFile(String resource)
+	{
+		InputStream in = null;
+		URL resourceUrl = new FileSystemManager().getClass().getResource(resource);
+		if (resourceUrl != null) {
+			in = new FileSystemManager().getClass().getResourceAsStream(resource);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find internal resource file: " + resource, "This likely a programming issue or an issue with the environment.");
+		}
+		return in;
+	}
+
+	/**
 	 * copy from input to output Note: it doesn't close either stream
 	 *
 	 * @param source

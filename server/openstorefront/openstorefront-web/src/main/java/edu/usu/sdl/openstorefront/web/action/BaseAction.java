@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.viewmodel.JsonFormLoad;
 import edu.usu.sdl.openstorefront.web.viewmodel.JsonResponse;
@@ -38,6 +39,7 @@ import net.sourceforge.stripes.validation.ValidationErrors;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
+ * Base Action Handler
  *
  * @author dshurtleff
  */
@@ -53,6 +55,18 @@ public abstract class BaseAction
 	protected String projectId;
 
 	protected final ServiceProxy service = new ServiceProxy();
+
+	private String applicationVersion;
+
+	public String getApplicationVersion()
+	{
+		return PropertiesManager.getApplicationVersion();
+	}
+
+	public void setApplicationVersion(String applicationVersion)
+	{
+		this.applicationVersion = applicationVersion;
+	}
 
 	protected void mapFields(Map<String, Object> fields, Object data, String propertyRoot)
 	{

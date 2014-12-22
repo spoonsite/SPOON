@@ -27,7 +27,7 @@ limitations under the License.
 	</head>
 	<body>
 		<header class="header">
-			<span class="api-title">Open Storefront API v1.2</span>
+			<span class="api-title">Open Storefront API <span id="appverison"></span></span>
 		</header>
 		
 		<div class="api-guide">
@@ -125,6 +125,8 @@ limitations under the License.
 						$('#apidocId').load('../API.action?Page&page=intro');
 					}					
 				};
+				
+				$('#appverison').load('../System.action?AppVersion');
 			});
 			
 		</script>
