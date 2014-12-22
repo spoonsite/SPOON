@@ -33,7 +33,7 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
 
     it('click on the FOOTER links, columns 1-4, all links below them', function() {
         // Footer has columns 1, 2, 3, 4.  Column li's are zero-based.
-        browser.get(theSite, 35000);
+        browser.get(theSite, 15000);
         browser.driver.sleep(350);
         element.all(by.css('.column li')).get(0).click();
         browser.driver.navigate().back();
@@ -69,7 +69,7 @@ describe('homepageLinksClicked Click Highlights and Footer Links on Storefront H
         browser.driver.sleep(750);
         // Turn Angular sync back on!
         browser.ignoreSyncronization = false;
-        browser.get(theSite, 35000);
-    }, 35000);
+        browser.get(theSite, 15000);
+    }, 59000);
 
  });

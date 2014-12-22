@@ -77,7 +77,7 @@ describe('reviews_Q-n-A', function() {
     browser.driver.sleep(5000);
 
     // Answer Question
-    element.all(by.css('.btn.btn-sm.btn-default')).get(0).click();
+    element.all(by.css('[class="btn btn-sm btn-default flipme collapsed"]')).get(0).click();
     browser.driver.sleep(2000);
 
     element(by.id('1response')).sendKeys('Just like me, they long to be, close to you.  Whoooaaaooaoaoa, close to you!',
@@ -89,7 +89,7 @@ describe('reviews_Q-n-A', function() {
     browser.driver.sleep(5000);
 
     // Delete
-    element.all(by.css('.btn.btn-sm.btn-default')).get(2).click();
+    element.all(by.css('.fa.fa-trash')).get(0).click();
     browser.driver.sleep(5000);
 
   }, 35000);
