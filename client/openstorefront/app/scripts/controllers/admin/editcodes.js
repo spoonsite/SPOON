@@ -89,6 +89,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
     timer = setTimeout(function(){
       // console.log('scope.check.windowSize', $scope.check.windowSize);
       $scope.windowSize = $scope.check.windowSize;
+      $scope.$apply();
     }, 500);
   }
   $scope.applyPage = function() {
@@ -96,6 +97,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
     timer = setTimeout(function(){
       // console.log('scope.check.pageNumber', $scope.check.pageNumber);
       $scope.pageNumber = $scope.check.pageNumber;
+      $scope.$apply();
     }, 500);
   }
 
@@ -138,17 +140,14 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
 
 
 app.filter('pageme', function () {
-  return _.memoize(function(arr, current, distance) {
-    console.log('current', current);
-    console.log('distance', distance);
-    
+  return _.memoize(function(arr, current, distance, predicate, reverse) {
     // if we don't have an array to search return...
     if (!arr) { return; }
     
     // otherwise find our sub array
     var newArr = angular.copy(arr.slice(current, (current + distance)));
     return newArr;
-  }, function(arr, current, distance){
-    return current + distance;
+  }, function(arr, current, distance, predicate, reverse){
+    return current + distance + predicate + reverse;
   });
 });
