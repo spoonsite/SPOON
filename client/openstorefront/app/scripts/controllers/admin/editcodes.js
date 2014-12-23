@@ -16,48 +16,87 @@
 
 'use strict';
 
-app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'size', 'business', function ($scope, $uiModalInstance, type, size, Business) {
+app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'size', 'business', '$timeout', function ($scope, $uiModalInstance, type, size, Business, $timeout) {
   $scope.type = type;
   $scope.size = size;
   $scope.predicate = 'activeStatus';
+  $scope.check = {};
   $scope.reverse = false;
-  $scope.data = {};
-  $scope.data.windowSize = 20;
-  $scope.data.pageNumber = 1;
+  $scope.windowSize = 20;
+  $scope.pageNumber = 1;
+  $scope.check.windowSize = $scope.windowSize;
+  $scope.check.pageNumber = $scope.pageNumber;
   $scope.current = 0;
 
+  var timer;
+
   var setupPaging = function() {
-    if ($scope.data.pageNumber > $scope.getMaxPage()) {
-      $scope.data.pageNumber = $scope.getMaxPage();
-    } else if ($scope.data.pageNumber <= 0) {
-      $scope.data.pageNumber = 1;
-    } else if (isNaN($scope.data.pageNumber)) {
-      $scope.data.pageNumber = 1;
-    }
-    if ($scope.data.windowSize > 100) {
-      $scope.data.windowSize = 100;
-    } else if ($scope.data.windowSize <= 0) {
-      $scope.data.windowSize = 1;
-    } else if (isNaN($scope.data.windowSize)) {
-      $scope.data.windowSize = 1;
-    }
-    $scope.current = $scope.data.windowSize * ($scope.data.pageNumber - 1);
+    clearTimeout(timer);
+    $scope.current = $scope.windowSize * ($scope.pageNumber - 1);
   }
 
-  $scope.pageChange = function() {
-    if ($scope.data.pageNumber) {
-      setupPaging();
+  $scope.$watch('windowSize', function(newVal, oldVal){
+    // console.log('Window Changed');
+    // console.log('Window newVal', newVal);
+    // console.log('Window oldVal', oldVal);
+    if ($scope.windowSize > 50) {
+      $scope.windowSize = 50;
+      $scope.check.windowSize = 50;
+    } else if ($scope.windowSize <= 0) {
+      $scope.windowSize = 5;
+      $scope.check.windowSize = 5;
+    } else if (isNaN($scope.windowSize)) {
+      $scope.windowSize = 5;
+      $scope.check.windowSize = 5;
+    } else {
+      $scope.check.windowSize = newVal;
     }
-  }
 
-  $scope.windowChange = function(){
-    if ($scope.data.windowSize) {
-      $scope.data.pageNumber = Math.ceil($scope.current / $scope.data.windowSize);
-      if (!$scope.data.pageNumber) {
-        $scope.data.pageNumber = 1;
-      }
-      setupPaging();
+    if ($scope.pageNumber > $scope.getMaxPage()) {
+      $scope.pageNumber = $scope.getMaxPage();
+    } else if ($scope.pageNumber <= 0) {
+      $scope.pageNumber = 1;
+      $scope.check.pageNumber = 1;
+    } else if (isNaN($scope.pageNumber)) {
+      $scope.pageNumber = 1;
+      $scope.check.pageNumber = 1;
     }
+
+    setupPaging();
+    
+  })
+  $scope.$watch('pageNumber', function(newVal, oldVal){
+    // console.log('page number Changed');
+    // console.log('page newVal', newVal);
+    // console.log('page oldVal', oldVal);
+    if ($scope.pageNumber > $scope.getMaxPage()) {
+      $scope.pageNumber = $scope.getMaxPage();
+    } else if ($scope.pageNumber <= 0) {
+      $scope.pageNumber = 1;
+      $scope.check.pageNumber = 1;
+    } else if (isNaN($scope.pageNumber)) {
+      $scope.pageNumber = 1;
+      $scope.check.pageNumber = 1;
+    } else {
+      $scope.check.pageNumber = newVal;
+    }
+    setupPaging();
+    
+  })
+
+  $scope.applyWindow = function() {
+    clearTimeout(timer)
+    timer = setTimeout(function(){
+      // console.log('scope.check.windowSize', $scope.check.windowSize);
+      $scope.windowSize = $scope.check.windowSize;
+    }, 500);
+  }
+  $scope.applyPage = function() {
+    clearTimeout(timer)
+    timer = setTimeout(function(){
+      // console.log('scope.check.pageNumber', $scope.check.pageNumber);
+      $scope.pageNumber = $scope.check.pageNumber;
+    }, 500);
   }
 
   $scope.setPredicate = function(predicate, override){
@@ -71,21 +110,19 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
 
 
   $scope.next = function () {
-    if (($scope.current + $scope.data.windowSize) <= $scope.type.codes.length) {
+    if (($scope.current + $scope.windowSize) <= $scope.type.codes.length) {
       $scope.pageNumber++;
-      setupPaging();
     }
   }
 
   $scope.previous = function () {
-    if (($scope.current - $scope.data.windowSize) >= 0) {
+    if (($scope.current - $scope.windowSize) >= 0) {
       $scope.pageNumber--;
-      setupPaging();
     } 
   }
 
   $scope.getMaxPage = function(){
-    return Math.ceil($scope.type.codes.length / $scope.data.windowSize);
+    return Math.ceil($scope.type.codes.length / $scope.windowSize);
   }
 
 
@@ -101,32 +138,17 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
 
 
 app.filter('pageme', function () {
-  // first we make sure that the pageMeCache is empty
-  var pageMeCache = {};
-  var filter = function(arr, current, distance) {
+  return _.memoize(function(arr, current, distance) {
+    console.log('current', current);
+    console.log('distance', distance);
+    
     // if we don't have an array to search return...
     if (!arr) { return; }
     
     // otherwise find our sub array
     var newArr = angular.copy(arr.slice(current, (current + distance)));
-
-    // then stringify the array
-    var arrString = JSON.stringify(arr);
-
-    // set up the pageMeCache
-    var frompageMeCache = pageMeCache[arrString+current];
-
-    // and from the pageMeCache, return the results
-    console.log('frompageMeCache', frompageMeCache);
-    console.log('newArr', newArr);
-    
-    console.log('JSON.stringify cache', JSON.stringify(frompageMeCache));
-    
-    if (JSON.stringify(frompageMeCache) === JSON.stringify(newArr)) {
-      return frompageMeCache;
-    }
-    pageMeCache[arrString+current] = newArr;
     return newArr;
-  };
-  return filter;
+  }, function(arr, current, distance){
+    return current + distance;
+  });
 });

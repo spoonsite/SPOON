@@ -13,7 +13,7 @@
       <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('sortOrder');">Sort Order<span ng-show="predicate === 'sortOrder'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th style="padding: 8px 3px;"><a href="">Actions</a></th>
     </tr>
-    <tr ng-repeat="code in type.codes | orderBy:predicate:reverse | pageme:current:data.windowSize"  ng-class="code.activeStatus === 'I'? 'inactive':''">
+    <tr ng-repeat="(type, code) in (type.codes | orderBy:predicate:reverse | pageme:current:windowSize) track by type"  ng-class="code.activeStatus === 'I'? 'inactive':''">
       <td style="padding:5px;">{{code.label}}</td>
       <td style="padding:5px;">{{code.code}}</td>
       <td style="padding:5px;">{{code.description}}</td>
@@ -28,10 +28,10 @@
   <div>
     <button class="btn btn-default" ng-click="previous()">Previous</button>
     <button class="btn btn-default" ng-click="next()">Next</button>
-    Go to page <input type="number" min="1" max="{{getMaxPage()}}" ng-model="data.pageNumber" ng-change="pageChange()"> of {{getMaxPage()}}.
+    Go to page <input id="pageNumber" type="number" min="1" max="{{getMaxPage()}}" ng-model="check.pageNumber" ng-change="applyPage()"> of {{getMaxPage()}}.
   </div>
   <div>
-    Show <input type="number" min="1" max="100" ng-model="data.windowSize" ng-change="windowChange()"> per page (max = 100).
+    Show <input id="windowSize" type="number" min="5" max="50" ng-model="check.windowSize" ng-change="applyWindow()"> per page (5-50).
   </div>
 </div>
 <div class="modal-footer">
