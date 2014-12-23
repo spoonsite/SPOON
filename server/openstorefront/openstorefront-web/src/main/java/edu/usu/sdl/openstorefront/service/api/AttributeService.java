@@ -147,6 +147,14 @@ public interface AttributeService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeAttributeType(String type);
+	
+	/**
+	 * Remove Type
+	 *
+	 * @param type
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void activateType(String type);
 
 	/**
 	 * Remove Code

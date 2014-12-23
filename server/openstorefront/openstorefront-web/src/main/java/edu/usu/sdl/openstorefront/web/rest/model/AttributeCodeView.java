@@ -31,6 +31,7 @@ public class AttributeCodeView
 	private String fullTextLink;
 	private String groupCode;
 	private Integer sortOrder;
+	private String activeStatus;
 
 	public AttributeCodeView()
 	{
@@ -44,7 +45,7 @@ public class AttributeCodeView
 		attributeCodeView.setDescription(attributeCode.getDescription());
 		attributeCodeView.setGroupCode(attributeCode.getGroupCode());
 		attributeCodeView.setSortOrder(attributeCode.getSortOrder());
-
+		attributeCodeView.setActiveStatus(attributeCode.getActiveStatus());
 		if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
 			attributeCodeView.setFullTextLink("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
 		} else {
@@ -112,6 +113,22 @@ public class AttributeCodeView
 	public void setGroupCode(String groupCode)
 	{
 		this.groupCode = groupCode;
+	}
+
+	/**
+	 * @return the activeStatus
+	 */
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	/**
+	 * @param activeStatus the activeStatus to set
+	 */
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }

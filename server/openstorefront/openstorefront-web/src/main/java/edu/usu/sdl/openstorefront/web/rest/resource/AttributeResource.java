@@ -54,12 +54,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -83,12 +85,17 @@ public class AttributeResource
 	@APIDescription("Gets all active attributes and codes for the attributes in view based model.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeTypeView.class)
-	public List<AttributeTypeView> getAttributeView()
+	public List<AttributeTypeView> getAttributeView(
+			@QueryParam("all")
+			@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
+			@DefaultValue("false") boolean all)
 	{
 		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
 
 		AttributeType attributeTypeExample = new AttributeType();
-		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		if (!all){
+			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		}
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
 		for (AttributeType attributeType : attributeTypes) {
 			AttributeTypeView attributeTypeView = AttributeTypeView.toView(attributeType);
@@ -382,6 +389,18 @@ public class AttributeResource
 			@RequiredParam String type)
 	{
 		service.getAttributeService().removeAttributeType(type.toUpperCase());
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}")
+	public void activateType(
+			@PathParam("type")
+			@RequiredParam String type)
+	{
+		service.getAttributeService().activateType(type.toUpperCase());
 	}
 
 	@POST

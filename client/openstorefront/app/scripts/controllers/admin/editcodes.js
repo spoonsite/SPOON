@@ -16,10 +16,128 @@
 
 'use strict';
 
-app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'business', function ($scope, $uiModalInstance, type, Business) {
-  
-  console.log('type', type);
+var pagesMemoizeCache;
+
+app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'size', 'business', '$timeout', function ($scope, $uiModalInstance, type, size, Business, $timeout) {
   $scope.type = type;
+  $scope.size = size;
+  $scope.predicate = 'activeStatus';
+  $scope.check = {};
+  $scope.reverse = false;
+  $scope.windowSize = 15;
+  $scope.pageNumber = 1;
+  $scope.check.windowSize = $scope.windowSize;
+  $scope.check.pageNumber = $scope.pageNumber;
+  $scope.current = 0;
+
+  var timer;
+
+  var setupPaging = function() {
+    clearTimeout(timer);
+    $scope.current = $scope.windowSize * ($scope.pageNumber - 1);
+    if (pagesMemoizeCache) {
+      pagesMemoizeCache.cache = {};
+    }
+  }
+
+  $scope.$watch('windowSize', function(newVal, oldVal){
+    // console.log('Window Changed');
+    // console.log('Window newVal', newVal);
+    // console.log('Window oldVal', oldVal);
+    if ($scope.windowSize > 50) {
+      $scope.windowSize = 50;
+      $scope.check.windowSize = 50;
+    } else if ($scope.windowSize <= 0) {
+      $scope.windowSize = 5;
+      $scope.check.windowSize = 5;
+    } else if (isNaN($scope.windowSize)) {
+      $scope.windowSize = 5;
+      $scope.check.windowSize = 5;
+    } else {
+      $scope.check.windowSize = newVal;
+    }
+
+    if ($scope.pageNumber > $scope.getMaxPage()) {
+      $scope.pageNumber = $scope.getMaxPage();
+    } else if ($scope.pageNumber <= 0) {
+      $scope.pageNumber = 1;
+      $scope.check.pageNumber = 1;
+    } else if (isNaN($scope.pageNumber)) {
+      $scope.pageNumber = 1;
+      $scope.check.pageNumber = 1;
+    }
+
+    setupPaging();
+    
+  })
+  $scope.$watch('pageNumber', function(newVal, oldVal){
+    // console.log('page number Changed');
+    // console.log('page newVal', newVal);
+    // console.log('page oldVal', oldVal);
+    if ($scope.pageNumber > $scope.getMaxPage()) {
+      $scope.pageNumber = $scope.getMaxPage();
+    } else if ($scope.pageNumber <= 0) {
+      $scope.pageNumber = 1;
+      $scope.check.pageNumber = 1;
+    } else if (isNaN($scope.pageNumber)) {
+      $scope.pageNumber = 1;
+      $scope.check.pageNumber = 1;
+    } else {
+      $scope.check.pageNumber = newVal;
+    }
+    setupPaging();
+    
+  })
+
+  $scope.applyWindow = function() {
+    clearTimeout(timer)
+    timer = setTimeout(function(){
+      // console.log('scope.check.windowSize', $scope.check.windowSize);
+      $scope.windowSize = $scope.check.windowSize;
+      $scope.$apply();
+    }, 500);
+  }
+  $scope.applyPage = function() {
+    clearTimeout(timer)
+    timer = setTimeout(function(){
+      // console.log('scope.check.pageNumber', $scope.check.pageNumber);
+      $scope.pageNumber = $scope.check.pageNumber;
+      $scope.$apply();
+    }, 500);
+  }
+
+  $scope.setPredicate = function(predicate, override){
+    if (pagesMemoizeCache) {
+      pagesMemoizeCache.cache = {};
+    }
+    if ($scope.predicate === predicate){
+      $scope.reverse = !$scope.reverse;
+    } else {
+      $scope.predicate = predicate;
+      $scope.reverse = !!override;
+    }
+  }
+
+  $scope.getUniqueId = function() {
+    return '' + $scope.type.type + $scope.current + $scope.windowSize + $scope.predicate + $scope.reverse;
+  }
+
+  $scope.next = function () {
+    if (($scope.current + $scope.windowSize) <= $scope.type.codes.length) {
+      $scope.pageNumber++;
+    }
+  }
+
+  $scope.previous = function () {
+    if (($scope.current - $scope.windowSize) >= 0) {
+      $scope.pageNumber--;
+    } 
+  }
+
+  $scope.getMaxPage = function(){
+    return Math.ceil($scope.type.codes.length / $scope.windowSize);
+  }
+
 
   $scope.ok = function () {
     $uiModalInstance.close('success');
@@ -28,59 +146,18 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'bus
   $scope.cancel = function () {
     $uiModalInstance.dismiss('cancel');
   };
-  // // Here we are grabbing the different collection key's and name's to put in the 'editcodes' tool.
-  // $scope.collection = [];
-  // $scope.collectionContent = null;
+}]);
 
-  // $scope.gridOptions = {
-  //   data: 'collectionContent',
-  //   enableCellSelection: true,
-  //   enableRowSelection: true,
-  //   enableCellEdit: true,
-  //   multiSelect: true,
-  //   selectWithCheckboxOnly: true,
-  //   showSelectionCheckbox: true,
-  //   // showGroupPanel: true,
-  //   columnDefs: [
-  //     // the number of stars determines width just like column span works on tables.
-  //     {field: 'label', displayName: 'Name', width: '***', resizable: false, enableCellEdit: true},
-  //     {field: 'code', displayName: 'Code', width: '**', resizable: false, enableCellEdit: true},
-  //     {field: 'description', displayName: 'Description', width: '***', enableCellEdit: true},
-  //     // {field: 'checked', displayName: 'Apply Filter', width: '**', resizable: false, enableCellEdit: false, cellTemplate: '<div class="ngSelectionCell "><input class="" type="checkbox" ng-checked="row.getProperty(col.field)" ng-model="COL_FIELD"/></div>'},
-  //     // {field: 'landing', displayName: 'Landing Page', width: '***', resizable: false, cellTemplate: '<div ng-if="row.getProperty(col.field)" class="imitateLink ngCellText " ng-click="editLanding(row.getProperty(col.field))"><a>Edit Landing Page</a></div> <div ng-if="!row.getProperty(col.field)" class="imitateLink ngCellText " ng-click="editLanding(\'\')"><a>Add Landing Page</a></div>', enableCellEdit: false, groupable: false, sortable: false}
-  //   //
-  //   ]
-  // };
-  
-  
-  // Business.getFilters().then(function(result) {
-  //   if (result) {
-  //     $scope.filters = angular.copy(result);
-  //     _.each($scope.filters, function(filter) {
-  //       $scope.collection.push({'name': filter.description, 'key': filter.type});
-  //     });
-  //   } else {
-  //     $scope.filters = null;
-  //   }
-  // });
-
-  // /***************************************************************
-  // * This function will grab a collection from a filter given the key
-  // * of the filter.
-  // ***************************************************************/
-  // $scope.grabCollection = function(key) {
-  //   var filter = _.where($scope.filters, {'type': key})[0];
-  //   $scope.collectionContent = filter.codes;
-  // };
-
-  // if ($scope.$parent.collectionSelection) {
-  //   $scope.collectionSelection = $scope.$parent.collectionSelection;
-  //   $scope.grabCollection($scope.collectionSelection.type);
-  // }
-  // // $scope.$watch('collectionContent', function() {
-  // //   // This is where we know something changed on the model for the collection that
-  // //   // The user was editing. (Useful for inline editing, possibly useful for modal editing as well.)
-  // //   // console.log('Checks', $scope.collectionContent[0].longDesc);
-  // // }, true);
-
+app.filter('pageme', ['$timeout', function ($timeout) {
+  pagesMemoizeCache = _.memoize(function(arr, current, distance, id) {
+    // if we don't have an array to search return...
+    if (!arr) { return; }
+    
+    // otherwise find our sub array
+    var newArr = angular.copy(arr.slice(current, (current + distance)));
+    return newArr;
+  }, function(arr, current, distance, id){
+    return id;
+  });
+  return pagesMemoizeCache;
 }]);

@@ -233,6 +233,11 @@ small button {
 }
 
 .fullWidthModal .modal-dialog {
+  width: 85%;
+  min-width: 450px;
+}
+
+.modal-dialog.modal-lg{
   width: 80%;
   min-width: 450px;
 }

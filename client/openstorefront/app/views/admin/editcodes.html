@@ -1,11 +1,63 @@
-<!-- First make the selection for which attributes can be edited -->
-<!-- <label for="collection">Attribute Codes to edit:</label>
-<select class="form-control" name="collection" id="collection" ng-model="collectionSelection" ng-change="grabCollection(collectionSelection.key)" ng-options="item.name for item in collection" style="width: auto; border-radius:0px;" >
-  <option value="">-- Choose an Attribute --</option>
-</select> -->
-
-<!-- Then when the selection has been made, put the content here to be edited -->
-<!-- List the attributes in a table and provide the information to edit -->
-<!-- <div class="gridStyle" ng-grid="gridOptions">
-</div> -->
-{{type}}
+<div class="modal-header">
+  <h3 style="display:inline-block; margin-top:0px; margin-bottom:0px;">Edit {{type.description}}</h3>
+  <button type="button" class="close" ng-click="cancel()" aria-hidden="true">×</button>
+</div> 
+<div class="modal-body">
+  <tabset justified="false" type="">  <!-- pills -->
+    <tab heading="Type Details">
+      <form action="">
+        <ul style="list-style:none">
+          <li><input type="text" ng-model="type.description"}}/></li>
+          <li><input type="text" ng-model="type.type"}}/></li>
+          <li><input type="checkbox" ng-model="type.visibleFlg" ng-checked="type.visibleFlg"}}/></li>
+          <li><input type="checkbox" ng-model="type.requiredFlg" ng-checked="type.requiredFlg"}}/></li>
+          <li><input type="checkbox" ng-model="type.importantFlg" ng-checked="type.importantFlg"}}/></li>
+          <li><input type="checkbox" ng-model="type.architectureFlg" ng-checked="type.architectureFlg"}}/></li>
+          <li><input type="checkbox" ng-model="type.allowMultipleFlg" ng-checked="type.allowMultipleFlg"}}/></li>
+        </ul>
+        <button type="submit" class="btn btn-default">Save&nbsp;<i class="fa fa-save"></i></button>
+      </form>
+    </tab>
+    <tab heading="Code Details">
+      <br>
+      <div ng-show="type.codes.length > windowSize">
+        <div>
+          Show&nbsp;<input id="windowSize" type="number" min="5" max="50" ng-model="check.windowSize" ng-change="applyWindow()">&nbsp;per page (5-50).
+        </div>
+        <br>
+        <div>
+          <button class="btn btn-default" ng-click="previous()"><i class="fa fa-arrow-left"></i>&nbsp;Previous</button>
+          <button class="btn btn-default" ng-click="next()">Next&nbsp;<i class="fa fa-arrow-right"></i></button>
+          Go to page&nbsp;<input id="pageNumber" type="number" min="1" max="{{getMaxPage()}}" ng-model="check.pageNumber" ng-change="applyPage()">&nbsp;of {{getMaxPage()}}.
+        </div>
+      </div>
+      <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="setPredicate('activeStatus')">Turn off sort</button>
+      <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="getFilters(true)">Refresh table <i class="fa fa-refresh"></i></button>
+      <table class="table table-bordered table-striped" style="table-layout:fixed;">
+        <tr>
+          <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('label');">Label<span ng-show="predicate === 'label'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('code');">Code<span ng-show="predicate === 'code'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('description');">Description<span ng-show="predicate === 'description'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('fullTextLink');">Link<span ng-show="predicate === 'fullTextLink'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('groupCode');">Group Code<span ng-show="predicate === 'groupCode'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('sortOrder');">Sort Order<span ng-show="predicate === 'sortOrder'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th style="padding: 8px 3px;"><a href="">Actions</a></th>
+        </tr>
+        <tr ng-repeat="code in (type.codes | orderBy:predicate:reverse | pageme:current:windowSize:getUniqueId())"  ng-class="code.activeStatus === 'I'? 'inactive':''">
+          <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.label}}</td>
+          <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.code}}</td>
+          <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.description}}</td>
+          <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.fullTextLink}}</td>
+          <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.groupCode}}</td>
+          <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.sortOrder}}</td>
+          <td style="padding: 0px 3px;">
+            <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editType(code)" ng-disabled="code.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button><button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button><!-- <button type="button" title="Delete Type" class="btn btn-default btn-sm" ng-click="deleteAttribute(code)"><i class="fa fa-trash"></i></button> -->
+          </td>
+        </tr>
+      </table>
+    </tab>
+  </tabset>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default ng-scope" ng-click="cancel()">Close</button>
+</div>

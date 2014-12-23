@@ -89,14 +89,37 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     return deferred.promise;
   };
   
-   article.getArchitecture = function(type){
-     var deferred = $q.defer();
-     
-     $http({
-        method: 'GET',
-        url: 'api/v1/resource/attributes/attributetypes/'+type+'/architecture'
+  article.getArchitecture = function(type){
+    var deferred = $q.defer();
+
+    $http({
+      method: 'GET',
+      url: 'api/v1/resource/attributes/attributetypes/'+type+'/architecture'
+    }).success(function(data, status, headers, config){        
+      if (data && data !== 'false' && isNotRequestError(data)){
+        removeError();
+        deferred.resolve(data);
+      } else {
+        removeError();
+        triggerError(data);
+        deferred.reject(false);
+      }
+    }).error(function(data, status, headers, config){
+      showServerError(data, 'body');
+      deferred.reject(data);
+    });
+
+    return deferred.promise;
+  };  
+
+  article.deactivateFilter = function(type){
+    var deferred = $q.defer();
+    if (type) {
+      $http({
+        method: 'DELETE',
+        url: 'api/v1/resource/attributes/attributetypes/' + type
       }).success(function(data, status, headers, config){        
-        if (data && data !== 'false' && isNotRequestError(data)){
+        if (isNotRequestError(data)){
           removeError();
           deferred.resolve(data);
         } else {
@@ -108,9 +131,38 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
         showServerError(data, 'body');
         deferred.reject(data);
       });
-      
-     return deferred.promise;
-   };   
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }
+
+  article.activateFilter = function(type) {
+    var deferred = $q.defer();
+    if (type) {
+      $http({
+        method: 'POST',
+        url: 'api/v1/resource/attributes/attributetypes/' + type
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }
 
   return article;
 }]);
