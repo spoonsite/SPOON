@@ -16,13 +16,15 @@
 
 'use strict';
 
+var pagesMemoizeCache;
+
 app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'size', 'business', '$timeout', function ($scope, $uiModalInstance, type, size, Business, $timeout) {
   $scope.type = type;
   $scope.size = size;
   $scope.predicate = 'activeStatus';
   $scope.check = {};
   $scope.reverse = false;
-  $scope.windowSize = 20;
+  $scope.windowSize = 15;
   $scope.pageNumber = 1;
   $scope.check.windowSize = $scope.windowSize;
   $scope.check.pageNumber = $scope.pageNumber;
@@ -33,6 +35,9 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
   var setupPaging = function() {
     clearTimeout(timer);
     $scope.current = $scope.windowSize * ($scope.pageNumber - 1);
+    if (pagesMemoizeCache) {
+      pagesMemoizeCache.cache = {};
+    }
   }
 
   $scope.$watch('windowSize', function(newVal, oldVal){
@@ -102,6 +107,9 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
   }
 
   $scope.setPredicate = function(predicate, override){
+    if (pagesMemoizeCache) {
+      pagesMemoizeCache.cache = {};
+    }
     if ($scope.predicate === predicate){
       $scope.reverse = !$scope.reverse;
     } else {
@@ -110,6 +118,9 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
     }
   }
 
+  $scope.getUniqueId = function() {
+    return '' + $scope.type.type + $scope.current + $scope.windowSize + $scope.predicate + $scope.reverse;
+  }
 
   $scope.next = function () {
     if (($scope.current + $scope.windowSize) <= $scope.type.codes.length) {
@@ -137,17 +148,16 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
   };
 }]);
 
-
-
-app.filter('pageme', function () {
-  return _.memoize(function(arr, current, distance, predicate, reverse) {
+app.filter('pageme', ['$timeout', function ($timeout) {
+  pagesMemoizeCache = _.memoize(function(arr, current, distance, id) {
     // if we don't have an array to search return...
     if (!arr) { return; }
     
     // otherwise find our sub array
     var newArr = angular.copy(arr.slice(current, (current + distance)));
     return newArr;
-  }, function(arr, current, distance, predicate, reverse){
-    return current + distance + predicate + reverse;
+  }, function(arr, current, distance, id){
+    return id;
   });
-});
+  return pagesMemoizeCache;
+}]);

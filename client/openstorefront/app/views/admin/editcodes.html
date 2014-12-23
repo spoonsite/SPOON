@@ -20,15 +20,19 @@
     </tab>
     <tab heading="Code Details">
       <br>
-      <div>
-        Show&nbsp;<input id="windowSize" type="number" min="5" max="50" ng-model="check.windowSize" ng-change="applyWindow()">&nbsp;per page (5-50).
+      <div ng-show="type.codes.length > windowSize">
+        <div>
+          Show&nbsp;<input id="windowSize" type="number" min="5" max="50" ng-model="check.windowSize" ng-change="applyWindow()">&nbsp;per page (5-50).
+        </div>
+        <br>
+        <div>
+          <button class="btn btn-default" ng-click="previous()"><i class="fa fa-arrow-left"></i>&nbsp;Previous</button>
+          <button class="btn btn-default" ng-click="next()">Next&nbsp;<i class="fa fa-arrow-right"></i></button>
+          Go to page&nbsp;<input id="pageNumber" type="number" min="1" max="{{getMaxPage()}}" ng-model="check.pageNumber" ng-change="applyPage()">&nbsp;of {{getMaxPage()}}.
+        </div>
       </div>
-      <br>
-      <div>
-        <button class="btn btn-default" ng-click="previous()"><i class="fa fa-arrow-left"></i>&nbsp;Previous</button>
-        <button class="btn btn-default" ng-click="next()">Next&nbsp;<i class="fa fa-arrow-right"></i></button>
-        Go to page&nbsp;<input id="pageNumber" type="number" min="1" max="{{getMaxPage()}}" ng-model="check.pageNumber" ng-change="applyPage()">&nbsp;of {{getMaxPage()}}.
-      </div>
+      <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="setPredicate('activeStatus')">Turn off sort</button>
+      <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="getFilters(true)">Refresh table <i class="fa fa-refresh"></i></button>
       <table class="table table-bordered table-striped" style="table-layout:fixed;">
         <tr>
           <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('label');">Label<span ng-show="predicate === 'label'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
@@ -39,7 +43,7 @@
           <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('sortOrder');">Sort Order<span ng-show="predicate === 'sortOrder'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
           <th style="padding: 8px 3px;"><a href="">Actions</a></th>
         </tr>
-        <tr ng-repeat="code in (type.codes | orderBy:predicate:reverse | pageme:current:windowSize:predicate:reverse)"  ng-class="code.activeStatus === 'I'? 'inactive':''">
+        <tr ng-repeat="code in (type.codes | orderBy:predicate:reverse | pageme:current:windowSize:getUniqueId())"  ng-class="code.activeStatus === 'I'? 'inactive':''">
           <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.label}}</td>
           <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.code}}</td>
           <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.description}}</td>
