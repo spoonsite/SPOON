@@ -196,7 +196,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   };
 
   var setupFilters = function() {
-    Business.getFilters().then(function(result) {
+    Business.getFilters(false, false).then(function(result) {
       if (result) {
         result = _.sortBy(result, function(item){
           return item.description;

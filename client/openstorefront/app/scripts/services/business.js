@@ -16,7 +16,7 @@
 'use strict';
 
 app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice',
-    function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice) { /*jshint unused: false*/
+  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -82,19 +82,30 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     return deferred.promise;
   };
 
-  business.getFilters = function(override) {
+  business.getFilters = function(override, getAll) {
     var deferred = $q.defer();
-    var filters = checkExpire('filters', minute * 1440);
+    var filters;
+    if (getAll) {
+      filters = checkExpire('All-filters', minute * 1440);
+    } else {
+      filters = checkExpire('filters', minute * 1440);
+    }
     if (filters && !override) {
       deferred.resolve(filters);
     } else {
+      var params = {'all': !!getAll};  
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/attributes'
+        'url': 'api/v1/resource/attributes',
+        'params': params
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
-          save('filters', data);
+          if (getAll) {
+            save('All-filters', data);
+          } else {
+            save('filters', data);
+          }
           deferred.resolve(data);
         } else {
           removeError();

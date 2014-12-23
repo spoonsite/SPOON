@@ -132,6 +132,9 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
                 },
                 contacts: function () {
                   return scope.contacts;
+                },
+                size: function() {
+                  return 'lg';
                 }
               }
             });
@@ -237,11 +240,12 @@ app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'type', 'contac
   };
 }]);
 
-app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', 'business', '$q', function ($scope, $uiModalInstance, type, contacts, Business, $q) {
+app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', 'size', 'business', '$q', function ($scope, $uiModalInstance, type, contacts, size, Business, $q) {
   $scope.userTypes = {};
   $scope.userTypes.groups = [];
   $scope.type = type;
   $scope.data = {};
+  $scope.size = size;
   $scope.data.selectedUsers = contacts? contacts: [];
 
   $scope.reverse = false;

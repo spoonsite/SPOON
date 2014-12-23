@@ -56,7 +56,7 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
     var modalInstance = $uiModal.open({
       templateUrl: 'views/userprofiletab.html',
       controller: 'adminEditUserProfileCtrl',
-      size: 'sm',
+      size: 'lg',
       resolve: {
         profile: function () {
           return profile;

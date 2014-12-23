@@ -16,11 +16,11 @@
 
 'use strict';
 
-app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', function ($scope, Business, $uiModal) {
-  $scope.predicate = 'description';
+app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$timeout', function ($scope, Business, $uiModal, $timeout) {
+  $scope.predicate = 'activeStatus';
   $scope.reverse = false;
   $scope.getFilters = function(override) {
-    Business.getFilters(override).then(function(result){
+    Business.getFilters(override, true).then(function(result){
       console.log('result', result);
       $scope.filters = result? angular.copy(result): [];
     }, function(){
@@ -42,14 +42,55 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', funct
     console.log('Deleted filter', filter);
   }
 
+  $scope.changeActivity = function(filter){
+    var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). Continue?");
+    if (cont) {
+      $scope.deactivateButtons = true;
+      if (filter.activeStatus === 'A') {
+        $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+        Business.articleservice.deactivateFilter(filter.type).then(function(){
+          $timeout(function(){
+            $scope.getFilters(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.getFilters(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+          }, 1000);
+        })
+      } else {
+        $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+        Business.articleservice.activateFilter(filter.type).then(function() {
+          $timeout(function(){
+            $scope.getFilters(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.getFilters(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+          }, 1000);
+        })
+      }
+    }
+  }
+
   $scope.editType = function(type){
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editcodes.html',
       controller: 'AdminEditcodesCtrl',
-      size: 'sm',
+      size: 'lg',
       resolve: {
         type: function () {
           return type;
+        },
+        size: function() {
+          return 'lg';
         }
       }
     });

@@ -48,13 +48,17 @@
 }
 
 td.truthy{
-  background: rgba(0, 255, 0, .1) !important;
+  background: rgba(188, 213, 188, 1) !important;
 }
 td.falsey{
-  background: rgba(255, 0, 0, .1) !important;
+  background: rgba(213, 188, 188, 1) !important;
 }
 
 tr.inactive{
+  color: rgb(150, 150, 150);
+  background: rgb(229, 229, 229);
+}
+tr.inactive td{
   color: rgb(150, 150, 150);
   background: rgb(229, 229, 229);
 }

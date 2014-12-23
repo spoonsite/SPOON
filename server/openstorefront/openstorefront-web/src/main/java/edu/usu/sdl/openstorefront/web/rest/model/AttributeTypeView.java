@@ -48,6 +48,9 @@ public class AttributeTypeView
 
 	@NotNull
 	private boolean allowMultipleFlg;
+	
+	@NotNull
+	private String activeStatus;
 
 	@DataType(AttributeCodeView.class)
 	private List<AttributeCodeView> codes = new ArrayList<>();
@@ -66,6 +69,7 @@ public class AttributeTypeView
 		attributeTypeView.setImportantFlg(attributeType.getImportantFlg());
 		attributeTypeView.setRequiredFlg(attributeType.getRequiredFlg());
 		attributeTypeView.setVisibleFlg(attributeType.getVisibleFlg());
+		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 
 		return attributeTypeView;
 	}
@@ -152,6 +156,22 @@ public class AttributeTypeView
 	public void setAllowMultipleFlg(boolean allowMultipleFlg)
 	{
 		this.allowMultipleFlg = allowMultipleFlg;
+	}
+
+	/**
+	 * @return the activeStatus
+	 */
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	/**
+	 * @param activeStatus the activeStatus to set
+	 */
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }

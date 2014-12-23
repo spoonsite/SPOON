@@ -1,7 +1,7 @@
 <!-- List the attributes in a table and provide the information to edit -->
 <div style="margin-top: 65px;" ng-controller="AdminEditattributesCtrl">
   <loader trigger="adminAttributes"></loader>
-  <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="predicate=''">Turn off sort</button>
+  <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="predicate='activeStatus'">Turn off sort</button>
   <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="getFilters(true)">Refresh table <i class="fa fa-refresh"></i></button>
   <table class="table table-bordered table-striped">
     <tr>
@@ -14,7 +14,7 @@
       <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('allowMultipleFlg', true);">Allow Multiple<span ng-show="predicate === 'allowMultipleFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th style="padding: 8px 3px;"><a href="">Actions</a></th>
     </tr>
-    <tr ng-repeat="filter in filters | orderBy:predicate:reverse">
+    <tr ng-repeat="filter in filters | orderBy:predicate:reverse"  ng-class="filter.activeStatus === 'I'? 'inactive':''">
       <td style="padding:5px;">{{filter.description}}</td>
       <td style="padding:5px;">{{filter.type}}</td>
       <td ng-class="filter.visibleFlg? 'truthy':'falsey'" style="padding:5px;">{{filter.visibleFlg}}</td>
@@ -23,8 +23,7 @@
       <td ng-class="filter.architectureFlg? 'truthy':'falsey'" style="padding:5px;">{{filter.architectureFlg}}</td>
       <td ng-class="filter.allowMultipleFlg? 'truthy':'falsey'" style="padding:5px;">{{filter.allowMultipleFlg}}</td>
       <td style="padding: 0px 3px;">
-        <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editType(filter)"><i class="fa fa-edit"></i></button>
-        <button type="button" title="Delete Type" class="btn btn-default btn-sm" ng-click="deleteAttribute(filter)"><i class="fa fa-trash"></i></button> 
+        <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editType(filter)" ng-disabled="filter.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button><button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(filter)" ng-class="filter.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button><!-- <button type="button" title="Delete Type" class="btn btn-default btn-sm" ng-click="deleteAttribute(filter)"><i class="fa fa-trash"></i></button> -->
       </td>
     </tr>
   </table>

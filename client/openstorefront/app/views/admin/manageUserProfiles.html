@@ -1,10 +1,9 @@
 <div ng-controller="AdminUserProfileCtrl" id="adminUserProfile" >
   <loader trigger="adminUserProfile"></loader>
-  <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="predicate=''">Turn off sort</button>
+  <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="predicate='activeStatus'">Turn off sort</button>
   <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="getUsers(true)">Refresh table <i class="fa fa-refresh"></i></button>
   <table class="table table-bordered">
     <tr>
-      <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('activeStatus');">Status <span ng-show="predicate === 'activeStatus'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('username');">Username <span ng-show="predicate === 'username'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('firstName');">First Name <span ng-show="predicate === 'firstName'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('lastName');">Last Name <span ng-show="predicate === 'lastName'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
@@ -15,7 +14,6 @@
       <th style="padding: 8px 3px;"><a href="">Actions</a></th>
     </tr>
     <tr ng-repeat="user in userProfiles | orderBy:predicate:reverse" ng-class="user.activeStatus === 'I'? 'inactive':''">
-      <td style="padding:5px;">{{user.activeStatus}}</td>
       <td style="padding:5px;">{{user.username}}</td>
       <td style="padding:5px;">{{user.firstName}}</td>
       <td style="padding:5px;">{{user.lastName}}</td>

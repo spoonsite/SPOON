@@ -16,10 +16,78 @@
 
 'use strict';
 
-app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'business', function ($scope, $uiModalInstance, type, Business) {
-  
-  console.log('type', type);
+app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'size', 'business', function ($scope, $uiModalInstance, type, size, Business) {
   $scope.type = type;
+  $scope.size = size;
+  $scope.predicate = 'activeStatus';
+  $scope.reverse = false;
+  $scope.data = {};
+  $scope.data.windowSize = 20;
+  $scope.data.pageNumber = 1;
+  $scope.current = 0;
+
+  var setupPaging = function() {
+    if ($scope.data.pageNumber > $scope.getMaxPage()) {
+      $scope.data.pageNumber = $scope.getMaxPage();
+    } else if ($scope.data.pageNumber <= 0) {
+      $scope.data.pageNumber = 1;
+    } else if (isNaN($scope.data.pageNumber)) {
+      $scope.data.pageNumber = 1;
+    }
+    if ($scope.data.windowSize > 100) {
+      $scope.data.windowSize = 100;
+    } else if ($scope.data.windowSize <= 0) {
+      $scope.data.windowSize = 1;
+    } else if (isNaN($scope.data.windowSize)) {
+      $scope.data.windowSize = 1;
+    }
+    $scope.current = $scope.data.windowSize * ($scope.data.pageNumber - 1);
+  }
+
+  $scope.pageChange = function() {
+    if ($scope.data.pageNumber) {
+      setupPaging();
+    }
+  }
+
+  $scope.windowChange = function(){
+    if ($scope.data.windowSize) {
+      $scope.data.pageNumber = Math.ceil($scope.current / $scope.data.windowSize);
+      if (!$scope.data.pageNumber) {
+        $scope.data.pageNumber = 1;
+      }
+      setupPaging();
+    }
+  }
+
+  $scope.setPredicate = function(predicate, override){
+    if ($scope.predicate === predicate){
+      $scope.reverse = !$scope.reverse;
+    } else {
+      $scope.predicate = predicate;
+      $scope.reverse = !!override;
+    }
+  }
+
+
+  $scope.next = function () {
+    if (($scope.current + $scope.data.windowSize) <= $scope.type.codes.length) {
+      $scope.pageNumber++;
+      setupPaging();
+    }
+  }
+
+  $scope.previous = function () {
+    if (($scope.current - $scope.data.windowSize) >= 0) {
+      $scope.pageNumber--;
+      setupPaging();
+    } 
+  }
+
+  $scope.getMaxPage = function(){
+    return Math.ceil($scope.type.codes.length / $scope.data.windowSize);
+  }
+
 
   $scope.ok = function () {
     $uiModalInstance.close('success');
@@ -28,59 +96,37 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'bus
   $scope.cancel = function () {
     $uiModalInstance.dismiss('cancel');
   };
-  // // Here we are grabbing the different collection key's and name's to put in the 'editcodes' tool.
-  // $scope.collection = [];
-  // $scope.collectionContent = null;
-
-  // $scope.gridOptions = {
-  //   data: 'collectionContent',
-  //   enableCellSelection: true,
-  //   enableRowSelection: true,
-  //   enableCellEdit: true,
-  //   multiSelect: true,
-  //   selectWithCheckboxOnly: true,
-  //   showSelectionCheckbox: true,
-  //   // showGroupPanel: true,
-  //   columnDefs: [
-  //     // the number of stars determines width just like column span works on tables.
-  //     {field: 'label', displayName: 'Name', width: '***', resizable: false, enableCellEdit: true},
-  //     {field: 'code', displayName: 'Code', width: '**', resizable: false, enableCellEdit: true},
-  //     {field: 'description', displayName: 'Description', width: '***', enableCellEdit: true},
-  //     // {field: 'checked', displayName: 'Apply Filter', width: '**', resizable: false, enableCellEdit: false, cellTemplate: '<div class="ngSelectionCell "><input class="" type="checkbox" ng-checked="row.getProperty(col.field)" ng-model="COL_FIELD"/></div>'},
-  //     // {field: 'landing', displayName: 'Landing Page', width: '***', resizable: false, cellTemplate: '<div ng-if="row.getProperty(col.field)" class="imitateLink ngCellText " ng-click="editLanding(row.getProperty(col.field))"><a>Edit Landing Page</a></div> <div ng-if="!row.getProperty(col.field)" class="imitateLink ngCellText " ng-click="editLanding(\'\')"><a>Add Landing Page</a></div>', enableCellEdit: false, groupable: false, sortable: false}
-  //   //
-  //   ]
-  // };
-  
-  
-  // Business.getFilters().then(function(result) {
-  //   if (result) {
-  //     $scope.filters = angular.copy(result);
-  //     _.each($scope.filters, function(filter) {
-  //       $scope.collection.push({'name': filter.description, 'key': filter.type});
-  //     });
-  //   } else {
-  //     $scope.filters = null;
-  //   }
-  // });
-
-  // /***************************************************************
-  // * This function will grab a collection from a filter given the key
-  // * of the filter.
-  // ***************************************************************/
-  // $scope.grabCollection = function(key) {
-  //   var filter = _.where($scope.filters, {'type': key})[0];
-  //   $scope.collectionContent = filter.codes;
-  // };
-
-  // if ($scope.$parent.collectionSelection) {
-  //   $scope.collectionSelection = $scope.$parent.collectionSelection;
-  //   $scope.grabCollection($scope.collectionSelection.type);
-  // }
-  // // $scope.$watch('collectionContent', function() {
-  // //   // This is where we know something changed on the model for the collection that
-  // //   // The user was editing. (Useful for inline editing, possibly useful for modal editing as well.)
-  // //   // console.log('Checks', $scope.collectionContent[0].longDesc);
-  // // }, true);
-
 }]);
+
+
+
+app.filter('pageme', function () {
+  // first we make sure that the pageMeCache is empty
+  var pageMeCache = {};
+  var filter = function(arr, current, distance) {
+    // if we don't have an array to search return...
+    if (!arr) { return; }
+    
+    // otherwise find our sub array
+    var newArr = angular.copy(arr.slice(current, (current + distance)));
+
+    // then stringify the array
+    var arrString = JSON.stringify(arr);
+
+    // set up the pageMeCache
+    var frompageMeCache = pageMeCache[arrString+current];
+
+    // and from the pageMeCache, return the results
+    console.log('frompageMeCache', frompageMeCache);
+    console.log('newArr', newArr);
+    
+    console.log('JSON.stringify cache', JSON.stringify(frompageMeCache));
+    
+    if (JSON.stringify(frompageMeCache) === JSON.stringify(newArr)) {
+      return frompageMeCache;
+    }
+    pageMeCache[arrString+current] = newArr;
+    return newArr;
+  };
+  return filter;
+});
