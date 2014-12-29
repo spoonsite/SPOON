@@ -18,7 +18,7 @@
 
 var pagesMemoizeCache;
 
-app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'size', 'business', '$timeout', function ($scope, $uiModalInstance, type, size, Business, $timeout) {
+app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 'type', 'size', 'business', '$timeout', function ($scope, $uiModalInstance, $uiModal, type, size, Business, $timeout) {
   $scope.type = type;
   $scope.size = size;
   $scope.predicate = 'activeStatus';
@@ -146,7 +146,94 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
   $scope.cancel = function () {
     $uiModalInstance.dismiss('cancel');
   };
+
+
+
+
+  $scope.changeActivity = function(code){
+    var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). Continue?");
+    if (cont) {
+      $scope.deactivateButtons = true;
+      if (code.activeStatus === 'A') {
+        $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+        Business.articleservice.deactivateCode(code.type).then(function(){
+          $timeout(function(){
+            $scope.getFilters(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.getFilters(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+          }, 1000);
+        })
+      } else {
+        $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+        Business.articleservice.activateFilter(code.type).then(function() {
+          $timeout(function(){
+            $scope.getFilters(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.getFilters(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+          }, 1000);
+        })
+      }
+    }
+  }
+
+
+  $scope.editCode = function(code){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/editcode.html',
+      controller: 'AdminEditCodeCtrl',
+      size: 'sm',
+      resolve: {
+        code: function () {
+          return code;
+        },
+        size: function() {
+          return 'sm';
+        }
+      }
+    });
+
+    modalInstance.result.then(function (result) {
+      //do something
+      triggerAlert('Your edits were saved', 'editUserProfile', 'body', 6000);
+    }, function () {
+      // cancled or failed
+    });
+  }
+
+
+
+
+
+
+
+
 }]);
+
+app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'size', 'business', '$timeout', function ($scope, $uiModalInstance, code, size, Business, $timeout) {
+  $scope.code = code;
+
+  
+  $scope.ok = function () {
+    $uiModalInstance.close('success');
+  };
+
+  $scope.cancel = function () {
+    $uiModalInstance.dismiss('cancel');
+  };
+}]);
+
 
 app.filter('pageme', ['$timeout', function ($timeout) {
   pagesMemoizeCache = _.memoize(function(arr, current, distance, id) {

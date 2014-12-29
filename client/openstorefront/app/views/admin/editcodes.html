@@ -1,24 +1,22 @@
 <div class="modal-header">
-  <h3 style="display:inline-block; margin-top:0px; margin-bottom:0px;">Edit {{type.description}}</h3>
+  <h3 style="display:inline-block; margin-top:0px; margin-bottom:0px; max-width:calc(100% - 30px)">Edit {{type.description}}</h3>
   <button type="button" class="close" ng-click="cancel()" aria-hidden="true">×</button>
 </div> 
 <div class="modal-body">
   <tabset justified="false" type="">  <!-- pills -->
-    <tab heading="Type Details">
-      <form action="">
-        <ul style="list-style:none">
-          <li><input type="text" ng-model="type.description"}}/></li>
-          <li><input type="text" ng-model="type.type"}}/></li>
-          <li><input type="checkbox" ng-model="type.visibleFlg" ng-checked="type.visibleFlg"}}/></li>
-          <li><input type="checkbox" ng-model="type.requiredFlg" ng-checked="type.requiredFlg"}}/></li>
-          <li><input type="checkbox" ng-model="type.importantFlg" ng-checked="type.importantFlg"}}/></li>
-          <li><input type="checkbox" ng-model="type.architectureFlg" ng-checked="type.architectureFlg"}}/></li>
-          <li><input type="checkbox" ng-model="type.allowMultipleFlg" ng-checked="type.allowMultipleFlg"}}/></li>
-        </ul>
+    <tab heading="Edit Type Details">
+      <form action="" style="margin-top:10px;">
+          <div class="col-sm-2" style="">Description</div><div class="col-sm-10"><input class="form-control" type="text" ng-model="type.description"}}/></div>
+          <div class="col-sm-2" style="">Type</div><div class="col-sm-10"><input class="form-control" type="text" ng-model="type.type"}}/></div>
+          <div class="col-sm-2" style="">Visible Flag</div><div class="col-sm-10"><input class="form-control" type="checkbox" ng-model="type.visibleFlg" ng-checked="type.visibleFlg"}}/></div>
+          <div class="col-sm-2" style="">Required Flag</div><div class="col-sm-10"><input class="form-control" type="checkbox" ng-model="type.requiredFlg" ng-checked="type.requiredFlg"}}/></div>
+          <div class="col-sm-2" style="">Important Flag</div><div class="col-sm-10"><input class="form-control" type="checkbox" ng-model="type.importantFlg" ng-checked="type.importantFlg"}}/></div>
+          <div class="col-sm-2" style="">Architecture Flag</div><div class="col-sm-10"><input class="form-control" type="checkbox" ng-model="type.architectureFlg" ng-checked="type.architectureFlg"}}/></div>
+          <div class="col-sm-2" style="">AllowMultiple Flag</div><div class="col-sm-10"><input class="form-control" type="checkbox" ng-model="type.allowMultipleFlg" ng-checked="type.allowMultipleFlg"}}/></div>
         <button type="submit" class="btn btn-default">Save&nbsp;<i class="fa fa-save"></i></button>
       </form>
     </tab>
-    <tab heading="Code Details">
+    <tab heading="Manage Codes">
       <br>
       <div ng-show="type.codes.length > windowSize">
         <div>
@@ -51,7 +49,7 @@
           <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.groupCode}}</td>
           <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.sortOrder}}</td>
           <td style="padding: 0px 3px;">
-            <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editType(code)" ng-disabled="code.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button><button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button><!-- <button type="button" title="Delete Type" class="btn btn-default btn-sm" ng-click="deleteAttribute(code)"><i class="fa fa-trash"></i></button> -->
+            <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editCode(code)" ng-disabled="code.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button><button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button><!-- <button type="button" title="Delete Type" class="btn btn-default btn-sm" ng-click="deleteAttribute(code)"><i class="fa fa-trash"></i></button> -->
           </td>
         </tr>
       </table>
