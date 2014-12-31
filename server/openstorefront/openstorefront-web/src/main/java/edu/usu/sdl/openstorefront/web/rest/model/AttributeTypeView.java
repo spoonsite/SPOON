@@ -63,7 +63,7 @@ public class AttributeTypeView
 	{
 		AttributeTypeView attributeTypeView = new AttributeTypeView();
 		attributeTypeView.setType(attributeType.getAttributeType());
-		attributeTypeView.setAllowMultipleFlg(attributeType.getAllowMutlipleFlg());
+		attributeTypeView.setAllowMultipleFlg(attributeType.getAllowMultipleFlg());
 		attributeTypeView.setArchitectureFlg(attributeType.getArchitectureFlg());
 		attributeTypeView.setDescription(attributeType.getDescription());
 		attributeTypeView.setImportantFlg(attributeType.getImportantFlg());

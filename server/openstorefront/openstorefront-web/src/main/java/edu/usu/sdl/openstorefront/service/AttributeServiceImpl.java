@@ -88,7 +88,18 @@ public class AttributeServiceImpl
 	@Override
 	public List<AttributeCode> findCodesForType(String type)
 	{
-		Element element = OSFCacheManager.getAttributeCache().get(type);
+		return findCodesForType(type, false);
+	}
+
+	@Override
+	public List<AttributeCode> findCodesForType(String type, Boolean all)
+	{
+		Element element;
+		if (all) {
+			element = OSFCacheManager.getAttributeCache().get(type + "-allCodes");
+		} else {
+			element = OSFCacheManager.getAttributeCache().get(type);
+		}
 		if (element != null) {
 			return (List<AttributeCode>) element.getObjectValue();
 		}
@@ -98,10 +109,17 @@ public class AttributeServiceImpl
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(type);
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
-			attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+			if (!all) {
+				attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+			}
 			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
-			element = new Element(type, attributeCodes);
+			if (all){
+				element = new Element(type + "-allCodes", attributeCodes);
+			} else {
+				element = new Element(type, attributeCodes);
+			}
 			OSFCacheManager.getAttributeCache().put(element);
+
 			return attributeCodes;
 		}
 	}
@@ -152,10 +170,12 @@ public class AttributeServiceImpl
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
 		if (existing != null) {
 			//remove to inactivate
+			OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType());
+			OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType() + "-allCodes");
 			existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeType.getUpdateUser());
-			existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
+			existing.setAllowMultipleFlg(attributeType.getAllowMultipleFlg());
 			existing.setArchitectureFlg(attributeType.getArchitectureFlg());
 			existing.setDescription(attributeType.getDescription());
 			existing.setImportantFlg(attributeType.getImportantFlg());
@@ -211,6 +231,8 @@ public class AttributeServiceImpl
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
 			//remove to inactivate
+			OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType());
+			OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType() + "-allCodes");
 			existing.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeCode.getUpdateUser());
@@ -343,6 +365,7 @@ public class AttributeServiceImpl
 
 			OSFCacheManager.getAttributeTypeCache().remove(type);
 			OSFCacheManager.getAttributeCache().remove(type);
+			OSFCacheManager.getAttributeCache().remove(type + "-allCodes");
 		}
 	}
 
@@ -359,6 +382,23 @@ public class AttributeServiceImpl
 			persistenceService.persist(attributeCode);
 
 			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
+			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType() + "-allCodes");
+		}
+	}
+	
+	@Override
+	public void activateCode(AttributeCodePk attributeCodePk)
+	{
+		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
+
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+			attributeCode.setUpdateDts(TimeUtil.currentDate());
+			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(attributeCode);
+			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
+			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType() + "-allCodes");
 		}
 	}
 
@@ -384,7 +424,7 @@ public class AttributeServiceImpl
 					AttributeType existing = existingAttributeMap.get(attributeType.getAttributeType());
 					if (existing != null) {
 						existing.setDescription(attributeType.getDescription());
-						existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
+						existing.setAllowMultipleFlg(attributeType.getAllowMultipleFlg());
 						existing.setArchitectureFlg(attributeType.getArchitectureFlg());
 						existing.setImportantFlg(attributeType.getImportantFlg());
 						existing.setRequiredFlg(attributeType.getRequiredFlg());
@@ -829,6 +869,16 @@ public class AttributeServiceImpl
 			attributeType.setUpdateDts(TimeUtil.currentDate());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
+		}
+	}
+
+	@Override
+	public void saveSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder)
+	{
+		AttributeCode code = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (code != null){
+			code.setSortOrder(sortOrder);
+			persistenceService.persist(code);
 		}
 	}
 

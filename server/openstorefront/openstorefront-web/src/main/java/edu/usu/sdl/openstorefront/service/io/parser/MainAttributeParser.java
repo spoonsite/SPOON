@@ -67,7 +67,7 @@ public class MainAttributeParser
 				attributeType.setDescription(data[DESC].trim());
 
 				//Default to true....Later an admin would need to determine which ones should only allow one.
-				attributeType.setAllowMutlipleFlg(Boolean.TRUE);
+				attributeType.setAllowMultipleFlg(Boolean.TRUE);
 				attributeType.setArchitectureFlg(Convert.toBoolean(data[ARCH_FLG]));
 				attributeType.setVisibleFlg(Convert.toBoolean(data[VISIBLE]));
 				attributeType.setImportantFlg(Convert.toBoolean(data[IMPORTANT]));

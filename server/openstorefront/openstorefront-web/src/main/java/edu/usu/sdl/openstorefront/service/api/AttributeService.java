@@ -51,6 +51,14 @@ public interface AttributeService
 	 * @param type
 	 * @return if type doesn't exist it return empty list
 	 */
+	public List<AttributeCode> findCodesForType(String type, Boolean all);
+
+	/**
+	 * Gets the active code for a type
+	 *
+	 * @param type
+	 * @return if type doesn't exist it return empty list
+	 */
 	public List<AttributeCode> findCodesForType(String type);
 
 	/**
@@ -249,5 +257,14 @@ public interface AttributeService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteAttributeXrefType(String attributeType);
+
+	/**
+	 * 
+	 * @param attributeCodePk
+	 * @param sortOrder 
+	 */
+	public void saveSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder);
+
+	public void activateCode(AttributeCodePk attributeCodePk);
 
 }

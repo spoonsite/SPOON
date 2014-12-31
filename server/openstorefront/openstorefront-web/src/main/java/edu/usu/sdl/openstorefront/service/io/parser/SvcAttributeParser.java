@@ -51,7 +51,7 @@ public class SvcAttributeParser
 		attributeType.setDescription("DI2E SvcV-4 Alignment");
 
 		//Default to true....Later an admin would need to determine which ones should only allow one.
-		attributeType.setAllowMutlipleFlg(Boolean.TRUE);
+		attributeType.setAllowMultipleFlg(Boolean.TRUE);
 		attributeType.setArchitectureFlg(Boolean.TRUE);
 		attributeType.setVisibleFlg(Boolean.TRUE);
 		attributeType.setImportantFlg(Boolean.TRUE);

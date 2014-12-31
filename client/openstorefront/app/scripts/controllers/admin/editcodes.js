@@ -18,10 +18,11 @@
 
 var pagesMemoizeCache;
 
-app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'size', 'business', '$timeout', function ($scope, $uiModalInstance, type, size, Business, $timeout) {
-  $scope.type = type;
+app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 'type', 'size', 'business', '$timeout', '$filter', function ($scope, $uiModalInstance, $uiModal, type, size, Business, $timeout, $filter) {
+  $scope.type = angular.copy(type);
+  $scope.backup = angular.copy(type);
   $scope.size = size;
-  $scope.predicate = 'activeStatus';
+  $scope.predicate = 'sortOrder';
   $scope.check = {};
   $scope.reverse = false;
   $scope.windowSize = 15;
@@ -29,8 +30,18 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
   $scope.check.windowSize = $scope.windowSize;
   $scope.check.pageNumber = $scope.pageNumber;
   $scope.current = 0;
+  $scope.dirty = false;
+  $scope.cache = new Date().getTime();
+
+  $scope.changed = false;
 
   var timer;
+
+
+  $scope.refreshFilterCache = function() {
+    Business.getFilters(true, false);
+  };
+
 
   var setupPaging = function() {
     clearTimeout(timer);
@@ -38,6 +49,29 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
     if (pagesMemoizeCache) {
       pagesMemoizeCache.cache = {};
     }
+  }
+
+  $scope.clearCache = function() {
+    if (pagesMemoizeCache) {
+      pagesMemoizeCache.cache = {};
+    } 
+    $scope.cache = new Date().getTime();
+  }
+
+  $scope.getType = function() {
+    Business.articleservice.getType(type.type, true, true).then(function(result){
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
+      if (result) {
+        console.log('----------------WE ARE GETTING THE NEW TYPE ==--------------------', result);
+        $scope.type = result;
+        $scope.clearCache();
+      } else {
+        $scope.type = {}
+      }
+    }, function() {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
+      $scope.type = {};
+    })
   }
 
   $scope.$watch('windowSize', function(newVal, oldVal){
@@ -119,7 +153,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
   }
 
   $scope.getUniqueId = function() {
-    return '' + $scope.type.type + $scope.current + $scope.windowSize + $scope.predicate + $scope.reverse;
+    return '' + $scope.type.type + $scope.current + $scope.windowSize + $scope.predicate + $scope.reverse + $scope.cache;
   }
 
   $scope.next = function () {
@@ -140,16 +174,206 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', 'type', 'siz
 
 
   $scope.ok = function () {
-    $uiModalInstance.close('success');
+    $uiModalInstance.close($scope.changed);
   };
 
   $scope.cancel = function () {
+    $uiModalInstance.dismiss($scope.changed);
+  };
+
+  $scope.applySortOrder = function(remove){
+    var temp = $filter('orderBy')($scope.type.codes, $scope.predicate, $scope.reverse);
+    console.log('temp', temp[0]);
+    var sortOrder = temp.length;
+    for (var i = temp.length - 1; i >= 0; i--) {
+      if (!remove){
+        temp[i].sortOrder = sortOrder--;
+      } else {
+        delete temp[i].sortOrder;
+      }
+    };
+    $scope.type.codes = angular.copy(temp);
+    var oldPredicate = $scope.predicate;
+    $scope.dirty = true;
+    $scope.clearCache();
+  }
+
+
+  $scope.saveType = function(){
+    $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
+    var type = angular.copy($scope.type);
+    type.attributeType = type.type;
+    console.log('Type save', type);
+    delete type.type;
+    delete type.codes;
+    Business.articleservice.saveType(type).then(function(result){
+      if (result) {
+        $scope.changed = true;
+        $timeout(function(){
+          $scope.getType();
+          $scope.dirty = false;
+          triggerAlert('Your edits were saved', 'editUserProfile', '#editTypeModalDiv', 6000);
+        }, 500);
+      }
+      $scope.refreshFilterCache()
+    }, function(){
+      $scope.refreshFilterCache()
+    })
+  }
+
+  $scope.saveSortOrder = function(){
+    $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
+    Business.articleservice.saveSortOrder($scope.type).then(function(result){
+      if (result) {
+        $timeout(function(){
+          $scope.getType();
+          $scope.dirty = false;
+          triggerAlert('Your edits were saved', 'editUserProfile', '#editTypeModalDiv', 6000);
+        }, 500);
+      }      
+    }, function(){
+    })
+  }
+
+  $scope.cancelChanges = function(){
+    $scope.dirty = false;
+    $scope.clearCache();
+    $scope.type = angular.copy($scope.backup);
+  }
+
+  $scope.changeActivity = function(code){
+    var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). Continue?");
+    if (cont) {
+      $scope.deactivateButtons = true;
+      if (code.activeStatus === 'A') {
+        $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
+        Business.articleservice.deactivateCode($scope.type.type, code.code).then(function(){
+          $timeout(function(){
+            $scope.getType();
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
+            $scope.refreshFilterCache();
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.getType();
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
+            $scope.refreshFilterCache();
+          }, 1000);
+        })
+      } else {
+        $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
+        Business.articleservice.activateCode($scope.type.type, code.code).then(function() {
+          $timeout(function(){
+            $scope.getType();
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
+            $scope.refreshFilterCache();
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.getType();
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
+            $scope.refreshFilterCache();
+          }, 1000);
+        })
+      }
+    }
+  }
+
+  $scope.getCodeDesc = function(desc){
+    if (desc && desc !== undefined  && desc !== null && desc !== '') {
+      return desc;
+    }
+    return ' ';
+  }
+
+  $scope.editCode = function(code){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/editcode.html',
+      controller: 'AdminEditCodeCtrl',
+      size: 'sm',
+      resolve: {
+        code: function () {
+          return code;
+        },
+        type: function () {
+          return type.type;
+        },
+        size: function() {
+          return 'sm';
+        }
+      }
+    });
+
+    modalInstance.result.then(function (result) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
+      $timeout(function(){
+        $scope.getType();
+        triggerAlert('Your edits were saved', 'editUserProfile', '#editTypeModalDiv', 6000);
+      }, 500);
+      $scope.refreshFilterCache()
+    }, function () {
+      console.log('The edit was canceled or failed');
+      // cancled or failed
+      $scope.refreshFilterCache()
+    });
+
+
+  }
+
+
+  $timeout(function() {
+    $('[data-toggle=\'tooltip\']').tooltip();
+  }, 300);
+}]);
+
+
+
+
+
+
+
+app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type', 'size', 'business', '$timeout', function ($scope, $uiModalInstance, code, type, size, Business, $timeout) {
+  $scope.code = angular.copy(code);
+  console.log('===CODE===', code);
+  
+  $scope.editorContent = angular.copy($scope.code.description);
+
+
+
+  $scope.ok = function () {
+    //save the code change.
+    $scope.code.detailUrl = $scope.code.fullTextLink;
+    console.log('$scope.code', $scope.code);
+    
+    Business.articleservice.saveCode(type, code.code, $scope.code).then(function(result){
+      if (result) {
+        console.log('Code save result', result);
+        console.log('$scope.code', $scope.code);
+        $uiModalInstance.close('success');
+      } else {
+        console.log('The code failed but the call succeded');
+        
+      }
+    }, function(){
+      // the save failed
+      console.log('The code save failed');
+      
+    })
+  };
+
+  $scope.cancel = function () {
+    console.log('$scope.code', $scope.code);
     $uiModalInstance.dismiss('cancel');
   };
 }]);
 
+
 app.filter('pageme', ['$timeout', function ($timeout) {
-  pagesMemoizeCache = _.memoize(function(arr, current, distance, id) {
+  var pagesMemoizeCache = _.memoize(function(arr, current, distance, id) {
     // if we don't have an array to search return...
     if (!arr) { return; }
     
@@ -159,5 +383,6 @@ app.filter('pageme', ['$timeout', function ($timeout) {
   }, function(arr, current, distance, id){
     return id;
   });
+
   return pagesMemoizeCache;
 }]);
