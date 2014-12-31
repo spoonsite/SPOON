@@ -61,7 +61,7 @@ public class AttributeType
 
 	@NotNull
 	@ConsumeField
-	private Boolean allowMutlipleFlg;
+	private Boolean allowMultipleFlg;
 
 	public static final String DI2E_SVCV4 = "DI2E-SVCV4-A";
 	public static final String TYPE = "TYPE";
@@ -155,14 +155,14 @@ public class AttributeType
 		this.importantFlg = importantFlg;
 	}
 
-	public Boolean getAllowMutlipleFlg()
+	public Boolean getAllowMultipleFlg()
 	{
-		return allowMutlipleFlg;
+		return allowMultipleFlg;
 	}
 
-	public void setAllowMutlipleFlg(Boolean allowMutlipleFlg)
+	public void setAllowMultipleFlg(Boolean allowMultipleFlg)
 	{
-		this.allowMutlipleFlg = allowMutlipleFlg;
+		this.allowMultipleFlg = allowMultipleFlg;
 	}
 
 }

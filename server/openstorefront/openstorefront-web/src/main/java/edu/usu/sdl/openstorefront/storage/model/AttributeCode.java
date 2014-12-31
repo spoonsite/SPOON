@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -124,6 +125,17 @@ public class AttributeCode
 		return true;
 	}
 
+	
+	public void copyFromView(AttributeCodeView code, AttributeCodePk attributeCodePk)
+	{
+		setAttributeCodePk(attributeCodePk);
+		setDescription(code.getDescription());
+		setDetailUrl(code.getFullTextLink());
+		setGroupCode(code.getGroupCode());
+		setLabel(code.getLabel());
+		setSortOrder(code.getSortOrder());
+	}
+	
 	public String getDescription()
 	{
 		return description;
@@ -193,5 +205,4 @@ public class AttributeCode
 	{
 		this.groupCode = groupCode;
 	}
-
 }

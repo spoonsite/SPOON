@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
@@ -93,13 +94,13 @@ public class AttributeResource
 		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
 
 		AttributeType attributeTypeExample = new AttributeType();
-		if (!all){
+		if (!all) {
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		}
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
 		for (AttributeType attributeType : attributeTypes) {
 			AttributeTypeView attributeTypeView = AttributeTypeView.toView(attributeType);
-			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
+			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType(), all);
 			attributeCodes.stream().forEach(code -> {
 				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
 			});
@@ -109,7 +110,8 @@ public class AttributeResource
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 			if (attributeTypeView.getArchitectureFlg()) {
 				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
-			} else {
+			}
+			else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
 		}
@@ -167,13 +169,44 @@ public class AttributeResource
 	@Path("/attributetypes/{type}")
 	public Response getAttributeTypeById(
 			@PathParam("type")
-			@RequiredParam String type)
+			@RequiredParam String type,
+			@QueryParam("view")
+			@APIDescription("Setting forces the attribute to return the view model.")
+			@DefaultValue("false") boolean view,
+			@QueryParam("all")
+			@APIDescription("Setting forces the attribute to return the view model.")
+			@DefaultValue("false") boolean all)
 	{
-		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
-		if (attributeType == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		} else {
-			return Response.ok(attributeType).build();
+		if (!view) {
+			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+			if (attributeType == null) {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+			else {
+				return Response.ok(attributeType).build();
+			}
+		}
+		else {
+			AttributeTypeView attributeTypeView = new AttributeTypeView();
+			AttributeType typeObj = service.getPersistenceService().findById(AttributeType.class, type);
+			if (typeObj != null) {
+				attributeTypeView = AttributeTypeView.toView(typeObj);
+			}
+			else {
+				typeObj = new AttributeType();
+				typeObj.setAttributeType(AttributeType.TYPE);
+			}
+			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(typeObj.getAttributeType(), all);
+			for (AttributeCode code : attributeCodes) {
+				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
+			}
+			if (attributeTypeView.getArchitectureFlg()) {
+				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
+			}
+			else {
+				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
+			}
+			return Response.ok(attributeTypeView).build();
 		}
 	}
 
@@ -194,7 +227,8 @@ public class AttributeResource
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, pk);
 		if (attributeCode == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
-		} else {
+		}
+		else {
 			return Response.ok(attributeCode).build();
 		}
 	}
@@ -354,7 +388,8 @@ public class AttributeResource
 		if (existing != null) {
 			attributeType.setAttributeType(type.toUpperCase());
 			return handleAttributePostPutType(attributeType, true);
-		} else {
+		}
+		else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing type.", "Make sure type exists before call PUT");
 		}
 	}
@@ -369,13 +404,15 @@ public class AttributeResource
 			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeType(attributeType, false);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).entity(attributeTypeCreated).build();
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -393,7 +430,7 @@ public class AttributeResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@APIDescription("Activate a type (In-activates).  Note: this doesn't remove all attribute type associations.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
 	public void activateType(
@@ -401,6 +438,30 @@ public class AttributeResource
 			@RequiredParam String type)
 	{
 		service.getAttributeService().activateType(type.toUpperCase());
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Updates a attribute code")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}/sortorder")
+	public Response updateAttributeCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			AttributeTypeView attributeType)
+	{
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(type);
+
+		for (AttributeCodeView code : attributeType.getCodes()) {
+			attributeCodePk.setAttributeCode(code.getCode());
+			service.getAttributeService().saveSortOrder(attributeCodePk, code.getSortOrder());
+			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeCode());
+		}
+		OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
+		OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType() + "-allCodes");
+
+		return Response.ok(attributeType).build();
 	}
 
 	@POST
@@ -433,11 +494,11 @@ public class AttributeResource
 		attributeCodePk.setAttributeCode(code);
 		attributeCodePk.setAttributeType(type);
 		attributeCode.setAttributeCodePk(attributeCodePk);
-
 		AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (existing != null) {
-			return handleAttributePostPutCode(attributeCode, true);
-		} else {
+			return handleAttributePostPutCode(attributeCode, false);
+		}
+		else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing code.", "Make sure type exists before call PUT");
 		}
 	}
@@ -452,7 +513,8 @@ public class AttributeResource
 			attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeCode(attributeCode, false);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -461,14 +523,15 @@ public class AttributeResource
 					+ attributeCode.getAttributeCodePk().getAttributeType()
 					+ "/attributecodes/"
 					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
-		} else {
-			return Response.ok().build();
+		}
+		else {
+			return Response.ok(attributeCode).build();
 		}
 	}
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@APIDescription("Remove a Code (In-activates).  Note: this doesn't remove all attribute type associations.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
 			@PathParam("type")
@@ -480,6 +543,23 @@ public class AttributeResource
 		attributeCodePk.setAttributeCode(code.toUpperCase());
 		attributeCodePk.setAttributeType(type.toUpperCase());
 		service.getAttributeService().removeAttributeCode(attributeCodePk);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Activate a Code (activates).")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}/attributecodes/{code}/activate")
+	public void activateCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode(code.toUpperCase());
+		attributeCodePk.setAttributeType(type.toUpperCase());
+		service.getAttributeService().activateCode(attributeCodePk);
 	}
 
 	@GET
@@ -604,7 +684,8 @@ public class AttributeResource
 			service.getAttributeService().saveAttributeXrefMap(attributeXref);
 
 			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/" + attributeXref.getType().getAttributeType() + "/detail")).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}

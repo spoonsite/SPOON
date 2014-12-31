@@ -17,17 +17,24 @@
 'use strict';
 
 app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$timeout', function ($scope, Business, $uiModal, $timeout) {
-  $scope.predicate = 'activeStatus';
+  $scope.predicate = 'description';
+  $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminAttributes');
   $scope.reverse = false;
   $scope.getFilters = function(override) {
     Business.getFilters(override, true).then(function(result){
-      console.log('result', result);
       $scope.filters = result? angular.copy(result): [];
+      $timeout(function(){
+        $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminAttributes');
+      })
     }, function(){
       $scope.filters = [];
     });
   }
   $scope.getFilters(false);
+
+  $scope.refreshFilterCache = function() {
+    Business.getFilters(true, false);
+  };
 
   $scope.setPredicate = function(predicate, override){
     if ($scope.predicate === predicate){
@@ -39,7 +46,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   }
 
   $scope.deleteAttribute = function(filter){
-    console.log('Deleted filter', filter);
+    // console.log('Deleted filter', filter);
   }
 
   $scope.changeActivity = function(filter){
@@ -96,10 +103,21 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     });
 
     modalInstance.result.then(function (result) {
-      //do something
-      triggerAlert('Your edits were saved', 'editUserProfile', 'body', 6000);
-    }, function () {
-      // cancled or failed
+      if (result) {
+        $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+        $scope.getFilters(true);
+        $scope.refreshFilterCache()
+      }
+    }, function (result) {
+      if (result) {
+        $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+        $scope.getFilters(true);
+        $scope.refreshFilterCache()
+      }      
     });
   }
+
+  $timeout(function() {
+    $('[data-toggle=\'tooltip\']').tooltip();
+  }, 300);
 }]);

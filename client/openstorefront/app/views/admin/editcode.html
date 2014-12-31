@@ -5,12 +5,12 @@
 <div class="modal-body">
   <form action="" style="margin-top:10px;">
     <div class="col-sm-3" style="">Label</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.label"}}/></div>
-    <div class="col-sm-3" style="">Code</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.code"}}/></div>
-    <div class="col-sm-3" style="">Description</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.description" /></div>
+    <div class="col-sm-3" style="">Code</div><div class="col-sm-9"><input ng-disabled="true" class="form-control" type="text" ng-model="code.code"}}/></div>
+    <div class="col-sm-3" style="">Description</div><div class="col-sm-9"><textarea ckeditor="editorOptions" ng-model="code.description" ng-watch="editorContent"></textarea></div>
     <div class="col-sm-3" style="">Full Text Link</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.fullTextLink" /></div>
     <div class="col-sm-3" style="">Group Code</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.groupCode" /></div>
-    <div class="col-sm-3" style="">Sort Order</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.sortOrder" /></div>
-    <button type="submit" class="btn btn-default">Save&nbsp;<i class="fa fa-save"></i></button>
+    <div class="col-sm-3" style="">Sort Order</div><div class="col-sm-9"><input class="form-control" type="number" ng-model="code.sortOrder" /></div>
+    <button type="submit" class="btn btn-default" ng-click="ok();">Save&nbsp;<i class="fa fa-save"></i></button>
   </form>
 </div>
 <div class="modal-footer">

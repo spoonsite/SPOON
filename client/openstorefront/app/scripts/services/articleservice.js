@@ -111,6 +111,42 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
 
     return deferred.promise;
   };  
+  
+  article.getType = function(type, view, all){
+    var deferred = $q.defer();
+    if (type) {
+      var method = 'GET';
+      var url = 'api/v1/resource/attributes/attributetypes/'+type;
+      var params = {}
+      if (view) {
+        params = {
+          'view': view,
+          'all': all
+        }
+      }
+      $http({
+        method: method,
+        url: url,
+        params: params
+      }).success(function(data, status, headers, config){        
+        if (data && data !== 'false' && isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject(false);
+    }
+
+    return deferred.promise;
+  };  
 
   article.deactivateFilter = function(type){
     var deferred = $q.defer();
@@ -137,6 +173,132 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
 
     return deferred.promise;
   }
+  
+  article.deactivateCode = function(type, code){
+    var deferred = $q.defer();
+    if (type) {
+      $http({
+        method: 'DELETE',
+        url: 'api/v1/resource/attributes/attributetypes/' + type + '/attributecodes/' + code
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }
+  
+  article.saveCode = function(type, code, data, newCode){
+    var deferred = $q.defer();
+    if (type, code, data) {
+      var url;
+      var method;
+      if (newCode || code !== data.code) {
+        url = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes';
+        method = 'POST';
+      } else {
+        method = 'PUT';
+        url = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code;
+      }
+      $http({
+        method: method,
+        url: url,
+        data: data
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+    return deferred.promise;
+  }  
+
+  article.saveType = function(type, newType){
+    var deferred = $q.defer();
+    if (type) {
+      var url;
+      var method;
+      if (newType) {
+        method = 'POST';
+        url = 'api/v1/resource/attributes/attributetypes/';
+      } else {
+        method = 'PUT';
+        url = 'api/v1/resource/attributes/attributetypes/'+type.attributeType;
+      }
+      $http({
+        method: method,
+        url: url,
+        data: type
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+    return deferred.promise;
+  }
+
+  article.saveSortOrder = function(attributeTypeView){
+    var deferred = $q.defer();
+    if (attributeTypeView) {
+      var url;
+      var method;
+      method = 'PUT';
+      url = 'api/v1/resource/attributes/attributetypes/'+attributeTypeView.type+'/sortorder';
+      $http({
+        method: method,
+        url: url,
+        data: attributeTypeView
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+    return deferred.promise;
+  }
 
   article.activateFilter = function(type) {
     var deferred = $q.defer();
@@ -144,6 +306,32 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
       $http({
         method: 'POST',
         url: 'api/v1/resource/attributes/attributetypes/' + type
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }
+
+  article.activateCode = function(type, code) {
+    var deferred = $q.defer();
+    if (type) {
+      $http({
+        method: 'POST',
+        url: 'api/v1/resource/attributes/attributetypes/' + type + '/attributecodes/' + code + '/activate'
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();

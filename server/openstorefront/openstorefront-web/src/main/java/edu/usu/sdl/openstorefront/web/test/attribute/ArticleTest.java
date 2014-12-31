@@ -71,7 +71,7 @@ public class ArticleTest
 		AttributeType attributeType = new AttributeType();
 		attributeType.setAttributeType("TEST-CASE-TMP");
 		attributeType.setDescription("This is a temp test attribute");
-		attributeType.setAllowMutlipleFlg(true);
+		attributeType.setAllowMultipleFlg(true);
 		attributeType.setArchitectureFlg(false);
 		attributeType.setImportantFlg(true);
 		attributeType.setRequiredFlg(false);

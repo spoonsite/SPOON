@@ -414,7 +414,7 @@ public class ComponentServiceImpl
 				oldAttribute.setUpdateDts(TimeUtil.currentDate());
 				persistenceService.persist(oldAttribute);
 			} else {
-				if (type.getAllowMutlipleFlg() == false) {
+				if (type.getAllowMultipleFlg() == false) {
 					ComponentAttribute example = new ComponentAttribute();
 					example.setComponentAttributePk(new ComponentAttributePk());
 					example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());

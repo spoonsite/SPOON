@@ -69,7 +69,7 @@ public class ComponentAttributeView
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
 		view.setImportantFlg(type.getImportantFlg());
 		view.setRequiredFlg(type.getRequiredFlg());
-		view.setAllowMultipleFlg(type.getAllowMutlipleFlg());
+		view.setAllowMultipleFlg(type.getAllowMultipleFlg());
 		view.setArchitectureFlg(type.getArchitectureFlg());
 		view.setVisibleFlg(type.getVisibleFlg());
 		view.setUpdateDts(article.getUpdateDts());
@@ -99,7 +99,7 @@ public class ComponentAttributeView
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
 		view.setImportantFlg(type.getImportantFlg());
 		view.setRequiredFlg(type.getRequiredFlg());
-		view.setAllowMultipleFlg(type.getAllowMutlipleFlg());
+		view.setAllowMultipleFlg(type.getAllowMultipleFlg());
 		view.setArchitectureFlg(type.getArchitectureFlg());
 		view.setVisibleFlg(type.getVisibleFlg());
 		view.setUpdateDts(attribute.getUpdateDts());
