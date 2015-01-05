@@ -15,14 +15,16 @@
  */
 
 
-var doAttributes = function() {
-
+var doAttributes = function(contentId) {
+    if (contentId === undefined || contentId === null){
+      contentId = '#content';
+    }
     $.get("/openstorefront/api/v1/resource/attributes", function(data) {
         if (data && data.length > 0){
             if (data[0].codes !== undefined) {
-              setupAttributes(data);
+              setupAttributes(data, contentId);
             } else {
-              $('#content').append('(requires login to view)');
+              $(contentId).append('(requires login to view)');
             }
         }
         
@@ -30,12 +32,12 @@ var doAttributes = function() {
 };
 
 
-var setupAttributes = function(types) {
+var setupAttributes = function(types, contentId) {
     for (var i = 0; i < types.length; i++) {
         var codes = types[i].codes;
         if (codes && codes.length > 0) {
             $('#tableOfContents').append('<tr><td><span goTo="' + types[i].type + '" class="imitateLink">' + types[i].description + '</span></td></tr>');
-            $('#content').append('<div id="' + types[i].type + '" style="margin-top: 50px;"><h3>' + types[i].description + ' (' + types[i].type + ')</h3><div style="margin-left: 20px;"><table><tr><th>Code</th><th>Label</th><th>Description</th></tr></table></div></div>');
+            $(contentId).append('<div id="' + types[i].type + '" style="margin-top: 50px;"><h3>' + types[i].description + ' (' + types[i].type + ')</h3><div style="margin-left: 20px;"><table><tr><th>Code</th><th>Label</th><th>Description</th></tr></table></div></div>');
             for (var j = 0; codes && j < codes.length; j++) {
                 $('#' + types[i].type).find('table').append('<tr><td>' + codes[j].code + '</td><td>' + codes[j].label + '</td><td>' + codes[j].description + '</td></tr></div>');
             }
@@ -54,28 +56,31 @@ var setupAttributes = function(types) {
 
 };
 
-var doLookups = function() {
+var doLookups = function(contentId) {
+    if (contentId === undefined || contentId === null){
+      contentId = '#content';
+    }
     $.get("/openstorefront/api/v1/resource/lookuptypes", function(data) {
         if (data && data.length > 0) {
             //console.log('data', data);
           if (data[0].code !== undefined) {
             var types = data;
             for (var i = 0; i < types.length; i++) {
-              setupLookups(types[i]);
+              setupLookups(types[i], contentId);
             }
           } else {            
-            $('#content').append('(requires login to view)');            
+            $(contentId).append('(requires login to view)');            
           }
         }
     });
 };
 
 
-var setupLookups = function(type) {
+var setupLookups = function(type, contentId) {
     $.get("/openstorefront/api/v1/resource/lookuptypes/" + type.code, function(codes) {
         if (codes && codes.length > 0) {
             $('#tableOfContents').append('<tr><td><span goTo="' + type.code + '" class="imitateLink">' + type.code + '</span></td></tr>');
-            $('#content').append('<div id="' + type.code + '" style="margin-top: 50px;"><h3>' + type.code + '</h3><div style="margin-left: 20px;"><table><tr><th>Description</th><th>Code</th></tr></table></div></div>');
+            $(contentId).append('<div id="' + type.code + '" style="margin-top: 50px;"><h3>' + type.code + '</h3><div style="margin-left: 20px;"><table><tr><th>Code</th><th>Description</th></tr></table></div></div>');
             $('span[goTo]').on('click', function(e) {
                 e.preventDefault();
                 var target = $(this).attr('goTo');
@@ -87,7 +92,7 @@ var setupLookups = function(type) {
                 });
             });
             for (var j = 0; codes && j < codes.length; j++) {
-                $('#' + type.code).find('table').append('<tr><td>' + codes[j].description + '</td><td>' + codes[j].code + '</td></tr></div>');
+                $('#' + type.code).find('table').append('<tr><td>' + codes[j].code + '</td><td>' + codes[j].description + '</td></tr></div>');
             }
         }
 

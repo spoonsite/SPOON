@@ -61,7 +61,7 @@ public class JiraService
 		JiraStats stats = new JiraStats();
 		try (JiraClient jiraClient = JiraManager.getClient()) {
 			ServerInfo serverInfo = jiraClient.getServerInfo();
-			stats.setServerInfo(serverInfo);
+			stats.popluateServerInfo(serverInfo);
 		}
 		stats.setMaxConnections(JiraManager.getMaxConnections());
 		stats.setRemainingConnections(JiraManager.getAvavilableConnections());

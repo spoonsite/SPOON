@@ -189,6 +189,11 @@ public class JaxrsProcessor
 									valueModel.setValueObject(objectMapper.writeValueAsString(returnTypeClass.newInstance()));
 									mapValueField(valueModel.getValueFields(), ServiceUtil.getAllFields(returnTypeClass).toArray(new Field[0]));
 									mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(returnTypeClass).toArray(new Field[0]), false);
+
+									aPIDescription = (APIDescription) returnTypeClass.getAnnotation(APIDescription.class);
+									if (aPIDescription != null) {
+										valueModel.setValueDescription(aPIDescription.value());
+									}
 								} catch (InstantiationException iex) {
 									log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", returnTypeClass));
 								}
@@ -205,6 +210,12 @@ public class JaxrsProcessor
 								valueModel.setTypeObject(objectMapper.writeValueAsString(dataType.value().newInstance()));
 								mapValueField(valueModel.getTypeFields(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]));
 								mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), false);
+
+								aPIDescription = (APIDescription) dataType.value().getAnnotation(APIDescription.class);
+								if (aPIDescription != null) {
+									valueModel.setTypeDescription(aPIDescription.value());
+								}
+
 							} catch (InstantiationException iex) {
 								log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", dataType.value()));
 							}
@@ -272,6 +283,12 @@ public class JaxrsProcessor
 							String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getTypeObject(), fieldList);
 							valueModel.setTypeObject(cleanUpJson);
 							mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(dataType.value()).toArray(new Field[0]), true);
+
+							APIDescription aPIDescription = (APIDescription) dataType.value().getAnnotation(APIDescription.class);
+							if (aPIDescription != null) {
+								valueModel.setTypeDescription(aPIDescription.value());
+							}
+
 						} catch (InstantiationException iex) {
 							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
 						}
@@ -282,6 +299,12 @@ public class JaxrsProcessor
 							String cleanUpJson = StringProcessor.stripeFieldJSON(valueModel.getValueObject(), fieldList);
 							valueModel.setValueObject(cleanUpJson);
 							mapComplexTypes(valueModel.getAllComplexTypes(), ServiceUtil.getAllFields(parameter.getType()).toArray(new Field[0]), true);
+
+							APIDescription aPIDescription = (APIDescription) parameter.getType().getAnnotation(APIDescription.class);
+							if (aPIDescription != null) {
+								valueModel.setTypeDescription(aPIDescription.value());
+							}
+
 						} catch (InstantiationException iex) {
 							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
 						}
@@ -330,6 +353,12 @@ public class JaxrsProcessor
 
 					APITypeModel typeModel = new APITypeModel();
 					typeModel.setName(fieldClass.getSimpleName());
+
+					APIDescription aPIDescription = (APIDescription) fieldClass.getAnnotation(APIDescription.class);
+					if (aPIDescription != null) {
+						typeModel.setDescription(aPIDescription.value());
+					}
+
 					Set<String> fieldList = mapValueField(typeModel.getFields(), fieldClass.getDeclaredFields(), onlyConsumeField);
 					if (fieldClass.isEnum()) {
 						typeModel.setObject(Arrays.toString(fieldClass.getEnumConstants()));
@@ -399,6 +428,11 @@ public class JaxrsProcessor
 				ParamTypeDescription description = (ParamTypeDescription) field.getAnnotation(ParamTypeDescription.class);
 				if (description != null) {
 					validation.append(description.value()).append("<br>");
+				}
+
+				APIDescription aPIDescription = (APIDescription) field.getAnnotation(APIDescription.class);
+				if (aPIDescription != null) {
+					fieldModel.setDescription(aPIDescription.value());
 				}
 
 				if ("Date".equals(field.getType().getSimpleName())) {

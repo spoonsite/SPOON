@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -36,19 +37,23 @@ public abstract class LookupEntity
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@APIDescription("Internal System code")
 	protected String code;
 
 	@NotNull
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
+	@APIDescription("A label")
 	protected String description;
 
 	@ConsumeField
 	@Sanitize(BasicHTMLSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
+	@APIDescription("This is a long description")
 	private String detailedDecription;
 
+	@APIDescription("Used to force order")
 	private Integer sortOrder;
 
 	public LookupEntity()

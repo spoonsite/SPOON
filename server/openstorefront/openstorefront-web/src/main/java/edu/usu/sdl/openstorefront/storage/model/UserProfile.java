@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -67,10 +68,12 @@ public class UserProfile
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
 	@ConsumeField
+	@APIDescription("External system id used for tracking")
 	private String externalGuid;
 
 	//If there no external guid use our guid.
 	@NotNull
+	@APIDescription("System generated id used for tracking")
 	private String internalGuid;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)

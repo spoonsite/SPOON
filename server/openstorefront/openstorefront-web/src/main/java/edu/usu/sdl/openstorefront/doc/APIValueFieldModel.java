@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.doc;
 
 /**
@@ -22,10 +21,12 @@ package edu.usu.sdl.openstorefront.doc;
  */
 public class APIValueFieldModel
 {
+
 	private String fieldName;
 	private boolean required;
 	private String type;
 	private String validation;
+	private String description;
 
 	public APIValueFieldModel()
 	{
@@ -69,6 +70,16 @@ public class APIValueFieldModel
 	public void setValidation(String validation)
 	{
 		this.validation = validation;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
 	}
 
 }

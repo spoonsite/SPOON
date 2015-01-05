@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
@@ -44,9 +45,11 @@ public class ComponentMedia
 	private String componentMediaId;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Stored name filename")
 	private String fileName;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Name of the file uploaded")
 	private String originalName;
 
 	@NotNull
@@ -61,6 +64,7 @@ public class ComponentMedia
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@ConsumeField
 	@Sanitize(LinkSanitizer.class)
+	@APIDescription("External Link")
 	private String link;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)

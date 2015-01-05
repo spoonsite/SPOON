@@ -20,6 +20,8 @@ limitations under the License.
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
+		 <h1>Error Handling</h1>
+		 <hr>
 		<h2>Common Application Success Codes</h2>	
 		Note: Redirection follows the HTTP protocols see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP codes</a><br>
 		<table>

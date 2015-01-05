@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -49,6 +50,7 @@ public class UserWatch
 
 	@NotNull
 	@ConsumeField
+	@APIDescription("Notify when watch is triggered")
 	private Boolean notifyFlg;
 
 	public UserWatch()

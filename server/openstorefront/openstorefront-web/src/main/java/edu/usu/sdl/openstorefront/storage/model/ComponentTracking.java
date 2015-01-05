@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -26,6 +27,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("Tracking information on a component")
 public class ComponentTracking
 		extends BaseComponent
 {
@@ -46,6 +48,8 @@ public class ComponentTracking
 	private String clientIp;
 
 	private String componentResourceId;
+
+	@APIDescription("External resource url")
 	private String resourceLink;
 
 	public ComponentTracking()
