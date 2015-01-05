@@ -114,7 +114,7 @@
 		<dependency>
 			<groupId>net.sf.uadetector</groupId>
 			<artifactId>uadetector-resources</artifactId>
-			<version>2014.08</version>
+			<version>2014.10</version>
 		</dependency>				
 		<dependency>
 			<groupId>net.sourceforge.stripes</groupId>

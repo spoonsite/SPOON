@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.util.Convert;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -48,7 +49,7 @@ public class AttributeTypeView
 
 	@NotNull
 	private boolean allowMultipleFlg;
-	
+
 	@NotNull
 	private String activeStatus;
 
@@ -63,12 +64,12 @@ public class AttributeTypeView
 	{
 		AttributeTypeView attributeTypeView = new AttributeTypeView();
 		attributeTypeView.setType(attributeType.getAttributeType());
-		attributeTypeView.setAllowMultipleFlg(attributeType.getAllowMultipleFlg());
-		attributeTypeView.setArchitectureFlg(attributeType.getArchitectureFlg());
+		attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(attributeType.getAllowMultipleFlg()));
+		attributeTypeView.setArchitectureFlg(Convert.toBoolean(attributeType.getArchitectureFlg()));
 		attributeTypeView.setDescription(attributeType.getDescription());
-		attributeTypeView.setImportantFlg(attributeType.getImportantFlg());
-		attributeTypeView.setRequiredFlg(attributeType.getRequiredFlg());
-		attributeTypeView.setVisibleFlg(attributeType.getVisibleFlg());
+		attributeTypeView.setImportantFlg(Convert.toBoolean(attributeType.getImportantFlg()));
+		attributeTypeView.setRequiredFlg(Convert.toBoolean(attributeType.getRequiredFlg()));
+		attributeTypeView.setVisibleFlg(Convert.toBoolean(attributeType.getVisibleFlg()));
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 
 		return attributeTypeView;
@@ -144,10 +145,11 @@ public class AttributeTypeView
 		this.importantFlg = importantFlg;
 	}
 
-	public boolean getAllowMultipleFlg() {
+	public boolean getAllowMultipleFlg()
+	{
 		return allowMultipleFlg;
 	}
-	
+
 	public boolean isAllowMultipleFlg()
 	{
 		return allowMultipleFlg;

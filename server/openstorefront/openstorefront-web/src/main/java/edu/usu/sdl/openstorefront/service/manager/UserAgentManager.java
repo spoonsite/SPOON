@@ -33,7 +33,7 @@ public class UserAgentManager
 
 	public static void init()
 	{
-		parser = UADetectorServiceFactory.getCachingAndUpdatingParser();
+		parser = UADetectorServiceFactory.getResourceModuleParser();
 	}
 
 	public static void cleanup()
