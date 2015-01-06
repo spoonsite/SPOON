@@ -212,37 +212,54 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   }
 
 
-  $scope.saveType = function(){
-    console.log('type', $scope.type);
-    console.log('type.type', $scope.type.type);
-    var cont = true;
-    if ($scope.addTypeFlg) {
-      cont = confirm("Once this form is saved, the type field will be fixed. Continue?");
-    }
-    if ($scope.type && $scope.type.type && cont) {
-      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
-      var type = angular.copy($scope.type);
-      type.attributeType = type.type;
-      type.description = type.description || '';
-      type.visibleFlg = type.visibleFlg || false;
-      type.requiredFlg = type.requiredFlg || false;
-      type.architectureFlg = type.architectureFlg || false;
-      type.allowMultipleFlg = type.allowMultipleFlg || false;
-      type.importantFlg = type.importantFlg || false;
+  $scope.saveType = function(validity){
+    if (validity) {
 
-      
-      // console.log('Type save', type);
-      delete type.type;
-      delete type.codes;
+      console.log('type', $scope.type);
+      console.log('type.type', $scope.type.type);
+      var cont = true;
+      if ($scope.addTypeFlg) {
+        cont = confirm("Once this form is saved, the type field will be fixed. Continue?");
+      }
+      if ($scope.type && $scope.type.type && cont) {
+        $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
+        var type = angular.copy($scope.type);
+        type.attributeType = type.type;
+        type.description = type.description || '';
+        type.visibleFlg = type.visibleFlg || false;
+        type.requiredFlg = type.requiredFlg || false;
+        type.architectureFlg = type.architectureFlg || false;
+        type.allowMultipleFlg = type.allowMultipleFlg || false;
+        type.importantFlg = type.importantFlg || false;
 
-      Business.articleservice.getType($scope.type.type, false, true).then(function(result){
-        console.log('result', result);
-        
-        var cont = true;
-        if (result && $scope.addTypeFlg) {
-          cont = confirm('Warning: You will be overriding a previously saved type by saving this form. Continue?');
-        }
-        if (cont) {
+
+        // console.log('Type save', type);
+        delete type.type;
+        delete type.codes;
+
+        Business.articleservice.getType($scope.type.type, false, true).then(function(result){
+          console.log('result', result);
+
+          var cont = true;
+          if (result && $scope.addTypeFlg) {
+            cont = confirm('Warning: You will be overriding a previously saved type by saving this form. Continue?');
+          }
+          if (cont) {
+            Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
+              if (result) {
+                $scope.addTypeFlg = false;
+                $scope.changed = true;
+                $timeout(function(){
+                  $scope.getType();
+                  $scope.dirty = false;
+                  triggerAlert('Your edits were saved', 'editUserProfile', '#editTypeModalDiv', 6000);
+                }, 500);
+              }
+            }, function(){
+              $scope.getType();
+            })
+          }
+        }, function(){
           Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
             if (result) {
               $scope.addTypeFlg = false;
@@ -256,23 +273,9 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
           }, function(){
             $scope.getType();
           })
-        }
-      }, function(){
-        Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
-          if (result) {
-            $scope.addTypeFlg = false;
-            $scope.changed = true;
-            $timeout(function(){
-              $scope.getType();
-              $scope.dirty = false;
-              triggerAlert('Your edits were saved', 'editUserProfile', '#editTypeModalDiv', 6000);
-            }, 500);
-          }
-        }, function(){
-          $scope.getType();
         })
-      })
-    } //
+      } //
+    }
   }
 
   $scope.saveSortOrder = function(){
@@ -404,38 +407,59 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
     $scope.code = {};
   }
 
-  $scope.ok = function () {
-    console.log('$scope.code', $scope.code);
-    console.log('type', type);
-    console.log('type', type);
-    var cont = true;
-    if ($scope.addCodeFlg) {
-      cont = confirm("Once this form is saved, the code field will be fixed. Continue?");
-    }
-    if ($scope.code && $scope.code.code && cont) {
-      //save the code change.
-      $scope.code.detailUrl = $scope.code.fullTextLink;
-      // console.log('$scope.code', $scope.code);
-      $scope.code.label = $scope.code.label || '';
-      $scope.code.description = $scope.code.description || '';
-      $scope.code.articleFilename = $scope.code.articleFilename || '';
-      $scope.code.detailUrl = $scope.code.detailUrl || '';
-      $scope.code.groupCode = $scope.code.groupCode || '';
-      $scope.code.sortOrder = $scope.code.sortOrder || null;
-      if (!$scope.code.sortOrder) {
-        delete $scope.code.sortOrder;
-      }
-      if (!code && !code.code) {
-        code = {};
-        code.code = '';
-      }
-      Business.articleservice.getCode(type, $scope.code.code, true).then(function(result){
+  $scope.getMaxCode = function() {
+    return $scope.code? $scope.code.length? $scope.code.length: 100 : 100;
+  }
 
-        var cont = true;
-        if (result && $scope.addCodeFlg) {
-          cont = confirm('Warning: You will be overriding a previously saved code by saving this form. Continue?');
+  $scope.ok = function (validity) {
+    if (validity) {
+
+      console.log('$scope.code', $scope.code);
+      console.log('type', type);
+      console.log('type', type);
+      var cont = true;
+      if ($scope.addCodeFlg) {
+        cont = confirm("Once this form is saved, the code field will be fixed. Continue?");
+      }
+      if ($scope.code && $scope.code.code && cont) {
+        //save the code change.
+        $scope.code.detailUrl = $scope.code.fullTextLink;
+        // console.log('$scope.code', $scope.code);
+        $scope.code.label = $scope.code.label || '';
+        $scope.code.description = $scope.code.description || '';
+        $scope.code.articleFilename = $scope.code.articleFilename || '';
+        $scope.code.detailUrl = $scope.code.detailUrl || '';
+        $scope.code.groupCode = $scope.code.groupCode || '';
+        $scope.code.sortOrder = $scope.code.sortOrder || null;
+        if (!$scope.code.sortOrder) {
+          delete $scope.code.sortOrder;
         }
-        if (cont) {
+        if (!code && !code.code) {
+          code = {};
+          code.code = '';
+        }
+        Business.articleservice.getCode(type, $scope.code.code, true).then(function(result){
+
+          var cont = true;
+          if (result && $scope.addCodeFlg) {
+            cont = confirm('Warning: You will be overriding a previously saved code by saving this form. Continue?');
+          }
+          if (cont) {
+            Business.articleservice.saveCode(type, code.code, $scope.code, $scope.addCodeFlg).then(function(result){
+              if (result) {
+                $scope.addCodeFlg = false;
+                // console.log('Code save result', result);
+                // console.log('$scope.code', $scope.code);
+                $uiModalInstance.close('success');
+              } else {
+                // console.log('The code failed but the call succeded');
+              }
+            }, function(){
+              // the save failed
+              // console.log('The code save failed');
+            })
+          }
+        }, function(){
           Business.articleservice.saveCode(type, code.code, $scope.code, $scope.addCodeFlg).then(function(result){
             if (result) {
               $scope.addCodeFlg = false;
@@ -449,23 +473,9 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
             // the save failed
             // console.log('The code save failed');
           })
-        }
-      }, function(){
-        Business.articleservice.saveCode(type, code.code, $scope.code, $scope.addCodeFlg).then(function(result){
-          if (result) {
-            $scope.addCodeFlg = false;
-            // console.log('Code save result', result);
-            // console.log('$scope.code', $scope.code);
-            $uiModalInstance.close('success');
-          } else {
-            // console.log('The code failed but the call succeded');
-          }
-        }, function(){
-          // the save failed
-          // console.log('The code save failed');
+          //unable to finish code check;
         })
-        //unable to finish code check;
-      })
+      } //
     }
   };
 
