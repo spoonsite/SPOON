@@ -16,13 +16,15 @@
     <div class="col-sm-12">
       <div class="tools-LandingTitle">
         <h3>
-          {{toolTitle}}
+	{{toolTitle}}
+	
           &nbsp;<div ng-if="checkParent()" style="display: inline-block;">
             <small><button class="btn btn-primary" style="margin-bottom: 10px" ng-click="goToParent()">Go back to Parent Tool</button></small>
           </div>
         </h3>
 
       </div>
+	{{detailedDesc}}	  
       <hr>
     </div>
     <div ng-include="incLoc">
