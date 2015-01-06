@@ -76,12 +76,18 @@ public class TaskFuture
 
 	public boolean isDone()
 	{
-		return future.isDone();
+		if (future != null) {
+			return future.isDone();
+		}
+		return false;
 	}
 
 	public boolean isCanceled()
 	{
-		return future.isCancelled();
+		if (future != null) {
+			return future.isCancelled();
+		}
+		return false;
 	}
 
 	public boolean cancel(boolean interrupt)

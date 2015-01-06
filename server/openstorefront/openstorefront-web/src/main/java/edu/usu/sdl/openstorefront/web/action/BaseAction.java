@@ -56,16 +56,9 @@ public abstract class BaseAction
 
 	protected final ServiceProxy service = new ServiceProxy();
 
-	private String applicationVersion;
-
 	public String getApplicationVersion()
 	{
 		return PropertiesManager.getApplicationVersion();
-	}
-
-	public void setApplicationVersion(String applicationVersion)
-	{
-		this.applicationVersion = applicationVersion;
 	}
 
 	protected void mapFields(Map<String, Object> fields, Object data, String propertyRoot)

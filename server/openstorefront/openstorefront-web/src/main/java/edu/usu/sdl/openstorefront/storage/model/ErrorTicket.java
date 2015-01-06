@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
@@ -30,7 +31,11 @@ public class ErrorTicket
 	@PK
 	@NotNull
 	private String errorTicketId;
+
+	@APIDescription("What was called")
 	private String calledAction;
+
+	@APIDescription("What was data in the call")
 	private String input;
 
 	@NotNull

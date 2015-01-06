@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.doc;
 
 import java.util.ArrayList;
@@ -25,9 +24,11 @@ import java.util.List;
  */
 public class APITypeModel
 {
+
 	private String name;
 	private String object;
-	private List<APIValueFieldModel> fields = new ArrayList<>(); 
+	private String description;
+	private List<APIValueFieldModel> fields = new ArrayList<>();
 
 	public APITypeModel()
 	{
@@ -62,5 +63,15 @@ public class APITypeModel
 	{
 		this.fields = fields;
 	}
-	
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
 }

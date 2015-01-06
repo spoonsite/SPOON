@@ -38,10 +38,12 @@
 		<filter-name>ShiroFilter</filter-name>
 		<filter-class>edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter</filter-class>
 	</filter>	
+	<!--
 	<context-param>
 		<param-name>shiroConfigLocations</param-name>
 		<param-value>file:/var/openstorefront/config/shiro.ini</param-value>
 	</context-param>
+	-->
 	
 	<filter-mapping>
 		<filter-name>ShiroFilter</filter-name>

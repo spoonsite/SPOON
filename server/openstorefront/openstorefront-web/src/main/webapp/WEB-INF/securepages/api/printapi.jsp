@@ -1,17 +1,7 @@
-<%--
-Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+<%-- 
+    Document   : printapi
+    Created on : Jan 5, 2015, 12:35:49 PM
+    Author     : dshurtleff
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -20,31 +10,60 @@ limitations under the License.
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="css/apidoc.css" rel="stylesheet" type="text/css"/>
-	<script src="script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
-        <title>API Details</title>
+		<link href="apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
+		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<link href="apidoc/css/apiprint.css" rel="stylesheet" type="text/css"/>
+		 <script src="apidoc/script/reference.js" type="text/javascript"></script>
+        <title>Open Storefront API - ${actionBean.applicationVersion}</title>
     </head>
     <body>
+		<div style="height: 200px"></div>
 		
-       <h1>${actionBean.resourceModel.resourceName}</h1>
-	      ${actionBean.resourceModel.resourceDescription}<br>
-	<c:if test="${actionBean.resourceModel.requireAdmin}">
+		<h1>Open Storefront API </h1>		
+		<span style="text-align: center; width: 100%; margin: 0px; float: left;">Version: ${actionBean.applicationVersion}</span>		
+		
+		<div class="spacer  pageBreak">
+		</div>
+		
+		<div id="intro"></div>
+		
+		<div class="spacer  pageBreak">
+		</div>
+
+		<div id="security"></div>		
+		
+		<div class="spacer  pageBreak">
+		</div>
+		
+		<div id="errorhandling"></div>		
+		
+		<div class="spacer  pageBreak">
+		</div>
+
+		<h1>API</h1>
+		<hr>
+
+		<c:forEach var="resourceModel" items="${actionBean.allResources}">
+			<br><br><br>
+ <h1>${resourceModel.resourceName}</h1>
+	      ${resourceModel.resourceDescription}<br>
+	<c:if test="${resourceModel.requireAdmin}">
 		<br>
 		<span class="resource-admin">Requires Admin Privilege</span>	  
 	</c:if>	  
 	
-	<h3>${actionBean.classPathDescription} Path: ${actionBean.resourceModel.resourcePath}</h3>
-	<c:if test="${!empty actionBean.resourceModel.methods}">
+	<h3>API Path: ${resourceModel.resourcePath}</h3>
+	<c:if test="${!empty resourceModel.methods}">
 		<h2>Paths</h2>
 		<ul>
-		<c:forEach var="item" items="${actionBean.resourceModel.methods}">
-			<li><span class="${item.restMethod}" style="line-height: 28px;">${item.restMethod}</span> - <a href="javascript:void();" onclick="scrollToAnchor('${item.id}');" >${actionBean.resourceModel.resourcePath}${item.methodPath}</a></li>
+		<c:forEach var="item" items="${resourceModel.methods}">
+			<li><span class="${item.restMethod}" style="line-height: 28px;">${item.restMethod}</span> - ${resourceModel.resourcePath}${item.methodPath}</li>
 		</c:forEach>
 		</ul>	
 	</c:if>
 	
 	
-	<c:if test="${!empty actionBean.resourceModel.resourceParams}">
+	<c:if test="${!empty resourceModel.resourceParams}">
 		<h3>Resource Parameters: </h3>	  
 		<table>
 			<tr>
@@ -55,7 +74,7 @@ limitations under the License.
 				<th>Restrictions</th>
 				<th>Parameter Type</th>
 			</tr>		
-			<c:forEach var="item" items="${actionBean.resourceModel.resourceParams}">
+			<c:forEach var="item" items="${resourceModel.resourceParams}">
 			<tr>
 				<td>${item.parameterName}</td>
 				<td>${item.parameterDescription}</td>
@@ -68,7 +87,7 @@ limitations under the License.
 		</table> 
 		
 	</c:if>
-	<c:if test="${!empty actionBean.resourceModel.methods}">
+	<c:if test="${!empty resourceModel.methods}">
 		<h2>Details</h2>
 		<table width="100%">
 			<tr>
@@ -79,12 +98,12 @@ limitations under the License.
 				<th style='text-align: left;'>Parameters</th>				
 				<th style='text-align: left;'>Produces/Consumes Type(s)</th>
 			</tr>		
-			<c:forEach var="item" items="${actionBean.resourceModel.methods}">
+			<c:forEach var="item" items="${resourceModel.methods}">
 			<tr style="background-color: white;">
 				<td align="center"><span class="${item.restMethod}">${item.restMethod}</span></td>
 				<td align="center">${item.requireAdmin}</td>
 				<td>${item.description}</td>
-				<td id="${item.id}TD"><span class="resourcePath"><a id="${item.id}">${actionBean.resourceModel.resourcePath}${item.methodPath}</a></span></td>
+				<td id="${item.id}TD"><span class="resourcePath">${resourceModel.resourcePath}${item.methodPath}</span></td>
 				<td>
 					<c:if test="${!empty item.methodParams}">
 					<table width="100%">
@@ -124,9 +143,7 @@ limitations under the License.
 				<tr style="background-color: lightgrey;">
 					<td colspan="6">
 						<div class="returnInfo">
-							<div id="ctitle-${item.id}" class="returnInfo-title"
-								 onmouseover="this.style.cursor='pointer';" onmouseout="this.style.cursor='default';"
-								 onclick="$('#cinfo-${item.id}').toggle('slow');">	
+							<div id="ctitle-${item.id}" class="returnInfo-title">	
 								<c:if test="${item.consumeObject.typeObject != null}">
 									Consume Object: <span class="value-object-name">${item.consumeObject.valueObjectName} (${item.consumeObject.typeObjectName})</span>									
 								</c:if>
@@ -134,8 +151,8 @@ limitations under the License.
 									Consume Object: <span class="value-object-name">${item.consumeObject.valueObjectName}</span>
 								</c:if>
 							</div>
-							<div id="cinfo-${item.id}" class="returnInfo-contents">								
-								<c:if test="${item.consumeObject.valueObject != null}">	
+							<div id="cinfo-${item.id}" class="returnInfo-contents-show">								
+								<c:if test="${item.consumeObject.valueObject != null}">
 									<h5>${item.consumeObject.valueDescription}</h5>
 									<pre>
 ${item.consumeObject.valueObject}									
@@ -164,7 +181,7 @@ ${item.consumeObject.valueObject}
 											</td>
 											<td>
 												${field.description}
-											</td>												
+											</td>											
 										</tr>
 										</c:forEach>
 									</table>								
@@ -199,7 +216,7 @@ ${item.consumeObject.typeObject}
 											</td>
 											<td>
 												${field.description}
-											</td>												
+											</td>											
 										</tr>
 										</c:forEach>
 									</table>								
@@ -236,7 +253,7 @@ ${complexType.object}
 												</td>
 												<td>
 													${field.description}
-												</td>												
+												</td>													
 											</tr>
 											</c:forEach>
 										</table>
@@ -252,9 +269,7 @@ ${complexType.object}
 				<tr style="background-color: lightgrey;">
 					<td colspan="6">
 						<div class="returnInfo">
-							<div id="rtitle-${item.id}" class="returnInfo-title"
-								 onmouseover="this.style.cursor='pointer';" onmouseout="this.style.cursor='default';"
-								 onclick="$('#rinfo-${item.id}').toggle('slow');">	
+							<div id="rtitle-${item.id}" class="returnInfo-title">	
 								<c:if test="${item.responseObject.typeObject != null}">
 									Response Object: <span class="value-object-name">${item.responseObject.valueObjectName} (${item.responseObject.typeObjectName})</span>
 								</c:if>
@@ -263,7 +278,7 @@ ${complexType.object}
 								</c:if>
 							</div>
 													
-							<div id="rinfo-${item.id}" class="returnInfo-contents">								
+							<div id="rinfo-${item.id}" class="returnInfo-contents-show">								
 								<c:if test="${item.responseObject.valueObject != null}">
 									<h5>${item.responseObject.valueDescription}</h5>
 									<pre>
@@ -287,9 +302,6 @@ ${item.responseObject.valueObject}
 											</td>
 											<td>
 												${field.type}
-											</td>
-											<td>
-												${field.validation}
 											</td>
 											<td>
 												${field.description}
@@ -325,7 +337,7 @@ ${item.responseObject.typeObject}
 											</td>
 											<td>
 												${field.validation}
-											</td>
+											</td>	
 											<td>
 												${field.description}
 											</td>											
@@ -379,19 +391,36 @@ ${complexType.object}
 			</c:if>				
 			</c:forEach>
 		</table> 
-			
-	</c:if>
-		<div class="toTopDiv" onclick="$('html,body').animate({scrollTop: 0},'slow');">Top</div>
+		<div class="pageBreak">
+		</div>	
+	</c:if>		
+</c:forEach>				
 		
+		<div class="spacer  pageBreak">
+		</div>
+		
+		<h1>Appendix</h1>
+		<hr>
+		
+		<h2>Lookup Table Reference</h2>
+		<div id="lookup"></div>
+		
+		<div class="spacer"></div>
+		
+		<h2>Attribute Table Reference</h2>   
+		<div id="attributes"></div>
+		
+	
 		<script type="text/javascript">
-			
-			function scrollToAnchor(aid){
-				$('*').removeClass('highlight');
-				var aTag = $("a[id='"+ aid +"']");
-				$('#'+aid+'TD').addClass('highlight');
-				$('html,body').animate({scrollTop: (aTag.offset().top-200)},'slow');
-			}	
-		</script>
-	   
+			$(document).ready(function(){
+				$('#intro').load('API.action?Page&page=intro');
+				$('#security').load('API.action?Page&page=security');
+				$('#errorhandling').load('API.action?Page&page=errorhandling');
+				
+				 doLookups('#lookup');				
+				 doAttributes('#attributes');
+			});			
+		</script>		
+		
     </body>
-</html>
+</html>		

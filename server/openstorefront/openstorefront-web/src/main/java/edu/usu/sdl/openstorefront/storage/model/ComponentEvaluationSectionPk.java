@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
@@ -36,6 +37,7 @@ public class ComponentEvaluationSectionPk
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = EvaluationSection.class)
+	@APIDescription("Evaluation section code")
 	private String evaluationSection;
 
 	public ComponentEvaluationSectionPk()

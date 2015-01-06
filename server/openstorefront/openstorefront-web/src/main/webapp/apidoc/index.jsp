@@ -28,6 +28,7 @@ limitations under the License.
 	<body>
 		<header class="header">
 			<span class="api-title">Open Storefront API <span id="appverison"></span></span>
+			<span style="position: absolute; top: 10px; right: 0px; padding-right: 20px;"><a href="../API.action?PrintView" style="color: yellow; ">Print View</a></span>
 		</header>
 		
 		<div class="api-guide">

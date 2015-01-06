@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("Attribute code are used to link metadata and create articles on topics")
 public class AttributeCode
 		extends BaseEntity
 {
@@ -125,7 +127,6 @@ public class AttributeCode
 		return true;
 	}
 
-	
 	public void copyFromView(AttributeCodeView code, AttributeCodePk attributeCodePk)
 	{
 		setAttributeCodePk(attributeCodePk);
@@ -135,7 +136,7 @@ public class AttributeCode
 		setLabel(code.getLabel());
 		setSortOrder(code.getSortOrder());
 	}
-	
+
 	public String getDescription()
 	{
 		return description;

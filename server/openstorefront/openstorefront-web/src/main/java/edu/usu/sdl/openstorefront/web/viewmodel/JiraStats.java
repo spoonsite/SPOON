@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.viewmodel;
 
 import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Holds the Jira Manager Stats
@@ -27,7 +28,14 @@ public class JiraStats
 		implements Serializable
 {
 
-	private ServerInfo serverInfo;
+	private String baseUri;
+	private String version;
+	private int buildNumber;
+	private Date buildDate;
+	private Date serverTime;
+	private String scmInfo;
+	private String serverTitle;
+
 	private int maxConnections;
 	private int remainingConnections;
 
@@ -35,14 +43,19 @@ public class JiraStats
 	{
 	}
 
-	public ServerInfo getServerInfo()
+	public void popluateServerInfo(ServerInfo serverInfo)
 	{
-		return serverInfo;
-	}
-
-	public void setServerInfo(ServerInfo serverInfo)
-	{
-		this.serverInfo = serverInfo;
+		if (serverInfo != null) {
+			baseUri = serverInfo.getBaseUri().toString();
+			version = serverInfo.getVersion();
+			buildNumber = serverInfo.getBuildNumber();
+			buildDate = serverInfo.getBuildDate().toDate();
+			if (serverInfo.getServerTime() != null) {
+				serverTime = serverInfo.getServerTime().toDate();
+			}
+			scmInfo = serverInfo.getScmInfo();
+			serverTitle = serverInfo.getServerTitle();
+		}
 	}
 
 	public int getMaxConnections()
@@ -63,6 +76,76 @@ public class JiraStats
 	public void setRemainingConnections(int remainingConnections)
 	{
 		this.remainingConnections = remainingConnections;
+	}
+
+	public String getBaseUri()
+	{
+		return baseUri;
+	}
+
+	public void setBaseUri(String baseUri)
+	{
+		this.baseUri = baseUri;
+	}
+
+	public String getVersion()
+	{
+		return version;
+	}
+
+	public void setVersion(String version)
+	{
+		this.version = version;
+	}
+
+	public int getBuildNumber()
+	{
+		return buildNumber;
+	}
+
+	public void setBuildNumber(int buildNumber)
+	{
+		this.buildNumber = buildNumber;
+	}
+
+	public Date getBuildDate()
+	{
+		return buildDate;
+	}
+
+	public void setBuildDate(Date buildDate)
+	{
+		this.buildDate = buildDate;
+	}
+
+	public Date getServerTime()
+	{
+		return serverTime;
+	}
+
+	public void setServerTime(Date serverTime)
+	{
+		this.serverTime = serverTime;
+	}
+
+	public String getScmInfo()
+	{
+		return scmInfo;
+	}
+
+	public void setScmInfo(String scmInfo)
+	{
+		this.scmInfo = scmInfo;
+	}
+
+	public String getServerTitle()
+	{
+		return serverTitle;
+	}
+
+	public void setServerTitle(String serverTitle)
+	{
+		this.serverTitle = serverTitle;
 	}
 
 }
