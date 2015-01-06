@@ -146,7 +146,37 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     }
 
     return deferred.promise;
-  };  
+  };
+    
+  article.getCode = function(type, code, override){
+    var deferred = $q.defer();
+    if (type && code) {
+      var method = 'GET';
+      var url = 'api/v1/resource/attributes/attributetypes/'+ type + '/attributecodes/' + code;
+      $http({
+        method: method,
+        url: url,
+      }).success(function(data, status, headers, config){        
+        if (data && data !== 'false' && isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject(false);
+    }
+
+    return deferred.promise;
+  };
+
+
 
   article.deactivateFilter = function(type){
     var deferred = $q.defer();
@@ -202,10 +232,17 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
   
   article.saveCode = function(type, code, data, newCode){
     var deferred = $q.defer();
-    if (type, code, data) {
+    console.log('type', type);
+    console.log('code', code);
+    console.log('data', data);
+    
+    if (type && data) {
       var url;
       var method;
-      if (newCode || code !== data.code) {
+      if (newCode || code !== data.code || !code) {
+        data.attributeCodePk = {};
+        data.attributeCodePk.attributeCode = data.code;
+        data.attributeCodePk.attributeType = type;
         url = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes';
         method = 'POST';
       } else {
@@ -331,7 +368,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     if (type) {
       $http({
         method: 'POST',
-        url: 'api/v1/resource/attributes/attributetypes/' + type + '/attributecodes/' + code + '/activate'
+        url: 'api/v1/resource/attributes/attributetypes/' + type + '/attributecodes/' + code
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();

@@ -549,7 +549,7 @@ public class AttributeResource
 	@RequireAdmin
 	@APIDescription("Activate a Code (activates).")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/attributetypes/{type}/attributecodes/{code}/activate")
+	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void activateCode(
 			@PathParam("type")
 			@RequiredParam String type,
