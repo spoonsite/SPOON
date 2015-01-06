@@ -259,10 +259,11 @@ var removeError = function() {
 
 var showServerError = function(errorObj, id){
   // console.log('errorO', errorObj);
+  console.log('errorObj', errorObj);
   
   var message = 'There was a server error. Contact a System Admin or try again';
   //message, potential resolution, ticketNumber, contact;
-  if (errorObj) {
+  if (errorObj && typeof errorObj === 'object') {
     if (errorObj.message) {
       message = message + ': <div class="leftIndent">Message:&nbsp;<span>' + errorObj.message + '</span></div>';
     }if (errorObj.errorTicketNumber) {
