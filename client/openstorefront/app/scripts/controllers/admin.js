@@ -79,6 +79,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   $scope.editor = function(branch) {
     $scope.incLoc = branch.location;
     $scope.toolTitle = branch.toolTitle;
+    $scope.detailedDesc = branch.detailedDesc;
     $scope.myTree.selectBranch(branch);
   };
 
@@ -192,6 +193,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     attributes.location='views/admin/editattributes.html';
     attributes.children = [];
     attributes.toolTitle = 'Manage Attributes';
+    attributes.detailedDesc = "Attributes are use to categorize components and other listings.  They can be search on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code respresents a specific value.  The data is linked by the type and code which allows for simple change of the description.";
     attributes.key = 'attributes';
     attributes.parentKey = null;
     attributes.data = $scope.filters;
@@ -225,17 +227,63 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     };
 
 
-    $scope.data.push({'label': 'Integration Management', 'location':'views/admin/configuration/default.html', 'toolTitle': 'Integration Management', 'key': 'integration' });
+    $scope.data.push(attributes);
+    $scope.data.push({
+      'label': 'Manage Articles', 
+      'location':'views/admin/editlanding.html', 
+      'toolTitle': 'Manage Articles',
+      'detailedDesc': "Articles, also called topic landing pages, are detail pages of topics of interest with optional related listings.  Articles are assigned to Attribute Code which allows for searching and filter by topic. ",
+      'key': 'landing'
+    });
     
-    $scope.data.push({'label': 'User Profiles', 'location':'views/admin/manageUserProfiles.html', 'toolTitle': 'User Profile Management', 'key': 'USER_PROFILE' });
-    $scope.data.push({'label': 'User Messages', 'location':'views/admin/manageUserMessages.html', 'toolTitle': 'User Message Management', 'key': 'USER_MESSAGE' });
-    $scope.data.push({'label': 'Jobs', 'location':'views/admin/manageJobs.html', 'toolTitle': 'Job Management', 'key': 'JOBS' });
-    $scope.data.push({'label': 'System', 'location':'views/admin/manageSystem.html', 'toolTitle': 'System Management', 'key': 'SYSTEM' });
+    $scope.data.push({
+      'label': 'Manage Components', 
+      'location':'views/admin/editcomponents.html', 
+      'toolTitle': 'Manage Components', 
+      'detailedDesc': "Components represent the main listing item in the application.  This tool allows for manipulating all data related to a component.",
+      'key': 'components' 
+    });
+    
+    $scope.data.push({
+      'label': 'Integration Management', 
+      'location':'views/admin/configuration/default.html', 
+      'toolTitle': 'Integration Management', 
+      'detailedDesc': "Allows for the configuration of data integration with external systems such as JIRA",
+      'key': 'integration' });
+    
+    $scope.data.push({
+      'label': 'User Profiles', 
+      'location':'views/admin/manageUserProfiles.html', 
+      'toolTitle': 'User Profile Management',
+      'detailedDesc': "A user profile represents a user in the system and contains the user's information.",
+      'key': 'USER_PROFILE' 
+    });
+    
+    $scope.data.push({
+      'label': 'User Messages', 
+      'location':'views/admin/manageUserMessages.html', 
+      'toolTitle': 'User Message Management', 
+      'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. ',
+      'key': 'USER_MESSAGE' 
+    });
+    
+    $scope.data.push({
+      'label': 'Jobs', 
+      'location':'views/admin/manageJobs.html',      
+      'toolTitle': 'Job Management', 
+      'detailedDesc': 'Allows for controling and viewing scheduled jobs and background tasks',
+      'key': 'JOBS' 
+    });
+    
+    $scope.data.push({
+      'label': 'System', 'location':'views/admin/manageSystem.html', 
+      'toolTitle': 'System Management', 
+      'detailedDesc': 'Allows for viewing system status and managing system properties',
+      'key': 'SYSTEM'
+    });
     
     // $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });
-    $scope.data.push(attributes);
-    $scope.data.push({'label':'Manage Articles', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Articles', 'key': 'landing'});
-    $scope.data.push({'label': 'Manage Components', 'location':'views/admin/editcomponents.html', 'toolTitle': 'Manage Components', 'key': 'components' });
+
     // $scope.data.push(lookupTables);
 
     // $scope.data.push({'label': 'Manage Branding', 'location': 'views/admin/editbranding.html', 'toolTitle': 'Manage Branding', 'key': 'branding' });
