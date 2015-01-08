@@ -79,7 +79,8 @@
 
 .navbar-brand .logo,
 .navbar-brand .logo-small{
-  font-family: sofachrome;
+  font-family: ngage;
+  /* font-family: sofachrome; */
   /*font-family: WideLatin;*/
 }
 .navbar-brand .logo-small {
@@ -96,11 +97,12 @@
 
 
 .logo-title{
-  font-family: sofachrome;
+  font-family: ngage;
+  /*font-family: sofachrome;*/
   /*font-family: WideLatin;*/
   color: white;
   text-align: center;
-  font-size: 28px;
+  font-size: 35px;
   /*text-shadow: 2px 2px 5px #7E7E7E;*/
   padding-top: 3px;
   white-space: nowrap;
@@ -110,6 +112,8 @@
   float: left;  
 }
 .logo-title span.dashes{
+  font-size: 28px;
+  font-family: sofachrome;
   letter-spacing: -2px;
 }
 
