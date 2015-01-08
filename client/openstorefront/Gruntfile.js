@@ -380,6 +380,7 @@ module.exports = function (grunt) {
           'styles/*.css',
           'scripts/esapi4js/**/*',
           'scripts/common/data.js',
+          'scripts/common/dropzone.js',
           'scripts/common/jquery-cron.js',
           'scripts/common/angular-multi-select.js',
           'scripts/common/cronGen.js'

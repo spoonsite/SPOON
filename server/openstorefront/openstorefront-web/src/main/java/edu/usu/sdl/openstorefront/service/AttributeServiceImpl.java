@@ -97,7 +97,8 @@ public class AttributeServiceImpl
 		Element element;
 		if (all) {
 			element = OSFCacheManager.getAttributeCache().get(type + "-allCodes");
-		} else {
+		}
+		else {
 			element = OSFCacheManager.getAttributeCache().get(type);
 		}
 		if (element != null) {
@@ -113,9 +114,10 @@ public class AttributeServiceImpl
 				attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 			}
 			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
-			if (all){
+			if (all) {
 				element = new Element(type + "-allCodes", attributeCodes);
-			} else {
+			}
+			else {
 				element = new Element(type, attributeCodes);
 			}
 			OSFCacheManager.getAttributeCache().put(element);
@@ -184,6 +186,8 @@ public class AttributeServiceImpl
 			persistenceService.persist(existing);
 		}
 		else {
+			OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType());
+			OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType() + "-allCodes");
 			attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			attributeType.setUpdateDts(TimeUtil.currentDate());
 			attributeType.setCreateDts(TimeUtil.currentDate());
@@ -245,6 +249,8 @@ public class AttributeServiceImpl
 			persistenceService.persist(existing);
 		}
 		else {
+			OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType());
+			OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType() + "-allCodes");
 			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
 			attributeCode.setCreateDts(TimeUtil.currentDate());
@@ -385,7 +391,7 @@ public class AttributeServiceImpl
 			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType() + "-allCodes");
 		}
 	}
-	
+
 	@Override
 	public void activateCode(AttributeCodePk attributeCodePk)
 	{
@@ -876,7 +882,7 @@ public class AttributeServiceImpl
 	public void saveSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder)
 	{
 		AttributeCode code = persistenceService.findById(AttributeCode.class, attributeCodePk);
-		if (code != null){
+		if (code != null) {
 			code.setSortOrder(sortOrder);
 			persistenceService.persist(code);
 		}

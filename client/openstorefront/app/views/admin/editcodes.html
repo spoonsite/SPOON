@@ -6,11 +6,11 @@
   <loader trigger="adminTypeRefresh"></loader>
   <tabset justified="false" type="">  <!-- pills -->
     <tab heading="Edit Type Details">
-      <form action="" style="margin-top:10px;">
+      <form name="myForm" style="margin-top:10px;" ng-submit="saveType(myForm.$valid)">
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Description</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="form-control" type="text" ng-model="type.description"}}/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="form-control" type="text" ng-model="type.description"}}  ng-maxlength="255" maxlength="255" placeholder="Description (label)"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Type</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input ng-disabled="true" class="form-control" type="text" ng-model="type.type"}}/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input ng-disabled="!addTypeFlg" class="form-control" type="text" ng-model="type.type"}}  ng-maxlength="20" maxlength="20" placeholder="Type key" required/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Visible Flag</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.visibleFlg" ng-checked="type.visibleFlg"}} data-toggle="tooltip" data-placement="top" title="Show up under visible list of filters (Filter By Attribute)"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Required Flag</div>
@@ -21,10 +21,10 @@
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.architectureFlg" ng-checked="type.architectureFlg"}} data-toggle="tooltip" data-placement="top" title="This attribute is an architecture"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Allow Multiple Flag</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.allowMultipleFlg" ng-checked="type.allowMultipleFlg"}} data-toggle="tooltip" data-placement="top" title="Allow multiple codes for this type per component"/></div>
-        <button type="submit" class="btn btn-default" style="margin-top:20px;" ng-click="saveType()">Save&nbsp;<i class="fa fa-save"></i></button>
+        <button type="submit" class="btn btn-default" style="margin-top:20px;" >Save&nbsp;<i class="fa fa-save"></i></button>
       </form>
     </tab>
-    <tab heading="Manage Codes">
+    <tab heading="Manage Codes" ng-show="!addTypeFlg">
       <div ng-show="type.codes.length > windowSize" style="margin-top:5px;">
         <div>
           Show&nbsp;<input id="windowSize" type="number" min="5" max="50" ng-model="check.windowSize" ng-change="applyWindow()">&nbsp;per page (5-50).
@@ -35,9 +35,11 @@
           Go to page&nbsp;<input id="pageNumber" type="number" min="1" max="{{getMaxPage()}}" ng-model="check.pageNumber" ng-change="applyPage()">&nbsp;of {{getMaxPage()}}.
         </div>
       </div>
+      
       <div class="pull-left" style="display:inline-block; margin-top: 5px;">
+        <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="editCode(false)">Add New Code&nbsp;<i class="fa fa-plus"></i></button>
         <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="setPredicate('activeStatus')">Turn off sort</button>
-        <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="getType()">Refresh table&nbsp;<i class="fa fa-refresh"></i></button>
+        <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="clearCache(); getType();">Refresh table&nbsp;<i class="fa fa-refresh"></i></button>
       </div>
       <div class="pull-right" style="display:inline-block; margin-top: 5px;">
         <button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="applySortOrder(false)">Apply Sort to Sort Order&nbsp;<i class="fa fa-sort-alpha-asc"></i></button>
