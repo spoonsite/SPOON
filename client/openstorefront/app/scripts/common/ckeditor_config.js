@@ -37,7 +37,7 @@ CKEDITOR.plugins.add( 'componentList', {
     {
       label: 'Insert Component List',
       command: 'insertComponentList',
-      icon: this.path + '../../../../images/yeoman.png'
+      icon: this.path + '../../../../images/logo/logo-stamp.svg'
     });
   }
 });
@@ -202,7 +202,7 @@ var getCkConfig = function() {
 
   // Set the most common block elements.
   config.enterMode = CKEDITOR.ENTER_BR;
-
+  config.allowedContent = true;
   // Make dialogs simpler.
   // config.removeDialogTabs = 'image:advanced;link:advanced;table:advanced';
 
