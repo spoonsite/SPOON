@@ -22,6 +22,17 @@ app.controller('AdminJobsCtrl', ['$scope', 'business', function ($scope, Busines
   $scope.schedulerStatus = {};
   $scope.tasks = {};
   $scope.showIntegrationJobs = false;
+  $scope.predicate = [];
+  $scope.reverse = [];
+  
+  $scope.setPredicate = function(predicate, table){
+    if ($scope.predicate[table] === predicate){
+      $scope.reverse[table] = !$scope.reverse[table];
+    } else {
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
+    }
+  };  
   
   $scope.refreshJobs = function(showIntegration){
     $scope.$emit('$TRIGGERLOAD', 'jobLoader');       

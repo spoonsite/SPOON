@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -63,6 +64,15 @@ public class TimeUtil
 	{
 		Instant instant = Instant.ofEpochMilli(date.getTime()).truncatedTo(ChronoUnit.DAYS);
 		return new Date(instant.toEpochMilli());
+	}
+
+	public static String millisToString(long millis)
+	{
+		long hours = TimeUnit.MILLISECONDS.toHours(millis);
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(millis) - (hours * 60);
+		long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) - ((hours * 60 * 60) + (minutes * 60));
+		millis = millis - ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000));
+		return String.format("%d hr(s) %d min(s) %d sec(s) %d ms", hours, minutes, seconds, millis);
 	}
 
 }

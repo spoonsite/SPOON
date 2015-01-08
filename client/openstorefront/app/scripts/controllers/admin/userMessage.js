@@ -25,6 +25,17 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
   ];
   $scope.queryFilter = angular.copy(utils.queryFilter);
   $scope.queryFilter.status = $scope.statusFilterOptions[0];
+  $scope.predicate = [];
+  $scope.reverse = [];  
+  
+  $scope.setPredicate = function(predicate, table){
+    if ($scope.predicate[table] === predicate){
+      $scope.reverse[table] = !$scope.reverse[table];
+    } else {
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
+    }
+  };  
   
   $scope.deleteUserMessage = function(username, userMessageId){     
     var response = window.confirm("Are you sure you want to delete this message for " + username + " ?");

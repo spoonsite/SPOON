@@ -60,6 +60,7 @@
 			<loader trigger="ticketLoader"></loader>
 			<div>
 				<br><br>
+				Error tickets are generated for system errors primarily triggered by the user.<br>
 				
 				Total Records: <b><span class="imitateLink" ng-bind="errorTickets.totalNumber"></span></b><br>
 				<div class="pagination row row-centered" >
@@ -110,5 +111,158 @@
 					</tr>
 			</table>
 		</tab>
+		<tab heading="Application Properties">
+			<loader trigger="appPropLoader"></loader>
+			<div>	
+				<br>
+				Application properties are properties that hold the application's internal state.<br>
+				<button class="btn btn-default" ng-click="refreshAppProperties()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+			</div>	
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('key', 'appProp');">Key <span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th>Value</th>
+						<th>Update User</th>
+						<th>Update Date</th>									
+						<th>Action</th>
+					</tr>
+					<tr ng-repeat="prop in appProperties | orderBy:predicate['appProp']:reverse['appProp']" >
+						<td>{{prop.key}}</td>
+						<td>{{prop.value}}</td>
+						<td>{{prop.updateUser}}</td>
+						<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+						<td style="padding:0px; width: 200px;">&nbsp;
+							<button class="btn" ng-click="editAppProperty(prop);"  title="Edit"><i class="fa fa-edit"></i></button>
+						</td>
+					</tr>					
+			</table>			
+		</tab>
+		<tab heading="System Config Properties">
+			<loader trigger="configPropLoader"></loader>
+			<div>	
+				<br>
+				Configuration properties are the properties use to initialize the system they are reflected from the configuration file.  
+				The system admin maintains these properties and they are applied upon restart.<br>
+				<button class="btn btn-default" ng-click="refreshConfigProps()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+			</div>	
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('code', 'confProp');">Key <span ng-show="predicate['confProp']  === 'code'"><i ng-show="!reverse['confProp'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['confProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th>Value</th>																						
+					</tr>
+					<tr ng-repeat="prop in configProperties | orderBy:predicate['confProp']:reverse['confProp']" >
+						<td>{{prop.code}}</td>
+						<td>{{prop.description}}</td>						
+					</tr>
+					
+			</table>			
+		</tab>
+		<tab heading="Logging">
+			<loader trigger="loggingLoader"></loader>
+			<div>	
+				<br>
+				Displays all loggers in the system.  A blank Level means the logger inherits its level from the parent logger. Note change's made here reset upon application restart.<br>
+				<button class="btn btn-default" ng-click="refreshLoggers()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+			</div>	
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('name', 'loggers');">Name <span ng-show="predicate['loggers'] === 'name'"><i ng-show="!reverse['loggers']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['loggers']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('level', 'loggers');">Level <span ng-show="predicate['loggers'] === 'level'"><i ng-show="!reverse['loggers']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['loggers']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('handlers', 'loggers');">Handlers <span ng-show="predicate['loggers'] == 'handlers'"><i ng-show="!reverse['loggers']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['loggers']" class="fa fa-sort-alpha-desc"></i></span></a></th>									
+						<th>Action</th>
+					</tr>
+					<tr ng-repeat="log in loggers | orderBy:predicate['loggers']:reverse['loggers']" >
+						<td>{{log.name}}</td>
+						<td>{{log.level}}</td>
+						<td>{{log.handlers}}</td>						
+						<td style="padding:0px; width: 200px;">&nbsp;
+							<button class="btn" ng-click="editLogger(log);" title="Edit"><i class="fa fa-edit"></i></button>
+						</td>
+					</tr>
+			</table>			
+		</tab>
+		<tab heading="Status">
+			<loader trigger="statusLoader"></loader>
+			<div>	
+				<br>
+				Show the system status which provides useful information for troubleshooting.<br>
+				<button class="btn btn-default" ng-click="refreshAppStatus()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+			</div>
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th>Application Version</th>
+						<td>{{appStatus.applicationVersion}}</td>
+						<th>Processors</th>
+						<td>{{appStatus.processorCount}}</td>
+					</tr>					
+					<tr>
+						<th>System Load</th>
+						<td>{{appStatus.systemLoad}}</td>
+						<th>Start Date</th>						
+						<td>{{appStatus.startTime | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
+					</tr>	
+					<tr>
+						<th >Uptime</th>	
+						<td>{{appStatus.upTime}}</td>
+						<th>Live Threads / Total Threads</th>			
+						<td>{{appStatus.liveThreadCount}} / {{appStatus.totalThreadCount}} </td>
+					</tr>	
+					<tr>
+						<th>Heap Memory</th>
+						<td>{{appStatus.heapMemory}}</td>
+						<th>Non-Heap Memory</th>
+						<td>{{appStatus.nonHeapMemory}}</td>
+					</tr>						
+					<tr>
+						<th>Memory Pools</th>
+						<td>
+							<ul>
+								<li ng-repeat="info in appStatus.memoryPoolInfos">
+									{{info}}<br><br>
+								</li>
+							</ul>
+						</td>
+						<th>Garbage Collection</th>
+						<td>
+							<ul>
+								<li ng-repeat="gcInfo in appStatus.garbageCollectionInfos">
+									{{gcInfo}}
+								</li>
+							</ul>
+						</td>
+					</tr>										
+			</table>
+			<br>
+			<b>Threads Status</b>
+			<div>					
+				<button class="btn btn-default" ng-click="refreshThreads()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+			</div>
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th>Id</th>
+						<th><a href="" ng-click="setPredicate('name', 'threads');">Name <span ng-show="predicate['threads'] === 'name'"><i ng-show="!reverse['threads']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['threads']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('status', 'threads');">Status <span ng-show="predicate['threads'] === 'status'"><i ng-show="!reverse['threads']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['threads']" class="fa fa-sort-alpha-desc"></i></span></a></th>									
+						<th>Details</th>
+					</tr>
+					<tr ng-repeat="thread in threads | orderBy:predicate['threads']:reverse['threads']" >
+						<td>{{thread.id}}</td>
+						<td>{{thread.name}}</td>
+						<td>{{thread.status}}</td>
+						<td ><p ng-bind-html="thread.details"></p></td>
+					</tr>
+			</table>
+			<br>
+			<b>System Properties</b>
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('key', 'sysProps');">Key <span ng-show="predicate['sysProps'] === 'key'"><i ng-show="!reverse['sysProps']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['sysProps']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th>Value</th>						
+					</tr>
+					<tr ng-repeat="prop in appStatus.systemProperties.entry | orderBy:predicate['sysProps']:reverse['sysProps']" >
+						<td>{{prop.key}}</td>
+						<td>{{prop.value}}</td>					
+					</tr>
+			</table>
+		</tab>		
 	</tabset>
 </div>
