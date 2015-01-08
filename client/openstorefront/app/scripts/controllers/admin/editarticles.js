@@ -18,11 +18,14 @@
 
 app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeout', function ($scope, Business, $uiModal, $timeout) {
   $scope.editorContent = $scope.$parent.editorContent;
+
   $scope.submitLanding = function(){
+  };
+
+  $scope.$watch('editorContentWatch', function(){
     console.log('$scope.editorContent', $scope.editorContent);
     console.log('$scope.editorContentWatch', $scope.editorContentWatch);
-    
-  };
+  })
   // $scope.predicate = 'description';
   // $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminAttributes');
   // $scope.reverse = false;
