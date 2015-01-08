@@ -18,19 +18,24 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import java.util.List;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
  * @author dshurtleff
  */
-@Path("v1/resource/appprops")
+@Path("v1/resource/applicationproperties")
 @APIDescription("System application state properties.")
 public class ApplicationPropertyResource
 		extends BaseResource
@@ -47,6 +52,43 @@ public class ApplicationPropertyResource
 		applicationPropertyExample.setActiveStatus(ApplicationProperty.ACTIVE_STATUS);
 		List<ApplicationProperty> applicationProperties = service.getPersistenceService().queryByExample(ApplicationProperty.class, new QueryByExample(applicationPropertyExample));
 		return applicationProperties;
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets a property in the system")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ApplicationProperty.class)
+	@Path("/{key}")
+	public Response getApplicationProperty(
+			@PathParam("key")
+			@RequiredParam String key)
+	{
+		ApplicationProperty applicationProperty = service.getSystemService().getProperty(key);
+		applicationProperty = service.getPersistenceService().unwrapProxyObject(ApplicationProperty.class, applicationProperty);
+		return sendSingleEntityResponse(applicationProperty);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Updates a property in the system. NOTE: data may need to be formated specfically according to the property.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.WILDCARD})
+	@DataType(ApplicationProperty.class)
+	@Path("/{key}")
+	public Response updateApplicationProperty(
+			@PathParam("key")
+			@RequiredParam String key,
+			String value)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		ApplicationProperty applicationProperty = service.getSystemService().getProperty(key);
+		if (applicationProperty != null) {
+			service.getSystemService().saveProperty(key, value);
+			applicationProperty = service.getSystemService().getProperty(key);
+			response = Response.ok(applicationProperty).build();
+		}
+		return response;
 	}
 
 }

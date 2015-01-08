@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -37,6 +39,8 @@ public class PropertiesManager
 {
 
 	private static final Logger log = Logger.getLogger(PropertiesManager.class.getName());
+
+	public static final String PW_PROPERTY = ".pw";
 
 	public static final String KEY_USE_REST_PROXY = "service.rest.proxy";
 	public static final String KEY_DB_CONNECT_MIN = "db.connectionpool.min";
@@ -117,6 +121,15 @@ public class PropertiesManager
 	{
 		getProperties().setProperty(value, value);
 		saveProperties();
+	}
+
+	public static Map<String, String> getAllProperties()
+	{
+		Map<String, String> propertyMap = new HashMap<>();
+		for (String key : getProperties().stringPropertyNames()) {
+			propertyMap.put(key, getProperties().getProperty(key));
+		}
+		return propertyMap;
 	}
 
 	private static Properties getProperties()
