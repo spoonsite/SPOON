@@ -20,13 +20,13 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
@@ -67,7 +68,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -110,8 +110,7 @@ public class AttributeResource
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 			if (attributeTypeView.getArchitectureFlg()) {
 				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
-			}
-			else {
+			} else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
 		}
@@ -181,18 +180,15 @@ public class AttributeResource
 			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
 			if (attributeType == null) {
 				return Response.status(Response.Status.NOT_FOUND).build();
-			}
-			else {
+			} else {
 				return Response.ok(attributeType).build();
 			}
-		}
-		else {
+		} else {
 			AttributeTypeView attributeTypeView = new AttributeTypeView();
 			AttributeType typeObj = service.getPersistenceService().findById(AttributeType.class, type);
 			if (typeObj != null) {
 				attributeTypeView = AttributeTypeView.toView(typeObj);
-			}
-			else {
+			} else {
 				typeObj = new AttributeType();
 				typeObj.setAttributeType(AttributeType.TYPE);
 			}
@@ -202,8 +198,7 @@ public class AttributeResource
 			}
 			if (attributeTypeView.getArchitectureFlg()) {
 				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
-			}
-			else {
+			} else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
 			return Response.ok(attributeTypeView).build();
@@ -227,8 +222,7 @@ public class AttributeResource
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, pk);
 		if (attributeCode == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-		else {
+		} else {
 			return Response.ok(attributeCode).build();
 		}
 	}
@@ -315,8 +309,8 @@ public class AttributeResource
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code);
 		attributeCodePk.setAttributeType(type);
-		String articleData = service.getAttributeService().getArticle(attributeCodePk);
-		if (StringUtils.isNotBlank(articleData)) {
+		ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
+		if (articleView != null) {
 			ArticleTracking articleTracking = new ArticleTracking();
 			articleTracking.setAttributeCode(code);
 			articleTracking.setAttributeType(type);
@@ -324,7 +318,7 @@ public class AttributeResource
 			articleTracking.setEventDts(TimeUtil.currentDate());
 			articleTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
 			service.getAttributeService().addArticleTrackEvent(articleTracking);
-			return Response.ok(articleData).build();
+			return Response.ok(articleView.getHtml()).build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
@@ -332,20 +326,39 @@ public class AttributeResource
 	@PUT
 	@RequireAdmin
 	@APIDescription("Updates article")
-	@Consumes({MediaType.TEXT_HTML})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}/article")
 	public Response updateEntityValue(
 			@PathParam("type")
 			@RequiredParam String type,
 			@PathParam("code")
 			@RequiredParam String code,
-			String article)
+			ArticleView articleView)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code.toUpperCase());
 		attributeCodePk.setAttributeType(type.toUpperCase());
-		service.getAttributeService().saveArticle(attributeCodePk, article);
-		return Response.ok().build();
+
+		AttributeCode attributeCodeExample = new AttributeCode();
+		attributeCodeExample.setAttributeCodePk(attributeCodePk);
+		AttributeCode attributeCode = service.getPersistenceService().queryOneByExample(AttributeCode.class, attributeCodeExample);
+		if (attributeCode != null) {
+			ValidationModel validationModel = new ValidationModel(articleView);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				Article article = new Article();
+				article.setTitle(articleView.getTitle());
+				article.setDescription(articleView.getDescription());
+				attributeCode.setArticle(article);
+				service.getAttributeService().saveArticle(attributeCode, articleView.getHtml());
+				return Response.ok().build();
+			} else {
+				return Response.ok(validationResult.toRestError()).build();
+			}
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 	}
 
 	@DELETE
@@ -388,8 +401,7 @@ public class AttributeResource
 		if (existing != null) {
 			attributeType.setAttributeType(type.toUpperCase());
 			return handleAttributePostPutType(attributeType, true);
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing type.", "Make sure type exists before call PUT");
 		}
 	}
@@ -404,15 +416,13 @@ public class AttributeResource
 			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeType(attributeType, false);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).entity(attributeTypeCreated).build();
-		}
-		else {
+		} else {
 			return Response.ok().build();
 		}
 	}
@@ -437,7 +447,7 @@ public class AttributeResource
 			@PathParam("type")
 			@RequiredParam String type)
 	{
-		service.getAttributeService().activateType(type.toUpperCase());
+		service.getAttributeService().activateAttributeType(type.toUpperCase());
 	}
 
 	@PUT
@@ -455,11 +465,8 @@ public class AttributeResource
 
 		for (AttributeCodeView code : attributeType.getCodes()) {
 			attributeCodePk.setAttributeCode(code.getCode());
-			service.getAttributeService().saveSortOrder(attributeCodePk, code.getSortOrder());
-			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeCode());
+			service.getAttributeService().saveAttributeCodeSortOrder(attributeCodePk, code.getSortOrder());
 		}
-		OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
-		OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType() + "-allCodes");
 
 		return Response.ok(attributeType).build();
 	}
@@ -497,8 +504,7 @@ public class AttributeResource
 		AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (existing != null) {
 			return handleAttributePostPutCode(attributeCode, false);
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing code.", "Make sure type exists before call PUT");
 		}
 	}
@@ -513,8 +519,7 @@ public class AttributeResource
 			attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeCode(attributeCode, false);
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
@@ -523,8 +528,7 @@ public class AttributeResource
 					+ attributeCode.getAttributeCodePk().getAttributeType()
 					+ "/attributecodes/"
 					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
-		}
-		else {
+		} else {
 			return Response.ok(attributeCode).build();
 		}
 	}
@@ -559,7 +563,7 @@ public class AttributeResource
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code.toUpperCase());
 		attributeCodePk.setAttributeType(type.toUpperCase());
-		service.getAttributeService().activateCode(attributeCodePk);
+		service.getAttributeService().activateAttributeCode(attributeCodePk);
 	}
 
 	@GET
@@ -684,8 +688,7 @@ public class AttributeResource
 			service.getAttributeService().saveAttributeXrefMap(attributeXref);
 
 			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/" + attributeXref.getType().getAttributeType() + "/detail")).build();
-		}
-		else {
+		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}

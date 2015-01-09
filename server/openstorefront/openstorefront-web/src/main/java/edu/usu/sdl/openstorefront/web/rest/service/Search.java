@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
@@ -192,8 +193,10 @@ public class Search
 			recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.ARTICLE);
 			recentlyAddedView.setArticleAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 			recentlyAddedView.setArticleAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-			recentlyAddedView.setDescription(attributeCode.getDescription());
-			recentlyAddedView.setName(attributeCode.getLabel());
+
+			ArticleView articleView = ArticleView.toView(attributeCode);
+			recentlyAddedView.setDescription(articleView.getDescription());
+			recentlyAddedView.setName(articleView.getTitle());
 			recentlyAddedView.setAddedDts(attributeCode.getUpdateDts());
 			recentlyAddedViews.add(recentlyAddedView);
 		}

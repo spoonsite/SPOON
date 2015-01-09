@@ -64,7 +64,6 @@ public class ComponentSearchView
 	{
 	}
 
-
 	public static ComponentSearchView toView(Component component)
 	{
 		ServiceProxy service = new ServiceProxy();
@@ -122,7 +121,7 @@ public class ComponentSearchView
 		return view;
 	}
 
-	public static ComponentSearchView toView(Article article)
+	public static ComponentSearchView toView(ArticleView article)
 	{
 		ComponentSearchView view = new ComponentSearchView();
 		view.setListingType(OpenStorefrontConstant.ListingType.ARTICLE.getDescription());
@@ -130,10 +129,9 @@ public class ComponentSearchView
 		view.setAverageRating(0);
 		view.setArticleAttributeType(article.getAttributeType());
 		view.setArticleAttributeCode(article.getAttributeCode());
-		view.setDescription(article.getAttributeCodeDescription());
-		view.setName(article.getAttributeCodeLabel());
+		view.setDescription(article.getDescription());
+		view.setName(article.getTitle());
 		view.setLastActivityDts(article.getUpdateDts());
-		view.setOrganization(article.getOrganization());
 		List<ComponentAttribute> attributes = new ArrayList<>();
 		ComponentAttribute attribute = new ComponentAttribute();
 		ComponentAttributePk pk = new ComponentAttributePk();

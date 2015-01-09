@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -116,7 +117,16 @@ public class ValidationUtil
 							try {
 								Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 								Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
-								ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, returnObj), fieldClass, field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
+								boolean check = true;
+								if (returnObj == null) {
+									NotNull notNull = (NotNull) fieldClass.getAnnotation(NotNull.class);
+									if (notNull == null) {
+										check = false;
+									}
+								}
+								if (check) {
+									ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, returnObj), fieldClass, field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
+								}
 							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 								throw new OpenStorefrontRuntimeException(ex);
 							}
@@ -146,7 +156,7 @@ public class ValidationUtil
 											ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
 										}
 									} else {
-										throw new OpenStorefrontRuntimeException("Field value is null. If this a collection it should be set to an empty collection.");
+										throw new OpenStorefrontRuntimeException("Field value is null. If this is a collection it should be set to an empty collection.");
 									}
 								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 									throw new OpenStorefrontRuntimeException(ex);

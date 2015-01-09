@@ -734,13 +734,13 @@ public class UserServiceImpl
 			}
 		}
 
-		String articleQuery = "select from " + AttributeCode.class.getSimpleName() + " where updateDts > :updateDtsParam and articleFilename is not null and activeStatus = :activeStatusParam";
+		String articleQuery = "select from " + AttributeCode.class.getSimpleName() + " where article is not null and article.createDts > :createDtsParam and activeStatus = :activeStatusParam";
 		queryParams = new HashMap<>();
-		queryParams.put("updateDtsParam", lastRunDts);
+		queryParams.put("createDtsParam", lastRunDts);
 		queryParams.put("activeStatusParam", AttributeCode.ACTIVE_STATUS);
 		List<AttributeCode> attributeCodes = persistenceService.query(articleQuery, queryParams);
 		for (AttributeCode attributeCode : attributeCodes) {
-			if (attributeCode.getCreateDts().after(lastRunDts)) {
+			if (attributeCode.getArticle().getCreateDts().after(lastRunDts)) {
 				recentChangeMessage.getArticlesAdded().add(attributeCode);
 			} else {
 				recentChangeMessage.getArticlesUpdated().add(attributeCode);

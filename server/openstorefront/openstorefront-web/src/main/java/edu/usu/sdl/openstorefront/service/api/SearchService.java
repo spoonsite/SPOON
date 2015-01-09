@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
@@ -69,7 +69,7 @@ public interface SearchService
 	 *
 	 * @param article
 	 */
-	public void addIndex(Article article);
+	public void addIndex(ArticleView article);
 
 	/**
 	 * Indexes articles and Components
@@ -77,7 +77,7 @@ public interface SearchService
 	 * @param components
 	 * @param articles
 	 */
-	public void indexArticlesAndComponents(List<Article> articles, List<Component> components);
+	public void indexArticlesAndComponents(List<ArticleView> articles, List<Component> components);
 
 	/**
 	 * Removes a search index

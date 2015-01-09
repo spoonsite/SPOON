@@ -16,8 +16,9 @@
 package edu.usu.sdl.openstorefront.web.test.search;
 
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
@@ -68,10 +69,13 @@ public class IndexTest
 			AttributeCode attributeCode = ArticleTest.createTestAttributeCode();
 
 			results.append("Save Article").append("<br>");
-			service.getAttributeService().saveArticle(attributeCode.getAttributeCodePk(), "DUMMY-TEST");
+			attributeCode.setArticle(new Article());
+			attributeCode.getArticle().setTitle("Test Title");
+			attributeCode.getArticle().setDescription("Test Description");
+			service.getAttributeService().saveArticle(attributeCode, "DUMMY-TEST");
 
 			results.append("Adding Article Index...<br>");
-			Article article = service.getAttributeService().getArticleView(attributeCode.getAttributeCodePk());
+			ArticleView article = service.getAttributeService().getArticleView(attributeCode.getAttributeCodePk());
 			service.getSearchService().addIndex(article);
 
 			results.append("Searching Article Index...<br>");

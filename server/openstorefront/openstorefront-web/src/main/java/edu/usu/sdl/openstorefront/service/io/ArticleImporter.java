@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.service.io;
 
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import java.io.File;
 import java.nio.file.Files;
@@ -34,7 +36,6 @@ public class ArticleImporter
 {
 
 	private static final Logger log = Logger.getLogger(ArticleImporter.class.getName());
-	private static final long MAX_ARTICLE_SIZE = 10485760;
 
 	@Override
 	protected String getSyncProperty()
@@ -46,7 +47,7 @@ public class ArticleImporter
 	protected void processFile(File file)
 	{
 		log.log(Level.INFO, MessageFormat.format("Importing article: {0}", file.getName()));
-		if (file.length() <= MAX_ARTICLE_SIZE) {
+		if (file.length() <= OpenStorefrontConstant.FIELD_SIZE_ARTICLE_SIZE) {
 
 			try {
 				String key = file.getName();
@@ -58,7 +59,8 @@ public class ArticleImporter
 				if (key.contains(ServiceUtil.COMPOSITE_KEY_SEPERATOR)) {
 					AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(key);
 					String articleText = new String(Files.readAllBytes(Paths.get(file.getPath())));
-					serviceProxy.getAttributeService().saveArticle(attributeCodePk, articleText);
+					AttributeCode attributeCode = serviceProxy.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+					serviceProxy.getAttributeService().saveArticle(attributeCode, articleText);
 
 				} else {
 					log.log(Level.WARNING, MessageFormat.format("Invalid filename: {0} make sure to follow this format.  <TYPE>" + ServiceUtil.COMPOSITE_KEY_SEPERATOR + "<CODE>.htm", file.getName()));
@@ -67,7 +69,7 @@ public class ArticleImporter
 				log.log(Level.SEVERE, "Unable to process article: " + file.getPath(), e);
 			}
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("Article: {0} has exceeded max allowed.  (MAX: {1})", new Object[]{file.getPath(), MAX_ARTICLE_SIZE}));
+			log.log(Level.WARNING, MessageFormat.format("Article: {0} has exceeded max allowed.  (MAX: {1})", new Object[]{file.getPath(), OpenStorefrontConstant.FIELD_SIZE_ARTICLE_SIZE}));
 		}
 	}
 

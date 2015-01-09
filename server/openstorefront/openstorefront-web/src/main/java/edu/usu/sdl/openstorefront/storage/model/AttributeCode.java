@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import java.util.Objects;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -53,8 +54,9 @@ public class AttributeCode
 	@ConsumeField
 	private String description;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String articleFilename;
+	@OneToOne(orphanRemoval = true)
+	@ConsumeField
+	private Article article;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@Sanitize(LinkSanitizer.class)
@@ -86,7 +88,7 @@ public class AttributeCode
 		hash = 79 * hash + Objects.hashCode(this.attributeCodePk);
 		hash = 79 * hash + Objects.hashCode(this.label);
 		hash = 79 * hash + Objects.hashCode(this.description);
-		hash = 79 * hash + Objects.hashCode(this.articleFilename);
+		hash = 79 * hash + Objects.hashCode(this.article);
 		hash = 79 * hash + Objects.hashCode(this.detailUrl);
 		hash = 79 * hash + Objects.hashCode(this.groupCode);
 		hash = 79 * hash + Objects.hashCode(this.sortOrder);
@@ -112,7 +114,7 @@ public class AttributeCode
 		if (!Objects.equals(this.description, other.description)) {
 			return false;
 		}
-		if (!Objects.equals(this.articleFilename, other.articleFilename)) {
+		if (!Objects.equals(this.article, other.article)) {
 			return false;
 		}
 		if (!Objects.equals(this.detailUrl, other.detailUrl)) {
@@ -177,16 +179,6 @@ public class AttributeCode
 		this.attributeCodePk = attributeCodePk;
 	}
 
-	public String getArticleFilename()
-	{
-		return articleFilename;
-	}
-
-	public void setArticleFilename(String articleFilename)
-	{
-		this.articleFilename = articleFilename;
-	}
-
 	public Integer getSortOrder()
 	{
 		return sortOrder;
@@ -206,4 +198,15 @@ public class AttributeCode
 	{
 		this.groupCode = groupCode;
 	}
+
+	public Article getArticle()
+	{
+		return article;
+	}
+
+	public void setArticle(Article article)
+	{
+		this.article = article;
+	}
+
 }
