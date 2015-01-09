@@ -1,4 +1,6 @@
 <!-- <button ng-click="setData()" class="btn btn-primary">Insert Resources</button> -->
-<form submit="doSomething()" ng-submit="submitLanding();" id="editLandingPages">
-  <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
-</form>
+<div ng-controller="adminEditArticlesCtrl">
+  <form ng-submit="submitLanding();" id="editLandingPages">
+    <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
+  </form>
+</div>

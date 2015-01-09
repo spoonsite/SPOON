@@ -37,7 +37,7 @@ CKEDITOR.plugins.add( 'componentList', {
     {
       label: 'Insert Component List',
       command: 'insertComponentList',
-      icon: this.path + '../../../../images/yeoman.png'
+      icon: this.path + '../../../../images/logo/logo-stamp.svg'
     });
   }
 });
@@ -133,7 +133,7 @@ var getCkConfig = function() {
 
   // add the font plugin
   config.extraPlugins = 'font,componentList';
-  config.extraAllowedContent = 'component-list(*)[*]{*}';
+  // config.extraAllowedContent = 'component-list(*)[*]{*}';
 
 
   // The toolbar groups arrangement, optimized for two toolbar rows.
@@ -179,8 +179,7 @@ var getCkConfig = function() {
     { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
     { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
     '/',
-    { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv',
-    '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
+    { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv', '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
     { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
     { name: 'insert', items : [ 'Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
     '/',
@@ -202,13 +201,13 @@ var getCkConfig = function() {
 
   // Set the most common block elements.
   config.enterMode = CKEDITOR.ENTER_BR;
-
+  config.allowedContent = true;
   // Make dialogs simpler.
   // config.removeDialogTabs = 'image:advanced;link:advanced;table:advanced';
 
   //misc options
   //height adjusts the content height.
-  config.height = '500px';
+  // config.height = '500px';
 
   return config;
 };
