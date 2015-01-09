@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -46,7 +45,7 @@ public class AttributeCodeView
 		attributeCodeView.setGroupCode(attributeCode.getGroupCode());
 		attributeCodeView.setSortOrder(attributeCode.getSortOrder());
 		attributeCodeView.setActiveStatus(attributeCode.getActiveStatus());
-		if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
+		if (attributeCode.getArticle() != null) {
 			attributeCodeView.setFullTextLink("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
 		} else {
 			attributeCodeView.setFullTextLink(attributeCode.getDetailUrl());

@@ -52,7 +52,7 @@ public class ComponentAttributeView
 	{
 	}
 
-	public static ComponentAttributeView toView(Article article)
+	public static ComponentAttributeView toView(ArticleView article)
 	{
 		ComponentAttributeView view = new ComponentAttributeView();
 		ServiceProxy service = new ServiceProxy();

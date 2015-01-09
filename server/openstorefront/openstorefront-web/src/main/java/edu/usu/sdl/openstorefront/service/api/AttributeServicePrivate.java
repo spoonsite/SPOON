@@ -30,7 +30,7 @@ public interface AttributeServicePrivate
 {
 
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void performSaveArticle(AttributeCodePk attributeCodePk, String article);
+	public void performSaveArticle(AttributeCode attributeCode, String articleContents);
 
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void performSaveAttributeType(AttributeType attributeType);

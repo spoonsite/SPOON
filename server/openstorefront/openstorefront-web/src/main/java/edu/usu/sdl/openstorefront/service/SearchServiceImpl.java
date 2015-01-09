@@ -29,7 +29,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
@@ -229,7 +229,7 @@ public class SearchServiceImpl
 					attributeList = attributeList + code.getDescription() + ",";
 				}
 				if (!type.getDescription().equals("")) {
-					attributeList = attributeList + code.getDescription() + ",";
+					attributeList = attributeList + type.getDescription() + ",";
 				}
 			}
 		}
@@ -247,7 +247,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void addIndex(Article article)
+	public void addIndex(ArticleView article)
 	{
 		Objects.requireNonNull(article.getHtml(), "Html content is required for an article");
 
@@ -265,9 +265,9 @@ public class SearchServiceImpl
 		solrDocModel.setIsComponent(Boolean.FALSE);
 
 		solrDocModel.setId(pk.toKey());
-		solrDocModel.setNameString(type.getDescription() + " " + code.getLabel() + " Article");
-		solrDocModel.setName(type.getDescription() + " " + code.getLabel() + " Article");
-		solrDocModel.setDescription(type.getDescription() + " " + code.getLabel() + " Article" + code.getDescription());
+		solrDocModel.setNameString(article.getTitle());
+		solrDocModel.setName(article.getTitle());
+		solrDocModel.setDescription(article.getDescription());
 		solrDocModel.setUpdateDts(article.getUpdateDts());
 
 		String attributeList = type.getAttributeType() + "," + type.getDescription() + "," + code.getLabel() + "," + code.getDescription();
@@ -290,7 +290,7 @@ public class SearchServiceImpl
 	@Override
 	public List<ComponentSearchView> architectureSearch(AttributeCodePk pk, FilterQueryParams filter)
 	{
-		List<Article> articles = this.getAttributeService().getArticlesForCodeLike(pk);
+		List<ArticleView> articles = this.getAttributeService().getArticlesForCodeLike(pk);
 		Map<String, Component> componentMap = new HashMap<>();
 		List<Component> components = new ArrayList<>();
 
@@ -317,7 +317,7 @@ public class SearchServiceImpl
 		components.addAll(componentMap.values());
 
 		List<ComponentSearchView> views = new ArrayList<>();
-		for (Article article : articles) {
+		for (ArticleView article : articles) {
 			views.add(ComponentSearchView.toView(article));
 		}
 		for (Component component : components) {
@@ -357,7 +357,7 @@ public class SearchServiceImpl
 		Component temp = new Component();
 		temp.setActiveStatus(Component.ACTIVE_STATUS);
 		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(temp));
-		List<Article> articles = getAttributeService().getArticles();
+		List<ArticleView> articles = getAttributeService().getArticles();
 
 		components.stream().forEach((component) -> {
 			addIndex(component);
@@ -368,7 +368,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void indexArticlesAndComponents(List<Article> articles, List<Component> components)
+	public void indexArticlesAndComponents(List<ArticleView> articles, List<Component> components)
 	{
 		components.stream().forEach((component) -> {
 			addIndex(component);
