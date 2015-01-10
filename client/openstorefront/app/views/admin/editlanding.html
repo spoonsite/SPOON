@@ -2,5 +2,6 @@
 <div ng-controller="adminEditArticlesCtrl">
   <form ng-submit="submitLanding();" id="editLandingPages">
     <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
+    <button type="submit">Save changes</button>
   </form>
 </div>

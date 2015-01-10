@@ -24,8 +24,7 @@
     "lodash": "2.4.1",
     "angular-carousel": "0.2.5",
     "angulartics": "0.16.5",
-    "ng-idle": "0.3.5",
-    "ckeditor": "#full/4.4.6"
+    "ng-idle": "0.3.5"
   },
   "devDependencies": {
     "angular-scenario": "1.2.23"
