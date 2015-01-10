@@ -26,22 +26,21 @@
 * params: param name -- param description
 * returns: Return name -- return description
 ***************************************************************/
-CKEDITOR.plugins.add( 'componentList', {
-  init : function( editor ) {
-    editor.addCommand( 'insertComponentList', {
-      exec: function( editor ) {
-        editor.insertHtml( '### Component List ###');
-      }
-    });
-    editor.ui.addButton( 'ComponentButton',
-    {
-      label: 'Insert Component List',
-      command: 'insertComponentList',
-      icon: this.path + '../../../../images/logo/logo-stamp.svg'
-    });
-  }
-});
-
+// CKEDITOR.plugins.add( 'componentList', {
+//   init : function( editor ) {
+//     editor.addCommand( 'insertComponentList', {
+//       exec: function( editor ) {
+//         editor.insertHtml( '<div style="border:1px solid black; height:200px; width: 100%"> <span ng-show="false">###COMPONENT LIST hide-more="[[hide-more]]" click-callback="[[callback]]" class-list="[[class-list]]" title="[[title]]" data="[[data]]" cols="[[cols]]" type="[[type]]" key="[[code]]" filters="[[filters]]" set-filters="" search="[[searchKey]]" ###</span><component-list ></component-list></div>');
+//       }
+//     });
+//     editor.ui.addButton( 'ComponentButton',
+//     {
+//       label: 'Insert Component List',
+//       command: 'insertComponentList',
+//       icon: this.path + '../../../../../images/logo/logo-stamp.svg'
+//     });
+//   }
+// });
 CKEDITOR.plugins.registered.save = {
   init : function( editor ) {
     var command = editor.addCommand( 'save', { /*jshint unused:false*/
@@ -56,6 +55,12 @@ CKEDITOR.plugins.registered.save = {
   }
 };
 
+CKEDITOR.enterMode = CKEDITOR.ENTER_BR;
+
+
+// CKEDITOR.basePath = 'scripts/common/ckeditor/';
+// CKEDITOR.plugins.basePath = 'scripts/common/ckeditor/plugins/';
+window.CKEDITOR_BASEPATH = '/scripts/common/ckeditor/';
 // This is the auto save feature...
 // (function()
 // {
@@ -132,7 +137,7 @@ var getCkConfig = function() {
   config.scayt_autoStartup = true;
 
   // add the font plugin
-  config.extraPlugins = 'font,componentList';
+  config.extraPlugins = 'font,componentlist,placeholder,codesnippet';
   // config.extraAllowedContent = 'component-list(*)[*]{*}';
 
 
@@ -145,6 +150,7 @@ var getCkConfig = function() {
     }
   //
   ];
+
 
   config.toolbar = 'Full';
 
@@ -181,7 +187,7 @@ var getCkConfig = function() {
     '/',
     { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv', '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
     { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
-    { name: 'insert', items : [ 'Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
+    { name: 'insert', items : [ 'Placeholder','Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
     '/',
     { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
     { name: 'colors', items : [ 'TextColor','BGColor' ] },
@@ -189,7 +195,9 @@ var getCkConfig = function() {
     { name: 'CusomtTools', items: ['ComponentButton'] }
   //
   ];
-
+  contentsCss: [
+    CKEDITOR.plugins.getPath( 'componentlist' ) + 'ckeditor-content.css',
+  ],
 
   // Remove some buttons, provided by the standard plugins, which we don't
   // need to have in the Standard(s) toolbar.
@@ -201,7 +209,8 @@ var getCkConfig = function() {
 
   // Set the most common block elements.
   config.enterMode = CKEDITOR.ENTER_BR;
-  config.allowedContent = true;
+  config.extraAllowedContent = 'component-list';
+  config.codeSnippet_theme = 'monokai_sublime';
   // Make dialogs simpler.
   // config.removeDialogTabs = 'image:advanced;link:advanced;table:advanced';
 

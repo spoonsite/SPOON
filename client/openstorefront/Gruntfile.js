@@ -255,6 +255,8 @@ module.exports = function (grunt) {
           src: [
           '<%= yeoman.dist %>/scripts/**/*.js',
           '<%= yeoman.dist %>/styles/**/*.css',
+          '!<%= yeoman.dist %>/scripts/common/ckeditor/**/*.js',
+          '!<%= yeoman.dist %>/scripts/common/**/*.css',
           ]
         }
       }
@@ -376,14 +378,15 @@ module.exports = function (grunt) {
           'bower_components/angular-mocks/angular-mocks.js',
           'scripts/common/angular-lightbox.js',
           'scripts/common/ng-ckeditor.js',
-          'bower_components/ckeditor/**/*',
           'styles/*.css',
+          'styles/common/ckeditor-content.css',
           'scripts/esapi4js/**/*',
           'scripts/common/data.js',
           'scripts/common/dropzone.js',
           'scripts/common/jquery-cron.js',
           'scripts/common/angular-multi-select.js',
-          'scripts/common/cronGen.js'
+          'scripts/common/cronGen.js',
+          'scripts/common/ckeditor/**/*'
           ]
         }, {
           expand: true,
