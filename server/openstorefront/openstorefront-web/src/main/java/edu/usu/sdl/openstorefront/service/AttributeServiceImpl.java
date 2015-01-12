@@ -42,7 +42,7 @@ import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.io.File;
@@ -61,7 +61,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import net.sf.ehcache.Element;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles Attribute information
@@ -92,38 +91,34 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<AttributeCode> findCodesForType(String type, Boolean all)
+	public List<AttributeCode> findCodesForType(String type, boolean all)
 	{
-		Element element;
+		List<AttributeCode> attributeCodes;
 		if (all) {
-			element = OSFCacheManager.getAttributeCache().get(type + "-allCodes");
-		}
-		else {
-			element = OSFCacheManager.getAttributeCache().get(type);
-		}
-		if (element != null) {
-			return (List<AttributeCode>) element.getObjectValue();
-		}
-		else {
-
 			AttributeCode attributeCodeExample = new AttributeCode();
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(type);
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
-			if (!all) {
-				attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-			}
-			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
-			if (all) {
-				element = new Element(type + "-allCodes", attributeCodes);
-			}
-			else {
-				element = new Element(type, attributeCodes);
-			}
-			OSFCacheManager.getAttributeCache().put(element);
+			attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+		} else {
+			Element element;
+			element = OSFCacheManager.getAttributeCache().get(type);
+			if (element != null) {
+				attributeCodes = (List<AttributeCode>) element.getObjectValue();
+			} else {
 
-			return attributeCodes;
+				AttributeCode attributeCodeExample = new AttributeCode();
+				AttributeCodePk attributeCodePk = new AttributeCodePk();
+				attributeCodePk.setAttributeType(type);
+				attributeCodeExample.setAttributeCodePk(attributeCodePk);
+				attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+
+				attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+				element = new Element(type, attributeCodes);
+				OSFCacheManager.getAttributeCache().put(element);
+			}
 		}
+		return attributeCodes;
 	}
 
 	@Override
@@ -137,14 +132,14 @@ public class AttributeServiceImpl
 	{
 		getAttributeServicePrivate().performSaveAttributeType(attributeType);
 
-		if (!updateIndexes) {
+		if (updateIndexes) {
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 			componentAttributePk.setAttributeType(attributeType.getAttributeType());
 			ComponentAttribute componentAttribute = new ComponentAttribute();
 			componentAttribute.setComponentAttributePk(componentAttributePk);
 			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, componentAttribute);
 
-			List<Article> articles = new ArrayList<>();
+			List<ArticleView> articles = new ArrayList<>();
 
 			AttributeCode attributeCodeExample = new AttributeCode();
 			AttributeCodePk codePk = new AttributeCodePk();
@@ -152,9 +147,9 @@ public class AttributeServiceImpl
 			attributeCodeExample.setAttributeCodePk(codePk);
 			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, attributeCodeExample);
 			for (AttributeCode attributeCode : attributeCodes) {
-				if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
-					String articleContext = getArticle(attributeCode.getAttributeCodePk());
-					articles.add(Article.toViewHtml(attributeCode, articleContext));
+				if (attributeCode.getArticle() != null) {
+					ArticleView article = getArticle(attributeCode.getAttributeCodePk());
+					articles.add(article);
 				}
 			}
 
@@ -172,8 +167,6 @@ public class AttributeServiceImpl
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
 		if (existing != null) {
 			//remove to inactivate
-			OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType());
-			OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType() + "-allCodes");
 			existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeType.getUpdateUser());
@@ -184,15 +177,12 @@ public class AttributeServiceImpl
 			existing.setRequiredFlg(attributeType.getRequiredFlg());
 			existing.setVisibleFlg(attributeType.getVisibleFlg());
 			persistenceService.persist(existing);
-		}
-		else {
-			OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType());
-			OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType() + "-allCodes");
-			attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
-			attributeType.setUpdateDts(TimeUtil.currentDate());
-			attributeType.setCreateDts(TimeUtil.currentDate());
+		} else {
+			attributeType.populateBaseCreateFields();
 			persistenceService.persist(attributeType);
 		}
+		OSFCacheManager.getAttributeCache().remove(attributeType.getAttributeType());
+		OSFCacheManager.getAttributeTypeCache().remove(attributeType.getAttributeType());
 	}
 
 	@Override
@@ -215,10 +205,10 @@ public class AttributeServiceImpl
 
 			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
 
-			List<Article> articles = new ArrayList<>();
-			if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
-				String articleContext = getArticle(attributeCode.getAttributeCodePk());
-				articles.add(Article.toViewHtml(attributeCode, articleContext));
+			List<ArticleView> articles = new ArrayList<>();
+			if (attributeCode.getArticle() != null) {
+				ArticleView article = getArticle(attributeCode.getAttributeCodePk());
+				articles.add(article);
 			}
 
 			List<Component> components = new ArrayList<>();
@@ -235,33 +225,27 @@ public class AttributeServiceImpl
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
 			//remove to inactivate
-			OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType());
-			OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType() + "-allCodes");
 			existing.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeCode.getUpdateUser());
-			existing.setArticleFilename(attributeCode.getArticleFilename());
 			existing.setDescription(attributeCode.getDescription());
 			existing.setDetailUrl(attributeCode.getDetailUrl());
 			existing.setLabel(attributeCode.getLabel());
 			existing.setGroupCode(attributeCode.getGroupCode());
 			existing.setSortOrder(attributeCode.getSortOrder());
 			persistenceService.persist(existing);
-		}
-		else {
-			OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType());
-			OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType() + "-allCodes");
-			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-			attributeCode.setUpdateDts(TimeUtil.currentDate());
-			attributeCode.setCreateDts(TimeUtil.currentDate());
+		} else {
+			attributeCode.populateBaseCreateFields();
 			persistenceService.persist(attributeCode);
 		}
+		OSFCacheManager.getAttributeCache().remove(attributeCode.getAttributeCodePk().getAttributeType());
+		OSFCacheManager.getAttributeTypeCache().remove(attributeCode.getAttributeCodePk().getAttributeType());
 	}
 
 	@Override
-	public String getArticle(AttributeCodePk attributeCodePk)
+	public ArticleView getArticle(AttributeCodePk attributeCodePk)
 	{
-		String article = null;
+		ArticleView article = null;
 
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
@@ -269,13 +253,12 @@ public class AttributeServiceImpl
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
-			if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
+			if (attributeCode.getArticle() != null) {
 				File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
 				try {
-					byte data[] = Files.readAllBytes(Paths.get(articleDir.getPath() + "/" + attributeCode.getArticleFilename()));
-					article = new String(data);
-				}
-				catch (IOException e) {
+					byte data[] = Files.readAllBytes(Paths.get(articleDir.getPath() + "/" + attributeCode.getArticle().getArticleFilename()));
+					article = ArticleView.toViewHtml(attributeCode, new String(data));
+				} catch (IOException e) {
 					throw new OpenStorefrontRuntimeException("Unable to find article for type: " + attributeCodePk.getAttributeType() + " code: " + attributeCodePk.getAttributeCode(), "Contact system admin to confirm file exists and is not corrupt.", e);
 				}
 			}
@@ -284,46 +267,52 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveArticle(AttributeCodePk attributeCodePk, String article)
+	public void saveArticle(AttributeCode attributeCode, String articleContents)
 	{
-		getAttributeServicePrivate().performSaveArticle(attributeCodePk, article);
-		AttributeCode code = new AttributeCode();
-		code.setAttributeCodePk(attributeCodePk);
-
-		getSearchService().addIndex(Article.toViewHtml(code, article));
-
+		getAttributeServicePrivate().performSaveArticle(attributeCode, articleContents);
+		getSearchService().addIndex(ArticleView.toViewHtml(attributeCode, articleContents));
 	}
 
 	@Override
-	public void performSaveArticle(AttributeCodePk attributeCodePk, String article)
+	public void performSaveArticle(AttributeCode attributeCode, String articleContents)
 	{
+		Objects.requireNonNull(attributeCode, "AttributeCode is required.");
+		Objects.requireNonNull(attributeCode.getArticle(), "Article is required.");
+		AttributeCodePk attributeCodePk = attributeCode.getAttributeCodePk();
+
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
-		Objects.requireNonNull(article, "Article is required.");
 
-		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
-		if (attributeCode != null) {
+		AttributeCode attributeCodeExisting = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
+		if (attributeCodeExisting != null) {
 			HTMLSanitizer sanitizer = new HTMLSanitizer();
-			article = sanitizer.santize(article).toString();
+			articleContents = sanitizer.santize(articleContents).toString();
 
 			//save the article
-			String filename = attributeCodePk.toKey() + ".htm";
+			String filename = attributeCodeExisting.getAttributeCodePk().toKey() + ".htm";
 			File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
 			try {
-				Files.write(Paths.get(articleDir.getPath() + "/" + filename), article.getBytes());
+				Files.write(Paths.get(articleDir.getPath() + "/" + filename), articleContents.getBytes());
 
 				//save attribute
-				attributeCode.setArticleFilename(filename);
-				attributeCode.setUpdateDts(TimeUtil.currentDate());
-				attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
-				persistenceService.persist(attributeCode);
-			}
-			catch (IOException e) {
+				if (attributeCodeExisting.getArticle() != null) {
+					attributeCodeExisting.getArticle().setArticleFilename(filename);
+					attributeCodeExisting.getArticle().populateBaseUpdateFields();
+					persistenceService.persist(attributeCodeExisting);
+				} else {
+					attributeCodeExisting.setArticle(attributeCode.getArticle());
+					attributeCodeExisting.getArticle().setArticleFilename(filename);
+					attributeCodeExisting.getArticle().populateBaseCreateFields();
+					persistenceService.persist(attributeCodeExisting);
+				}
+				OSFCacheManager.getAttributeCache().remove(attributeCodeExisting.getAttributeCodePk().getAttributeType());
+				OSFCacheManager.getAttributeTypeCache().remove(attributeCodeExisting.getAttributeCodePk().getAttributeType());
+
+			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException("Unable to save article.", "Contact system admin.  Check permissions on the directory and make sure device has enough space.");
 			}
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find attribute for type: " + attributeCodePk.getAttributeType() + " code: " + attributeCodePk.getAttributeCode(), "Add attribute first before posting article");
 		}
 	}
@@ -344,13 +333,14 @@ public class AttributeServiceImpl
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
 			attributeCode.setDetailUrl(null);
-			if (attributeCode.getArticleFilename() != null) {
+			if (attributeCode.getArticle() != null) {
 				File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
-				File ariticleFile = new File(articleDir.getPath() + "/" + attributeCode.getArticleFilename());
+				File ariticleFile = new File(articleDir.getPath() + "/" + attributeCode.getArticle().getArticleFilename());
 				if (ariticleFile.exists()) {
 					ariticleFile.delete();
 				}
-				attributeCode.setArticleFilename(null);
+				persistenceService.delete(attributeCode.getArticle());
+				attributeCode.setArticle(null);
 			}
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveAttributeCode(attributeCode, false);
@@ -371,7 +361,6 @@ public class AttributeServiceImpl
 
 			OSFCacheManager.getAttributeTypeCache().remove(type);
 			OSFCacheManager.getAttributeCache().remove(type);
-			OSFCacheManager.getAttributeCache().remove(type + "-allCodes");
 		}
 	}
 
@@ -388,12 +377,12 @@ public class AttributeServiceImpl
 			persistenceService.persist(attributeCode);
 
 			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
-			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType() + "-allCodes");
+			OSFCacheManager.getAttributeTypeCache().remove(attributeCodePk.getAttributeType());
 		}
 	}
 
 	@Override
-	public void activateCode(AttributeCodePk attributeCodePk)
+	public void activateAttributeCode(AttributeCodePk attributeCodePk)
 	{
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 
@@ -403,8 +392,9 @@ public class AttributeServiceImpl
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeCode);
+
 			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
-			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType() + "-allCodes");
+			OSFCacheManager.getAttributeTypeCache().remove(attributeCodePk.getAttributeType());
 		}
 	}
 
@@ -439,8 +429,7 @@ public class AttributeServiceImpl
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						saveAttributeType(existing, true);
-					}
-					else {
+					} else {
 						attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						attributeType.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						attributeType.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
@@ -476,20 +465,17 @@ public class AttributeServiceImpl
 										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 										saveAttributeCode(existingCode, true);
 									}
-								}
-								else {
+								} else {
 									attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 									attributeCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 									attributeCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 									saveAttributeCode(attributeCode, true);
 								}
 								newCodeSet.add(attributeCode.getAttributeCodePk().toKey());
-							}
-							else {
+							} else {
 								log.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add  Attribute Code:  {0} Validation Issues:\n{1}", new Object[]{attributeCode.getAttributeCodePk().toKey(), validationResult.toString()}));
 							}
-						}
-						catch (Exception e) {
+						} catch (Exception e) {
 							log.log(Level.SEVERE, "Unable to save attribute code: " + attributeCode.getAttributeCodePk().toKey(), e);
 						}
 					}
@@ -501,12 +487,10 @@ public class AttributeServiceImpl
 							removeAttributeCode(attributeCode.getAttributeCodePk());
 						}
 					});
-				}
-				else {
+				} else {
 					log.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Type:  {0} Validation Issues:\n{1}", new Object[]{attributeType.getAttributeType(), validationResult.toString()}));
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
 			}
 		});
@@ -539,8 +523,7 @@ public class AttributeServiceImpl
 		Element element = OSFCacheManager.getAttributeTypeCache().get(type);
 		if (element != null) {
 			attributeType = (AttributeType) element.getObjectValue();
-		}
-		else {
+		} else {
 			AttributeType attributeTypeExample = new AttributeType();
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			List<AttributeType> attributeTypes = persistenceService.queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
@@ -568,13 +551,12 @@ public class AttributeServiceImpl
 		String query;
 		if (maxResults != null) {
 			query = "select from AttributeCode where activeStatus = :activeStatusParam "
-					+ " and articleFilename is not null "
-					+ " order by updateDts DESC LIMIT " + maxResults;
-		}
-		else {
+					+ " and article is not null "
+					+ " order by article.createDts DESC LIMIT " + maxResults;
+		} else {
 			query = "select from AttributeCode where activeStatus = :activeStatusParam "
-					+ " and articleFilename is not null "
-					+ " order by updateDts DESC";
+					+ " and article is not null "
+					+ " order by article.createDts DESC";
 		}
 
 		Map<String, Object> parameters = new HashMap<>();
@@ -600,8 +582,7 @@ public class AttributeServiceImpl
 					if (rootCode.equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
 						architecture.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 						architecture.setDescription(attributeCode.getDescription());
-					}
-					else {
+					} else {
 						String codeTokens[] = attributeCode.getAttributeCodePk().getAttributeCode().split(Pattern.quote("."));
 						Architecture rootArchtecture = architecture;
 						StringBuilder codeKey = new StringBuilder();
@@ -646,12 +627,10 @@ public class AttributeServiceImpl
 					}
 				}
 
-			}
-			else {
+			} else {
 				throw new OpenStorefrontRuntimeException("Attribute Type is not an architecture: " + attributeType, "Make sure type is an architecture.");
 			}
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find attribute type: " + attributeType, "Check type code.");
 		}
 		sortArchitecture(architecture.getChildren());
@@ -688,15 +667,15 @@ public class AttributeServiceImpl
 		List<ComponentSearchView> list = new ArrayList<>();
 		List<AttributeCode> codes = findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
-			list.add(ComponentSearchView.toView(Article.toView(code)));
+			list.add(ComponentSearchView.toView(ArticleView.toView(code)));
 		});
 		return list;
 	}
 
 	@Override
-	public List<Article> getArticlesForCodeLike(AttributeCodePk attributeCodePk)
+	public List<ArticleView> getArticlesForCodeLike(AttributeCodePk attributeCodePk)
 	{
-		List<Article> articles = new ArrayList<>();
+		List<ArticleView> articles = new ArrayList<>();
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
@@ -721,38 +700,37 @@ public class AttributeServiceImpl
 		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
 
 		for (AttributeCode code : attributeCodes) {
-			if (code.getArticleFilename() != null) {
-				articles.add(Article.toView(code));
+			if (code.getArticle() != null) {
+				articles.add(ArticleView.toView(code));
 			}
 		}
 		return articles;
 	}
 
 	@Override
-	public List<Article> getArticles()
+	public List<ArticleView> getArticles()
 	{
-		List<Article> list = new ArrayList<>();
+		List<ArticleView> list = new ArrayList<>();
 		List<AttributeCode> codes = findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
-			String content = getArticle(code.getAttributeCodePk());
-			list.add(Article.toViewHtml(code, content));
+			ArticleView article = getArticle(code.getAttributeCodePk());
+			list.add(article);
 		});
 		return list;
 	}
 
 	@Override
-	public Article getArticleView(AttributeCodePk attributeCodePk)
+	public ArticleView getArticleView(AttributeCodePk attributeCodePk)
 	{
-		Article article = null;
+		ArticleView article = null;
 
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
-		if (attributeCode.getArticleFilename() != null) {
-			String content = getArticle(attributeCodePk);
-			article = Article.toViewHtml(attributeCode, content);
+		if (attributeCode.getArticle() != null) {
+			article = getArticle(attributeCodePk);
 		}
 		return article;
 	}
@@ -788,12 +766,10 @@ public class AttributeServiceImpl
 					//(however, which  code  is used depends on the order that came in.  which is not  determinate)
 					//First one we hit wins
 					log.log(Level.WARNING, MessageFormat.format("Duplicate external code for attribute type: {0} Code: {1}", new Object[]{xrefAttributeMap.getAttributeType(), xrefAttributeMap.getExternalCode()}));
-				}
-				else {
+				} else {
 					codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
 				}
-			}
-			else {
+			} else {
 				Map<String, String> codeMap = new HashMap<>();
 				codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
 				attributeCodeMap.put(xrefAttributeMap.getAttributeType(), codeMap);
@@ -832,15 +808,13 @@ public class AttributeServiceImpl
 					temp.setExternalCode(map.getExternalCode());
 					temp.setLocalCode(map.getLocalCode());
 					persistenceService.persist(temp);
-				}
-				else {
+				} else {
 					map.setActiveStatus(AttributeXRefMap.ACTIVE_STATUS);
 					map.setXrefId(persistenceService.generateId());
 					persistenceService.persist(map);
 				}
 			}
-		}
-		else {
+		} else {
 			attributeXRefView.getType().setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
 			persistenceService.persist(attributeXRefView.getType());
 			for (AttributeXRefMap map : attributeXRefView.getMap()) {
@@ -866,7 +840,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void activateType(String type)
+	public void activateAttributeType(String type)
 	{
 		AttributeType attributeType = persistenceService.findById(AttributeType.class, type);
 
@@ -875,16 +849,27 @@ public class AttributeServiceImpl
 			attributeType.setUpdateDts(TimeUtil.currentDate());
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
+
+			OSFCacheManager.getAttributeCache().remove(type);
+			OSFCacheManager.getAttributeTypeCache().remove(type);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to save sort order.  Attribute Type: " + type, "Check data");
 		}
 	}
 
 	@Override
-	public void saveSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder)
+	public void saveAttributeCodeSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder)
 	{
+		Objects.requireNonNull(attributeCodePk, "Attribute Code PK is required");
 		AttributeCode code = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (code != null) {
 			code.setSortOrder(sortOrder);
 			persistenceService.persist(code);
+
+			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
+			OSFCacheManager.getAttributeTypeCache().remove(attributeCodePk.getAttributeType());
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to save sort order.  Attribute code: " + attributeCodePk.toString(), "Check data");
 		}
 	}
 

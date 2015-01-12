@@ -29,6 +29,13 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
   $scope.queryFilter = angular.copy(utils.queryFilter);
   $scope.queryFilter.max = 100;
   $scope.untilDate = new Date();
+  $scope.appProperties = [];
+  $scope.configProperties = [];
+  $scope.loggers = [];
+  $scope.appStatus = {};
+  $scope.threads = [];
+  $scope.predicate = [];
+  $scope.reverse = [];
 
   $scope.refreshTickets = function(){
     $scope.$emit('$TRIGGERLOAD', 'ticketLoader');       
@@ -84,6 +91,15 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
       $scope.pageNumber = $scope.maxPageNumber;
     }
     $scope.refreshTickets(); 
+  };
+  
+  $scope.setPredicate = function(predicate, table){
+    if ($scope.predicate[table] === predicate){
+      $scope.reverse[table] = !$scope.reverse[table];
+    } else {
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
+    }
   };
 
   $scope.showErrorDetails = function(ticketId){
@@ -144,5 +160,167 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
     }
   };
 
+  $scope.refreshAppProperties = function(){
+    $scope.$emit('$TRIGGERLOAD', 'appPropLoader');       
+   
+    Business.systemservice.getAppProperties().then(function (results) {
+      if (results) {          
+        $scope.appProperties = results;
+      }  
+      $scope.$emit('$TRIGGERUNLOAD', 'appPropLoader');        
+    });      
+  };
+  $scope.refreshAppProperties();
+
+ $scope.refreshConfigProps = function(){
+    $scope.$emit('$TRIGGERLOAD', 'configPropLoader');       
+   
+    Business.systemservice.getConfigProperties().then(function (results) {
+      if (results) {          
+        $scope.configProperties = results;
+      }  
+      $scope.$emit('$TRIGGERUNLOAD', 'configPropLoader');        
+    });      
+  };
+  $scope.refreshConfigProps();
+
+ $scope.refreshLoggers = function(){
+    $scope.$emit('$TRIGGERLOAD', 'loggingLoader');       
+   
+    Business.systemservice.getLoggers().then(function (results) {
+      if (results) {          
+        $scope.loggers = results;
+      }  
+      $scope.$emit('$TRIGGERUNLOAD', 'loggingLoader');        
+    });      
+  };
+  $scope.refreshLoggers();
+  
+ $scope.refreshAppStatus = function(){
+    $scope.$emit('$TRIGGERLOAD', 'loggingLoader');       
+   
+    Business.systemservice.getAppStatus().then(function (results) {
+      if (results) {          
+        $scope.appStatus = results;
+      }  
+      $scope.$emit('$TRIGGERUNLOAD', 'loggingLoader');        
+    });      
+  };
+  $scope.refreshAppStatus();  
+  
+ $scope.refreshThreads = function(){
+    $scope.$emit('$TRIGGERLOAD', 'loggingLoader');       
+   
+    Business.systemservice.getThreads().then(function (results) {
+      if (results) {          
+        $scope.threads = results;
+      }  
+      $scope.$emit('$TRIGGERUNLOAD', 'loggingLoader');        
+    });      
+  };
+  $scope.refreshThreads();   
+
+  $scope.editAppProperty = function(property){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/editAppProperty.html',
+      controller: 'adminEditAppPropertyCtrl',
+      size: 'lg',
+      resolve: {
+        property: function () {
+          return property;
+        }
+      }
+    }); 
+
+  };
+  $scope.$on('$REFRESH_APP_PROPS', function(){
+    triggerAlert('Saved successfully', 'editAppProperty', 'body', 3000);
+    $scope.refreshAppProperties();
+  });
+
+  $scope.editLogger = function(logger){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/editLogger.html',
+      controller: 'adminEditLoggingCtrl',
+      size: 'lg',
+      resolve: {
+        logger: function () {
+          return logger;
+        }
+      }
+    }); 
+  };
+  
+  $scope.$on('$REFRESH_LOGGERS', function(){
+      triggerAlert('Saved successfully', 'editLogger', 'body', 3000);
+      $scope.refreshLoggers();
+  });  
+
+}]);
+
+app.controller('adminEditAppPropertyCtrl', ['$scope', '$uiModalInstance', 'property', 'business', function ($scope, $uiModalInstance, property, Business) {
+    $scope.propetyForm = angular.copy(property);
+    
+    
+    $scope.cancel = function(){
+     $uiModalInstance.dismiss('cancel');
+    };
+    
+    $scope.save = function(){
+      $scope.$emit('$TRIGGERLOAD', 'formLoader'); 
+      Business.systemservice.updateAppProperty($scope.propetyForm.key, $scope.propetyForm.value).then(function (results) {      
+       $scope.$emit('$TRIGGERUNLOAD', 'formLoader');
+       $scope.$emit('$TRIGGEREVENT', '$REFRESH_APP_PROPS');       
+       $uiModalInstance.dismiss('success');
+      }, function(){
+        triggerAlert('Unable to save. ', 'editLogger', 'body', 3000);
+        $scope.$emit('$TRIGGERUNLOAD', 'formLoader'); 
+      });
+    };
+    
+}]);
+
+app.controller('adminEditLoggingCtrl', ['$scope', '$uiModalInstance', 'logger', 'business', function ($scope, $uiModalInstance, logger, Business) {
+    $scope.logger = angular.copy(logger);
+    $scope.logLevels = [];
+    
+    $scope.loadLevels = function(){
+      $scope.$emit('$TRIGGERLOAD', 'formLoader');       
+
+      Business.systemservice.getLogLevels().then(function (results) {
+        if (results) {          
+          $scope.logLevels = results;          
+          $scope.logger.levelSelect = _.find($scope.logLevels, {'code': $scope.logger.level});
+          if ($scope.logger.levelSelect === undefined) {
+            $scope.logger.useParentLevel=true;
+          }
+        }  
+        $scope.$emit('$TRIGGERUNLOAD', 'formLoader');        
+      });      
+    };
+    $scope.loadLevels();    
+        
+    $scope.cancel = function(){
+     $uiModalInstance.dismiss('cancel');
+    };
+    
+    $scope.save = function(){
+      $scope.$emit('$TRIGGERLOAD', 'formLoader'); 
+      if ($scope.logger.useParentLevel) {
+        $scope.logger.level = null;
+      } else {
+        $scope.logger.level = $scope.logger.levelSelect.code;
+      }
+      
+      Business.systemservice.updateLogLevel($scope.logger.name, $scope.logger.level).then(function (results) {      
+       $scope.$emit('$TRIGGERUNLOAD', 'formLoader'); 
+       $scope.$emit('$TRIGGEREVENT', '$REFRESH_LOGGERS');  
+       $uiModalInstance.dismiss('success');
+      }, function(){
+        triggerAlert('Unable to save. ', 'editLogger', 'body', 3000);
+        $scope.$emit('$TRIGGERUNLOAD', 'formLoader'); 
+      });
+    };
+    
 }]);
 

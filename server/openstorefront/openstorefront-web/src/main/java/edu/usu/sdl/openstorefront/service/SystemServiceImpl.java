@@ -61,8 +61,7 @@ public class SystemServiceImpl
 	@Override
 	public ApplicationProperty getProperty(String key)
 	{
-		ApplicationProperty applicationProperty = null;
-		applicationProperty = persistenceService.findById(ApplicationProperty.class, key);
+		ApplicationProperty applicationProperty = persistenceService.findById(ApplicationProperty.class, key);
 		return applicationProperty;
 	}
 

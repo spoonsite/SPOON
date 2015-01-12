@@ -419,6 +419,8 @@ ${complexType.object}
 				
 				 doLookups('#lookup');				
 				 doAttributes('#attributes');
+				 
+				 window.print();
 			});			
 		</script>		
 		

@@ -102,7 +102,10 @@ limitations under the License.
 				</li>				
 				<li>
 					<a href="#../API.action?API&resourceClass=JiraService&classPath=service">Jira</a>					
-				</li>					
+				</li>
+				<li>
+					<a href="#../API.action?API&resourceClass=Application&classPath=service">Application</a>
+				</li>	
 			</ul>				
 		</div>
 		<div id="apidocId" class="api-doc">

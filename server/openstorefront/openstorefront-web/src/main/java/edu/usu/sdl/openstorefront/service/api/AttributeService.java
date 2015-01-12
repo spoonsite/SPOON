@@ -24,7 +24,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
-import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import java.util.List;
@@ -46,12 +46,13 @@ public interface AttributeService
 	public List<AttributeType> getRequiredAttributes();
 
 	/**
-	 * Gets the active code for a type
+	 * Gets the codes for a type Note active codes are cached.
 	 *
 	 * @param type
+	 * @param all
 	 * @return if type doesn't exist it return empty list
 	 */
-	public List<AttributeCode> findCodesForType(String type, Boolean all);
+	public List<AttributeCode> findCodesForType(String type, boolean all);
 
 	/**
 	 * Gets the active code for a type
@@ -108,12 +109,12 @@ public interface AttributeService
 	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
 
 	/**
-	 * Grabs the article for a give code or type
+	 * Grabs the article and the contents for a give code or type
 	 *
 	 * @param attributeCodePk
-	 * @return article data or null for no article.
+	 * @return complete article
 	 */
-	public String getArticle(AttributeCodePk attributeCodePk);
+	public ArticleView getArticle(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Grabs the article for a give code and type with the content
@@ -121,7 +122,7 @@ public interface AttributeService
 	 * @param attributeCodePk
 	 * @return the full article
 	 */
-	public Article getArticleView(AttributeCodePk attributeCodePk);
+	public ArticleView getArticleView(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Grabs the article for a give code or type. Get the article codes only,
@@ -130,15 +131,15 @@ public interface AttributeService
 	 * @param attributeCodePk
 	 * @return article data or null for no article.
 	 */
-	public List<Article> getArticlesForCodeLike(AttributeCodePk attributeCodePk);
+	public List<ArticleView> getArticlesForCodeLike(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Saves a new article (This will scub the article data prior to save)
 	 *
-	 * @param attributeCodePk
-	 * @param article
+	 * @param attributeCode
+	 * @param articleContents
 	 */
-	public void saveArticle(AttributeCodePk attributeCodePk, String article);
+	public void saveArticle(AttributeCode attributeCode, String articleContents);
 
 	/**
 	 * Deletes a article. WARNING: This will remove the link and delete any
@@ -155,14 +156,14 @@ public interface AttributeService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeAttributeType(String type);
-	
+
 	/**
 	 * Remove Type
 	 *
 	 * @param type
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void activateType(String type);
+	public void activateAttributeType(String type);
 
 	/**
 	 * Remove Code
@@ -226,7 +227,7 @@ public interface AttributeService
 	 *
 	 * @return
 	 */
-	public List<Article> getArticles();
+	public List<ArticleView> getArticles();
 
 	/**
 	 * Gets the active xref types for an IntegrationType
@@ -259,12 +260,20 @@ public interface AttributeService
 	public void deleteAttributeXrefType(String attributeType);
 
 	/**
-	 * 
+	 * Updates the sort order of code
+	 *
 	 * @param attributeCodePk
-	 * @param sortOrder 
+	 * @param sortOrder
 	 */
-	public void saveSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveAttributeCodeSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder);
 
-	public void activateCode(AttributeCodePk attributeCodePk);
+	/**
+	 * Activates a attribute Code
+	 *
+	 * @param attributeCodePk
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void activateAttributeCode(AttributeCodePk attributeCodePk);
 
 }

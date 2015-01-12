@@ -8,15 +8,19 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		
+		<style>
+			.disclaimer{
+				
+			}
+		</style>
 	</head>
 	<body>
 	<div class="auth-forms">
 	  <div class="auth-content">
-		<div class="row">
+		<div class="row" style="padding-left: 20px;padding-right: 20px;">
 		  <h2>Log In</h2>
 		  <form id="loginForm" action="Login.action?Login" method="POST">
-			<span>By logging in you are consenting to these conditions</span>
+			  <span >By logging in you are consenting to these conditions</span>
 			<div class="disclaimer">
 			  <h1>WARNING:</h1>
 			  <p>
@@ -25,9 +29,9 @@
 			</div>		
 			<div style="width: 300px; margin: 0px auto;">
 				<input type="hidden" id="gotoPageId" name="gotoPage"  />	
-				<input type="text" name="username" placeholder="Username" class="form-control" autofocus autocomplete="false">
+				<input type="text" name="username" placeholder="Username" class="form-control" autofocus autocomplete="false" style="width: 200px;">
 				<br>
-				<input type="password" name="password" placeholder="Password" class="form-control" autocomplete="false">
+				<input type="password" name="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;">
 				<br>
 				<br>
 				<input type="submit" value="Log in" style="width: auto;" class="btn btn-primary" />
