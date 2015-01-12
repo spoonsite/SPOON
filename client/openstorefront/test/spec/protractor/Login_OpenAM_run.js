@@ -21,12 +21,12 @@
 //openAM = true; other = false;
 
 // CURRENT PRODUCTION
-//theSite = 'https://storefront1.di2e.net/openstorefront/index.html';
-//openAM = true; other = false;
+theSite = 'https://storefront.di2e.net/openstorefront/index.html';
+openAM = false; other = true;
 
 // TESTING SITE
-theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
-openAM = false; other = true;
+//theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
+//openAM = false; other = true;
 
 
 // Leave OUTSIDE of describe, it, expect-- as it is NOT an Angular website page.
@@ -46,6 +46,6 @@ if (other) {
     console.log(theSite);
     console.log('UN:admin,  PW:secret');
     console.log('*********************************************************************');
-    browser.driver.sleep(28000);
+    browser.driver.sleep(41000);
 }
 
