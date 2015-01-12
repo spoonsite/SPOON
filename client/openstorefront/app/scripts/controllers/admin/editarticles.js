@@ -20,8 +20,8 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.editorContent = $scope.$parent.editorContent;
 
   $scope.submitLanding = function(){
-    console.log('$scope.editorContent', $scope.editorContent);
-    console.log('$scope.editorContentWatch', $scope.editorContentWatch);
+    console.log('$scope.editorContent', $($scope.editorContent).find('.componentlist'));
+    console.log('$scope.editorContent', $($scope.editorContent));
   };
   // $scope.predicate = 'description';
   // $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminAttributes');
