@@ -78,7 +78,7 @@ limitations under the License.
           </table>
         </div>
         <br>
-        <button data-toggle="collapse" href="#moreFilters" ng-click="moreFilters = !!!moreFilters" class="btn btn-default" style="width: 100%;"><span ng-show="!!!moreFilters">More Filters</span><span ng-show="!!moreFilters">Less Filters</span></button>
+        <button data-toggle="collapse" href="#moreFilters" ng-click="moreFilters = !!!moreFilters" class="btn btn-primary" style="width: 100%;"><span ng-show="!!!moreFilters">More Filters</span><span ng-show="!!moreFilters">Less Filters</span></button>
         <div id="moreFilters" class="panel-collapse collapse">
           <div ng-class="$last? 'lastFilter': ''"   ng-if="!filter.visibleFlg" class="panel panel-default" class="filterTableDiv"  ng-repeat="filter in filters">
             <table class="table">
@@ -113,7 +113,7 @@ limitations under the License.
       </div>
       <br>
       <div class="lastFilter">
-        <button class="btn red btn-default col-sm-12" ng-click="clearFilters()">Reset Filters</button>
+        <button class="btn red btn-primary col-sm-12" ng-click="clearFilters()">Reset Filters</button>
       </div>
     </div>
   </div>
@@ -166,17 +166,20 @@ limitations under the License.
         <div class='container-fluid results'>
           <div>
             <div class="searchTitle">
-              <button class='btn btn-default detailsTitleButton collapsed' id="data-collapse-tags" ng-click="resetSearch();"  data-toggle="tooltip" data-placement="bottom" data-title="Clear Search" data-trigger="hover">
+              <button class='btn btn-info detailsTitleButton' ng-click="resetSearch();"  data-toggle="tooltip" data-container="body" data-placement="bottom" data-title="Clear Search" data-trigger="hover">
                 <i class="fa fa-search imitateLink"></i>
               </button>
-              Search &mdash; {{searchTitle}} <span ng-if="data && data.data && data.data.length" style="font-size: 12px;">({{data.data.length}} results)</span>
+              Search &mdash; {{searchTitle}} <span ng-if="data && data.data && data.data.length" style="font-size: 12px;">({{getNumThings(false)}} Component<span ng-show="getNumThings(false) > 1">s</span><span ng-show="getNumThings(true)">&nbsp;and {{getNumThings(true)}} Article<span ng-show="getNumThings(true) > 1">s</span>)</span><span ng-show="!getNumThings(true)">)</span></span>
             </div>
             <div class="searchDescription">
               <!-- fa fa-file-text, fa fa-book, fa fa-info-circle-->
               <!-- glyphicon glyphicon-info-sign -->
-              <span ng-click="setupModal(modal, ''); openModal('descModal'); " class="imitateLink" > <span ng-bind-html="searchDescription"></span> <i class="glyphicon glyphicon-info-sign"></i></span>
+              <span ng-click="setupModal(modal, ''); openModal('descModal'); " class="imitateLink" > 
+                <span ng-bind-html="searchDescription"></span>
+                <i class="glyphicon glyphicon-info-sign colorizeMe" id="data-info-button"  data-toggle="tooltip" data-container="body" data-placement="bottom" data-title="More info on search" data-trigger="hover"></i>
+              </span>
               <div>
-                <button class="btn btn-default" ng-click="goToCompare()">Compare All</button>
+                <button class="btn btn-primary" ng-click="goToCompare()">Compare All</button>
               </div>
             </div>
           </div>
