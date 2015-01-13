@@ -57,6 +57,23 @@ CKEDITOR.plugins.registered.save = {
 
 CKEDITOR.enterMode = CKEDITOR.ENTER_BR;
 
+CKEDITOR.on('instanceReady', function(ev)
+{
+  var editor = ev.editor;
+  var dataProcessor = editor.dataProcessor;
+  var htmlFilter = dataProcessor && dataProcessor.htmlFilter;
+  htmlFilter.addRules(
+  {
+    elements : 
+    {
+      input: function(element)
+      {
+        return true;
+      },
+    }
+  });
+});
+
 
 // CKEDITOR.basePath = 'scripts/common/ckeditor/';
 // CKEDITOR.plugins.basePath = 'scripts/common/ckeditor/plugins/';
@@ -195,10 +212,6 @@ var getCkConfig = function() {
     { name: 'CusomtTools', items: ['ComponentButton'] }
   //
   ];
-  contentsCss: [
-    CKEDITOR.plugins.getPath( 'componentlist' ) + 'ckeditor-content.css',
-  ],
-
   // Remove some buttons, provided by the standard plugins, which we don't
   // need to have in the Standard(s) toolbar.
   // config.removeButtons = "Styles,Source,Subscript,Superscript,Strike Through";
@@ -209,8 +222,10 @@ var getCkConfig = function() {
 
   // Set the most common block elements.
   config.enterMode = CKEDITOR.ENTER_BR;
-  config.extraAllowedContent = 'component-list';
+  config.allowedContent = true;
+  config.extraAllowedContent = '*(*){*}[*]';
   config.codeSnippet_theme = 'monokai_sublime';
+  config.contentsCss = 'styles/common/ckeditor-content.css';
   // Make dialogs simpler.
   // config.removeDialogTabs = 'image:advanced;link:advanced;table:advanced';
 

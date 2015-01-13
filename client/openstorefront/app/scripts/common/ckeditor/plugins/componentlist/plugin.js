@@ -38,65 +38,70 @@ CKEDITOR.plugins.add( 'componentlist', {
         // }
         hidemore: {
           selector: '.componentlist-hide-more',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         clickcallback: {
           selector: '.componentlist-click-callback',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         classlist: {
           selector: '.componentlist-class-list',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         title: {
           selector: '.componentlist-title',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         data: {
           selector: '.componentlist-data',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         cols: {
           selector: '.componentlist-cols',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         type: {
           selector: '.componentlist-type',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         key: {
           selector: '.componentlist-key',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         filters: {
           selector: '.componentlist-filters',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         setfilters: {
           selector: '.componentlist-set-filters',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
         search: {
           selector: '.componentlist-search',
-          allowedContent: 'br strong em'
+          allowedContent: true,
         },
       },
 
       // Define the template of a new Simple Box widget.
       // The template will be used when creating new instances of the Simple Box widget.
-      template: '<div class="componentlist"> ###Component List###' + 
+      template: '<div class="componentlist"> <h2>Component List</h2>' + 
       '<div ng-show="false">' +
-      '<label>Hide-more: </label><div class="componentlist-hide-more attribute"><p>hidemore...</p></div><br>' +
-      '<label>Click-callback: </label><div class="componentlist-click-callback attribute"><p>clickcallback...</p></div><br>' +
-      '<label>Class-list: </label><div class="componentlist-class-list attribute"><p>classlist...</p></div><br>' +
-      '<label>Title: </label><div class="componentlist-title attribute"><p>title...</p></div><br>' +
-      '<label>Data: </label><div class="componentlist-data attribute"><p>data...</p></div><br>' +
-      '<label>Cols: </label><div class="componentlist-cols attribute"><p>cols...</p></div><br>' +
-      '<label>Type: </label><div class="componentlist-type attribute"><p>type...</p></div><br>' +
-      '<label>Key: </label><div class="componentlist-key attribute"><p>key...</p></div><br>' +
-      '<label>Filters: </label><div class="componentlist-filters attribute"><p>filters...</p></div><br>' +
-      '<label>Setfilters: </label><div class="componentlist-set-filters attribute"><p>setfilters...</p></div><br>' +
-      '<label>Search: </label><div class="componentlist-search attribute"><p>search...</p></div><br>' +
+      '<div class="col-sm-6">' +
+      '<label>Title: </label><div class="componentlist-title attribute"><p data-attributeLabel="title"></p></div><br>' +
+      '<label>Type: </label><div class="componentlist-type attribute"><p data-attributeLabel="type"></p></div><br>' +
+      '<label>Key: </label><div class="componentlist-key attribute"><p data-attributeLabel="key"></p></div><br>' +
+      '<label>Class-list: </label><div class="componentlist-class-list attribute"><p data-attributeLabel="classlist"></p></div><br>' +
+      '<label>Hide-more: </label><div class="componentlist-hide-more attribute"><p data-attributeLabel="hidemore"></p></div><br>' +
+      '</div>' +
+      '<div class="col-sm-6">' +
+      '<label>Filters: </label><div class="componentlist-filters attribute"><p data-attributeLabel="filters">filters</p></div><br>' +
+      '<label>Click-callback: </label><div class="componentlist-click-callback attribute"><p data-attributeLabel="clickcallback">updateDetails</p></div><br>' +
+      '<label>Data: </label><div class="componentlist-data attribute"><p data-attributeLabel="data">data.data</p></div><br>' +
+      '<label>Cols: </label><div class="componentlist-cols attribute"><p data-attributeLabel="cols">3</p></div><br>' +
+      '<label>Search: </label><div class="componentlist-search attribute"><p data-attributeLabel="search">doSearchKey</p></div><br>' +
+      '</div>' +
+      '<div style="clear:both">' +
+      '</div>' +
       '</div>' +
       '</div>',
       // template: '<div class="componentlist"><span class="editablespans">hide-more</span></div>',
@@ -112,5 +117,5 @@ CKEDITOR.plugins.add( 'componentlist', {
         return element.name == 'div' && element.hasClass( 'componentlist' );
       }
     } );
-}
+  }//
 } );

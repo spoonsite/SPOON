@@ -257,6 +257,7 @@ module.exports = function (grunt) {
           '<%= yeoman.dist %>/styles/**/*.css',
           '!<%= yeoman.dist %>/scripts/common/ckeditor/**/*.js',
           '!<%= yeoman.dist %>/scripts/common/**/*.css',
+          '!<%= yeoman.dist %>/styles/common/**/*.css',
           ]
         }
       }
