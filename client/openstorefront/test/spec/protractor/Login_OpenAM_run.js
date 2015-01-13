@@ -14,7 +14,7 @@
  */
 
 // GLOBAL Variable for the tests
-// CURRENT PRODUCTION
+// CURRENT PRODUCTION  ***** DO NOT RUN WITHOUT PERMISSION FROM DI2E AND COORDINATION *****
 //theSite = 'https://storefront.di2e.net/openstorefront/index.html';
 //openAM = false; other = true;
 
