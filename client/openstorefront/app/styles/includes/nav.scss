@@ -5,6 +5,11 @@
 .defaultSpacer {
   height: 52px;
 }
+
+#nav .top {
+  border-bottom: 3px solid #FF811A;
+}
+
 .top {
   position: fixed;
   top: 0px;
@@ -137,8 +142,8 @@
   border-bottom-color: darken(#cccccc, 20%);
 }
 .navbar-default .navbar-nav > .dropdown > a:hover .caret{
-  border-top-color: #ff4800;
-  border-bottom-color: #ff4800;
+  border-top-color: #FF811A;
+  border-bottom-color: #FF811A;
 }
 
 .navbar-default .navbar-nav > li > a:hover,
@@ -146,7 +151,7 @@
 .navbar-default .navbar-nav > li > a:focus {
   background:#3d3d3d;
   color:#eeeeee;                  
-  border-top: 2px solid #ff4800;
+  border-top: 2px solid #FF811A;
   margin-top:0px;
 }
 
@@ -154,7 +159,7 @@
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
   color: #555555;
-  border-top: 2px solid #ff4800;
+  border-top: 2px solid #FF811A;
   background-color: #e7e7e7;
 }
 

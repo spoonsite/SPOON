@@ -133,6 +133,23 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.selectedTab = tab;
   };
 
+  $scope.getNumThings = function(article){
+    if ($scope.data && $scope.data.data && $scope.data.data.length) {
+      var count = 0;
+      _.each($scope.data.data, function(item){
+        if (item.listingType === 'Article' && article) {
+          count++; 
+        } else if (!article) {
+          count++;
+        }
+      })
+      return count;
+    } else {
+      return 0;
+    }
+  }
+
+
   /***************************************************************
   * Here we set the tab class
   * params: tab -- The tab to check to see if it is selected
