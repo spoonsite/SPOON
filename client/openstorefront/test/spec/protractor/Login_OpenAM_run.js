@@ -14,19 +14,13 @@
  */
 
 // GLOBAL Variable for the tests
-//theSite = 'http://di2e.github.io/openstorefront/index.html';
-//openAM = false; other = false;
-
-//theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
-//openAM = true; other = false;
-
 // CURRENT PRODUCTION
-theSite = 'https://storefront.di2e.net/openstorefront/index.html';
-openAM = false; other = true;
+//theSite = 'https://storefront.di2e.net/openstorefront/index.html';
+//openAM = false; other = true;
 
 // TESTING SITE
-//theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
-//openAM = false; other = true;
+theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
+openAM = false; other = true;
 
 
 // Leave OUTSIDE of describe, it, expect-- as it is NOT an Angular website page.
@@ -46,6 +40,6 @@ if (other) {
     console.log(theSite);
     console.log('UN:admin,  PW:secret');
     console.log('*********************************************************************');
-    browser.driver.sleep(41000);
+    browser.driver.sleep(31000);
 }
 
