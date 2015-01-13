@@ -70,8 +70,9 @@ describe('searchAll_Search entire database', function() {
         browser.get(theSite);
 
         // Search on a LONG, special character string
-        //var bigEntry = '€β™±≠∞µ∑Ω①↖≤ÿñà—””…<HTML>INSERT INTO<table></table>asdljasdoiewrueowoiupewriuocvxnewrq423523#$%&^$#%@#$^#%$^@#$@!$#%@#^@#$^%#$%%$@#645987@#$$@#~~~```/???/\/\|{}{[][][;';
-        //element(by.id('mainSearchBar')).sendKeys(bigEntry, protractor.Key.ENTER);
+        // WARNING:  ***** Causes SQL injection like errors in the error logs! *****
+        var bigEntry = '€β™±≠∞µ∑Ω①↖≤ÿñà—””…<HTML>INSERT INTO<table></table>asdljasdoiewrueowoiupewriuocvxnewrq423523#$%&^$#%@#$^#%$^@#$@!$#%@#^@#$^%#$%%$@#645987@#$$@#~~~```/???/\/\|{}{[][][;';
+        element(by.id('mainSearchBar')).sendKeys(bigEntry, protractor.Key.ENTER);
 
         // Should return 0 results, and NOT time out!
         expect(element.all(by.repeater('item in data')).count()).toEqual(0);

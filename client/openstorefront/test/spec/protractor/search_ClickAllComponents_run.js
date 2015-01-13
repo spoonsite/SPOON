@@ -14,7 +14,7 @@
  */
 
 // *** varies, depending on what is in the sample database ***
-var totalResults = 71; // Articles present
+var totalResults = 59; // Articles present
 
 
 describe('search_ClickAllComponents', function() {
@@ -41,8 +41,9 @@ describe('From the global search all search results', function() {
         // Use .then due to asynchronous code this would complete before the .click() otherwise
         componentCount ++;
         var theTime = new Date().toLocaleTimeString();
+        // Manually check the output to see if big delays between components exist.
         console.log(componentCount + ': Current System Time:  ' + theTime);
       });
     });
   });
-});
+});  // If this goes past the defaultTimeoutInterval: setting in protractor.conf.js it will fail.
