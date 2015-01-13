@@ -1,4 +1,4 @@
-/* Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+/* Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
@@ -12,11 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 // *** varies, depending on what is in the sample database ***
-var totalResults = 71; // Articles present
+var totalResults = 59; // Articles present
 
 
-describe('searchAll_Search entire database', function() {
+describe('search_ClickAllComponents', function() {
     it('Global search (all blank) returns ' + totalResults + ' expected current db results', function() {
         // Open the main site
         browser.get(theSite, 4000);
@@ -29,13 +30,20 @@ describe('searchAll_Search entire database', function() {
     });
 });
 
+// CLICK all search results to look for SLOW Search Results pages
 describe('From the global search all search results', function() {
-  it('clicking on each of the search results does NOT timeout', function () {
+  componentCount= 0;
+  it('clicking on EACH of the search results does NOT timeout', function () {
+    // Go through each repeater search item ('item in data')
     element.all(by.repeater('item in data')).each(function (theItem) {
       theTitle = theItem.element(by.css('.results-content-title'));
-      //textTitle = theTitle.element(by.css('.results-content-title-content.ng-binding')).getText();
-      //console.log(textTitle);  // STILL ouputs and object not the component text
-      theTitle.click();
+      theTitle.click().then(function () {
+        // Use .then due to asynchronous code this would complete before the .click() otherwise
+        componentCount ++;
+        var theTime = new Date().toLocaleTimeString();
+        // Manually check the output to see if big delays between components exist.
+        console.log(componentCount + ': Current System Time:  ' + theTime);
+      });
     });
   });
-});
+});  // If this goes past the defaultTimeoutInterval: setting in protractor.conf.js it will fail.

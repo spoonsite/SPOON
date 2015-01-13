@@ -70,6 +70,7 @@ describe('searchAll_Search entire database', function() {
         browser.get(theSite);
 
         // Search on a LONG, special character string
+        // WARNING:  ***** Causes SQL injection like errors in the error logs! *****
         var bigEntry = '€β™±≠∞µ∑Ω①↖≤ÿñà—””…<HTML>INSERT INTO<table></table>asdljasdoiewrueowoiupewriuocvxnewrq423523#$%&^$#%@#$^#%$^@#$@!$#%@#^@#$^%#$%%$@#645987@#$$@#~~~```/???/\/\|{}{[][][;';
         element(by.id('mainSearchBar')).sendKeys(bigEntry, protractor.Key.ENTER);
 
