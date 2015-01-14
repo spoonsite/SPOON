@@ -22,10 +22,10 @@
             </span>
           </div>
           <div class="pull-right" id="detailsToolButtons">
-            <button ng-init="tagsOn = false" class='btn btn-info detailsTitleButton' id="data-collapse-tags" ng-click="toggleTags('#tagsUpdate'); tagsOn = true"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
+            <button ng-init="tagsOn = false" class='btn btn-info detailsTitleButton' id="data-collapse-tags" ng-click="toggleTags('#tagsUpdate');"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
               <i class="fa fa-tags imitateLink"></i>
-              <i ng-show="!tagsOn"class="fa fa-toggle-off" style="position: relative; left: -20px; font-size: xx-small; top: 12px;"></i>
-              <i ng-show="tagsOn"class="fa fa-toggle-off" style="position: relative; left: -20px; font-size: xx-small; top: 12px; color: #ff4800;"></i>
+              <i ng-show="!tagsOn"class="fa fa-toggle-off" style="position: relative; left: -27px; font-size: xx-small; top: 12px;"></i>
+              <i ng-show="tagsOn"class="fa fa-toggle-on" style="position: relative; left: -27px; font-size: xx-small; top: 12px; color: #ff4800;"></i>
             </button>
             <button class='btn btn-info detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
             </button>
