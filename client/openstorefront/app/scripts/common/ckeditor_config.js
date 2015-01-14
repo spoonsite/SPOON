@@ -55,8 +55,6 @@ CKEDITOR.plugins.registered.save = {
   }
 };
 
-CKEDITOR.enterMode = CKEDITOR.ENTER_BR;
-
 CKEDITOR.on('instanceReady', function(ev)
 {
   var editor = ev.editor;
@@ -226,6 +224,16 @@ var getCkConfig = function() {
   config.extraAllowedContent = '*(*){*}[*]';
   config.codeSnippet_theme = 'monokai_sublime';
   config.contentsCss = 'styles/common/ckeditor-content.css';
+  config.forcePasteAsPlainText = false; // default so content won't be manipulated on load
+  config.basicEntities = true;
+  config.entities = true;
+  config.entities_latin = false;
+  config.entities_greek = false;
+  config.entities_processNumerical = false;
+  config.fillEmptyBlocks = function (element) {
+    return true; // DON'T DO ANYTHING!!!!!
+  };
+  
   // Make dialogs simpler.
   // config.removeDialogTabs = 'image:advanced;link:advanced;table:advanced';
 
