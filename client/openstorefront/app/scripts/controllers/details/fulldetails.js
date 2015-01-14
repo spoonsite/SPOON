@@ -434,8 +434,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   * This function saves a component's tags
   ***************************************************************/
   $scope.toggleTags = function(id){
-    // $('#data-collapse-tags').toggleClass('collapsed');
-    // $(id).collapse('toggle');
+    $('#data-collapse-tags').toggleClass('collapsed');
+    $(id).collapse('toggle');
+    $(id).on('hidden.bs.collapse', function(){
+      $scope.tagsOn = false;
+      $scope.$apply();
+    })
+    $(id).on('shown.bs.collapse', function(){
+      $scope.tagsOn = true;
+      $scope.$apply();
+    })
   };
 
   /***************************************************************
