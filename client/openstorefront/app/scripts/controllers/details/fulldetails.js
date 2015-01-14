@@ -389,6 +389,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.toggleTags = function(id){
     $('#data-collapse-tags').toggleClass('collapsed');
     $(id).collapse('toggle');
+    $(id).on('hidden.bs.collapse', function(){
+      $scope.tagsOn = false;
+      $scope.$apply();
+    })
+    $(id).on('shown.bs.collapse', function(){
+      $scope.tagsOn = true;
+      $scope.$apply();
+    })
   };
 
   /***************************************************************

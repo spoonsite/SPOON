@@ -22,22 +22,24 @@
             </span>
           </div>
           <div class="pull-right" id="detailsToolButtons">
-            <button class='btn btn-default detailsTitleButton collapsed' id="data-collapse-tags" ng-click="toggleTags('#tagsUpdate')"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
+            <button ng-init="tagsOn = false" class='btn btn-info detailsTitleButton' id="data-collapse-tags" ng-click="toggleTags('#tagsUpdate');"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover">
               <i class="fa fa-tags imitateLink"></i>
+              <i ng-show="!tagsOn"class="fa fa-toggle-off" style="position: relative; left: -27px; font-size: xx-small; top: 12px;"></i>
+              <i ng-show="tagsOn"class="fa fa-toggle-on" style="position: relative; left: -27px; font-size: xx-small; top: 12px; color: #ff4800;"></i>
             </button>
-            <button class='btn btn-default detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
+            <button class='btn btn-info detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
             </button>
-            <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
+            <button class='btn btn-info detailsTitleButton' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
             </button>
-            <button class='btn btn-default detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
+            <button class='btn btn-info detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
             </button>
-            <button class='btn btn-default detailsTitleButton' id="printLink" ng-click="goToPrint('/print', {'type':'component', 'id': details.details.componentId})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Print View" data-trigger="hover">
+            <button class='btn btn-info detailsTitleButton' id="printLink" ng-click="goToPrint('/print', {'type':'component', 'id': details.details.componentId})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Print View" data-trigger="hover">
               <i class="fa fa-print imitateLink"></i>
             </button>
-            <button ng-show="!single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goToFullPage(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
+            <button ng-show="!single" class='btn btn-info detailsTitleButton' id="permenantLink" ng-click="goToFullPage(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
               <i class="fa fa-copy imitateLink"></i>
             </button>
-            <button ng-show="single" class='btn btn-default detailsTitleButton' id="permenantLink" ng-click="goTo('/', {})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Home Page" data-trigger="hover">
+            <button ng-show="single" class='btn btn-info detailsTitleButton' id="permenantLink" ng-click="goTo('/', {})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Home Page" data-trigger="hover">
               <i class="ic ic-home2 imitateLink"></i>
             </button>
           </div>
@@ -97,7 +99,7 @@
 
           <div class="col-md-3" style="background-color:#ffffff;border-right:1px dashed #5cb85c;border-top:1px dashed #5cb85c;border-bottom:1px dashed #5cb85c; height:50px;text-align:center; color:#4E9C4E">In Progress</div>
 
-          <div class="col-md-3" style="background-color:#ff4800;border-right:1px solid navy;border-top:1px solid navy;border-bottom:1px solid navy; height:50px;text-align:center; color:white">Halted</div>
+          <div class="col-md-3" style="background-color:#FF811A;border-right:1px solid navy;border-top:1px solid navy;border-bottom:1px solid navy; height:50px;text-align:center; color:white">Halted</div>
 
           <div class="col-md-3" style="background-color:#ffffff ;border-right:1px solid gray;border-top:1px solid gray;border-bottom:1px solid gray; height:50px;text-align:center; color:#808080 ">Not Started</div>
         </div>
@@ -106,7 +108,7 @@
           <br><br><b>Level 0 – Available for Reuse/Not Evaluated</b>
           <br>
           <ul>
-            <li>Asset is added to the Clearinghouse for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
+            <li>Asset is added to the Clearinghouse Site for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
             <li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li>
             <li>Asset has completed the Component Prep and Analysis phase.</li>
           </ul>
@@ -124,7 +126,7 @@
             <li>Integration and Test portion of the DI2E Framework Evaluation Checklist complete.</li>
             <li>These questions focus on the interoperability and ease of reuse, and will normally include an I&amp;T plan.</li>
             <li>This level does not indicate a pass or fail of the conformance test.</li>
-            <li>Consumer will read the Test Report linked in the Clearinghouse entry for program functionality.</li>
+            <li>Consumer will read the Test Report linked in the Clearinghouse Site entry for program functionality.</li>
           </ul>
           <br><b>Level 3 – DI2E Framework Reference Implementation</b>
           <br>
@@ -134,7 +136,7 @@
           <br><b>NA – No Evaluation Planned</b>
           <br>
           <ul>
-            <li>Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Clearinghouse (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.).</li>
+            <li>Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Clearinghouse Site (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.).</li>
             <li>N/A indicates no evaluation is expected.</li>
           </ul>
         </p>

@@ -38,6 +38,10 @@
 @import "fonts/icomoon.scss";
 
 
+.colorizeMe {
+  color: #FF811A;
+}
+
 
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -63,7 +67,7 @@ body {
 }
 
 .componentListItem a{
-  color: #ff4800;
+  color: #FF811A;
 }
 
 .hasLinks {
@@ -90,7 +94,7 @@ body {
 }
 .results-content-title:hover{
   cursor: pointer;
-  color: #ff4800;
+  color: #FF811A;
 }
 .results-content-description {
   padding: 0px 5px;
@@ -143,10 +147,8 @@ body {
 
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus,
 .nav-tabs.nav-justified > li.active > a, .nav-tabs.nav-justified > li.active > a:hover, .nav-tabs.nav-justified > li.active > a:focus {
-  color: #555555;
   color: white;
-  background-color: #428bca;
-  background-color: #555555;
+  background-color: #FF811A;
   font-size: 15px;
   border: 2px solid #357ebd;
   border: 2px solid #555555;
@@ -154,7 +156,7 @@ body {
 }
 
 .nav-tabs > li > a:hover, .nav-tabs.nav-justified > li > a:hover {
-  border: 2px solid #ff4800;
+  border: 2px solid #FF811A;
   border-bottom: 2px solid transparent;
 }
 .nav-tabs > li > a:active, .nav-tabs.nav-justified > li > a:active {
