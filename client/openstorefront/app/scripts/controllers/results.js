@@ -137,9 +137,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     if ($scope.data && $scope.data.data && $scope.data.data.length) {
       var count = 0;
       _.each($scope.data.data, function(item){
-        if (item.listingType === 'Article' && article) {
-          count++; 
+        if (article) {
+          if (item.listingType === 'Article') {
+            count++; 
+          }
         } else if (!article) {
+          if (item.listingType !== 'Article')
           count++;
         }
       })
