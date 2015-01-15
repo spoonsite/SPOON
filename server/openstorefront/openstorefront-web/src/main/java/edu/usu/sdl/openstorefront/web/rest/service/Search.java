@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -29,6 +31,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.ListingStats;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
@@ -207,6 +210,25 @@ public class Search
 		}
 
 		return recentlyAddedViews;
+	}
+
+	@GET
+	@APIDescription("Get Listing Stats")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/stats")
+	public Response getListingStats()
+	{
+		ListingStats listingStats = new ListingStats();
+
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		long numberOfActiveComponents = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, componentExample));
+		listingStats.setNumberOfComponents(numberOfActiveComponents);
+
+		List<AttributeCode> articles = service.getAttributeService().findRecentlyAddedArticles(Integer.MAX_VALUE);
+		listingStats.setNumberOfArticles(articles.size());
+
+		return Response.ok(listingStats).build();
 	}
 
 }
