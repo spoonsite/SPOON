@@ -42,7 +42,7 @@ describe('reviews_Q-n-A', function() {
 
   it('Write a Review verify then delete review', function() {
     // Click on Review button
-    element.all(by.css('.btn.btn-primary')).get(4).click();
+    element(by.css('.page2.page2Styles .tab-content .btn.btn-primary')).click();
     browser.driver.sleep(1000);
 
     // Weird, works in byAttribute, but not here, says another element would receive the click

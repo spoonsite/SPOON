@@ -20,7 +20,7 @@ describe('SvcV-4_button from the home page', function() {
         browser.get(theSite, 8000);
 
         // Click the SvcV-4 button
-        element.all(by.css('.btn.btn-primary.pull-right')).get(1).click();
+        element.all(by.css('.btn.btn-primary.pull-right')).get(0).click();
         browser.driver.sleep(5000);
 
         // Expand
