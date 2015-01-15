@@ -20,7 +20,17 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.editorContent = $scope.$parent.editorContent;
 
   $scope.submitLanding = function(){
-    console.log('$scope.editorContent', $($scope.editorContent).find('div.componentlistBody'));
+    var lists = $($scope.editorContent).find('div.componentlistBody');
+    if (lists.length) {
+      _.each(lists, function(componentList, $index){
+        var attributes = $(componentList).find('[data-attributeLabel]');
+        console.log('Component list $index --------------', $index);
+        _.each(attributes, function(attribute){
+          console.log('attribute label', $(attribute).attr('data-attributeLabel'));
+          console.log('attribute value', $(attribute).html());
+        });
+      });
+    }
   };
   // $scope.predicate = 'description';
   // $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminAttributes');
