@@ -23,7 +23,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   //////////////////////////////////////////////////////////////////////////////
   $scope._scopename = 'main';
   $scope.pageTitle  = 'DI2E';
-  $scope.subTitle   = 'Storefront';
+  $scope.subTitle   = 'Clearinghouse';
   $scope.typeahead  = null;
   $scope.goToLand   = false;
   $scope.searchKey  = $rootScope.searchKey;

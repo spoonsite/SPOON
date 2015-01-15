@@ -23,7 +23,7 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
   $scope.total            = {};
   $scope.userProfileForm  = {};
   $scope._scopename       = 'userprofile';
-  $scope.pageTitle        = 'DI2E Storefront Catalog';
+  $scope.pageTitle        = 'DI2E Clearinghouse';
   $scope.defaultTitle     = 'Browse Categories';
   $scope.untilDate = new Date();
   $scope.review           = null;

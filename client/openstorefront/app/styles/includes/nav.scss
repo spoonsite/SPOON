@@ -5,6 +5,11 @@
 .defaultSpacer {
   height: 52px;
 }
+
+#nav .top {
+  border-bottom: 3px solid #FF811A;
+}
+
 .top {
   position: fixed;
   top: 0px;
@@ -79,7 +84,8 @@
 
 .navbar-brand .logo,
 .navbar-brand .logo-small{
-  font-family: sofachrome;
+  font-family: ngage;
+  /* font-family: sofachrome; */
   /*font-family: WideLatin;*/
 }
 .navbar-brand .logo-small {
@@ -96,11 +102,13 @@
 
 
 .logo-title{
-  font-family: sofachrome;
+  font-family: Calibri;
+  /*font-family: ngage;*/
+  /*font-family: sofachrome;*/
   /*font-family: WideLatin;*/
   color: white;
   text-align: center;
-  font-size: 28px;
+  font-size: 35px;
   /*text-shadow: 2px 2px 5px #7E7E7E;*/
   padding-top: 3px;
   white-space: nowrap;
@@ -110,7 +118,10 @@
   float: left;  
 }
 .logo-title span.dashes{
+  font-size: 28px;
+  font-family: sofachrome;
   letter-spacing: -2px;
+  display:none;
 }
 
 
@@ -133,8 +144,8 @@
   border-bottom-color: darken(#cccccc, 20%);
 }
 .navbar-default .navbar-nav > .dropdown > a:hover .caret{
-  border-top-color: #ff4800;
-  border-bottom-color: #ff4800;
+  border-top-color: #FF811A;
+  border-bottom-color: #FF811A;
 }
 
 .navbar-default .navbar-nav > li > a:hover,
@@ -142,7 +153,7 @@
 .navbar-default .navbar-nav > li > a:focus {
   background:#3d3d3d;
   color:#eeeeee;                  
-  border-top: 2px solid #ff4800;
+  border-top: 2px solid #FF811A;
   margin-top:0px;
 }
 
@@ -150,7 +161,7 @@
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
   color: #555555;
-  border-top: 2px solid #ff4800;
+  border-top: 2px solid #FF811A;
   background-color: #e7e7e7;
 }
 
