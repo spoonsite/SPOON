@@ -84,7 +84,7 @@ CKEDITOR.plugins.add( 'componentlist', {
 
       // Define the template of a new Simple Box widget.
       // The template will be used when creating new instances of the Simple Box widget.
-      template: '<div class="componentlist"> <div class="componentlistBody"><h2>Component List</h2>' + 
+      template: '<div class="componentlist"> <div class="componentlistBody" ng-show="false"><h2>Component List</h2>' + 
       '<div ng-show="false">' +
       '<div class="col-sm-6">' +
       '<label>Title: </label><div class="attribute"><p class="componentlist-title" data-attributeLabel="title"></p></div><br>' +
