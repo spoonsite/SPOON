@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -118,10 +119,7 @@ public class LookupServiceImpl
 			lookupEntity.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(lookupEntity);
 		}
-		if (LookupEntity.INACTIVE_STATUS.equals(lookupEntity.getActiveStatus())) {
-			//clear cache
-			OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
-		}
+		OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
 	}
 
 	@Override
@@ -185,6 +183,8 @@ public class LookupServiceImpl
 			lookupEntity.setUpdateDts(TimeUtil.currentDate());
 			lookupEntity.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(lookupEntity);
+
+			OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
 		}
 	}
 
@@ -265,6 +265,22 @@ public class LookupServiceImpl
 			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");
 		}
 		return lookupEntity;
+	}
+
+	@Override
+	public <T extends LookupEntity> void updateLookupStatus(T lookupEntity, String status)
+	{
+		Objects.requireNonNull(lookupEntity, "Lookup Enity required");
+
+		LookupEntity lookupEntityFound = persistenceService.findById(lookupEntity.getClass(), lookupEntity.getCode());
+		if (lookupEntityFound != null) {
+			lookupEntityFound.setActiveStatus(status);
+			lookupEntityFound.setUpdateDts(TimeUtil.currentDate());
+			lookupEntityFound.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(lookupEntityFound);
+
+			OSFCacheManager.getLookupCache().remove((Object) lookupEntityFound.getClass().getName());
+		}
 	}
 
 }

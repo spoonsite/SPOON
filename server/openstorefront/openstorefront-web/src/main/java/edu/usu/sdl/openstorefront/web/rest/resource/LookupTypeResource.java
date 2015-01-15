@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.SystemTable;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -46,9 +47,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -68,7 +71,9 @@ public class LookupTypeResource
 	@APIDescription("Get a list of available lookup entities")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
-	public List<LookupModel> listEntitiies()
+	public List<LookupModel> listEntitiies(
+			@QueryParam("systemTables") Boolean systemTables
+	)
 	{
 		List<LookupModel> lookupModels = new ArrayList<>();
 
@@ -76,14 +81,31 @@ public class LookupTypeResource
 		for (Class entityClass : entityClasses) {
 			if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ServiceUtil.isSubLookupEntity(entityClass)) {
-					LookupModel lookupModel = new LookupModel();
+					boolean add = true;
 
-					lookupModel.setCode(entityClass.getSimpleName());
-					APIDescription aPIDescription = (APIDescription) entityClass.getAnnotation(APIDescription.class);
-					if (aPIDescription != null) {
-						lookupModel.setDescription(aPIDescription.value());
+					if (systemTables != null) {
+						SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
+						if (systemTables == false) {
+							if (systemTable != null) {
+								add = false;
+							}
+						} else {
+							if (systemTable == null) {
+								add = false;
+							}
+						}
 					}
-					lookupModels.add(lookupModel);
+
+					if (add) {
+						LookupModel lookupModel = new LookupModel();
+
+						lookupModel.setCode(entityClass.getSimpleName());
+						APIDescription aPIDescription = (APIDescription) entityClass.getAnnotation(APIDescription.class);
+						if (aPIDescription != null) {
+							lookupModel.setDescription(aPIDescription.value());
+						}
+						lookupModels.add(lookupModel);
+					}
 				}
 			}
 		}
@@ -120,6 +142,43 @@ public class LookupTypeResource
 		{
 		};
 		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Exports codes in csv formt. POST to Upload.action?UploadLookup&entityName=entity and then the file to import codes (Requires Admin)")
+	@RequireAdmin
+	@Produces("text/csv")
+	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
+	@Path("/{entity}/export")
+	public Response exprotEntityValues(
+			@PathParam("entity")
+			@RequiredParam String entityName,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		checkEntity(entityName);
+
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		StringBuilder data = new StringBuilder();
+		List<LookupEntity> lookups = new ArrayList<>();
+		try {
+			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
+			lookups = service.getLookupService().findLookup(lookupClass, filterQueryParams.getStatus());
+		} catch (ClassNotFoundException e) {
+			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
+		}
+		lookups = filterQueryParams.filter(lookups);
+
+		for (LookupEntity lookup : lookups) {
+			data.append(lookup.export());
+		}
+
+		ResponseBuilder response = Response.ok(data.toString());
+		response.header("Content-Disposition", "attachment; filename=\"" + entityName + ".csv\"");
+		return response.build();
 	}
 
 	@GET
@@ -186,6 +245,7 @@ public class LookupTypeResource
 				newLookupEntity.setCode(lookupEntity.getCode());
 				newLookupEntity.setDescription(lookupEntity.getDescription());
 				newLookupEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
+				newLookupEntity.setSortOrder(lookupEntity.getSortOrder());
 
 				newLookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 				newLookupEntity.setCreateUser(SecurityUtil.getCurrentUserName());
@@ -257,10 +317,38 @@ public class LookupTypeResource
 
 		LookupEntity lookupEntity = service.getLookupService().getLookupEnity(entityName, code.toUpperCase());
 		if (lookupEntity == null) {
-			throw new OpenStorefrontRuntimeException("Lookup code not found", "Check code passed in. (Case-InSensitive)");
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 		genericLookupEntity.setCode(code.toUpperCase());
 		return handlePostPutCode(entityName, genericLookupEntity, false);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Activates a given entity code.")
+	@Path("/{entity}/{code}/activate")
+	public Response activeEntityCode(
+			@PathParam("entity")
+			@RequiredParam String entityName,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		LookupEntity lookupEntity = null;
+		try {
+			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
+			Object value = service.getPersistenceService().findById(lookupClass, code);
+			if (value != null) {
+				lookupEntity = (LookupEntity) service.getPersistenceService().unwrapProxyObject(lookupClass, value);
+			}
+		} catch (ClassNotFoundException e) {
+			throw new OpenStorefrontRuntimeException("(System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
+		}
+		if (lookupEntity == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} else {
+			service.getLookupService().updateLookupStatus(lookupEntity, LookupEntity.ACTIVE_STATUS);
+		}
+		return Response.ok().build();
 	}
 
 	@DELETE

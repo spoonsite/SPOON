@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
-
-import edu.usu.sdl.openstorefront.doc.APIDescription;
+package edu.usu.sdl.openstorefront.service.io;
 
 /**
+ * Define a model as exportable and importable
  *
  * @author dshurtleff
  */
-@APIDescription("Evaluation level status: Complete, Pending...etc")
-public class LevelStatus
-		extends LookupEntity
+public interface ExportImport
 {
 
-	public static final String COMPLETE = "C";
-	public static final String IN_PROGRESS = "P";
-	public static final String HALTED = "H";
-	public static final String NOT_STARTED = "N";
+	public String export();
 
-	public LevelStatus()
-	{
-	}
-
+	public void importData(String[] data);
 }

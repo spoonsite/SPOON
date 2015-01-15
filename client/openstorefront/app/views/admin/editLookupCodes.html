@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>Edit {{tablename}} Table</h2>
+<hr>
+<div id="lookupWindowDiv"  style="padding-left: 20px; padding-right: 20px;">
+	
+	<loader trigger="lookupCodeLoader"></loader>
+	<div>	
+		<br>			
+		Filter:
+		<button type="button"  class="btn btn-default"  id="filterstatus" ng-model="filterstatus.status" data-html="1" ng-change="refreshLookupCodes()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
+			Active <span class="caret"></span>
+		</button>  		
+		<button class="btn btn-default" ng-click="refreshLookupCodes()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+		<span style="position: absolute; right: 0px; padding-right: 20px;">
+			<button class="btn btn-default" ng-click="addLookupCode()" title="Add Code">Add&nbsp;<i class="fa fa-add"></i></button>
+			<button class="btn btn-default" ng-click="export()" title="Export Codes">Export&nbsp;<i class="fa fa-sign-out"></i></button>
+			<button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Codes">Import&nbsp;<i class="fa fa-sign-in"></i></button>			
+		</span>		
+		<div ng-show="flags.showUpload" style="border: 2px lightgrey solid; padding: 20px;" >			
+			
+			<div class="form-group">
+				<label>File Input</label>
+				<input type="file" nv-file-select uploader="uploader" name="uploadFile" width="100" />
+				<p class="help-block">CVS (code, description, detail description(optional), sort order (optional)</p>	
+			</div>
+			<button ng-click="uploader.uploadAll()" class="btn-primary">Upload</button> 			
+		</div>		
+	</div>	
+	<table class="table table-striped table-bordered">
+			<tr>
+				<th><a href="" ng-click="setPredicate('code', 'lookupProp');">Code <span ng-show="predicate['lookupProp']  === 'code'"><i ng-show="!reverse['lookupProp'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['lookupProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th><a href="" ng-click="setPredicate('description', 'lookupProp');">Description <span ng-show="predicate['lookupProp']  === 'description'"><i ng-show="!reverse['lookupProp'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['lookupProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th align="center">Detailed Description</th>
+				<th align="center"><a href="" ng-click="setPredicate('description', 'lookupProp');">Sort Order <span ng-show="predicate['lookupProp']  === 'description'"><i ng-show="!reverse['lookupProp'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['lookupProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th align="center">Status</th>
+				<th>Update User</th>
+				<th>Update Date</th>				
+				<th>Action</th>
+			</tr>
+			<tr ng-repeat="code in lookupCodes | orderBy:predicate['lookupProp']:reverse['lookupProp']" >
+				<td>{{code.code}}</td>
+				<td>{{code.description}}</td>
+				<td>{{code.detailedDecription}}</td>	
+				<td>{{code.sortOrder}}</td>							
+				<td align="center">{{code.activeStatus}}</td>
+				<td>{{code.updateUser}}</td>				
+				<td>{{code.updateDts | date:'MM/dd/yyyy h:mm:ss a'}}</td>				
+				<td style="padding:0px; width: 200px;">&nbsp;
+					<button class="btn" ng-click="editLookupCode(code);"  title="Edit Code"><i class="fa fa-edit"></i></button>
+					<button type="button" title="Activate/Deactivate Code" class="btn btn-default btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I' ? 'inverted':'' " ><i class="fa fa-power-off"></i></button>
+				</td>
+			</tr>
+
+	</table>	
+	<hr>
+	<br>
+	<br>
+	<div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
+		<button type="submit" class="btn btn-primary" ng-click="close()"><i class="fa fa-times"></i>&nbsp;Cancel</button>			
+	</div>	
+</div>
+

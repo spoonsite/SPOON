@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.io;
 
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -60,6 +61,8 @@ public class ArticleImporter
 					AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(key);
 					String articleText = new String(Files.readAllBytes(Paths.get(file.getPath())));
 					AttributeCode attributeCode = serviceProxy.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+					Article article = new Article();
+					attributeCode.setArticle(article);
 					serviceProxy.getAttributeService().saveArticle(attributeCode, articleText);
 
 				} else {

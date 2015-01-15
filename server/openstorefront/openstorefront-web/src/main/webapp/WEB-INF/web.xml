@@ -77,6 +77,10 @@
 			<param-value>edu.usu.sdl.openstorefront.web.extension</param-value>
 		</init-param>
 		<init-param>
+			<param-name>MultipartWrapper.Class</param-name>
+			<param-value>net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper</param-value>
+		</init-param>
+		<init-param>
 			<param-name>FileUpload.MaximumPostSize</param-name>
 			<param-value>20mb</param-value>
 		</init-param>		

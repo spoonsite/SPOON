@@ -112,4 +112,13 @@ public interface LookupService
 	 */
 	public LookupEntity getLookupEnityByDesc(String lookClassName, String description);
 
+	/**
+	 * Sets the status of a lookup
+	 *
+	 * @param <T>
+	 * @param lookupEntity
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public <T extends LookupEntity> void updateLookupStatus(T lookupEntity, String status);
+
 }
