@@ -66,7 +66,7 @@ ESA or Solr (Base solr will require some changes to the schema.xml to make sure 
 		f.   Save/Exit then  source /etc/bash.bashrc
 		g.  Confirm “java –version” it should run
 
-###Install Tomcat
+###Install Tomcat Public Package
 
 	1.	Download and copy to home directory
 	2.	tar -xvf apache-tomcat-7.0.55.tar.gz
@@ -122,6 +122,14 @@ ESA or Solr (Base solr will require some changes to the schema.xml to make sure 
 		d.  chkconfig --level 234 tomcat on
 	
 	7. Open port iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
+	 
+###Install Tomcat Using jpackage
+	http://www.jpackage.org/
+
+	1. Follow the instruction about setup the repo for your system install (Eg. yum, apt...etc)
+	2. Pull down tomcat7-7.0.54-2 from the version 6 repo.
+	3. NOTE jpackage version has a mistake in the package.   The ecj jar library is very old and doesn't work with 	         jdk1.8.   However, this is easily corrected.   Just download 7.0.54 from apache.org and replace ecj-xxx.jar in tomcat/lib directory with ecj-xxx.jar from the 7.0.54 version.
+
 
 ###Server Control
 

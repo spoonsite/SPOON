@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.openstorefront.util;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.util.SystemTable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Marks class as a system table
  *
  * @author dshurtleff
  */
-@SystemTable
-@APIDescription("Tracking Event Types")
-public class TrackEventCode
-		extends LookupEntity
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface SystemTable
 {
-
-	public static final String LOGIN = "L";
-	public static final String VIEW = "V";
-	public static final String EXTERNAL_LINK_CLICK = "ELC";
-	public static final String COMPONENT_SYNC = "SYNC";
-
-	public TrackEventCode()
-	{
-	}
-
 }

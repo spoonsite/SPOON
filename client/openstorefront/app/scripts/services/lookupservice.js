@@ -299,6 +299,85 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     }
     return deferred.promise;
   };
+  
+  var getLookups = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/lookuptypes?systemTables=false' 
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var getLookupCodes = function(entity, filterstatus) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/lookuptypes/' + entity + "?status=" + filterstatus
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+  
+  var saveLookupCode = function(edit, entity, code, data) {
+    var deferred = $q.defer();
+    var method = edit ? 'PUT' : 'POST'; 
+    var url = edit ? 'api/v1/resource/lookuptypes/' + entity + '/' + code : 'api/v1/resource/lookuptypes/' + entity;       
+    
+      $http({
+        'method': method,
+        'url': url,
+        data: data
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
+  
+  var deactivateLookupCode = function(entity, code) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/lookuptypes/' + entity + '/' + code
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };
+  
+  var activateLookupCode = function(entity, code) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/lookuptypes/' + entity + '/' + code + '/activate'        
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
+  
 
   //Public API
   return {
@@ -309,7 +388,12 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     getEvalLevels: getEvalLevels,
     getExpertise: getExpertise,
     getReviewConList: getReviewConList,
-    getReviewProList: getReviewProList
+    getReviewProList: getReviewProList,
+    getLookups: getLookups,
+    getLookupCodes: getLookupCodes,
+    saveLookupCode: saveLookupCode,
+    deactivateLookupCode: deactivateLookupCode,
+    activateLookupCode: activateLookupCode
   };
 
 }]);

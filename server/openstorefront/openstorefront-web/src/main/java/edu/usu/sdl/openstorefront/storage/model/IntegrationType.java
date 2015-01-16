@@ -16,12 +16,14 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.util.SystemTable;
 
 /**
  * Integration Types
  *
  * @author dshurtleff
  */
+@SystemTable
 @APIDescription("External Systems Integration Types")
 public class IntegrationType
 		extends LookupEntity

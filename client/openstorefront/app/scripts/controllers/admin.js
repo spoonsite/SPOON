@@ -223,6 +223,14 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     });
     
     $scope.data.push({
+      'label': 'Manage Lookups', 
+      'location': 'views/admin/manageLookups.html', 
+      'toolTitle': 'Manage Lookups', 
+      'detailedDesc': 'Lookups are  tables of valid-values that are used to classify data in  a consistent way.',
+      'key': 'lookups' 
+    });    
+    
+    $scope.data.push({
       'label': 'Integration Management', 
       'location':'views/admin/configuration/default.html', 
       'toolTitle': 'Integration Management', 

@@ -15,13 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.io.ExportImport;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.io.StringWriter;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +38,7 @@ import javax.validation.constraints.Size;
  */
 public abstract class LookupEntity
 		extends BaseEntity
+		implements ExportImport
 {
 
 	@PK
@@ -54,10 +62,50 @@ public abstract class LookupEntity
 	private String detailedDecription;
 
 	@APIDescription("Used to force order")
+	@ConsumeField
+	@Min(0)
+	@Max(Integer.MAX_VALUE)
 	private Integer sortOrder;
 
 	public LookupEntity()
 	{
+	}
+
+	@Override
+	public String export()
+	{
+		StringWriter stringWriter = new StringWriter();
+		CSVWriter writer = new CSVWriter(stringWriter);
+		writer.writeNext(new String[]{getCode(),
+			getDescription(),
+			getDetailedDecription(),
+			getSortOrder() != null ? sortOrder.toString() : ""
+		});
+		return stringWriter.toString();
+	}
+
+	@Override
+	public void importData(String[] data)
+	{
+		int CODE = 0;
+		int DESCRIPTION = 1;
+		int DETAILED_DESCRIPTION = 2;
+		int SORT_ORDER = 3;
+
+		if (data.length > DESCRIPTION) {
+
+			setCode(data[CODE].trim().toUpperCase());
+			setDescription(data[DESCRIPTION].trim());
+
+			if (data.length > DETAILED_DESCRIPTION) {
+				setDetailedDecription(data[DETAILED_DESCRIPTION].trim());
+			}
+			if (data.length > SORT_ORDER) {
+				setSortOrder(Convert.toInteger(data[SORT_ORDER].trim()));
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Missing Required Fields: (Code, Description) Unable import the data.");
+		}
 	}
 
 	public String getCode()

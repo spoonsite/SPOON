@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>{{editModeText}} code on {{tablename}} Table</h2>
+<hr>
+<div  id="editLookupWindowDiv" style="padding-left: 20px; padding-right: 20px;">
+	<loader trigger="codeFormLoader"></loader>
+
+	<label class="col-sm-3 control-label">Code <span style="color: red; font-weight: bold;">*</span></label>
+	<input  type="text" 
+			id="code"
+			name="code"
+			placeholder="Code"					
+			class="form-control" 
+			 ng-disabled="editMode"
+			ng-model="lookupCodeForm.code" 
+			ng-minlength=1 
+			ng-maxlength=20
+			required 
+			ng-focus />			
+	<p ng-show="lookupCodeForm.description.$error.required && !lookupCodeForm.description.$focused" class="help-block">Description is required</p>	
+	
+	<label class="col-sm-3 control-label">Description <span style="color: red; font-weight: bold;">*</span></label>
+	<input  type="text" 
+			id="description"
+			name="description"
+			placeholder="Description"					
+			class="form-control" 
+			ng-model="lookupCodeForm.description" 
+			ng-minlength=1 
+			ng-maxlength=255
+			required 
+			ng-focus />			
+	<p ng-show="lookupCodeForm.description.$error.required && !lookupCodeForm.description.$focused" class="help-block">Description is required</p>
+	<label class="col-sm-3 control-label">Detailed Description</label>
+	<input  type="text" 
+			id="detailedDecription"
+			name="detailedDecription"
+			placeholder="Detail Description"					
+			class="form-control" 
+			ng-model="lookupCodeForm.detailedDecription" 
+			ng-minlength=0
+			ng-maxlength=4000
+			required 
+			ng-focus />	
+
+	<label class="col-sm-3 control-label">Sort Order</label>
+	<input  type="text" 
+			id="sortOrder"
+			name="sortOrder"
+			placeholder="Sort Order"				
+			class="form-control"
+			onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+			ng-model="lookupCodeForm.sortOrder" 			
+			maxlength=4
+			required 
+			ng-focus />		
+
+	<hr>
+	<br>
+	<br>
+	<div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
+		<button type="submit" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;Save</button>
+		<a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancel()"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>		
+	</div>		
+</div>

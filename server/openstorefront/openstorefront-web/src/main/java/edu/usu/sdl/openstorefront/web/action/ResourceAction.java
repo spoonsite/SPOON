@@ -121,7 +121,7 @@ public class ResourceAction
 			}
 			return streamUploadResponse(errors);
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denyed");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
 	@HandlesEvent("Redirect")

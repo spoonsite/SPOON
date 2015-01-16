@@ -122,7 +122,7 @@ public class MediaAction
 			}
 			return streamUploadResponse(errors);
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denyed");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
 	public String getMediaId()

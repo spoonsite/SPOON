@@ -16,7 +16,7 @@
 describe('search_Filters_by_Rating', function() {
     // Open the main site
     browser.get(theSite, 9000);
-    element.all(by.css('.btn.btn-primary.pull-right')).get(2).click();
+    element.all(by.css('.btn.btn-primary.pull-right')).get(1).click();
 
     it('Search filter by 5 star Rating', function () {
         element.all(by.css('.star-off-png')).get(4).click();
@@ -36,16 +36,16 @@ describe('search_Filters_by_Rating', function() {
     }, 15000);
 
     it('Click Reset Filters button LEFT NAV', function () {
-        element.all(by.css('.btn.red.btn-default')).get(0).click();
+        element.all(by.css('.btn.red.btn-primary.col-sm-12')).get(0).click();
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
     }, 15000);
 
    it('Click More Filters  Expand all filters click all down buttons', function() {
        // Click on "More Filters"
-       element.all(by.css('.btn.btn-default')).get(0).click();
+       element.all(by.css('.btn.btn-primary')).get(0).click();
 
        // Click all fa fa-caret-down buttons
-       var carrotsDown = 21;
+       var carrotsDown = 17;
        for (var i=0; i <= carrotsDown; i++) {
            element.all(by.css('.fa.fa-caret-down')).get(i).click();
            browser.driver.sleep(1);
