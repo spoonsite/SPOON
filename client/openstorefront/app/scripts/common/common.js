@@ -259,11 +259,10 @@ var removeError = function() {
 
 var showServerError = function(errorObj, id){
   // console.log('errorO', errorObj);
-  console.log('errorObj', errorObj);
-  
   var message = 'There was a server error. Contact a System Admin or try again';
   //message, potential resolution, ticketNumber, contact;
   if (errorObj && typeof errorObj === 'object') {
+    console.log('errorObj', errorObj);
     if (errorObj.message) {
       message = message + ': <div class="leftIndent">Message:&nbsp;<span>' + errorObj.message + '</span></div>';
     }if (errorObj.errorTicketNumber) {
@@ -271,8 +270,8 @@ var showServerError = function(errorObj, id){
     }if (errorObj.potentialResolution) {
       message = message + '<div class="leftIndent">Potential resolution:&nbsp;<span>' + errorObj.potentialResolution + '</span></div>';
     }
+    triggerAlert(message, 'serverError', id, 6000);
   }
-  triggerAlert(message, 'serverError', id, 6000);
 }
 
 /***************************************************************

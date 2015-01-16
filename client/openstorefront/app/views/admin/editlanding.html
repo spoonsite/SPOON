@@ -1,7 +1,5 @@
 <!-- <button ng-click="setData()" class="btn btn-primary">Insert Resources</button> -->
 <div ng-controller="adminEditArticlesCtrl">
-  <form ng-submit="submitLanding();" id="editLandingPages">
-    <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
-    <button type="submit">Save changes</button>
-  </form>
+  <select ng-model="attribute.type" ng-options="attr.type as attr.type for attr in attributes"></select>
+  <button class="btn btn-default" ng-click="editContent('DI2E-SVCV4-A', '1.2.1');">Edit SVCV4 1.2.1 Article (test)</button>
 </div>

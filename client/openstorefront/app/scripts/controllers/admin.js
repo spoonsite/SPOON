@@ -39,28 +39,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     }
   });
 
-  /***************************************************************
-  * If we don't have a landing page, we're going to set up one for now so that
-  * there will always be one in the editor when we look, unless we click on a button
-  * that says 'add landing page'
-  ***************************************************************/
-  if (!$scope.landingRoute) {
-    Business.landingPage('IDAM', 'views/temp/landingpage.html', true).then(function (result) { /*jshint unused:false*/
-      $scope.landingRoute = result.value;
-    });
-  }
-  
-
-  /***************************************************************
-  * This function watches the landingRoute so that when that changes, we load
-  * the new content into the editor that we want to be able to look at.
-  ***************************************************************/
-  $scope.$watch('landingRoute', function() {
-    $.get($scope.landingRoute).then(function(responseData) {
-      $scope.editorContent = $scope.parseForEditor(responseData);
-      $scope.$apply();
-    });
-  });
 
 
   /***************************************************************
@@ -114,9 +92,12 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * This function takes a key, finds the branch with that key, and then
   * sends us there 
   ***************************************************************/
-  $scope.editLanding = function(route) {
+  $scope.editLanding = function(type, code) {
     var branch = checkCollection($scope.data, 0, 'landing');
-    $scope.landingRoute = route;
+    $scope.type = type;
+    $scope.code = code;
+    console.log('We set the type and code', type + '---' + code);
+    
     $scope.editor(branch);
   };
 
@@ -144,15 +125,15 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * tags for a list of components
   ***************************************************************/
   $scope.parseComponentInsert = function (content) {
-    if (content !== null && content !== undefined && content !== '') {
-      var data = content;
-      // console.log('data', data);
-      var splitData = data.split('### Component List ###');
-      // console.log('sp', splitData);
-      data = splitData.join('\n<component-list click-callback="updateDetails" class-list="" data="data" cols="3" search="doSearchKey" ></component-list>\n');
-      // console.log('data', data);
-      return data;
-    }
+    // if (content !== null && content !== undefined && content !== '') {
+    //   var data = content;
+    //   // console.log('data', data);
+    //   var splitData = data.split('### Component List ###');
+    //   // console.log('sp', splitData);
+    //   data = splitData.join('\n<component-list click-callback="updateDetails" class-list="" data="data" cols="3" search="doSearchKey" ></component-list>\n');
+    //   // console.log('data', data);
+    //   return data;
+    // }
     return content;
   };
 
@@ -164,7 +145,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     if (content !== null && content !== undefined && content !== '') {
       var parser = new DOMParser();
       var doc = parser.parseFromString(content, 'text/html');
-      $(doc).find('component-list').replaceWith('### Component List ###');
+      // $(doc).find('component-list').replaceWith('### Component List ###');
       return $(doc).find('body').html();
     }
     return content;
@@ -178,9 +159,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     // console.log('Save', $scope.saveContent);
   };
 
-
-  // setup editor options
-  $scope.editorOptions = getCkConfig();
 
   /***************************************************************
   * This function sets up the menu on the left for the admin tools.

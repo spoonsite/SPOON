@@ -42,6 +42,8 @@ public class HTMLSanitizer
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
 							"ul")
 					.addAttributes("a", "href", "title")
+					.addAttributes("div", "ng-show", "class")
+					.addAttributes("p", "data-attributelabel")
 					.addAttributes("blockquote", "cite")
 					.addAttributes("col", "span", "width")
 					.addAttributes("colgroup", "span", "width")
