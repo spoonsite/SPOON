@@ -34,12 +34,13 @@ var app = angular
     'mgcrea.ngStrap',
     'ngTagsInput',
     'ngAnimate',
-    'ngCkeditor',
+    'ngCkeditor',    
     'ngGrid',
     'ngMockE2E',
     'bootstrapLightbox',
     'angular-carousel',
     'angulartics.google.analytics',
+    'angularFileUpload',
     'ngIdle',    
     'multi-select'
   // end of dependency injections
