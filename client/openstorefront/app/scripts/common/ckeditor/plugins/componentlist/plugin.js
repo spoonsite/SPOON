@@ -64,8 +64,8 @@ CKEDITOR.plugins.add( 'componentlist', {
           selector: '.componentlist-type',
           allowedContent: true,
         },
-        key: {
-          selector: '.componentlist-key',
+        code: {
+          selector: '.componentlist-code',
           allowedContent: true,
         },
         filters: {
@@ -75,11 +75,7 @@ CKEDITOR.plugins.add( 'componentlist', {
         setfilters: {
           selector: '.componentlist-set-filters',
           allowedContent: true,
-        },
-        search: {
-          selector: '.componentlist-search',
-          allowedContent: true,
-        },
+        }
       },
 
       // Define the template of a new Simple Box widget.
@@ -89,16 +85,15 @@ CKEDITOR.plugins.add( 'componentlist', {
       '<div class="col-sm-6">' +
       '<label>Title: </label><div class="attribute"><p class="componentlist-title" data-attributeLabel="title"></p></div><br>' +
       '<label>Type: </label><div class="attribute"><p class="componentlist-type" data-attributeLabel="type"></p></div><br>' +
-      '<label>Key: </label><div class="attribute"><p class="componentlist-key" data-attributeLabel="key"></p></div><br>' +
-      '<label>Class-list: </label><div class="attribute"><p class="componentlist-class-list" data-attributeLabel="classlist"></p></div><br>' +
-      '<label>Hide-more: </label><div class="attribute"><p class="componentlist-hide-more" data-attributeLabel="hidemore"></p></div><br>' +
+      '<label>Code: </label><div class="attribute"><p class="componentlist-code" data-attributeLabel="code"></p></div><br>' +
+      '<label>Class-list: </label><div class="attribute"><p class="componentlist-class-list" data-attributeLabel="class-list"></p></div><br>' +
+      '<label>Click-callback: </label><div class="attribute"><p class="componentlist-click-callback" data-attributeLabel="click-callback">callback</p></div><br>' +
       '</div>' +
       '<div class="col-sm-6">' +
       '<label>Filters: </label><div class="attribute"><p class="componentlist-filters" data-attributeLabel="filters">filters</p></div><br>' +
-      '<label>Click-callback: </label><div class="attribute"><p class="componentlist-click-callback" data-attributeLabel="clickcallback">updateDetails</p></div><br>' +
-      '<label>Data: </label><div class="attribute"><p class="componentlist-data" data-attributeLabel="data">data.data</p></div><br>' +
+      '<label>Data: </label><div class="attribute"><p class="componentlist-data" data-attributeLabel="data">data</p></div><br>' +
+      '<label>Hide-more: </label><div class="attribute"><p class="componentlist-hide-more" data-attributeLabel="hide-more">true</p></div><br>' +
       '<label>Cols: </label><div class="attribute"><p class="componentlist-cols" data-attributeLabel="cols">3</p></div><br>' +
-      '<label>Search: </label><div class="attribute"><p class="componentlist-search" data-attributeLabel="search">doSearchKey</p></div><br>' +
       '</div>' +
       '<div style="clear:both">' +
       '</div>' +

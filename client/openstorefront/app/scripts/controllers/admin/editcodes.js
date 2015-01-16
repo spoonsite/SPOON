@@ -184,12 +184,20 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   }
 
 
-  $scope.ok = function () {
-    $uiModalInstance.close($scope.changed);
+  $scope.ok = function (type, code) {
+    var result = {};
+    result.refresh = $scope.changed;
+    result.type = type;
+    result.code = code;
+    $uiModalInstance.close(result);
   };
 
-  $scope.cancel = function () {
-    $uiModalInstance.dismiss($scope.changed);
+  $scope.cancel = function (type, code) {
+    var result = {};
+    result.refresh = $scope.changed;
+    result.type = type;
+    result.code = code;
+    $uiModalInstance.dismiss(result);
   };
 
   $scope.applySortOrder = function(remove){

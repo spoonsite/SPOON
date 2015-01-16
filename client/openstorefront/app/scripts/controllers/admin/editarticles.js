@@ -17,122 +17,120 @@
 'use strict';
 
 app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeout', function ($scope, Business, $uiModal, $timeout) {
-  $scope.editorContent = $scope.$parent.editorContent;
+  $scope.type = $scope.$parent.type || null;
+  $scope.code = $scope.$parent.code || null;
+  $scope.attribute = {};
 
-  $scope.submitLanding = function(){
-    var lists = $($scope.editorContent).find('div.componentlistBody');
+
+  // /***************************************************************
+  // * If we don't have a landing page, we're going to set up one for now so that
+  // * there will always be one in the editor when we look, unless we click on a button
+  // * that says 'add landing page'
+  // ***************************************************************/
+
+  $scope.getAttributes = function(override) {
+    Business.getAttributes(override, true).then(function(result){
+      $scope.attributes = result? angular.copy(result): [];
+      console.log('$scope.attributes', $scope.attributes);
+      
+      $timeout(function(){
+        $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminAttributes');
+      })
+    }, function(){
+      $scope.attributes = [];
+    });
+  }
+  $scope.getAttributes(false);
+
+
+  $scope.editContent = function(type, code){
+    $scope.type = $scope.type || type;
+    $scope.code = $scope.code || code;
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/editlandingform.html',
+      controller: 'AdminEditLandingCtrl',
+      size: 'lg',
+      resolve: {
+        type: function () {
+          return $scope.type;
+        },
+        code: function () {
+          return $scope.code;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (result) {
+      console.log('result', result);
+      
+    }, function (result) {
+      console.log('result', result);
+      
+    });
+  }
+  
+  if ($scope.type && $scope.code) {
+    $scope.editContent($scope.type, $scope.code);
+  }
+}]);
+
+
+app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'code', 'business', function ($scope, $uiModalInstance, type, code, Business) {
+
+  $scope.type = type;
+  $scope.code = code;
+  $scope.editorContent = '';
+  $scope.editorOptions = getCkConfig();
+
+  $scope.ok = function () {
+    var temp = $($scope.editorContent);
+    var content = $('<div></div>');
+    _.each(temp, function(e){
+      content.append(e);
+    })
+    var lists = content.find('div.componentlistBody');
     if (lists.length) {
       _.each(lists, function(componentList, $index){
+        // console.log('Component list $index --------------', $index);
+        // console.log('componentList', componentList);
         var attributes = $(componentList).find('[data-attributeLabel]');
-        console.log('Component list $index --------------', $index);
+        var componentListElement = $('<component-list></component-list>');
         _.each(attributes, function(attribute){
-          console.log('attribute label', $(attribute).attr('data-attributeLabel'));
-          console.log('attribute value', $(attribute).html());
+          var attrib = $(attribute);
+          var attr = attrib.attr('data-attributeLabel');
+          var value = attrib.html();
+          // console.log('label', attr);
+          // console.log('value', value);
+          componentListElement.attr(attr, value);
         });
+        var alreadythere = $(componentList).parent().find('component-list');
+        if (alreadythere.length) {
+          alreadythere.remove();
+        }
+        $(componentList).parent().append(componentListElement);
       });
     }
+    // $scope.editorContentWatch = $scope.editorContent;
+    console.log('Editor Content', content);
+    $uiModalInstance.close();
   };
-  // $scope.predicate = 'description';
-  // $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminAttributes');
-  // $scope.reverse = false;
-  // $scope.getFilters = function(override) {
-  //   Business.getFilters(override, true).then(function(result){
-  //     $scope.filters = result? angular.copy(result): [];
-  //     $timeout(function(){
-  //       $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminAttributes');
-  //     })
-  //   }, function(){
-  //     $scope.filters = [];
-  //   });
-  // }
-  // $scope.getFilters(false);
 
-  // $scope.refreshFilterCache = function() {
-  //   Business.getFilters(true, false);
-  // };
+  $scope.cancel = function () {
+    $uiModalInstance.dismiss('cancel');
+  };
 
-  // $scope.setPredicate = function(predicate, override){
-  //   if ($scope.predicate === predicate){
-  //     $scope.reverse = !$scope.reverse;
-  //   } else {
-  //     $scope.predicate = predicate;
-  //     $scope.reverse = !!override;
-  //   }
-  // }
+  $scope.getContent = function(){
+    if ($scope.type && $scope.code) {
+      console.log('type/code', $scope.type + '---' + $scope.code);
+      Business.articleservice.getArticle($scope.type, $scope.code, true).then(function (result) { /*jshint unused:false*/
+        $scope.editorContent = result || ' ';
+      }, function(){
+        $scope.editorContent = ' ';
+      });
+    }
+  }
 
-  // $scope.deleteAttribute = function(filter){
-  //   // console.log('Deleted filter', filter);
-  // }
+  $scope.getContent();
 
-  // $scope.changeActivity = function(filter){
-  //   var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). Continue?");
-  //   if (cont) {
-  //     $scope.deactivateButtons = true;
-  //     if (filter.activeStatus === 'A') {
-  //       $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-  //       Business.articleservice.deactivateFilter(filter.type).then(function(){
-  //         $timeout(function(){
-  //           $scope.getFilters(true);
-  //           $scope.deactivateButtons = false;
-  //           $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-  //         }, 1000);
-  //       }, function(){
-  //         $timeout(function(){
-  //           $scope.getFilters(true);
-  //           $scope.deactivateButtons = false;
-  //           $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-  //         }, 1000);
-  //       })
-  //     } else {
-  //       $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-  //       Business.articleservice.activateFilter(filter.type).then(function() {
-  //         $timeout(function(){
-  //           $scope.getFilters(true);
-  //           $scope.deactivateButtons = false;
-  //           $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-  //         }, 1000);
-  //       }, function(){
-  //         $timeout(function(){
-  //           $scope.getFilters(true);
-  //           $scope.deactivateButtons = false;
-  //           $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-  //         }, 1000);
-  //       })
-  //     }
-  //   }
-  // }
-
-  // $scope.editType = function(type){
-  //   var modalInstance = $uiModal.open({
-  //     templateUrl: 'views/admin/editcodes.html',
-  //     controller: 'AdminEditcodesCtrl',
-  //     size: 'lg',
-  //     resolve: {
-  //       type: function () {
-  //         return type;
-  //       },
-  //       size: function() {
-  //         return 'lg';
-  //       }
-  //     }
-  //   });
-
-  //   modalInstance.result.then(function (result) {
-  //     if (result) {
-  //       $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-  //       $scope.getFilters(true);
-  //       $scope.refreshFilterCache()
-  //     }
-  //   }, function (result) {
-  //     if (result) {
-  //       $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-  //       $scope.getFilters(true);
-  //       $scope.refreshFilterCache()
-  //     }      
-  //   });
-  // }
-
-  // $timeout(function() {
-  //   $('[data-toggle=\'tooltip\']').tooltip();
-  // }, 300);
 }]);
+

@@ -1,6 +1,36 @@
-<h1 style="text-align:center"><span style="font-family:trebuchet ms,helvetica,sans-serif"><span style="color:#A52A2A">IdAM Information</span></span></h1>
+<div class="ng-scope">
+<h1 style="text-align:center"><span style="font-family:trebuchet ms,helvetica,sans-serif"><span style="color:#A52A2A">Content Discovery and Retrieval</span></span></h1>
 
-<hr />
+<h2>Content Discovery and Retrieval Overview:</h2>
+
+<p>Content Discovery and Retrieval are the two high level categories. Requirements pertaining to metadata, query management, information sharing, ranking, and federated search were categorized as Content Discovery. Retrieval requirements included delivery service, mediation and delivery management.<br>
+<br>
+Content Discovery provides consumers with the ability to discover the existence of potentially relevant content resources and content collections from across the IC/DoD Enterprise. Content Discovery also enables consumers to discover valuable metadata about content resources to support making them visible, accessible, understandable, and trusted.<br>
+<br>
+Retrieval provides consumers the ability to retrieve and route specific content resources. To do so, content providers are to ensure their content is accessible to the Enterprise. Additionally a consumer may submit a query from one location but have the content delivered at a specified time and/or to a different location. For this reason, the Retrieval capability should support both direct and indirect retrieval of content.<br>
+<br>
+The Core CDR Components define a fundamental set of functionality that directly addresses specific requirements that enable Content Discovery and Retrieval capabilities. The goal is to have the following core components with common interface and behavioral models: Search, Brokered Search, Describe, Query Management, and Retrieve.<br>
+&nbsp;</p>
+
+<ul>
+  <li><b>Consumer Component</b>: The Consumer Component represents any entity that initiates a content discovery or content retrieval interaction with any of the Core CDR Components. Existing CDR Components can serve as Consumer Components, allowing for service composability.</li>
+  <li><b>Provider Component</b>: The Provider Component describes the applicable construct related to the providers of content to support content discovery and retrieval use cases. It is embodied in the Content Collection Component, which represents a data source that holds one or more content resources. In this sense, a Content Collection Component may be a database, a document repository, an imagery repository, an authoring system, etc.</li>
+  <li><b>Core CDR Components</b><br>
+  The Core CDR Components define a fundamental set of functionality that directly addresses specific requirements that enable Content Discovery and Retrieval capabilities. The following subsections provide a common interface and behavioral model for each core component: Search, Brokered Search, Describe, Query Management, and Retrieve.<br>
+  <br>
+  The CDR Components are intended to interact and build upon each other in a composable fashion. Composability is the property of the components that allows them to be combined in multiple ways to achieve more complex objectives. Many of the following component descriptions include non-exhaustive lists of examples of composability.
+  <ul>
+    <li><b>Search Component</b>: The Search Component serves as the primary content discovery mechanism to expose content collections for discovery and accessibility, enabling content consumers to discover disparate collections and relevant content resources from collections across the IC/DoD Enterprise. Specifically, the Search Component provides a means to accept requests that have a uniform syntax and semantics that can be transformed, as needed, and applied to newly-developed or existing content collections, unambiguously conveying a query without knowing or setting requirements on the implementation of the underlying content collections.</li>
+    <li><b>Brokered Search Component</b>: The Brokered Search Component serves as the primary mechanism to 1) facilitate the distribution of queries to applicable/relevant content collections (exposed as Search Components) and 2) process the returned results. To satisfy the basic federated search use case, a Consumer Component submits a query request to the Brokered Search Component, which then distributes the query to the applicable Search Components. The Search Components interpret the search request as best they can, compile a list of search results and send the search results back to the Brokered Search Component.</li>
+    <li><b>Describe Component</b>: The Describe Component serves as the primary mechanism for content providers to expose information to describe the context, access constraints, and current inventory status of the underlying content resources, and the exposed information will support static and dynamic discovery and accessibility of a content collection. Search and Brokered Search leverage the output of this component to determine whether the content collection may contain content resources that are relevant to the consumer query. To support a wide array of use cases, the Describe Component should reflect both the static and dynamic information about the underlying content collection.</li>
+    <li><b>Query Management Component</b>: The Query Management (QM) Component provides a coordinated set of activities that enable service consumers to store, retrieve, modify, delete, and execute Persistent Searches. Persistent Searches are searches that are saved into a data storage collection and can be executed in the future to provide updated results to consumers. The QM Component uses the interfaces defined by the Search Component, the Brokered Search Component, the Retrieve Component, the Deliver Component, and the Describe Component to create a comprehensive interface definition based on the composable services those components, and other components external to CDR, provide.</li>
+    <li><b>Retrieve Component</b>: The Retrieve Component enables access to discovered content and is the primary mechanism for content consumers to access one or more specific content resources from a content collection. The content is typically addressed by a unique resource identifier. The Retrieve Component can return content to the requesting consumer or, in concert with the Deliver Component, can redirect the content to other consumers.</li>
+  </ul>
+  </li>
+</ul>
+<br>
+For more information on CDR see the <a href="http://www.dni.gov/index.php/about/organization/chief-information-officer/cdr-reference-architecture" rel="nofollow">IC/DoD enterprise Content Discovery and Retrieval Reference Architecture (CDR RA)</a>
+
 <div class="componentlist">
 <div class="componentlistBody" ng-show="false">
 <h2>Component List</h2>
@@ -9,31 +39,31 @@
 <div class="col-sm-6"><label>Title: </label>
 
 <div class="attribute">
-<p class="componentlist-title" data-attributelabel="title">11</p>
+<p class="componentlist-title" data-attributelabel="title">CDR components list</p>
 </div>
-<br />
+<br>
 <label>Type: </label>
 
 <div class="attribute">
-<p class="componentlist-type" data-attributelabel="type"></p>
+<p class="componentlist-type" data-attributelabel="type">DI2E-SVCV4-A</p>
 </div>
-<br />
-<label>Key: </label>
+<br>
+<label>Code: </label>
 
 <div class="attribute">
-<p class="componentlist-key" data-attributelabel="key"></p>
+<p class="componentlist-code" data-attributelabel="code">1.2.1</p>
 </div>
-<br />
+<br>
 <label>Class-list: </label>
 
 <div class="attribute">
-<p class="componentlist-class-list" data-attributelabel="classlist"></p>
+<p class="componentlist-class-list" data-attributelabel="class-list">min</p>
 </div>
-<br />
-<label>Hide-more: </label>
+<br>
+<label>Click-callback: </label>
 
 <div class="attribute">
-<p class="componentlist-hide-more" data-attributelabel="hidemore"></p>
+<p class="componentlist-click-callback" data-attributelabel="click-callback">callback</p>
 </div>
 </div>
 
@@ -42,175 +72,27 @@
 <div class="attribute">
 <p class="componentlist-filters" data-attributelabel="filters">filters</p>
 </div>
-<br />
-<label>Click-callback: </label>
-
-<div class="attribute">
-<p class="componentlist-click-callback" data-attributelabel="clickcallback">updateDetails</p>
-</div>
-<br />
+<br>
 <label>Data: </label>
 
 <div class="attribute">
-<p class="componentlist-data" data-attributelabel="data">data.data</p>
+<p class="componentlist-data" data-attributelabel="data">data</p>
 </div>
-<br />
-<label>Cols: </label>
+<br>
+<label>Hide-more: </label>
+
+<div class="attribute">
+<p class="componentlist-hide-more" data-attributelabel="hide-more">true</p>
+</div>
+<br>
+<label><span class="scayt-misspell-word" data-scayt-word="Cols">Cols</span>: </label>
 
 <div class="attribute">
 <p class="componentlist-cols" data-attributelabel="cols">3</p>
-</div>
-<br />
-<label>Search: </label>
-
-<div class="attribute">
-<p class="componentlist-search" data-attributelabel="search">doSearchKey</p>
 </div>
 </div>
 
 <div style="clear:both">&nbsp;</div>
 </div>
 </div>
-</div>
-
-&nbsp;
-
-<h2>Architecture overview:</h2>
-<a ng-click="scrollTo('functions')">Go To SvcV-4 Functions</a><br />
-<a ng-click="scrollTo('components')">Go To Component List</a>
-
-<div style="margin-left: 20px">
-<div style="clear: both">&nbsp;</div>
-
-<ul>
-  <li>
-  <h3>Description:</h3>
-
-  <ul>
-    <li>
-    <h4>IdAM includes services that provide criteria used in access decisions and the rules and requirements assessing each request against those criteria. Resources may include applications, services, networks, and computing devices.</h4>
-    </li>
-  </ul>
-  </li>
-  <li>
-  <h3>Definition:</h3>
-
-  <ul>
-    <li>
-    <h4>Identity and Access Management (IdAM) defines the set of services that manage permissions required to access each resource.</h4>
-    </li>
-  </ul>
-  </li>
-  <li>
-  <h3>IdAM Capability Functionality Diagram:</h3>
-
-  <div style="text-align:center"><img alt="IdAM Capability Functionality" src="images/idamCapabilityFunctionality.png" style="width: 80%; display: inline-block; height: auto" /></div>
-
-  <div>&nbsp;</div>
-  &nbsp;
-
-  <div>&nbsp;</div>
-  </li>
-  <li>
-  <h3>SvcV-4 Functions and Descriptions:</h3>
-
-  <div style="float:left; width: 50%">
-  <ul>
-    <li>
-    <h4>1.2.1.1 - Local Identity Management</h4>
-
-    <div><strong>Description:</strong> Local Identity Management provides the creation, maintenance, and deletion of user accounts, group membership and other user attributes, password maintenance, and the administration of user access rights for local, role-based access control systems. This service also creates local accounts from PKI certificates, and maps the DN from a certificate to a local UserID.</div>
-
-    <div><strong>Definition:</strong> Local Identity Management provides the creation, maintenance, and deletion of user accounts, password maintenance, and the administration of user access rights. Also Creates local account from PKI certificate. Maps DN to UserID in local account.</div>
-    </li>
-    <li>
-    <h4>1.2.1.2 - Credential Management</h4>
-
-    <div><strong>Definition:</strong> Life-cycle management of credentials (e.g., PKI soft token) associated with digital identities. Credential management includes PKI life-cycle management of Identity and Non Person Entity (NPE) (e.g., server) keys and certificates.</div>
-    </li>
-    <li>
-    <h4>1.2.1.3 - Resource Policy Management</h4>
-
-    <div><strong>Definition:</strong> Resource Policy Management creates and maintains access control policies for protected resources.</div>
-    </li>
-    <li>
-    <h4>1.2.1.4 - Authentication Service</h4>
-
-    <div><strong>Definition:</strong> Authentication Service performs authentication of entities within the enterprise.</div>
-    </li>
-    <li>
-    <h4>1.2.1.5 - Policy Decision Point</h4>
-
-    <div><strong>Description:</strong> A Policy Decision Point service hosts Quality of Protection (QoP) parameters and user attributes so that services can flexibly determine and execute protection measures. For example, some services may require X.509 certificate based authentication whereas others may only need username / password authentication. Or, clients that access a resource from different domains may require different &ldquo;strengths&rdquo; of authentication and access control. PDPs do this by accepting authorization queries (typically XACML based), evaluating the request based on a variety of inputs (target resource, requested operation, requester&#39;s identity, etc.) and returning authorization decision assertions.</div>
-
-    <div><strong>Definition:</strong> Policy Decision Points accepts access requests and returns whether the request is appropriate given access rules and conditions.</div>
-    </li>
-    <li>
-    <h4>1.2.1.6 - Policy Enforcement Point</h4>
-
-    <div><strong>Description:</strong> Policy Enforcement Points sit in front of the requested web services, intercepting incoming requests and outgoing responses to apply the appropriate access policies. The PEP generates the access request to the Policy Decision Point (PDP) and interprets and enforces the PDP&#39;s decision. Policies can be built to include, but are not limited to, authentication, authorization, data integrity, and confidentiality. When enforcing authorization policies, the PEP uses the PDP to evaluate an authorization policy for the resource. When a security token is provided to the PEP, that token is validated prior to being trusted. Token validation may occur in the PEP itself, or if the PEP is unable to validate the token, the PEP may leverage an STS to perform validation on its behalf.</div>
-
-    <div><strong>Definition:</strong> Policy Enforcement Point (PEP)enforces security-related policies for access to protected resources.</div>
-    </li>
-  </ul>
-  </div>
-
-  <div style="float:left; width: 50%">
-  <ul>
-    <li>
-    <h4>1.2.1.7 - Policy Access Point</h4>
-
-    <div><strong>Description:</strong> The Policy Access Point exposes authorization policies by retrieving and managing policies as implemented by Policy Decision Point (PDP) logic (e.g., access control over portlets in a portal server, or whether a service consumer may search the registry for the key to retrieve all implementations). Implementation may optionally be published in the Enterprise Service Registry (ESR) as defined by the DoD/IC Service Registry and Governance Working Group. [SSP note: a recommended format for PAS messages is extensible Access Control Markup Language (XACML)]</div>
-
-    <div><strong>Definition:</strong> Policy Access Point enables service providers and applications to request and retrieve access policies.</div>
-    </li>
-    <li>
-    <h4>1.2.1.8 - Security Token Service</h4>
-
-    <div><strong>Description:</strong> Security Token Service forms the basis for identification and authentication activities by generating security tokens and inserting them in outgoing encrypted messages. Passed security tokens contain authentication and attribute assertions that temporarily authenticate users. Tokens also contain user attributes and a security assertion which can be validated by receiving policy services. The Security Token Service may also perform token validation if required.</div>
-
-    <div><strong>Definition:</strong> Security Token Service creates enterprise security tokens to provide authentication across systems and services.</div>
-    </li>
-    <li>
-    <h4>1.2.1.9 - Federation Service Management</h4>
-
-    <div><strong>Definition:</strong> Federation Service Management establishes trust relationships between different organizations or systems, allowing entities within an environment to access resources within another environment without the need to have an individual account on the remote environment. This service defines and maintains trust relationships, which are then queried by the Security Token Validation service when making validation decisions.</div>
-    </li>
-    <li>
-    <h4>1.2.1.10 - Attribute Access</h4>
-
-    <div><strong>Description:</strong> Attribute Access accepts attribute requests from authorized consumers and responds with an attribute assertion containing the requested attribute values that are releasable to that consumer. Attributes for either human users or non-person entities (NPE) can be passed and are typically used by Policy Decision Services, Policy Decision Points, Application Servers, or other SAML endpoints. Secure attribute passing supports an Attribute-Based Access Control (ABAC) authorization model.</div>
-
-    <div><strong>Definition:</strong> Attribute Access provides values that describe human users and non-person entities (NPE) for the purpose of making authorization decisions.</div>
-    </li>
-    <li>
-    <h4>1.2.1.11 - Certificate Validation</h4>
-
-    <div><strong>Description:</strong> Certificate Validation ensures a presented PKI certificate has been signed by a trusted CA, is within the valid timeframe, has not been tampered with, has not been revoked, etc. Certificate Validation Service allows clients to delegate some or all certificate validation tasks and is especially useful when a client application has limited Public Key Infrastructure (PKI) services. The service corresponds to a &ldquo;Tier 2 Validation Service&rdquo; and shields client applications from such PKI complexities as X.509v3 certificate syntax processing (e.g., expiration), revocation status checking, or certificate path validation. Certificate Validation may include any OCSP responders.</div>
-
-    <div><strong>Definition:</strong> Certificate Validation ensures a presented security assertion within a security token matches similar data in the Certification Authority&#39;s (CA) root certificate.</div>
-    </li>
-  </ul>
-  </div>
-  </li>
-  <li>
-  <h3>IdAM Focus Area Success Criteria:</h3>
-
-  <div>
-  <ul>
-    <li>Secures federated search capabilities within the Intelligence Mission Area of JIE</li>
-    <li>Is interoperable with IdAM on JIE and ICITE-supported networks</li>
-    <li>Is extensible to Disconnected, Degraded, Intermittent, and Low Bandwidth (DDIL) environments</li>
-  </ul>
-  </div>
-  </li>
-</ul>
-
-<h3>Other IdAM Compliant Components Coming Soon to the Clearinghouse site</h3>
-
-<div>
-<ul>
-  <li>DataPower</li>
-</ul>
-</div>
-</div>
+<component-list title="CDR components list" type="DI2E-SVCV4-A" code="1.2.1" class-list="min" click-callback="callback" filters="filters" data="data" hide-more="true" cols="3"></component-list></div>

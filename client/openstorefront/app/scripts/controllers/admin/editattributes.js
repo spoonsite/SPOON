@@ -45,6 +45,10 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     }
   }
 
+  $scope.editLanding = function(type, code) {
+    $scope.$parent.editLanding(type, code);
+  }
+
   $scope.deleteAttribute = function(filter){
     // console.log('Deleted filter', filter);
   }
@@ -103,17 +107,21 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     });
 
     modalInstance.result.then(function (result) {
-      if (result) {
+      if (result && result.refresh === true) {
         $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
         $scope.getFilters(true);
         $scope.refreshFilterCache()
+      } else if (result.type && result.code) {
+        $scope.editLanding(result.type, result.code);
       }
     }, function (result) {
-      if (result) {
+      if (result && result.refresh === true) {
         $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
         $scope.getFilters(true);
         $scope.refreshFilterCache()
-      }      
+      } else if (result.type && result.code) {
+        $scope.editLanding(result.type, result.code);
+      }  
     });
   }
 
