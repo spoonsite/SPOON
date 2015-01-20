@@ -88,6 +88,38 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     }
     return deferred.promise;
   };
+
+  article.getArticles = function(override, all) {
+    var deferred = $q.defer();
+    var result = checkExpire('all-articles', minute * 30);
+    if (result && !override) {
+      deferred.resolve(result);
+    } else {
+      var params = {};
+      if (all){
+        params.all = 'true';
+      }
+      $http({
+        method: 'GET',
+        url: 'api/v1/resource/attributes/attributetypes/articlecodes',
+        params: params
+      }).success(function(data, status, headers, config){
+        if (data && data !== 'false' && isNotRequestError(data)){
+          removeError();
+          save('all-articles', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    }
+    return deferred.promise;
+  };
   
   article.getArchitecture = function(type){
     var deferred = $q.defer();
@@ -147,7 +179,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
 
     return deferred.promise;
   };
-    
+
   article.getCode = function(type, code, override){
     var deferred = $q.defer();
     if (type && code) {
@@ -333,6 +365,54 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
       });
     } else {
       deferred.reject('There was no type...');
+    }
+    return deferred.promise;
+  }
+
+
+  article.saveArticle = function(article){
+    var deferred = $q.defer();
+    if (article && article.attributeType && article.attributeCode) {
+      var url;
+      var method;
+      method = 'PUT';
+      url = 'api/v1/resource/attributes/attributetypes/'+article.attributeType+'/attributecodes/'+article.attributeCode+'/article';
+      $http({
+        method: method,
+        url: url,
+        data: article
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+    return deferred.promise;
+  }
+
+  article.previewArticle = function(article){
+    var deferred = $q.defer();
+    if (article && article.attributeType && article.attributeCode) {
+      $http({
+        method: 'POST',
+        url: 'Article.action?Preview&attributeType='+article.attributeType+'&attributeCode='+article.attributeCode,
+        data: $.param({html: article.html}),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+      }).success(function(data, status, headers, config){
+        deferred.resolve(data);
+      }).error(function(data, status, headers, config){
+        deferred.reject(false);
+      })
     }
     return deferred.promise;
   }

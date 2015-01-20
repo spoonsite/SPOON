@@ -119,6 +119,49 @@ public class ComponentAttributeView
 		return views;
 	}
 
+	public static ComponentAttributeView toView(AttributeCode attribute)
+	{
+		ServiceProxy service = new ServiceProxy();
+		ComponentAttributeView view = new ComponentAttributeView();
+		AttributeCodePk pk = attribute.getAttributeCodePk();
+		AttributeCode code = service.getAttributeService().findCodeForType(pk);
+		AttributeType type = service.getAttributeService().findType(attribute.getAttributeCodePk().getAttributeType());
+
+		view.setExternalLink(code.getDetailUrl());
+		view.setCodeDescription(code.getLabel());
+		view.setCodeLongDescription(code.getDescription());
+		view.setTypeDescription(type.getDescription());
+		view.setTypeLongDescription(type.getDescription());
+		view.setType(type.getAttributeType());
+		view.setCode(code.getAttributeCodePk().getAttributeCode());
+		view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
+		view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
+		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
+		view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
+		view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
+		view.setUpdateDts(attribute.getUpdateDts());
+		view.setSortOrder(code.getSortOrder());
+		view.setGroupCode(code.getGroupCode());
+
+		return view;
+	}
+
+	public static List<ComponentAttributeView> attributeCodeListToViewList(List<AttributeCode> attributes)
+	{
+		if (attributes != null && attributes.size() > 0) {
+
+			List<ComponentAttributeView> views = new ArrayList<>();
+			attributes.stream().forEach((attribute) -> {
+				views.add(ComponentAttributeView.toView(attribute));
+			});
+			return views;
+		}
+		else {
+			return new ArrayList<ComponentAttributeView>();
+		}
+
+	}
+
 	public String getCodeDescription()
 	{
 		return codeDescription;

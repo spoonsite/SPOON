@@ -16,12 +16,20 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.nio.file.attribute.AttributeView;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +44,10 @@ public class ArticleView
 
 	private String attributeCode;
 	private String attributeType;
+	private String typeDescription;
+	private String codeDescription;
+	private String typeLongDescription;
+	private String codeLongDescription;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -59,9 +71,20 @@ public class ArticleView
 
 	public static ArticleView toView(AttributeCode attributeCode)
 	{
+		ServiceProxy service = new ServiceProxy();
 		ArticleView articleView = new ArticleView();
 		articleView.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 		articleView.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+		pk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+		AttributeCode code = service.getAttributeService().findCodeForType(pk);
+		AttributeType type = service.getAttributeService().findType(attributeCode.getAttributeCodePk().getAttributeType());
+
+		articleView.setCodeDescription(code.getLabel());
+		articleView.setCodeLongDescription(code.getDescription());
+		articleView.setTypeDescription(type.getDescription());
+		articleView.setTypeLongDescription(type.getDescription());
 		if (attributeCode.getArticle() != null) {
 			if (StringUtils.isNotBlank(attributeCode.getArticle().getTitle())) {
 				articleView.setTitle(attributeCode.getArticle().getTitle());
@@ -86,6 +109,15 @@ public class ArticleView
 		ArticleView articleView = toView(attributeCode);
 		articleView.setHtml(content);
 		return articleView;
+	}
+	
+	public static List<ArticleView> toViewList(List<AttributeCode> attributes)
+	{
+		List<ArticleView> views = new ArrayList<>();
+		attributes.stream().forEach((attribute) -> {
+			views.add(ArticleView.toView(attribute));
+		});
+		return views;
 	}
 
 	public String getAttributeCode()
@@ -146,6 +178,70 @@ public class ArticleView
 	public void setDescription(String description)
 	{
 		this.description = description;
+	}
+
+	/**
+	 * @return the typeDescription
+	 */
+	public String getTypeDescription()
+	{
+		return typeDescription;
+	}
+
+	/**
+	 * @param typeDescription the typeDescription to set
+	 */
+	public void setTypeDescription(String typeDescription)
+	{
+		this.typeDescription = typeDescription;
+	}
+
+	/**
+	 * @return the codeDescription
+	 */
+	public String getCodeDescription()
+	{
+		return codeDescription;
+	}
+
+	/**
+	 * @param codeDescription the codeDescription to set
+	 */
+	public void setCodeDescription(String codeDescription)
+	{
+		this.codeDescription = codeDescription;
+	}
+
+	/**
+	 * @return the typeLongDescription
+	 */
+	public String getTypeLongDescription()
+	{
+		return typeLongDescription;
+	}
+
+	/**
+	 * @param typeLongDescription the typeLongDescription to set
+	 */
+	public void setTypeLongDescription(String typeLongDescription)
+	{
+		this.typeLongDescription = typeLongDescription;
+	}
+
+	/**
+	 * @return the codeLongDescription
+	 */
+	public String getCodeLongDescription()
+	{
+		return codeLongDescription;
+	}
+
+	/**
+	 * @param codeLongDescription the codeLongDescription to set
+	 */
+	public void setCodeLongDescription(String codeLongDescription)
+	{
+		this.codeLongDescription = codeLongDescription;
 	}
 
 }
