@@ -298,6 +298,8 @@ public class AttributeServiceImpl
 				//save attribute
 				if (attributeCodeExisting.getArticle() != null) {
 					attributeCodeExisting.getArticle().setArticleFilename(filename);
+					attributeCodeExisting.getArticle().setTitle(attributeCode.getArticle().getTitle());
+					attributeCodeExisting.getArticle().setDescription(attributeCode.getArticle().getDescription());
 					attributeCodeExisting.getArticle().populateBaseUpdateFields();
 					persistenceService.persist(attributeCodeExisting);
 				} else {
