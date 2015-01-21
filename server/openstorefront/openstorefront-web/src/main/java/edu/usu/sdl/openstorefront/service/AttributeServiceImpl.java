@@ -875,4 +875,18 @@ public class AttributeServiceImpl
 		}
 	}
 
+	@Override
+	public List<AttributeCode> getArticles(Boolean all)
+	{
+		String activeStatus = AttributeCode.ACTIVE_STATUS;
+		
+		List<AttributeCode> list = findRecentlyAddedArticles(null, activeStatus);
+		if (all) {
+			activeStatus = AttributeCode.INACTIVE_STATUS;
+			List<AttributeCode> temp = findRecentlyAddedArticles(null, activeStatus);
+			list.addAll(temp);
+		}		
+		return list;
+	}
+
 }

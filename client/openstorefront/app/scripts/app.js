@@ -507,6 +507,8 @@ var app = angular
       //////////////////////////////////////////////////////////////////////////////
       //Mock Back End  (use passThrough to route to server)
       $httpBackend.whenGET(/views.*/).passThrough();
+      $httpBackend.whenGET(/Article.*/).passThrough();
+      $httpBackend.whenPOST(/Article.*/).passThrough();
       $httpBackend.whenGET('System.action?UserAgent').passThrough();
       $httpBackend.whenGET('System.action?AppVersion').passThrough();
 

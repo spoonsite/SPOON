@@ -46,24 +46,16 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     var search = $location.search()
     var type;
     var code;
-    if (search && search.type && search.code && $location.path() === '/landing'){
-      type = search.type;
-      code = search.code;
+    if (search && search.type === 'preview' && $location.path() === '/landing'){
+      var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
+      url = url.substring(0, url.length - 1);
+      console.log('url', url);
+      
+      $scope.landingRoute = url + search.code;
+      console.log('$scope.landingRoute', $scope.landingRoute);
+      $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+      $scope.loaded = true;
     } else {
-      type = localCache.get('type');
-      code = localCache.get('code');
-    }
-    $scope.landingRoute = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article';
-    $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
-    $scope.loaded = true;
-  }, 1000); //
-
-  $scope.$on('$TRIGGERLANDING', function(event, data) {
-    $scope.data = [];
-    var type;
-    var code;
-    if (!data) {
-      var search = $location.search()
       if (search && search.type && search.code && $location.path() === '/landing'){
         type = search.type;
         code = search.code;
@@ -74,6 +66,35 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
       $scope.landingRoute = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article';
       $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
       $scope.loaded = true;
+    }
+  }, 1000); //
+
+  $scope.$on('$TRIGGERLANDING', function(event, data) {//
+    $scope.data = [];
+    var type;
+    var code;
+    if (!data) {
+      var search = $location.search()
+      if (search && search.type === 'preview' && $location.path()) {
+        var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
+        url = url.substring(0, url.length - 1);
+        console.log('url', url);
+        $scope.landingRoute = url + search.code;
+        console.log('$scope.landingRoute', $scope.landingRoute);
+        $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+        $scope.loaded = true;
+      } else {
+        if (search && search.type && search.code && $location.path() === '/landing'){
+          type = search.type;
+          code = search.code;
+        } else {
+          type = localCache.get('type');
+          code = localCache.get('code');
+        }
+        $scope.landingRoute = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article';
+        $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
+        $scope.loaded = true;
+      }
     } else {
       $scope.landingRoute = data;
       $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');

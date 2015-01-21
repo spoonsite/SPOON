@@ -29,7 +29,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   // ***************************************************************/
 
   $scope.getAttributes = function(override) {
-    Business.getAttributes(override, true).then(function(result){
+    Business.getFilters(override, true).then(function(result){
       $scope.attributes = result? angular.copy(result): [];
       console.log('$scope.attributes', $scope.attributes);
       
@@ -40,22 +40,34 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       $scope.attributes = [];
     });
   }
-  $scope.getAttributes(false);
+  $scope.getAttributes(true);
+
+  $scope.getArticles = function(override){
+    Business.articleservice.getArticles(override, true).then(function(result){
+      $scope.articles = result? angular.copy(result): [];
+      console.log('$scope.articles', $scope.articles);
+    }, function(){
+      $scope.articles = [];
+    })
+  }
+  $scope.getArticles(true);
 
 
-  $scope.editContent = function(type, code){
-    $scope.type = $scope.type || type;
-    $scope.code = $scope.code || code;
+  $scope.getArticleDesc = function(desc){
+    if (desc && desc !== undefined  && desc !== null && desc !== '') {
+      return desc;
+    }
+    return ' ';
+  }
+
+  $scope.editContent = function(article){
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editlandingform.html',
       controller: 'AdminEditLandingCtrl',
       size: 'lg',
       resolve: {
-        type: function () {
-          return $scope.type;
-        },
-        code: function () {
-          return $scope.code;
+        article: function () {
+          return article;
         }
       }
     });
@@ -72,18 +84,40 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   if ($scope.type && $scope.code) {
     $scope.editContent($scope.type, $scope.code);
   }
+
+  
+  $timeout(function() {
+    $('[data-toggle=\'tooltip\']').tooltip();
+  }, 300);
+
 }]);
 
+app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 'business', '$location', function ($scope, $uiModalInstance, article, Business, $location) {
 
-app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'code', 'business', function ($scope, $uiModalInstance, type, code, Business) {
-
-  $scope.type = type;
-  $scope.code = code;
+  $scope.article = angular.copy(article);
+  $scope.type = $scope.article.attributeType;
+  $scope.code = $scope.article.attributeCode;
   $scope.editorContent = '';
   $scope.editorOptions = getCkConfig();
 
-  $scope.ok = function () {
-    var temp = $($scope.editorContent);
+  $scope.preview = function(){
+    $scope.article.html = $scope.getEditorContent();
+    Business.articleservice.previewArticle($scope.article).then(function(result){
+      console.log('Preview result', result);
+      var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
+      url = url + '/landing' + '?' + $.param({
+        type: 'preview',
+        code: result
+      });
+      window.open(url, 'Aritlce_Preview_' + $scope.article.attributeType + $scope.article.attributeCode, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
+    }, function(){
+      console.log('We didnt get a preview');
+      
+    })
+  }
+
+  $scope.getEditorContent = function(){
+    var temp = $($scope.editorContentWatch);
     var content = $('<div></div>');
     _.each(temp, function(e){
       content.append(e);
@@ -110,9 +144,18 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
         $(componentList).parent().append(componentListElement);
       });
     }
+    return content.html();
+  }
+
+  $scope.ok = function () {
     // $scope.editorContentWatch = $scope.editorContent;
-    console.log('Editor Content', content);
-    $uiModalInstance.close();
+    $scope.article.html = $scope.getEditorContent();
+    Business.articleservice.saveArticle($scope.article).then(function(result){
+      console.log('$scope.article', $scope.article);
+      $uiModalInstance.close();
+    }, function(){
+      triggerAlert('There was an error saving your article, please try again.', 'articleAlert', 'articleEditModal', 6000);
+    })
   };
 
   $scope.cancel = function () {
@@ -120,13 +163,15 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
   };
 
   $scope.getContent = function(){
-    if ($scope.type && $scope.code) {
+    if ($scope.type && $scope.code && !$scope.article.html) {
       console.log('type/code', $scope.type + '---' + $scope.code);
       Business.articleservice.getArticle($scope.type, $scope.code, true).then(function (result) { /*jshint unused:false*/
         $scope.editorContent = result || ' ';
       }, function(){
         $scope.editorContent = ' ';
       });
+    } else {
+      $scope.editorContent = $scope.article.html;
     }
   }
 
