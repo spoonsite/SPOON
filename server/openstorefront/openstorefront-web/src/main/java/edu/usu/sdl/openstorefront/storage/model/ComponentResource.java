@@ -76,14 +76,11 @@ public class ComponentResource
 	}
 
 	@Override
-	public int compareTo(Object o)
+	public int customCompareTo(BaseComponent o)
 	{
-		int value = super.compareTo(o);
+		int value = ServiceUtil.compareObjects(getFileName(), ((ComponentResource) o).getFileName());
 		if (value == 0) {
-			value = ServiceUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());
-		}
-		if (value == 0) {
-			value = ServiceUtil.compareObjects(getMimeType(), ((ComponentMedia) o).getMimeType());
+			value = ServiceUtil.compareObjects(getMimeType(), ((ComponentResource) o).getMimeType());
 		}
 		return value;
 	}

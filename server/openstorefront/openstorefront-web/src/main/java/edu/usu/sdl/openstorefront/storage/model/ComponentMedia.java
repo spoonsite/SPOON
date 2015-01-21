@@ -77,12 +77,9 @@ public class ComponentMedia
 	}
 
 	@Override
-	public int compareTo(Object o)
+	public int customCompareTo(BaseComponent o)
 	{
-		int value = super.compareTo(o);
-		if (value == 0) {
-			value = ServiceUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());
-		}
+		int value = ServiceUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());
 		return value;
 	}
 
