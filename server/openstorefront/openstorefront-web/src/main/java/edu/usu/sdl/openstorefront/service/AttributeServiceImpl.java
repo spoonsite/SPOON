@@ -301,7 +301,7 @@ public class AttributeServiceImpl
 					attributeCodeExisting.getArticle().setTitle(attributeCode.getArticle().getTitle());
 					attributeCodeExisting.getArticle().setDescription(attributeCode.getArticle().getDescription());
 					attributeCodeExisting.getArticle().populateBaseUpdateFields();
-					persistenceService.persist(attributeCodeExisting);
+					persistenceService.saveNonPkEntity(attributeCodeExisting.getArticle());
 				} else {
 					attributeCodeExisting.setArticle(attributeCode.getArticle());
 					attributeCodeExisting.getArticle().setArticleFilename(filename);

@@ -116,6 +116,29 @@ public class ComponentRESTResource
 	}
 
 	@GET
+	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Component.class)
+	@Path("/filterable")
+	public Response getComponentList(@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(filterQueryParams.getStatus());
+		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+		components = filterQueryParams.filter(components);
+
+		GenericEntity<List<Component>> entity = new GenericEntity<List<Component>>(components)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
 	@APIDescription("Get a list of components by an id set.  If it can't find a component for a griven id it's not returned.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)

@@ -341,7 +341,7 @@ public class ServiceUtil
 					value = pkValue.toString();
 				}
 			} catch (IllegalArgumentException | IllegalAccessException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to set value on " + entity.getClass().getName(), "Check entity passed in.");
+				throw new OpenStorefrontRuntimeException("Unable to get value on " + entity.getClass().getName(), "Check entity passed in.");
 			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find PK for enity: " + entity.getClass().getName(), "Check entity passed in.");
