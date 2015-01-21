@@ -148,16 +148,19 @@ public class ComponentServiceImpl
 	@Override
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk)
 	{
-		return deactivateBaseComponent(subComponentClass, pk, true);
+		return deactivateBaseComponent(subComponentClass, pk, true, null);
 	}
 
-	private <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity)
+	private <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity, String updateUser)
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
 			found.setActiveStatus(T.INACTIVE_STATUS);
 			found.setUpdateDts(TimeUtil.currentDate());
-			found.setUpdateUser(SecurityUtil.getCurrentUserName());
+			if (StringUtils.isBlank(updateUser)) {
+				updateUser = SecurityUtil.getCurrentUserName();
+			}
+			found.setUpdateUser(updateUser);
 			persistenceService.persist(found);
 
 			if (updateComponentActivity) {
@@ -1032,6 +1035,7 @@ public class ComponentServiceImpl
 				//compare
 				if (entity.compareTo(baseComponent) == 0) {
 					match = true;
+					inputMap.add(ServiceUtil.getPKFieldValue(entity));
 					break;
 				}
 			}
@@ -1079,7 +1083,7 @@ public class ComponentServiceImpl
 					Field pkField = ServiceUtil.getPKField(oldEnity);
 					if (pkField != null) {
 						pkField.setAccessible(true);
-						deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false);
+						deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
 					} else {
 						throw new OpenStorefrontRuntimeException("Unable to find PK field on entity.", "Check enity: " + oldEnity.getClass().getName());
 					}

@@ -44,7 +44,15 @@ public abstract class BaseComponent<T>
 		if (value == 0) {
 			value = ServiceUtil.compareConsumeFields(this, o);
 		}
+		if (value == 0) {
+			value = customCompareTo(o);
+		}
 		return value;
+	}
+
+	public int customCompareTo(BaseComponent o)
+	{
+		return 0;
 	}
 
 	public String getComponentId()
