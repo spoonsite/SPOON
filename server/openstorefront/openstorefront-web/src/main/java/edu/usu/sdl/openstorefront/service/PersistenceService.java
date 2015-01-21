@@ -695,6 +695,27 @@ public class PersistenceService
 		return t;
 	}
 
+	public <T extends BaseEntity> T saveNonPkEntity(T entity)
+	{
+		OObjectDatabaseTx db = getConnection();
+		T t = null;
+		try {
+			ValidationModel validationModel = new ValidationModel(entity);
+			validationModel.setSantize(false);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				t = db.save(entity);
+			} else {
+				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
+			}
+		} catch (Exception e) {
+			throw new OpenStorefrontRuntimeException("Unable to save record: " + StringProcessor.printObject(entity), e);
+		} finally {
+			closeConnection(db);
+		}
+		return t;
+	}
+
 	public <T> void delete(T entity)
 	{
 		OObjectDatabaseTx db = getConnection();
