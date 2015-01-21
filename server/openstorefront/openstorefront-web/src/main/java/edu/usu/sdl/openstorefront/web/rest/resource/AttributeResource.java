@@ -46,6 +46,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.net.URI;
 import java.util.ArrayList;
@@ -204,6 +205,8 @@ public class AttributeResource
 			return Response.ok(attributeTypeView).build();
 		}
 	}
+	
+	
 
 	@GET
 	@APIDescription("Gets attribute type")
@@ -294,6 +297,20 @@ public class AttributeResource
 		return sendSingleEntityResponse(attributeCode);
 	}
 
+	@GET
+	@APIDescription("Gets all codes that have an article.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeCode.class)
+	@Path("/attributetypes/articlecodes")
+	public List<ArticleView> getAllCodesWithArticles(
+			@QueryParam("all")
+			@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
+			@DefaultValue("false") boolean all)
+	{
+		List<ArticleView> codes = ArticleView.toViewList(service.getAttributeService().getArticles(all));
+		return codes;
+	}
+	
 	@GET
 	@APIDescription("Gets article if it existing for the given type and code.")
 	@Produces({MediaType.WILDCARD})
