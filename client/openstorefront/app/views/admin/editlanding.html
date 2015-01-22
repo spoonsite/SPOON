@@ -1,8 +1,21 @@
 <!-- <button ng-click="setData()" class="btn btn-primary">Insert Resources</button> -->
 <div ng-controller="adminEditArticlesCtrl">
 
-  <button type="button" class="btn btn-default ng-pristine ng-valid" id="attributeType" ng-model="attribute.type" data-html="1" ng-options="attr.type as attr.description for attr in attributes" data-animation="am-flip-x" bs-select="" data-placeholder="Select an Attribute"><span class="caret"></span>
-  </button>
+  <form class="form-inline" role="form">
+    <div class="form-group" style="margin-left:9px;">
+      <label>Type</label>
+      <button type="button" class="btn btn-default ng-pristine ng-valid" id="attributeType" ng-model="attributeType.type" data-html="1" ng-options="attr.type as attr.description for attr in attributes" data-animation="am-flip-x" bs-select="" data-placeholder="Select an Attribute"><span class="caret"></span>
+      </button>
+    </div>
+    <div class="form-group" style="margin-left:9px;">
+      <label>Code</label>
+      <select type="text" class="form-control" style="width:auto" ng-model="attributeCode.code" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in codes.codes" placeholder="Enter Code"></select>
+    </div>
+    <div class="form-group">
+      <button type="button" class="btn btn-default ng-pristine ng-valid" id="attributeType" ng-click="newArticle()">Create Article&nbsp;<i class="fa fa-edit"></i></span>
+      </button>
+    </div>
+  </form>
 <!--   <select ng-model="attribute.type" ng-options="attr.type as attr.description for attr in attributes">
     <option value=''>- Select an Attribute -</option>
   </select> -->
@@ -21,7 +34,7 @@
       <td ng-show="article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{getArticleDesc(article.description)}}">{{article.description}}</td>
       <td ng-show="!article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
       <td style="padding:0px 5px;">
-        <button type="button" class="btn btn-sm btn-default" ng-click=""><i class="fa fa-trash"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit"></i></button>
+        <button type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="deleteArticle(article)"><i class="fa fa-trash"></i></button>
       </td>
     </tr>
   </table>

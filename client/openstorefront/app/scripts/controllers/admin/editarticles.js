@@ -19,14 +19,35 @@
 app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeout', function ($scope, Business, $uiModal, $timeout) {
   $scope.type = $scope.$parent.type || null;
   $scope.code = $scope.$parent.code || null;
-  $scope.attribute = {};
-
+  $scope.attributeType = {};
+  $scope.attributeCode = {};
+  $scope.codes = {};
 
   // /***************************************************************
   // * If we don't have a landing page, we're going to set up one for now so that
   // * there will always be one in the editor when we look, unless we click on a button
   // * that says 'add landing page'
   // ***************************************************************/
+
+  var compare = function (a, b) {
+    return ((a.label == b.label) ? 0 : ((a.label > b.label) ? 1 : -1));
+  }
+
+  $scope.getAttributeCodes = function(override) {
+    Business.articleservice.getType($scope.attributeType.type, true, true).then(function(result){
+      result.codes.sort(compare);
+      $scope.codes.codes = (result && result.codes)? angular.copy(result.codes): [];
+      console.log('$scope.codes', $scope.codes.codes);
+    }, function(){
+      $scope.codes.codes = [];
+    });
+  }
+  $scope.$watch('attributeType', function(){
+    if ($scope.attributeType.type){
+      console.log('$scope.attributeType.type', $scope.attributeType.type);
+      $scope.getAttributeCodes();
+    }
+  }, true)
 
   $scope.getAttributes = function(override) {
     Business.getFilters(override, true).then(function(result){
@@ -74,18 +95,45 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
 
     modalInstance.result.then(function (result) {
       console.log('result', result);
+      $scope.getArticles(true);
       
     }, function (result) {
       console.log('result', result);
+      $scope.getArticles(true);
       
     });
   }
   
+  $scope.newArticle = function(){
+    var found = _.find($scope.articles, {'attributeType': $scope.attributeType.type, 'attributeCode': $scope.attributeCode.code});
+    var article;
+    if (!found && $scope.attributeType.type && $scope.attributeCode.code){
+      article = {
+        attributeCode: $scope.attributeCode.code,
+        attributeType: $scope.attributeType.type,
+        description: '',
+        title: '',
+      };
+    } else {
+      article = found;
+    }
+    $scope.editContent(article);
+  }
+
+  $scope.deleteArticle = function(article){
+    Business.articleservice.deleteArticle(article).then(function(result){
+      console.log('result', result);
+      triggerAlert('The article was deleted.', 'articleAlert', 'body', 6000)
+      $scope.getArticles(true);
+
+    })
+  }
+
   if ($scope.type && $scope.code) {
     $scope.editContent($scope.type, $scope.code);
   }
 
-  
+
   $timeout(function() {
     $('[data-toggle=\'tooltip\']').tooltip();
   }, 300);
@@ -102,6 +150,8 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
 
   $scope.preview = function(){
     $scope.article.html = $scope.getEditorContent();
+    console.log('$scope.article', $scope.article);
+    
     Business.articleservice.previewArticle($scope.article).then(function(result){
       console.log('Preview result', result);
       var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
@@ -117,7 +167,12 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
   }
 
   $scope.getEditorContent = function(){
+    var html = $scope.editorContentWatch;
+    html = '<div id="allTheContent">' + html + '</div>';
     var temp = $($scope.editorContentWatch);
+    console.log('$scope.editorcontent', $scope.editorContentWatch);
+    console.log('temp', temp);
+    
     var content = $('<div></div>');
     _.each(temp, function(e){
       content.append(e);
@@ -144,7 +199,7 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
         $(componentList).parent().append(componentListElement);
       });
     }
-    return content.html();
+    return content.find('#allTheContent').html();
   }
 
   $scope.ok = function () {

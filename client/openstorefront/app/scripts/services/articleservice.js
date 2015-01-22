@@ -400,6 +400,35 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     return deferred.promise;
   }
 
+  article.deleteArticle = function(article){
+    var deferred = $q.defer();
+    if (article && article.attributeType && article.attributeCode) {
+      var url;
+      var method;
+      method = 'DELETE';
+      url = 'api/v1/resource/attributes/attributetypes/'+article.attributeType+'/attributecodes/'+article.attributeCode+'/article';
+      $http({
+        method: method,
+        url: url,
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+    return deferred.promise;
+  }
+
   article.previewArticle = function(article){
     var deferred = $q.defer();
     if (article && article.attributeType && article.attributeCode) {
