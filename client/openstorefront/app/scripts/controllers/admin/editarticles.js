@@ -167,10 +167,16 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
   }
 
   $scope.getEditorContent = function(){
-    var html = $scope.editorContentWatch;
-    html = '<div id="allTheContent">' + html + '</div>';
-    var temp = $($scope.editorContentWatch);
-    console.log('$scope.editorcontent', $scope.editorContentWatch);
+    var html = angular.copy($scope.editorContentWatch);
+    var temp = null;
+    if (_.contains(html, 'id="allTheDContent"')) {
+      temp = $(html);
+    }
+    if (!temp || !temp.find('#allTheContent').length) {
+      html = '<div id="allTheContent">' + html + '</div>';
+      var temp = $(html);
+    }
+    console.log('$scope.editorcontent', html);
     console.log('temp', temp);
     
     var content = $('<div></div>');

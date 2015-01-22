@@ -83,19 +83,19 @@ CKEDITOR.plugins.add( 'componentlist', {
       template: '<div class="componentlist"> <div class="componentlistBody" ng-show="false"><h2>Component List</h2>' + 
       '<div ng-show="false">' +
       '<div class="col-sm-6">' +
-      '<label>Title: </label><div class="attribute"><p class="componentlist-title" data-attributeLabel="title"></p></div><br>' +
-      '<label>Type: </label><div class="attribute"><p class="componentlist-type" data-attributeLabel="type"></p></div><br>' +
-      '<label>Code: </label><div class="attribute"><p class="componentlist-code" data-attributeLabel="code"></p></div><br>' +
-      '<label>Class-list: </label><div class="attribute"><p class="componentlist-class-list" data-attributeLabel="class-list"></p></div><br>' +
-      '<label>Click-callback: </label><div class="attribute"><p class="componentlist-click-callback" data-attributeLabel="click-callback">callback</p></div><br>' +
+      '<label ng-show="false">Title: </label><div ng-show="false" class="attribute"><p class="componentlist-title" data-attributeLabel="title"></p></div><br>' +
+      '<label ng-show="false">Type: </label><div ng-show="false" class="attribute"><p class="componentlist-type" data-attributeLabel="type"></p></div><br>' +
+      '<label ng-show="false">Code: </label><div ng-show="false" class="attribute"><p class="componentlist-code" data-attributeLabel="code"></p></div><br>' +
+      '<label ng-show="false">Class-list: </label><div ng-show="false" class="attribute"><p class="componentlist-class-list" data-attributeLabel="class-list"></p></div><br>' +
+      '<label ng-show="false">Click-callback: </label><div ng-show="false" class="attribute"><p class="componentlist-click-callback" data-attributeLabel="click-callback">callback</p></div><br>' +
       '</div>' +
       '<div class="col-sm-6">' +
-      '<label>Filters: </label><div class="attribute"><p class="componentlist-filters" data-attributeLabel="filters">filters</p></div><br>' +
-      '<label>Data: </label><div class="attribute"><p class="componentlist-data" data-attributeLabel="data">data</p></div><br>' +
-      '<label>Hide-more: </label><div class="attribute"><p class="componentlist-hide-more" data-attributeLabel="hide-more">true</p></div><br>' +
-      '<label>Cols: </label><div class="attribute"><p class="componentlist-cols" data-attributeLabel="cols">3</p></div><br>' +
+      '<label ng-show="false">Filters: </label><div ng-show="false" class="attribute"><p class="componentlist-filters" data-attributeLabel="filters">filters</p></div><br>' +
+      '<label ng-show="false">Data: </label><div ng-show="false" class="attribute"><p class="componentlist-data" data-attributeLabel="data">data</p></div><br>' +
+      '<label ng-show="false">Hide-more: </label><div ng-show="false" class="attribute"><p class="componentlist-hide-more" data-attributeLabel="hide-more">true</p></div><br>' +
+      '<label ng-show="false">Cols: </label><div ng-show="false" class="attribute"><p class="componentlist-cols" data-attributeLabel="cols">3</p></div><br>' +
       '</div>' +
-      '<div style="clear:both"></div>' +
+      '<div ng-show="false" style="clear:both"></div>' +
       '</div>' +
       '</div>' +
       '</div>',
