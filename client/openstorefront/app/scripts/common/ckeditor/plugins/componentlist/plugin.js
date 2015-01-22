@@ -95,8 +95,7 @@ CKEDITOR.plugins.add( 'componentlist', {
       '<label>Hide-more: </label><div class="attribute"><p class="componentlist-hide-more" data-attributeLabel="hide-more">true</p></div><br>' +
       '<label>Cols: </label><div class="attribute"><p class="componentlist-cols" data-attributeLabel="cols">3</p></div><br>' +
       '</div>' +
-      '<div style="clear:both">' +
-      '</div>' +
+      '<div style="clear:both"></div>' +
       '</div>' +
       '</div>' +
       '</div>',

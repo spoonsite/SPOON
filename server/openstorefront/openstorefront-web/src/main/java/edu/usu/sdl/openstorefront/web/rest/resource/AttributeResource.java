@@ -369,7 +369,7 @@ public class AttributeResource
 				article.setDescription(articleView.getDescription());
 				attributeCode.setArticle(article);
 				service.getAttributeService().saveArticle(attributeCode, articleView.getHtml());
-				return Response.ok().build();
+				return Response.ok(attributeCode).build();
 			} else {
 				return Response.ok(validationResult.toRestError()).build();
 			}
