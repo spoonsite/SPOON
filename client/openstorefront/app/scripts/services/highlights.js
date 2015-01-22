@@ -61,10 +61,10 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
 
   var highlights = {};
 
-  highlights.getHighlights = function() {
+  highlights.getHighlights = function(override) {
     var deferred = $q.defer();
     var highlights = checkExpire('highlights', minute * 1440);
-    if (highlights) {
+    if (highlights && !override) {
       deferred.resolve(highlights);
     } else {
       $http({
