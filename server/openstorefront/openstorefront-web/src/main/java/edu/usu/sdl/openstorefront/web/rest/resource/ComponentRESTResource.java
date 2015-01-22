@@ -57,6 +57,8 @@ import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
@@ -71,7 +73,9 @@ import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -89,6 +93,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import jersey.repackaged.com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * ComponentRESTResource Resource
@@ -130,12 +135,45 @@ public class ComponentRESTResource
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(filterQueryParams.getStatus());
 		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+		long total = components.size();
 		components = filterQueryParams.filter(components);
 
-		GenericEntity<List<Component>> entity = new GenericEntity<List<Component>>(components)
-		{
-		};
-		return sendSingleEntityResponse(entity);
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
+
+		List<ComponentIntegrationConfig> componentIntegrationConfigs = service.getPersistenceService().queryByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		Map<String, List<ComponentIntegrationConfig>> configMap = new HashMap<>();
+		componentIntegrationConfigs.forEach(config -> {
+			if (configMap.containsKey(config.getComponentId())) {
+				configMap.get(config.getComponentId()).add(config);
+			} else {
+				List<ComponentIntegrationConfig> configList = new ArrayList<>();
+				configList.add(config);
+				configMap.put(config.getComponentId(), configList);
+			}
+		});
+
+		List<ComponentAdminView> componentAdminViews = new ArrayList<>();
+		for (Component component : components) {
+			ComponentAdminView componentAdminView = new ComponentAdminView();
+			componentAdminView.setComponent(component);
+			StringBuilder configs = new StringBuilder();
+			List<ComponentIntegrationConfig> configList = configMap.get(component.getComponentId());
+			if (configList != null) {
+				configList.forEach(config -> {
+					if (StringUtils.isNotBlank(config.getIssueNumber())) {
+						configs.append("(").append(config.getIntegrationType()).append(" - ").append(config.getIssueNumber()).append(") ");
+					} else {
+						configs.append("(").append(config.getIntegrationType()).append(") ");
+					}
+				});
+			}
+			componentAdminView.setIntegrationManagement(configs.toString());
+			componentAdminView.setComponent(component);
+			componentAdminViews.add(componentAdminView);
+		}
+		ComponentAdminWrapper componentAdminWrapper = new ComponentAdminWrapper(componentAdminViews, total);
+		return sendSingleEntityResponse(componentAdminWrapper);
 	}
 
 	@GET
