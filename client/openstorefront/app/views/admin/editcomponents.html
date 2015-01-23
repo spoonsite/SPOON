@@ -67,7 +67,7 @@ limitations under the License.
 				<th><a href="" ng-click="setPredicate('component.lastActivityDts', 'components');" title="Last time the component of any component date was updated">Last Activity Date <span ng-show="predicate['components']  === 'component.lastActivityDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th><a href="" ng-click="setPredicate('component.approvedDts', 'components');">Approval Date<span ng-show="predicate['components']  === 'component.approvedDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th><a href="" ng-click="setPredicate('component.approvalState', 'components');">Approval State<span ng-show="predicate['components']  === 'component.approvalState'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-				<th><a href="" ng-click="setPredicate('integrationManagement', 'components');">Integration Management<span ng-show="predicate['components']  === 'integrationManagement'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
+				<th><a href="" ng-click="setPredicate('integrationManagement', 'components');"  title="Shows if the component's data is being patially managed by an external system ">Integration Management<span ng-show="predicate['components']  === 'integrationManagement'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
 				<th>Action</th>
 			</tr>
 			<tr ng-repeat="component in filteredComponents | orderBy:predicate['components']:reverse['components']" >
@@ -75,12 +75,13 @@ limitations under the License.
 				<td>{{component.component.description | limitTo: 100}}</td>
 				<td>{{component.component.lastActivityDts}}</td>
 				<td>{{component.component.approvedDts}}</td>
-				<td>{{component.component.approvalState}}</td>
+				<td align="center">{{component.component.approvalState}}</td>
 				<td>{{component.integrationManagement}}</td>
 				<td style="padding:0px; width: 200px;">&nbsp;
-					<button class="btn" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>
-					<button class="btn" ng-click="editComponent(component);"  title="Activate/Inactivate" ng-class="component.component.activeStatus === 'I' ? 'inverted':'' "><i class="fa fa-power-off"></i></button>					
-					<button class="btn" ng-click="editComponent(component);"  title="Export"><i class="fa fa-sign-out"></i></button>					
+					<button class="btn btn-primary" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>
+					<button class="btn btn-primary" ng-click="toggleStatus(component)"  title="Activate/Inactivate" ng-class="component.component.activeStatus === 'I' ? 'inverted':'' "><i class="fa fa-power-off"></i></button>					
+					<button class="btn btn-info" ng-click="exportComponent(component.component.componentId)"  title="Export"><i class="fa fa-sign-out"></i></button>
+					<button class="btn btn-danger" ng-click="deleteComponent(component.component)"  title="Delete"><i class="fa fa-trash"></i></button>
 				</td>
 			</tr>
 
