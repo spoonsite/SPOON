@@ -749,8 +749,52 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function($http, $q
       });
     
     return deferred.promise;    
+  };  
+  
+  componentservice.activateComponent = function(componentId) {
+        var deferred = $q.defer();
+    
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/resource/components/' + componentId + '/activate' 
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;    
   };
   
+  componentservice.inactivateComponent = function(componentId) {
+        var deferred = $q.defer();
+    
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/components/' + componentId
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;    
+  };  
+  
+  componentservice.deleteComponent = function(componentId) {
+        var deferred = $q.defer();
+    
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/components/' + componentId + '/cascade'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;    
+  };   
   
   
   return componentservice;

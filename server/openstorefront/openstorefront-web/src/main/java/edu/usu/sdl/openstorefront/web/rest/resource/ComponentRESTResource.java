@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
@@ -23,6 +24,8 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.sort.SortUtil;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
@@ -53,6 +56,7 @@ import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -208,6 +212,67 @@ public class ComponentRESTResource
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
 		return sendSingleEntityResponse(view);
+	}
+
+	@GET
+	@APIDescription("Gets a component <br>(Note: this only the top level component object only)")
+	@RequireAdmin
+	@Produces({MediaType.WILDCARD})
+	@DataType(ComponentAll.class)
+	@Path("/{id}/export")
+	public Response getComponentExport(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
+		if (componentAll != null) {
+			Response.ResponseBuilder response = Response.ok(componentAll.export());
+			response.header("Content-Disposition", "attachment; filename=\"" + componentAll.getComponent().getName() + ".json\"");
+			return response.build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+
+	@GET
+	@APIDescription("Gets a component <br>(Note: this only the top level component object only)")
+	@RequireAdmin
+	@Produces({MediaType.WILDCARD})
+	@DataType(ComponentAll.class)
+	@Path("/export")
+	public Response getComponentExport(@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(filterQueryParams.getStatus());
+		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+		components = filterQueryParams.filter(components);
+
+		if (components.isEmpty() == false) {
+			List<ComponentAll> fullComponents = new ArrayList<>();
+			for (Component component : components) {
+				ComponentAll componentAll = service.getComponentService().getFullComponent(component.getComponentId());
+				fullComponents.add(componentAll);
+			}
+
+			String componentJson;
+			try {
+				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
+				Response.ResponseBuilder response = Response.ok(componentJson);
+				response.header("Content-Disposition", "attachment; filename=\"AllComponents.json\"");
+				return response.build();
+			} catch (JsonProcessingException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to export component.", ex);
+			}
+		} else {
+			Response.ResponseBuilder response = Response.ok("[]");
+			response.header("Content-Disposition", "attachment; filename=\"AllComponents.json\"");
+			return response.build();
+		}
 	}
 
 	@POST
@@ -1220,7 +1285,9 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		return service.getComponentService().getBaseComponent(ComponentResource.class, componentId);
+		List<ComponentResource> componentResources = service.getComponentService().getBaseComponent(ComponentResource.class, componentId);
+		componentResources = SortUtil.sortComponentResource(componentResources);
+		return componentResources;
 	}
 
 	@GET

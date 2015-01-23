@@ -2,7 +2,7 @@
 
 /*global triggerError, removeError, isEmpty*/
 
-app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', function ($scope, Business, $timeout) {
+app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$uiModal',  function ($scope, Business, $timeout, $uiModal) {
 
     $scope.predicate = [];
     $scope.reverse = [];
@@ -21,7 +21,8 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
     $scope.componentFilter = {};
     $scope.componentFilter.search = '';
     $scope.componentFilter.status = $scope.statusFilterOptions[0];
-
+    $scope.flags = {};
+    $scope.flags.showUpload = false;
 
     $scope.firstPage = function () {
       $scope.pageNumber = 1;
@@ -72,7 +73,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
 
 
     $scope.refreshComponents = function () {
-      $scope.$emit('$TRIGGERLOAD', 'ticketLoader');
+      $scope.$emit('$TRIGGERLOAD', 'componentLoader');
       $scope.queryFilter.status = $scope.componentFilter.status.code;
       $scope.queryFilter.offset = ($scope.pageNumber - 1) * $scope.queryFilter.max;
       Business.componentservice.getFilteredComponents($scope.queryFilter).then(function (results) {
@@ -84,10 +85,13 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
 
           $scope.maxPageNumber = Math.ceil($scope.components.totalNumber / $scope.queryFilter.max);
         }
-        $scope.$emit('$TRIGGERUNLOAD', 'ticketLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
       });
     };
     $scope.refreshComponents();
+    $scope.$on('$REFRESH_COMPONENTS', function(){       
+        $scope.refreshComponents();
+    });     
 
     $scope.filterComponentResults = function(){
       if ($scope.componentFilter.search === '') {
@@ -100,255 +104,84 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', func
     };
 
 
+    $scope.editComponent = function(component){
+        var modalInstance = $uiModal.open({
+        templateUrl: 'views/admin/component/editComponent.html',
+        controller: 'AdminComponentEditCtrl',
+        size: 'lg',
+        resolve: {
+          component: function () {
+            return component;
+          },
+          editMode: function(){
+            return true;
+          }
+        }
+      });     
+    };
+    
+    $scope.addComponent = function(){
+        var modalInstance = $uiModal.open({
+        templateUrl: 'views/admin/component/editComponent.html',
+        controller: 'AdminComponentEditCtrl',
+        size: 'lg',
+        resolve: {
+          component: function () {
+            return {};
+          },
+          editMode: function(){
+            return false;
+          }
+        }
+      });       
+    };
+    
+    $scope.toggleStatus = function(component){
+      $scope.$emit('$TRIGGERLOAD', 'componentLoader');
+      if (component.component.activeStatus === 'A') {
+        Business.componentservice.inactivateComponent(component.component.componentId).then(function (results) {
+          $scope.refreshComponents();
+          $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+        });        
+      } else {
+        Business.componentservice.activateComponent(component.component.componentId).then(function (results) {
+          $scope.refreshComponents();
+          $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+        });        
+      }
+    };
+    
+    $scope.exportComponent = function(componentId){
+      window.location.href = "api/v1/resource/components/" + componentId + "/export";
+    };    
+    
+    $scope.deleteComponent = function(component){
+      var response = window.confirm("Are you sure you want DELETE  "+ component.name + "?");
+      if (response) {
+        $scope.$emit('$TRIGGERLOAD', 'componentLoader');
+        Business.componentservice.deleteComponent(component.componentId).then(function (result) {          
+          $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+          $scope.refreshComponents();
+        });
+      }
+    }; 
+     
+    $scope.exportAll = function(){
+       window.location.href = "api/v1/resource/components/export";
+    };
+     
 
+}]);
 
-//  $scope._scopename = 'editComponent?';
-//  $scope.base = {};
-//  $scope.subComponent = {};
-//  $scope.relatedComponent = {};
-//  $scope.currentDependency = {};
-//  $scope.requiredAttributes = [];
-//  $scope.item = null;
-//  $scope.search = null;
-//  $scope.componentListKey = null;
-//  $scope.found = false;
-//  $scope.nav = {
-//    'bars': [
-//    {
-//      'title': 'General',
-//      'location': 'views/admin/component/generalform.html'
-//    }, {
-//      'title': 'Evaluation',
-//      'location': 'views/admin/component/evaluationform.html'
-//    }, {
-//      'title': 'Attributes/Vitals',
-//      'location': 'views/admin/component/componentvitalsform.html'
-//    }, {
-//      'title': 'Artifacts',
-//      'location': 'views/admin/component/componentartifactsform.html'
-//    }, {
-//      'title': 'Contacts',
-//      'location': 'views/admin/component/pocform.html'
-//    }, {
-//      'title': 'Reviews/Tags/Q&A',
-//      'location': 'views/admin/component/reviews.html'
-//    }],
-//    'current': ''
-//  };
-//
-//  Business.getFilters().then(function(result){
-//    if (result) {
-//      $scope.filters = angular.copy(result);
-//      _.each($scope.filters, function(filter){
-//        if (filter.requiredFlg) {
-//          $scope.requiredAttributes[filter.description] = filter.codes[0];
-//        }
-//      });
-//    }
-//  });
-//
-//
-//  /***************************************************************
-//  * Dependency functions
-//  ***************************************************************/
-//  $scope.resetForm = function(){
-//    $scope.found = false;
-//  };
-//
-//  $scope.editDependency = function($index) {
-//    $scope.editDep = true;
-//    $scope.depIndex = $index;
-//    $scope.currentDependency = angular.copy($scope.item.dependencies[$index]);
-//  };
-//
-//  $scope.deleteDependency = function(index) {
-//    $scope.item.dependencies.splice(index, 1);
-//    $scope.currentDependency = {};
-//  };
-//
-//  $scope.resetDependency = function() {
-//    $scope.currentDependency = $scope.item.dependencies[$scope.depIndex];
-//  };
-//
-//  $scope.clearDependency = function() {
-//    $scope.currentDependency.dependency = null;
-//    $scope.currentDependency.version = null;
-//    $scope.currentDependency.dependencyReferenceLink = null;
-//    $scope.currentDependency.comment = null;
-//  };
-//
-//  var checkDependency = function() {
-//    var passed = true;
-//    if (!($scope.currentDependency.comment && $scope.currentDependency.comment !== '')){
-//      passed = false;
-//      triggerError({
-//        'errors': [
-//        {'dependencyComment': 'Dependencies must have a comment to describe them.'}
-//        ]
-//      });
-//    } else {
-//      removeError('dependencyComment');
-//    }
-//    if (!($scope.currentDependency.dependency && $scope.currentDependency.dependency !== '')){
-//      passed = false;
-//      triggerError({
-//        'errors': [
-//        {'dependency': 'Dependencies must have a title.'}
-//        ]
-//      });
-//    } else {
-//      removeError('dependency');
-//    }
-//    return passed;
-//  };
-//
-//  $scope.saveDependency = function() {
-//    if (checkDependency()) {
-//      $scope.editDep = false;
-//      $scope.item.dependencies[$scope.depIndex] = $scope.currentDependency;
-//      $scope.currentDependency = {};
-//    }
-//  };
-//
-//  $scope.addDependency = function() {
-//    if (!isEmpty($scope.currentDependency)) {
-//      if (checkDependency()) {
-//        $scope.item.dependencies.push($scope.currentDependency);
-//        $scope.currentDependency = {};
-//      }
-//    }
-//  };
-//
-//  $scope.doComponentSearch = function() {
-//    if (typeof $scope.componentListKey === 'object' && $scope.componentListKey) {
-//      $scope.item = $scope.componentListKey;
-//      $scope.found = true;
-//      $scope.search = null;
-//      $timeout(function(){
-//        $scope.nav.current = 'General';
-//      });
-//
-//    } else if ($scope.componentListKey){
-//      Business.componentservice.doSearch('search', $scope.componentListKey).then(function(result){
-//        if (result && result.data) {
-//          $scope.search = result.data;
-//        } else {
-//          $scope.search = [];
-//        }
-//      });
-//    }
-//  };
-//
-//  $scope.setItem = function(id) {
-//    Business.componentservice.getComponentDetails(id).then(function(result){
-//      if (result) {
-//        $scope.item = result;
-//        $scope.found = true;
-//        $timeout(function(){
-//          $scope.nav.current = 'General';
-//        });
-//      }
-//    });
-//  };
-//
-//  $scope.deleteSubComponent = function(id) {
-//    var index = _.find($scope.item.subComponents, {'componentId': id});
-//    var delIndex = $scope.item.subComponents.indexOf(index);
-//    // console.log('delindex', delIndex);
-//    
-//    if (delIndex > -1) {
-//      $scope.item.subComponents.splice(delIndex, 1);
-//    }
-//  };
-//  
-//  $scope.deleteRelatedComponent = function(id) {
-//    var index = _.find($scope.item.relatedComponents, {'componentId': id});
-//    var delIndex = $scope.item.relatedComponents.indexOf(index);
-//    // console.log('delindex', delIndex);
-//    
-//    if (delIndex > -1) {
-//      $scope.item.relatedComponents.splice(delIndex, 1);
-//    }
-//  };
-//
-//  $scope.savebase = function() {
-//    // console.log('scope.item', $scope.item);
-//  };
-//
-//  $scope.$watch('subComponent', function(value) {
-//    if (value) {
-//      if (typeof value === 'object' && value.subComponent && value.subComponent.componentId && value.subComponent.name) {
-//        var found = _.some($scope.item.subComponents, function(thing){
-//          return thing.componentId === value.subComponent.componentId;
-//        });
-//        if (!found && value.subComponent.componentId !== $scope.item.componentId) {
-//          $scope.item.subComponents.push(value.subComponent);
-//        }
-//        $scope.subComponent.subComponent = null;
-//      }
-//    }
-//  }, true);
-//  $scope.$watch('relatedComponent', function(value) {
-//    if (value) {
-//      if (typeof value === 'object' && value.relatedComponent && value.relatedComponent.componentId && value.relatedComponent.name) {
-//        var found = _.some($scope.item.relatedComponents, function(thing){
-//          return thing.componentId === value.relatedComponent.componentId;
-//        });
-//        if (!found && value.relatedComponent.componentId !== $scope.item.componentId) {
-//          $scope.item.relatedComponents.push(value.relatedComponent);
-//        }
-//        $scope.relatedComponent.relatedComponent = null;
-//      }
-//    }
-//  }, true);
-//
-//  $scope.$watch(function() {
-//    return $scope.item? $scope.item.parentComponent: null;
-//  }, function(value){
-//    if (value) {
-//      // console.log('changes', $scope.item.parentComponent);
-//      if (value && value.componentId && value.name) {
-//        $scope.parentSuccess = 'good';
-//      } else {
-//        $scope.parentSuccess = 'bad';
-//      }
-//    } else {
-//      $scope.parentSuccess = 'bad';
-//    }
-//  }, true);
-//
-//  $scope.$watch('componentListKey', function(value) { /*jshint unused:false*/
-//    $scope.doComponentSearch();
-//  });
-//
-//  $scope.$on('$typeahead.select', function(event, data){
-//    if (data.triggerFlg) {
-//      if (data.componentId && data.name) {
-//        if (data.triggerFlg === 'parent') {
-//          delete data.triggerFlg;
-//          if ($scope.item.componentId !== data.componentId) {
-//            $scope.item.parentComponent = data;
-//          } else {
-//            $scope.parentSuccess = false;
-//            $scope.item.parentComponent = null;
-//          }
-//        } else if (data.triggerFlg === 'sub'){
-//          delete data.triggerFlg;
-//          $scope.subComponent.subComponent = data;
-//        } else {
-//          delete data.triggerFlg;
-//          $scope.relatedComponent.relatedComponent = data;
-//        }
-//        $scope.$apply();
-//      } else if (data === '') {
-//        if (data.triggerFlg === 'parent') {
-//          $scope.item.parentComponent = null;
-//        } else {
-//          $scope.subComponent.subComponent = null;
-//        }
-//      }
-//    }
-//  });
-
-
+app.controller('AdminComponentEditCtrl', ['$scope', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', 'FileUploader',
+  function ($scope, $uiModalInstance, component, editMode, Business, $uiModal, FileUploader) {
+    
+    $scope.editMode = editMode;
+    $scope.editModeText = $scope.editMode ? 'Edit ' + component.name : 'Add Component';
+    $scope.componentForm = angular.copy(component.component);
+    
+    $scope.close = function () {
+      $uiModalInstance.dismiss('close');
+    };
+    
 }]);

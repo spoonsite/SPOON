@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.service.transfermodel.QuestionAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
+import edu.usu.sdl.openstorefront.sort.SortUtil;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -323,6 +324,7 @@ public class ComponentServiceImpl
 		result.setTags(getBaseComponent(ComponentTag.class, componentId));
 
 		List<ComponentResource> componentResources = getBaseComponent(ComponentResource.class, componentId);
+		componentResources = SortUtil.sortComponentResource(componentResources);
 		componentResources.forEach(resource -> {
 			result.getResources().add(ComponentResourceView.toView(resource));
 		});
@@ -1742,7 +1744,10 @@ public class ComponentServiceImpl
 			componentAll = (ComponentAll) element.getObjectValue();
 		} else {
 			componentAll = new ComponentAll();
-			componentAll.setComponent(persistenceService.findById(Component.class, componentId));
+
+			Component componentExample = new Component();
+			componentExample.setComponentId(componentId);
+			componentAll.setComponent(persistenceService.queryOneByExample(Component.class, componentExample));
 			componentAll.setAttributes(getAttributesByComponentId(componentId));
 			componentAll.setContacts(getBaseComponent(ComponentContact.class, componentId));
 			componentAll.setEvaluationSections(getBaseComponent(ComponentEvaluationSection.class, componentId));
@@ -1750,6 +1755,8 @@ public class ComponentServiceImpl
 			componentAll.setMedia(getBaseComponent(ComponentMedia.class, componentId));
 			componentAll.setMetadata(getBaseComponent(ComponentMetadata.class, componentId));
 			componentAll.setResources(getBaseComponent(ComponentResource.class, componentId));
+			componentAll.setResources(SortUtil.sortComponentResource(componentAll.getResources()));
+
 			componentAll.setTags(getBaseComponent(ComponentTag.class, componentId));
 
 			List<QuestionAll> allQuestions = new ArrayList<>();
