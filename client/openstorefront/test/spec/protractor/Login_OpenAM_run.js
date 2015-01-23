@@ -19,7 +19,7 @@
 //openAM = false; other = true;
 
 // TESTING SITE
-theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
+theSite = 'http://store-dev.usu.di2e.net/openstorefront/index.html';
 openAM = false; other = true;
 
 
@@ -34,12 +34,12 @@ if (openAM) {
     browser.driver.sleep(1000);
 }
 
-// Other Non-OpenAM site, but still need to login (manually)
+// Other Non-OpenAM site)
 if (other) {
-    console.log('**********  Please manually log in, you have ~30 seconds.  **********');
-    console.log(theSite);
-    console.log('UN:admin,  PW:secret');
-    console.log('*********************************************************************');
-    browser.driver.sleep(31000);
+    browser.ignoreSynchronization = true;
+    browser.get(theSite, 3500);
+    element.all(by.css('.form-control')).get(0).sendKeys('admin');
+    element.all(by.css('.form-control')).get(1).sendKeys('secret', protractor.Key.ENTER);
+    browser.driver.sleep(2000);
 }
 
