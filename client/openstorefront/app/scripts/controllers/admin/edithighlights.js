@@ -17,17 +17,31 @@
 'use strict';
 
 app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$timeout', function ($scope, Business, $uiModal, $timeout) {
-  $scope.predicate = 'description';
-  $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminHighlights');
+  $scope.predicate = 'title';
+  $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
   $scope.reverse = false;
   $scope.data = {};
+  $scope.deactivateButtons = false;
+  
+  $scope.setPredicate = function(predicate, override){
+    if ($scope.predicate === predicate){
+      $scope.reverse = !$scope.reverse;
+    } else {
+      $scope.predicate = predicate;
+      $scope.reverse = !!override;
+    }
+  }
 
-
-  Business.highlightservice.getHighlights(true).then(function(result){
-    $scope.data.highlights = result? result: [];
-  }, function(){
-    $scope.data.highlights = [];
-  })
+  $scope.getHighlights = function() {
+    Business.highlightservice.getHighlights(true, true).then(function(result){
+      $scope.data.highlights = result? result: [];
+      $scope.$emit('$TRIGGERUNLOAD', 'adminHighlights');
+    }, function(){
+      $scope.$emit('$TRIGGERUNLOAD', 'adminHighlights');
+      $scope.data.highlights = [];
+    })
+  }
+  $scope.getHighlights();
 
   $scope.setPredicate = function(predicate, override){
     if ($scope.predicate === predicate){
@@ -35,6 +49,30 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
     } else {
       $scope.predicate = predicate;
       $scope.reverse = !!override;
+    }
+  }
+
+  $scope.getHighlightCodes = function() {
+    Business.lookupservice.getHighlightCodes().then(function(result){
+      console.log('highlightCodes', result);
+      
+      $scope.highlightCodes = result || [];
+    }, function(){
+      $scope.highlightCodes = [];
+    })
+  }
+  $scope.getHighlightCodes()
+
+  $scope.getHighlightCode = function(code){
+    if($scope.highlightCodes && $scope.highlightCodes.length) {
+      var found = _.find($scope.highlightCodes, {'code': code});
+      if (found) {
+        return found.description;
+      } else {
+        return code;
+      }
+    } else {
+      return code;
     }
   }
 
@@ -50,8 +88,42 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
     return ' ';
   }
 
-  $scope.deleteHighlights = function(highlight){
-    //Do stuff if we're deleting the highlight
+  $scope.changeActivity = function(highlight){
+    var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). Continue?");
+    if (cont) {
+      $scope.deactivateButtons = true;
+      if (highlight.activeStatus === 'A') {
+        $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
+        Business.highlightservice.deactivateHighlight(highlight.highlightId).then(function(){
+          $timeout(function(){
+            $scope.getHighlights(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminHighlights');
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.getHighlights(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminHighlights');
+          }, 1000);
+        })
+      } else {
+        $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
+        Business.highlightservice.activateHighlight(highlight.highlightId).then(function() {
+          $timeout(function(){
+            $scope.getHighlights(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminHighlights');
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.getHighlights(true);
+            $scope.deactivateButtons = false;
+            $scope.$emit('$TRIGGERUNLOAD', 'adminHighlights');
+          }, 1000);
+        })
+      }
+    }
   }
 
   $scope.editHighlights = function(highlight){
@@ -68,7 +140,13 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
 
     modalInstance.result.then(function (result) {
       $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
+      $timeout(function(){
+        $scope.getHighlights(true);
+      }, 1000);
     }, function (result) {
+      $timeout(function(){
+        $scope.getHighlights(true);
+      }, 1000);
       $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
     });
   }
@@ -80,12 +158,29 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
 
 app.controller('AdminEditHighlightsModalCtrl',['$scope', '$uiModalInstance', 'highlight', 'business', '$location', function ($scope, $uiModalInstance, highlight, Business, $location) {
 
-  $scope.highlight = angular.copy(highlight);
-  $scope.editorContent = '';
+  $scope.highlight = highlight? angular.copy(highlight) : {};
+  $scope.editorContent = angular.copy($scope.highlight.description) || ' ';
   $scope.editorOptions = getCkConfig(true);
+  $scope.highlightCodes;
+
+  Business.lookupservice.getHighlightCodes().then(function(result){
+    console.log('highlightCodes', result);
+    
+    $scope.highlightCodes = result || [];
+  }, function(){
+    $scope.highlightCodes = [];
+  })
+
 
   $scope.ok = function () {
-    $uiModalInstance.close();
+    $scope.highlight.description = $scope.editorContentWatch;
+    console.log('$scope.highlight', $scope.highlight);
+    Business.highlightservice.saveHighlight($scope.highlight).then(function(result){
+      triggerAlert('The changes to the highlight were saved', 'highlightAlert', 'body', 6000);
+      $uiModalInstance.close();
+    }, function(){
+      triggerAlert('There were errors when saving the highlight', 'highlightAlert', 'highlightEditModal', 6000);
+    })
   };
 
   $scope.cancel = function () {
@@ -93,4 +188,3 @@ app.controller('AdminEditHighlightsModalCtrl',['$scope', '$uiModalInstance', 'hi
   };
 
 }]);
-

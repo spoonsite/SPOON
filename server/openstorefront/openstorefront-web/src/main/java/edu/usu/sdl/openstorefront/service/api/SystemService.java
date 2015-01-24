@@ -84,6 +84,14 @@ public interface SystemService
 	public void removeHighlight(String hightlightId);
 
 	/**
+	 * Inactive Hightlight
+	 *
+	 * @param hightlightId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void activateHighlight(String hightlightId);
+
+	/**
 	 * Delete all old and save new highlights This assume to be called by the
 	 * importer and is meant to sync the DB with the file
 	 *

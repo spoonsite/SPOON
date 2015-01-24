@@ -144,6 +144,18 @@ public class SystemServiceImpl
 	}
 
 	@Override
+	public void activateHighlight(String hightlightId)
+	{
+		Highlight highlight = persistenceService.findById(Highlight.class, hightlightId);
+		if (highlight != null) {
+			highlight.setActiveStatus(Highlight.ACTIVE_STATUS);
+			highlight.setUpdateUser(SecurityUtil.getCurrentUserName());
+			highlight.setUpdateDts(TimeUtil.currentDate());
+			persistenceService.persist(highlight);
+		}
+	}
+
+	@Override
 	public void syncHighlights(List<Highlight> highlights)
 	{
 		int removeCount = persistenceService.deleteByExample(new Highlight());
