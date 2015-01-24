@@ -141,6 +141,37 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     return deferred.promise;
   };
 
+  var getHighlightCodes = function() {
+    var deferred = $q.defer();
+
+    if (refreshData.highlightType) {
+      localCache.clear('HighlightType');
+      refreshData.highlightType = false;
+    }
+
+    var highlightType = checkExpire('HighlightType', minute * 1440);
+    if (highlightType) {
+      deferred.resolve(highlightType);
+    } else {
+      loadLookupTable('HighlightType', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          save('HighlightType', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      }, false);
+    }
+
+    return deferred.promise;
+  };
+
   var getEvaluationSections = function() {
     var deferred = $q.defer();
 
@@ -384,6 +415,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     getSvcv4: getSvcv4,
     getEvaluationSections: getEvaluationSections,
     getContactTypeCodes: getContactTypeCodes,
+    getHighlightCodes:getHighlightCodes,
     getUserTypeCodes: getUserTypeCodes,
     getEvalLevels: getEvalLevels,
     getExpertise: getExpertise,

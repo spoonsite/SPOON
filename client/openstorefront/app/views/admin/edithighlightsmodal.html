@@ -12,16 +12,26 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="col-md-2" style="text-align:right;" for="description">Description</label>
+      <label class="col-md-2" style="text-align:right;" for="description">Highlight Code</label>
       <div class="col-md-10">
-        <textarea id="description" class="form-control" rows="5" ng-model="highlight.description"></textarea>
+        <select class="form-control" ng-model="highlight.highlightType" ng-options="type.code as type.description for type in highlightCodes"></select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-md-2" style="text-align:right;" for="description">Highlight Link</label>
+      <div class="col-md-10">
+        <input type="URL" class="form-control" id="title" placeholder="Title" ng-model="highlight.link">
       </div>
     </div>
     <div style="clear:both; margin-bottom:5px;"></div>
+
+
     <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
+    
+
+
     <div style="text-align: center; padding:5px;">
       <button type="submit" style="display:inline-block;" class="btn btn-primary">Save Changes</button>
-      <button type="button" style="display:inline-block;" class="btn btn-primary" ng-click="preview()">Preview Changes</button>
       <button type="button" style="display:inline-block;" class="btn btn-danger" ng-click="cancel()">Cancel Changes</button>
     </div>
   </form>
