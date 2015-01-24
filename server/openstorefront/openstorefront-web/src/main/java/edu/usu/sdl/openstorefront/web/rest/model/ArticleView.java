@@ -18,15 +18,11 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
-import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
-import java.nio.file.attribute.AttributeView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,16 +71,15 @@ public class ArticleView
 		ArticleView articleView = new ArticleView();
 		articleView.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 		articleView.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
-		AttributeCodePk pk = new AttributeCodePk();
-		pk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-		pk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
-		AttributeCode code = service.getAttributeService().findCodeForType(pk);
-		AttributeType type = service.getAttributeService().findType(attributeCode.getAttributeCodePk().getAttributeType());
 
-		articleView.setCodeDescription(code.getLabel());
-		articleView.setCodeLongDescription(code.getDescription());
-		articleView.setTypeDescription(type.getDescription());
-		articleView.setTypeLongDescription(type.getDescription());
+		articleView.setCodeDescription(attributeCode.getLabel());
+		articleView.setCodeLongDescription(attributeCode.getDescription());
+
+		AttributeType type = service.getPersistenceService().findById(AttributeType.class, attributeCode.getAttributeCodePk().getAttributeType());
+		if (type != null) {
+			articleView.setTypeDescription(type.getDescription());
+			articleView.setTypeLongDescription(type.getDescription());
+		}
 		if (attributeCode.getArticle() != null) {
 			if (StringUtils.isNotBlank(attributeCode.getArticle().getTitle())) {
 				articleView.setTitle(attributeCode.getArticle().getTitle());
@@ -110,7 +105,7 @@ public class ArticleView
 		articleView.setHtml(content);
 		return articleView;
 	}
-	
+
 	public static List<ArticleView> toViewList(List<AttributeCode> attributes)
 	{
 		List<ArticleView> views = new ArrayList<>();
