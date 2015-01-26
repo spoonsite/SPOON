@@ -67,7 +67,7 @@ CKEDITOR.on('instanceReady', function(ev)
       input: function(element)
       {
         return true;
-      },
+      }
     }
   });
 });
@@ -141,7 +141,7 @@ window.CKEDITOR_BASEPATH = '/scripts/common/ckeditor/';
 * To have a speific set up, we will need a nother config file, or some functions that define
 * what is returned here dynamically.
 ***************************************************************/
-var getCkConfig = function(noComonentList) {
+var getCkConfig = function() {
   var config = {};
   // Define changes to default configuration here.
   // For the complete reference:
@@ -169,51 +169,32 @@ var getCkConfig = function(noComonentList) {
 
   config.toolbar = 'Full';
 
-  if (!noComonentList) {
+  config.toolbar_Full =
+  [
+    ////////////////////////////////////////////////////////////////////////////
+    // THIS IS THE FULL SET
+    // { name: 'document', items : [ 'Source','-','Save','NewPage','DocProps','Preview','Print','-','Templates' ] },
+    // { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+    // { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
+    // { name: 'forms', items : [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+    // 'HiddenField' ] },
+    // '/',
+    // { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+    // { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv',
+    // '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
+    // { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+    // { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
+    // '/',
+    // { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
+    // { name: 'colors', items : [ 'TextColor','BGColor' ] },
+    // { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About' ] }
+    ////////////////////////////////////////////////////////////////////////////
 
-    config.toolbar_Full =
-    [
-      ////////////////////////////////////////////////////////////////////////////
-      // THIS IS THE FULL SET
-      // { name: 'document', items : [ 'Source','-','Save','NewPage','DocProps','Preview','Print','-','Templates' ] },
-      // { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-      // { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
-      // { name: 'forms', items : [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
-      // 'HiddenField' ] },
-      // '/',
-      // { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-      // { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv',
-      // '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
-      // { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
-      // { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
-      // '/',
-      // { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-      // { name: 'colors', items : [ 'TextColor','BGColor' ] },
-      // { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About' ] }
-      ////////////////////////////////////////////////////////////////////////////
+    // { name: 'font', items: ['Format', 'Font', 'FontSize', 'Bold', 'Italic', 'Underline', '-', 'TextColor', 'BGColor' ]},
+    // { name: 'styling', items: ['NumberedList', 'BulletedList', '-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ]},
+    // { name: 'inserts', items: ['Image','Table','HorizontalRule','SpecialChar', '-', 'Link','Unlink',] },
+    // { name: 'maximize', items: ['Maximize']}
 
-      // { name: 'font', items: ['Format', 'Font', 'FontSize', 'Bold', 'Italic', 'Underline', '-', 'TextColor', 'BGColor' ]},
-      // { name: 'styling', items: ['NumberedList', 'BulletedList', '-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ]},
-      // { name: 'inserts', items: ['Image','Table','HorizontalRule','SpecialChar', '-', 'Link','Unlink',] },
-      // { name: 'maximize', items: ['Maximize']}
-
-      { name: 'document', items : [ 'Source','-','Save','DocProps','Preview','Print','-','Templates' ] },
-      { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-      { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
-      { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-      '/',
-      { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv', '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
-      { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
-      { name: 'insert', items : [ 'Placeholder','Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
-      '/',
-      { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-      { name: 'colors', items : [ 'TextColor','BGColor' ] },
-      { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About',  ] },
-      { name: 'CusomtTools', items: ['ComponentButton'] }
-    //
-    ];
-  } else {
-    config.toolbar_Full = [
     { name: 'document', items : [ 'Source','-','Save','DocProps','Preview','Print','-','Templates' ] },
     { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
     { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
@@ -225,8 +206,10 @@ var getCkConfig = function(noComonentList) {
     '/',
     { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
     { name: 'colors', items : [ 'TextColor','BGColor' ] },
-    { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About',  ] }]
-  }
+    { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About',  ] },
+    { name: 'CusomtTools', items: ['ComponentButton'] }
+  //
+  ];
   // Remove some buttons, provided by the standard plugins, which we don't
   // need to have in the Standard(s) toolbar.
   // config.removeButtons = "Styles,Source,Subscript,Superscript,Strike Through";
@@ -256,7 +239,108 @@ var getCkConfig = function(noComonentList) {
 
   //misc options
   //height adjusts the content height.
-  // config.height = '500px';
+  //config.height = '500px';
+
+  return config;
+};
+
+var getCkBasicConfig = function() {
+  var config = {};
+  // Define changes to default configuration here.
+  // For the complete reference:
+  // http://docs.ckeditor.com/#!/api/CKEDITOR.config
+
+  // make sure that the spell-check-as-you-type is set to be on by default
+  /*jshint camelcase: false */
+  config.scayt_autoStartup = true;
+
+  // add the font plugin
+  config.extraPlugins = 'font,componentlist,placeholder,codesnippet';
+  // config.extraAllowedContent = 'component-list(*)[*]{*}';
+
+
+  // The toolbar groups arrangement, optimized for two toolbar rows.
+  config.toolbarGroups = [
+    //
+    {
+      name: 'document',
+      groups: [ 'mode', 'document', 'doctools' ]
+    }
+  //
+  ];
+
+
+  config.toolbar = 'Full';
+
+  config.toolbar_Full =
+  [
+    ////////////////////////////////////////////////////////////////////////////
+    // THIS IS THE FULL SET
+    // { name: 'document', items : [ 'Source','-','Save','NewPage','DocProps','Preview','Print','-','Templates' ] },
+    // { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+    // { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
+    // { name: 'forms', items : [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+    // 'HiddenField' ] },
+    // '/',
+    // { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+    // { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv',
+    // '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
+    // { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+    // { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
+    // '/',
+    // { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
+    // { name: 'colors', items : [ 'TextColor','BGColor' ] },
+    // { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About' ] }
+    ////////////////////////////////////////////////////////////////////////////
+
+    // { name: 'font', items: ['Format', 'Font', 'FontSize', 'Bold', 'Italic', 'Underline', '-', 'TextColor', 'BGColor' ]},
+    // { name: 'styling', items: ['NumberedList', 'BulletedList', '-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ]},
+    // { name: 'inserts', items: ['Image','Table','HorizontalRule','SpecialChar', '-', 'Link','Unlink',] },
+    // { name: 'maximize', items: ['Maximize']}
+
+    { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+    { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
+    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+    '/',
+    { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv', '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
+    { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+    { name: 'insert', items : [ 'Placeholder','Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak' ] },
+    '/',
+    { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
+    { name: 'colors', items : [ 'TextColor','BGColor' ] },
+    { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','Source'  ] }
+  //
+  ];
+  // Remove some buttons, provided by the standard plugins, which we don't
+  // need to have in the Standard(s) toolbar.
+  // config.removeButtons = "Styles,Source,Subscript,Superscript,Strike Through";
+  // config.removeButtons = 'Underline,Subscript,Superscript';
+
+  // Remove the "magicline" that suggests an inserted paragraph.
+  // config.removePlugins = 'magicline,elementspath';
+
+  // Set the most common block elements.
+  config.enterMode = CKEDITOR.ENTER_BR;
+  config.allowedContent = true;
+  config.extraAllowedContent = '*(*){*}[*]';
+  config.codeSnippet_theme = 'monokai_sublime';
+  config.contentsCss = 'styles/common/ckeditor-content.css';
+  config.forcePasteAsPlainText = false; // default so content won't be manipulated on load
+  config.basicEntities = true;
+  config.entities = true;
+  config.entities_latin = false;
+  config.entities_greek = false;
+  config.entities_processNumerical = false;
+  config.fillEmptyBlocks = function (element) {
+    return true; // DON'T DO ANYTHING!!!!!
+  };
+  
+  // Make dialogs simpler.
+  // config.removeDialogTabs = 'image:advanced;link:advanced;table:advanced';
+
+  //misc options
+  //height adjusts the content height.
+  config.height = '100px';
 
   return config;
 };
