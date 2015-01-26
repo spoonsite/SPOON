@@ -14,43 +14,179 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
+<style>
+	.required:after {
+		 content:"*"; 
+		 color:red;
+	}
+</style>
+
 <h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>{{editModeText}}</h2>
 <hr>
 <div  id="componentWindowDiv"  style="padding-left: 20px; padding-right: 20px;">
 	<tabset>
 		<tab heading="General">
-			
-			
-			
+			<br>
+			<div class="form-group"  >
+				<label class=" control-label required">Name</label>				
+					<input  type="text" 
+							id="firstName"
+							name="firstName"													
+							class="form-control" 
+							ng-model="userProfileForm.firstName" 
+							ng-minlength=1
+							ng-maxlength=250 
+							required 
+							ng-focus />
+					<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
+					<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
+				
+			</div>			
+			<div class="form-group" show-errors >
+				<label class="control-label required">Description</label>
+				<textarea ckeditor="editorOptions" style="height: 100px;" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>				
+			</div>
+			<div class="form-group" show-errors >
+				<label class="control-label">Parent Component</label><br>
+				  <button type="button" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
+					Select <span class="caret"></span>
+				  </button>  			
+			</div>	
+			<div class="form-group"  >
+				<label class=" control-label required" title="External Id">GUID</label>				
+					<input  type="text" 
+							id="firstName"
+							name="firstName"													
+							class="form-control" 
+							ng-model="userProfileForm.firstName" 
+							ng-minlength=1
+							ng-maxlength=40 
+							required 
+							ng-focus />
+					<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
+					<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
+				
+			</div>	
+			<div class="form-group"  >
+				<label class=" control-label required">Organization</label>				
+					<input  type="text" 
+							id="firstName"
+							name="firstName"													
+							class="form-control" 
+							ng-model="userProfileForm.firstName" 
+							ng-minlength=1
+							ng-maxlength=120
+							required 
+							ng-focus />
+					<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
+					<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
+				
+			</div>	
+			<div class="form-group"  >
+				<label class=" control-label">Release Date</label>	<br>			
+				<input type="text" id="releaseDate" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="recentChangesForm.lastRunDts"  placeholder="Date" data-date-type="number" bs-datepicker> 				
+			</div>	
+			<div class="form-group"  >
+				<label class=" control-label">Version</label>				
+					<input  type="text" 
+							id="firstName"
+							name="firstName"													
+							class="form-control" 
+							ng-model="userProfileForm.firstName" 
+							ng-minlength=0
+							ng-maxlength=255
+							required 
+							ng-focus />
+					<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
+					<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
+				
+			</div>	
+			<div class="form-group" show-errors >
+				<label class="control-label required">Approval State</label><br>
+				  <button type="button" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
+					Select <span class="caret"></span>
+				  </button>  			
+			</div>				
+			<hr>
+			<h3>Required Attributes</h3>
+			<hr>			
+			<button type="submit" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;Save</button>						
 		</tab>
 		<tab heading="Attributes">
-			
+			<br>
+			Attributes are filterable metadata about the asset.<br>
+			<div class="form-group" show-errors >
+				<label class="control-label">Attribute Type</label><br>
+				  <button type="button" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
+					Select <span class="caret"></span>
+				  </button>  			
+			</div>	
+			<div class="form-group" show-errors >
+				<label class="control-label">Attribute Code</label><br>
+				  <button type="button" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
+					Select <span class="caret"></span>
+				  </button>  			
+			</div>	
+			<button type="submit" class="btn btn-primary" ng-click="addAttribute()"><i class="fa fa-save"></i>&nbsp;Add</button>	
+			<div>	
+				<br>				
+				<button class="btn btn-default" ng-click="refreshAppProperties()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+			</div>	
+			<table class="table table-striped table-bordered">
+				<tr>
+					<th><a href="" ng-click="setPredicate('key', 'appProp');">Attribute Type <span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th>Attribute Code</th>
+					<th>Status</th>
+					<th>Orphan</th>									
+					<th>Action</th>
+				</tr>
+				<tr ng-repeat="prop in appProperties | orderBy:predicate['appProp']:reverse['appProp']" >
+					<td>{{prop.key}}</td>
+					<td>{{prop.value}}</td>
+					<td>{{prop.updateUser}}</td>
+					<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+					<td style="padding:0px; width: 200px;">&nbsp;
+						<button class="btn" ng-click="editAppProperty(prop);"  title="Edit"><i class="fa fa-edit"></i></button>
+						<button class="btn" ng-click="editAppProperty(prop);"  title="Toggle Status"><i class="fa fa-edit"></i></button>						
+					</td>
+				</tr>					
+			</table>
 		</tab>		
 		<tab heading="Contacts">
+			<br>
 			
 		</tab>
 		<tab heading="Resources">
+			<br>
 			
 		</tab>		
 		<tab heading="Media">
+			<br>
 			
 		</tab>		
 		<tab heading="Dependancies">
-		
+			<br>
+			
+			
 		</tab>
 		<tab heading="Evaluation Information">
-		
+			<br>
+			
 		</tab>
 		<tab heading="Metadata">
+			<br>
 			
 		</tab>		
 		<tab heading="Reviews">
+			<br>
 			
 		</tab>		
 		<tab heading="Questions">
+			<br>
 			
 		</tab>		
 		<tab heading="Tags">
+			<br>
 			
 		</tab>		
 	</tabset>

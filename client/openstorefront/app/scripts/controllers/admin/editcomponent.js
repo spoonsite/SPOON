@@ -179,6 +179,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$uiModalInstance', 'compone
     $scope.editMode = editMode;
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.name : 'Add Component';
     $scope.componentForm = angular.copy(component.component);
+    $scope.editorOptions = getCkBasicConfig();
     
     $scope.close = function () {
       $uiModalInstance.dismiss('close');
