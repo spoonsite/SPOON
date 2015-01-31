@@ -173,13 +173,364 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
 
 }]);
 
-app.controller('AdminComponentEditCtrl', ['$scope', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', 'FileUploader',
-  function ($scope, $uiModalInstance, component, editMode, Business, $uiModal, FileUploader) {
+app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', 'FileUploader', 
+  function ($scope, $q, $uiModalInstance, component, editMode, Business, $uiModal, FileUploader) {
     
     $scope.editMode = editMode;
-    $scope.editModeText = $scope.editMode ? 'Edit ' + component.name : 'Add Component';
-    $scope.componentForm = angular.copy(component.component);
+    $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
+    $scope.componentForm = component.component !== undefined ? angular.copy(component.component) : {};
     $scope.editorOptions = getCkBasicConfig();
+        
+    $scope.statusFilterOptions = [
+      {code: 'A', desc: 'Active'},
+      {code: 'I', desc: 'Inactive'}
+    ];
+    
+    $scope.predicate = [];
+    $scope.reverse = [];      
+    
+    var basicForm = {
+      saveText: 'Add',
+      edit: false
+    };
+    
+    var basicFilter = {
+      status: $scope.statusFilterOptions[0]
+    };    
+    
+    $scope.generalForm = {};   
+    $scope.generalForm.requiredAttribute = {};
+    $scope.flags = {};
+    if (component.integrationManagement){
+      $scope.flags.showIntegrationBanner = true;
+      $scope.integrationText = component.integrationManagement;
+    }
+    $scope.componentAttributeQueryFilter = angular.copy(utils.queryFilter);      
+
+          
+    $scope.attributeForm = angular.copy(basicForm);
+    $scope.componentAttributeViewQueryFilter = angular.copy(utils.queryFilter);      
+    $scope.attributeFilter = angular.copy(basicFilter);
+        
+    $scope.contactForm = angular.copy(basicForm);
+    $scope.contactQueryFilter = angular.copy(utils.queryFilter);   
+    $scope.contactQueryFilter.status = $scope.statusFilterOptions[0].code;
+    
+    $scope.resourceForm = angular.copy(basicForm);
+    $scope.resourceQueryFilter = angular.copy(utils.queryFilter);   
+    $scope.resourceQueryFilter.status = $scope.statusFilterOptions[0].code;
+    
+    
+    
+    $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+    
+    $scope.setPredicate = function (predicate, table) {
+      if ($scope.predicate[table] === predicate) {
+        $scope.reverse[table] = !$scope.reverse[table];
+      } else {
+        $scope.predicate[table] = predicate;
+        $scope.reverse[table] = false;
+      }
+    };
+    
+//<editor-fold   desc="COMMON Section">    
+
+    $scope.loadLookup = function(lookup, entity, loader){
+      $scope.$emit('$TRIGGERLOAD', loader);
+
+      Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+        $scope.$emit('$TRIGGERUNLOAD', loader);
+        if (results) {
+          $scope[entity]= results;
+        }        
+      });      
+    };
+    
+    $scope.loadEntity = function(entityOptions){
+      if ($scope.componentForm.componentId) {
+        $scope.$emit('$TRIGGERLOAD', entityOptions.loader);        
+        Business.componentservice.getComponentSubEntity({
+          componentId: $scope.componentForm.componentId,
+          entity: entityOptions.entity,
+          queryParamFilter: entityOptions.filter
+        }).then(function (results) {
+          $scope.$emit('$TRIGGERUNLOAD', entityOptions.loader);
+          if (results) {
+            $scope[entityOptions.entity] = results;
+          }
+        });
+      }
+    };
+    
+    $scope.toggleEntityStatus = function(entityOptions){
+      $scope.$emit('$TRIGGERLOAD', entityOptions.loader);
+      if(entityOptions.entity.activeStatus === 'A') {
+        Business.componentservice.inactivateEnity({
+          componentId: $scope.componentForm.componentId,
+          entityId: entityOptions.entityId,
+          entity: entityOptions.entityName
+        }).then(function (results) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', entityOptions.loader);
+          entityOptions.loadEntity();             
+        });        
+      } else {
+        Business.componentservice.activateEntity({
+          componentId: $scope.componentForm.componentId,
+          entityId: entityOptions.entityId,
+          entity: entityOptions.entityName
+        }).then(function (results) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', entityOptions.loader);
+          entityOptions.loadEntity();  
+        });        
+      }
+    };    
+    
+    $scope.editEntity = function(form, entity){
+      $scope[form] = angular.copy(entity);     
+      $scope[form].saveText = "Update";
+      $scope[form].edit = true; 
+      $scope[form].collapse = false;          
+    };
+
+    $scope.cancelEdit = function(form){
+      $scope[form] = {};
+      $scope[form].saveText = "Add";
+      $scope[form].edit = false;       
+    };
+
+//</editor-fold>       
+    
+    
+//<editor-fold   desc="General Section">
+    $scope.loadComponentList = function(){
+      Business.componentservice.getComponentLookupList().then(function (results) {
+        if (results) {          
+          $scope.parentComponents = results;                    
+          $scope.parentComponents.push({
+            code: '',
+            description: '  '
+          });
+          $scope.generalForm.parentComp = _.find($scope.parentComponents, {code: $scope.componentForm.parentComponentId});          
+        }
+      });      
+    };
+       
+    
+    $scope.loadApprovalStatus  = function(){
+      Business.componentservice.getComponentApproveStatus().then(function (results) {
+        if (results) {
+          $scope.approvalStatuses = results;
+          $scope.generalForm.approvalStatus = _.find($scope.approvalStatuses, {code: $scope.componentForm.approvalState});  
+        }
+      });      
+    };
+    
+    $scope.getAttributes = function (override) { 
+      Business.getFilters(override, false).then(function (result) {
+        $scope.allAttributes = result ? angular.copy(result) : [];
+        $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true});
+       
+      });
+    };    
+    
+    $scope.loadComponentAttributes = function(){
+      if ($scope.componentForm.componentId) {
+        $scope.componentAttributeQueryFilter.status = 'A';    
+        Business.componentservice.getComponentAttributes($scope.componentForm.componentId, $scope.componentAttributeQueryFilter).then(function (results) {
+          if (results) {
+            $scope.activeComponentAttributes = results;                    
+            _.forEach($scope.activeComponentAttributes, function (item) {
+              $scope.generalForm.requiredAttribute[item.componentAttributePk.attributeType] = item.componentAttributePk.attributeCode;
+            });            
+          }
+        });
+      }
+    };
+    
+    $scope.loadAllComponentForms = function(){
+      $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
+      
+      var deferred = $q.defer();
+      deferred.promise.then(function(){
+        $scope.loadComponentList();
+      }).then(function(){
+        $scope.loadApprovalStatus();  
+      }).then(function(){
+        $scope.getAttributes(true); 
+      }).then(function(){
+        $scope.loadComponentAttributes();
+      }).then(function(){
+        $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+      });      
+      deferred.resolve('Start');      
+    };
+    $scope.loadAllComponentForms();
+    
+    $scope.getCodesForType = function(type){
+      var foundType = _.find($scope.allAttributes, {type: type});
+      return foundType !== undefined ? foundType.codes : [];
+    };    
+    
+//</editor-fold>     
+    
+//<editor-fold   desc="ATTRIBUTE Section">
+
+    $scope.loadComponentAttributesView = function(){
+      if ($scope.componentForm.componentId) {
+        $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');
+        $scope.componentAttributeViewQueryFilter.status = $scope.attributeFilter.status.code;    
+        Business.componentservice.getComponentAttributeView($scope.componentForm.componentId, $scope.componentAttributeViewQueryFilter).then(function (results) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'attributeFormLoader');
+          if (results) {
+            $scope.componentAttributesView = results; 
+            $scope.componentAttributesView = _.filter($scope.componentAttributesView, {requiredFlg: false});
+          }
+        });
+      }
+    };    
+    $scope.loadComponentAttributesView();   
+    
+   
+    $scope.toggleAttributeStatus = function(attribute){
+      $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');
+      
+      if(attribute.activeStatus === 'A') {
+        Business.componentservice.inactivateAttribute($scope.componentForm.componentId, attribute.type, attribute.code).then(function (results) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'attributeFormLoader');
+          $scope.loadComponentAttributesView();              
+        });        
+      } else {
+        Business.componentservice.activateAttribute($scope.componentForm.componentId, attribute.type, attribute.code).then(function (results) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'attributeFormLoader');
+          $scope.loadComponentAttributesView();    
+        });        
+      }
+    }; 
+    
+    $scope.saveAttribute = function(){
+      $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');
+      var componentAttribute = {
+        componentAttributePk: {
+          attributeType : $scope.attributeForm.type,
+          attributeCode : $scope.attributeForm.code          
+        }
+      };
+      Business.componentservice.saveAttribute($scope.componentForm.componentId, componentAttribute).then(function (result) {
+        $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'attributeFormLoader');
+        if (result){
+          if (result && result !== 'false' && isNotRequestError(result)) {
+            removeError();
+            triggerAlert('Saved successfully', 'saveAttributes', 'componentWindowDiv', 3000);
+            $scope.attributeForm.type = "";
+            $scope.attributeForm.code = "";
+            $scope.loadComponentAttributesView();
+          } else {
+            removeError();
+            triggerError(result, true);
+          }
+        }        
+      });       
+    };
+    
+    $scope.cancelAttributeEdit = function(){
+      $scope.attributeForm.type = "";
+      $scope.attributeForm.code = "";
+      $scope.attributeForm.saveText = "Add";
+      $scope.attributeForm.edit = false;        
+    };
+//</editor-fold> 
+
+//<editor-fold   desc="Contact Section">
+    
+    $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader');  
+
+    $scope.loadContacts = function() {
+      $scope.loadEntity({
+      filter: $scope.contactQueryFilter,
+      entity: 'contacts',
+      loader: 'contactFormLoader'
+     });
+    };
+    $scope.loadContacts();    
+   
+    $scope.toggleContactStatus = function(contact){
+      $scope.toggleEntityStatus({
+        entity: contact,        
+        entityId: contact.contactId,
+        entityName: 'contacts',        
+        loader: 'contactFormLoader',
+        loadEntity: function(){
+          $scope.loadContacts();
+        }
+      });
+    };    
+    
+    $scope.saveContact = function(){
+      $scope.$emit('$TRIGGERLOAD', 'contactFormLoader');
+      
+      if ($scope.contactForm.edit){
+        Business.componentservice.updateContact($scope.componentForm.componentId, $scope.contactForm).then(function (result) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'contactFormLoader');
+          if (result) {
+            if (result && result !== 'false' && isNotRequestError(result)){      
+              removeError();
+              triggerAlert('Saved successfully', 'saveContact', 'contactManagementDivId', 3000);
+              $scope.cancelEdit('contactForm');
+              $scope.loadContacts();
+            } else {
+              removeError();
+              triggerError(result, true);
+            }
+          }
+        });         
+      } else {
+        Business.componentservice.addContact($scope.componentForm.componentId, $scope.contactForm).then(function (result) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'contactFormLoader');
+          if (result) {
+            if (result && result !== 'false' && isNotRequestError(result)){  
+              removeError();
+              triggerAlert('Saved successfully', 'saveContact', 'contactManagementDivId', 3000);
+              $scope.cancelEdit('contactForm');
+              $scope.loadContacts();
+            } else {
+              removeError();
+              triggerError(result, true);
+            }
+          }
+        });       
+      }      
+    };
+
+//</editor-fold>  
+
+//<editor-fold   desc="Resource Section">
+    
+    $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader');  
+
+    $scope.loadResources = function() {
+      $scope.loadEntity({
+      filter: $scope.resourceQueryFilter,
+      entity: 'resources',
+      loader: 'resourceFormLoader'
+     });
+    };
+    $scope.loadResources();
+    
+    $scope.toggleResourceStatus = function(resource){
+      $scope.toggleEntityStatus({
+        entity: resource,        
+        entityId: resource.resourceId,
+        entityName: 'resources',        
+        loader: 'resourceFormLoader',
+        loadEntity: function(){
+          $scope.loadResources();
+        }
+      });
+    };
+
+//</editor-fold> 
+    
+  
     
     $scope.close = function () {
       $uiModalInstance.dismiss('close');

@@ -61,10 +61,13 @@ public class ArticleImporter
 					AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(key);
 					String articleText = new String(Files.readAllBytes(Paths.get(file.getPath())));
 					AttributeCode attributeCode = serviceProxy.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
-					Article article = new Article();
-					attributeCode.setArticle(article);
-					serviceProxy.getAttributeService().saveArticle(attributeCode, articleText);
-
+					if (attributeCode != null) {
+						Article article = new Article();
+						attributeCode.setArticle(article);
+						serviceProxy.getAttributeService().saveArticle(attributeCode, articleText);
+					} else {
+						log.log(Level.SEVERE, MessageFormat.format("Unable to process article: {0}  Unable able to find attribute code.  Check the filename.", file.getPath()));
+					}
 				} else {
 					log.log(Level.WARNING, MessageFormat.format("Invalid filename: {0} make sure to follow this format.  <TYPE>" + ServiceUtil.COMPOSITE_KEY_SEPERATOR + "<CODE>.htm", file.getName()));
 				}
