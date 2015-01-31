@@ -290,13 +290,13 @@ public class DataConvertUseCase
 			updateUser = StringUtils.isNotBlank(oldAsset.getEditedBy().getUsername()) ? oldAsset.getEditedBy().getUsername() : OpenStorefrontConstant.SYSTEM_ADMIN_USER;
 
 			if ("Approved".equalsIgnoreCase(oldAsset.getApprovalStatus())) {
-				componentDetail.setApprovalState(Component.APPROVAL_STATE_APPROVED);
+				componentDetail.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.A.name());
 				if (componentDetail.getApprovedDts() == null) {
 					componentDetail.setApprovedDts(TimeUtil.currentDate());
 					componentDetail.setApprovedUser(createUser);
 				}
 			} else {
-				componentDetail.setApprovalState(Component.APPROVAL_STATE_PENDING);
+				componentDetail.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.P.name());
 			}
 
 			componentDetail.setCreateUser(createUser);

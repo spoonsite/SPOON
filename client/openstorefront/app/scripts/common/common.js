@@ -172,9 +172,9 @@ var triggerAlert = function(text, uid, id, delay, append) {
     }
     $('#alert_holder_'+uid).remove();
     if (append) {
-      $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+      $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
     } else {
-      $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+      $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;"  id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
     }
     
     // this will hide the alert on any action outside the alert box.
@@ -290,7 +290,7 @@ var showServerError = function(errorObj, id){
 *    ]
 *  };
 ***************************************************************/
-var triggerError = function(errorObj) {
+var triggerError = function(errorObj, useFormNames) {
   // console.log('errorObject', errorObj);
   
   if (isRequestError(errorObj)) {
@@ -299,14 +299,25 @@ var triggerError = function(errorObj) {
       // console.log('item', item);
       
       var i = item.key;
-      $('#'+i).addClass('errorOnInput');
-      $('#'+i).tooltip({
-        // container: 'body',
-        html: 'true',
-        placement: 'top',
-        trigger: 'focus',
-        title: item.value
-      });
+      if (useFormNames){
+        $("input[name='" + i + "']").addClass('errorOnInput');
+        $('#' + i).tooltip({
+          // container: 'body',
+          html: 'true',
+          placement: 'top',
+          trigger: 'focus',
+          title: item.value
+        });        
+      } else {
+        $('#' + i).addClass('errorOnInput');
+        $('#' + i).tooltip({
+          // container: 'body',
+          html: 'true',
+          placement: 'top',
+          trigger: 'focus',
+          title: item.value
+        });
+      }
     });
   }
 };

@@ -172,6 +172,20 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk)
+	{
+		T found = persistenceService.findById(subComponentClass, pk);
+		if (found != null) {
+			found.setActiveStatus(T.ACTIVE_STATUS);
+			found.populateBaseUpdateFields();
+			persistenceService.persist(found);
+
+			updateComponentLastActivity(found.getComponentId());
+		}
+		return found;
+	}
+
+	@Override
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)
 	{
 		deleteBaseComponent(subComponentClass, pk, true);
@@ -944,7 +958,7 @@ public class ComponentServiceImpl
 		}
 
 		if (StringUtils.isBlank(component.getApprovalState())) {
-			component.setApprovalState(Component.APPROVAL_STATE_PENDING);
+			component.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.A.name());
 		}
 
 		if (component.getLastActivityDts() != null) {
@@ -1231,7 +1245,7 @@ public class ComponentServiceImpl
 
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
-		parameters.put("approvedStateParam", Component.APPROVAL_STATE_APPROVED);
+		parameters.put("approvedStateParam", OpenStorefrontConstant.ComponentApprovalStatus.A.name());
 
 		return persistenceService.query(query, parameters);
 	}

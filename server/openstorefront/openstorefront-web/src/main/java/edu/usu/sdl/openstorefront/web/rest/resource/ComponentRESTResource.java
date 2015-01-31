@@ -63,17 +63,21 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
 import java.util.ArrayList;
@@ -122,6 +126,50 @@ public class ComponentRESTResource
 	public List<ComponentSearchView> getComponents()
 	{
 		return service.getComponentService().getComponents();
+	}
+
+	@GET
+	@APIDescription("Get a list of active components for selection list.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/lookup")
+	public Response getComponentLookupList()
+	{
+		List<LookupModel> lookupModels = new ArrayList<>();
+
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+		components.forEach(component -> {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(component.getComponentId());
+			lookupModel.setDescription(component.getName());
+			lookupModels.add(lookupModel);
+		});
+
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Get valid component approval statuses")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/approvalStatus")
+	public List<LookupModel> getComponentApprovalStatus()
+	{
+		List<LookupModel> lookupModels = new ArrayList<>();
+
+		for (OpenStorefrontConstant.ComponentApprovalStatus approvalStatus : OpenStorefrontConstant.ComponentApprovalStatus.values()) {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(approvalStatus.name());
+			lookupModel.setDescription(approvalStatus.getDescription());
+			lookupModels.add(lookupModel);
+		}
+
+		return lookupModels;
 	}
 
 	@GET
@@ -409,11 +457,56 @@ public class ComponentRESTResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentAttribute.class)
 	@Path("/{id}/attributes")
-	public List<ComponentAttribute> getComponentAttribute(
+	public Response getComponentAttribute(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
 	{
-		return service.getComponentService().getBaseComponent(ComponentAttribute.class, componentId);
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		List<ComponentAttribute> componentAttributes = new ArrayList<>();
+
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
+		componentAttributeExample.setComponentId(componentId);
+		componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+		componentAttributes = filterQueryParams.filter(componentAttributes);
+
+		GenericEntity<List<ComponentAttribute>> entity = new GenericEntity<List<ComponentAttribute>>(componentAttributes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Gets attributes for a component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentAttributeView.class)
+	@Path("/{id}/attributes/view")
+	public Response getComponentAttributeView(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
+		componentAttributeExample.setComponentId(componentId);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+		componentAttributes = filterQueryParams.filter(componentAttributes);
+		List<ComponentAttributeView> componentAttributeViews = ComponentAttributeView.toViewList(componentAttributes);
+
+		GenericEntity<List<ComponentAttributeView>> entity = new GenericEntity<List<ComponentAttributeView>>(componentAttributeViews)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -499,6 +592,28 @@ public class ComponentRESTResource
 		pk.setAttributeType(attributeType);
 		pk.setComponentId(componentId);
 		service.getComponentService().deactivateBaseComponent(ComponentAttribute.class, pk);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates an attribute on the component")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/attributes/{attributeType}/{attributeCode}/activate")
+	public Response activateComponentAttribute(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("attributeType")
+			@RequiredParam String attributeType,
+			@PathParam("attributeCode")
+			@RequiredParam String attributeCode)
+	{
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setAttributeCode(attributeCode);
+		pk.setAttributeType(attributeType);
+		pk.setComponentId(componentId);
+		service.getComponentService().activateBaseComponent(ComponentAttribute.class, pk);
+		ComponentAttribute componentAttribute = service.getPersistenceService().findById(ComponentAttribute.class, pk);
+		return sendSingleEntityResponse(componentAttribute);
 	}
 
 	@POST
@@ -634,6 +749,37 @@ public class ComponentRESTResource
 		return service.getComponentService().getBaseComponent(ComponentContact.class, componentId);
 	}
 
+	@GET
+	@APIDescription("Gets all contact for a component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentContactView.class)
+	@Path("/{id}/contacts/view")
+	public Response getComponentContact(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentContact componentContactExample = new ComponentContact();
+		componentContactExample.setActiveStatus(filterQueryParams.getStatus());
+		componentContactExample.setComponentId(componentId);
+
+		List<ComponentContact> contacts = service.getPersistenceService().queryByExample(ComponentContact.class, componentContactExample);
+		List<ComponentContactView> contactViews = new ArrayList<>();
+		contacts.forEach(contact -> {
+			contactViews.add(ComponentContactView.toView(contact));
+		});
+
+		GenericEntity<List<ComponentContactView>> entity = new GenericEntity<List<ComponentContactView>>(contactViews)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Remove a contact from the component")
@@ -651,6 +797,26 @@ public class ComponentRESTResource
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentContact.class, contactId);
 		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activate a contact on the component")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/contacts/{contactId}/activate")
+	public Response activateComponentContact(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("contactId")
+			@RequiredParam String contactId)
+	{
+		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, contactId);
+		if (componentContact != null) {
+			checkBaseComponentBelongsToComponent(componentContact, componentId);
+			service.getComponentService().activateBaseComponent(ComponentContact.class, contactId);
+			componentContact = service.getPersistenceService().findById(ComponentContact.class, contactId);
+		}
+		return sendSingleEntityResponse(componentContact);
 	}
 
 	@POST
@@ -815,6 +981,172 @@ public class ComponentRESTResource
 		}
 	}
 	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource RESOURCE section">
+	@GET
+	@APIDescription("Get the resources associated to the given component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentResource.class)
+	@Path("/{id}/resources")
+	public List<ComponentResource> getComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		List<ComponentResource> componentResources = service.getComponentService().getBaseComponent(ComponentResource.class, componentId);
+		componentResources = SortUtil.sortComponentResource(componentResources);
+		return componentResources;
+	}
+
+	@GET
+	@APIDescription("Get the resources associated to the given component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentResourceView.class)
+	@Path("/{id}/resources/view")
+	public Response getComponentResourceView(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setActiveStatus(filterQueryParams.getStatus());
+		componentResourceExample.setComponentId(componentId);
+		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+		componentResources = filterQueryParams.filter(componentResources);
+		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
+
+		GenericEntity<List<ComponentResourceView>> entity = new GenericEntity<List<ComponentResourceView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Get a resource associated to the given component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentResource.class)
+	@Path("/{id}/resources/{resourceId}")
+	public Response getComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("resourceId")
+			@RequiredParam String resourceId)
+	{
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setComponentId(componentId);
+		componentResourceExample.setResourceId(resourceId);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		return sendSingleEntityResponse(componentResource);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Remove a given resource from the specified entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/resources/{resourceId}")
+	public void deleteComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("resourceId")
+			@RequiredParam String resourceId)
+	{
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setComponentId(componentId);
+		componentResourceExample.setResourceId(resourceId);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		if (componentResource != null) {
+			service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates a resource")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/resources/{resourceId}/activate")
+	public Response activateComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("resourceId")
+			@RequiredParam String resourceId)
+	{
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setComponentId(componentId);
+		componentResourceExample.setResourceId(resourceId);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		if (componentResource != null) {
+			service.getComponentService().activateBaseComponent(ComponentResource.class, resourceId);
+			componentResource.setActiveStatus(Component.ACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(componentResource);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Add a resource to the given entity.  Use a form to POST Resource.action?UploadResource to upload file.  "
+			+ "To upload: pass the componentResource.resourceType...etc and 'file'.")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentResource.class)
+	@Path("/{id}/resources")
+	public Response addComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam ComponentResource resource)
+	{
+		resource.setComponentId(componentId);
+		return saveResource(resource, true);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Update a resource associated with a given entity. Use a form to POST Resource.action?UploadResource to upload file. "
+			+ " To upload: pass the componentResource.resourceType...etc and 'file'.")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}/resources/{resourceId}")
+	public Response updateComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("resourceId")
+			@RequiredParam String resourceId,
+			@RequiredParam ComponentResource resource)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setComponentId(componentId);
+		componentResourceExample.setResourceId(resourceId);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		if (componentResource != null) {
+			resource.setComponentId(componentId);
+			resource.setResourceId(resourceId);
+			response = saveResource(resource, false);
+		}
+		return response;
+	}
+
+	private Response saveResource(ComponentResource resource, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(resource);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
+			resource.setCreateUser(SecurityUtil.getCurrentUserName());
+			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
+			service.getComponentService().saveComponentResource(resource);
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			return Response.created(URI.create("v1/resource/components/" + resource.getComponentId() + "/resources/" + resource.getResourceId())).entity(resource).build();
+		} else {
+			return Response.ok(resource).build();
+		}
+	}
+	// </editor-fold>
 
 	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource MEDIA section">
 	@GET
@@ -1271,122 +1603,6 @@ public class ComponentRESTResource
 			return Response.created(URI.create("v1/resource/components/" + response.getComponentId() + "/questions/" + response.getQuestionId() + "/responses/" + response.getResponseId())).entity(response).build();
 		} else {
 			return Response.ok(response).build();
-		}
-	}
-	// </editor-fold>
-
-	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource RESOURCE section">
-	@GET
-	@APIDescription("Get the resources associated to the given component")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentResource.class)
-	@Path("/{id}/resources")
-	public List<ComponentResource> getComponentResource(
-			@PathParam("id")
-			@RequiredParam String componentId)
-	{
-		List<ComponentResource> componentResources = service.getComponentService().getBaseComponent(ComponentResource.class, componentId);
-		componentResources = SortUtil.sortComponentResource(componentResources);
-		return componentResources;
-	}
-
-	@GET
-	@APIDescription("Get a resource associated to the given component")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentResource.class)
-	@Path("/{id}/resources/{resourceId}")
-	public Response getComponentResource(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("resourceId")
-			@RequiredParam String resourceId)
-	{
-		ComponentResource componentResourceExample = new ComponentResource();
-		componentResourceExample.setComponentId(componentId);
-		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
-		return sendSingleEntityResponse(componentResource);
-	}
-
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Remove a given resource from the specified entity")
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/resources/{resourceId}")
-	public void deleteComponentResource(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("resourceId")
-			@RequiredParam String resourceId)
-	{
-		ComponentResource componentResourceExample = new ComponentResource();
-		componentResourceExample.setComponentId(componentId);
-		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
-		if (componentResource != null) {
-			service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
-		}
-	}
-
-	@POST
-	@RequireAdmin
-	@APIDescription("Add a resource to the given entity.  Use a form to POST Resource.action?UploadResource to upload file.  "
-			+ "To upload: pass the componentResource.resourceType...etc and 'file'.")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(ComponentResource.class)
-	@Path("/{id}/resources")
-	public Response addComponentResource(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@RequiredParam ComponentResource resource)
-	{
-		resource.setComponentId(componentId);
-		return saveResource(resource, true);
-	}
-
-	@PUT
-	@RequireAdmin
-	@APIDescription("Update a resource associated with a given entity. Use a form to POST Resource.action?UploadResource to upload file. "
-			+ " To upload: pass the componentResource.resourceType...etc and 'file'.")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/resources/{resourceId}")
-	public Response updateComponentResource(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("resourceId")
-			@RequiredParam String resourceId,
-			@RequiredParam ComponentResource resource)
-	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
-		ComponentResource componentResourceExample = new ComponentResource();
-		componentResourceExample.setComponentId(componentId);
-		componentResourceExample.setResourceId(resourceId);
-		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
-		if (componentResource != null) {
-			resource.setComponentId(componentId);
-			resource.setResourceId(resourceId);
-			response = saveResource(resource, false);
-		}
-		return response;
-	}
-
-	private Response saveResource(ComponentResource resource, Boolean post)
-	{
-		ValidationModel validationModel = new ValidationModel(resource);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
-			resource.setCreateUser(SecurityUtil.getCurrentUserName());
-			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getComponentService().saveComponentResource(resource);
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + resource.getComponentId() + "/resources/" + resource.getResourceId())).entity(resource).build();
-		} else {
-			return Response.ok(resource).build();
 		}
 	}
 	// </editor-fold>

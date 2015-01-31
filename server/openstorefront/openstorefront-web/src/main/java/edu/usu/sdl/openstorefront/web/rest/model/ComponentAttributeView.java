@@ -47,6 +47,8 @@ public class ComponentAttributeView
 	private Date updateDts;
 	private Integer sortOrder;
 	private String groupCode;
+	private boolean orphan;
+	private String activeStatus;
 
 	public ComponentAttributeView()
 	{
@@ -89,7 +91,15 @@ public class ComponentAttributeView
 		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 		AttributeCode code = service.getAttributeService().findCodeForType(pk);
+		if (code == null) {
+			view.setOrphan(true);
+			code = service.getPersistenceService().findById(AttributeCode.class, pk);
+		}
 		AttributeType type = service.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+		if (type == null) {
+			view.setOrphan(true);
+			type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
+		}
 
 		view.setExternalLink(code.getDetailUrl());
 		view.setCodeDescription(code.getLabel());
@@ -106,6 +116,7 @@ public class ComponentAttributeView
 		view.setUpdateDts(attribute.getUpdateDts());
 		view.setSortOrder(code.getSortOrder());
 		view.setGroupCode(code.getGroupCode());
+		view.setActiveStatus(attribute.getActiveStatus());
 
 		return view;
 	}
@@ -142,6 +153,7 @@ public class ComponentAttributeView
 		view.setUpdateDts(attribute.getUpdateDts());
 		view.setSortOrder(code.getSortOrder());
 		view.setGroupCode(code.getGroupCode());
+		view.setActiveStatus(attribute.getActiveStatus());
 
 		return view;
 	}
@@ -155,9 +167,8 @@ public class ComponentAttributeView
 				views.add(ComponentAttributeView.toView(attribute));
 			});
 			return views;
-		}
-		else {
-			return new ArrayList<ComponentAttributeView>();
+		} else {
+			return new ArrayList<>();
 		}
 
 	}
@@ -376,6 +387,26 @@ public class ComponentAttributeView
 	public void setGroupCode(String groupCode)
 	{
 		this.groupCode = groupCode;
+	}
+
+	public boolean getOrphan()
+	{
+		return orphan;
+	}
+
+	public void setOrphan(boolean orphan)
+	{
+		this.orphan = orphan;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.sort;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,7 +83,7 @@ public class BeanComparator<T>
 						}
 					}
 				} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-					log.log(Level.WARNING, "Sort field doesn't exist: " + sortField);
+					log.log(Level.FINER, MessageFormat.format("Sort field doesn''t exist: {0}", sortField));
 				}
 			}
 		}

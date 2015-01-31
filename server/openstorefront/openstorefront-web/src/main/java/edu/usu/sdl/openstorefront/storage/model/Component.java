@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.ComponentApprovalStatus;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -82,7 +83,7 @@ public class Component
 	@NotNull
 	@ValidValueType(
 			{
-				Component.APPROVAL_STATE_APPROVED, Component.APPROVAL_STATE_PENDING
+				ComponentApprovalStatus.APPROVED, ComponentApprovalStatus.PENDING
 			})
 	@ConsumeField
 	@APIDescription("Status of an approval")
@@ -98,9 +99,6 @@ public class Component
 	@NotNull
 	@APIDescription("Updated when any of the component's related data has changed.  Used for  watches.")
 	private Date lastActivityDts;
-
-	public static final String APPROVAL_STATE_APPROVED = "A";
-	public static final String APPROVAL_STATE_PENDING = "P";
 
 	public Component()
 	{

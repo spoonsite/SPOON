@@ -86,6 +86,16 @@ public interface ComponentService
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk);
 
 	/**
+	 * Activates a base component
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param pk
+	 * @return
+	 */
+	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk);
+
+	/**
 	 * Deletes a base component
 	 *
 	 * @param <T>

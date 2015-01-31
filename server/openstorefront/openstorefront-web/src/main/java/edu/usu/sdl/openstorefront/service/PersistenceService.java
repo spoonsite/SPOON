@@ -15,9 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.id.OClusterPositionFactory;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
@@ -140,7 +138,7 @@ public class PersistenceService
 	 *
 	 * @param <T>
 	 * @param entityClass
-	 * @param primaryKey
+	 * @param primaryKey (DB RID not our Entity PK
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -154,13 +152,6 @@ public class PersistenceService
 				rid = (ORecordId) primaryKey;
 			} else if (primaryKey instanceof String) {
 				rid = new ORecordId((String) primaryKey);
-			} else if (primaryKey instanceof Number) {
-				// COMPOSE THE RID
-				OClass cls = database.getMetadata().getSchema().getClass(entityClass);
-				if (cls == null) {
-					throw new IllegalArgumentException("Class '" + entityClass + "' is not configured in the database");
-				}
-				rid = new ORecordId(cls.getDefaultClusterId(), OClusterPositionFactory.INSTANCE.valueOf(((Number) primaryKey).longValue()));
 			} else {
 				throw new IllegalArgumentException("PrimaryKey '" + primaryKey + "' type (" + primaryKey.getClass() + ") is not supported");
 			}

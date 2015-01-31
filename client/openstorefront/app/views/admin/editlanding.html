@@ -31,7 +31,7 @@
       <td style="padding: 5px;">{{article.typeDescription}}</td>
       <td style="padding: 5px;">{{article.codeDescription}}</td>
       <td style="padding: 5px;">{{article.title}}</td>
-      <td ng-show="article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{getArticleDesc(article.description)}}">{{article.description}}</td>
+      <td ng-show="article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis;" width="40%" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{getArticleDesc(article.description)}}">{{article.description}}</td>
       <td ng-show="!article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
       <td style="padding:0px 5px;">
         <button type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="deleteArticle(article)"><i class="fa fa-trash"></i></button>
