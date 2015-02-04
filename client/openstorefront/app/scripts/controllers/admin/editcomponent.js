@@ -173,8 +173,8 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
 
 }]);
 
-app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', 'FileUploader', 
-  function ($scope, $q, $uiModalInstance, component, editMode, Business, $uiModal, FileUploader) {
+app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', 'FileUploader', 
+  function ($scope, $q, $filter, $uiModalInstance, component, editMode, Business, $uiModal, FileUploader) {
     
     $scope.editMode = editMode;
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
@@ -210,7 +210,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'c
           
     $scope.attributeForm = angular.copy(basicForm);
     $scope.componentAttributeViewQueryFilter = angular.copy(utils.queryFilter);      
-    $scope.attributeFilter = angular.copy(basicFilter);
+    $scope.componentAttributeViewQueryFilter.status = $scope.statusFilterOptions[0].code;
         
     $scope.contactForm = angular.copy(basicForm);
     $scope.contactQueryFilter = angular.copy(utils.queryFilter);   
@@ -297,6 +297,66 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'c
       $scope[form].saveText = "Add";
       $scope[form].edit = false;       
     };
+    
+    $scope.saveEntity = function(options){
+      $scope.$emit('$TRIGGERLOAD', options.loader);
+      
+      if ($scope.contactForm.edit){
+        Business.componentservice.updateSubComponentEntity({
+          componentId: $scope.componentForm.componentId,
+          entityName: options.entityName,
+          entity: options.entity,
+          entityId: options.entityId
+        }).then(function (result) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', options.loader);
+          if (result) {
+            if (result && result !== 'false' && isNotRequestError(result)){      
+              removeError();
+              triggerAlert('Saved successfully', options.alertId, options.alertDiv, 3000);
+              $scope.cancelEdit(options.formName);
+              options.loadEntity();                
+            } else {
+              removeError();
+              triggerError(result, true);
+            }
+          }
+        });         
+      } else {
+        Business.componentservice.addSubComponentEntity({
+          componentId: $scope.componentForm.componentId,
+          entityName: options.entityName,
+          entity: options.entity
+        }).then(function (result) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', options.loader);
+          if (result) {
+            if (result && result !== 'false' && isNotRequestError(result)){  
+              removeError();
+              triggerAlert('Saved successfully', options.alertId, options.alertDiv, 3000);
+              $scope.cancelEdit(options.formName);
+              options.loadEntity(); 
+            } else {
+              removeError();
+              triggerError(result, true);
+            }
+          }
+        });       
+      }      
+    };   
+    
+    $scope.hardDeleteEntity = function(options){
+      var response = window.confirm("Are you sure you want DELETE  "+ options.entityName + "?");
+      if (response) {
+        $scope.$emit('$TRIGGERLOAD', options.loader);
+        Business.componentservice.forceRemoveEnity({
+          componentId: $scope.componentForm.componentId,
+          entity: options.entityPath,
+          entityId: options.entityId
+        }).then(function (result) {          
+          $scope.$emit('$TRIGGERUNLOAD', options.loader);
+          options.loadEntity();
+        });
+      }
+    };
 
 //</editor-fold>       
     
@@ -320,7 +380,6 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'c
       Business.componentservice.getComponentApproveStatus().then(function (results) {
         if (results) {
           $scope.approvalStatuses = results;
-          $scope.generalForm.approvalStatus = _.find($scope.approvalStatuses, {code: $scope.componentForm.approvalState});  
         }
       });      
     };
@@ -369,7 +428,67 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'c
     $scope.getCodesForType = function(type){
       var foundType = _.find($scope.allAttributes, {type: type});
       return foundType !== undefined ? foundType.codes : [];
-    };    
+    };  
+    
+    $scope.saveComponent = function(){
+      $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
+      
+      var requiredForComponent = {
+        component: $scope.componentForm,
+        attributes: []
+      };
+      
+      _.forOwn($scope.generalForm.requiredAttribute, function (value, key) {
+        requiredForComponent.attributes.push({
+          componentAttributePk: {
+            attributeType: key,
+            attributeCode: value
+          }
+        });
+      });
+      
+    if (requiredForComponent.component.releaseDate){
+      requiredForComponent.component.releaseDate = $filter('date')(requiredForComponent.component.releaseDate, "yyyy-MM-dd'T'HH:mm:ss.sss");
+      //requiredForComponent.component.releaseDate = requiredForComponent.component.releaseDate.sub
+    }
+      
+      if ($scope.editMode){
+        Business.componentservice.updateComponent(requiredForComponent, $scope.componentForm.componentId).then(function (result) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+          if (result) {
+            if (result && result !== 'false' && isNotRequestError(result)){      
+              removeError();
+              triggerAlert('Saved successfully', 'saveGeneralComponent', 'componentWindowDiv', 3000);
+              $scope.componentForm = result.component;
+              $scope.$emit('$TRIGGEREVENT', '$REFRESH_COMPONENTS');  
+            } else {
+              removeError();
+              triggerError(result, true);
+            }
+          }
+        });         
+      } else {
+        Business.componentservice.addComponent(requiredForComponent).then(function (result) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+          if (result) {
+            if (result && result !== 'false' && isNotRequestError(result)){  
+              removeError();
+              triggerAlert('Saved successfully', 'saveGeneralComponent', 'componentWindowDiv', 3000);
+              $scope.componentForm = result.component;
+              $scope.editMode = true;
+              $scope.editModeText = 'Edit ' + $scope.componentForm.name;
+              $scope.$emit('$TRIGGEREVENT', '$REFRESH_COMPONENTS');  
+            } else {
+              removeError();
+              triggerError(result, true);
+            }
+          }
+        });       
+      } 
+      
+    };
+    
+    
     
 //</editor-fold>     
     
@@ -377,8 +496,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'c
 
     $scope.loadComponentAttributesView = function(){
       if ($scope.componentForm.componentId) {
-        $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');
-        $scope.componentAttributeViewQueryFilter.status = $scope.attributeFilter.status.code;    
+        $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');     
         Business.componentservice.getComponentAttributeView($scope.componentForm.componentId, $scope.componentAttributeViewQueryFilter).then(function (results) {
           $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'attributeFormLoader');
           if (results) {
@@ -431,13 +549,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'c
         }        
       });       
     };
-    
-    $scope.cancelAttributeEdit = function(){
-      $scope.attributeForm.type = "";
-      $scope.attributeForm.code = "";
-      $scope.attributeForm.saveText = "Add";
-      $scope.attributeForm.edit = false;        
-    };
+
 //</editor-fold> 
 
 //<editor-fold   desc="Contact Section">
@@ -464,42 +576,21 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'c
         }
       });
     };    
-    
-    $scope.saveContact = function(){
-      $scope.$emit('$TRIGGERLOAD', 'contactFormLoader');
-      
-      if ($scope.contactForm.edit){
-        Business.componentservice.updateContact($scope.componentForm.componentId, $scope.contactForm).then(function (result) {
-          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'contactFormLoader');
-          if (result) {
-            if (result && result !== 'false' && isNotRequestError(result)){      
-              removeError();
-              triggerAlert('Saved successfully', 'saveContact', 'contactManagementDivId', 3000);
-              $scope.cancelEdit('contactForm');
-              $scope.loadContacts();
-            } else {
-              removeError();
-              triggerError(result, true);
-            }
-          }
-        });         
-      } else {
-        Business.componentservice.addContact($scope.componentForm.componentId, $scope.contactForm).then(function (result) {
-          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'contactFormLoader');
-          if (result) {
-            if (result && result !== 'false' && isNotRequestError(result)){  
-              removeError();
-              triggerAlert('Saved successfully', 'saveContact', 'contactManagementDivId', 3000);
-              $scope.cancelEdit('contactForm');
-              $scope.loadContacts();
-            } else {
-              removeError();
-              triggerError(result, true);
-            }
-          }
-        });       
-      }      
-    };
+   
+    $scope.saveContact = function () {
+      $scope.saveEntity({
+        alertId: 'saveContact',
+        alertDiv: 'contactManagementDivId',
+        loader: 'contactFormLoader',
+        entityName: 'contacts',
+        entity: $scope.contactForm,
+        entityId: $scope.contactForm.contactId,
+        formName: 'contactForm',
+        loadEntity: function () {
+          $scope.loadContacts();
+        }
+      });       
+     };
 
 //</editor-fold>  
 
@@ -527,6 +618,103 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$uiModalInstance', 'c
         }
       });
     };
+    
+    $scope.deleteResource = function(resource){
+     $scope.hardDeleteEntity({
+        loader: 'resourceFormLoader',
+        entityName: 'Resource',
+        entityPath: 'resources',
+        entityId: resource.resourceId,
+        loadEntity: function(){
+          $scope.loadResources();
+        }        
+     }); 
+    };
+   
+    $scope.saveResource = function () {
+      $scope.resourceForm.link = $scope.resourceForm.originalLink;
+      if ($scope.resourceForm.originalLink || 
+        $scope.resourceUploader.queue.length === 0) {
+        
+        if (!$scope.resourceForm.originalLink) {
+          $scope.resourceForm.fileName = $scope.resourceForm.localResourceName;    
+          $scope.resourceForm.originalName = $scope.resourceForm.originalFileName;  
+        } else {
+          $scope.resourceForm.mimeType = '';
+        }
+        
+        $scope.saveEntity({
+          alertId: 'saveResource',
+          alertDiv: 'componentWindowDiv',
+          loader: 'resourceFormLoader',
+          entityName: 'resources',
+          entity: $scope.resourceForm,
+          entityId: $scope.resourceForm.resourceId,
+          formName: 'resourceForm',
+          loadEntity: function () {
+            $scope.loadResources();
+          }
+        });
+      } else {      
+        $scope.resourceUploader.uploadAll();
+      }
+     };   
+     
+    $scope.cancelResourceEdit = function () {
+      $scope.cancelEdit('resourceForm');
+      $scope.resourceUploader.clearQueue();
+    };
+     
+    $scope.resourceUploader = new FileUploader({
+      url: 'Resource.action?UploadResource',
+      alias: 'file',
+      queueLimit: 1,  
+      removeAfterUpload: true,
+      onBeforeUploadItem: function(item) {
+        $scope.$emit('$TRIGGERLOAD', 'resourceFormLoader');
+        
+        item.formData.push({
+          "componentResource.componentId" : $scope.componentForm.componentId
+        });
+        item.formData.push({
+          "componentResource.resourceType" : $scope.resourceForm.resourceType
+        });
+        item.formData.push({
+          "componentResource.description" : $scope.resourceForm.description
+        });
+        item.formData.push({
+          "componentResource.restricted" : $scope.resourceForm.restricted
+        });        
+        item.formData.push({
+          "componentResource.resourceId" : $scope.resourceForm.resourceId
+        });        
+       },
+      onSuccessItem: function (item, response, status, headers) {
+        $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
+        $scope.resourceUploader.clearQueue();
+        
+        //check response for a fail ticket or a error model
+        if (response.success) {
+          triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
+          $scope.loadResources();
+        } else {
+          if (response.errors) {
+            var uploadError = response.errors.file;
+            var enityError = response.errors.componentResource;
+            var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
+            triggerAlert('Unable to upload resource. Message: <br> ' + errorMessage, 'saveResource', 'componentWindowDiv', 6000);
+          } else {
+            triggerAlert('Unable to upload resource. ', 'saveResource', 'componentWindowDiv', 6000);
+          }
+        }
+      },
+      onErrorItem: function (item, response, status, headers) {
+        $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
+        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);
+        $scope.resourceUploader.clearQueue();
+      }      
+    });     
+    
 
 //</editor-fold> 
     

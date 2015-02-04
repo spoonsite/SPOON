@@ -67,6 +67,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
@@ -337,7 +338,8 @@ public class ComponentRESTResource
 			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
 			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
-			return Response.created(URI.create("v1/resource/components/" + service.getComponentService().saveComponent(component).getComponent().getComponentId())).entity(component).build();
+			RequiredForComponent savedComponent = service.getComponentService().saveComponent(component);
+			return Response.created(URI.create("v1/resource/components/" + savedComponent.getComponent().getComponentId())).entity(savedComponent).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -1045,10 +1047,10 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a given resource from the specified entity")
+	@APIDescription("Inactivates a given resource from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/resources/{resourceId}")
-	public void deleteComponentResource(
+	public void inactivateComponentResource(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("resourceId")
@@ -1060,6 +1062,26 @@ public class ComponentRESTResource
 		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
 		if (componentResource != null) {
 			service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
+		}
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Remove a given resource from the specified component")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/resources/{resourceId}/force")
+	public void deleteComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("resourceId")
+			@RequiredParam String resourceId)
+	{
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setComponentId(componentId);
+		componentResourceExample.setResourceId(resourceId);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		if (componentResource != null) {
+			service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
 		}
 	}
 
@@ -1161,13 +1183,59 @@ public class ComponentRESTResource
 		return service.getComponentService().getBaseComponent(ComponentMedia.class, componentId);
 	}
 
+	@GET
+	@APIDescription("Get the resources associated to the given component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMediaView.class)
+	@Path("/{id}/media/view")
+	public Response getComponentMediaView(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentMedia componentMediaExample = new ComponentMedia();
+		componentMediaExample.setActiveStatus(filterQueryParams.getStatus());
+		componentMediaExample.setComponentId(componentId);
+		List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(ComponentMedia.class, componentMediaExample);
+		componentMedia = filterQueryParams.filter(componentMedia);
+		List<ComponentMediaView> views = ComponentMediaView.toViewList(componentMedia);
+
+		GenericEntity<List<ComponentMediaView>> entity = new GenericEntity<List<ComponentMediaView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Get a media item associated to the given component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMedia.class)
+	@Path("/{id}/media/{mediaId}")
+	public Response getComponentMedia(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("mediaId")
+			@RequiredParam String mediaId)
+	{
+		ComponentMedia componentMediaExample = new ComponentMedia();
+		componentMediaExample.setComponentId(componentId);
+		componentMediaExample.setComponentMediaId(mediaId);
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		return sendSingleEntityResponse(componentMedia);
+	}
+
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes media from the specified entity")
+	@APIDescription("Inactivates media from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentMedia.class)
 	@Path("/{id}/media/{mediaId}")
-	public void deleteComponentMedia(
+	public void inactivateComponentMedia(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("mediaId")
@@ -1177,6 +1245,25 @@ public class ComponentRESTResource
 		if (componentMedia != null) {
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentMedia.class, mediaId);
+		}
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Removes media from the specified entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMedia.class)
+	@Path("/{id}/media/{mediaId}}/force")
+	public void deleteComponentMedia(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("mediaId")
+			@RequiredParam String mediaId)
+	{
+		ComponentMedia componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
+		if (componentMedia != null) {
+			checkBaseComponentBelongsToComponent(componentMedia, componentId);
+			service.getComponentService().deleteBaseComponent(ComponentMedia.class, mediaId);
 		}
 	}
 

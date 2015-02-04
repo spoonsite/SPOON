@@ -91,7 +91,7 @@ public class MediaAction
 				}
 			}
 
-		};
+		}.setFilename(componentMedia.getOriginalName());
 	}
 
 	@HandlesEvent("UploadMedia")
@@ -119,6 +119,8 @@ public class MediaAction
 				} else {
 					errors.put("file", validationResult.toHtmlString());
 				}
+			} else {
+				errors.put("componentMedia", "Missing component media information");
 			}
 			return streamUploadResponse(errors);
 		}

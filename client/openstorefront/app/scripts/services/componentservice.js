@@ -834,8 +834,42 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
       return deferred.promise;
     };
     
-//</editor-fold>      
+    componentservice.addComponent = function (requiredForComponent) {
+      var deferred = $q.defer();
 
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/components',
+        data: requiredForComponent
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };    
+    
+    componentservice.updateComponent = function (requiredForComponent, componentId) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/resource/components/' + componentId,
+        data: requiredForComponent
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };
+        
+    
+//</editor-fold>      
 
 //<editor-fold   desc="Attributes">
     componentservice.getComponentAttributes = function (componentId, queryParamFilter) {
@@ -920,44 +954,6 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
     };     
 //</editor-fold> 
 
-//<editor-fold  desc="Contacts">
-   
-    componentservice.addContact = function (componentId, contact) {
-      var deferred = $q.defer();
-
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/resource/components/' + componentId + '/contacts',
-        data: contact
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
-
-      return deferred.promise;
-    }; 
-    
-    componentservice.updateContact = function (componentId, contact) {
-      var deferred = $q.defer();
-
-      $http({
-        'method': 'PUT',
-        'url': 'api/v1/resource/components/' + componentId + '/contacts/' + contact.contactId,
-        data: contact
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
-
-      return deferred.promise;
-    }; 
-    
-//</editor-fold> 
-
 //<editor-fold  desc="Common Base Entity">
 
     componentservice.getComponentSubEntity = function (loadOptions) {
@@ -992,6 +988,22 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
       return deferred.promise;
     };   
     
+    componentservice.forceRemoveEnity = function (options) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId + '/force'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };     
+    
     componentservice.activateEntity = function (options) {
       var deferred = $q.defer();
 
@@ -1006,22 +1018,15 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
       });
 
       return deferred.promise;
-    };     
+    };   
     
-
-//</editor-fold>
-
-//<editor-fold   desc="Resources">
-    
-
-    
-    componentservice.addResource = function (componentId, resource) {
+    componentservice.addSubComponentEntity = function (options) {
       var deferred = $q.defer();
 
       $http({
         'method': 'POST',
-        'url': 'api/v1/resource/components/' + componentId + '/resources',
-        data: resource
+        'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entityName,
+        data: options.entity
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1032,13 +1037,13 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
       return deferred.promise;
     }; 
     
-    componentservice.updateResource = function (componentId, resource) {
+    componentservice.updateSubComponentEntity = function (options) {
       var deferred = $q.defer();
 
       $http({
         'method': 'PUT',
-        'url': 'api/v1/resource/components/' + componentId + '/resources/' + resource.resourceId,
-        data: resource
+        'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entityName + '/' + options.entityId,
+        data: options.entity
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1048,7 +1053,10 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
 
       return deferred.promise;
     }; 
-//</editor-fold>      
+        
+//</editor-fold>
+
+
     
 
     return componentservice;
