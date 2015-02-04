@@ -17,7 +17,7 @@ Developing Open-Storefront (Client)
 If you want your pull requests (or patches) to be merged into master, you will need to comply with the current schaffolding scheme set up with the tools this document will detail. Please respect these guidelines.
 
 If you are reading this document with a normal text editor, please take a look
-at the more readable [formatted version](https://github.com/dshurt/Open-Storefront/blob/master/README.md).
+at the more readable [formatted version](https://github.com/di2e/openstorefront/blob/master/README.md).
 
 If you discover pitfalls, tips and tricks, or other details not described in this document,
 please update it using the [markdown syntax](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet).
@@ -34,7 +34,7 @@ Table of content
 Quick start
 ===========
 
-If you don't want to contribute to this project and you know git, Yoeman, Bower, and Grunt, these build instructions should suffice:
+If you want to contribute to this project and you know git, Yoeman, Bower, and Grunt, these build instructions should suffice:
 
 * To build `Open-Storefront`:
 
@@ -239,11 +239,12 @@ JDK 8
 ESA/SOLR  
 Open AM* (Configurable)  
 
-The application is a JEE webapp.  So any JEE 6 compliant server should work with just server configuration setup.
-JAX-RS is heavily used for REST API. 
+The application is a JEE webapp.  So any JEE 6 (web-profile) compliant server should work with some server configuration.  Our current deployment target is Tomcat 7.
+
 
 Key Libraries used
 ------------------
+JAX-RS is heavily used for REST API. (Jersey) 
 Stripes -Action based web framework  
 Jackson -JSON Handling/binding  
 Apache Shiro -Security  
@@ -260,7 +261,7 @@ Mav -Dmaven.test.skip=true or -DskipTests=true install
 
 Deploying
 ---------
-Copy the war artifacts to the standalone deploy directory in wildfly. Some IDEs can handle this for you.
+Copy the war artifact to the webapp directory for tomcat. Some IDEs can handle this for you.  See application server documentation for other deployment mechanisms.
 
 
 Building a Production Release 
@@ -276,7 +277,7 @@ Running
 =======
 
 Run in Tomcat 7
-Note: it requires ESA (Solr) for Searching.
+Note: Searching requires an external ESA/(Solr) for searching.
 
 
 
