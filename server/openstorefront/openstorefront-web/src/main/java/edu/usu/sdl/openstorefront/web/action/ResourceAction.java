@@ -80,17 +80,17 @@ public class ResourceAction
 			@Override
 			protected void stream(HttpServletResponse response) throws Exception
 			{
-				Path path = componentResource.pathToResource();
+				Path path = getComponentResource().pathToResource();
 				if (path != null && path.toFile().exists()) {
 					Files.copy(path, response.getOutputStream());
 				} else {
-					Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
-					String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{componentResource.pathToResource(), resourceId, component.getName(), component.getComponentId()});
+					Component component = service.getPersistenceService().findById(Component.class, getComponentResource().getComponentId());
+					String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{getComponentResource().pathToResource(), resourceId, component.getName(), component.getComponentId()});
 					throw new OpenStorefrontRuntimeException(message);
 				}
 			}
 
-		};
+		}.setFilename(componentResource.getOriginalName());
 	}
 
 	@HandlesEvent("UploadResource")
@@ -118,6 +118,8 @@ public class ResourceAction
 				} else {
 					errors.put("file", validationResult.toHtmlString());
 				}
+			} else {
+				errors.put("componentResource", "Missing component resource information");
 			}
 			return streamUploadResponse(errors);
 		}
@@ -160,6 +162,26 @@ public class ResourceAction
 	public void setResourceId(String resourceId)
 	{
 		this.resourceId = resourceId;
+	}
+
+	public ComponentResource getComponentResource()
+	{
+		return componentResource;
+	}
+
+	public void setComponentResource(ComponentResource componentResource)
+	{
+		this.componentResource = componentResource;
+	}
+
+	public FileBean getFile()
+	{
+		return file;
+	}
+
+	public void setFile(FileBean file)
+	{
+		this.file = file;
 	}
 
 }

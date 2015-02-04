@@ -91,6 +91,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -196,10 +197,39 @@ public class ComponentServiceImpl
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
 			String componentId = found.getComponentId();
+			if (found instanceof ComponentResource) {
+				removeLocalResource((ComponentResource) found);
+			}
+			if (found instanceof ComponentMedia) {
+				removeLocalMedia((ComponentMedia) found);
+			}
+
 			persistenceService.delete(found);
 
 			if (updateComponentActivity) {
 				updateComponentLastActivity(componentId);
+			}
+		}
+	}
+
+	private void removeLocalResource(ComponentResource componentResource)
+	{
+		//Note: this can't be rolled back
+		Path path = componentResource.pathToResource();
+		if (path != null) {
+			if (path.toFile().exists()) {
+				path.toFile().delete();
+			}
+		}
+	}
+
+	private void removeLocalMedia(ComponentMedia componentMedia)
+	{
+		//Note: this can't be rolled back
+		Path path = componentMedia.pathToMedia();
+		if (path != null) {
+			if (path.toFile().exists()) {
+				path.toFile().delete();
 			}
 		}
 	}
@@ -215,6 +245,19 @@ public class ComponentServiceImpl
 		try {
 			T example = subComponentClass.newInstance();
 			example.setComponentId(componentId);
+
+			if (subComponentClass.getName().equals(ComponentResource.class.getName())) {
+				List<T> resources = persistenceService.queryByExample(subComponentClass, example);
+				resources.forEach(resource -> {
+					removeLocalResource((ComponentResource) resource);
+				});
+			}
+			if (subComponentClass.getName().equals(ComponentMedia.class.getName())) {
+				List<T> media = persistenceService.queryByExample(subComponentClass, example);
+				media.forEach(mediaItem -> {
+					removeLocalMedia((ComponentMedia) mediaItem);
+				});
+			}
 			persistenceService.deleteByExample(example);
 
 			if (updateComponentActivity) {
@@ -429,8 +472,7 @@ public class ComponentServiceImpl
 			ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
 			if (oldAttribute != null) {
 				oldAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-				oldAttribute.setUpdateUser(attribute.getUpdateUser());
-				oldAttribute.setUpdateDts(TimeUtil.currentDate());
+				oldAttribute.populateBaseUpdateFields();
 				persistenceService.persist(oldAttribute);
 			} else {
 				if (type.getAllowMultipleFlg() == false) {
@@ -579,12 +621,19 @@ public class ComponentServiceImpl
 	{
 		ComponentMedia oldMedia = persistenceService.findById(ComponentMedia.class, media.getComponentMediaId());
 		if (oldMedia != null) {
+			if (StringUtils.isNotBlank(media.getLink())) {
+				removeLocalMedia(oldMedia);
+				oldMedia.setFileName(null);
+				oldMedia.setOriginalName(null);
+				oldMedia.setMimeType(null);
+			} else {
+				oldMedia.setFileName(media.getFileName());
+				oldMedia.setOriginalName(media.getOriginalName());
+				oldMedia.setMimeType(media.getMimeType());
+			}
 			oldMedia.setCaption(media.getCaption());
-			oldMedia.setFileName(media.getFileName());
 			oldMedia.setLink(media.getLink());
 			oldMedia.setMediaTypeCode(media.getMediaTypeCode());
-			oldMedia.setMimeType(media.getMimeType());
-			oldMedia.setOriginalName(media.getOriginalName());
 			oldMedia.setActiveStatus(media.getActiveStatus());
 			oldMedia.setUpdateDts(TimeUtil.currentDate());
 			oldMedia.setUpdateUser(media.getUpdateUser());
@@ -703,11 +752,20 @@ public class ComponentServiceImpl
 	{
 		ComponentResource oldResource = persistenceService.findById(ComponentResource.class, resource.getResourceId());
 		if (oldResource != null) {
+
+			if (StringUtils.isNotBlank(resource.getLink())) {
+				removeLocalResource(oldResource);
+				oldResource.setFileName(null);
+				oldResource.setOriginalName(null);
+				oldResource.setMimeType(null);
+			} else {
+				oldResource.setFileName(resource.getFileName());
+				oldResource.setOriginalName(resource.getOriginalName());
+				oldResource.setMimeType(resource.getMimeType());
+			}
+
 			oldResource.setDescription(resource.getDescription());
 			oldResource.setLink(resource.getLink());
-			oldResource.setFileName(resource.getFileName());
-			oldResource.setOriginalName(resource.getOriginalName());
-			oldResource.setMimeType(resource.getMimeType());
 			oldResource.setResourceType(resource.getResourceType());
 			oldResource.setRestricted(resource.getRestricted());
 			oldResource.setActiveStatus(resource.getActiveStatus());
@@ -880,15 +938,25 @@ public class ComponentServiceImpl
 
 				if (component.getComponent().compareTo(oldComponent) != 0) {
 					oldComponent.setName(component.getComponent().getName());
-					oldComponent.setApprovalState(component.getComponent().getApprovalState());
-					oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
+					if (OpenStorefrontConstant.ComponentApprovalStatus.P.name().equals(oldComponent.getApprovalState())
+							&& OpenStorefrontConstant.ComponentApprovalStatus.A.name().equals(component.getComponent().getApprovalState())) {
+						oldComponent.setApprovalState(component.getComponent().getApprovalState());
+
+						if (StringUtils.isBlank(component.getComponent().getApprovedUser())) {
+							component.getComponent().setApprovedUser(SecurityUtil.getCurrentUserName());
+						}
+						if (component.getComponent().getApprovedDts() == null) {
+							component.getComponent().setApprovedDts(TimeUtil.currentDate());
+						}
+						oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
+						oldComponent.setApprovedDts(component.getComponent().getApprovedDts());
+					}
 					oldComponent.setDescription(component.getComponent().getDescription());
 					oldComponent.setGuid(component.getComponent().getGuid());
 					oldComponent.setLastActivityDts(TimeUtil.currentDate());
 					oldComponent.setOrganization(component.getComponent().getOrganization());
 					oldComponent.setParentComponentId(component.getComponent().getParentComponentId());
 					oldComponent.setReleaseDate(component.getComponent().getReleaseDate());
-					oldComponent.setApprovedDts(component.getComponent().getApprovedDts());
 					oldComponent.setVersion(component.getComponent().getVersion());
 					oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
 					oldComponent.setUpdateDts(TimeUtil.currentDate());
@@ -911,6 +979,16 @@ public class ComponentServiceImpl
 				component.getComponent().setCreateDts(TimeUtil.currentDate());
 				component.getComponent().setUpdateDts(TimeUtil.currentDate());
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
+
+				if (OpenStorefrontConstant.ComponentApprovalStatus.A.name().equals(component.getComponent().getApprovalState())) {
+					if (StringUtils.isBlank(component.getComponent().getApprovedUser())) {
+						component.getComponent().setApprovedUser(SecurityUtil.getCurrentUserName());
+					}
+					if (component.getComponent().getApprovedDts() == null) {
+						component.getComponent().setApprovedDts(TimeUtil.currentDate());
+					}
+				}
+
 				persistenceService.persist(component.getComponent());
 				component.setComponentChanged(true);
 
@@ -959,6 +1037,8 @@ public class ComponentServiceImpl
 
 		if (StringUtils.isBlank(component.getApprovalState())) {
 			component.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.A.name());
+			component.setApprovedUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
+			component.setApprovedDts(TimeUtil.currentDate());
 		}
 
 		if (component.getLastActivityDts() != null) {
@@ -1133,6 +1213,12 @@ public class ComponentServiceImpl
 		}
 		deleteComponentIntegration(componentId);
 
+		//Delete child relationships
+		String parentClearUpdate = "update component set parentComponentId = null where parentComponentId = :parentComponentIdParam";
+		Map<String, Object> params = new HashMap<>();
+		params.put("parentComponentIdParam", componentId);
+		persistenceService.runDbCommand(parentClearUpdate, params);
+
 		Component component = persistenceService.findById(Component.class, componentId);
 		persistenceService.delete(component);
 
@@ -1189,9 +1275,7 @@ public class ComponentServiceImpl
 		Objects.requireNonNull(media);
 		Objects.requireNonNull(fileInput);
 
-		String extension = OpenStorefrontConstant.getFileExtensionForMime(media.getMimeType());
-		media.setFileName(media.getMediaTypeCode() + "-" + System.currentTimeMillis() + "-" + extension);
-
+		media.setFileName(media.getComponentMediaId());
 		try (InputStream in = fileInput) {
 			Files.copy(in, media.pathToMedia());
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -1207,9 +1291,7 @@ public class ComponentServiceImpl
 		Objects.requireNonNull(resource);
 		Objects.requireNonNull(fileInput);
 
-		String extension = OpenStorefrontConstant.getFileExtensionForMime(resource.getMimeType());
-		resource.setFileName(resource.getResourceType() + "-" + System.currentTimeMillis() + "-" + extension);
-
+		resource.setFileName(resource.getResourceId());
 		try (InputStream in = fileInput) {
 			Files.copy(in, resource.pathToResource());
 			resource.setUpdateUser(SecurityUtil.getCurrentUserName());

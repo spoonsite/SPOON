@@ -349,6 +349,18 @@ public class PersistenceService
 		return updateCount;
 	}
 
+	public <T> int runDbCommand(String query, Map<String, Object> queryParams)
+	{
+		int updateCount = 0;
+		OObjectDatabaseTx db = getConnection();
+		try {
+			updateCount = db.command(new OCommandSQL(query)).execute(queryParams);
+		} finally {
+			closeConnection(db);
+		}
+		return updateCount;
+	}
+
 	public long countByExample(QueryByExample queryByExample)
 	{
 		long count = 0;

@@ -272,7 +272,7 @@ var showServerError = function(errorObj, id){
     }
     triggerAlert(message, 'serverError', id, 6000);
   }
-}
+};
 
 /***************************************************************
 * This function adds a tooltip and styling to an input element

@@ -18,7 +18,9 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.MediaType;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -28,11 +30,16 @@ import org.apache.commons.lang.StringUtils;
 public class ComponentMediaView
 {
 
+	private String componentMediaId;
 	private String link;
 	private String contentType;
 	private String mimeType;
 	private String caption;
 	private Date updateDts;
+	private String activeStatus;
+	private String fileName;
+	private String originalFileName;
+	private String originalLink;
 
 	public ComponentMediaView()
 	{
@@ -47,11 +54,23 @@ public class ComponentMediaView
 		} else {
 			mediaView.setLink(media.getLink());
 		}
+		mediaView.setComponentMediaId(media.getComponentMediaId());
+		mediaView.setActiveStatus(media.getActiveStatus());
+		mediaView.setFileName(media.getFileName());
+		mediaView.setOriginalFileName(media.getOriginalName());
+		mediaView.setOriginalLink(media.getLink());
 		mediaView.setContentType(TranslateUtil.translate(MediaType.class, media.getMediaTypeCode()));
 		mediaView.setMimeType(media.getMimeType());
 		mediaView.setCaption(media.getCaption());
 		mediaView.setUpdateDts(media.getUpdateDts());
 		return mediaView;
+	}
+
+	public static List<ComponentMediaView> toViewList(List<ComponentMedia> mediaList)
+	{
+		List<ComponentMediaView> componentMediaViews = new ArrayList<>();
+
+		return componentMediaViews;
 	}
 
 	public String getLink()
@@ -102,6 +121,56 @@ public class ComponentMediaView
 	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getOriginalLink()
+	{
+		return originalLink;
+	}
+
+	public void setOriginalLink(String originalLink)
+	{
+		this.originalLink = originalLink;
+	}
+
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
+	}
+
+	public String getOriginalFileName()
+	{
+		return originalFileName;
+	}
+
+	public void setOriginalFileName(String originalFileName)
+	{
+		this.originalFileName = originalFileName;
+	}
+
+	public String getComponentMediaId()
+	{
+		return componentMediaId;
+	}
+
+	public void setComponentMediaId(String componentMediaId)
+	{
+		this.componentMediaId = componentMediaId;
 	}
 
 }

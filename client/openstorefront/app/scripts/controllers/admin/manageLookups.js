@@ -111,7 +111,7 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
       onErrorItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'lookupCodeLoader');
         triggerAlert('Unable to import codes. Failure communicating with server. ', 'importCode', '#lookupWindowDiv', 6000);
-        $scope.uploader.clearQueue()
+        $scope.uploader.clearQueue();
       }      
     });
     

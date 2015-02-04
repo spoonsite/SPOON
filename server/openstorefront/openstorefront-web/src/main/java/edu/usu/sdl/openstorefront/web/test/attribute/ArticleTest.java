@@ -94,6 +94,7 @@ public class ArticleTest
 		attributeCode.setLabel("A");
 		attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
+		serviceProxy.getAttributeService().saveAttributeCode(attributeCode, false);
 		return attributeCode;
 	}
 

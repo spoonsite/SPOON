@@ -51,7 +51,7 @@ public class SecurityUtil
 				username = currentUser.getPrincipal().toString();
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started.  Or no user is logged in.");
+			log.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
 		}
 		return username;
 	}

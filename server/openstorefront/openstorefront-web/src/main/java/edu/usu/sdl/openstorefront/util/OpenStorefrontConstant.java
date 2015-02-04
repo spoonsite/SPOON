@@ -96,6 +96,7 @@ public class OpenStorefrontConstant
 		mimeXref.put("application/docx", ".docx");
 		mimeXref.put("application/xls", ".xls");
 		mimeXref.put("application/xlsx", ".xlsx");
+		mimeXref.put("application/vnd.ms-excel", ".csv");
 		mimeXref.put("application/pdf", ".pdf");
 		mimeXref.put("application/zip", ".zip");
 		mimeXref.put("application/gzip", ".gzip");
