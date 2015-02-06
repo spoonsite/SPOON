@@ -49,6 +49,7 @@ If you want to contribute to this project and you know git, Yoeman, Bower, and G
   * yoeman & generator-angular (yoeman vanilla angular generator)
   * bower
   * grunt
+  * ruby (with sass and compass)
 
 * Versions currently used:
   * git version 1.9.4
@@ -124,7 +125,7 @@ For more info on forking, read [Github's help on forking](http://help.github.com
         $ cd Open-Storefront-Project
 
         # Then clone the repository you want to clone.
-        $ git clone https://github.com/dshurt/Open-Storefront.git
+        $ git clone https://github.com/di2e/openstorefront.git
         $ cd Open-Storefront
         $ ls
 
@@ -184,6 +185,31 @@ Once yeoman has finished installing, we then need to install the AngularJS scaff
 You can now start scaffolding your apps with Yeoman, managing dependencies with Bower, and building & running your application with Grunt!
 Grunt and Bower have also been installed globally, so you should be able to use them in other projects from now on.
 
+Notes for redhat/centos users:
+-------------------------
+
+Additional packages and gems…
+
+npm install -g grunt-cli (was prompted by npm to install)
+npm install grunt-contrib-compass --save-dev
+npm install grunt-bower-install --save-dev
+npm install grunt-wiredep --save-dev
+
+yum install ruby
+yum install ruby-devel
+
+gem install sass
+gem install compass
+
+npm install karma --save-dev  
+npm install karma-coverage --save-dev
+npm install karma-jasmine --save-dev
+npm install karam-chrome-launcher --save-dev
+
+yum install google-chrome-stable
+
+yum install maven
+
 
 Building with Grunt
 ===================
@@ -212,6 +238,10 @@ Running the build
 * **Run the build**:
 
         $ grunt build --appPath=/openstorefront  
+        
+        or use
+        
+        $ grunt buildprod 
         
     "appPath" is only needed when changing the root context.          
     The first build will take a long time, because a lot of dependencies will be downloaded (and cached locally).
@@ -244,7 +274,7 @@ The application is a JEE webapp.  So any JEE 6 (web-profile) compliant server sh
 
 Key Libraries used
 ------------------
-JAX-RS is heavily used for REST API. (Jersey) 
+JAX-RS is heavily used for REST API. (Jersey with Moxy for data binding) 
 Stripes -Action based web framework  
 Jackson -JSON Handling/binding  
 Apache Shiro -Security  
@@ -252,8 +282,7 @@ Orient DB -No SQL/Hybrid database
 
 Building with Maven
 -------------------
-
-mvn install  
+run "mvn install" from $PROJECT_HOME/server/openstorefront   
 
 (Skip tests)  
 Mav -Dmaven.test.skip=true or -DskipTests=true install  
@@ -277,8 +306,14 @@ Running
 =======
 
 Run in Tomcat 7
-Note: Searching requires an external ESA/(Solr) for searching.
+Note: Searching requires an external ESA/(Solr) instance setup.
 
+
+Setting up SOLR
+===============
+ESA uses SOLR 4.3.1 so that is the version that the application is setup to use. 
+
+TODO 
 
 
 FAQ
