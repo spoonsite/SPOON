@@ -124,18 +124,18 @@
           <hr  ng-if="checked.subComponents.checked" >
           <div id="dependenciesleft" ng-if="checked.dependencies.checked" style="position: relative"><strong>Dependencies:&nbsp;</strong>
             <table ng-if="detailsleft.dependencies.data.length" class="table table-striped table-bordered" style="table-layout:fixed; margin-bottom: 0px;">
-              <tr>
-                <th>Dependency</th>
-                <th>Version</th>
-                <th>Comment</th>
-                <th>Update Date</th>
-              </tr>
-              <tr ng-repeat="dependency in detailsleft.dependencies.data">
-                <td>{{dependency.dependency}}</td>
-                <td>{{dependency.version}}</td>
-                <td>{{dependency.comment}}</td>
-                <td>{{getDate(dependency.updateDts)}}</td>
-              </tr>
+		<tr>
+			<th>Dependency</th>
+			<th>Version</th>           
+			<th>Link</th>
+			<th>Comment</th>
+		</tr>
+		<tr ng-repeat="dependency in detailsleft.dependencies.data">
+			<td>{{dependency.dependencyName}}</td>
+			<td>{{dependency.version}}</td>
+			<td>{{dependency.dependancyReferenceLink}}</td>
+			<td>{{dependency.comment}}</td>           
+		</tr>			  
             </table>
             <div ng-if="!detailsleft.dependencies.data.length">
               There are no dependencies listed for this component

@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -24,12 +27,31 @@ import java.util.Date;
  */
 public class ComponentRelationshipView
 {
+
 	private String componentId;
 	private String name;
 	private Date updateDts;
 
 	public ComponentRelationshipView()
 	{
+	}
+
+	public static ComponentRelationshipView toView(Component component)
+	{
+		Objects.requireNonNull(component, "Component Required");
+		ComponentRelationshipView relationshipView = new ComponentRelationshipView();
+		relationshipView.setComponentId(component.getComponentId());
+		relationshipView.setName(component.getName());
+		return relationshipView;
+	}
+
+	public static List<ComponentRelationshipView> toViewList(List<Component> components)
+	{
+		List<ComponentRelationshipView> views = new ArrayList<>();
+		components.forEach(component -> {
+			views.add(toView(component));
+		});
+		return views;
 	}
 
 	public String getComponentId()

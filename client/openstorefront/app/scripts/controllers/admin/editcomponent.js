@@ -220,7 +220,17 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.resourceQueryFilter = angular.copy(utils.queryFilter);   
     $scope.resourceQueryFilter.status = $scope.statusFilterOptions[0].code;
     
+    $scope.mediaForm = angular.copy(basicForm);
+    $scope.mediaQueryFilter = angular.copy(utils.queryFilter);   
+    $scope.mediaQueryFilter.status = $scope.statusFilterOptions[0].code;    
     
+    $scope.dependencyForm = angular.copy(basicForm);
+    $scope.dependencyFilter = angular.copy(utils.queryFilter);   
+    $scope.dependencyFilter.status = $scope.statusFilterOptions[0].code;      
+    
+    $scope.metadataForm = angular.copy(basicForm);
+    $scope.metadataFilter = angular.copy(utils.queryFilter);   
+    $scope.metadataFilter.status = $scope.statusFilterOptions[0].code;     
     
     $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
     
@@ -301,7 +311,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.saveEntity = function(options){
       $scope.$emit('$TRIGGERLOAD', options.loader);
       
-      if ($scope.contactForm.edit){
+      if ($scope[options.formName].edit){
         Business.componentservice.updateSubComponentEntity({
           componentId: $scope.componentForm.componentId,
           entityName: options.entityName,
@@ -358,8 +368,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
       }
     };
 
-//</editor-fold>       
-    
+//</editor-fold>          
     
 //<editor-fold   desc="General Section">
     $scope.loadComponentList = function(){
@@ -661,8 +670,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
      };   
      
     $scope.cancelResourceEdit = function () {
-      $scope.cancelEdit('resourceForm');
-      $scope.resourceUploader.clearQueue();
+      $scope.cancelEdit('resourceForm');      
     };
      
     $scope.resourceUploader = new FileUploader({
@@ -685,17 +693,19 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
         item.formData.push({
           "componentResource.restricted" : $scope.resourceForm.restricted
         });        
-        item.formData.push({
-          "componentResource.resourceId" : $scope.resourceForm.resourceId
-        });        
+        if ($scope.resourceForm.resourceId) {
+          item.formData.push({
+            "componentResource.resourceId" : $scope.resourceForm.resourceId
+          });
+        }
        },
       onSuccessItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
-        $scope.resourceUploader.clearQueue();
-        
+             
         //check response for a fail ticket or a error model
         if (response.success) {
-          triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
+          triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000); 
+          $scope.cancelResourceEdit();
           $scope.loadResources();
         } else {
           if (response.errors) {
@@ -710,14 +720,212 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
       },
       onErrorItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
-        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);
-        $scope.resourceUploader.clearQueue();
+        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);      
       }      
     });     
     
 
 //</editor-fold> 
+  
+//<editor-fold   desc="Media Section">
+
+    $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader');
+
+    $scope.loadMedia = function () {
+      $scope.loadEntity({
+        filter: $scope.mediaQueryFilter,
+        entity: 'media',
+        loader: 'mediaFormLoader'
+      });
+    };
+    $scope.loadMedia();
     
+    $scope.deleteMedia = function(media){
+     $scope.hardDeleteEntity({
+        loader: 'mediaFormLoader',
+        entityName: 'Media',
+        entityPath: 'media',
+        entityId: media.componentMediaId,
+        loadEntity: function(){
+          $scope.loadMedia();
+        }        
+     }); 
+    };    
+    
+    $scope.toggleMediaStatus = function(media){
+      $scope.toggleEntityStatus({
+        entity: media,        
+        entityId: media.componentMediaId,
+        entityName: 'media',        
+        loader: 'mediaFormLoader',
+        loadEntity: function(){
+          $scope.loadMedia();
+        }
+      });
+    };    
+    
+    $scope.saveMedia = function () {
+      $scope.mediaForm.link = $scope.mediaForm.originalLink;
+      if ($scope.mediaForm.originalLink || 
+        $scope.mediaUploader.queue.length === 0) {
+        
+        if (!$scope.mediaForm.originalLink) {          
+          $scope.mediaForm.originalName = $scope.mediaForm.originalFileName;  
+        } else {
+          $scope.mediaForm.mimeType = '';
+        }
+        
+        $scope.saveEntity({
+          alertId: 'saveMedia',
+          alertDiv: 'componentWindowDiv',
+          loader: 'mediaFormLoader',
+          entityName: 'media',
+          entity: $scope.mediaForm,
+          entityId: $scope.mediaForm.componentMediaId,
+          formName: 'mediaForm',
+          loadEntity: function () {
+            $scope.loadMedia();
+          }
+        });
+      } else {      
+        $scope.mediaUploader.uploadAll();
+      }
+     };   
+     
+    $scope.cancelMediaEdit = function () {
+      $scope.cancelEdit('mediaForm');      
+    };
+     
+    $scope.mediaUploader = new FileUploader({
+      url: 'Media.action?UploadMedia',
+      alias: 'file',
+      queueLimit: 1,  
+      removeAfterUpload: true,
+      onBeforeUploadItem: function(item) {
+        $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
+        
+        item.formData.push({
+          "componentMedia.componentId" : $scope.componentForm.componentId
+        });
+        item.formData.push({
+          "componentMedia.mediaTypeCode" : $scope.mediaForm.mediaTypeCode
+        });
+        item.formData.push({
+          "componentMedia.caption" : $scope.mediaForm.caption
+        });
+        if ($scope.mediaForm.componentMediaId) {
+          item.formData.push({
+            "componentMedia.componentMediaId": $scope.mediaForm.componentMediaId
+          });
+        }
+       },
+      onSuccessItem: function (item, response, status, headers) {
+        $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
+               
+        //check response for a fail ticket or a error model
+        if (response.success) {
+          triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
+          $scope.cancelMediaEdit();
+          $scope.loadMedia();          
+        } else {
+          if (response.errors) {
+            var uploadError = response.errors.file;
+            var enityError = response.errors.componentMedia;
+            var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
+            triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'componentWindowDiv', 6000);
+          } else {
+            triggerAlert('Unable to upload media. ', 'saveMedia', 'componentWindowDiv', 6000);
+          }
+        }
+      },
+      onErrorItem: function (item, response, status, headers) {
+        $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
+        triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
+      }      
+    });     
+    
+
+//</editor-fold>
+  
+//<editor-fold   desc="Dependancy Section">
+  
+    $scope.loadDependancies = function() {
+      $scope.loadEntity({
+      filter: $scope.dependencyFilter,
+      entity: 'dependencies',
+      loader: 'dependencyFormLoader'
+     });
+    };
+    $scope.loadDependancies();    
+   
+    $scope.toggleDependancyStatus = function(depend){
+      $scope.toggleEntityStatus({
+        entity: depend,        
+        entityId: depend.dependencyId,
+        entityName: 'dependencies',        
+        loader: 'dependencyFormLoader',
+        loadEntity: function(){
+          $scope.loadDependancies();
+        }
+      });
+    };    
+   
+    $scope.saveDependancy = function () {
+      $scope.saveEntity({
+        alertId: 'saveDependancy',
+        alertDiv: 'componentWindowDiv',
+        loader: 'dependencyFormLoader',
+        entityName: 'dependencies',
+        entity: $scope.dependencyForm,
+        entityId: $scope.dependencyForm.dependencyId,
+        formName: 'dependencyForm',
+        loadEntity: function () {
+          $scope.loadDependancies();
+        }
+      });       
+     };
+
+//</editor-fold>    
+  
+//<editor-fold   desc="Metadata Section">
+  
+    $scope.loadMetadata = function() {
+      $scope.loadEntity({
+      filter: $scope.metadataFilter,
+      entity: 'metadata',
+      loader: 'metadataFormLoader'
+     });
+    };
+    $scope.loadMetadata();    
+   
+    $scope.toggleMetadataStatus = function(meta){
+      $scope.toggleEntityStatus({
+        entity: meta,        
+        entityId: meta.metadataId,
+        entityName: 'metadata',        
+        loader: 'metadataFormLoader',
+        loadEntity: function(){
+          $scope.loadMetadata();
+        }
+      });
+    };    
+   
+    $scope.saveMetadata = function () {
+      $scope.saveEntity({
+        alertId: 'saveMetadata',
+        alertDiv: 'componentWindowDiv',
+        loader: 'metadataFormLoader',
+        entityName: 'metadata',
+        entity: $scope.metadataForm,
+        entityId: $scope.metadataForm.metadataId,
+        formName: 'metadataForm',
+        loadEntity: function () {
+          $scope.loadMetadata();
+        }
+      });       
+     };
+
+//</editor-fold>   
   
     
     $scope.close = function () {

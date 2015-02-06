@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -25,25 +27,38 @@ import java.util.Date;
 public class ComponentExternalDependencyView
 {
 
-	private String dependency;
+	private String dependencyId;
+	private String dependencyName;
 	private String version;
 	private String dependancyReferenceLink;
 	private String comment;
 	private Date updateDts;
+	private String activeStatus;
 
 	public ComponentExternalDependencyView()
 	{
 	}
-	
+
 	public static ComponentExternalDependencyView toView(ComponentExternalDependency dependency)
 	{
 		ComponentExternalDependencyView view = new ComponentExternalDependencyView();
 		view.setComment(dependency.getComment());
 		view.setVersion(dependency.getVersion());
 		view.setDependancyReferenceLink(dependency.getDependancyReferenceLink());
-		view.setDependency(dependency.getDependencyName());
+		view.setDependencyName(dependency.getDependencyName());
+		view.setDependencyId(dependency.getDependencyId());
 		view.setUpdateDts(dependency.getUpdateDts());
+		view.setActiveStatus(dependency.getActiveStatus());
 		return view;
+	}
+
+	public static List<ComponentExternalDependencyView> toViewList(List<ComponentExternalDependency> dependencies)
+	{
+		List<ComponentExternalDependencyView> views = new ArrayList<>();
+		dependencies.forEach(dependency -> {
+			views.add(toView(dependency));
+		});
+		return views;
 	}
 
 	public String getComment()
@@ -76,30 +91,44 @@ public class ComponentExternalDependencyView
 		this.dependancyReferenceLink = dependancyReferenceLink;
 	}
 
-	public String getDependency()
-	{
-		return dependency;
-	}
-
-	public void setDependency(String dependency)
-	{
-		this.dependency = dependency;
-	}
-
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getDependencyId()
+	{
+		return dependencyId;
+	}
+
+	public void setDependencyId(String dependencyId)
+	{
+		this.dependencyId = dependencyId;
+	}
+
+	public String getDependencyName()
+	{
+		return dependencyName;
+	}
+
+	public void setDependencyName(String dependencyName)
+	{
+		this.dependencyName = dependencyName;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }

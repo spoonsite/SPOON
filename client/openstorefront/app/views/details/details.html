@@ -45,11 +45,14 @@
     <table ng-if="details.details.dependencies[0] !== undefined" class="table table-bordered table-hover">
       <tbody>
         <tr>
-          <th class="valign" colspan="2"><h4>External Dependencies</h4></th>
+          <th class="valign" colspan="1"><h4>External Dependencies</h4></th>
         </tr>             
         <tr id="dependencies{{$index}}Update" data-ng-repeat="row in details.details.dependencies">
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('dependencies'+$index)? 'updatedForUser': ''" class="text-left-bold">{{row.dependency}}</td>
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" class="text-left">{{row.comment}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('dependencies'+$index)? 'updatedForUser': ''" class="text-left-bold">
+			  <p style="font-size: 15px;">{{row.dependencyName}}  {{row.version}}</p>
+			  <p ng-show="row.dependancyReferenceLink"><a href="{{row.dependancyReferenceLink}}" target="_blank" ng-click="sendEvent('External-Link', details.details.name, row.link + ' -- ' + row.resourceTypeDesc)">{{row.dependancyReferenceLink}}</a></p>
+			  <p ng-show="row.comment">{{row.comment}}</p>
+		  </td>
         </tr>
       </tbody>
     </table>  

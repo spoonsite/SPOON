@@ -80,6 +80,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentRelationshipView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
@@ -365,6 +366,11 @@ public class ComponentServiceImpl
 			tempParentComponent = new Component();
 		}
 		result.setComponentDetails(tempComponent, tempParentComponent);
+
+		Component childExample = new Component();
+		childExample.setParentComponentId(componentId);
+		List<Component> childComponents = persistenceService.queryByExample(Component.class, childExample);
+		result.setSubComponents(ComponentRelationshipView.toViewList(childComponents));
 
 		UserWatch tempWatch = new UserWatch();
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());

@@ -161,7 +161,7 @@ limitations under the License.
 			<div>	
 				<br>
 				Filter Status:
-				<select type="text" class="form-control"  ng-change="loadComponentAttributesView()" style="width:100px;display: inline" ng-model="componentAttributeViewQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
+				<select type="text" class="form-control"  ng-change="loadComponentAttributesView()" style="width:110px;display: inline" ng-model="componentAttributeViewQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
 				<button class="btn btn-default" ng-click="loadComponentAttributesView()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
 			</div>	
 			<table class="table table-striped table-bordered">
@@ -273,7 +273,7 @@ limitations under the License.
 			<div>	
 				<br>
 				Filter Status:
-				<select type="text" class="form-control"  ng-change="loadContacts()" style="width:100px;display: inline" ng-model="contactQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
+				<select type="text" class="form-control"  ng-change="loadContacts()" style="width:110px;display: inline" ng-model="contactQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
 				<button class="btn btn-default" ng-click="loadContacts()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
 			</div>	
 			<table class="table table-striped table-bordered">
@@ -354,12 +354,12 @@ limitations under the License.
 			<div>	
 				<br>
 				Filter Status:
-				<select type="text" class="form-control"  ng-change="loadResources()" style="width:100px;display: inline" ng-model="resourceQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
+				<select type="text" class="form-control"  ng-change="loadResources()" style="width:110px;display: inline" ng-model="resourceQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
 				<button class="btn btn-default" ng-click="loadResources()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
 			</div>	
 			<table class="table table-striped table-bordered">
 				<tr>
-					<th><a href="" ng-click="setPredicate('key', 'appProp');">Resource Type <span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
+					<th><a href="" ng-click="setPredicate('key', 'resources');">Resource Type <span ng-show="predicate['resources'] === 'key'"><i ng-show="!reverse['resources']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['resources']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
 					<th>Description</th>
 					<th>Link</th>									
 					<th>Mime Type</th>									
@@ -367,7 +367,7 @@ limitations under the License.
 					<th>Restricted</th>									
 					<th>Action</th>
 				</tr>
-				<tr ng-repeat="resource in resources | orderBy:predicate['appProp']:reverse['appProp']" >
+				<tr ng-repeat="resource in resources | orderBy:predicate['resources']:reverse['resources']" >
 					<td>{{resource.resourceTypeDesc}}</td>
 					<td>{{resource.description}}</td>
 					<td>{{resource.originalLink}}</td>
@@ -385,161 +385,164 @@ limitations under the License.
 		<tab heading="Media" ng-show="editMode">
 			<hr>
 			Screenshots, video, other media for a component.<br><br>
-			<div class="form-group" show-errors >
-				<label class="control-label">Media Type</label><br>
-				  <button type="button" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
-					Select <span class="caret"></span>
-				  </button>  			
-			</div>	
-			<div class="form-group"  >
-				<label class=" control-label required">Caption</label>				
-					<input  type="text" 
-							id="firstName"
-							name="firstName"													
-							class="form-control" 
-							ng-model="userProfileForm.firstName" 
-							ng-minlength=1
-							ng-maxlength=250
-							required 
-							ng-focus />
-					<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-					<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>	
-			<div class="form-group"  >
-				<input type="checkbox" name="" class="" />&nbsp;<label class=" control-label">External Link</label>				
-			</div>	
-			<div class="form-group"  >
-				<label class=" control-label">Upload Resource</label>		
-				 
-			</div>				
-			<div class="form-group"  >
-				<label class=" control-label">Link</label>				
-					<input  type="text" 
-							id="firstName"
-							name="firstName"													
-							class="form-control" 
-							ng-model="userProfileForm.firstName" 
-							ng-minlength=1
-							ng-maxlength=250
-							required 
-							ng-focus />
-					<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-					<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>	
-			<button type="submit" class="btn btn-primary" ng-click="addAttribute()"><i class="fa fa-save"></i>&nbsp;Add</button>	
+			<loader trigger="mediaFormLoader"></loader>
+			<div class="btn-warning formPanel-header" ng-click="mediaForm.collapse = !mediaForm.collapse;">
+				Add/Edit Media
+				<span style="position: absolute; right: 0px; padding-right: 35px;">
+					<i class="fa" ng-class="mediaForm.collapse ? 'fa-toggle-down' : 'fa-toggle-up' "></i>						
+				</span>
+			</div>
+			<div class="formPanel" collapse="mediaForm.collapse">
+				<form class="form-horizontal" name='mediaUIForm' role="form"  ng-submit="saveMedia()" style="padding-left: 10px; padding-right: 10px;">
+					<div class="form-group" show-errors >
+						<label class="control-label required">Media Type</label><br>
+						<select type="text" class="form-control" name="mediaTypeCode" required style="width:500px;" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"></select>
+						<p ng-show="mediaUIForm.mediaTypeCode.$error.required && !mediaUIForm.mediaTypeCode.$focused" class="help-block">Media Type is required.</p>							
+					</div>	
+					<div class="form-group"  >
+						<label class=" control-label">Caption</label>				
+						<input  type="text" 								
+								name="caption"													
+								class="form-control" 
+								ng-model="mediaForm.caption" 
+								ng-minlength=0
+								ng-maxlength=250								
+								ng-focus />
+					</div>	
+					<div class="form-group"  >
+						<label class=" control-label">Upload Resource</label>		
+						<input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" width="100" ng-disabled="mediaForm.originalLink" />
+						<p class="help-block" ng-show="mediaForm.fileName">Current Local Media: {{mediaForm.originalFileName}} ({{mediaForm.fileName}})</p>								
+					</div>				
+					<div class="form-group"  >
+						<label class=" control-label">Link</label>				
+						<input  type="text" 								
+								name="originalLink"													
+								class="form-control" 
+								placeholder="http:///www.example.com/image.png"
+								ng-model="mediaForm.originalLink"								
+								ng-minlength=0
+								ng-maxlength=250								
+								ng-focus />
+					</div>	
+					<button type="submit" class="btn btn-primary" ng-disabled="mediaUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{mediaForm.saveText}}</button>	
+					<a  ng-href=""  name="cancelSave" ng-click="cancelMediaEdit()" ng-show="mediaForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>	
+				</form>			
+			</div>
 			<div>	
 				<br>
-				Filter Status:
-				<button type="button"  class="btn btn-default"  id="filterstatus" ng-model="componentFilter.status" data-html="1" ng-change="refreshComponents()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
-					Active <span class="caret"></span>
-				</button> 				
-				<button class="btn btn-default" ng-click="refreshAppProperties()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				Filter Status:				
+				<select type="text" class="form-control"  ng-change="loadMedia()" style="width:110px;display: inline" ng-model="mediaQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>				
+				<button class="btn btn-default" ng-click="loadMedia()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
 			</div>	
 			<table class="table table-striped table-bordered">
 				<tr>
-					<th><a href="" ng-click="setPredicate('key', 'appProp');">Media Type <span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+					<th><a href="" ng-click="setPredicate('key', 'media');">Media Type <span ng-show="predicate['media'] === 'key'"><i ng-show="!reverse['media']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
 					<th>Caption</th>														
 					<th>Mime Type</th>									
 					<th>Local Media Name</th>
 					<th>Link</th>					
 					<th>Action</th>
 				</tr>
-				<tr ng-repeat="prop in appProperties | orderBy:predicate['appProp']:reverse['appProp']" >
-					<td>{{prop.key}}</td>
-					<td>{{prop.value}}</td>
-					<td>{{prop.updateUser}}</td>
-					<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+				<tr ng-repeat="mediaItem in media | orderBy:predicate['media']:reverse['media']" >
+					<td>{{mediaItem.contentType}}</td>
+					<td>{{mediaItem.caption}}</td>
+					<td>{{mediaItem.mimeType}}</td>
+					<td><p ng-show="mediaItem.fileName">{{mediaItem.originalFileName}} ({{mediaItem.fileName}})</p></td>	
+					<td>{{mediaItem.originalLink}}</td>	
 					<td style="padding:0px; width: 200px;">&nbsp;
-						<button class="btn" ng-click="editAppProperty(prop);"  title="Edit"><i class="fa fa-edit"></i></button>
-						<button class="btn" ng-click="editAppProperty(prop);"  title="Toggle Status"><i class="fa fa-edit"></i></button>						
+						<button class="btn" ng-click="editEntity('mediaForm', mediaItem);"  title="Edit"><i class="fa fa-edit"></i></button>
+						<button class="btn" ng-click="toggleMediaStatus(mediaItem);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
+						<button class="btn btn-danger" ng-click="deleteMedia(mediaItem);"  title="Delete"><i class="fa fa-trash"></i></button>
 					</td>
 				</tr>					
 			</table>
 		</tab>		
-		<tab heading="Dependancies" ng-show="editMode">
+		<tab heading="Dependencies" ng-show="editMode">
 			<hr>
 			External dependences for a component<br><br>
-			<div class="form-group"  >
-				<label class=" control-labe required">Name</label>				
-				<input  type="text" 
-						id="firstName"
-						name="firstName"													
-						class="form-control" 
-						ng-model="userProfileForm.firstName" 
-						ng-minlength=1
-						ng-maxlength=250
-						required 
-						ng-focus />
-				<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-				<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>	
-			<div class="form-group"  >
-				<label class=" control-label required">Version</label>				
-				<input  type="text" 
-						id="firstName"
-						name="firstName"													
-						class="form-control" 
-						ng-model="userProfileForm.firstName" 
-						ng-minlength=1
-						ng-maxlength=250
-						required 
-						ng-focus />
-				<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-				<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>	
-			<div class="form-group"  >
-				<label class=" control-label required">External Link</label>				
-				<input  type="text" 
-						id="firstName"
-						name="firstName"													
-						class="form-control" 
-						ng-model="userProfileForm.firstName" 
-						ng-minlength=1
-						ng-maxlength=250
-						required 
-						ng-focus />
-				<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-				<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>				
-			<div class="form-group"  >
-				<label class=" control-label required">Comment</label>				
-				<input  type="text" 
-						id="firstName"
-						name="firstName"													
-						class="form-control" 
-						ng-model="userProfileForm.firstName" 
-						ng-minlength=1
-						ng-maxlength=250
-						required 
-						ng-focus />
-				<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-				<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>	
-			<button type="submit" class="btn btn-primary" ng-click="addAttribute()"><i class="fa fa-save"></i>&nbsp;Add</button>	
+			<loader trigger="dependencyFormLoader"></loader>
+			<div class="btn-warning formPanel-header" ng-click="dependencyForm.collapse = !dependencyForm.collapse;">
+				Add/Edit Dependency
+				<span style="position: absolute; right: 0px; padding-right: 35px;">
+					<i class="fa" ng-class="dependencyForm.collapse ? 'fa-toggle-down' : 'fa-toggle-up' "></i>						
+				</span>
+			</div>
+			<div class="formPanel" collapse="dependencyForm.collapse">
+				<form class="form-horizontal" name='dependancyUIForm' role="form"  ng-submit="saveDependancy()" style="padding-left: 10px; padding-right: 10px;">
+					<div class="form-group"  >
+						<label class=" control-labe required">Name</label>				
+						<input  type="text" 
+								name="name"													
+								class="form-control" 
+								ng-model="dependencyForm.dependencyName" 
+								ng-minlength=1
+								ng-maxlength=250
+								required 
+								ng-focus />
+						<p ng-show="dependancyUIForm.name.$error.minlength && !dependancyUIForm.name.$focused" class="help-block">Name must be longer than 1 character in length.</p>
+						<p ng-show="dependancyUIForm.name.$error.required && !dependancyUIForm.name.$focused" class="help-block">Name is required.</p>
+					</div>	
+					<div class="form-group"  >
+						<label class=" control-label required">Version</label>				
+						<input  type="text" 						
+								name="version"													
+								class="form-control" 
+								ng-model="dependencyForm.version" 
+								ng-minlength=1
+								ng-maxlength=250
+								required 
+								ng-focus />
+						<p ng-show="dependancyUIForm.version.$error.minlength && !dependancyUIForm.version.$focused" class="help-block">Version must be longer than 1 character in length.</p>
+						<p ng-show="dependancyUIForm.version.$error.required && !dependancyUIForm.version.$focused" class="help-block">Version is required.</p>
+					</div>	
+					<div class="form-group"  >
+						<label class=" control-label">External Link</label>				
+						<input  type="text" 						
+								name="dependancyReferenceLink"													
+								class="form-control" 
+								placeholder="http://www.example.com"
+								ng-model="dependencyForm.dependancyReferenceLink" 
+								ng-minlength=0
+								ng-maxlength=250						
+								ng-focus />
+					</div>				
+					<div class="form-group"  >
+						<label class=" control-label">Comment</label>				
+						<input  type="text" 						
+								name="comment"													
+								class="form-control" 
+								ng-model="dependencyForm.comment" 
+								ng-minlength=0
+								ng-maxlength=250					
+								ng-focus />
+					</div>	
+					<button type="submit" class="btn btn-primary" ng-disabled="dependancyUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{dependencyForm.saveText}}</button>	
+					<a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancelEdit('dependencyForm')" ng-show="dependencyForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
+				</form>			
+			</div>						
 			<div>	
 				<br>
 				Filter Status:
-				<button type="button"  class="btn btn-default"  id="filterstatus" ng-model="componentFilter.status" data-html="1" ng-change="refreshComponents()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
-					Active <span class="caret"></span>
-				</button> 				
-				<button class="btn btn-default" ng-click="refreshAppProperties()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				<select type="text" class="form-control"  ng-change="loadDependancies()" style="width:110px;display: inline" ng-model="dependencyFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>				
+				<button class="btn btn-default" ng-click="loadDependancies()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
 			</div>	
 			<table class="table table-striped table-bordered">
 				<tr>
-					<th><a href="" ng-click="setPredicate('key', 'appProp');">Name <span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
-					<th>Version</th>														
-					<th>Comment</th>									
-					<th>Link</th>									
+					<th><a href="" ng-click="setPredicate('dependencyName', 'depend');">Name <span ng-show="predicate['depend'] === 'dependencyName'"><i ng-show="!reverse['depend']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['depend']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+					<th>Version</th>	
+					<th>Link</th>
+					<th>Comment</th>																							
 					<th>Action</th>
 				</tr>
-				<tr ng-repeat="prop in appProperties | orderBy:predicate['appProp']:reverse['appProp']" >
-					<td>{{prop.key}}</td>
-					<td>{{prop.value}}</td>
-					<td>{{prop.updateUser}}</td>
-					<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+				<tr ng-repeat="depend in dependencies | orderBy:predicate['depend']:reverse['depend']" >
+					<td>{{depend.dependencyName}}</td>
+					<td>{{depend.version}}</td>
+					<td>{{depend.dependancyReferenceLink}}</td>
+					<td>{{depend.comment}}</td>														
 					<td style="padding:0px; width: 200px;">&nbsp;
-						<button class="btn" ng-click="editAppProperty(prop);"  title="Edit"><i class="fa fa-edit"></i></button>
-						<button class="btn" ng-click="editAppProperty(prop);"  title="Toggle Status"><i class="fa fa-edit"></i></button>						
+						<button class="btn" ng-click="editEntity('dependencyForm', depend);"  title="Edit"><i class="fa fa-edit"></i></button>
+						<button class="btn" ng-click="toggleDependancyStatus(depend);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
 					</td>
 				</tr>					
 			</table>			
@@ -547,56 +550,64 @@ limitations under the License.
 		<tab heading="Metadata" ng-show="editMode">
 			<hr>
 			Extra non-filterable information about a component.<br><br>
-			<div class="form-group"  >
-				<label class=" control-label">Label</label>				
-				<input  type="text" 
-						id="firstName"
-						name="firstName"													
-						class="form-control" 
-						ng-model="userProfileForm.firstName" 
-						ng-minlength=1
-						ng-maxlength=250
-						required 
-						ng-focus />
-				<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-				<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
+			<loader trigger="metadataFormLoader"></loader>
+			<div class="btn-warning formPanel-header" ng-click="metadataForm.collapse = !metadataForm.collapse;">
+				Add/Edit Metadata
+				<span style="position: absolute; right: 0px; padding-right: 35px;">
+					<i class="fa" ng-class="metadataForm.collapse ? 'fa-toggle-down' : 'fa-toggle-up' "></i>						
+				</span>
+			</div>
+			<div class="formPanel" collapse="metadataForm.collapse">
+				<form class="form-horizontal" name='metadataUIForm' role="form"  ng-submit="saveMetadata()" style="padding-left: 10px; padding-right: 10px;">
+					<div class="form-group"  >
+						<label class=" control-label required">Label</label>				
+						<input  type="text" 								
+								name="label"													
+								class="form-control" 
+								ng-model="metadataForm.label" 
+								ng-minlength=1
+								ng-maxlength=250
+								required 
+								ng-focus />
+						<p ng-show="metadataUIForm.label.$error.minlength && !metadataUIForm.label.$focused" class="help-block">Label must be longer than 1 character in length.</p>
+						<p ng-show="metadataUIForm.label.$error.required && !metadataUIForm.label.$focused" class="help-block">Label is required.</p>
+					</div>	
+					<div class="form-group"  >
+						<label class=" control-labe required">Value</label>				
+						<input  type="text" 								
+								name="value"													
+								class="form-control" 
+								ng-model="metadataForm.value" 
+								ng-minlength=1
+								ng-maxlength=250
+								required 
+								ng-focus />
+						<p ng-show="metadataUIForm.value.$error.minlength && !metadataUIForm.value.$focused" class="help-block">Value must be longer than 1 character in length.</p>
+						<p ng-show="metadataUIForm.value.$error.required && !metadataUIForm.value.$focused" class="help-block">Value is required.</p>
+					</div>				
+					<button type="submit" class="btn btn-primary" ng-disabled="metadataUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{metadataForm.saveText}}</button>	
+					<a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancelEdit('metadataForm')" ng-show="metadataForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
+		
+				</form>	
 			</div>	
-			<div class="form-group"  >
-				<label class=" control-label">Value</label>				
-				<input  type="text" 
-						id="firstName"
-						name="firstName"													
-						class="form-control" 
-						ng-model="userProfileForm.firstName" 
-						ng-minlength=1
-						ng-maxlength=250
-						required 
-						ng-focus />
-				<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-				<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>				
-			<button type="submit" class="btn btn-primary" ng-click="addAttribute()"><i class="fa fa-save"></i>&nbsp;Add</button>
 			<div>	
 				<br>
 				Filter Status:
-				<button type="button"  class="btn btn-default"  id="filterstatus" ng-model="componentFilter.status" data-html="1" ng-change="refreshComponents()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
-					Active <span class="caret"></span>
-				</button> 				
-				<button class="btn btn-default" ng-click="refreshAppProperties()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
+				<select type="text" class="form-control"  ng-change="loadMetadata()" style="width:110px;display: inline" ng-model="metadataFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>			
+				<button class="btn btn-default" ng-click="loadMetadata()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
 			</div>	
 			<table class="table table-striped table-bordered">
 				<tr>
-					<th><a href="" ng-click="setPredicate('key', 'appProp');">Label<span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+					<th><a href="" ng-click="setPredicate('Label', 'meta');">Label<span ng-show="predicate['meta'] === 'key'"><i ng-show="!reverse['meta']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['meta']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
 					<th>Value</th>																					
 					<th>Action</th>
 				</tr>
-				<tr ng-repeat="prop in appProperties | orderBy:predicate['appProp']:reverse['appProp']" >
-					<td>{{prop.key}}</td>
-					<td>{{prop.value}}</td>
-					<td>{{prop.updateUser}}</td>
-					<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+				<tr ng-repeat="meta in metadata | orderBy:predicate['meta']:reverse['meta']" >
+					<td>{{meta.label}}</td>
+					<td>{{meta.value}}</td>					
 					<td style="padding:0px; width: 200px;">&nbsp;						
-						<button class="btn" ng-click="editAppProperty(prop);"  title="Toggle Status"><i class="fa fa-edit"></i></button>						
+					<button class="btn" ng-click="editEntity('metadataForm', meta);"  title="Edit"><i class="fa fa-edit"></i></button>
+						<button class="btn" ng-click="toggleMetadataStatus(meta);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>							
 					</td>
 				</tr>					
 			</table>				

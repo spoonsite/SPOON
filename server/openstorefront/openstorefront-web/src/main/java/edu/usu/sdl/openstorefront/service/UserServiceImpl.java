@@ -445,7 +445,7 @@ public class UserServiceImpl
 					userTracking.setDeviceType(readableUserAgent.getTypeName());
 					userTracking.setOsPlatform(readableUserAgent.getOperatingSystem().getName() + "  version: " + readableUserAgent.getOperatingSystem().getVersionNumber().toVersionString());
 				}
-				userTracking.setClientIp(request.getRemoteAddr());
+				userTracking.setClientIp(SecurityUtil.getClientIp(request));
 				userTracking.setUserAgent(userAgent);
 
 				saveUserTracking(userTracking);
