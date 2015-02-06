@@ -32,6 +32,7 @@ public class ComponentMediaView
 
 	private String componentMediaId;
 	private String link;
+	private String mediaTypeCode;
 	private String contentType;
 	private String mimeType;
 	private String caption;
@@ -59,6 +60,7 @@ public class ComponentMediaView
 		mediaView.setFileName(media.getFileName());
 		mediaView.setOriginalFileName(media.getOriginalName());
 		mediaView.setOriginalLink(media.getLink());
+		mediaView.setMediaTypeCode(media.getMediaTypeCode());
 		mediaView.setContentType(TranslateUtil.translate(MediaType.class, media.getMediaTypeCode()));
 		mediaView.setMimeType(media.getMimeType());
 		mediaView.setCaption(media.getCaption());
@@ -69,7 +71,9 @@ public class ComponentMediaView
 	public static List<ComponentMediaView> toViewList(List<ComponentMedia> mediaList)
 	{
 		List<ComponentMediaView> componentMediaViews = new ArrayList<>();
-
+		mediaList.forEach(media -> {
+			componentMediaViews.add(toView(media));
+		});
 		return componentMediaViews;
 	}
 
@@ -171,6 +175,16 @@ public class ComponentMediaView
 	public void setComponentMediaId(String componentMediaId)
 	{
 		this.componentMediaId = componentMediaId;
+	}
+
+	public String getMediaTypeCode()
+	{
+		return mediaTypeCode;
+	}
+
+	public void setMediaTypeCode(String mediaTypeCode)
+	{
+		this.mediaTypeCode = mediaTypeCode;
 	}
 
 }

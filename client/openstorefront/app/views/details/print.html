@@ -147,15 +147,15 @@
         <table class="table table-striped table-bordered" style="table-layout:fixed">
           <tr>
             <th>Dependency</th>
-            <th>Version</th>
-            <th>Comment</th>
-            <th>Update Date</th>
+            <th>Version</th>           
+            <th>Link</th>
+	 <th>Comment</th>
           </tr>
           <tr ng-repeat="dependency in details.dependencies.data">
-            <td>{{dependency.dependency}}</td>
+            <td>{{dependency.dependencyName}}</td>
             <td>{{dependency.version}}</td>
-            <td>{{dependency.comment}}</td>
-            <td>{{getDate(dependency.updateDts)}}</td>
+	 <td>{{dependency.dependancyReferenceLink}}</td>
+            <td>{{dependency.comment}}</td>           
           </tr>
         </table>
       </div>

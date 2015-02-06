@@ -66,8 +66,10 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
@@ -422,7 +424,7 @@ public class ComponentRESTResource
 		//Track Views
 		if (componentDetail != null || componentPrint != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
-			componentTracking.setClientIp(request.getRemoteAddr());
+			componentTracking.setClientIp(SecurityUtil.getClientIp(request));
 			componentTracking.setComponentId(componentId);
 			componentTracking.setEventDts(TimeUtil.currentDate());
 			componentTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
@@ -649,22 +651,68 @@ public class ComponentRESTResource
 
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource DEPENDENCY section">
 	@GET
-	@APIDescription("Get the dependencies from the entity")
+	@APIDescription("Get the dependencies for the component")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentExternalDependency.class)
-	@Path("/{id}/dependency")
-	public List<ComponentExternalDependency> getComponentDependency(
+	@Path("/{id}/dependencies")
+	public List<ComponentExternalDependency> getComponentDependencies(
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentExternalDependency.class, componentId);
 	}
 
+	@GET
+	@APIDescription("Gets a dependency for a component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentExternalDependency.class)
+	@Path("/{id}/dependencies/{dependencyId}")
+	public Response getComponentDependency(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("dependencyId")
+			@RequiredParam String dependencyId)
+	{
+		ComponentExternalDependency dependencyExample = new ComponentExternalDependency();
+		dependencyExample.setDependencyId(dependencyId);
+		dependencyExample.setComponentId(componentId);
+		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(ComponentExternalDependency.class, dependencyExample);
+		return sendSingleEntityResponse(componentExternalDependency);
+	}
+
+	@GET
+	@APIDescription("Get the dependencies from the entity")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentExternalDependencyView.class)
+	@Path("/{id}/dependencies/view")
+	public Response getComponentDependencies(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentExternalDependency dependencyExample = new ComponentExternalDependency();
+		dependencyExample.setActiveStatus(filterQueryParams.getStatus());
+		dependencyExample.setComponentId(componentId);
+
+		List<ComponentExternalDependency> componentExternalDependencies = service.getPersistenceService().queryByExample(ComponentExternalDependency.class, dependencyExample);
+		componentExternalDependencies = filterQueryParams.filter(componentExternalDependencies);
+		List<ComponentExternalDependencyView> views = ComponentExternalDependencyView.toViewList(componentExternalDependencies);
+
+		GenericEntity<List<ComponentExternalDependencyView>> entity = new GenericEntity<List<ComponentExternalDependencyView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes a dependency from the component")
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/dependency/{dependencyId}")
+	@APIDescription("Inactivates a dependency from the component")
+	@Path("/{id}/dependencies/{dependencyId}")
 	public void deleteComponentDependency(
 			@PathParam("id")
 			@RequiredParam String componentId,
@@ -678,12 +726,32 @@ public class ComponentRESTResource
 		}
 	}
 
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates a dependency from the component")
+	@Path("/{id}/dependencies/{dependencyId}/activate")
+	public Response activatieComponentDependency(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("dependencyId")
+			@RequiredParam String dependencyId)
+	{
+		ComponentExternalDependency dependencyExample = new ComponentExternalDependency();
+		dependencyExample.setDependencyId(dependencyId);
+		dependencyExample.setComponentId(componentId);
+		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().queryOneByExample(ComponentExternalDependency.class, dependencyExample);
+		if (componentExternalDependency != null) {
+			service.getComponentService().activateBaseComponent(ComponentExternalDependency.class, dependencyId);
+		}
+		return sendSingleEntityResponse(componentExternalDependency);
+	}
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Add a dependency to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentExternalDependency.class)
-	@Path("/{id}/dependency")
+	@Path("/{id}/dependencies")
 	public Response addComponentDependency(
 			@PathParam("id")
 			@RequiredParam String componentId,
@@ -698,7 +766,7 @@ public class ComponentRESTResource
 	@APIDescription("Update a contact associated to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentExternalDependency.class)
-	@Path("/{id}/dependency/{dependencyId}")
+	@Path("/{id}/dependencies/{dependencyId}")
 	public Response updateComponentDependency(
 			@PathParam("id")
 			@RequiredParam String componentId,
@@ -1232,8 +1300,6 @@ public class ComponentRESTResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Inactivates media from the specified component")
-	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(ComponentMedia.class)
 	@Path("/{id}/media/{mediaId}")
 	public void inactivateComponentMedia(
 			@PathParam("id")
@@ -1251,9 +1317,7 @@ public class ComponentRESTResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Removes media from the specified entity")
-	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(ComponentMedia.class)
-	@Path("/{id}/media/{mediaId}}/force")
+	@Path("/{id}/media/{mediaId}/force")
 	public void deleteComponentMedia(
 			@PathParam("id")
 			@RequiredParam String componentId,
@@ -1265,6 +1329,30 @@ public class ComponentRESTResource
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
 			service.getComponentService().deleteBaseComponent(ComponentMedia.class, mediaId);
 		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates media from the specified component")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMedia.class)
+	@Path("/{id}/media/{mediaId}/activate")
+	public Response activateComponentMedia(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("mediaId")
+			@RequiredParam String mediaId)
+	{
+		ComponentMedia componentMediaExample = new ComponentMedia();
+		componentMediaExample.setComponentId(componentId);
+		componentMediaExample.setComponentMediaId(mediaId);
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		if (componentMedia != null) {
+			checkBaseComponentBelongsToComponent(componentMedia, componentId);
+			service.getComponentService().activateBaseComponent(ComponentMedia.class, mediaId);
+			componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(componentMedia);
 	}
 
 	@POST
@@ -1341,10 +1429,56 @@ public class ComponentRESTResource
 		return service.getComponentService().getBaseComponent(ComponentMetadata.class, componentId);
 	}
 
+	@GET
+	@APIDescription("Gets a metadata entity for a component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMetadata.class)
+	@Path("/{id}/metadata/{metadataId}")
+	public Response getComponentMetadataEntity(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("metadataId")
+			@RequiredParam String metadataId)
+	{
+		ComponentMetadata metadataExample = new ComponentMetadata();
+		metadataExample.setMetadataId(metadataId);
+		metadataExample.setComponentId(componentId);
+		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(ComponentMetadata.class, metadataExample);
+		return sendSingleEntityResponse(componentMetadata);
+	}
+
+	@GET
+	@APIDescription("Get the dependencies from the entity")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMetadataView.class)
+	@Path("/{id}/metadata/view")
+	public Response getComponentMetadataView(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentMetadata metadataExample = new ComponentMetadata();
+		metadataExample.setActiveStatus(filterQueryParams.getStatus());
+		metadataExample.setComponentId(componentId);
+
+		List<ComponentMetadata> componentMetadata = service.getPersistenceService().queryByExample(ComponentMetadata.class, metadataExample);
+		componentMetadata = filterQueryParams.filter(componentMetadata);
+		List<ComponentMetadataView> views = ComponentMetadataView.toViewList(componentMetadata);
+
+		GenericEntity<List<ComponentMetadataView>> entity = new GenericEntity<List<ComponentMetadataView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes metadata from the specified component")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Inactivates metadata from the specified component")
 	@Path("/{id}/metadata/{metadataId}")
 	public void deleteComponentMetadata(
 			@PathParam("id")
@@ -1357,6 +1491,26 @@ public class ComponentRESTResource
 			checkBaseComponentBelongsToComponent(componentMetadata, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentMetadata.class, metadataId);
 		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Removes metadata from the specified component")
+	@Path("/{id}/metadata/{metadataId}/activate")
+	public Response activateComponentMetadata(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("metadataId")
+			@RequiredParam String metadataId)
+	{
+		ComponentMetadata metadataExample = new ComponentMetadata();
+		metadataExample.setMetadataId(metadataId);
+		metadataExample.setComponentId(componentId);
+		ComponentMetadata componentMetadata = service.getPersistenceService().queryOneByExample(ComponentMetadata.class, metadataExample);
+		if (componentMetadata != null) {
+			service.getComponentService().activateBaseComponent(ComponentMetadata.class, metadataId);
+		}
+		return sendSingleEntityResponse(componentMetadata);
 	}
 
 	@POST
@@ -1411,8 +1565,7 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-
-			return Response.created(URI.create("v1/resource/components/" + metadata.getComponentId() + "/media/" + metadata.getMetadataId())).build();
+			return Response.created(URI.create("v1/resource/components/" + metadata.getComponentId() + "/metadata/" + metadata.getMetadataId())).entity(metadata).build();
 		} else {
 			return Response.ok(metadata).build();
 		}

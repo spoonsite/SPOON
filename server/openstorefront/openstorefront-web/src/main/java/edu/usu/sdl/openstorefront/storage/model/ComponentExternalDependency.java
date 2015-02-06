@@ -49,16 +49,14 @@ public class ComponentExternalDependency
 	@Sanitize(TextSanitizer.class)
 	private String version;
 
-	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@Sanitize(TextSanitizer.class)
 	@APIDescription("External URL to the dependancy")
 	private String dependancyReferenceLink;
 
-	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String comment;
 

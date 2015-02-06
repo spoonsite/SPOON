@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -25,9 +27,11 @@ import java.util.Date;
 public class ComponentMetadataView
 {
 
+	private String metadataId;
 	private String label;
 	private String value;
 	private Date updateDts;
+	private String activeStatus;
 
 	public ComponentMetadataView()
 	{
@@ -39,7 +43,18 @@ public class ComponentMetadataView
 		componentMetadataView.setLabel(metadata.getLabel());
 		componentMetadataView.setUpdateDts(metadata.getUpdateDts());
 		componentMetadataView.setValue(metadata.getValue());
+		componentMetadataView.setMetadataId(metadata.getMetadataId());
+		componentMetadataView.setActiveStatus(metadata.getActiveStatus());
 		return componentMetadataView;
+	}
+
+	public static List<ComponentMetadataView> toViewList(List<ComponentMetadata> metadataList)
+	{
+		List<ComponentMetadataView> componentMetadataViews = new ArrayList<>();
+		metadataList.forEach(metadata -> {
+			componentMetadataViews.add(toView(metadata));
+		});
+		return componentMetadataViews;
 	}
 
 	public String getLabel()
@@ -70,6 +85,26 @@ public class ComponentMetadataView
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getMetadataId()
+	{
+		return metadataId;
+	}
+
+	public void setMetadataId(String metadataId)
+	{
+		this.metadataId = metadataId;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }
