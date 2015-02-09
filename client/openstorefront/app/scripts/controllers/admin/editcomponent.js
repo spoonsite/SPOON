@@ -230,7 +230,9 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     
     $scope.metadataForm = angular.copy(basicForm);
     $scope.metadataFilter = angular.copy(utils.queryFilter);   
-    $scope.metadataFilter.status = $scope.statusFilterOptions[0].code;     
+    $scope.metadataFilter.status = $scope.statusFilterOptions[0].code;    
+    
+    $scope.evaluationForm = {};
     
     $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
     
@@ -354,7 +356,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     };   
     
     $scope.hardDeleteEntity = function(options){
-      var response = window.confirm("Are you sure you want DELETE  "+ options.entityName + "?");
+      var response = window.confirm("Are you sure you want to DELETE "+ options.entityName + "?");
       if (response) {
         $scope.$emit('$TRIGGERLOAD', options.loader);
         Business.componentservice.forceRemoveEnity({
@@ -927,6 +929,141 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
 
 //</editor-fold>   
   
+//<editor-fold   desc="Evaluation Section">
+
+    $scope.loadEvaluationInfo = function(){
+      $scope.$emit('$TRIGGERLOAD', 'evaluationLoader');
+
+      Business.lookupservice.getLookupCodes('EvaluationSection', 'A').then(function (results) {      
+        if (results) {
+          $scope.activeSections = results;
+          if ($scope.componentForm.componentId) {
+            Business.componentservice.getEvaluationSections($scope.componentForm.componentId).then(function (data) {
+              $scope.$emit('$TRIGGERUNLOAD', 'evaluationLoader');
+              if (data) {
+                $scope.allSections = data;  
+                $scope.sections = [];
+                $scope.oldSections = [];
+                _.forEach($scope.allSections, function(record){
+                    var foundSection = _.find($scope.activeSections, {code : record.evaluationSection});
+                    if (foundSection) {
+                      $scope.sections.push(record);                    
+                    } else {
+                      $scope.oldSections.push(record);
+                    }
+                });
+                _.forEach($scope.activeSections, function(record){
+                    var foundSection = _.find($scope.allSections, {evaluationSection : record.code});
+                    if (!foundSection) {
+                      $scope.sections.push({
+                        name: record.description,
+                        evaluationSection: record.code                        
+                      });                          
+                    }
+                });
+               $scope.sections = _.sortBy($scope.sections, 'name');
+               $scope.oldSections = _.sortBy($scope.oldSections, 'name');
+              }
+            });
+          }
+        }  
+      });      
+    };
+    $scope.loadEvaluationInfo();
+    
+    $scope.clearAllEvaluationSections = function(){
+      var response = window.confirm("Are you sure you want to DELETE all evaluation information for this component?");
+      if (response) {
+        $scope.$emit('$TRIGGERLOAD', 'evaluationLoader');      
+        Business.componentservice.deleteAllEvaluationSection($scope.componentForm.componentId).then(function (results) {
+          $scope.$emit('$TRIGGERUNLOAD', 'evaluationLoader');    
+          triggerAlert('Remove all successfully', 'saveEvalSection', 'componentWindowDiv', 3000);
+          $scope.loadEvaluationInfo();
+        });
+      }
+    };
+    
+    $scope.saveEvalSection = function(section){
+      if (section.score) {
+        if (section.score < 1){
+          section.score = 1;
+        } else if (section.score > 5){
+          section.score = 5;
+        }        
+      }
+      $scope.saveEntity({
+        alertId: 'saveEvalSection',
+        alertDiv: 'componentWindowDiv',
+        loader: 'evaluationFormLoader',
+        entityName: 'sections',
+        entity: {
+          "componentEvaluationSectionPk": {
+            "evaluationSection": section.evaluationSection
+          },
+          "score": section.score
+        },
+        entityId: section.evaluationSection,
+        formName: 'evaluationForm',
+        loadEntity: function () {
+          $scope.loadEvaluationInfo();
+        }
+      });       
+      
+    };
+    
+    $scope.removeEvaluationSection = function(section){
+      var response = window.confirm("Are you sure you want to DELETE section " + section.name + " for this component? (This will reset any unsaved changes)");
+      if (response) {
+        $scope.$emit('$TRIGGERLOAD', 'evaluationLoader');      
+        Business.componentservice.deleteEvaluationSection($scope.componentForm.componentId, section.evaluationSection).then(function (results) {
+          $scope.$emit('$TRIGGERUNLOAD', 'evaluationLoader');           
+          $scope.loadEvaluationInfo();
+        });
+      }      
+    };    
+    
+    $scope.checkEvalScore = function(section){
+        if (section.score) {
+          if (section.score < 1) {
+            section.score = 1;
+          } else if (section.score > 5) {
+            section.score = 5;
+          }
+        }      
+    };
+    
+    $scope.saveAllEvalSections = function () {
+      var allSections = [];
+      _.forEach($scope.sections, function (section) {
+        if (section.score) {
+          if (section.score < 1) {
+            section.score = 1;
+          } else if (section.score > 5) {
+            section.score = 5;
+          }
+        }
+        allSections.push({
+          "componentEvaluationSectionPk": {
+            "evaluationSection": section.evaluationSection
+          },
+          "score": section.score          
+        });
+      });
+
+      $scope.$emit('$TRIGGERLOAD', 'evaluationLoader');
+      Business.componentservice.saveAllEvaluationSections({
+        componentId: $scope.componentForm.componentId,
+        sections: allSections
+      }).then(function (results) {
+        $scope.$emit('$TRIGGERUNLOAD', 'evaluationLoader');
+        triggerAlert('Saved all successfully', 'saveEvalSection', 'componentWindowDiv', 3000);
+        $scope.loadEvaluationInfo();
+      });
+    };
+            
+    
+
+//</editor-fold>   
     
     $scope.close = function () {
       $uiModalInstance.dismiss('close');
