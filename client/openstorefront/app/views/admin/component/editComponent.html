@@ -615,51 +615,64 @@ limitations under the License.
 		<tab heading="Evaluation Information" ng-show="editMode">
 			<hr>
 			Evaluation scoring information<br><br>
-			<div class="form-group" show-errors >
-				<label class="control-label">Evaluation Section</label><br>
-				  <button type="button" class="btn btn-default"  id="userRole" ng-model="userProfileForm.userRole" data-html="1" ng-options="usertype.description for usertype in userTypeCodes" data-animation="am-flip-x" bs-select>
-					Select <span class="caret"></span>
-				  </button>  			
-			</div>	
-			<div class="form-group"  >
-				<label class=" control-label">Score</label>				
-				<input  type="text" 
-						id="firstName"
-						name="firstName"													
-						class="form-control" 
-						ng-model="userProfileForm.firstName" 
-						ng-minlength=1
-						ng-maxlength=250
-						required 
-						ng-focus />
-				<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-				<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>				
-			<button type="submit" class="btn btn-primary" ng-click="addAttribute()"><i class="fa fa-save"></i>&nbsp;Add</button>
-			<div>	
-				<br>
-				Filter Status:
-				<button type="button"  class="btn btn-default"  id="filterstatus" ng-model="componentFilter.status" data-html="1" ng-change="refreshComponents()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
-					Active <span class="caret"></span>
-				</button> 				
-				<button class="btn btn-default" ng-click="refreshAppProperties()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
-			</div>	
+			<loader trigger="evaluationLoader"></loader>
+			<button type="submit" class="btn btn-danger" ng-click="clearAllEvaluationSections()"><i class="fa fa-trash"></i>&nbsp;Clear All Sections</button>
+			<div ng-show="evaluationForm.oldSections">
+				<h3>Old Evaluation Sections</h3>
+				<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('key', 'oldeval');">Section Name <span ng-show="predicate['oldeval'] === 'key'"><i ng-show="!reverse['oldeval']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['oldeval']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+						<th>Score</th>																					
+						<th>Action</th>
+					</tr>
+					<tr ng-repeat="section in oldSections | orderBy:predicate['oldeval']:reverse['oldeval']" >
+						<td>{{section.name}}</td>
+						<td>
+						<input  type="number" 
+								name="score"
+								class="form-control"							
+								ng-model="section.score" 			
+								max=5
+								min=1
+								ng-focus />								
+						</td>																		
+						<td style="padding:0px; width: 200px;">&nbsp;						
+							<button class="btn btn-primary" ng-click="saveEvalSection(section);"  title="Save"><i class="fa fa-save"></i></button>
+							<button class="btn btn-danger" ng-click="removeEvaluationSection(section);"  title="Remove"><i class="fa fa-trash"></i></button>		
+						</td>
+					</tr>					
+				</table>			
+			</div>			
+			
+			<h3>Available Evaluation Sections</h3>
 			<table class="table table-striped table-bordered">
 				<tr>
-					<th><a href="" ng-click="setPredicate('key', 'appProp');">Section Name <span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
-					<th>Score</th>																					
+					<th><a href="" ng-click="setPredicate('name', 'eval');">Section Name <span ng-show="predicate['eval'] === 'name'"><i ng-show="!reverse['eval']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['eval']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+					<th>Score</th>
+					<th>Existing</th>
 					<th>Action</th>
 				</tr>
-				<tr ng-repeat="prop in appProperties | orderBy:predicate['appProp']:reverse['appProp']" >
-					<td>{{prop.key}}</td>
-					<td>{{prop.value}}</td>
-					<td>{{prop.updateUser}}</td>
-					<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
-					<td style="padding:0px; width: 200px;">&nbsp;						
-						<button class="btn" ng-click="editAppProperty(prop);"  title="Toggle Status"><i class="fa fa-edit"></i></button>						
+				<tr ng-repeat="section in sections | orderBy:predicate['eval']:reverse['eval']" >
+					<td>{{section.name}}</td>
+					<td style="width: 100px;">
+					<input  type="text" 
+							name="score"
+							class="form-control"							
+							ng-model="section.score" 
+							onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+							ng-blur="checkEvalScore(section);"
+							max=5
+							min=1
+							ng-focus />								
+					</td>
+					<td style="width: 75px;" align="center"><i class="fa" ng-class="section.activeStatus === 'A' ? 'fa-check' : ''"></td>
+					<td style="padding:0px; width: 200px;">&nbsp;												
+						<button class="btn btn-danger" ng-click="removeEvaluationSection(section);"  title="Remove"><i class="fa fa-trash"></i></button>		
 					</td>
 				</tr>					
-			</table>			
+			</table>
+			<button class="btn btn-primary" ng-click="saveAllEvalSections();"  title="Save"><i class="fa fa-save"></i>&nbsp;Save All</button>
+			
 		</tab>		
 		<tab heading="Reviews" ng-show="editMode">
 			<hr>

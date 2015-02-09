@@ -596,6 +596,17 @@ public class ComponentServiceImpl
 		saveComponentEvaluationSection(section, true);
 	}
 
+	@Override
+	public void saveComponentEvaluationSection(List<ComponentEvaluationSection> sections)
+	{
+		sections.forEach(section -> {
+			saveComponentEvaluationSection(section, false);
+		});
+		if (!sections.isEmpty()) {
+			updateComponentLastActivity(sections.get(0).getComponentId());
+		}
+	}
+
 	private void saveComponentEvaluationSection(ComponentEvaluationSection section, boolean updateLastActivity)
 	{
 		ComponentEvaluationSection oldSection = persistenceService.findById(ComponentEvaluationSection.class, section.getComponentEvaluationSectionPk());

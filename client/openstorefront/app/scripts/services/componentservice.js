@@ -1056,6 +1056,73 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
         
 //</editor-fold>
 
+//<editor-fold  desc="Evaluation Section Entity">
+
+    componentservice.getEvaluationSections = function (componentId) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/components/' + componentId + '/sections/view'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };
+    
+   componentservice.deleteEvaluationSection = function (componentId, sectionCode) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/components/' + componentId + '/sections/' + sectionCode
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };
+    
+   componentservice.deleteAllEvaluationSection = function (componentId) {
+      var deferred = $q.defer();      
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/components/' + componentId + '/sections'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+      return deferred.promise;
+    };    
+    
+    componentservice.saveAllEvaluationSections = function (options) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/components/' + options.componentId + '/sections/all',
+        data: options.sections
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };     
+    
+//</editor-fold>     
+    
 
     
 

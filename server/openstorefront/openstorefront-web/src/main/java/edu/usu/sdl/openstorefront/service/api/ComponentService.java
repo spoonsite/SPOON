@@ -170,12 +170,14 @@ public interface ComponentService
 	public List<ComponentAttribute> getAttributesByComponentId(String componentId);
 
 	/**
+	 * Gets all unique tags
 	 *
 	 * @return
 	 */
 	public List<ComponentTag> getTagCloud();
 
 	/**
+	 * Saves a component Attribute
 	 *
 	 * @param attribute
 	 */
@@ -209,6 +211,15 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentEvaluationSection(ComponentEvaluationSection section);
+
+	/**
+	 * Save all sections and then updates component WARNING: All sections should
+	 * be for the same component.
+	 *
+	 * @param sections
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentEvaluationSection(List<ComponentEvaluationSection> sections);
 
 	/**
 	 *

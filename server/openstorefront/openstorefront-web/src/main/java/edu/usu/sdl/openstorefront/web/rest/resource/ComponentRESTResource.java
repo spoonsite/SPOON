@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.sort.SortUtil;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -66,6 +67,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSectionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
@@ -950,7 +952,7 @@ public class ComponentRESTResource
 
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Evaluation Section section">
 	@GET
-	@APIDescription("Gets an evaluation section associated to the component")
+	@APIDescription("Gets evaluation sections associated to the component")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentEvaluationSection.class)
 	@Path("/{id}/sections")
@@ -959,6 +961,21 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentEvaluationSection.class, componentId);
+	}
+
+	@GET
+	@APIDescription("Gets  evaluation sections associated to the component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentEvaluationSectionView.class)
+	@Path("/{id}/sections/view")
+	public List<ComponentEvaluationSectionView> getComponentEvaluationSectionView(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		List<ComponentEvaluationSection> sections = service.getComponentService().getBaseComponent(ComponentEvaluationSection.class, componentId);
+		List<ComponentEvaluationSectionView> views = ComponentEvaluationSectionView.toViewList(sections);
+		views.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentEvaluationSectionView.NAME_FIELD));
+		return views;
 	}
 
 	@DELETE
@@ -975,7 +992,7 @@ public class ComponentRESTResource
 		ComponentEvaluationSectionPk pk = new ComponentEvaluationSectionPk();
 		pk.setComponentId(componentId);
 		pk.setEvaluationSection(evalSection);
-		service.getComponentService().deactivateBaseComponent(ComponentEvaluationSection.class, pk);
+		service.getComponentService().deleteBaseComponent(ComponentEvaluationSection.class, pk);
 	}
 
 	@DELETE
@@ -988,6 +1005,43 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		service.getComponentService().deleteAllBaseComponent(ComponentEvaluationSection.class, componentId);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Adds a group evaluation section to the component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(ComponentEvaluationSection.class)
+	@Path("/{id}/sections/all")
+	public Response saveComponentEvaluationSections(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam List<ComponentEvaluationSection> sections)
+	{
+		ValidationResult allValidationResult = new ValidationResult();
+		for (ComponentEvaluationSection section : sections) {
+			section.setComponentId(componentId);
+			section.getComponentEvaluationSectionPk().setComponentId(componentId);
+
+			ValidationModel validationModel = new ValidationModel(section);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (!validationResult.valid()) {
+				allValidationResult.merge(validationResult);
+			}
+		}
+
+		if (allValidationResult.valid()) {
+			for (ComponentEvaluationSection section : sections) {
+				section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
+				section.setCreateUser(SecurityUtil.getCurrentUserName());
+				section.setUpdateUser(SecurityUtil.getCurrentUserName());
+			}
+			service.getComponentService().saveComponentEvaluationSection(sections);
+		} else {
+			return Response.ok(allValidationResult.toRestError()).build();
+		}
+		return Response.ok().build();
 	}
 
 	@POST

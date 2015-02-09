@@ -29,9 +29,13 @@ import java.util.List;
 public class ComponentEvaluationSectionView
 {
 
+	public static final String NAME_FIELD = "name";
+
 	private String name;
 	private Integer score;
 	private Date updateDts;
+	private String activeStatus;
+	private String evaluationSection;
 
 	public ComponentEvaluationSectionView()
 	{
@@ -43,6 +47,8 @@ public class ComponentEvaluationSectionView
 		view.setName(TranslateUtil.translate(EvaluationSection.class, section.getComponentEvaluationSectionPk().getEvaluationSection()));
 		view.setScore(section.getScore());
 		view.setUpdateDts(section.getUpdateDts());
+		view.setActiveStatus(section.getActiveStatus());
+		view.setEvaluationSection(section.getComponentEvaluationSectionPk().getEvaluationSection());
 		return view;
 	}
 
@@ -83,6 +89,26 @@ public class ComponentEvaluationSectionView
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getEvaluationSection()
+	{
+		return evaluationSection;
+	}
+
+	public void setEvaluationSection(String evaluationSection)
+	{
+		this.evaluationSection = evaluationSection;
 	}
 
 }
