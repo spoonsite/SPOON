@@ -1123,7 +1123,23 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
     
 //</editor-fold>     
     
+//<editor-fold  desc="Tags Entity">
+    componentservice.getComponentTags = function (componentId) {
+      var deferred = $q.defer();
 
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/components/' + componentId + '/tags'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };
+//</editor-fold> 
     
 
     return componentservice;

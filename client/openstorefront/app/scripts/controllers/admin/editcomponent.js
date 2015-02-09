@@ -234,6 +234,10 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     
     $scope.evaluationForm = {};
     
+    $scope.tagForm = angular.copy(basicForm);
+    $scope.tagFilter = angular.copy(utils.queryFilter);   
+    $scope.tagFilter.status = $scope.statusFilterOptions[0].code;        
+    
     $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
     
     $scope.setPredicate = function (predicate, table) {
@@ -1064,6 +1068,53 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     
 
 //</editor-fold>   
+
+//<editor-fold   desc="Tags Section">
+  
+    $scope.loadTags = function() {
+      if ($scope.componentForm.componentId) {
+        $scope.$emit('$TRIGGERLOAD', 'tagFormLoader');        
+        Business.componentservice.getComponentTags($scope.componentForm.componentId).then(function (results) {
+          $scope.$emit('$TRIGGERUNLOAD', 'tagFormLoader');
+          if (results) {
+            $scope.tags = results;
+          }
+        });
+      }     
+     
+    };
+    $scope.loadTags();    
+   
+    $scope.saveTag = function () {
+      $scope.saveEntity({
+        alertId: 'saveTag',
+        alertDiv: 'componentWindowDiv',
+        loader: 'tagFormLoader',
+        entityName: 'tags',
+        entity: $scope.tagForm,
+        entityId: $scope.tagForm.tagId,
+        formName: 'tagForm',
+        loadEntity: function () {
+           $scope.loadTags();
+        }
+      });  
+     };
+     
+     $scope.removeTag = function(tag){       
+        $scope.$emit('$TRIGGERLOAD', 'tagFormLoader');        
+        
+        Business.componentservice.inactivateEnity({
+          componentId: $scope.componentForm.componentId,
+          entityId: tag.tagId,
+          entity: 'tags'
+        }).then(function (results) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'tagFormLoader');
+           $scope.loadTags();            
+        });         
+     };
+
+//</editor-fold>  
+
     
     $scope.close = function () {
       $uiModalInstance.dismiss('close');
