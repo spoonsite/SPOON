@@ -733,41 +733,44 @@ limitations under the License.
 		<tab heading="Tags" ng-show="editMode">
 			<hr>
 			Component searchable labels.<br><br>
-			<div class="form-group"  >
-				<label class=" control-label">Tag</label>				
-				<input  type="text" 
-						id="firstName"
-						name="firstName"													
-						class="form-control" 
-						ng-model="userProfileForm.firstName" 
-						ng-minlength=1
-						ng-maxlength=250
-						required 
-						ng-focus />
-				<p ng-show="userForm.firstName.$error.minlength && !userForm.firstName.$focused" class="help-block">Name must be longer than 1 character in length.</p>
-				<p ng-show="userForm.firstName.$error.required && !userForm.firstName.$focused" class="help-block">Name is required.</p>
-			</div>				
-			<button type="submit" class="btn btn-primary" ng-click="addAttribute()"><i class="fa fa-save"></i>&nbsp;Add</button>			
+			<loader trigger="tagFormLoader"></loader>
+			<div class="btn-warning formPanel-header" ng-click="tagForm.collapse = !tagForm.collapse;">
+				Add Tag
+				<span style="position: absolute; right: 0px; padding-right: 35px;">
+					<i class="fa" ng-class="tagForm.collapse ? 'fa-toggle-down' : 'fa-toggle-up' "></i>						
+				</span>
+			</div>
+			<div class="formPanel" collapse="tagForm.collapse">
+				<form class="form-horizontal" name='tagUIForm' role="form"  ng-submit="saveTag()" style="padding-left: 10px; padding-right: 10px;">
+					<div class="form-group"  >
+						<label class=" control-label required">Tag</label>				
+						<input  type="text" 								
+								name="text"													
+								class="form-control" 
+								ng-model="tagForm.text" 
+								ng-minlength=1
+								ng-maxlength=250
+								required 
+								ng-focus />
+						<p ng-show="tagUIForm.text.$error.minlength && !tagUIForm.text.$focused" class="help-block">Tag must be longer than 1 character in length.</p>
+						<p ng-show="tagUIForm.text.$error.required && !tagUIForm.text.$focused" class="help-block">Tag is required.</p>
+					</div>				
+					<button type="submit" class="btn btn-primary" ng-disabled="tagUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button>						
+				</form>			
+			</div>	
 			<div>	
 				<br>
-				Filter Status:
-				<button type="button"  class="btn btn-default"  id="filterstatus" ng-model="componentFilter.status" data-html="1" ng-change="refreshComponents()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
-					Active <span class="caret"></span>
-				</button> 				
-				<button class="btn btn-default" ng-click="refreshAppProperties()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
+				<button class="btn btn-default" ng-click="loadTags()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
 			</div>	
 			<table class="table table-striped table-bordered">
 				<tr>
-					<th><a href="" ng-click="setPredicate('key', 'appProp');">Tag<span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>																															
+					<th><a href="" ng-click="setPredicate('text', 'tag');">Tag<span ng-show="predicate['tag'] === 'text'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th>																															
 					<th>Action</th>
 				</tr>
-				<tr ng-repeat="prop in appProperties | orderBy:predicate['appProp']:reverse['appProp']" >
-					<td>{{prop.key}}</td>
-					<td>{{prop.value}}</td>
-					<td>{{prop.updateUser}}</td>
-					<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+				<tr ng-repeat="tag in tags | orderBy:predicate['tag']:reverse['tag']" >
+					<td>{{tag.text}}</td>
 					<td style="padding:0px; width: 200px;">&nbsp;						
-						<button class="btn" ng-click="editAppProperty(prop);"  title="Toggle Status"><i class="fa fa-edit"></i></button>						
+						<button class="btn btn-danger" ng-click="removeTag(tag);"  title="Remove"><i class="fa fa-trash"></i></button>						
 					</td>
 				</tr>					
 			</table>	
