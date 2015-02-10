@@ -1628,7 +1628,7 @@ public class ComponentRESTResource
 
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource QUESTION section">
 	@GET
-	@APIDescription("Get the questions associated with the specified entity")
+	@APIDescription("Get the questions associated with the specified component")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentQuestion.class)
 	@Path("/{id}/questions")
@@ -1637,6 +1637,50 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentQuestion.class, componentId);
+	}
+
+	@GET
+	@APIDescription("Get the questions associated with the specified component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentQuestionView.class)
+	@Path("/{id}/questions/view")
+	public Response getComponentQuestionView(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentQuestion questionExample = new ComponentQuestion();
+		questionExample.setActiveStatus(filterQueryParams.getStatus());
+		questionExample.setComponentId(componentId);
+
+		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(ComponentQuestion.class, questionExample);
+		componentQuestions = filterQueryParams.filter(componentQuestions);
+
+		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
+		responseExample.setComponentId(componentId);
+
+		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, responseExample);
+		Map<String, List<ComponentQuestionResponseView>> responseMap = new HashMap<>();
+		for (ComponentQuestionResponse componentQuestionResponse : componentQuestionResponses) {
+			if (responseMap.containsKey(componentQuestionResponse.getQuestionId())) {
+				responseMap.get(componentQuestionResponse.getQuestionId()).add(ComponentQuestionResponseView.toView(componentQuestionResponse));
+			} else {
+				List<ComponentQuestionResponseView> responseViews = new ArrayList<>();
+				responseViews.add(ComponentQuestionResponseView.toView(componentQuestionResponse));
+				responseMap.put(componentQuestionResponse.getQuestionId(), responseViews);
+			}
+		}
+		List<ComponentQuestionView> views = ComponentQuestionView.toViewList(componentQuestions, responseMap);
+
+		GenericEntity<List<ComponentQuestionView>> entity = new GenericEntity<List<ComponentQuestionView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -1652,6 +1696,7 @@ public class ComponentRESTResource
 		List<ComponentQuestion> questions = service.getComponentService().getBaseComponent(ComponentQuestion.class, componentId);
 		for (ComponentQuestion question : questions) {
 			ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
+			responseExample.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			responseExample.setQuestionId(question.getQuestionId());
 
 			List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, new QueryByExample(responseExample));
@@ -1680,7 +1725,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a question from the specified entity")
+	@APIDescription("Inactivates a question from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/questions/{questionId}")
 	public Response deleteComponentQuestion(
@@ -1700,6 +1745,29 @@ public class ComponentRESTResource
 			}
 		}
 		return response;
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates a question from the specified entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/questions/{questionId}/activate")
+	public Response activateComponentQuestion(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId)
+	{
+		ComponentQuestion componentQuestionExample = new ComponentQuestion();
+		componentQuestionExample.setComponentId(componentId);
+		componentQuestionExample.setQuestionId(questionId);
+
+		ComponentQuestion componentQuestion = service.getPersistenceService().queryOneByExample(ComponentQuestion.class, componentQuestionExample);
+		if (componentQuestion != null) {
+			service.getComponentService().activateBaseComponent(ComponentQuestion.class, questionId);
+			componentQuestion.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(componentQuestion);
 	}
 
 	@POST
@@ -1764,7 +1832,7 @@ public class ComponentRESTResource
 
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource QUESTION RESPONSE section">
 	@GET
-	@APIDescription("Gets the responses for a given question associated to the specified v ")
+	@APIDescription("Gets the responses for a given question associated to the specified component")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentQuestionResponse.class)
 	@Path("/{id}/questions/{questionId}/responses")
@@ -1782,7 +1850,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Gets the responses for a given question associated to the specified v ")
+	@APIDescription("Gets the responses for a given question associated to the specified component")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentQuestionResponse.class)
 	@Path("/{id}/questions/{questionId}/responses/{responseId}")
@@ -1803,7 +1871,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a response from the given question on the specified component")
+	@APIDescription("Inactivates a response from the given question on the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/questions/{questionId}/responses/{responseId}")
 	public Response deleteComponentQuestionResponse(
@@ -1828,6 +1896,31 @@ public class ComponentRESTResource
 			}
 		}
 		return response;
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates a response from the given question on the specified component")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/questions/{questionId}/responses/{responseId}/activate")
+	public Response activateComponentQuestionResponse(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("questionId")
+			@RequiredParam String questionId,
+			@PathParam("responseId")
+			@RequiredParam String responseId)
+	{
+		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
+		responseExample.setComponentId(componentId);
+		responseExample.setQuestionId(questionId);
+		responseExample.setResponseId(responseId);
+		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
+		if (questionResponse != null) {
+			service.getComponentService().activateBaseComponent(ComponentQuestionResponse.class, responseId);
+			questionResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(questionResponse);
 	}
 
 	@POST
@@ -1915,9 +2008,38 @@ public class ComponentRESTResource
 	}
 
 	@GET
+	@APIDescription("Get the reviews for a specified entity")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReviewView.class)
+	@Path("/{id}/reviews/view")
+	public Response getComponentReviewView(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentReview reviewExample = new ComponentReview();
+		reviewExample.setActiveStatus(filterQueryParams.getStatus());
+		reviewExample.setComponentId(componentId);
+
+		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(ComponentReview.class, reviewExample);
+		componentReviews = filterQueryParams.filter(componentReviews);
+		List<ComponentReviewView> views = ComponentReviewView.toViewList(componentReviews);
+
+		GenericEntity<List<ComponentReviewView>> entity = new GenericEntity<List<ComponentReviewView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
 	@APIDescription("Get the reviews for a specified user")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentReview.class)
+	@DataType(ComponentReviewView.class)
 	@Path("/reviews/{username}")
 	public List<ComponentReviewView> getComponentReviewsByUsername(
 			@PathParam("username")
@@ -1945,6 +2067,29 @@ public class ComponentRESTResource
 			}
 		}
 		return response;
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activate a review on  the specified component")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/reviews/{reviewId}/activate")
+	public Response activateComponentReview(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("reviewId")
+			@RequiredParam String reviewId)
+	{
+		ComponentReview componentReviewExample = new ComponentReview();
+		componentReviewExample.setComponentId(componentId);
+		componentReviewExample.setComponentReviewId(reviewId);
+
+		ComponentReview componentReview = service.getPersistenceService().queryOneByExample(ComponentReview.class, componentReviewExample);
+		if (componentReview != null) {
+			service.getComponentService().activateBaseComponent(ComponentReview.class, reviewId);
+			componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+		}
+		return sendSingleEntityResponse(componentReviewExample);
 	}
 
 	@POST

@@ -1140,7 +1140,42 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
       return deferred.promise;
     };
 //</editor-fold> 
+   
+//<editor-fold  desc="Question Reponses Entity">
+
+    componentservice.inactivateQuestionResponse = function (options) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/components/' + options.componentId + '/questions/'  + options.questionId + '/responses/' + options.responseId 
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };   
     
+    componentservice.activateQuestionResponse = function (options) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/resource/components/' + options.componentId + '/questions/'  + options.questionId + '/responses/' + options.responseId  + '/activate'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };  
+
+//</editor-fold> 
 
     return componentservice;
   }]);
