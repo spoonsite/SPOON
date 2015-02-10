@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,6 +39,8 @@ public class ComponentQuestionView
 	private String userTypeCode;
 	private Date createDts;
 	private Date updateDts;
+	private String activeStatus;
+	private Date questionUpdateDts;
 
 	@DataType(ComponentQuestionResponseView.class)
 	private List<ComponentQuestionResponseView> responses = new ArrayList<>();
@@ -53,6 +56,7 @@ public class ComponentQuestionView
 		view.setResponses(responses);
 		view.setQuestion(question.getQuestion());
 		view.setUsername(question.getCreateUser());
+		view.setActiveStatus(question.getActiveStatus());
 		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, question.getUserTypeCode());
 		if (typeCode == null) {
 			view.setUserType(null);
@@ -62,6 +66,7 @@ public class ComponentQuestionView
 		}
 		view.setOrganization(question.getOrganization());
 		view.setQuestionId(question.getQuestionId());
+		view.setQuestionUpdateDts(question.getUpdateDts());
 		Date max;
 		if (responses.size() > 0) {
 			max = responses.get(0).getUpdateDts();
@@ -74,6 +79,19 @@ public class ComponentQuestionView
 		}
 
 		return view;
+	}
+
+	public static List<ComponentQuestionView> toViewList(List<ComponentQuestion> questions, Map<String, List<ComponentQuestionResponseView>> responseMap)
+	{
+		List<ComponentQuestionView> views = new ArrayList<>();
+		questions.forEach(question -> {
+			List<ComponentQuestionResponseView> responses = responseMap.get(question.getQuestionId());
+			if (responses == null) {
+				responses = new ArrayList<>();
+			}
+			views.add(toView(question, responses));
+		});
+		return views;
 	}
 
 	public List<ComponentQuestionResponseView> getResponses()
@@ -206,5 +224,25 @@ public class ComponentQuestionView
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public Date getQuestionUpdateDts()
+	{
+		return questionUpdateDts;
+	}
+
+	public void setQuestionUpdateDts(Date questionUpdateDts)
+	{
+		this.questionUpdateDts = questionUpdateDts;
 	}
 }

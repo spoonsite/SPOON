@@ -238,6 +238,13 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.tagFilter = angular.copy(utils.queryFilter);   
     $scope.tagFilter.status = $scope.statusFilterOptions[0].code;        
     
+    $scope.reviewFilter = angular.copy(utils.queryFilter);   
+    $scope.reviewFilter.status = $scope.statusFilterOptions[0].code;     
+
+    $scope.questionFilter = angular.copy(utils.queryFilter);   
+    $scope.questionFilter.status = $scope.statusFilterOptions[0].code;      
+    $scope.questionDetailsShow = [];
+    
     $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
     
     $scope.setPredicate = function (predicate, table) {
@@ -273,6 +280,9 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
           $scope.$emit('$TRIGGERUNLOAD', entityOptions.loader);
           if (results) {
             $scope[entityOptions.entity] = results;
+            if (entityOptions.callback){
+              entityOptions.callback(results);
+            }
           }
         });
       }
@@ -1112,6 +1122,98 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
            $scope.loadTags();            
         });         
      };
+
+//</editor-fold>  
+
+//<editor-fold   desc="Reviews Section">
+
+  $scope.loadReviews = function() {
+    $scope.loadEntity({
+    filter: $scope.reviewFilter,
+    entity: 'reviews',
+    loader: 'reviewFormLoader'
+   });
+  };
+  $scope.loadReviews();    
+
+  $scope.toggleReviewStatus = function(review){
+    $scope.toggleEntityStatus({
+      entity: review,        
+      entityId: review.reviewId,
+      entityName: 'reviews',        
+      loader: 'reviewFormLoader',
+      loadEntity: function(){
+        $scope.loadReviews();
+      }
+    });
+  }; 
+
+//</editor-fold>  
+
+//<editor-fold   desc="Questions Section">
+
+  $scope.loadQuestions = function() {
+    $scope.loadEntity({
+    filter: $scope.questionFilter,
+    entity: 'questions',
+    loader: 'questionFormLoader',
+    callback: function(results){
+      _.forEach(results, function(question){
+        if (!($scope.questionDetailsShow[question.questionId])){
+          $scope.questionDetailsShow[question.questionId] = {};
+          $scope.questionDetailsShow[question.questionId].flag = false;
+          $scope.questionDetailsShow[question.questionId].showResponsesText = 'Show';
+        }
+      });
+    }    
+   });
+  };
+  $scope.loadQuestions();    
+
+  $scope.toggleQuestionStatus = function(question){
+    $scope.toggleEntityStatus({
+      entity: question,        
+      entityId: question.questionId,
+      entityName: 'questions',        
+      loader: 'questionFormLoader',
+      loadEntity: function(){
+        $scope.loadQuestions();
+      }
+    });
+  }; 
+  
+  $scope.showQuestionResponses = function(question){
+     $scope.questionDetailsShow[question.questionId].flag = !$scope.questionDetailsShow[question.questionId].flag;
+     if ($scope.questionDetailsShow[question.questionId].flag === false){
+       $scope.questionDetailsShow[question.questionId].showResponsesText = 'Show';
+     } else {
+       $scope.questionDetailsShow[question.questionId].showResponsesText = 'Hide';
+     }        
+  };
+ 
+  
+  $scope.toggleQuestionResponseStatus = function(questionResponse, question){
+      $scope.$emit('$TRIGGERLOAD', 'questionFormLoader');
+      if (questionResponse.activeStatus === 'A') {
+        Business.componentservice.inactivateQuestionResponse({
+          componentId: $scope.componentForm.componentId,
+          questionId: question.questionId,
+          responseId: questionResponse.responseId
+        }).then(function (results) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'questionFormLoader');
+          $scope.loadQuestions();
+        });
+      } else {
+        Business.componentservice.activateQuestionResponse({
+          componentId: $scope.componentForm.componentId,
+          questionId: question.questionId,
+          responseId: questionResponse.responseId
+        }).then(function (results) {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'questionFormLoader');
+          $scope.loadQuestions();
+        });
+      }
+  };  
 
 //</editor-fold>  
 

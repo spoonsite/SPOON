@@ -37,32 +37,40 @@ public class ComponentQuestionResponseView
 	private String userTypeCode;
 	private Date answeredDate;
 	private Date updateDts;
+	private String activeStatus;
 
 	public ComponentQuestionResponseView()
 	{
 	}
-	
-	public static List<ComponentQuestionResponseView> toViewList(List<ComponentQuestionResponse> responses)
+
+	public static ComponentQuestionResponseView toView(ComponentQuestionResponse response)
 	{
 		ServiceProxy service = new ServiceProxy();
+
+		ComponentQuestionResponseView tempView = new ComponentQuestionResponseView();
+		tempView.setAnsweredDate(response.getUpdateDts());
+		tempView.setOrganization(response.getOrganization());
+		tempView.setResponse(response.getResponse());
+		tempView.setActiveStatus(response.getActiveStatus());
+		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, response.getUserTypeCode());
+		if (typeCode == null) {
+			tempView.setUserType(null);
+			tempView.setUserTypeCode(null);
+		} else {
+			tempView.setUserTypeCode(typeCode.getCode());
+			tempView.setUserType(typeCode.getDescription());
+		}
+		tempView.setUsername(response.getUpdateUser());
+		tempView.setUpdateDts(response.getUpdateDts());
+		tempView.setResponseId(response.getResponseId());
+		return tempView;
+	}
+
+	public static List<ComponentQuestionResponseView> toViewList(List<ComponentQuestionResponse> responses)
+	{
 		List<ComponentQuestionResponseView> viewList = new ArrayList();
-		responses.forEach(response->{
-			ComponentQuestionResponseView tempView = new ComponentQuestionResponseView();
-			tempView.setAnsweredDate(response.getUpdateDts());
-			tempView.setOrganization(response.getOrganization());
-			tempView.setResponse(response.getResponse());
-			UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, response.getUserTypeCode());
-			if (typeCode == null) {
-				tempView.setUserType(null);
-				tempView.setUserTypeCode(null);
-			} else {
-				tempView.setUserTypeCode(typeCode.getCode());
-				tempView.setUserType(typeCode.getDescription());
-			}
-			tempView.setUsername(response.getUpdateUser());
-			tempView.setUpdateDts(response.getUpdateDts());
-			tempView.setResponseId(response.getResponseId());
-			viewList.add(tempView);
+		responses.forEach(response -> {
+			viewList.add(toView(response));
 		});
 		return viewList;
 	}
@@ -169,6 +177,16 @@ public class ComponentQuestionResponseView
 	public void setUserType(String userType)
 	{
 		this.userType = userType;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }
