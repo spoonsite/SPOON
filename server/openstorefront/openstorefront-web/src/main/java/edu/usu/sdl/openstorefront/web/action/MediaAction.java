@@ -115,6 +115,12 @@ public class MediaAction
 						service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+					} finally {
+						try {
+							file.delete();
+						} catch (IOException ex) {
+							log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+						}
 					}
 				} else {
 					errors.put("file", validationResult.toHtmlString());

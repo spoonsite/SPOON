@@ -94,6 +94,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -279,7 +280,16 @@ public class ComponentRESTResource
 	{
 		ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
 		if (componentAll != null) {
-			Response.ResponseBuilder response = Response.ok(componentAll.export());
+			List<ComponentAll> fullComponents = new ArrayList<>();
+			fullComponents.add(componentAll);
+
+			String componentJson;
+			try {
+				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
+			} catch (JsonProcessingException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to export component.", ex);
+			}
+			Response.ResponseBuilder response = Response.ok(componentJson);
 			response.header("Content-Disposition", "attachment; filename=\"" + componentAll.getComponent().getName() + ".json\"");
 			return response.build();
 		} else {
@@ -287,28 +297,20 @@ public class ComponentRESTResource
 		}
 	}
 
-	@GET
-	@APIDescription("Gets a component <br>(Note: this only the top level component object only)")
+	@POST
+	@APIDescription("Gets a component (Full)")
 	@RequireAdmin
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export")
-	public Response getComponentExport(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getComponentExport(
+			@FormParam("id")
+			@RequiredParam List<String> ids)
 	{
-		ValidationResult validationResult = filterQueryParams.validate();
-		if (!validationResult.valid()) {
-			return sendSingleEntityResponse(validationResult.toRestError());
-		}
-
-		Component componentExample = new Component();
-		componentExample.setActiveStatus(filterQueryParams.getStatus());
-		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-		components = filterQueryParams.filter(components);
-
-		if (components.isEmpty() == false) {
+		if (ids.isEmpty() == false) {
 			List<ComponentAll> fullComponents = new ArrayList<>();
-			for (Component component : components) {
-				ComponentAll componentAll = service.getComponentService().getFullComponent(component.getComponentId());
+			for (String componentId : ids) {
+				ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
 				fullComponents.add(componentAll);
 			}
 
@@ -316,14 +318,14 @@ public class ComponentRESTResource
 			try {
 				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
 				Response.ResponseBuilder response = Response.ok(componentJson);
-				response.header("Content-Disposition", "attachment; filename=\"AllComponents.json\"");
+				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.json\"");
 				return response.build();
 			} catch (JsonProcessingException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to export component.", ex);
+				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
 			}
 		} else {
 			Response.ResponseBuilder response = Response.ok("[]");
-			response.header("Content-Disposition", "attachment; filename=\"AllComponents.json\"");
+			response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.json\"");
 			return response.build();
 		}
 	}

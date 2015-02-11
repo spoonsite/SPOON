@@ -2,7 +2,8 @@
 
 /*global triggerError, removeError, isEmpty*/
 
-app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$uiModal',  function ($scope, Business, $timeout, $uiModal) {
+app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$uiModal', 'FileUploader', 
+  function ($scope, Business, $timeout, $uiModal, FileUploader) {
 
     $scope.predicate = [];
     $scope.reverse = [];
@@ -23,6 +24,10 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.componentFilter.status = $scope.statusFilterOptions[0];
     $scope.flags = {};
     $scope.flags.showUpload = false;
+    $scope.componentUploadOptions = {};
+    $scope.selectedComponents = [];
+    $scope.selectAllComps = {};
+    $scope.selectAllComps.flag = false;
 
     $scope.firstPage = function () {
       $scope.pageNumber = 1;
@@ -166,9 +171,76 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       }
     }; 
      
-    $scope.exportAll = function(){
-       window.location.href = "api/v1/resource/components/export";
+    $scope.selectComponent = function(component){
+      if (component.selected) {
+        component.selected = !component.selected;
+        if (component.selected === false) {
+         $scope.selectedComponents = _.reject($scope.selectedComponents, function(id) { return id === component.component.componentId; });
+        } else {
+          $scope.selectedComponents.push(component.component.componentId);
+        }
+      } else {
+        component.selected = true;
+        $scope.selectedComponents.push(component.component.componentId);
+      }
     };
+
+    $scope.selectAllComponents = function(){
+      $scope.selectedComponents = [];
+      _.forEach($scope.filteredComponents, function(component){                
+        component.selected = !$scope.selectAllComps.flag; //click happens before state change
+        if (component.selected) {
+          $scope.selectedComponents.push(component.component.componentId);
+        }
+      });
+    };
+    
+    $scope.exportAll = function(){
+      //$scope.exportForm.submit();
+      document.exportForm.submit();
+      // window.location.href = "api/v1/resource/components/export";
+    };
+     
+    $scope.componentUploader = new FileUploader({
+      url: 'Upload.action?UploadComponent',
+      alias: 'uploadFile',
+      queueLimit: 1,  
+      removeAfterUpload: true,
+      onBeforeUploadItem: function(item) {
+        $scope.$emit('$TRIGGERLOAD', 'componentLoader');
+        
+        item.formData.push({
+          "componentUploadOptions.uploadReviews" : $scope.componentUploadOptions.uploadReviews
+        });
+        item.formData.push({
+          "componentUploadOptions.uploadQuestions" : $scope.componentUploadOptions.uploadQuestions
+        });
+        item.formData.push({
+          "componentUploadOptions.uploadTags" : $scope.componentUploadOptions.uploadTags
+        });              
+       },
+      onSuccessItem: function (item, response, status, headers) {
+        $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+             
+        //check response for a fail ticket or a error model
+        if (response.success) {
+          triggerAlert('Uploaded successfully.  Processing components; watch tasks for completion.', 'importComponents', 'componentWindowDiv', 3000); 
+          $scope.flags.showUpload = false;
+        } else {
+          if (response.errors) {
+            var uploadError = response.errors.uploadFile;            
+            var errorMessage = uploadError !== undefined ? uploadError : '  ';
+            triggerAlert('Unable to upload component(s). Message: <br> ' + errorMessage, 'importComponents', 'componentWindowDiv', 6000);
+          } else {
+            triggerAlert('Unable to upload component(s). ', 'importComponents', 'componentWindowDiv', 6000);
+          }
+        }
+      },
+      onErrorItem: function (item, response, status, headers) {
+        $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
+        triggerAlert('Unable to upload component(s). Failure communicating with server. ', 'importComponents', 'componentWindowDiv', 6000);      
+      }      
+    });      
      
 
 }]);

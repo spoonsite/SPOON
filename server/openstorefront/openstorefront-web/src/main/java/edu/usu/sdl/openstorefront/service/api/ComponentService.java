@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import java.io.InputStream;
 import java.util.List;
 
@@ -308,15 +309,22 @@ public interface ComponentService
 
 	/**
 	 * This save the full component; this meant for use in the importer. It will
-	 * generate id and fill in missing file where possible. This is complete
-	 * sync. Meaning it will remove all subcomponents and then add the one's in
-	 * the model so the DB matches.
+	 * generate id and fill in missing data where possible. This will try to
+	 * sync the component adding and updating where applicable
 	 *
 	 * @param componentAll
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentAll saveFullComponent(ComponentAll componentAll);
+
+	/**
+	 * This will handle syncing all the component of the list.
+	 *
+	 * @param components
+	 * @param options
+	 */
+	public void importComponents(List<ComponentAll> components, ComponentUploadOption options);
 
 	/**
 	 * Deletes the component and all related entities

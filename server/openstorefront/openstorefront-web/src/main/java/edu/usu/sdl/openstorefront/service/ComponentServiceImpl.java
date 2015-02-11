@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.service.transfermodel.QuestionAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
@@ -520,6 +521,7 @@ public class ComponentServiceImpl
 		if (component != null) {
 			component.setLastActivityDts(TimeUtil.currentDate());
 			persistenceService.persist(component);
+			OSFCacheManager.getComponentCache().remove(componentId);
 			getUserService().checkComponentWatches(component);
 			getSearchService().addIndex(persistenceService.findById(Component.class, componentId));
 		} else {
@@ -1038,7 +1040,20 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public void importComponents(List<ComponentAll> components, ComponentUploadOption options)
+	{
+		components.forEach(component -> {
+			saveFullComponent(component, options);
+		});
+	}
+
+	@Override
 	public ComponentAll saveFullComponent(ComponentAll componentAll)
+	{
+		return saveFullComponent(componentAll, new ComponentUploadOption());
+	}
+
+	public ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options)
 	{
 		LockSwitch lockSwitch = new LockSwitch();
 
@@ -1089,22 +1104,28 @@ public class ComponentServiceImpl
 		lockSwitch.setSwitched(handleBaseComponetSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId()));
 		lockSwitch.setSwitched(handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId()));
 
-//These are user data and they shouldn't be changed on sync (I'm leave it as a reminder)
-//		handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId());
-//		for (QuestionAll question : componentAll.getQuestions()) {
-//			List<ComponentQuestion> questions = new ArrayList<>(1);
-//			questions.add(question.getQuestion());
-//			handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId());
-//			handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId());
-//		}
-//
-//		for (ReviewAll reviewAll : componentAll.getReviews()) {
-//			List<ComponentReview> reviews = new ArrayList<>(1);
-//			reviews.add(reviewAll.getComponentReview());
-//			handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId());
-//			handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId());
-//			handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId());
-//		}
+		if (options.getUploadTags()) {
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
+		}
+		if (options.getUploadQuestions()) {
+			for (QuestionAll question : componentAll.getQuestions()) {
+				List<ComponentQuestion> questions = new ArrayList<>(1);
+				questions.add(question.getQuestion());
+				lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId()));
+				lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId()));
+			}
+		}
+
+		if (options.getUploadQuestions()) {
+			for (ReviewAll reviewAll : componentAll.getReviews()) {
+				List<ComponentReview> reviews = new ArrayList<>(1);
+				reviews.add(reviewAll.getComponentReview());
+				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId()));
+				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId()));
+				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId()));
+			}
+		}
+
 		if (Component.INACTIVE_STATUS.equals(component.getActiveStatus())) {
 			getUserService().removeAllWatchesForComponent(component.getComponentId());
 			getSearchService().deleteById(component.getComponentId());
