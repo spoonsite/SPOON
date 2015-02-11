@@ -16,10 +16,15 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import au.com.bytecode.opencsv.CSVReader;
+import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
@@ -49,11 +54,13 @@ public class UploadAction
 
 	private static final Logger log = Logger.getLogger(UploadAction.class.getName());
 
-	@Validate(required = true, on = {"UploadLookup"})
+	@Validate(required = true, on = {"UploadLookup", "UploadComponent"})
 	private FileBean uploadFile;
 
 	@Validate(required = true, on = "UploadLookup")
 	private String entityName;
+
+	private ComponentUploadOption componentUploadOptions = new ComponentUploadOption();
 
 	@HandlesEvent("UploadLookup")
 	public Resolution uploadLookup()
@@ -119,6 +126,36 @@ public class UploadAction
 		}
 	}
 
+	@HandlesEvent("UploadComponent")
+	public Resolution uploadComponent()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			try {
+				List<ComponentAll> components = StringProcessor.defaultObjectMapper().readValue(uploadFile.getInputStream(), new TypeReference<List<ComponentAll>>()
+				{
+				});
+
+				TaskRequest taskRequest = new TaskRequest();
+				taskRequest.setAllowMultiple(false);
+				taskRequest.setName("Uploading " + components.size() + " Component(s)");
+				service.getAyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
+			} catch (IOException ex) {
+				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+			} finally {
+				try {
+					uploadFile.delete();
+				} catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
 	public FileBean getUploadFile()
 	{
 		return uploadFile;
@@ -137,6 +174,16 @@ public class UploadAction
 	public void setEntityName(String entityName)
 	{
 		this.entityName = entityName;
+	}
+
+	public ComponentUploadOption getComponentUploadOptions()
+	{
+		return componentUploadOptions;
+	}
+
+	public void setComponentUploadOptions(ComponentUploadOption componentUploadOptions)
+	{
+		this.componentUploadOptions = componentUploadOptions;
 	}
 
 }
