@@ -46,7 +46,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       // setFilters: '=',
     },
     link: function postLink(scope, element, attrs) {
-
+      console.log('scope.data', scope.data);
+      
       scope.getShortDescription = getShortDescription;
 
       if (scope.search && (!scope.search.type || !scope.search.code)) {
@@ -95,6 +96,15 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         $location.path('/compare');
         // console.log('list', encodeURI(list));
       };
+
+      scope.showitem = function(item){
+        var type = (attrs.type !== null && attrs.type !== undefined && attrs.type !== '')? attrs.type: null;
+        var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
+        if (type && code && item.listingType === 'Article') {
+          return !(item.articleAttributeType === type && item.articleAttributeCode === code);
+        }
+        return true;
+      }
 
       scope.addToCompare = function(id) {
         if (_.contains(list, id)){

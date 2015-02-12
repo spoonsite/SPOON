@@ -415,7 +415,12 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   };
 
   $scope.getTimes = function(n){
-    return new Array(parseInt(n));
+    var num = parseInt(n);
+    if (!isNaN(num)){
+      return new Array(num);
+    } else {
+      return new Array(0);
+    }
   };
 
   /***************************************************************

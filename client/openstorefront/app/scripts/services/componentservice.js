@@ -1228,6 +1228,22 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
       });
 
       return deferred.promise;
+    };
+
+    componentservice.getCount = function () {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/search/stats'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        console.log('data', data);
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject(false);
+      });
+      return deferred.promise;
     };  
 
 //</editor-fold> 
