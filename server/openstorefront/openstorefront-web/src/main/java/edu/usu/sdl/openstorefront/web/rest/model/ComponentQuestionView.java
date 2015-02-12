@@ -41,6 +41,8 @@ public class ComponentQuestionView
 	private Date updateDts;
 	private String activeStatus;
 	private Date questionUpdateDts;
+	private String componentId;
+	private String componentName;
 
 	@DataType(ComponentQuestionResponseView.class)
 	private List<ComponentQuestionResponseView> responses = new ArrayList<>();
@@ -53,6 +55,8 @@ public class ComponentQuestionView
 	{
 		ServiceProxy service = new ServiceProxy();
 		ComponentQuestionView view = new ComponentQuestionView();
+		view.setComponentId(question.getComponentId());
+		view.setComponentName(service.getComponentService().getComponentName(question.getComponentId()));
 		view.setResponses(responses);
 		view.setQuestion(question.getQuestion());
 		view.setUsername(question.getCreateUser());
@@ -244,5 +248,25 @@ public class ComponentQuestionView
 	public void setQuestionUpdateDts(Date questionUpdateDts)
 	{
 		this.questionUpdateDts = questionUpdateDts;
+	}
+
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
+
+	public String getComponentName()
+	{
+		return componentName;
+	}
+
+	public void setComponentName(String componentName)
+	{
+		this.componentName = componentName;
 	}
 }

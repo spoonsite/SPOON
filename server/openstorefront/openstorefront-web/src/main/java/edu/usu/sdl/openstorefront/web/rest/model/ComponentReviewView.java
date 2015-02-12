@@ -105,13 +105,9 @@ public class ComponentReviewView
 		view.setTitle(review.getTitle());
 		view.setComponentId(review.getComponentId());
 		view.setReviewId(review.getComponentReviewId());
-		view.setName(service.getPersistenceService().findById(Component.class, review.getComponentId()).getName());
-		ExperienceTimeType timeCode = service.getLookupService().getLookupEnity(ExperienceTimeType.class, review.getUserTimeCode());
-		if (timeCode == null) {
-			view.setUserTimeCode(null);
-		} else {
-			view.setUserTimeCode(timeCode.getDescription());
-		}
+		view.setName(service.getComponentService().getComponentName(review.getComponentId()));
+		view.setUserTimeCode(TranslateUtil.translate(ExperienceTimeType.class, review.getUserTimeCode()));
+
 		ComponentReviewPro reviewProExample = new ComponentReviewPro();
 		reviewProExample.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 		ComponentReviewProPk reviewProPk = new ComponentReviewProPk();
@@ -121,7 +117,7 @@ public class ComponentReviewView
 		view.setPros(ComponentReviewProCon.toViewListPro(componentReviewPros));
 
 		ComponentReviewCon reviewConExample = new ComponentReviewCon();
-		reviewConExample.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+		reviewConExample.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 		ComponentReviewConPk reviewConPk = new ComponentReviewConPk();
 		reviewConPk.setComponentReviewId(review.getComponentReviewId());
 		reviewConExample.setComponentReviewConPk(reviewConPk);

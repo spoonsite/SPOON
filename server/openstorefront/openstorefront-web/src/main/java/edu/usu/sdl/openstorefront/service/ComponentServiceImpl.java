@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.IssueField;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
@@ -307,6 +308,28 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public String getComponentName(String componentId)
+	{
+		String componentName = null;
+		Element element = OSFCacheManager.getComponentLookupCache().get(componentId);
+		if (element != null) {
+			componentName = (String) element.getObjectValue();
+		} else {
+			String query = "select componentId, name from " + Component.class.getSimpleName();
+			List<ODocument> documents = persistenceService.query(query, null);
+			documents.forEach(document -> {
+				Element newElement = new Element(document.field("componentId"), document.field("name"));
+				OSFCacheManager.getComponentLookupCache().put(newElement);
+			});
+			element = OSFCacheManager.getComponentLookupCache().get(componentId);
+			if (element != null) {
+				componentName = (String) element.getObjectValue();
+			}
+		}
+		return componentName;
+	}
+
+	@Override
 	public List<ComponentSearchView> getComponents()
 	{
 		List<ComponentSearchView> componentSearchViews = new ArrayList<>();
@@ -522,6 +545,7 @@ public class ComponentServiceImpl
 			component.setLastActivityDts(TimeUtil.currentDate());
 			persistenceService.persist(component);
 			OSFCacheManager.getComponentCache().remove(componentId);
+			OSFCacheManager.getComponentLookupCache().remove(componentId);
 			getUserService().checkComponentWatches(component);
 			getSearchService().addIndex(persistenceService.findById(Component.class, componentId));
 		} else {

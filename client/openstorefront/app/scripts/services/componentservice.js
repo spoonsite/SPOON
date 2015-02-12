@@ -1139,9 +1139,64 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
 
       return deferred.promise;
     };
+    
+    componentservice.getComponentAllTags = function () {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/components/tagviews'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };    
+    
+    
+    
 //</editor-fold> 
    
+//<editor-fold  desc="ReviewEntity">
+
+    componentservice.getComponentAllReviews = function (queryParamFilter) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/components/reviewviews?' + queryParamFilter.toQuery()
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    }; 
+
+//</editor-fold>
+   
 //<editor-fold  desc="Question Reponses Entity">
+
+    componentservice.getComponentAllQuestions = function (queryParamFilter) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/components/questionviews?' + queryParamFilter.toQuery()
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    }; 
 
     componentservice.inactivateQuestionResponse = function (options) {
       var deferred = $q.defer();
