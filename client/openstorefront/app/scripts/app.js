@@ -42,7 +42,8 @@ var app = angular
     'angulartics.google.analytics',
     'angularFileUpload',
     'ngIdle',    
-    'multi-select'
+    'multi-select',
+    'angular.filter'
   // end of dependency injections
   ]
 // end of the module creation

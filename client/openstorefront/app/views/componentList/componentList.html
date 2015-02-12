@@ -16,7 +16,7 @@
       <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
       <table class="table table-striped" id="resultsTable">
         <tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;">
-          <td style="white-space: inherit;" id="{{getComponentScroll(item)}}">
+          <td ng-show="showitem(item)" style="white-space: inherit;" id="{{getComponentScroll(item)}}">
             <div class="container-fluid">
               <div class="row" style="margin-left: 0px; margin-right: 0px">
                 <div class="results-content">

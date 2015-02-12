@@ -46,6 +46,10 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   
   Business.systemservice.getAppVersion().then(function(result){
     $scope.appverison = result;
+  });  
+  
+  Business.componentservice.getCount().then(function(result){
+    $scope.componentCount = result? result: 0;
   });
 
   Business.getFilters().then(function(result){
