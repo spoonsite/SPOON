@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
@@ -71,7 +72,8 @@ public class SearchServiceImpl
 	{
 		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
-		list.addAll(service.getComponentService().getComponents());
+		List<ComponentSearchView> components = service.getComponentService().getComponents();
+		list.addAll(components);
 		list.addAll(service.getAttributeService().getArticlesSearchView());
 		return list;
 	}
@@ -310,7 +312,9 @@ public class SearchServiceImpl
 		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(ComponentAttribute.class, queryByExample);
 		for (ComponentAttribute componentAttribute : componentAttributes) {
 			Component temp = persistenceService.findById(Component.class, componentAttribute.getComponentAttributePk().getComponentId());
-			componentMap.put(temp.getComponentId(), temp);
+			if (OpenStorefrontConstant.ComponentApprovalStatus.APPROVED.equals(temp.getApprovalState())) {
+				componentMap.put(temp.getComponentId(), temp);
+			}
 		}
 
 		// eliminate duplicate componentID on search results
