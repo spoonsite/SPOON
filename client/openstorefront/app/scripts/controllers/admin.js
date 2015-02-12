@@ -256,10 +256,34 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     });    
     
     $scope.data.push({
+      'label': 'Questions', 
+      'location':'views/admin/manageQuestions.html', 
+      'toolTitle': 'Manage Question', 
+      'detailedDesc': "User questions and answers about a component.",
+      'key': 'questions' 
+    });   
+    
+    $scope.data.push({
+      'label': 'Reviews', 
+      'location':'views/admin/manageReviews.html', 
+      'toolTitle': 'Manage User Reivews', 
+      'detailedDesc': "User reviews and ratings about a component.",
+      'key': 'reviews' 
+    });    
+    
+    $scope.data.push({
       'label': 'System', 'location':'views/admin/manageSystem.html', 
       'toolTitle': 'System Management', 
       'detailedDesc': 'Allows for viewing system status and managing system properties',
       'key': 'SYSTEM'
+    });
+
+    $scope.data.push({
+      'label': 'Tags', 
+      'location':'views/admin/manageTags.html', 
+      'toolTitle': 'Manage Tags', 
+      'detailedDesc': "Tags are user-definable labels that are associated to a component.",
+      'key': 'tags' 
     });
 
     $scope.data.push({

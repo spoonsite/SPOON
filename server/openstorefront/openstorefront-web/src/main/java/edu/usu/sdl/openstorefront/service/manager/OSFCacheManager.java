@@ -36,6 +36,7 @@ public class OSFCacheManager
 	private static Cache attributeTypeCache;
 	private static Cache userAgentCache;
 	private static Cache componentCache;
+	private static Cache componentLookupCache;
 
 	public static void init()
 	{
@@ -63,6 +64,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("componentCache", 200, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentCache = singletonManager.getCache("componentCache");
+
+			memoryOnlyCache = new Cache("componentLookupCache", 10000, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			componentLookupCache = singletonManager.getCache("componentLookupCache");
 
 		} finally {
 			lock.unlock();
@@ -98,6 +103,11 @@ public class OSFCacheManager
 	public static Cache getComponentCache()
 	{
 		return componentCache;
+	}
+
+	public static Cache getComponentLookupCache()
+	{
+		return componentLookupCache;
 	}
 
 	@Override

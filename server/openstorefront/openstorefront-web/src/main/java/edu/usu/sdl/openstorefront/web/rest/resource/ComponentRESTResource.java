@@ -82,6 +82,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.web.rest.model.TagView;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
@@ -328,6 +329,107 @@ public class ComponentRESTResource
 			response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.json\"");
 			return response.build();
 		}
+	}
+
+	@GET
+	@APIDescription("Get a list of components tags")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(TagView.class)
+	@Path("/tagviews")
+	public Response getAllComponentTags()
+	{
+		List<TagView> views = new ArrayList<>();
+
+		ComponentTag componentTagExample = new ComponentTag();
+		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
+
+		List<ComponentTag> tags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
+		if (!tags.isEmpty()) {
+
+			tags.forEach(tag -> {
+				TagView tagView = new TagView();
+				tagView.setTagId(tag.getTagId());
+				tagView.setText(tag.getText());
+				tagView.setCreateDts(tag.getCreateDts());
+				tagView.setCreateUser(tag.getCreateUser());
+				tagView.setComponentId(tag.getComponentId());
+				String componentName = service.getComponentService().getComponentName(tag.getComponentId());
+				if (componentName != null) {
+					tagView.setComponentName(componentName);
+				} else {
+					tagView.setComponentName("Missing Component (Orphaned Tag)");
+				}
+				views.add(tagView);
+			});
+		}
+
+		GenericEntity<List<TagView>> entity = new GenericEntity<List<TagView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Get a list of components reviews")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentReviewView.class)
+	@Path("/reviewviews")
+	public Response getAllComponentReviews(@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentReview reviewExample = new ComponentReview();
+		reviewExample.setActiveStatus(filterQueryParams.getStatus());
+
+		List<ComponentReview> componentReviews = service.getPersistenceService().queryByExample(ComponentReview.class, reviewExample);
+		componentReviews = filterQueryParams.filter(componentReviews);
+		List<ComponentReviewView> views = ComponentReviewView.toViewList(componentReviews);
+
+		GenericEntity<List<ComponentReviewView>> entity = new GenericEntity<List<ComponentReviewView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Get a list of components questions")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentQuestionView.class)
+	@Path("/questionviews")
+	public Response getAllComponentQuestions(@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentQuestion questionExample = new ComponentQuestion();
+		questionExample.setActiveStatus(filterQueryParams.getStatus());
+
+		List<ComponentQuestion> componentQuestions = service.getPersistenceService().queryByExample(ComponentQuestion.class, questionExample);
+		componentQuestions = filterQueryParams.filter(componentQuestions);
+
+		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
+		List<ComponentQuestionResponse> componentQuestionResponses = service.getPersistenceService().queryByExample(ComponentQuestionResponse.class, responseExample);
+		Map<String, List<ComponentQuestionResponseView>> responseMap = new HashMap<>();
+		for (ComponentQuestionResponse componentQuestionResponse : componentQuestionResponses) {
+			if (responseMap.containsKey(componentQuestionResponse.getQuestionId())) {
+				responseMap.get(componentQuestionResponse.getQuestionId()).add(ComponentQuestionResponseView.toView(componentQuestionResponse));
+			} else {
+				List<ComponentQuestionResponseView> responseViews = new ArrayList<>();
+				responseViews.add(ComponentQuestionResponseView.toView(componentQuestionResponse));
+				responseMap.put(componentQuestionResponse.getQuestionId(), responseViews);
+			}
+		}
+		List<ComponentQuestionView> views = ComponentQuestionView.toViewList(componentQuestions, responseMap);
+
+		GenericEntity<List<ComponentQuestionView>> entity = new GenericEntity<List<ComponentQuestionView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@POST

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.api;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -41,7 +42,6 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
-import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import java.io.InputStream;
 import java.util.List;
 
@@ -128,6 +128,14 @@ public interface ComponentService
 	 * @return Component updated or null if no component found
 	 */
 	public Component activateComponent(String componentId);
+
+	/**
+	 * High-speed component name lookup
+	 *
+	 * @param componentId
+	 * @return Name or null if not found
+	 */
+	public String getComponentName(String componentId);
 
 	/**
 	 * Return the whole list of components. (the short view)
