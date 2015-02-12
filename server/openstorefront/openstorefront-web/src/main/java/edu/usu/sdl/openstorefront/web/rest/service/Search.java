@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
+import edu.usu.sdl.openstorefront.sort.ComponentSearchViewComparator;
 import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -37,7 +38,6 @@ import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -64,17 +64,6 @@ public class Search
 		extends BaseResource
 {
 
-	public class CustomComparator
-			implements Comparator<ComponentSearchView>
-	{
-
-		@Override
-		public int compare(ComponentSearchView o1, ComponentSearchView o2)
-		{
-			return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-		}
-	}
-
 	@GET
 	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -88,9 +77,9 @@ public class Search
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		List<ComponentSearchView> result = service.getSearchService().getSearchItems(query, filterQueryParams);
-		Collections.sort(result, new CustomComparator());
-		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result)
+		List<ComponentSearchView> results = service.getSearchService().getSearchItems(query, filterQueryParams);
+		results.sort(new ComponentSearchViewComparator());
+		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(results)
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -143,9 +132,9 @@ public class Search
 		pk.setAttributeCode(code);
 		pk.setAttributeType(type);
 
-		List<ComponentSearchView> result = service.getSearchService().architectureSearch(pk, filterQueryParams);
-		Collections.sort(result, new CustomComparator());
-		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result)
+		List<ComponentSearchView> results = service.getSearchService().architectureSearch(pk, filterQueryParams);
+		results.sort(new ComponentSearchViewComparator());
+		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(results)
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -154,17 +143,13 @@ public class Search
 	@GET
 	@APIDescription("Used to retrieve all possible search results.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Component.class)
+	@DataType(ComponentSearchView.class)
 	@Path("/all")
 	public List<ComponentSearchView> getAllForSearch()
 	{
-		List<ComponentSearchView> result = service.getSearchService().getAll();
-		if (result != null) {
-			Collections.sort(result, new CustomComparator());
-			return result;
-		} else {
-			return null;
-		}
+		List<ComponentSearchView> results = service.getSearchService().getAll();
+		Collections.sort(results, new ComponentSearchViewComparator());
+		return results;
 	}
 
 	@GET
@@ -222,6 +207,7 @@ public class Search
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
 		long numberOfActiveComponents = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, componentExample));
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 

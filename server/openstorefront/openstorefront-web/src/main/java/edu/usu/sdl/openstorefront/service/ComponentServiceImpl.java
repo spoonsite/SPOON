@@ -336,6 +336,7 @@ public class ComponentServiceImpl
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
 		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(componentExample));
 
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
@@ -993,7 +994,15 @@ public class ComponentServiceImpl
 						}
 						oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
 						oldComponent.setApprovedDts(component.getComponent().getApprovedDts());
+					} else if (OpenStorefrontConstant.ComponentApprovalStatus.A.name().equals(oldComponent.getApprovalState())
+							&& OpenStorefrontConstant.ComponentApprovalStatus.P.name().equals(component.getComponent().getApprovalState())) {
+						oldComponent.setApprovalState(component.getComponent().getApprovalState());
+						oldComponent.setApprovedUser(null);
+						oldComponent.setApprovedDts(null);
+						component.getComponent().setApprovedUser(null);
+						component.getComponent().setApprovedDts(null);
 					}
+
 					oldComponent.setDescription(component.getComponent().getDescription());
 					oldComponent.setGuid(component.getComponent().getGuid());
 					oldComponent.setLastActivityDts(TimeUtil.currentDate());
@@ -1590,7 +1599,13 @@ public class ComponentServiceImpl
 
 			//get all active data
 			StringBuilder componentQuery = new StringBuilder();
-			componentQuery.append("select from Component where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId in ").append(inQuery);
+			componentQuery.append("select from Component where activeStatus='")
+					.append(Component.ACTIVE_STATUS)
+					.append("'and approvalState='")
+					.append(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED)
+					.append("' and componentId in ")
+					.append(inQuery);
+
 			List<Component> components = persistenceService.query(componentQuery.toString(), new HashMap<>(), Component.class, true);
 
 			StringBuilder componentAttributeQuery = new StringBuilder();

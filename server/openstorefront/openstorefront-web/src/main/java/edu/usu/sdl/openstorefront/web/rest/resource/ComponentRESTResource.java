@@ -136,7 +136,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Get a list of active components for selection list.")
+	@APIDescription("Get a list of active and approved components for selection list.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
 	@Path("/lookup")
@@ -146,6 +146,7 @@ public class ComponentRESTResource
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
 		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
 		components.forEach(component -> {
 			LookupModel lookupModel = new LookupModel();
@@ -180,7 +181,8 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
+	@RequireAdmin
+	@APIDescription("Get a list of all components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
 	@Path("/filterable")

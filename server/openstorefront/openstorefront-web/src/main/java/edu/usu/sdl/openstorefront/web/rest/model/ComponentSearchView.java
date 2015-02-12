@@ -87,7 +87,7 @@ public class ComponentSearchView
 		view.setDescription(component.getDescription());
 		view.setParentComponentId(component.getParentComponentId());
 		view.setGuid(component.getGuid());
-		view.setApprovalState(component.getActiveStatus());
+		view.setApprovalState(component.getApprovalState());
 		view.setApprovedDts(component.getApprovedDts());
 		view.setApprovedUser(component.getApprovedUser());
 		view.setLastActivityDts(component.getLastActivityDts());
