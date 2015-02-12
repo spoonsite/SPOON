@@ -138,7 +138,8 @@ public interface ComponentService
 	public String getComponentName(String componentId);
 
 	/**
-	 * Return the whole list of components. (the short view)
+	 * Return the whole list of components. (the short view) Just Active and
+	 * Approved components
 	 *
 	 * @return
 	 */
