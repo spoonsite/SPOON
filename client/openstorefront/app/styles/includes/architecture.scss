@@ -1,25 +1,55 @@
 .architectureSearch * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 .architectureSearch .archBody {
-    border:1px solid black;
-    height: 500px;
-    min-width:500px;
+  background: white;
+  border:1px solid slategray;
+  height: 600px;
+  min-width:500px;
 }
+.architectureSearch{
+  min-width:500px;
+}
+.architectureSearch.full{
+  position: fixed;
+  z-index: 1011;
+  top:0px;
+  bottom:0px;
+  right:0px;
+  left:0px;
+  margin:0px !important;
+}
+
+
+.architectureSearch.full .archBody{
+  height: calc(100% - 34px);
+  width: auto;
+  margin:0px;
+}
+
+.architectureSearch.full .fa.fa-external-link-square{
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
 .architectureSearch .archList {
-    float:left;
-    border:1px solid red;
-    height: 100%;
-    width: 200px;
-    overflow:auto;
+  float:left;
+  border:1px solid darkgray;
+  height: 100%;
+  width: 300px;
+  overflow:auto;
 }
 .architectureSearch .rightSide {
-    float:right;
-    border:1px solid blue;
-    min-height:50%;
-    width: calc(100% - 200px);
-    padding:5px
+  overflow:auto;
+  float:right;
+  border:1px solid darkgray;
+  min-height:50%;
+  width: calc(100% - 300px);
+  padding:5px
 }
 .architectureSearch .rightSide h2 {
-    margin-top:5px;
+  margin-top:5px;
 }
