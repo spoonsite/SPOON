@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.transfermodel.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
@@ -453,5 +454,14 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteComponentIntegrationConfig(String integrationConfigId);
+
+	/**
+	 * Handle bulk changing of component Attributes...even across components
+	 * Passed in Attribute should be Live ("proxy") entities.
+	 *
+	 * @param bulkComponentAttributeChange
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange);
 
 }

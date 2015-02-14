@@ -158,7 +158,7 @@ public interface AttributeService
 	public void deleteArticle(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Remove Type
+	 * InActivates Type. Also it will inactive associated componentAttribute
 	 *
 	 * @param type
 	 */
@@ -166,7 +166,16 @@ public interface AttributeService
 	public void removeAttributeType(String type);
 
 	/**
-	 * Remove Type
+	 * Warning: This hard deletes of Attribute Type and all codes and associated
+	 * information
+	 *
+	 * @param type
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void cascadeDeleteAttributeType(String type);
+
+	/**
+	 * Activates Type; Also it will inactive associated componentAttribute
 	 *
 	 * @param type
 	 */
@@ -174,12 +183,29 @@ public interface AttributeService
 	public void activateAttributeType(String type);
 
 	/**
-	 * Remove Code
+	 * Inactivate Code; Also it will active associated componentAttribute
 	 *
 	 * @param attributeCodePk
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeAttributeCode(AttributeCodePk attributeCodePk);
+
+	/**
+	 * Activates a attribute Code. Also it will active associated
+	 * componentAttribute
+	 *
+	 * @param attributeCodePk
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void activateAttributeCode(AttributeCodePk attributeCodePk);
+
+	/**
+	 * Warning: This hard deletes of Attribute code and associated information
+	 *
+	 * @param attributeCodePk
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void cascadeDeleteAttributeCode(AttributeCodePk attributeCodePk);
 
 	/**
 	 * Sync the db with the attribute code Map Note this won't remove types
@@ -275,13 +301,5 @@ public interface AttributeService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveAttributeCodeSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder);
-
-	/**
-	 * Activates a attribute Code
-	 *
-	 * @param attributeCodePk
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void activateAttributeCode(AttributeCodePk attributeCodePk);
 
 }

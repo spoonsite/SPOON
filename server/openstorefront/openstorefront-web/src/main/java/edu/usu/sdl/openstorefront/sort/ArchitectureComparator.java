@@ -16,12 +16,16 @@
 package edu.usu.sdl.openstorefront.sort;
 
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
+import java.math.BigDecimal;
 import java.util.Comparator;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Compare Architecture based on codes
  *
  * @author dshurtleff
+ * @param <T>
  */
 public class ArchitectureComparator<T extends Architecture>
 		implements Comparator<T>
@@ -31,8 +35,21 @@ public class ArchitectureComparator<T extends Architecture>
 	public int compare(T o1, T o2)
 	{
 		//Codes should be numbers
-		Integer codeKey1 = Integer.parseInt(o1.getAttributeCode().replace(".", ""));
-		Integer codeKey2 = Integer.parseInt(o2.getAttributeCode().replace(".", ""));
+		BigDecimal codeKey1;
+		BigDecimal codeKey2;
+
+		if (StringUtils.isNotBlank(o1.getArchitectureCode())) {
+			codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getArchitectureCode());
+		} else {
+			codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getAttributeCode());
+		}
+
+		if (StringUtils.isNotBlank(o2.getArchitectureCode())) {
+			codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getArchitectureCode());
+		} else {
+			codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getAttributeCode());
+		}
+
 		return codeKey1.compareTo(codeKey2);
 	}
 

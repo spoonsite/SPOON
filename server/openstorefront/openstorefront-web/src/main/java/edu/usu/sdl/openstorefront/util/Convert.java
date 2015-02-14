@@ -114,4 +114,31 @@ public class Convert
 		return null;
 	}
 
+	public static BigDecimal toBigDecimal(Object data)
+	{
+		return toBigDecimal(data, null);
+	}
+
+	public static BigDecimal toBigDecimal(Object data, BigDecimal defaultDecimal)
+	{
+		if (data != null) {
+			try {
+				if (data instanceof Integer) {
+					return BigDecimal.valueOf(((Integer) data).doubleValue());
+				} else if (data instanceof String) {
+					return new BigDecimal(data.toString());
+				} else if (data instanceof BigDecimal) {
+					return (BigDecimal) data;
+				} else if (data instanceof BigInteger) {
+					return BigDecimal.valueOf(((BigInteger) data).longValue());
+				} else if (data instanceof Number) {
+					return BigDecimal.valueOf(((Number) data).longValue());
+				}
+			} catch (NumberFormatException e) {
+				return defaultDecimal;
+			}
+		}
+		return null;
+	}
+
 }

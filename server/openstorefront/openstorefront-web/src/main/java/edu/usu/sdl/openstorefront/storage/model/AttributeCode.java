@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -28,6 +29,7 @@ import java.util.Objects;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -36,12 +38,18 @@ import javax.validation.constraints.Size;
 @APIDescription("Attribute code are used to link metadata and create articles on topics")
 public class AttributeCode
 		extends BaseEntity
+		implements ExportImport
 {
 
 	@PK
 	@NotNull
 	@ConsumeField
 	private AttributeCodePk attributeCodePk;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String architectureCode;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -63,6 +71,11 @@ public class AttributeCode
 	@ConsumeField
 	private String detailUrl;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@Sanitize(LinkSanitizer.class)
+	@ConsumeField
+	private String badgeUrl;
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
@@ -81,6 +94,27 @@ public class AttributeCode
 	{
 	}
 
+	public String architectureCode()
+	{
+		if (StringUtils.isNotBlank(getArchitectureCode())) {
+			return getArchitectureCode();
+		} else {
+			return getAttributeCodePk().getAttributeCode();
+		}
+	}
+
+	@Override
+	public String export()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void importData(String[] data)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -88,6 +122,8 @@ public class AttributeCode
 		hash = 79 * hash + Objects.hashCode(this.attributeCodePk);
 		hash = 79 * hash + Objects.hashCode(this.label);
 		hash = 79 * hash + Objects.hashCode(this.description);
+		hash = 79 * hash + Objects.hashCode(this.architectureCode);
+		hash = 79 * hash + Objects.hashCode(this.badgeUrl);
 		hash = 79 * hash + Objects.hashCode(this.article);
 		hash = 79 * hash + Objects.hashCode(this.detailUrl);
 		hash = 79 * hash + Objects.hashCode(this.groupCode);
@@ -117,6 +153,12 @@ public class AttributeCode
 		if (!Objects.equals(this.article, other.article)) {
 			return false;
 		}
+		if (!Objects.equals(this.architectureCode, other.architectureCode)) {
+			return false;
+		}
+		if (!Objects.equals(this.badgeUrl, other.badgeUrl)) {
+			return false;
+		}
 		if (!Objects.equals(this.detailUrl, other.detailUrl)) {
 			return false;
 		}
@@ -134,6 +176,8 @@ public class AttributeCode
 		setAttributeCodePk(attributeCodePk);
 		setDescription(code.getDescription());
 		setDetailUrl(code.getFullTextLink());
+		setArchitectureCode(code.getArchitectureCode());
+		setBadgeUrl(code.getBadgeUrl());
 		setGroupCode(code.getGroupCode());
 		setLabel(code.getLabel());
 		setSortOrder(code.getSortOrder());
@@ -207,6 +251,26 @@ public class AttributeCode
 	public void setArticle(Article article)
 	{
 		this.article = article;
+	}
+
+	public String getArchitectureCode()
+	{
+		return architectureCode;
+	}
+
+	public void setArchitectureCode(String architectureCode)
+	{
+		this.architectureCode = architectureCode;
+	}
+
+	public String getBadgeUrl()
+	{
+		return badgeUrl;
+	}
+
+	public void setBadgeUrl(String badgeUrl)
+	{
+		this.badgeUrl = badgeUrl;
 	}
 
 }

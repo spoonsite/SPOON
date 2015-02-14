@@ -133,6 +133,18 @@ public class PersistenceService
 		return active;
 	}
 
+	public boolean isAttached(BaseEntity baseEntity)
+	{
+		boolean attached = false;
+		OObjectDatabaseTx database = getConnection();
+		try {
+			attached = database.isManaged(baseEntity);
+		} finally {
+			closeConnection(database);
+		}
+		return attached;
+	}
+
 	/**
 	 * This only works on managed objects
 	 *

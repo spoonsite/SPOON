@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
+import edu.usu.sdl.openstorefront.service.transfermodel.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.sort.ArchitectureComparator;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
@@ -231,6 +232,8 @@ public class AttributeServiceImpl
 			existing.setDescription(attributeCode.getDescription());
 			existing.setDetailUrl(attributeCode.getDetailUrl());
 			existing.setLabel(attributeCode.getLabel());
+			existing.setArchitectureCode(attributeCode.getArchitectureCode());
+			existing.setBadgeUrl(attributeCode.getBadgeUrl());
 			existing.setGroupCode(attributeCode.getGroupCode());
 			existing.setSortOrder(attributeCode.getSortOrder());
 			persistenceService.persist(existing);
@@ -361,9 +364,28 @@ public class AttributeServiceImpl
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
 
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(type, null));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.INACTIVE);
+
+			//Stay in the same transaction
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
 			OSFCacheManager.getAttributeTypeCache().remove(type);
 			OSFCacheManager.getAttributeCache().remove(type);
 		}
+	}
+
+	private List<ComponentAttribute> getComponentAttributes(String type, String code)
+	{
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+		componentAttributePk.setAttributeType(type);
+		componentAttributePk.setAttributeType(code);
+		componentAttributeExample.setComponentAttributePk(componentAttributePk);
+		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
+		queryByExample.setReturnNonProxied(false);
+		return persistenceService.queryByExample(ComponentAttribute.class, queryByExample);
 	}
 
 	@Override
@@ -377,6 +399,54 @@ public class AttributeServiceImpl
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeCode);
+
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(attributeCodePk.getAttributeType(), attributeCodePk.getAttributeCode()));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.INACTIVE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
+			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
+			OSFCacheManager.getAttributeTypeCache().remove(attributeCodePk.getAttributeType());
+		}
+	}
+
+	@Override
+	public void cascadeDeleteAttributeType(String type)
+	{
+		Objects.requireNonNull(type, "Attribute type is required.");
+
+		AttributeType attributeType = persistenceService.findById(AttributeType.class, type);
+		if (attributeType != null) {
+			AttributeCode attributeCodeExample = new AttributeCode();
+			AttributeCodePk attributeCodePk = new AttributeCodePk();
+			attributeCodePk.setAttributeType(type);
+			attributeCodeExample.setAttributeCodePk(attributeCodePk);
+			persistenceService.deleteByExample(attributeCodeExample);
+			persistenceService.delete(attributeType);
+
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(type, null));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.DELETE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
+			OSFCacheManager.getAttributeTypeCache().remove(type);
+			OSFCacheManager.getAttributeCache().remove(type);
+		}
+	}
+
+	@Override
+	public void cascadeDeleteAttributeCode(AttributeCodePk attributeCodePk)
+	{
+		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
+
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			persistenceService.delete(attributeCode);
+
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(attributeCodePk.getAttributeType(), attributeCodePk.getAttributeCode()));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.INACTIVE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
 
 			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
 			OSFCacheManager.getAttributeTypeCache().remove(attributeCodePk.getAttributeType());
@@ -394,6 +464,11 @@ public class AttributeServiceImpl
 			attributeCode.setUpdateDts(TimeUtil.currentDate());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeCode);
+
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(attributeCodePk.getAttributeType(), attributeCodePk.getAttributeCode()));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.ACTIVATE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
 
 			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
 			OSFCacheManager.getAttributeTypeCache().remove(attributeCodePk.getAttributeType());
@@ -581,11 +656,11 @@ public class AttributeServiceImpl
 				String rootCode = "0";
 				List<AttributeCode> attributeCodes = findCodesForType(attributeType);
 				for (AttributeCode attributeCode : attributeCodes) {
-					if (rootCode.equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
-						architecture.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+					if (rootCode.equals(attributeCode.architectureCode())) {
+						architecture.setAttributeCode(attributeCode.architectureCode());
 						architecture.setDescription(attributeCode.getDescription());
 					} else {
-						String codeTokens[] = attributeCode.getAttributeCodePk().getAttributeCode().split(Pattern.quote("."));
+						String codeTokens[] = attributeCode.architectureCode().split(Pattern.quote("."));
 						Architecture rootArchtecture = architecture;
 						StringBuilder codeKey = new StringBuilder();
 						for (int i = 0; i < codeTokens.length - 1; i++) {
@@ -612,7 +687,7 @@ public class AttributeServiceImpl
 						//now find the correct postion and add/update
 						boolean found = false;
 						for (Architecture child : rootArchtecture.getChildren()) {
-							if (child.getAttributeCode().equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
+							if (child.getAttributeCode().equals(attributeCode.architectureCode())) {
 								child.setName(attributeCode.getLabel());
 								child.setDescription(attributeCode.getDescription());
 								found = true;
@@ -620,7 +695,9 @@ public class AttributeServiceImpl
 						}
 						if (!found) {
 							Architecture newChild = new Architecture();
-							newChild.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+							newChild.setAttributeCode(attributeCode.architectureCode());
+							newChild.setOriginalAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+							newChild.setArchitectureCode(attributeCode.getArchitectureCode());
 							newChild.setAttributeType(attributeType);
 							newChild.setName(attributeCode.getLabel());
 							newChild.setDescription(attributeCode.getDescription());
@@ -852,6 +929,11 @@ public class AttributeServiceImpl
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
 
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(type, null));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.ACTIVATE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
 			OSFCacheManager.getAttributeCache().remove(type);
 			OSFCacheManager.getAttributeTypeCache().remove(type);
 		} else {
@@ -879,13 +961,13 @@ public class AttributeServiceImpl
 	public List<AttributeCode> getArticles(Boolean all)
 	{
 		String activeStatus = AttributeCode.ACTIVE_STATUS;
-		
+
 		List<AttributeCode> list = findRecentlyAddedArticles(null, activeStatus);
 		if (all) {
 			activeStatus = AttributeCode.INACTIVE_STATUS;
 			List<AttributeCode> temp = findRecentlyAddedArticles(null, activeStatus);
 			list.addAll(temp);
-		}		
+		}
 		return list;
 	}
 

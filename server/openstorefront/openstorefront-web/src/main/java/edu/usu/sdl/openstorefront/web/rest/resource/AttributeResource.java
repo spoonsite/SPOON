@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
@@ -443,25 +444,45 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@APIDescription("Remove a type (In-activates).  Note: this inactives all attribute type associations. Runs in a background task.")
 	@Path("/attributetypes/{type}")
 	public void deleteAttributeType(
 			@PathParam("type")
 			@RequiredParam String type)
 	{
-		service.getAttributeService().removeAttributeType(type.toUpperCase());
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Inactivating Attribute Type");
+		service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeType(type.toUpperCase());
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete a type and all attribute type associations. (codes, component attributes).  Runs in a background task.")
+	@Path("/attributetypes/{type}/force")
+	public void hardDeleteAttributeType(
+			@PathParam("type")
+			@RequiredParam String type)
+	{
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Deleting Attribute Type");
+		service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(type.toUpperCase());
 	}
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Activate a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@APIDescription("Activate a type.  Note: this activates all attribute type associations. Runs in a background task.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
 	public void activateType(
 			@PathParam("type")
 			@RequiredParam String type)
 	{
-		service.getAttributeService().activateAttributeType(type.toUpperCase());
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Activating Attribute Type");
+		service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeType(type.toUpperCase());
 	}
 
 	@PUT
@@ -549,7 +570,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a Code (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@APIDescription("Remove a Code (In-activates) and inactivates all attribute type associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
 			@PathParam("type")
@@ -560,12 +581,36 @@ public class AttributeResource
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code.toUpperCase());
 		attributeCodePk.setAttributeType(type.toUpperCase());
-		service.getAttributeService().removeAttributeCode(attributeCodePk);
+
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Inactivate Attribute Dode");
+		service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeCode(attributeCodePk);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete a Code and all attribute code associations. Runs in background.")
+	@Path("/attributetypes/{type}/attributecodes/{code}/force")
+	public void hardDeleteAttributeCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode(code.toUpperCase());
+		attributeCodePk.setAttributeType(type.toUpperCase());
+
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Deleting Attribute Code");
+		service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeCode(attributeCodePk);
 	}
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Activate a Code (activates).")
+	@APIDescription("Activate a Code (activates) and all assicated data.  Runs in background.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void activateCode(
@@ -577,7 +622,11 @@ public class AttributeResource
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code.toUpperCase());
 		attributeCodePk.setAttributeType(type.toUpperCase());
-		service.getAttributeService().activateAttributeCode(attributeCodePk);
+
+		TaskRequest taskRequest = new TaskRequest();
+		taskRequest.setAllowMultiple(false);
+		taskRequest.setName("Activating Attribute Code");
+		service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeCode(attributeCodePk);
 	}
 
 	@GET

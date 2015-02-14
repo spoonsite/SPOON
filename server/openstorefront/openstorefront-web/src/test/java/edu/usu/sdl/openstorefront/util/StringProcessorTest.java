@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -237,6 +238,31 @@ public class StringProcessorTest
 		String result = StringProcessor.stripHtml(text);
 		System.out.println(result);
 		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of archtecureCodeToDecimal method, of class StringProcessor.
+	 */
+	@Test
+	public void testArchtecureCodeToDecimal()
+	{
+		System.out.println("archtecureCodeToDecimal");
+		String code = "1.2.1.1";
+		BigDecimal result = StringProcessor.archtecureCodeToDecimal(code);
+		System.out.println(result.toPlainString());
+
+		code = "1";
+		result = StringProcessor.archtecureCodeToDecimal(code);
+		System.out.println(result.toPlainString());
+
+		code = "1.";
+		result = StringProcessor.archtecureCodeToDecimal(code);
+		System.out.println(result.toPlainString());
+
+		code = "1.2";
+		result = StringProcessor.archtecureCodeToDecimal(code);
+		System.out.println(result.toPlainString());
 
 	}
 

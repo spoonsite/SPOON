@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -243,6 +244,27 @@ public class StringProcessor
 			return doc.text().trim();
 		}
 		return text;
+	}
+
+	/**
+	 * Converts a 1.1.1 to a BigDecimal for comparison
+	 *
+	 * @param code
+	 * @return BigDecimal (returns zero on null)
+	 */
+	public static BigDecimal archtecureCodeToDecimal(String code)
+	{
+		BigDecimal result = BigDecimal.ZERO;
+		if (StringUtils.isNotBlank(code)) {
+			code = code.replace(".", "");
+			if (code.length() > 1) {
+				StringBuilder sb = new StringBuilder(code);
+				sb.insert(1, ".");
+				code = sb.toString();
+			}
+			result = Convert.toBigDecimal(code, result);
+		}
+		return result;
 	}
 
 }
