@@ -28,6 +28,8 @@ public class AttributeCodeView
 	private String label;
 	private String description;
 	private String fullTextLink;
+	private String badgeUrl;
+	private String architectureCode;
 	private String groupCode;
 	private Integer sortOrder;
 	private String activeStatus;
@@ -44,6 +46,8 @@ public class AttributeCodeView
 		attributeCodeView.setDescription(attributeCode.getDescription());
 		attributeCodeView.setGroupCode(attributeCode.getGroupCode());
 		attributeCodeView.setSortOrder(attributeCode.getSortOrder());
+		attributeCodeView.setBadgeUrl(attributeCode.getBadgeUrl());
+		attributeCodeView.setArchitectureCode(attributeCode.getArchitectureCode());
 		attributeCodeView.setActiveStatus(attributeCode.getActiveStatus());
 		if (attributeCode.getArticle() != null) {
 			attributeCodeView.setFullTextLink("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
@@ -114,20 +118,34 @@ public class AttributeCodeView
 		this.groupCode = groupCode;
 	}
 
-	/**
-	 * @return the activeStatus
-	 */
 	public String getActiveStatus()
 	{
 		return activeStatus;
 	}
 
-	/**
-	 * @param activeStatus the activeStatus to set
-	 */
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+
+	public String getBadgeUrl()
+	{
+		return badgeUrl;
+	}
+
+	public void setBadgeUrl(String badgeUrl)
+	{
+		this.badgeUrl = badgeUrl;
+	}
+
+	public String getArchitectureCode()
+	{
+		return architectureCode;
+	}
+
+	public void setArchitectureCode(String architectureCode)
+	{
+		this.architectureCode = architectureCode;
 	}
 
 }

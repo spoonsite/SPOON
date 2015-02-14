@@ -38,10 +38,19 @@ public class SvcAttributeParser
 
 	private static final Logger log = Logger.getLogger(SvcAttributeParser.class.getName());
 
+	private static final int UID = 0;
 	private static final int CODE = 1;
 	private static final int LABEL = 2;
 	private static final int DEFINITION = 3;
 	private static final int DESCRIPTION = 4;
+	private static final int EXAMPLE_SPEC = 5;
+	private static final int EXAMPLE_SOLUTION = 6;
+	private static final int DI2E_STATUS = 7;
+	private static final int DSGS_ENTERPRISE = 8;
+	private static final int JCA_ALIGNMENT = 9;
+	private static final int JCSFL_ALIGNMENT = 10;
+	private static final int JARM_ALIGNMENT = 11;
+	private static final int INTERNAL_COMMENTS = 12;
 
 	@Override
 	protected void internalParse(CSVReader reader) throws IOException
@@ -59,7 +68,7 @@ public class SvcAttributeParser
 
 		attributeMap.put(attributeType, new ArrayList<>());
 
-		int lineNumber = 0;
+		int lineNumber;
 		List<String[]> allLines = reader.readAll();
 		for (int i = 1; i < allLines.size(); i++) {
 			lineNumber = i;
@@ -70,14 +79,18 @@ public class SvcAttributeParser
 				if (StringUtils.isNotBlank(data[CODE].trim())) {
 					AttributeCode attributeCode = new AttributeCode();
 					AttributeCodePk attributeCodePk = new AttributeCodePk();
-					attributeCodePk.setAttributeCode(data[CODE].trim().toUpperCase());
+					attributeCodePk.setAttributeCode(data[UID].trim().toUpperCase());
 					attributeCodePk.setAttributeType(attributeType.getAttributeType());
 					attributeCode.setAttributeCodePk(attributeCodePk);
 
 					StringBuilder desc = new StringBuilder();
-					desc.append("<b>Definition:</b>").append(StringProcessor.stripeExtendedChars(data[DEFINITION].replace("\n", "<br>"))).append("<br>");
-					desc.append("<b>Description:</b>").append(StringProcessor.stripeExtendedChars(data[DESCRIPTION].replace("\n", "<br>")));
+					desc.append("<b>Definition:</b>").append(StringProcessor.stripeExtendedChars(data[DEFINITION].trim().replace("\n", "<br>"))).append("<br>");
+					desc.append("<b>Description:</b>").append(StringProcessor.stripeExtendedChars(data[DESCRIPTION].trim().replace("\n", "<br>"))).append("<br>");
+					desc.append("<b>JCA Alignment:</b>").append(StringProcessor.stripeExtendedChars(data[JCA_ALIGNMENT].trim().replace("\n", "<br>"))).append("<br>");
+					desc.append("<b>JCSFL Alignment:</b>").append(StringProcessor.stripeExtendedChars(data[JCSFL_ALIGNMENT].trim().replace("\n", "<br>"))).append("<br>");
+					desc.append("<b>JARM/ESL Alignment:</b>").append(StringProcessor.stripeExtendedChars(data[JARM_ALIGNMENT].trim().replace("\n", "<br>"))).append("<br>");
 					attributeCode.setDescription(desc.toString());
+					attributeCode.setArchitectureCode(data[CODE].trim().toUpperCase());
 					attributeCode.setLabel(data[CODE].toUpperCase().trim() + " " + data[LABEL].trim());
 
 					attributeMap.get(attributeType).add(attributeCode);

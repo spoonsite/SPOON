@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
+import edu.usu.sdl.openstorefront.service.transfermodel.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
@@ -129,6 +130,11 @@ public class ComponentServiceImpl
 
 	public ComponentServiceImpl()
 	{
+	}
+
+	public ComponentServiceImpl(PersistenceService persistenceService)
+	{
+		super(persistenceService);
 	}
 
 	@Override
@@ -1973,6 +1979,34 @@ public class ComponentServiceImpl
 		}
 
 		return componentAll;
+	}
+
+	@Override
+	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange)
+	{
+		Set<String> componentIdSet = new HashSet<>();
+
+		for (ComponentAttribute componentAttribute : bulkComponentAttributeChange.getAttributes()) {
+
+			componentIdSet.add(componentAttribute.getComponentId());
+			componentAttribute.populateBaseUpdateFields();
+			switch (bulkComponentAttributeChange.getOpertionType()) {
+				case ACTIVATE:
+					componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+					persistenceService.persist(componentAttribute);
+					break;
+				case INACTIVE:
+					componentAttribute.setActiveStatus(ComponentAttribute.INACTIVE_STATUS);
+					persistenceService.persist(componentAttribute);
+					break;
+				case DELETE:
+					persistenceService.delete(componentAttribute);
+					break;
+			}
+		}
+		componentIdSet.forEach(componentId -> {
+			updateComponentLastActivity(componentId);
+		});
 	}
 
 }
