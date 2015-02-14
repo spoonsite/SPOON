@@ -210,6 +210,11 @@ app.directive('abnTree', ['$timeout', function($timeout) {
           }
         });
         addBranchToList = function(level, branch, visible) {
+          console.log('level', level);
+          console.log('branch', branch);
+          console.log('visible', visible);
+          console.log('==============');
+          
           var child, childVisible, treeIcon, _i, _len, _ref, _results;
           if (branch.expanded === null) {
             branch.expanded = false;
