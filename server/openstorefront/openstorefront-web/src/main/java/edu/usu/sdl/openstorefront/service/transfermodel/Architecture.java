@@ -32,6 +32,7 @@ public class Architecture
 	private String attributeCode;
 	private String originalAttributeCode;
 	private String architectureCode;
+	private Integer sortOrder;
 	private List<Architecture> children = new ArrayList<>();
 
 	public Architecture()
@@ -106,6 +107,16 @@ public class Architecture
 	public void setOriginalAttributeCode(String originalAttributeCode)
 	{
 		this.originalAttributeCode = originalAttributeCode;
+	}
+
+	public Integer getSortOrder()
+	{
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder)
+	{
+		this.sortOrder = sortOrder;
 	}
 
 }

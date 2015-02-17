@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.sort;
 
 import edu.usu.sdl.openstorefront.doc.APIResourceModel;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Comparator;
  * @param <T>
  */
 public class ApiResourceComparator<T extends APIResourceModel>
-		implements Comparator<T>
+		implements Comparator<T>, Serializable
 {
 
 	@Override

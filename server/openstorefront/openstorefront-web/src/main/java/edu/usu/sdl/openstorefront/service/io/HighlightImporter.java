@@ -54,8 +54,11 @@ public class HighlightImporter
 				List<Highlight> highlights = objectMapper.readValue(file, new TypeReference<List<Highlight>>()
 				{
 				});
-				serviceProxy.getSystemService().syncHighlights(highlights);
-
+				if (highlights == null) {
+					log.log(Level.SEVERE, "Unable to process highlight file.  File should conform to JSON format for a Highlight type.");
+				} else {
+					serviceProxy.getSystemService().syncHighlights(highlights);
+				}
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to process highlight file.  File should conform to JSON format for a Highlight type.", e);
 			}

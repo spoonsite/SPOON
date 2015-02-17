@@ -390,8 +390,12 @@ public class ComponentServiceImpl
 
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
+		if (tempComponent == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id: " + componentId);
+		}
+
 		Component tempParentComponent;
-		if (tempComponent != null && tempComponent.getParentComponentId() != null) {
+		if (tempComponent.getParentComponentId() != null) {
 			tempParentComponent = persistenceService.findById(Component.class, tempComponent.getParentComponentId());
 		} else {
 			tempParentComponent = new Component();
@@ -662,12 +666,12 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void saveComponentMedia(ComponentMedia media)
+	public ComponentMedia saveComponentMedia(ComponentMedia media)
 	{
-		saveComponentMedia(media, true);
+		return saveComponentMedia(media, true);
 	}
 
-	private void saveComponentMedia(ComponentMedia media, boolean updateLastActivity)
+	private ComponentMedia saveComponentMedia(ComponentMedia media, boolean updateLastActivity)
 	{
 		ComponentMedia oldMedia = persistenceService.findById(ComponentMedia.class, media.getComponentMediaId());
 		if (oldMedia != null) {
@@ -688,6 +692,7 @@ public class ComponentServiceImpl
 			oldMedia.setUpdateDts(TimeUtil.currentDate());
 			oldMedia.setUpdateUser(media.getUpdateUser());
 			persistenceService.persist(oldMedia);
+			media = oldMedia;
 		} else {
 			media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			media.setComponentMediaId(persistenceService.generateId());
@@ -699,6 +704,7 @@ public class ComponentServiceImpl
 		if (updateLastActivity) {
 			updateComponentLastActivity(media.getComponentId());
 		}
+		return media;
 	}
 
 	@Override
@@ -793,12 +799,12 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void saveComponentResource(ComponentResource resource)
+	public ComponentResource saveComponentResource(ComponentResource resource)
 	{
-		saveComponentResource(resource, true);
+		return saveComponentResource(resource, true);
 	}
 
-	private void saveComponentResource(ComponentResource resource, boolean updateLastActivity)
+	private ComponentResource saveComponentResource(ComponentResource resource, boolean updateLastActivity)
 	{
 		ComponentResource oldResource = persistenceService.findById(ComponentResource.class, resource.getResourceId());
 		if (oldResource != null) {
@@ -822,6 +828,7 @@ public class ComponentServiceImpl
 			oldResource.setUpdateDts(TimeUtil.currentDate());
 			oldResource.setUpdateUser(resource.getUpdateUser());
 			persistenceService.persist(oldResource);
+			resource = oldResource;
 		} else {
 			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 			resource.setResourceId(persistenceService.generateId());
@@ -833,6 +840,7 @@ public class ComponentServiceImpl
 		if (updateLastActivity) {
 			updateComponentLastActivity(resource.getComponentId());
 		}
+		return resource;
 	}
 
 	@Override
@@ -1352,6 +1360,9 @@ public class ComponentServiceImpl
 		Objects.requireNonNull(media);
 		Objects.requireNonNull(fileInput);
 
+		if (StringUtils.isBlank(media.getComponentMediaId())) {
+			media = saveComponentMedia(media);
+		}
 		media.setFileName(media.getComponentMediaId());
 		try (InputStream in = fileInput) {
 			Files.copy(in, media.pathToMedia());
@@ -1368,6 +1379,9 @@ public class ComponentServiceImpl
 		Objects.requireNonNull(resource);
 		Objects.requireNonNull(fileInput);
 
+		if (StringUtils.isBlank(resource.getResourceId())) {
+			resource.setResourceId(persistenceService.generateId());
+		}
 		resource.setFileName(resource.getResourceId());
 		try (InputStream in = fileInput) {
 			Files.copy(in, resource.pathToResource());

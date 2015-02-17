@@ -71,10 +71,13 @@ public class JiraManager
 		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
 		try {
 			JiraClient jiraClient = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
+			if (jiraClient == null) {
+				throw new OpenStorefrontRuntimeException("Unable to retrieve Jira Connection in time.  No resource available.", "Adjust jira pool size appropriate to load or try again");
+			}
 			jiraClient.initConnection();
 			return jiraClient;
 		} catch (InterruptedException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to retrieve Jira Connection in time.  No resource available.", "Adjust jira pool size appropriate to load.", ex);
+			throw new OpenStorefrontRuntimeException("Unable to retrieve Jira Connection - wait interrupted.  No resource available.", "Adjust jira pool size appropriate to load.", ex);
 		}
 	}
 

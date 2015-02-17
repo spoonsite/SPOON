@@ -62,6 +62,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import net.sf.ehcache.Element;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles Attribute information
@@ -342,7 +343,9 @@ public class AttributeServiceImpl
 				File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
 				File ariticleFile = new File(articleDir.getPath() + "/" + attributeCode.getArticle().getArticleFilename());
 				if (ariticleFile.exists()) {
-					ariticleFile.delete();
+					if (ariticleFile.delete() == false) {
+						log.log(Level.WARNING, "Unable to remove file");
+					}
 				}
 				persistenceService.delete(attributeCode.getArticle());
 				attributeCode.setArticle(null);
@@ -698,6 +701,7 @@ public class AttributeServiceImpl
 							newChild.setAttributeCode(attributeCode.architectureCode());
 							newChild.setOriginalAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 							newChild.setArchitectureCode(attributeCode.getArchitectureCode());
+							newChild.setSortOrder(attributeCode.getSortOrder());
 							newChild.setAttributeType(attributeType);
 							newChild.setName(attributeCode.getLabel());
 							newChild.setDescription(attributeCode.getDescription());
@@ -759,23 +763,35 @@ public class AttributeServiceImpl
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode == null) {
+			AttributeCode attributeCodeExample = new AttributeCode();
+			AttributeCodePk attributeCodePkExample = new AttributeCodePk();
+			attributeCodePkExample.setAttributeType(attributeCodePk.getAttributeType());
+			attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
+			attributeCodeExample.setArchitectureCode(attributeCodePk.getAttributeCode());
+
+			attributeCode = persistenceService.queryOneByExample(AttributeCode.class, attributeCodeExample);
+		}
+
 		AttributeCode attributeCodeExample = new AttributeCode();
 		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
-
 		attributeCodePkExample.setAttributeType(attributeCodePk.getAttributeType());
 		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 
 		AttributeCode attributeCodeLikeExample = new AttributeCode();
-		AttributeCodePk attributeCodePkLikeExample = new AttributeCodePk();
+		if (attributeCode != null && StringUtils.isNotBlank(attributeCode.getArchitectureCode())) {
+			attributeCodeLikeExample.setArchitectureCode(attributeCode.getArchitectureCode() + "%");
+		} else {
+			AttributeCodePk attributeCodePkLikeExample = new AttributeCodePk();
 
-		// get attribute codes by using LIKE sql construct 'value%'
-		attributeCodePkLikeExample.setAttributeCode(attributeCodePk.getAttributeCode() + "%");
-		attributeCodeLikeExample.setAttributeCodePk(attributeCodePkLikeExample);
+			// get attribute codes by using LIKE sql construct 'value%'
+			attributeCodePkLikeExample.setAttributeCode(attributeCodePk.getAttributeCode() + "%");
+			attributeCodeLikeExample.setAttributeCodePk(attributeCodePkLikeExample);
+		}
 
 		QueryByExample queryByExample = new QueryByExample(attributeCodeExample);
-
 		queryByExample.setLikeExample(attributeCodeLikeExample);
-
 		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
 
 		for (AttributeCode code : attributeCodes) {

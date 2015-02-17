@@ -408,7 +408,7 @@ public class UserServiceImpl
 						}
 					} while (!unique && idIndex < MAX_NAME_CHECK);
 
-					if (profile == null) {
+					if (unique == false) {
 						throw new OpenStorefrontRuntimeException("Failed to create a unique username.", "Check username and make sure it's unique.");
 					}
 				}

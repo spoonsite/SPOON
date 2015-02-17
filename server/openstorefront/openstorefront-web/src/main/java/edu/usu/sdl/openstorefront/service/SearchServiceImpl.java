@@ -296,20 +296,47 @@ public class SearchServiceImpl
 		Map<String, Component> componentMap = new HashMap<>();
 		List<Component> components = new ArrayList<>();
 
-		ComponentAttribute componentAttributeExample = new ComponentAttribute();
-		ComponentAttributePk componentAttributePkExample = new ComponentAttributePk();
-		componentAttributePkExample.setAttributeType(pk.getAttributeType());
-		componentAttributeExample.setComponentAttributePk(componentAttributePkExample);
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, pk);
+		if (attributeCode == null) {
+			AttributeCode attributeCodeExample = new AttributeCode();
+			AttributeCodePk attributeCodePkExample = new AttributeCodePk();
+			attributeCodePkExample.setAttributeType(pk.getAttributeType());
+			attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
+			attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
 
-		ComponentAttribute componentAttributeLikeExample = new ComponentAttribute();
-		ComponentAttributePk componentAttributePkLikeExample = new ComponentAttributePk();
-		componentAttributePkLikeExample.setAttributeCode(pk.getAttributeCode() + "%");
-		componentAttributeLikeExample.setComponentAttributePk(componentAttributePkLikeExample);
+			attributeCode = persistenceService.queryOneByExample(AttributeCode.class, attributeCodeExample);
+		}
 
-		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
-		queryByExample.setLikeExample(componentAttributeLikeExample);
+		AttributeCode attributeExample = new AttributeCode();
+		AttributeCodePk attributePkExample = new AttributeCodePk();
+		attributePkExample.setAttributeType(pk.getAttributeType());
+		attributeExample.setAttributeCodePk(attributePkExample);
 
-		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(ComponentAttribute.class, queryByExample);
+		AttributeCode attributeCodeLikeExample = new AttributeCode();
+		if (attributeCode != null && StringUtils.isNotBlank(attributeCode.getArchitectureCode())) {
+			attributeCodeLikeExample.setArchitectureCode(attributeCode.getArchitectureCode() + "%");
+		} else {
+			AttributeCodePk attributePkLikeExample = new AttributeCodePk();
+			attributePkLikeExample.setAttributeCode(pk.getAttributeCode() + "%");
+			attributeCodeLikeExample.setAttributeCodePk(attributePkLikeExample);
+		}
+
+		QueryByExample queryByExample = new QueryByExample(attributeExample);
+		queryByExample.setLikeExample(attributeCodeLikeExample);
+
+		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+		List<String> ids = new ArrayList();
+		attributeCodes.forEach(code -> {
+			ids.add("'" + code.getAttributeCodePk().getAttributeCode() + "'");
+		});
+
+		String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode in [";
+		componentAttributeQuery = componentAttributeQuery + StringUtils.join(ids, ",") + "]";
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("attributeType", pk.getAttributeType());
+		List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
+
 		for (ComponentAttribute componentAttribute : componentAttributes) {
 			Component temp = persistenceService.findById(Component.class, componentAttribute.getComponentAttributePk().getComponentId());
 			if (OpenStorefrontConstant.ComponentApprovalStatus.APPROVED.equals(temp.getApprovalState())) {

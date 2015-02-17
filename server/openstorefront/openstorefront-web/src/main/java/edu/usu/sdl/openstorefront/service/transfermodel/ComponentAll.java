@@ -34,8 +34,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This is full composite Model of the component
@@ -83,20 +81,23 @@ public class ComponentAll
 			ComponentAll componentAll = StringProcessor.defaultObjectMapper().readValue(data[0], new TypeReference<ComponentAll>()
 			{
 			});
-			this.component = componentAll.getComponent();
-			this.attributes = componentAll.getAttributes();
-			this.contacts = componentAll.getContacts();
-			this.evaluationSections = componentAll.getEvaluationSections();
-			this.externalDependencies = componentAll.getExternalDependencies();
-			this.media = componentAll.getMedia();
-			this.metadata = componentAll.getMetadata();
-			this.questions = componentAll.getQuestions();
-			this.resources = componentAll.getResources();
-			this.reviews = componentAll.getReviews();
-			this.tags = componentAll.getTags();
-
+			if (componentAll != null) {
+				this.component = componentAll.getComponent();
+				this.attributes = componentAll.getAttributes();
+				this.contacts = componentAll.getContacts();
+				this.evaluationSections = componentAll.getEvaluationSections();
+				this.externalDependencies = componentAll.getExternalDependencies();
+				this.media = componentAll.getMedia();
+				this.metadata = componentAll.getMetadata();
+				this.questions = componentAll.getQuestions();
+				this.resources = componentAll.getResources();
+				this.reviews = componentAll.getReviews();
+				this.tags = componentAll.getTags();
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to import component.", "Make sure the data is in the correct format");
+			}
 		} catch (IOException ex) {
-			Logger.getLogger(ComponentAll.class.getName()).log(Level.SEVERE, null, ex);
+			throw new OpenStorefrontRuntimeException("Unable to import component. Data could not be real", ex);
 		}
 	}
 

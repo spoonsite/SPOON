@@ -237,7 +237,7 @@ public interface ComponentService
 	 * @param media
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentMedia(ComponentMedia media);
+	public ComponentMedia saveComponentMedia(ComponentMedia media);
 
 	/**
 	 *
@@ -265,7 +265,7 @@ public interface ComponentService
 	 * @param resource
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentResource(ComponentResource resource);
+	public ComponentResource saveComponentResource(ComponentResource resource);
 
 	/**
 	 *
