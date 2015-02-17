@@ -24,15 +24,19 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
     compile: function(tElem, tAttrs){
       return {
         pre: function(scope, element, attrs){
+          console.log('scope', scope);
+          
           scope.tree = {};
           scope.tree.data = [];
           scope.myTree = {};
-
+          scope.branch = null;
           var setupChildren = function(child) {
             var temp = {
               'label': child.name, 
               'detailedDesc': child.description,
-              'key': child.attributeCode + child.attributeType
+              'key': child.attributeCode + child.attributeType,
+              'attributeType': child.attributeType,
+              'attributeCode': child.attributeCode,
             };
             temp.children = []
             _.each(child.children, function(item){
@@ -40,19 +44,19 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
             })
             return temp;
           }
-
           Business.articleservice.getArchitecture('DI2E-SVCV4-A').then(function(result){
             if (result) {
               console.log('result', result);
               scope.tree.data.push(setupChildren(result));
-              console.log('scope.tree', scope.tree);
+              // console.log('scope.tree', scope.tree);
             }
           }, function(){
             scope.tree.data = [];
           });
-
         }, //
         post: function(scope, iElem, iAttrs){
+          console.log('scope', scope);
+          
           scope.search = '';
           scope.full = false;
 
@@ -64,9 +68,20 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
             }
           })
           
-          scope.log = function(){
-            console.log('You pressed enter on the input: ', scope.search);
+          scope.selected = function(branch){
+            console.log('branch', branch);
+            scope.branch = branch;
+            scope.myTree.selectBranch(branch);
           }
+          scope.log = function(){
+            // console.log('You pressed enter on the input: ', scope.search);
+          }
+          scope.expandAll = function(){
+            scope.myTree.expandAll();
+          };
+          scope.collapseAll = function(){
+            scope.myTree.collapseAll();
+          };
         }
       }
     }

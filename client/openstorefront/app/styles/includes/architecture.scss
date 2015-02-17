@@ -4,7 +4,7 @@
 .architectureSearch .archBody {
   background: white;
   border:1px solid slategray;
-  height: 600px;
+  height: 800px;
   min-width:500px;
 }
 .architectureSearch{
@@ -42,11 +42,19 @@
   width: 300px;
   overflow:auto;
 }
-.architectureSearch .rightSide {
+.architectureSearch .rightSide1 {
   overflow:auto;
   float:right;
   border:1px solid darkgray;
-  min-height:50%;
+  height:30%;
+  width: calc(100% - 300px);
+  padding:5px
+}
+.architectureSearch .rightSide2 {
+  overflow:auto;
+  float:right;
+  border:1px solid darkgray;
+  height:70%;
   width: calc(100% - 300px);
   padding:5px
 }
