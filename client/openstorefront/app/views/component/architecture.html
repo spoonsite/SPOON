@@ -9,15 +9,19 @@
   </div>
   <div class="archBody">
     <div class="archList treeNav">
-      <abn-tree tree-data="tree.data" tree-control="myTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" expand-level="1"></abn-tree>
+      <button style="width:50%" class="btn btn-default" ng-click="expandAll()">Expand All&nbsp;<i class="fa fa-expand"></i></button>
+      <button style="width:50%; margin-left:-5px;" class="btn btn-default" ng-click="collapseAll()">Collapse All&nbsp;<i class="fa fa-compress"></i></button>
+      <abn-tree tree-data="tree.data" tree-control="myTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" on-select="selected(branch)" expand-level="1"></abn-tree>
     </div>
-    <div class="rightSide">
-      <h2>Description</h2>
-      <div>description content</div>
+    <div class="rightSide1">
+      <h2>Description<span ng-show="branch">{{branch.label}}</span></h2>
+      <div dynamichtml="branch.detailedDesc"></div>
     </div>
-    <div class="rightSide">
+    <div class="rightSide2">
       <h2>Results</h2>
-      <div>results content</div>
+      <div>
+        <component-list click-callback="updateDetails" class-list="" list="list" data="data" cols="3" search="doSearchKey" type="{{branch.attributeType}}" code="{{branch.attributeCode}}"></component-list>
+      </div>
     </div>
   </div>
 </div>

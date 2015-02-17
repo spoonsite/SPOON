@@ -37,8 +37,10 @@ app.directive('dynamichtml', ['$compile', function ($compile) {
     replace: true,
     link: function (scope, ele, attrs) {
       scope.$watch(attrs.dynamichtml, function(html) {
-        ele.html(html.toString());
-        $compile(ele.contents())(scope);
+        if (html) {
+          ele.html(html.toString());
+          $compile(ele.contents())(scope);
+        }
       });
     }
   };

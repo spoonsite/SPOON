@@ -172,44 +172,55 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
 
 
 
+      attrs.$observe('type', function(value){
+        scope.setupData();
+      });
+      attrs.$observe('code', function(value){
+        scope.setupData();
+      });
+
       /***************************************************************
       * Here we handle attribute set ups. If an attribute is set, it will most likely
       * override something else.
       ***************************************************************/
-      if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
-        var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
-        scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
-        var architecture = null;
+      scope.setupData = function() {
 
-        var filter = _.find(scope.filters, {'type': attrs.type});
-        // console.log('filter', filter);
-        
-        if (filter){
-          architecture = filter.architectureFlg;
-        }
-        Business.componentservice.doSearch(scope.search.type, scope.search.code, architecture).then(function(result){
-          if (result)
-          {
-            if (result.data && result.data.length > 0) { 
-              scope.data = angular.copy(result.data);
+        if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
+          var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
+          scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
+          var architecture = null;
+
+          var filter = _.find(scope.filters, {'type': attrs.type});
+          // console.log('filter', filter);
+
+          if (filter){
+            architecture = filter.architectureFlg;
+          }
+          Business.componentservice.doSearch(scope.search.type, scope.search.code, architecture).then(function(result){
+            if (result)
+            {
+              if (result.data && result.data.length > 0) { 
+                scope.data = angular.copy(result.data);
+              } else {
+                scope.data = [];
+              }
             } else {
               scope.data = [];
             }
-          } else {
-            scope.data = [];
-          }
-          $timeout(function(){
-            scope.$apply();
-          })
-        });
+            $timeout(function(){
+              scope.$apply();
+            })
+          });
+        }
+        if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
+          scope.isTitle = true;
+          scope.title = attrs.title;
+        }
+        if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
+          scope.showCompare = true;
+        }
       }
-      if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
-        scope.isTitle = true;
-        scope.title = attrs.title;
-      }
-      if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
-        scope.showCompare = true;
-      }
+      scope.setupData();
 
       /***************************************************************
       * This funciton gives the correct component list the active class that
