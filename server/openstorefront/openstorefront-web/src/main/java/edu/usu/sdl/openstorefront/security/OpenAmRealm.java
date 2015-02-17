@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.security;
 
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import java.util.Objects;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -43,6 +44,7 @@ public class OpenAmRealm
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals)
 	{
+		Objects.requireNonNull(principals, "Principals Required");
 		OpenAmUser openAmUser = (OpenAmUser) principals.getPrimaryPrincipal();
 		return populateAccount(openAmUser.getTokenId(), openAmUser.getUsername());
 	}

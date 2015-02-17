@@ -94,6 +94,11 @@ public class AttributeCode
 	{
 	}
 
+	/**
+	 * Gets the correct architecture code
+	 *
+	 * @return code
+	 */
 	public String architectureCode()
 	{
 		if (StringUtils.isNotBlank(getArchitectureCode())) {

@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.sort;
 
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Comparator;
  * @author dshurtleff
  */
 public class RecentlyAddedViewComparator<T extends RecentlyAddedView>
-		implements Comparator<T>
+		implements Comparator<T>, Serializable
 {
 
 	@Override

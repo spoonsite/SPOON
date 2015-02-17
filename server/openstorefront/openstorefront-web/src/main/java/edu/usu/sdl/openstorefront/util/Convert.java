@@ -97,7 +97,7 @@ public class Convert
 		if (data != null) {
 			try {
 				if (data instanceof Integer) {
-					return (Long) data;
+					return Long.parseLong(Integer.toString((Integer) data));
 				} else if (data instanceof String) {
 					return Long.parseLong(data.toString());
 				} else if (data instanceof BigDecimal) {

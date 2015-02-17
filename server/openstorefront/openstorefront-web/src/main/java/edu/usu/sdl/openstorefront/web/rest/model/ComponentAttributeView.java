@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -138,23 +139,26 @@ public class ComponentAttributeView
 		AttributeCode code = service.getAttributeService().findCodeForType(pk);
 		AttributeType type = service.getAttributeService().findType(attribute.getAttributeCodePk().getAttributeType());
 
-		view.setExternalLink(code.getDetailUrl());
-		view.setCodeDescription(code.getLabel());
-		view.setCodeLongDescription(code.getDescription());
-		view.setTypeDescription(type.getDescription());
-		view.setTypeLongDescription(type.getDescription());
-		view.setType(type.getAttributeType());
-		view.setCode(code.getAttributeCodePk().getAttributeCode());
-		view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
-		view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
-		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
-		view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
-		view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
-		view.setUpdateDts(attribute.getUpdateDts());
-		view.setSortOrder(code.getSortOrder());
-		view.setGroupCode(code.getGroupCode());
-		view.setActiveStatus(attribute.getActiveStatus());
-
+		if (code != null && type != null) {
+			view.setExternalLink(code.getDetailUrl());
+			view.setCodeDescription(code.getLabel());
+			view.setCodeLongDescription(code.getDescription());
+			view.setTypeDescription(type.getDescription());
+			view.setTypeLongDescription(type.getDescription());
+			view.setType(type.getAttributeType());
+			view.setCode(code.getAttributeCodePk().getAttributeCode());
+			view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
+			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
+			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
+			view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
+			view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
+			view.setUpdateDts(attribute.getUpdateDts());
+			view.setSortOrder(code.getSortOrder());
+			view.setGroupCode(code.getGroupCode());
+			view.setActiveStatus(attribute.getActiveStatus());
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find code and/or type.");
+		}
 		return view;
 	}
 

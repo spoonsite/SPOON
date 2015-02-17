@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.sort;
 
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
  * @param <T>
  */
 public class ArchitectureComparator<T extends Architecture>
-		implements Comparator<T>
+		implements Comparator<T>, Serializable
 {
 
 	@Override
@@ -38,19 +39,24 @@ public class ArchitectureComparator<T extends Architecture>
 		BigDecimal codeKey1;
 		BigDecimal codeKey2;
 
-		if (StringUtils.isNotBlank(o1.getArchitectureCode())) {
-			codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getArchitectureCode());
+		if (o1.getSortOrder() != null && o2.getSortOrder() != null) {
+			return o1.getSortOrder().compareTo(o2.getSortOrder());
 		} else {
-			codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getAttributeCode());
-		}
 
-		if (StringUtils.isNotBlank(o2.getArchitectureCode())) {
-			codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getArchitectureCode());
-		} else {
-			codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getAttributeCode());
-		}
+			if (StringUtils.isNotBlank(o1.getArchitectureCode())) {
+				codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getArchitectureCode());
+			} else {
+				codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getAttributeCode());
+			}
 
-		return codeKey1.compareTo(codeKey2);
+			if (StringUtils.isNotBlank(o2.getArchitectureCode())) {
+				codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getArchitectureCode());
+			} else {
+				codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getAttributeCode());
+			}
+
+			return codeKey1.compareTo(codeKey2);
+		}
 	}
 
 }
