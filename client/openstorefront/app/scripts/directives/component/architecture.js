@@ -24,7 +24,6 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
     compile: function(tElem, tAttrs){
       return {
         pre: function(scope, element, attrs){
-          console.log('scope', scope);
           
           scope.tree = {};
           scope.tree.data = [];
@@ -46,16 +45,13 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
           }
           Business.articleservice.getArchitecture('DI2E-SVCV4-A').then(function(result){
             if (result) {
-              console.log('result', result);
               scope.tree.data.push(setupChildren(result));
-              // console.log('scope.tree', scope.tree);
             }
           }, function(){
             scope.tree.data = [];
           });
         }, //
         post: function(scope, iElem, iAttrs){
-          console.log('scope', scope);
           
           scope.search = '';
           scope.full = false;
@@ -67,14 +63,10 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
               $('body').css('overflow', 'auto');
             }
           })
-          
+
           scope.selected = function(branch){
-            console.log('branch', branch);
             scope.branch = branch;
             scope.myTree.selectBranch(branch);
-          }
-          scope.log = function(){
-            // console.log('You pressed enter on the input: ', scope.search);
           }
           scope.expandAll = function(){
             scope.myTree.expandAll();
@@ -86,4 +78,34 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
       }
     }
   }
+}]);
+
+
+
+app.filter('architecturequicksearch', ['$timeout', function ($timeout) {
+  var contains = function(a, b){
+    return a.toLowerCase().indexOf(b.toLowerCase()) > -1;
+  }
+  var checkForContains = function(arr, item, search) {
+    var arr = arr || [];
+    _.each(item, function(thing){
+      if (thing.children.length) {
+        arr.concat(checkForContains(arr, thing.children, search));
+      }
+      if ( contains(thing.attributeCode, search) || contains(thing.attributeType, search) || contains(thing.detailedDesc, search) || contains(thing.label, search)) {
+        arr.push(thing);
+      }
+    });
+    return arr;
+  }
+  var pagesMemoizeCache = _.memoize(function(arr, search) {
+    // if we don't have an array to search return...
+    if (!arr || !search) { return; }
+    var newArr = checkForContains([], arr, search);
+    return newArr;
+  }, function(arr, search){
+    return search;
+  });
+
+  return pagesMemoizeCache;
 }]);

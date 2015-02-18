@@ -9,9 +9,19 @@
   </div>
   <div class="archBody">
     <div class="archList treeNav">
-      <button style="width:50%" class="btn btn-default" ng-click="expandAll()">Expand All&nbsp;<i class="fa fa-expand"></i></button>
-      <button style="width:50%; margin-left:-5px;" class="btn btn-default" ng-click="collapseAll()">Collapse All&nbsp;<i class="fa fa-compress"></i></button>
-      <abn-tree tree-data="tree.data" tree-control="myTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" on-select="selected(branch)" expand-level="1"></abn-tree>
+      <span ng-show="!search">
+        <button style="width:50%" class="btn btn-default" ng-click="expandAll()">Expand All&nbsp;<i class="fa fa-expand"></i></button>
+        <button style="width:50%; margin-left:-5px;" class="btn btn-default" ng-click="collapseAll()">Collapse All&nbsp;<i class="fa fa-compress"></i></button>
+        <abn-tree tree-data="tree.data" tree-control="myTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" on-select="selected(branch)" expand-level="1"></abn-tree>
+      </span>
+      <span ng-show="search">
+        <button style="width:100%" class="btn btn-default" ng-click="search = ''">Remove Quick Search&nbsp;<i class="fa fa-trash"></i></button>
+        <ul>
+          <li ng-repeat="item in tree.data | architecturequicksearch: search">
+            {{item.label}}
+          </li>
+        </ul>
+      </span>
     </div>
     <div class="rightSide1">
       <h2>Description<span ng-show="branch">{{branch.label}}</span></h2>

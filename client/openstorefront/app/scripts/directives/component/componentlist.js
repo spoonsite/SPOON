@@ -184,7 +184,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       * override something else.
       ***************************************************************/
       scope.setupData = function() {
-
         if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
           var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
           scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
@@ -207,6 +206,11 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             } else {
               scope.data = [];
             }
+            $timeout(function(){
+              scope.$apply();
+            })
+          }, function(){
+            scope.data = [];
             $timeout(function(){
               scope.$apply();
             })
