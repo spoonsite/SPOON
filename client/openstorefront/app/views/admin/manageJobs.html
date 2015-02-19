@@ -85,7 +85,8 @@
 						<th><a href="" ng-click="setPredicate('taskName', 'tasks');">Task Name <span ng-show="predicate['tasks'] === 'taskName'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('status', 'tasks');">Status <span ng-show="predicate['tasks'] === 'status'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('submitedDts', 'tasks');">Submitted Date <span ng-show="predicate['tasks'] === 'submitedDts'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-						<th><a href="" ng-click="setPredicate('completedDts', 'tasks');">Completion Date <span ng-show="predicate['tasks'] === 'completedDts'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>						
+						<th><a href="" ng-click="setPredicate('completedDts', 'tasks');">Completion Date <span ng-show="predicate['tasks'] === 'completedDts'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>												
+						<th style="width: 175px;">Allows Multiple Tasks</th>
 						<th>Error</th>
 						<th>Action</th>
 					</tr>
@@ -93,7 +94,8 @@
 						<td>{{task.taskName}}</td>
 						<td>{{task.status}}</td>
 						<td>{{task.submitedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
-						<td>{{task.completedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
+						<td>{{task.completedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>						
+						<td style="width: 175px;">{{task.allowMultiple}}</td>										
 						<td>{{task.error}}</td>										
 						<td style="padding:0px; width: 200px;">&nbsp;
 							<button class="btn btn-danger" ng-show="task.status === 'WORKING'" ng-click="removeAllTooltips(); cancelTask(task.taskId)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Cancel task and Interrupt">Cancel&nbsp;<i class="fa fa-trash-o"></i></button>														

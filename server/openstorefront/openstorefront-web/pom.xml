@@ -389,6 +389,7 @@
 				<version>2.3</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<useCache>true</useCache>					
 				</configuration>
 			</plugin>
 			<!--

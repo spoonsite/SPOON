@@ -50,6 +50,8 @@ public class MainAttributeParser
 	private static final int EXTERNAL_LINK = 9;
 	private static final int GROUP = 10;
 	private static final int SORT_ORDER = 11;
+	private static final int ARCHITECTURE_CODE = 12;
+	private static final int BADGE_URL = 13;
 
 	private static final String HEADER = "Attribute Type";
 
@@ -88,6 +90,14 @@ public class MainAttributeParser
 
 				if (data.length > SORT_ORDER) {
 					attributeCode.setSortOrder(Convert.toInteger(data[SORT_ORDER].trim()));
+				}
+
+				if (data.length > ARCHITECTURE_CODE) {
+					attributeCode.setArchitectureCode(data[ARCHITECTURE_CODE].trim());
+				}
+
+				if (data.length > BADGE_URL) {
+					attributeCode.setBadgeUrl(data[BADGE_URL].trim());
 				}
 
 				if (attributeMap.containsKey(attributeType)) {

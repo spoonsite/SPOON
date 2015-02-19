@@ -418,9 +418,10 @@ ${complexType.object}
 				$('#errorhandling').load('API.action?Page&page=errorhandling');
 				
 				 doLookups('#lookup');				
-				 doAttributes('#attributes');
+				 doAttributes('#attributes', function(){
+					 window.print();
+				 });
 				 
-				 window.print();
 			});			
 		</script>		
 		

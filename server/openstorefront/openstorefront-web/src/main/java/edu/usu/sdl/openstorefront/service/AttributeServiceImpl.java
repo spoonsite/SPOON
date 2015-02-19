@@ -384,7 +384,7 @@ public class AttributeServiceImpl
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(type);
-		componentAttributePk.setAttributeType(code);
+		componentAttributePk.setAttributeCode(code);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
 		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
 		queryByExample.setReturnNonProxied(false);
@@ -448,7 +448,7 @@ public class AttributeServiceImpl
 
 			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
 			bulkComponentAttributeChange.setAttributes(getComponentAttributes(attributeCodePk.getAttributeType(), attributeCodePk.getAttributeCode()));
-			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.INACTIVE);
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.DELETE);
 			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
 
 			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());

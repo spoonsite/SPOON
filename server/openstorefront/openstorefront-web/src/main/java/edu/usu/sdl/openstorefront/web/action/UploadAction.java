@@ -18,14 +18,20 @@ package edu.usu.sdl.openstorefront.web.action;
 import au.com.bytecode.opencsv.CSVReader;
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
+import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
+import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -54,7 +60,7 @@ public class UploadAction
 
 	private static final Logger log = Logger.getLogger(UploadAction.class.getName());
 
-	@Validate(required = true, on = {"UploadLookup", "UploadComponent"})
+	@Validate(required = true, on = {"UploadLookup", "UploadComponent", "UploadAttributes", "UploadSvcv4"})
 	private FileBean uploadFile;
 
 	@Validate(required = true, on = "UploadLookup")
@@ -124,6 +130,61 @@ public class UploadAction
 		} else {
 			return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 		}
+	}
+
+	@HandlesEvent("UploadAttributes")
+	public Resolution uploadAttribute()
+	{
+		return handleAttributeUpload(new MainAttributeParser());
+	}
+
+	private Resolution handleAttributeUpload(BaseAttributeParser parser)
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			//log
+			log.log(Level.INFO, MessageFormat.format("(Admin) Uploading attributes: {0}", uploadFile));
+
+			//check content type
+			Set<String> allowTypes = new HashSet<>();
+			allowTypes.add("text/csv");
+			allowTypes.add("application/vnd.ms-excel");
+			allowTypes.add("application/vnd.oasis.opendocument.spreadsheet");
+
+			if (allowTypes.contains(uploadFile.getContentType()) == false) {
+				errors.put("uploadFile", "Format not supported.  Requires a csv text file.");
+			}
+
+			if (errors.isEmpty()) {
+				//parse
+
+				try (InputStream in = uploadFile.getInputStream()) {
+					Map<AttributeType, List<AttributeCode>> attributeMap = parser.parse(in);
+
+					TaskRequest taskRequest = new TaskRequest();
+					taskRequest.setAllowMultiple(false);
+					taskRequest.setName("Processing Attribute Upload");
+					service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
+				} finally {
+					try {
+						uploadFile.delete();
+					} catch (IOException ex) {
+						throw new OpenStorefrontRuntimeException(ex);
+					}
+				}
+			}
+			return streamUploadResponse(errors);
+		} else {
+			return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		}
+	}
+
+	@HandlesEvent("UploadSvcv4")
+	public Resolution uploadSvcv4()
+	{
+		return handleAttributeUpload(new SvcAttributeParser());
 	}
 
 	@HandlesEvent("UploadComponent")

@@ -649,7 +649,9 @@ public class ComponentServiceImpl
 		ComponentEvaluationSection oldSection = persistenceService.findById(ComponentEvaluationSection.class, section.getComponentEvaluationSectionPk());
 		if (oldSection != null) {
 			oldSection.setActiveStatus(section.getActiveStatus());
-			oldSection.setScore(section.getScore());
+			oldSection.setActualScore(section.getActualScore());
+			oldSection.setScore(null);
+			oldSection.setNotAvailable(section.getNotAvailable());
 			oldSection.setUpdateDts(TimeUtil.currentDate());
 			oldSection.setUpdateUser(section.getUpdateUser());
 			persistenceService.persist(oldSection);
@@ -2002,14 +2004,15 @@ public class ComponentServiceImpl
 
 		for (ComponentAttribute componentAttribute : bulkComponentAttributeChange.getAttributes()) {
 
-			componentIdSet.add(componentAttribute.getComponentId());
 			componentAttribute.populateBaseUpdateFields();
 			switch (bulkComponentAttributeChange.getOpertionType()) {
 				case ACTIVATE:
+					componentIdSet.add(componentAttribute.getComponentId());
 					componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 					persistenceService.persist(componentAttribute);
 					break;
 				case INACTIVE:
+					componentIdSet.add(componentAttribute.getComponentId());
 					componentAttribute.setActiveStatus(ComponentAttribute.INACTIVE_STATUS);
 					persistenceService.persist(componentAttribute);
 					break;

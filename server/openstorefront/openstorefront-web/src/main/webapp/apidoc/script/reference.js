@@ -15,7 +15,7 @@
  */
 
 
-var doAttributes = function(contentId) {
+var doAttributes = function(contentId, callback) {
     if (contentId === undefined || contentId === null){
       contentId = '#content';
     }
@@ -27,7 +27,7 @@ var doAttributes = function(contentId) {
               $(contentId).append('(requires login to view)');
             }
         }
-        
+        callback();
     });
 };
 
