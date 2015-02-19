@@ -17,7 +17,9 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.storage.model.EvaluationSection;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,10 +34,11 @@ public class ComponentEvaluationSectionView
 	public static final String NAME_FIELD = "name";
 
 	private String name;
-	private Integer score;
+	private BigDecimal actualScore;
 	private Date updateDts;
 	private String activeStatus;
 	private String evaluationSection;
+	private Boolean notAvailable;
 
 	public ComponentEvaluationSectionView()
 	{
@@ -45,9 +48,15 @@ public class ComponentEvaluationSectionView
 	{
 		ComponentEvaluationSectionView view = new ComponentEvaluationSectionView();
 		view.setName(TranslateUtil.translate(EvaluationSection.class, section.getComponentEvaluationSectionPk().getEvaluationSection()));
-		view.setScore(section.getScore());
+
+		if (section.getActualScore() == null) {
+			view.setActualScore(Convert.toBigDecimal(section.getScore()));
+		} else {
+			view.setActualScore(section.getActualScore());
+		}
 		view.setUpdateDts(section.getUpdateDts());
 		view.setActiveStatus(section.getActiveStatus());
+		view.setNotAvailable(section.getNotAvailable());
 		view.setEvaluationSection(section.getComponentEvaluationSectionPk().getEvaluationSection());
 		return view;
 	}
@@ -71,14 +80,14 @@ public class ComponentEvaluationSectionView
 		this.name = name;
 	}
 
-	public Integer getScore()
+	public BigDecimal getActualScore()
 	{
-		return score;
+		return actualScore;
 	}
 
-	public void setScore(Integer score)
+	public void setActualScore(BigDecimal actualScore)
 	{
-		this.score = score;
+		this.actualScore = actualScore;
 	}
 
 	public Date getUpdateDts()
@@ -109,6 +118,16 @@ public class ComponentEvaluationSectionView
 	public void setEvaluationSection(String evaluationSection)
 	{
 		this.evaluationSection = evaluationSection;
+	}
+
+	public Boolean getNotAvailable()
+	{
+		return notAvailable;
+	}
+
+	public void setNotAvailable(Boolean notAvailable)
+	{
+		this.notAvailable = notAvailable;
 	}
 
 }

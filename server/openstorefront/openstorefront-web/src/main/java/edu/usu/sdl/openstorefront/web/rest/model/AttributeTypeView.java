@@ -15,9 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.util.Convert;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -27,6 +30,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class AttributeTypeView
+		implements ExportImport
 {
 
 	@NotNull
@@ -73,6 +77,37 @@ public class AttributeTypeView
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 
 		return attributeTypeView;
+	}
+
+	@Override
+	public String export()
+	{
+		StringWriter stringWriter = new StringWriter();
+		CSVWriter writer = new CSVWriter(stringWriter);
+		codes.stream().forEach((code) -> {
+			writer.writeNext(new String[]{getType(),
+				getDescription(),
+				Boolean.toString(getArchitectureFlg()),
+				Boolean.toString(getVisibleFlg()),
+				Boolean.toString(getImportantFlg()),
+				Boolean.toString(getRequiredFlg()),
+				code.getCode(),
+				code.getLabel(),
+				code.getDescription(),
+				code.getFullTextLink(),
+				code.getGroupCode(),
+				code.getSortOrder() == null ? "" : code.getSortOrder().toString(),
+				code.getArchitectureCode(),
+				code.getBadgeUrl()
+			});
+		});
+		return stringWriter.toString();
+	}
+
+	@Override
+	public void importData(String[] data)
+	{
+		throw new UnsupportedOperationException("Use Parser");
 	}
 
 	public String getType()
@@ -160,17 +195,11 @@ public class AttributeTypeView
 		this.allowMultipleFlg = allowMultipleFlg;
 	}
 
-	/**
-	 * @return the activeStatus
-	 */
 	public String getActiveStatus()
 	{
 		return activeStatus;
 	}
 
-	/**
-	 * @param activeStatus the activeStatus to set
-	 */
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;

@@ -148,9 +148,8 @@ public class LookupTypeResource
 	@APIDescription("Exports codes in csv formt. POST to Upload.action?UploadLookup&entityName=entity and then the file to import codes (Requires Admin)")
 	@RequireAdmin
 	@Produces("text/csv")
-	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}/export")
-	public Response exprotEntityValues(
+	public Response exportEntityValues(
 			@PathParam("entity")
 			@RequiredParam String entityName,
 			@BeanParam FilterQueryParams filterQueryParams)

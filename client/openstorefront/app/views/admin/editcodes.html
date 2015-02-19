@@ -8,19 +8,19 @@
     <tab heading="Edit Type Details">
       <form name="myForm" style="margin-top:10px;" ng-submit="saveType(myForm.$valid)">
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Description</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="form-control" type="text" ng-model="type.description"}}  ng-maxlength="255" maxlength="255" placeholder="Description (label)"/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="form-control" type="text" ng-model="type.description"  ng-maxlength="255" maxlength="255" placeholder="Description (label)"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Type</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input ng-disabled="!addTypeFlg" class="form-control" type="text" ng-model="type.type"}}  ng-maxlength="20" maxlength="20" placeholder="Type key" required/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input ng-disabled="!addTypeFlg" class="form-control" type="text" ng-model="type.type"  ng-maxlength="20" maxlength="20" placeholder="Type key" required/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Visible Flag</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.visibleFlg" ng-checked="type.visibleFlg"}} data-toggle="tooltip" data-placement="top" title="Show up under visible list of filters (Filter By Attribute)"/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.visibleFlg" ng-checked="type.visibleFlg" data-toggle="tooltip" data-placement="top" title="Show up under visible list of filters (Filter By Attribute)"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Required Flag</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.requiredFlg" ng-checked="type.requiredFlg"}} data-toggle="tooltip" data-placement="top" title="Require this attribute upon adding a new component"/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.requiredFlg" ng-checked="type.requiredFlg" data-toggle="tooltip" data-placement="top" title="Require this attribute upon adding a new component"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Important Flag</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.importantFlg" ng-checked="type.importantFlg"}} data-toggle="tooltip" data-placement="top" title="Show up on summary page"/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.importantFlg" ng-checked="type.importantFlg" data-toggle="tooltip" data-placement="top" title="Show up on summary page"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Architecture Flag</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.architectureFlg" ng-checked="type.architectureFlg"}} data-toggle="tooltip" data-placement="top" title="This attribute is an architecture"/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.architectureFlg" ng-checked="type.architectureFlg" data-toggle="tooltip" data-placement="top" title="This attribute is an architecture"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Allow Multiple Flag</div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.allowMultipleFlg" ng-checked="type.allowMultipleFlg"}} data-toggle="tooltip" data-placement="top" title="Allow multiple codes for this type per component"/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.allowMultipleFlg" ng-checked="type.allowMultipleFlg" data-toggle="tooltip" data-placement="top" title="Allow multiple codes for this type per component"/></div>
         <button type="submit" class="btn btn-default" style="margin-top:20px;" >Save&nbsp;<i class="fa fa-save"></i></button>
       </form>
     </tab>
@@ -55,6 +55,8 @@
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('fullTextLink');">Link&nbsp;<span ng-show="predicate === 'fullTextLink'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('groupCode');">Group Code&nbsp;<span ng-show="predicate === 'groupCode'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('sortOrder');">Sort Order&nbsp;<span ng-show="predicate === 'sortOrder'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
+	 <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('architectureCode');">Architecture Code&nbsp;<span ng-show="predicate === 'architectureCode'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
+	 <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('badgeUrl');">Badge Url&nbsp;<span ng-show="predicate === 'badgeUrl'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
             <th style="padding: 8px 3px;"><a href="">Actions</a></th>
           </tr>
           <tr ng-repeat="code in (type.codes | orderBy:predicate:reverse | pageme:current:windowSize:getUniqueId())"  ng-class="code.activeStatus === 'I'? 'inactive':''">
@@ -65,6 +67,8 @@
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.fullTextLink}}</td>
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.groupCode}}</td>
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.sortOrder}}</td>
+	 <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.architectureCode}}</td>
+	 <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.badgeUrl}}</td>
             <td style="padding: 0px 3px;">
               <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editCode(code)" ng-disabled="code.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button><button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button><button type="button" title="Edit Landing Page" class="btn btn-default btn-sm" ng-click="cancel(type.type, code.code)"><i class="fa fa-edit"></i></button><!-- <button type="button" title="Delete Type" class="btn btn-default btn-sm" ng-click="deleteAttribute(code)"><i class="fa fa-trash"></i></button> -->
             </td>

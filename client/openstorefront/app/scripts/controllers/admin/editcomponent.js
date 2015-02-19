@@ -574,6 +574,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
               $scope.componentForm = result.component;
               $scope.editMode = true;
               $scope.editModeText = 'Edit ' + $scope.componentForm.name;
+              $scope.loadEvaluationInfo();
               $scope.$emit('$TRIGGEREVENT', '$REFRESH_COMPONENTS');  
             } else {
               removeError();
@@ -898,9 +899,11 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
         item.formData.push({
           "componentMedia.mediaTypeCode" : $scope.mediaForm.mediaTypeCode
         });
-        item.formData.push({
-          "componentMedia.caption" : $scope.mediaForm.caption
-        });
+        if ($scope.mediaForm.caption) {
+          item.formData.push({
+            "componentMedia.caption": $scope.mediaForm.caption
+          });
+        }
         if ($scope.mediaForm.componentMediaId) {
           item.formData.push({
             "componentMedia.componentMediaId": $scope.mediaForm.componentMediaId
@@ -1051,6 +1054,8 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
                $scope.oldSections = _.sortBy($scope.oldSections, 'name');
               }
             });
+          } else {
+            $scope.$emit('$TRIGGERUNLOAD', 'evaluationLoader');
           }
         }  
       });      
@@ -1070,11 +1075,11 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     };
     
     $scope.saveEvalSection = function(section){
-      if (section.score) {
-        if (section.score < 1){
-          section.score = 1;
-        } else if (section.score > 5){
-          section.score = 5;
+      if (section.actualScore) {
+        if (section.actualScore < 1){
+          section.actualScore = 1;
+        } else if (section.actualScore > 5){
+          section.actualScore = 5;
         }        
       }
       $scope.saveEntity({
@@ -1086,7 +1091,8 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
           "componentEvaluationSectionPk": {
             "evaluationSection": section.evaluationSection
           },
-          "score": section.score
+          "actualScore": section.actualScore,
+          "notAvailable": section.notAvailable
         },
         entityId: section.evaluationSection,
         formName: 'evaluationForm',
@@ -1109,11 +1115,11 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     };    
     
     $scope.checkEvalScore = function(section){
-        if (section.score) {
-          if (section.score < 1) {
-            section.score = 1;
-          } else if (section.score > 5) {
-            section.score = 5;
+        if (section.actualScore) {
+          if (section.actualScore < 1) {
+            section.actualScore = 1;
+          } else if (section.actualScore > 5) {
+            section.actualScore = 5;
           }
         }      
     };
@@ -1121,18 +1127,19 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.saveAllEvalSections = function () {
       var allSections = [];
       _.forEach($scope.sections, function (section) {
-        if (section.score) {
-          if (section.score < 1) {
-            section.score = 1;
-          } else if (section.score > 5) {
-            section.score = 5;
+        if (section.actualScore) {
+          if (section.actualScore < 1) {
+            section.actualScore = 1;
+          } else if (section.actualScore > 5) {
+            section.actualScore = 5;
           }
         }
         allSections.push({
           "componentEvaluationSectionPk": {
             "evaluationSection": section.evaluationSection
           },
-          "score": section.score          
+          "actualScore": section.actualScore,
+          "notAvailable": section.notAvailable
         });
       });
 

@@ -89,7 +89,7 @@ public class AttributeResource
 	@DataType(AttributeTypeView.class)
 	public List<AttributeTypeView> getAttributeView(
 			@QueryParam("all")
-			@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
+			@APIDescription("Setting all to true will pull both active and inactive records")
 			@DefaultValue("false") boolean all)
 	{
 		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
@@ -117,6 +117,60 @@ public class AttributeResource
 		}
 
 		return attributeTypeViews;
+	}
+
+	@GET
+	@APIDescription("Exports attributes in csv formt. POST to Upload.action?UploadAttributes and then the file to import attributes (Requires Admin)")
+	@RequireAdmin
+	@Produces("text/csv")
+	@Path("export")
+	public Response exportAttributes()
+	{
+		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
+
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+
+		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
+		for (AttributeType attributeType : attributeTypes) {
+			AttributeTypeView attributeTypeView = AttributeTypeView.toView(attributeType);
+			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
+			attributeCodes.stream().forEach(code -> {
+				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
+			});
+			attributeTypeViews.add(attributeTypeView);
+		}
+		attributeTypeViews.sort(new AttributeTypeViewComparator<>());
+		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
+			if (attributeTypeView.getArchitectureFlg()) {
+				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
+			} else {
+				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
+			}
+		}
+		StringBuilder data = new StringBuilder();
+		data.append("Attribute Type").append(",");
+		data.append("Description").append(",");
+		data.append("Architecture Flag").append(",");
+		data.append("Visible Flag").append(",");
+		data.append("Important Flag").append(",");
+		data.append("Required Flag").append(",");
+		data.append("Code").append(",");
+		data.append("Code Label").append(",");
+		data.append("Code Description").append(",");
+		data.append("External Link").append(",");
+		data.append("Group").append(",");
+		data.append("Sort Order").append(",");
+		data.append("Architecture Code").append(",");
+		data.append("Badge Url").append("\n");
+
+		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
+			data.append(attributeTypeView.export());
+		}
+
+		Response.ResponseBuilder response = Response.ok(data.toString());
+		response.header("Content-Disposition", "attachment; filename=\"allattributes.csv\"");
+		return response.build();
 	}
 
 	@GET

@@ -67,18 +67,14 @@ limitations under the License.
 					<select type="text" class="form-control" style="width:auto" ng-model="componentForm.parentComponentId" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="comp.code as comp.description for comp in parentComponents" placeholder="Select Component"></select>
 				</div>	
 				<div class="form-group"  >
-					<label class=" control-label required" title="External Id">GUID</label>				
+					<label class=" control-label " title="External Id">GUID</label>				
 						<input  type="text" 								
 								name="guid"													
 								class="form-control" 
 								ng-model="componentForm.guid" 
 								ng-minlength=1
-								ng-maxlength=40 
-								required 
+								ng-maxlength=40								
 								ng-focus />
-						<p ng-show="componentUIForm.guid.$error.minlength && !componentUIForm.guid.$focused" class="help-block">GUID must be longer than 1 character in length.</p>
-						<p ng-show="componentUIForm.guid.$error.required && !componentUIForm.guid.$focused" class="help-block">GUID is required.</p>
-
 				</div>	
 				<div class="form-group"  >
 					<label class=" control-label required">Organization</label>				
@@ -648,17 +644,22 @@ limitations under the License.
 			<table class="table table-striped table-bordered">
 				<tr>
 					<th><a href="" ng-click="setPredicate('name', 'eval');">Section Name <span ng-show="predicate['eval'] === 'name'"><i ng-show="!reverse['eval']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['eval']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+					<th>Not Available</th>
 					<th>Score</th>
 					<th>Existing</th>
 					<th>Action</th>
 				</tr>
 				<tr ng-repeat="section in sections | orderBy:predicate['eval']:reverse['eval']" >
-					<td>{{section.name}}</td>
+					<td>{{section.name}}</td>					
+					<td style="width: 100px;" align="center">
+						<input type="checkbox" ng-model="section.notAvailable" />
+					</td>
 					<td style="width: 100px;">
 					<input  type="text" 
 							name="score"
+							ng-disabled="section.notAvailable"
 							class="form-control"							
-							ng-model="section.score" 
+							ng-model="section.actualScore" 
 							onkeypress='return event.charCode >= 48 && event.charCode <= 57'
 							ng-blur="checkEvalScore(section);"
 							max=5
@@ -755,7 +756,7 @@ limitations under the License.
 					<td colspan="6" style="padding: 10px">						
 						<table class="table table-striped table-bordered">
 							<tr>
-								<th><a href="" ng-click="setPredicate('response', 'questionResponse');">Question<span ng-show="predicate['questionResponse'] === 'response'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+								<th><a href="" ng-click="setPredicate('response', 'questionResponse');">Response<span ng-show="predicate['questionResponse'] === 'response'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
 								<th><a href="" ng-click="setPredicate('username', 'questionResponse');">Username<span ng-show="predicate['questionResponse'] === 'username'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 								<th><a href="" ng-click="setPredicate('userType', 'questionResponse');">User Type<span ng-show="predicate['questionResponse'] === 'userType'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 								<th><a href="" ng-click="setPredicate('organization', 'questionResponse');">Organization<span ng-show="predicate['questionResponse'] === 'organization'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
