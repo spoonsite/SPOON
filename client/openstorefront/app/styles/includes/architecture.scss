@@ -42,6 +42,14 @@
   width: 300px;
   overflow:auto;
 }
+.architectureSearch .rightSide {
+  overflow:auto;
+  float:right;
+  border:1px solid darkgray;
+  height:100%;
+  width: calc(100% - 300px);
+  padding:5px
+}
 .architectureSearch .rightSide1 {
   overflow:auto;
   float:right;

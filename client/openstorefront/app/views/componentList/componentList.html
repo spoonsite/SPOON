@@ -21,7 +21,18 @@
               <div class="row" style="margin-left: 0px; margin-right: 0px">
                 <div class="results-content">
                   <div class="results-content-title">
-                    <div ng-click="clickCallback(item.componentId, item)" id="{{item.componentId}}">
+                    <div ng-show="blankTarget">
+                      <a ng-if="item.listingType === 'Article'" href="#/landing?type={{item.articleAttributeType}}&code={{item.articleAttributeCode}}" target="_blank">
+                        <div class="results-content-title-content" >{{item.name}}
+                          <span style="font-size:13px;">&nbsp;(Article)</span>
+                        </div>
+                      </a>
+                      <a ng-if="item.listingType !== 'Article'" href="#/single?id={{item.componentId}}" target="_blank">
+                        <div class="results-content-title-content" >{{item.name}}
+                        </div>
+                      </a>
+                    </div>
+                    <div ng-show="!blankTarget" ng-click="clickCallback(item.componentId, item)" id="{{item.componentId}}">
                       <div class="results-content-title-content" >{{item.name}}
                         <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
                       </div>

@@ -40,13 +40,13 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       data: '=',
       filters: '=',
       clickCallback: '=',
+      blankTarget: '=',
       hideMore: '@',
       // list: '=',
       // search: '&',
       // setFilters: '=',
     },
     link: function postLink(scope, element, attrs) {
-      console.log('scope.data', scope.data);
       
       scope.getShortDescription = getShortDescription;
 
@@ -73,19 +73,43 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       scope.isTitle = false;
       scope.listOfClasses = attrs.classList;
 
+      var popupWin = false;
+      function windowOpener(url, name, args) {
+        if (typeof(popupWin) != "object"){
+          popupWin = window.open(url,name,args);
+        } else {
+          if (!popupWin.closed){ 
+            popupWin.location.href = url;
+          } else {
+            popupWin = window.open(url, name,args);
+          }
+        }
+        popupWin.focus();
+      }
+
+
       if (scope.clickCallback === undefined) {
         scope.clickCallback =  function(id, article) {
-          var url = $location.absUrl().replace($location.url(), '');
+          var root = '';
+          var name = '';
+          var args = '';
+          root = $location.absUrl().replace($location.url(), '');
+          if (root.slice(-1) === '/') {
+            root = root.slice(0, -1);
+          }
           if (article && article.listingType === 'Article') {
             localCache.save('type', article.articleAttributeType);
             localCache.save('code', article.articleAttributeCode);
             // $scope.$emit('$TRIGGERUNLOAD', 'fullDetailsLoader');
-            url = url + '/landing';
-            window.open(url, 'Landing_Page' + id, 'scrollbars');
+            root = root + '/landing';
+            name = 'Landing_Page_' + id;
+            args = 'scrollbars';
           } else {
-            url = url + '/single?id=' + id;
-            window.open(url, 'Component_' + id, 'window settings');
+            root = root + '/single?id=' + id;
+            name = 'Component_' + id;
+            args = 'window settings';
           }
+          windowOpener(root, name, args);
         };
       }
 
@@ -94,7 +118,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           'id': list
         });
         $location.path('/compare');
-        // console.log('list', encodeURI(list));
       };
 
       scope.showitem = function(item){
@@ -171,7 +194,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       };
 
 
-
+      var timer = null;
       attrs.$observe('type', function(value){
         scope.setupData();
       });
@@ -184,45 +207,50 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       * override something else.
       ***************************************************************/
       scope.setupData = function() {
-        if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
-          var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
-          scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
-          var architecture = null;
+        if (timer) {
+          clearTimeout(timer);
+        } else { 
+          setTimeout(function() {
+            if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
+              var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
+              scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
+              var architecture = null;
 
-          var filter = _.find(scope.filters, {'type': attrs.type});
-          // console.log('filter', filter);
+              var filter = _.find(scope.filters, {'type': attrs.type});
 
-          if (filter){
-            architecture = filter.architectureFlg;
-          }
-          Business.componentservice.doSearch(scope.search.type, scope.search.code, architecture).then(function(result){
-            if (result)
-            {
-              if (result.data && result.data.length > 0) { 
-                scope.data = angular.copy(result.data);
-              } else {
-                scope.data = [];
+              if (filter){
+                architecture = filter.architectureFlg;
               }
-            } else {
-              scope.data = [];
+              Business.componentservice.doSearch(scope.search.type, scope.search.code, architecture).then(function(result){
+                if (result)
+                {
+                  if (result.data && result.data.length > 0) { 
+                    scope.data = angular.copy(result.data);
+                  } else {
+                    scope.data = [];
+                  }
+                } else {
+                  scope.data = [];
+                }
+                $timeout(function(){
+                  scope.$apply();
+                })
+              }, function(){
+                scope.data = [];
+                $timeout(function(){
+                  scope.$apply();
+                })
+              });
             }
-            $timeout(function(){
-              scope.$apply();
-            })
-          }, function(){
-            scope.data = [];
-            $timeout(function(){
-              scope.$apply();
-            })
-          });
-        }
-        if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
-          scope.isTitle = true;
-          scope.title = attrs.title;
-        }
-        if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
-          scope.showCompare = true;
-        }
+            if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
+              scope.isTitle = true;
+              scope.title = attrs.title;
+            }
+            if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
+              scope.showCompare = true;
+            }
+          }, 100);
+        } //
       }
       scope.setupData();
 
