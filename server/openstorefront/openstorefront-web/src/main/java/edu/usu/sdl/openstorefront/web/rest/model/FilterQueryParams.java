@@ -70,6 +70,10 @@ public class FilterQueryParams
 	@Sanitize(TextSanitizer.class)
 	private String status;
 
+	@QueryParam("allResults")
+	@DefaultValue("false")
+	private Boolean all;
+
 	public FilterQueryParams()
 	{
 	}
@@ -86,6 +90,7 @@ public class FilterQueryParams
 		filterQueryParams.setMax(Integer.MAX_VALUE);
 		filterQueryParams.setOffset(0);
 		filterQueryParams.setStatus(BaseEntity.ACTIVE_STATUS);
+		filterQueryParams.setAll(false);
 		filterQueryParams.setSortField("description");
 		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_DESCENDING);
 		return filterQueryParams;
@@ -169,6 +174,22 @@ public class FilterQueryParams
 	public void setStatus(String status)
 	{
 		this.status = status;
+	}
+
+	/**
+	 * @return the all
+	 */
+	public Boolean getAll()
+	{
+		return all;
+	}
+
+	/**
+	 * @param all the all to set
+	 */
+	public void setAll(Boolean all)
+	{
+		this.all = all;
 	}
 
 }
