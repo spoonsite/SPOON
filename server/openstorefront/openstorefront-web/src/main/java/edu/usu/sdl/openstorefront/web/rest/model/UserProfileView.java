@@ -15,12 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
@@ -66,6 +66,7 @@ public class UserProfileView
 	private String activeStatus;
 
 	@NotNull
+	@APIDescription("The application doesn't store this information it's passed in from the idam system hence this is only correct for the current logged in user.")
 	private boolean admin;
 	private Date lastLoginDts;
 
@@ -84,7 +85,7 @@ public class UserProfileView
 		if (includeLogin) {
 			List<UserProfile> temp = new ArrayList<>();
 			temp.add(profile);
-			 loginMap = ServiceProxy.getProxy().getUserService().getLastLogin(temp);
+			loginMap = ServiceProxy.getProxy().getUserService().getLastLogin(temp);
 		}
 		return toView(profile, loginMap);
 	}
@@ -106,8 +107,7 @@ public class UserProfileView
 
 		if (StringUtils.isNotBlank(profile.getExternalGuid())) {
 			view.setGuid(profile.getExternalGuid());
-		}
-		else {
+		} else {
 			view.setGuid(profile.getInternalGuid());
 		}
 		if (loginMap != null && !loginMap.isEmpty()) {
