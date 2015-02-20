@@ -18,10 +18,14 @@ package edu.usu.sdl.openstorefront.web.action;
 import edu.usu.sdl.openstorefront.doc.APIResourceModel;
 import edu.usu.sdl.openstorefront.doc.JaxrsProcessor;
 import edu.usu.sdl.openstorefront.sort.ApiResourceComparator;
+import edu.usu.sdl.openstorefront.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -53,8 +57,44 @@ public class APIAction
 
 	private List<APIResourceModel> allResources = new ArrayList<>();
 
-	@HandlesEvent("API")
+	private List<LookupModel> resourceClasses = new ArrayList<>();
+	private List<LookupModel> serviceClasses = new ArrayList<>();
 
+	@DefaultHandler
+	public Resolution mainPage()
+	{
+		ResolverUtil resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(BaseResource.class), "edu.usu.sdl.openstorefront.web.rest.resource");
+
+		List<Class> classList = new ArrayList<>();
+		classList.addAll(resolverUtil.getClasses());
+		for (Class apiResourceClass : classList) {
+			if (BaseResource.class.getName().equals(apiResourceClass.getName()) == false) {
+				LookupModel lookupModel = new LookupModel();
+				lookupModel.setCode(apiResourceClass.getSimpleName());
+				lookupModel.setDescription(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(apiResourceClass.getSimpleName())).replace("Resource", "").replace("REST", ""));
+				resourceClasses.add(lookupModel);
+			}
+		}
+
+		resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(BaseResource.class), "edu.usu.sdl.openstorefront.web.rest.service");
+
+		classList = new ArrayList<>();
+		classList.addAll(resolverUtil.getClasses());
+		for (Class apiResourceClass : classList) {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(apiResourceClass.getSimpleName());
+			lookupModel.setDescription(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(apiResourceClass.getSimpleName())).replace("Service", ""));
+			serviceClasses.add(lookupModel);
+		}
+		resourceClasses.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupModel.DESCRIPTION_FIELD));
+		serviceClasses.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupModel.DESCRIPTION_FIELD));
+
+		return new ForwardResolution("/WEB-INF/securepages/api/main.jsp");
+	}
+
+	@HandlesEvent("API")
 	public Resolution apiDetails()
 	{
 		try {
@@ -164,6 +204,26 @@ public class APIAction
 	public void setAllResources(List<APIResourceModel> allResources)
 	{
 		this.allResources = allResources;
+	}
+
+	public List<LookupModel> getResourceClasses()
+	{
+		return resourceClasses;
+	}
+
+	public void setResourceClasses(List<LookupModel> resourceClasses)
+	{
+		this.resourceClasses = resourceClasses;
+	}
+
+	public List<LookupModel> getServiceClasses()
+	{
+		return serviceClasses;
+	}
+
+	public void setServiceClasses(List<LookupModel> serviceClasses)
+	{
+		this.serviceClasses = serviceClasses;
 	}
 
 }
