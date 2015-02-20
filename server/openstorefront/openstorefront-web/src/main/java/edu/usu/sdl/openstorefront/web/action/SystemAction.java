@@ -68,6 +68,24 @@ public class SystemAction
 		return new StreamingResolution("text/plain", getApplicationVersion());
 	}
 
+	@HandlesEvent("AttributeFix")
+	public Resolution attributeFix()
+	{
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+
+			AttributeType attributeTypeExample = new AttributeType();
+			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+
+			AttributeType attributeTypeUpdate = new AttributeType();
+			attributeTypeUpdate.setAllowMultipleFlg(Boolean.TRUE);
+			int recordsUpdated = service.getPersistenceService().updateByExample(AttributeType.class, attributeTypeUpdate, attributeTypeExample);
+
+			return new StreamingResolution("text/html", "Finished Update attributes.  Attribute Types updated:  " + recordsUpdated);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
 	//Temp method for 1.3-->remove when done
 	@HandlesEvent("AttributeConvert")
 	public Resolution attributeConvert()
