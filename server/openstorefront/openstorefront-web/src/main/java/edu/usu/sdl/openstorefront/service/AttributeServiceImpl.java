@@ -508,12 +508,12 @@ public class AttributeServiceImpl
 						existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						saveAttributeType(existing, true);
+						saveAttributeType(existing, false);
 					} else {
 						attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						attributeType.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						attributeType.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						saveAttributeType(attributeType, true);
+						saveAttributeType(attributeType, false);
 					}
 
 					List<AttributeCode> existingAttributeCodes = findCodesForType(attributeType.getAttributeType());
@@ -538,18 +538,20 @@ public class AttributeServiceImpl
 										existingCode.setDescription(attributeCode.getDescription());
 										existingCode.setDetailUrl(attributeCode.getDetailUrl());
 										existingCode.setLabel(attributeCode.getLabel());
+										existingCode.setArchitectureCode(attributeCode.architectureCode());
+										existingCode.setBadgeUrl(attributeCode.getBadgeUrl());
 										existingCode.setGroupCode(attributeCode.getGroupCode());
 										existingCode.setSortOrder(attributeCode.getSortOrder());
 										existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 										existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-										saveAttributeCode(existingCode, true);
+										saveAttributeCode(existingCode, false);
 									}
 								} else {
 									attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 									attributeCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 									attributeCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-									saveAttributeCode(attributeCode, true);
+									saveAttributeCode(attributeCode, false);
 								}
 								newCodeSet.add(attributeCode.getAttributeCodePk().toKey());
 							} else {
