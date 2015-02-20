@@ -331,7 +331,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets all active attributes and codes for the attributes in view based model.")
+	@APIDescription("Gets an attribute code.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/attributetypes/{type}/attributecodes/{code}")
@@ -344,7 +344,7 @@ public class AttributeResource
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code);
 		attributeCodePk.setAttributeType(type);
-		AttributeCode attributeCode = service.getPersistenceService().detach(service.getPersistenceService().findById(AttributeCode.class, attributeCodePk));
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 
 		return sendSingleEntityResponse(attributeCode);
 	}
