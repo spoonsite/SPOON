@@ -16,10 +16,6 @@
 
 'use strict';
 
-app.controller('AdminTrackingCtrl', function ($scope) {
-  $scope.awesomeThings = [
-  'HTML5 Boilerplate',
-  'AngularJS',
-  'Karma'
-  ];
-});
+app.controller('AdminTrackingCtrl',['$scope', function ($scope) {
+  //stuff here...
+}]);

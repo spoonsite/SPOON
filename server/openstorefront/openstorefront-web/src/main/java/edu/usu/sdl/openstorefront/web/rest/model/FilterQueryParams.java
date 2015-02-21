@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -25,6 +26,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -69,6 +71,14 @@ public class FilterQueryParams
 	@Size(min = 0, max = 3)
 	@Sanitize(TextSanitizer.class)
 	private String status;
+
+	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss simple date format")
+	@QueryParam("start")
+	private Date start;
+
+	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss simple date format")
+	@QueryParam("end")
+	private Date end;
 
 	@QueryParam("allResults")
 	@DefaultValue("false")
@@ -190,6 +200,38 @@ public class FilterQueryParams
 	public void setAll(Boolean all)
 	{
 		this.all = all;
+	}
+
+	/**
+	 * @return the start
+	 */
+	public Date getStart()
+	{
+		return start;
+	}
+
+	/**
+	 * @param start the start to set
+	 */
+	public void setStart(Date start)
+	{
+		this.start = start;
+	}
+
+	/**
+	 * @return the end
+	 */
+	public Date getEnd()
+	{
+		return end;
+	}
+
+	/**
+	 * @param end the end to set
+	 */
+	public void setEnd(Date end)
+	{
+		this.end = end;
 	}
 
 }

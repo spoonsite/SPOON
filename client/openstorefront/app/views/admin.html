@@ -7,8 +7,8 @@
     <div >
       <div class="treeNav">
         <abn-tree tree-data="data" tree-control="myTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" on-select="editor(branch)" expand-level="1" initial-selection="Tracking"></abn-tree>
-		<hr>	
-		<span style="padding-left: 10px;"><i class="fa fa-file-code-o"></i><a href="API.action" target="_blank">&nbsp;API Document</a></span>
+        <hr>	
+        <span style="padding-left: 10px;"><i class="fa fa-file-code-o"></i><a href="API.action" target="_blank">&nbsp;API Document</a></span>
       </div>
     </div>
   </div>
@@ -16,20 +16,20 @@
     <div class="col-sm-12">
       <div class="tools-LandingTitle">
         <h3>
-	{{toolTitle}}
-	
-          &nbsp;<div ng-if="checkParent()" style="display: inline-block;">
-            <small><button class="btn btn-primary" style="margin-bottom: 10px" ng-click="goToParent()">Go back to Parent Tool</button></small>
-          </div>
-        </h3>
+         {{toolTitle}}
+         
+         &nbsp;<div ng-if="checkParent()" style="display: inline-block;">
+         <small><button class="btn btn-primary" style="margin-bottom: 10px" ng-click="goToParent()">Go back to Parent Tool</button></small>
+       </div>
+     </h3>
 
-      </div>
-	{{detailedDesc}}	  
-      <hr>
-    </div>
-    <div ng-include="incLoc">
-    </div>
-  </div>
+   </div>
+   {{detailedDesc}}	  
+   <hr>
+ </div>
+ <div ng-include="incLoc">
+ </div>
+</div>
 </div>
 
 
