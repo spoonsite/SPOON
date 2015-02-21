@@ -65,14 +65,38 @@
   }
 
   // converts a string into a Date object and then into a readable string.
-  utils.getDate = function(date){
-    if (date)
+  utils.getDate = function(date, toString, morning){
+    toString = toString || false;
+    if (date && !toString)
     {
       var d = new Date(date);
       var currDate = d.getDate();
       var currMonth = d.getMonth();
       var currYear = d.getFullYear();
       return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+    } else if (date){
+      var d = new Date(date);
+
+      var year = d.getFullYear();
+
+      var month = d.getMonth() + 1;
+      if(month <= 9) {
+        month = '0'+month;
+      }
+
+      var day= d.getDate();
+      if(day <= 9) {
+        day = '0'+day;
+      }
+
+      var currDate = d.getFullYear() + '-' + month + '-' + day + 'T';
+      
+      if (morning){
+        currDate += '00:00:00.000';
+      } else {
+        currDate += '23:59:59.999'
+      }
+      return currDate;
     }
     return null;
   };
@@ -106,11 +130,14 @@
     'October', 'November', 'December');
   
   utils.queryFilter = {
+    start: null,
+    end: null,
     status: null,
     max: null,
     sortField: null,
     sortOrder: null,
     offset: null,
+    all: false,
     toQuery: function () {
       return utils.toParamString(this);
     }
