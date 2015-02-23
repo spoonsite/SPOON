@@ -152,6 +152,7 @@ public class SystemAction
 				attribute.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 				service.getPersistenceService().persist(attribute);
 			});
+			return new StreamingResolution("text/html", "Updated Status on: " + componentAttributes.size() + " component attibutes.");
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}

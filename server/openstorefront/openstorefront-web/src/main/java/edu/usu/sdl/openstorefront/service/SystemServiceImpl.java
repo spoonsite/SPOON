@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
+import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -32,6 +33,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -298,6 +300,37 @@ public class SystemServiceImpl
 	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel)
 	{
 		saveProperty(ApplicationProperty.GLOBAL_INTEGRATION_REFRESH, globalIntegrationModel.getJiraRefreshRate());
+	}
+
+	@Override
+	public void saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput)
+	{
+		Objects.requireNonNull(generalMedia);
+		Objects.requireNonNull(fileInput);
+
+		generalMedia.setFileName(generalMedia.getName());
+		try (InputStream in = fileInput) {
+			Files.copy(in, generalMedia.pathToMedia());
+			generalMedia.populateBaseCreateFields();
+			persistenceService.persist(generalMedia);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+	}
+
+	@Override
+	public void removeGeneralMedia(String mediaName)
+	{
+		GeneralMedia generalMedia = persistenceService.findById(GeneralMedia.class, mediaName);
+		if (generalMedia != null) {
+			Path path = generalMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					path.toFile().delete();
+				}
+			}
+			persistenceService.delete(generalMedia);
+		}
 	}
 
 }

@@ -51,6 +51,7 @@ public class FileSystemManager
 	public static final String IMPORT_COMPONENT_DIR = MAIN_DIR + "/import/component";
 	public static final String ARTICLE_DIR = MAIN_PERM_DIR + "/article";
 	public static final String MEDIA_DIR = MAIN_PERM_DIR + "/media";
+	public static final String GENERAL_MEDIA_DIR = MAIN_PERM_DIR + "/generalmedia";
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
 	public static final String DB_DIR = MAIN_DIR + "/db";

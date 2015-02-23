@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
+import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -62,6 +63,9 @@ public class MediaAction
 
 	@Validate(required = true, on = "UploadMedia")
 	private FileBean file;
+
+	@Validate(required = true, on = "GeneralMedia")
+	private String name;
 
 	@HandlesEvent("LoadMedia")
 	public Resolution sendMedia()
@@ -133,6 +137,38 @@ public class MediaAction
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
+	@HandlesEvent("GeneralMedia")
+	public Resolution generalMedia()
+	{
+		GeneralMedia generalMediaExample = new GeneralMedia();
+		generalMediaExample.setName(name);
+		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		if (generalMedia == null) {
+			throw new OpenStorefrontRuntimeException("Media not Found", "Check media name");
+		}
+
+		return new StreamingResolution(generalMedia.getMimeType())
+		{
+
+			@Override
+			protected void stream(HttpServletResponse response) throws Exception
+			{
+				Path path = generalMedia.pathToMedia();
+				if (path != null && path.toFile().exists()) {
+					Files.copy(path, response.getOutputStream());
+				} else {
+
+					log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
+
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream("/image/close-red.png")) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+			}
+
+		}.setFilename(generalMedia.getOriginalFileName());
+	}
+
 	public String getMediaId()
 	{
 		return mediaId;
@@ -161,6 +197,16 @@ public class MediaAction
 	public void setFile(FileBean file)
 	{
 		this.file = file;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 
 }
