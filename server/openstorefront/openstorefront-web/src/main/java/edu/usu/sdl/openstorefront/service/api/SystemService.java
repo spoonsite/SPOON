@@ -19,9 +19,11 @@ import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -135,5 +137,22 @@ public interface SystemService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel);
+
+	/**
+	 * Saves a general media file
+	 *
+	 * @param generalMedia
+	 * @param fileInput (optional on update)
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput);
+
+	/**
+	 * Delete the general media
+	 *
+	 * @param mediaName
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeGeneralMedia(String mediaName);
 
 }
