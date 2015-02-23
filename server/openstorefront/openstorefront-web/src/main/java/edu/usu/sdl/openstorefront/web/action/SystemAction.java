@@ -114,6 +114,7 @@ public class SystemAction
 					ComponentAttribute oldAttribute = service.getPersistenceService().findById(ComponentAttribute.class, attribute.getComponentAttributePk());
 					service.getPersistenceService().delete(oldAttribute);
 					attribute.getComponentAttributePk().setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+					attribute.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 					service.getPersistenceService().persist(attribute);
 				} else {
 					messages.append("Unable to find old code:  ").append(attribute.getComponentAttributePk().getAttributeCode());
@@ -131,6 +132,26 @@ public class SystemAction
 			service.getPersistenceService().deleteByExample(attributeCodeExample);
 
 			return new StreamingResolution("text/html", "Finished conversion of " + componentAttributes.size() + " component attributes.<br>  Messages: " + messages.toString());
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
+	@HandlesEvent("AttributeStatusUpdate")
+	public Resolution attributeStatusUpdate()
+	{
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(AttributeType.DI2E_SVCV4);
+			componentAttributeExample.setComponentAttributePk(componentAttributePk);
+
+			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+			componentAttributes.forEach(attribute -> {
+				attribute.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+				service.getPersistenceService().persist(attribute);
+			});
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
