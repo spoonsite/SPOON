@@ -72,13 +72,13 @@ public class FilterQueryParams
 	@Sanitize(TextSanitizer.class)
 	private String status;
 
-	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss simple date format")
+	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss, Unix Epoch Millisecond, yyyy-MM-dd, MM/dd/yyyy")
 	@QueryParam("start")
-	private Date start;
+	private DateParam startDts;
 
 	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss simple date format")
 	@QueryParam("end")
-	private Date end;
+	private DateParam endDts;
 
 	@QueryParam("allResults")
 	@DefaultValue("false")
@@ -186,52 +186,50 @@ public class FilterQueryParams
 		this.status = status;
 	}
 
-	/**
-	 * @return the all
-	 */
 	public Boolean getAll()
 	{
 		return all;
 	}
 
-	/**
-	 * @param all the all to set
-	 */
 	public void setAll(Boolean all)
 	{
 		this.all = all;
 	}
 
-	/**
-	 * @return the start
-	 */
 	public Date getStart()
 	{
-		return start;
+		if (startDts != null) {
+			return startDts.getDate();
+		}
+		return null;
 	}
 
-	/**
-	 * @param start the start to set
-	 */
-	public void setStart(Date start)
-	{
-		this.start = start;
-	}
-
-	/**
-	 * @return the end
-	 */
 	public Date getEnd()
 	{
-		return end;
+		if (endDts != null) {
+			return endDts.getDate();
+		}
+		return null;
 	}
 
-	/**
-	 * @param end the end to set
-	 */
-	public void setEnd(Date end)
+	public DateParam getStartDts()
 	{
-		this.end = end;
+		return startDts;
+	}
+
+	public void setStartDts(DateParam startDts)
+	{
+		this.startDts = startDts;
+	}
+
+	public DateParam getEndDts()
+	{
+		return endDts;
+	}
+
+	public void setEndDts(DateParam endDts)
+	{
+		this.endDts = endDts;
 	}
 
 }
