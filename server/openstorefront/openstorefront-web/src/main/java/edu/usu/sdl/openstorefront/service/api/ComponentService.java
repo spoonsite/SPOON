@@ -42,6 +42,9 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingCompleteWrapper;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import java.io.InputStream;
 import java.util.List;
@@ -194,6 +197,14 @@ public interface ComponentService
 	 */
 	public void saveComponentAttribute(ComponentAttribute attribute);
 
+	/**
+	 *
+	 * @param filter
+	 * @param componentId
+	 * @return
+	 */
+	public ComponentTrackingResult getComponentTracking(FilterQueryParams filter, String componentId);
+	
 	/**
 	 *
 	 * @param attribute
@@ -463,5 +474,5 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange);
-
+	
 }

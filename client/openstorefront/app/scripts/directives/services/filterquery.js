@@ -72,6 +72,9 @@ app.directive('filterquery',['business', function (Business) {
           console.log('The request failed');
         });
       }
+      scope.getDate = function(d) {
+        return utils.getDate(d);
+      }
     }
   };
 }]);
