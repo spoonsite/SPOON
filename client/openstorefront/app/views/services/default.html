@@ -17,12 +17,14 @@
 </div>
 
 <div style="clear:both;"></div>
-<table>
+<table class="table table-striped">
   <tr>
-    <th>stuff</th>
+    <th>id</th>
+    <th>date Of Event</th>
   </tr>
   <tr ng-repeat="item in data">
-    <td>data</td>
+    <td>{{item.componentTrackingId}}</td>
+    <td>{{getDate(item.eventDts)}}</td>
   </tr>
 </table>
 <button class="btn btn-default" ng-click="sendRequest()">Apply Changes&nbsp;<i class="fa fa-search"></i></button>

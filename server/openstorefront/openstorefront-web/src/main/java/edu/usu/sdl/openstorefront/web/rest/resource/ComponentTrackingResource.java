@@ -25,9 +25,11 @@ import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
+import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -63,23 +65,33 @@ public class ComponentTrackingResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		ComponentTracking trackingExample = new ComponentTracking();
-		if (!filterQueryParams.getAll()) {
-			trackingExample.setActiveStatus(filterQueryParams.getStatus());
-		}
-
-		QueryByExample<ComponentTracking> queryByExample = new QueryByExample(trackingExample);
-		queryByExample.setMaxResults(filterQueryParams.getMax());
-		queryByExample.setFirstResult(filterQueryParams.getOffset());
-
-		ComponentTracking trackingOrderExample = new ComponentTracking();
-		trackingOrderExample.setCreateDts(QueryByExample.DATE_FLAG);
-		queryByExample.setOrderBy(trackingOrderExample);
-		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
-
-		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(ComponentTracking.class, queryByExample);
-
-		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
-		return sendSingleEntityResponse(new ComponentTrackingWrapper(componentTrackings, total));
+//		ComponentTracking trackingExample = new ComponentTracking();
+//		if (!filterQueryParams.getAll()) {
+//			trackingExample.setActiveStatus(filterQueryParams.getStatus());
+//		}
+//
+//		QueryByExample<ComponentTracking> queryByExample = new QueryByExample(trackingExample);
+//		queryByExample.setMaxResults(filterQueryParams.getMax());
+//		queryByExample.setFirstResult(filterQueryParams.getOffset());
+//
+//		ComponentTracking trackingOrderExample = new ComponentTracking();
+//		trackingOrderExample.setCreateDts(QueryByExample.DATE_FLAG);
+//		queryByExample.setOrderBy(trackingOrderExample);
+//		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
+//
+//		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(ComponentTracking.class, queryByExample);
+//
+//		int index = 0;
+//
+//		for(ComponentTracking temp : componentTrackings){
+//			if (temp.getEventDts().compareTo(filterQueryParams.getEnd()) < 0) {
+//			index++;
+//		}
+//		}
+//		List<ComponentTracking> result = componentTrackings.subList(0, index);
+//		
+//		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
+		ComponentTrackingResult result = service.getComponentService().getComponentTracking(filterQueryParams, componentId);
+		return sendSingleEntityResponse(result);
 	}
 }

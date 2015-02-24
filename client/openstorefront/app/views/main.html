@@ -59,7 +59,7 @@ limitations under the License.
               <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
             </div>
             <div class="navSearchBar">
-              <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key.name as key.name for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
+              <input type="text" class="form-control searchBar" on-enter="goToSearch('search', searchKey)" ng-model="searchKey" ng-options="key.name as key.name for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
             </div>
           </form>
         </div>
