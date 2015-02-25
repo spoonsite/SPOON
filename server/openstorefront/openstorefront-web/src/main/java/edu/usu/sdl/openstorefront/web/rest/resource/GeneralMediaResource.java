@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.GeneralMediaView;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.DELETE;
@@ -62,6 +64,32 @@ public class GeneralMediaResource
 		List<GeneralMediaView> generalMediaViews = GeneralMediaView.toViewList(generalMedia);
 
 		GenericEntity<List<GeneralMediaView>> entity = new GenericEntity<List<GeneralMediaView>>(generalMediaViews)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all general media records for a lookup list")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/lookup")
+	public Response getGeneralMediaLookup()
+	{
+		GeneralMedia generalMediaExample = new GeneralMedia();
+		generalMediaExample.setActiveStatus(GeneralMedia.ACTIVE_STATUS);
+		List<GeneralMedia> generalMedia = service.getPersistenceService().queryByExample(GeneralMedia.class, generalMediaExample);
+		List<GeneralMediaView> generalMediaViews = GeneralMediaView.toViewList(generalMedia);
+
+		List<LookupModel> lookups = new ArrayList<>();
+		generalMediaViews.forEach(media -> {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(media.getMediaLink());
+			lookupModel.setDescription(media.getName());
+		});
+
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookups)
 		{
 		};
 		return sendSingleEntityResponse(entity);

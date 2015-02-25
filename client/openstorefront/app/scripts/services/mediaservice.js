@@ -20,7 +20,7 @@ app.factory('mediaservice', ['$http', '$q', 'localCache', function($http, $q, lo
     
     var mediaservice = {};
     
-    mediaservice.getGeneralMedia = function (queryParamFilter) {
+    mediaservice.getGeneralMedia = function () {
       var deferred = $q.defer();
 
       $http({
@@ -35,6 +35,22 @@ app.factory('mediaservice', ['$http', '$q', 'localCache', function($http, $q, lo
 
       return deferred.promise;
     }; 
+
+    mediaservice.getGeneralMediaLookup = function () {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/generalmedia/lookup'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };
 
     mediaservice.removeMedia = function (name) {
       var deferred = $q.defer();
