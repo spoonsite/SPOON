@@ -727,10 +727,13 @@ public class UserServiceImpl
 		queryParams.put("activeStatusParam", Component.ACTIVE_STATUS);
 		List<Component> components = persistenceService.query(componentQuery, queryParams);
 		for (Component component : components) {
-			if (component.getApprovedDts().after(lastRunDts)) {
-				recentChangeMessage.getComponentsAdded().add(component);
-			} else {
-				recentChangeMessage.getComponentsUpdated().add(component);
+			if (OpenStorefrontConstant.ComponentApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+				if (component.getApprovedDts() != null
+						&& component.getApprovedDts().after(lastRunDts)) {
+					recentChangeMessage.getComponentsAdded().add(component);
+				} else {
+					recentChangeMessage.getComponentsUpdated().add(component);
+				}
 			}
 		}
 

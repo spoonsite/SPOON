@@ -417,8 +417,8 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
 
   $scope.getMaxCode = function() {
     return $scope.code? $scope.code.length? $scope.code.length: 100 : 100;
-  }
-
+  };
+  
   $scope.ok = function (validity) {
     if (validity) {
 
