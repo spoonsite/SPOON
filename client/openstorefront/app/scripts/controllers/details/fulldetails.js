@@ -379,8 +379,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   /***************************************************************
   * This function converts a timestamp to a displayable date
   ***************************************************************/
-  $scope.getDate = function(date){
-    return utils.getDate(date);
+  $scope.getDate = function(date, toString, morning, monthYear){
+    return utils.getDate(date, toString, morning, monthYear);
   };
 
   /***************************************************************
