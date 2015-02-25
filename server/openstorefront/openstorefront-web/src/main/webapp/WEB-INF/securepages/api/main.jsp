@@ -33,7 +33,7 @@ limitations under the License.
 			<span style="position: absolute; top: 10px; right: 0px; padding-right: 20px;"><a href="API.action?PrintView" style="color: yellow; ">Print View</a></span>
 		</header>
 		
-		<div class="api-guide">
+		<div class="api-guide" style="overflow-y: auto;">
 			<h4>API</h4>
 			<ul>
 				<li>

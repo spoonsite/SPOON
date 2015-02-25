@@ -20,8 +20,8 @@ limitations under the License.
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="css/apidoc.css" rel="stylesheet" type="text/css"/>
-	<script src="script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<link href="apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
+	<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
         <title>API Details</title>
     </head>
     <body>
@@ -38,7 +38,7 @@ limitations under the License.
 		<h2>Paths</h2>
 		<ul>
 		<c:forEach var="item" items="${actionBean.resourceModel.methods}">
-			<li><span class="${item.restMethod}" style="line-height: 28px;">${item.restMethod}</span> - <a href="javascript:void();" onclick="scrollToAnchor('${item.id}');" >${actionBean.resourceModel.resourcePath}${item.methodPath}</a></li>
+			<li><span class="${item.restMethod}" style="line-height: 28px;">${item.restMethod}</span> - <a href="javascript:" onclick="scrollToAnchor('${item.id}');" >${actionBean.resourceModel.resourcePath}${item.methodPath}</a></li>
 		</c:forEach>
 		</ul>	
 	</c:if>

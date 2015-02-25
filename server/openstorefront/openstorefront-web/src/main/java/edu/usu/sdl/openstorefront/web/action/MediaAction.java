@@ -67,6 +67,11 @@ public class MediaAction
 	@Validate(required = true, on = "GeneralMedia")
 	private String name;
 
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "name", on = "UploadGeneralMedia")
+	})
+	private GeneralMedia generalMedia;
+
 	@HandlesEvent("LoadMedia")
 	public Resolution sendMedia()
 	{
@@ -142,7 +147,7 @@ public class MediaAction
 	{
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setName(name);
-		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
 		if (generalMedia == null) {
 			throw new OpenStorefrontRuntimeException("Media not Found", "Check media name");
 		}
@@ -167,6 +172,45 @@ public class MediaAction
 			}
 
 		}.setFilename(generalMedia.getOriginalFileName());
+	}
+
+	@HandlesEvent("UploadGeneralMedia")
+	public Resolution uploadGeneralMedia()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			if (generalMedia != null) {
+				generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+				generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+				generalMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+				generalMedia.setOriginalFileName(file.getFileName());
+				generalMedia.setMimeType(file.getContentType());
+
+				ValidationModel validationModel = new ValidationModel(generalMedia);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid()) {
+					try {
+						service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+					} catch (IOException ex) {
+						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+					} finally {
+						try {
+							file.delete();
+						} catch (IOException ex) {
+							log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+						}
+					}
+				} else {
+					errors.put("file", validationResult.toHtmlString());
+				}
+			} else {
+				errors.put("generalMedia", "Missing general media information");
+			}
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
 	public String getMediaId()
@@ -207,6 +251,16 @@ public class MediaAction
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public GeneralMedia getGeneralMedia()
+	{
+		return generalMedia;
+	}
+
+	public void setGeneralMedia(GeneralMedia generalMedia)
+	{
+		this.generalMedia = generalMedia;
 	}
 
 }

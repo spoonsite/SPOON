@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.GeneralMediaView;
 import java.util.List;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -37,7 +38,7 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/generalmedia")
-@APIDescription("General media is used for articles, badges...etc.  Dynamic Resources.")
+@APIDescription("General media is used for articles, badges...etc.  Dynamic Resources. <br> To create a new record POST to Media.action?UploadGeneralMedia&generalMedia.name={name} *Admin Role required")
 public class GeneralMediaResource
 		extends BaseResource
 {
@@ -68,7 +69,7 @@ public class GeneralMediaResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets a general media record.")
+	@APIDescription("Gets a general media record. See Media.action?GeneralMedia&name={name} to get the actual resource")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GeneralMediaView.class)
 	@Path("/{name}")
@@ -81,6 +82,14 @@ public class GeneralMediaResource
 		return sendSingleEntityResponse(generalMedia);
 	}
 
-	//Post
-	//Delete
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Deletes a general media record.")
+	@Path("/{name}")
+	public void deleteGeneralMedia(
+			@PathParam("name") String name)
+	{
+		service.getSystemService().removeGeneralMedia(name);
+	}
+
 }
