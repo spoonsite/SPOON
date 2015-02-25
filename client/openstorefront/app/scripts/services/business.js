@@ -15,8 +15,8 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice', 'trackingservice',
-  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice, trackingservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice',
+  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice, mediaservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -59,7 +59,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   var get = function(key) {
     return localCache.get(key, 'object');
-  }
+  };
 
   var updateCache = function(name, value) {
     save(name, value);
@@ -74,7 +74,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.configurationservice = configurationservice;
   business.jobservice = jobservice;
   business.systemservice = systemservice;
-  business.trackingservice = trackingservice;
+  business.mediaservice = mediaservice;
 
   business.updateCache = function(name, value) {
     var deferred = $q.defer();

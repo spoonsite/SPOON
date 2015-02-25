@@ -256,6 +256,14 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     });    
     
     $scope.data.push({
+      'label': 'Media', 
+      'location':'views/admin/manageMedia.html', 
+      'toolTitle': 'Manage General Media', 
+      'detailedDesc': "Media that can be used for articles and badges",
+      'key': 'media' 
+    });    
+    
+    $scope.data.push({
       'label': 'Questions', 
       'location':'views/admin/manageQuestions.html', 
       'toolTitle': 'Manage Question', 
@@ -284,14 +292,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       'toolTitle': 'Manage Tags', 
       'detailedDesc': "Tags are user-definable labels that are associated to a component.",
       'key': 'tags' 
-    });
-
-    $scope.data.push({
-      'label': 'Tracking', 
-      'location':'views/admin/tracking.html', 
-      'toolTitle': 'Manage Tracking', 
-      'detailedDesc': "Track system, user, and component data.",
-      'key': 'tracking' 
     });
 
     $scope.data.push({

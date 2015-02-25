@@ -113,6 +113,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
         var modalInstance = $uiModal.open({
         templateUrl: 'views/admin/component/editComponent.html',
         controller: 'AdminComponentEditCtrl',
+        backdrop: 'static',
         size: 'lg',
         resolve: {
           component: function () {
@@ -129,6 +130,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
         var modalInstance = $uiModal.open({
         templateUrl: 'views/admin/component/editComponent.html',
         controller: 'AdminComponentEditCtrl',
+        backdrop: 'static',
         size: 'lg',
         resolve: {
           component: function () {

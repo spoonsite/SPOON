@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<style>
+	.required:after {
+		 content:" *"; 
+		 color:red;
+	}
+</style>
+
+<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>Add Media <span style="float: right; font-size: 18px;"><i class="fa fa-close" ng-click="close();"></i>&nbsp;&nbsp;</span></h2>
+<hr>
+<div   style="padding-left: 20px; padding-right: 20px;">
+	<loader trigger="mediaFormLoader"></loader>
+	<form class="form-horizontal" name='mediaUIForm' role="form"  ng-submit="saveMedia(mediaUIForm)" style="padding-left: 10px; padding-right: 10px;">
+		<div class="form-group"  >
+			<label class=" control-label required">Name</label>				
+			<input  type="text" 								
+					name="name"													
+					class="form-control" 
+					ng-model="mediaForm.name" 
+					required
+					ng-minlength=1
+					ng-maxlength=250								
+					ng-focus />
+			<p ng-show="mediaUIForm.name.$error.required && !mediaUIForm.name.$focused" class="help-block">Name is required and it must be unique.</p>							
+		</div>	
+		<div class="form-group"  >
+			<label class=" control-label required">Upload Media</label>		
+			<input type="file" nv-file-select uploader="mediaUploader" required name="uploadFile" width="100"  />	
+			<p ng-show="mediaUIForm.uploadFile.$error.required && !mediaUIForm.uploadFile.$focused" class="help-block">Media file is required.</p>	
+		</div>	
+		<hr>
+		<br>
+		<br>
+		<div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
+			<button type="submit" class="btn btn-primary" ng-disabled="mediaUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;Save</button>	
+			<a ng-href="" ng-click="close()"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>	
+		</div>		
+	</form>
+</div>
+	
