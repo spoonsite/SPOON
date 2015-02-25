@@ -1,13 +1,13 @@
 <div ng-controller="AdminTrackingCtrl">
   <tabset justified="false" type="">  <!-- pills -->
     <tab heading="User">
-      <filterquery url="api/v1/resource/componenttracking"></filterquery>
+      <filterquery url="api/v1/resource/componenttracking" type="user"></filterquery>
     </tab>
     <tab heading="Component">
-      This is the component tracking
+      <filterquery url="api/v1/resource/componenttracking" type="component"></filterquery>
     </tab>
     <tab heading="Article">
-      This is the article tracking
+      <filterquery url="api/v1/resource/componenttracking" type="article"></filterquery>
     </tab>
   </tabset>
 </div>

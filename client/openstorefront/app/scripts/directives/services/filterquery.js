@@ -17,17 +17,20 @@
 'use strict';
 
 app.directive('filterquery',['business', function (Business) {
-  var returnFilterQuerySource = function(){
-    return 'views/services/default.html';
+  var returnFilterQuerySource = function(element, attrs){
+    if (attrs.type === 'component') {
+      return 'views/services/default.html';
+    } else {
+      return 'views/services/default.html';
+    }
   }
   return {
-    templateUrl: returnFilterQuerySource(),
+    templateUrl: returnFilterQuerySource,
     restrict: 'E',
     scope:{
       url: '@'
     },
     link: function postLink(scope, element, attrs) {
-      scope.today = new Date();
       /*
       utils.queryFilter = {
         status: null,
@@ -40,25 +43,25 @@ app.directive('filterquery',['business', function (Business) {
           return utils.toParamString(this);
         }
       };
-
-      {
-        active status
-        client ip
-        component id
-        component tracking id
-        create dts
-        create user
-        event dts
-        storage version
-        track event type code
-        update dts
-        update user
-      }
       */
+      scope.today = new Date();
       scope.query = {};
       scope.query.filterObj = angular.copy(utils.queryFilter);
       scope.query.url = scope.url || '';
+      scope.query.filterObj.offset = 0;
+      scope.query.filterObj.max = 20;
+      scope.pagination = {};
+      scope.pagination.currentPage = 1;
+      scope.pagination.itemsPerPage = 20;
+      scope.pagination.maxSize = 5;
 
+      Business.lookupservice.getLookupCodes('TrackEventCode').then(function(result){
+        console.log('track event codes', result);
+        
+        scope.eventCodes = result? result: [];
+      }, function(){
+        scope.eventCodes = [];
+      })
 
       scope.sendRequest = function(){
         scope.query.filterObj.start = utils.getDate(scope.query.filterObj.start, true, true);
@@ -66,12 +69,53 @@ app.directive('filterquery',['business', function (Business) {
         console.log('We sent the request', scope.query);
         Business.trackingservice.get(scope.query).then(function(result){
           console.log('result', result);
-          scope.data = result? result.componentTrackings: [];
+          scope.data = result? result.result: [];
+          scope.pagination.totalItems = result.count;
+          console.log('pagination', scope.pagination);
         }, function(){
           scope.data = [];
           console.log('The request failed');
         });
       }
+      scope.sendRequest();
+
+      scope.pageChanged = function(){
+        scope.query.filterObj.offset = (scope.pagination.currentPage - 1) * scope.pagination.itemsPerPage;
+        scope.sendRequest();
+      };
+
+      scope.switchOrder = function(sortOrder) {
+        if (sortOrder === 'DESC') {
+          return 'ASC';
+        } else {
+          return 'DESC';
+        }
+      }
+
+      scope.changeSortOrder = function(field){
+        if (scope.oldField && scope.oldField === field) {
+          scope.query.filterObj.sortField = field;
+          scope.query.filterObj.sortOrder = scope.switchOrder(scope.query.filterObj.sortOrder);
+        } else {
+          scope.query.filterObj.sortField = field;
+          scope.query.filterObj.sortOrder = 'DESC';
+        }
+        scope.oldField = field;
+        scope.sendRequest();
+      }
+
+      scope.getEventType = function(code){
+        if (scope.eventCodes.length){
+          var found = _.find(scope.eventCodes, {'code': code});
+          if (found) {
+            return found.description;
+          } else {
+            return code;
+          }
+        }
+        return code;
+      }
+
       scope.getDate = function(d) {
         return utils.getDate(d);
       }

@@ -349,9 +349,14 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   var getLookupCodes = function(entity, filterstatus) {
     var deferred = $q.defer();
     
+      var url = 'api/v1/resource/lookuptypes/' + entity;
+      if (filterstatus){
+        url += "?status=" + filterstatus;
+      } 
+
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/lookuptypes/' + entity + "?status=" + filterstatus
+        'url': url
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);       
       }).error(function(data, status, headers, config) { /*jshint unused:false*/

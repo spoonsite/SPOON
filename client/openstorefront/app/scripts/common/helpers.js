@@ -65,7 +65,7 @@
   }
 
   // converts a string into a Date object and then into a readable string.
-  utils.getDate = function(date, toString, morning){
+  utils.getDate = function(date, toString, morning, monthYear){
     toString = toString || false;
     if (date && !toString)
     {
@@ -73,7 +73,11 @@
       var currDate = d.getDate();
       var currMonth = d.getMonth();
       var currYear = d.getFullYear();
-      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+      if (!monthYear) {
+        return ((currMonth + 1) + '/' + currDate + '/' + currYear);
+      } else {
+        return ((currMonth + 1) + '/' + currYear);
+      }
     } else if (date){
       var d = new Date(date);
 
