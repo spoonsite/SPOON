@@ -171,7 +171,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     attributes.location='views/admin/editattributes.html';
     attributes.children = [];
     attributes.toolTitle = 'Manage Attributes';
-    attributes.detailedDesc = "Attributes are use to categorize components and other listings.  They can be search on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code respresents a specific value.  The data is linked by the type and code which allows for simple change of the description.";
+    attributes.detailedDesc = "Attributes are used to categorize components and other listings.  They can be searched on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code respresents a specific value.  The data is linked by the type and code which allows for a simple change of the description.";
     attributes.key = 'attributes';
     attributes.parentKey = null;
     attributes.data = $scope.filters;
@@ -209,7 +209,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       'label': 'Articles', 
       'location':'views/admin/editlanding.html', 
       'toolTitle': 'Manage Articles',
-      'detailedDesc': "Articles, also called topic landing pages, are detail pages of topics of interest with optional related listings.  Articles are assigned to Attribute Code which allows for searching and filter by topic. ",
+      'detailedDesc': "Articles, also called topic landing pages, are detail pages of topics of interest with optional related listings.  Articles are assigned to an Attribute Code which allows for searching and filter by topic. ",
       'key': 'landing'
     });
 

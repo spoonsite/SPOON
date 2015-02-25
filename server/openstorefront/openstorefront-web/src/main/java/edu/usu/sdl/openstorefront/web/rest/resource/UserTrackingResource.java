@@ -13,11 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.storage.model.UserTracking;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingResult;
+import javax.ws.rs.BeanParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * UserTrackingResource Resource
@@ -28,6 +40,25 @@ import javax.ws.rs.Path;
 @Path("v1/resource/usertracking")
 @APIDescription("Track user data.")
 public class UserTrackingResource
+		extends BaseResource
 {
-	
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Get the list of tracking details on users passing in a filter")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(UserTracking.class)
+	public Response getActiveComponentTracking(
+			@PathParam("id")
+			@RequiredParam String userId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		UserTrackingResult result = service.getUserService().getUserTracking(filterQueryParams, userId);
+		return sendSingleEntityResponse(result);
+	}
 }

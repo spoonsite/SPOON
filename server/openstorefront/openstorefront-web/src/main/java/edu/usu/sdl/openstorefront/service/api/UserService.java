@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingResult;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +113,13 @@ public interface UserService
 	 */
 	public UserWatch getWatch(String watchId);
 
+	/**
+	 * @param filter
+	 * @param userId
+	 * @return 
+	 */
+	public UserTrackingResult getUserTracking(FilterQueryParams filter, String userId);
+	
 	/**
 	 *
 	 * @param watch
