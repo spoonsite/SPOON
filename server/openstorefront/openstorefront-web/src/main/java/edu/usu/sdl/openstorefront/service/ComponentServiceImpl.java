@@ -105,6 +105,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -2103,6 +2105,37 @@ public class ComponentServiceImpl
 		});
 	}
 
+	private Boolean objectHasProperty(Object obj, String propertyName)
+	{
+		List<Field> properties = getAllFields(obj);
+		for (Field field : properties) {
+			if (field.getName().equalsIgnoreCase(propertyName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static List<Field> getAllFields(Object obj)
+	{
+		List<Field> fields = new ArrayList<Field>();
+		getAllFieldsRecursive(fields, obj.getClass());
+		return fields;
+	}
+
+	private static List<Field> getAllFieldsRecursive(List<Field> fields, Class<?> type)
+	{
+		for (Field field : type.getDeclaredFields()) {
+			fields.add(field);
+		}
+
+		if (type.getSuperclass() != null) {
+			fields = getAllFieldsRecursive(fields, type.getSuperclass());
+		}
+
+		return fields;
+	}
+
 	@Override
 	public ComponentTrackingResult getComponentTracking(FilterQueryParams filter, String componentId)
 	{
@@ -2114,30 +2147,13 @@ public class ComponentServiceImpl
 		List<ComponentTrackingCompleteWrapper> response = new ArrayList<>();
 		ComponentTrackingResult result = new ComponentTrackingResult();
 
-		queryString.append("select * ");
-		queryString.append("from ComponentTracking ");
+		queryString.append("select * from ComponentTracking ");
 
 		String whereClause = "";
 		if (!filter.getAll()) {
-			whereClause += "where activeStatus=:activeStatusParam ";
+			whereClause += " where activeStatus=:activeStatusParam ";
 			mappedParams.put("activeStatusParam", filter.getStatus());
 			queryString.append(whereClause);
-		}
-
-		if (filter.getSortField() != null) {
-//			if (queryByExample.getGroupBy() != null) {
-//				String names = generateExampleNames(queryByExample.getGroupBy());
-//				if (StringUtils.isNotBlank(names)) {
-//					queryString.append(" group by ").append(names);
-//				}
-//			}
-//			if (queryByExample.getOrderBy() != null) {
-//				String names = generateExampleNames(queryByExample.getOrderBy());
-//				if (StringUtils.isNotBlank(names)) {
-//					queryString.append(" order by ").append(names).append(" ").append(queryByExample.getSortDirection());
-//				}
-//			}
-			//mappedParams.putAll(mapParameters(queryByExample.getLikeExample()));
 		}
 
 		if (filter.getStart() != null && filter.getEnd() != null) {
@@ -2148,13 +2164,29 @@ public class ComponentServiceImpl
 				queryString.append(" where ");
 			}
 
-			queryString.append("eventDts >= :startDate");
-			queryString.append(" AND eventDts <= :endDate");
+			queryString.append(" eventDts >= :startDate ");
+			queryString.append(" AND eventDts <= :endDate ");
 			mappedParams.put("startDate", filter.getStart());
 			mappedParams.put("endDate", filter.getEnd());
 
 		}
 
+		if (filter.getSortField() != null) {
+//			if (filter.getSortField() != null) {
+//				String names = generateExampleNames(queryByExample.getGroupBy());
+//				if (StringUtils.isNotBlank(names)) {
+//					queryString.append(" group by ").append(names);
+//				}
+//			}
+			if (filter.getSortField() != null && objectHasProperty(new ComponentTracking(), filter.getSortField())) {
+				queryString.append(" order by ").append(filter.getSortField());
+				if (filter.getSortOrder() != null && (filter.getSortOrder().equals(OpenStorefrontConstant.SORT_ASCENDING) || filter.getSortOrder().equals(OpenStorefrontConstant.SORT_DESCENDING))) {
+					queryString.append(" ").append(filter.getSortOrder());
+				}
+			}
+
+			//mappedParams.putAll(mapParameters(queryByExample.getLikeExample()));
+		}
 		countStr = queryString.toString();
 		countParams = mappedParams;
 
@@ -2179,6 +2211,18 @@ public class ComponentServiceImpl
 			wrapper.setName(this.getComponentName(item.getComponentId()));
 			response.add(wrapper);
 		}
+		if (filter.getSortField().equals("name")) {
+			Collections.sort(response, new Comparator<ComponentTrackingCompleteWrapper>()
+					 {
+						 @Override
+						 public int compare(ComponentTrackingCompleteWrapper p1, ComponentTrackingCompleteWrapper p2)
+						 {
+							 return p1.getName().compareToIgnoreCase(p2.getName());
+						 }
+
+			});
+		}
+		
 		result.setResult(response);
 		return result;
 	}
