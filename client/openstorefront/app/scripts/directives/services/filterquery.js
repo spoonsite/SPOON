@@ -28,32 +28,24 @@ app.directive('filterquery',['business', function (Business) {
     templateUrl: returnFilterQuerySource,
     restrict: 'E',
     scope:{
-      url: '@'
+      url: '@',
+      defaultMax: '@'
     },
     link: function postLink(scope, element, attrs) {
-      /*
-      utils.queryFilter = {
-        status: null,
-        max: null,
-        sortField: null,
-        sortOrder: null,
-        offset: null,
-        all: false,
-        toQuery: function () {
-          return utils.toParamString(this);
-        }
-      };
-      */
+      scope.defaultMax = scope.defaultMax? parseInt(scope.defaultMax): 50;
       scope.today = new Date();
       scope.query = {};
       scope.query.filterObj = angular.copy(utils.queryFilter);
       scope.query.url = scope.url || '';
       scope.query.filterObj.offset = 0;
-      scope.query.filterObj.max = 20;
+      scope.query.filterObj.max = scope.defaultMax;
       scope.pagination = {};
       scope.pagination.currentPage = 1;
-      scope.pagination.itemsPerPage = 20;
-      scope.pagination.maxSize = 5;
+      scope.pagination.itemsPerPage = scope.defaultMax;
+      scope.pagination.maxSize = 10;
+      scope.showPagination = true;
+      scope.maxResults;
+      scope.maxPerPage;
 
       Business.lookupservice.getLookupCodes('TrackEventCode').then(function(result){
         console.log('track event codes', result);
@@ -69,6 +61,7 @@ app.directive('filterquery',['business', function (Business) {
         console.log('We sent the request', scope.query);
         Business.trackingservice.get(scope.query).then(function(result){
           console.log('result', result);
+          scope.backupResult = result;
           scope.data = result? result.result: [];
           scope.pagination.totalItems = result.count;
           console.log('pagination', scope.pagination);
@@ -89,6 +82,30 @@ app.directive('filterquery',['business', function (Business) {
           return 'ASC';
         } else {
           return 'DESC';
+        }
+      }
+
+      scope.checkMax = function(){
+        if (scope.maxResults) {
+          scope.query.filterObj.offset = 0;
+          scope.query.filterObj.max = scope.maxResults;
+          scope.showPagination = false;
+        } else {
+          scope.showPagination = true;
+        }
+      }
+
+      scope.toTop = function(){
+        jQuery('html,body').animate({scrollTop:0},0);
+      }
+
+      scope.setPageMax = function(){
+        if (scope.maxPerPage){
+          scope.query.filterObj.max = scope.maxPerPage;
+          scope.pagination.itemsPerPage = scope.maxPerPage
+        } else {
+          scope.query.filterObj.max = 20;
+          scope.pagination.itemsPerPage = 20;
         }
       }
 

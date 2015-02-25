@@ -96,7 +96,7 @@
       var currDate = d.getFullYear() + '-' + month + '-' + day + 'T';
       
       if (morning){
-        currDate += '00:00:00.000';
+        currDate += '00:00:01.000';
       } else {
         currDate += '23:59:59.999'
       }
