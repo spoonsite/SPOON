@@ -19,7 +19,7 @@
 //openAM = false; other = true;
 
 // TESTING SITE
-theSite = 'http://store-dev.usu.di2e.net/openstorefront/index.html';
+theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
 openAM = false; other = true;
 
 

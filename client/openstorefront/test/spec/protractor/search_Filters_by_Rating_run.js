@@ -32,7 +32,7 @@ describe('search_Filters_by_Rating', function() {
     it('Search filter by 1 star Rating', function () {
         element.all(by.css('.star-off-png')).get(0).click();
         // No search results expected
-        expect(element.all(by.repeater('item in data')).count()).toEqual(1);
+        expect(element.all(by.repeater('item in data')).count()).toEqual(3);
     }, 15000);
 
     it('Click Reset Filters button LEFT NAV', function () {
