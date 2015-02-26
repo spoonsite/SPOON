@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.SystemTable;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -91,9 +92,14 @@ public class LookupServiceImpl
 	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass, String activeStatus)
 	{
 		try {
+			SystemTable systemTable = (SystemTable) lookTableClass.getAnnotation(SystemTable.class);
 			T testExample = lookTableClass.newInstance();
-			testExample.setActiveStatus(activeStatus);
-			return persistenceService.queryByExample(lookTableClass, new QueryByExample(testExample));
+			if (systemTable != null) {
+				return testExample.systemValues();
+			} else {
+				testExample.setActiveStatus(activeStatus);
+				return persistenceService.queryByExample(lookTableClass, new QueryByExample(testExample));
+			}
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
@@ -208,10 +214,15 @@ public class LookupServiceImpl
 			if (lookupEntity == null) {
 				//cache miss
 				try {
+					SystemTable systemTable = (SystemTable) lookupClass.getAnnotation(SystemTable.class);
 					T example = lookupClass.newInstance();
-					example.setCode(code);
-					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-					lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
+					if (systemTable != null) {
+						lookupEntity = example.systemValue(code);
+					} else {
+						example.setCode(code);
+						example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+						lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
+					}
 					if (lookupEntity != null) {
 						lookupCacheMap.put(code, lookupEntity);
 					}
@@ -242,10 +253,19 @@ public class LookupServiceImpl
 		T lookupEntity = null;
 		if (StringUtils.isNotBlank(description)) {
 			try {
+				SystemTable systemTable = (SystemTable) lookupClass.getAnnotation(SystemTable.class);
 				T example = lookupClass.newInstance();
-				example.setDescription(description);
-				example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-				lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
+				if (systemTable != null) {
+					for (LookupEntity lookup : example.systemValues()) {
+						if (lookup.getDescription().equals(description)) {
+							lookupEntity = (T) lookup;
+						}
+					}
+				} else {
+					example.setDescription(description);
+					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+					lookupEntity = persistenceService.queryOneByExample(lookupClass, new QueryByExample(example));
+				}
 
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new OpenStorefrontRuntimeException(e);
