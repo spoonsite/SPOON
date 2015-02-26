@@ -24,7 +24,7 @@ limitations under the License.
     </head>
     <body>
         <h2>Lookup Table Reference</h2>	
-        <div class='wrapper'>
+        <div class='wrapper' >
             <table id="tableOfContents"></table>
             <div id="content"></div>
         </div>

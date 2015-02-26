@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.manager.NewFileHandler;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.SystemTable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -64,9 +65,14 @@ public class LookupImporter
 			for (Class entityClass : entityClasses) {
 				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 					if (ServiceUtil.isSubLookupEntity(entityClass)) {
-						File codeFile = FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv");
-						if (codeFile.exists()) {
-							lookupCodeFiles.add(codeFile);
+						SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
+						if (systemTable != null) {
+							log.log(Level.WARNING, "Skipping System Table.   System Tables are not user-definable.");
+						} else {
+							File codeFile = FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv");
+							if (codeFile.exists()) {
+								lookupCodeFiles.add(codeFile);
+							}
 						}
 					}
 				}
@@ -79,16 +85,19 @@ public class LookupImporter
 			for (Class entityClass : entityClasses) {
 				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 					if (ServiceUtil.isSubLookupEntity(entityClass)) {
-						FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv", new NewFileHandler()
-						{
-							@Override
-							public void handleNewFile(File newFile)
+						SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
+						if (systemTable == null) {
+							FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv", new NewFileHandler()
 							{
-								File files[] = new File[1];
-								files[0] = newFile;
-								filesUpdatedOrAdded(files, true);
-							}
-						});
+								@Override
+								public void handleNewFile(File newFile)
+								{
+									File files[] = new File[1];
+									files[0] = newFile;
+									filesUpdatedOrAdded(files, true);
+								}
+							});
+						}
 					}
 				}
 			}
@@ -119,15 +128,20 @@ public class LookupImporter
 		try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(file)))) {
 
 			lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + className);
-			List<String[]> allData = reader.readAll();
-			for (String data[] : allData) {
-				try {
-					LookupEntity lookupEntity = (LookupEntity) lookupClass.newInstance();
-					lookupEntity.importData(data);
-					lookupEntities.add(lookupEntity);
-				} catch (Exception e) {
-					log.log(Level.WARNING, MessageFormat.format(e.toString() + " -  Unable Process line: {0} in file: {1}", new Object[]{Arrays.toString(data), file}));
+			SystemTable systemTable = (SystemTable) lookupClass.getAnnotation(SystemTable.class);
+			if (systemTable == null) {
+				List<String[]> allData = reader.readAll();
+				for (String data[] : allData) {
+					try {
+						LookupEntity lookupEntity = (LookupEntity) lookupClass.newInstance();
+						lookupEntity.importData(data);
+						lookupEntities.add(lookupEntity);
+					} catch (Exception e) {
+						log.log(Level.WARNING, MessageFormat.format(e.toString() + " -  Unable Process line: {0} in file: {1}", new Object[]{Arrays.toString(data), file}));
+					}
 				}
+			} else {
+				log.log(Level.WARNING, "Skipping System Table.   System Tables are not user-definable.");
 			}
 		} catch (IOException ex) {
 			log.log(Level.SEVERE, "Unable to read file: " + file, ex);

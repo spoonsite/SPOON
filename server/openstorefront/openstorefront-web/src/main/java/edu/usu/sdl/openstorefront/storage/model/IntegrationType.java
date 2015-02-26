@@ -16,7 +16,10 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import static edu.usu.sdl.openstorefront.storage.model.LookupEntity.newLookup;
 import edu.usu.sdl.openstorefront.util.SystemTable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Integration Types
@@ -33,6 +36,14 @@ public class IntegrationType
 
 	public IntegrationType()
 	{
+	}
+
+	@Override
+	protected Map<String, LookupEntity> systemCodeMap()
+	{
+		Map<String, LookupEntity> codeMap = new HashMap<>();
+		codeMap.put(JIRA, newLookup(IntegrationType.class, JIRA, "Jira"));
+		return codeMap;
 	}
 
 }

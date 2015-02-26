@@ -27,6 +27,10 @@ import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -69,6 +73,46 @@ public abstract class LookupEntity
 
 	public LookupEntity()
 	{
+	}
+
+	/**
+	 * Override to add codes
+	 *
+	 * @return
+	 */
+	protected Map<String, LookupEntity> systemCodeMap()
+	{
+		return new HashMap<>();
+	}
+
+	public <T extends LookupEntity> List<T> systemValues()
+	{
+		List<T> lookups = new ArrayList<>();
+		for (String key : systemCodeMap().keySet()) {
+			T lookup = (T) systemCodeMap().get(key);
+			lookups.add(lookup);
+		}
+
+		return lookups;
+	}
+
+	public <T extends LookupEntity> T systemValue(String code)
+	{
+		return (T) systemCodeMap().get(code);
+	}
+
+	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description)
+	{
+		T lookup = null;
+		try {
+			lookup = lookupClass.newInstance();
+			lookup.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+			lookup.setCode(code);
+			lookup.setDescription(description);
+		} catch (InstantiationException | IllegalAccessException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to create lookup", ex);
+		}
+		return lookup;
 	}
 
 	@Override

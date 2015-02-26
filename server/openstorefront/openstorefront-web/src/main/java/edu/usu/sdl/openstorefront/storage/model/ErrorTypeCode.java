@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.util.SystemTable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -36,6 +38,18 @@ public class ErrorTypeCode
 
 	public ErrorTypeCode()
 	{
+	}
+
+	@Override
+	protected Map<String, LookupEntity> systemCodeMap()
+	{
+		Map<String, LookupEntity> codeMap = new HashMap<>();
+		codeMap.put(SYSTEM, newLookup(ErrorTypeCode.class, SYSTEM, "System"));
+		codeMap.put(REST_API, newLookup(ErrorTypeCode.class, REST_API, "REST Api"));
+		codeMap.put(USER_ERROR, newLookup(ErrorTypeCode.class, USER_ERROR, "User Error"));
+		codeMap.put(AUTO_SYSTEM, newLookup(ErrorTypeCode.class, AUTO_SYSTEM, "Auto System"));
+		codeMap.put(IMPORT, newLookup(ErrorTypeCode.class, IMPORT, "Import"));
+		return codeMap;
 	}
 
 }

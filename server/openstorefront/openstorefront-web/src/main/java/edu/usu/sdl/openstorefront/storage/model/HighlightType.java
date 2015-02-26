@@ -16,7 +16,10 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import static edu.usu.sdl.openstorefront.storage.model.LookupEntity.newLookup;
 import edu.usu.sdl.openstorefront.util.SystemTable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -28,8 +31,22 @@ public class HighlightType
 		extends LookupEntity
 {
 
+	public static final String COMPONENT = "C";
+	public static final String ARTICLE = "A";
+	public static final String EXTERNAL_LINK = "EL";
+
 	public HighlightType()
 	{
+	}
+
+	@Override
+	protected Map<String, LookupEntity> systemCodeMap()
+	{
+		Map<String, LookupEntity> codeMap = new HashMap<>();
+		codeMap.put(COMPONENT, newLookup(HighlightType.class, COMPONENT, "Component"));
+		codeMap.put(ARTICLE, newLookup(HighlightType.class, ARTICLE, "Article"));
+		codeMap.put(EXTERNAL_LINK, newLookup(HighlightType.class, EXTERNAL_LINK, "External Link"));
+		return codeMap;
 	}
 
 }
