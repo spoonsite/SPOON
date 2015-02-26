@@ -16,7 +16,7 @@
 describe('searchAll_Search entire database', function() {
 
     // *** varies, depending on what is in the sample database ***
-    var totalResults = 59; // Article present
+    var totalResults = 60; // Articles present
 
     it('Global search (all blank) returns ' + totalResults + ' expected current db results', function() {
         // Open the main site
@@ -52,15 +52,15 @@ describe('searchAll_Search entire database', function() {
     it('Global search for (star)VANTAGE returned ' + resNum2 + ' expected results. ', function () {
         searchAll(searchFor2, resNum2);
     }, 20000);
-    searchFor3 = 't*R';    resNum3 = 31;
+    searchFor3 = 't*R';    resNum3 = 30;
     it('Global search for t(star)R returned ' + resNum3 + ' expected results. ', function () {
         searchAll(searchFor3, resNum3);
     }, 20000);
-    searchFor4 = 'TH??r';    resNum4 = 28;
+    searchFor4 = 'TH??r';    resNum4 = 27;
     it('Global search for TH(qm)(qm)r returned ' + resNum4 + ' expected results. ', function () {
         searchAll(searchFor4, resNum4);
     }, 20000);
-    searchFor5 = 't*i?';    resNum5 = 46;
+    searchFor5 = 't*i?';    resNum5 = 45;
     it('Global search for t(star)i(qm) returned ' + resNum5 + ' expected results. ', function () {
         searchAll(searchFor5, resNum5);
     }, 20000);

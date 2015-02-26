@@ -52,7 +52,7 @@ describe('search_Filters_by_Attribute', function() {
     attribFilter(checkB1, expResults1);
   }, 45000);
 
-  var checkBNA = 'DI2E Evaluation Level_NA';    var expResultsNA = 19;
+  var checkBNA = 'DI2E Evaluation Level_NA';    var expResultsNA = 18;
   it('Filter By Attribute- ' + checkBNA + ' gives ' + expResultsNA + ' results', function() {
     attribFilter(checkBNA, expResultsNA);
   }, 45000);
