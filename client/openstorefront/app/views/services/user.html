@@ -45,24 +45,21 @@
 <!-- This part is unique to each different tracking class... -->
 <div style="">
   <div style="text-align:left; padding-left:15px; padding-right:15px;">
-    <table style="" class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered">
       <tr>
         <th ng-click="changeSortOrder('updateUser')" class="imitateLink">Name&nbsp;<span ng-show="query.filterObj.sortField === 'updateUser' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'updateUser' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <!-- <th ng-click="changeSortOrder('componentId')" class="imitateLink">Component ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('componentTrackingId')" class="imitateLink">Event Tracking ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentTrackingId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentTrackingId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('eventDts')" class="imitateLink">Date Of Event&nbsp;<span ng-show="query.filterObj.sortField === 'eventDts' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'eventDts' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('clientIp')" class="imitateLink">Client IP&nbsp;<span ng-show="query.filterObj.sortField === 'clientIp' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'clientIp' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('trackEventTypeCode')" class="imitateLink">Event Type&nbsp;<span ng-show="query.filterObj.sortField === 'trackEventTypeCode' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'trackEventTypeCode' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('storageVersion')" class="imitateLink">Storage Version&nbsp;<span ng-show="query.filterObj.sortField === 'storageVersion' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'storageVersion' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th> -->
+        <th>Action</th>
       </tr>
-      <tr ng-repeat="item in data">
+      <tr ng-repeat-start="item in data" >
         <td>{{item.updateUser}}</td>
-       <!--  <td>{{item.data.componentId}}</td>
-        <td>{{item.data.componentTrackingId}}</td>
-        <td>{{getDate(item.data.eventDts)}}</td>
-        <td>{{item.data.clientIp}}</td>
-        <td>{{getEventType(item.data.trackEventTypeCode)}}</td>
-        <td>{{item.data.storageVersion}}</td> -->
+        <td style="padding:0px; width: 200px;">&nbsp;
+          <button class="btn btn-default" ng-click="item.show = !item.show"><i class="fa fa-view"></i>View Details</button>
+        </td>
+      </tr>
+      <tr ng-show="item.show" ng-repeat-end>
+        <td colspan="2">
+          These are them cool details!
+        </td>
       </tr>
     </table>
   </div>

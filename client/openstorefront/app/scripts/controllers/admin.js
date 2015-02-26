@@ -295,6 +295,14 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     });
 
     $scope.data.push({
+      'label': 'Tracking', 
+      'location':'views/admin/tracking.html', 
+      'toolTitle': 'Manage Tracking', 
+      'detailedDesc': "Track system, user, and component data.",
+      'key': 'tracking' 
+    });
+
+    $scope.data.push({
       'label': 'User Profiles', 
       'location':'views/admin/manageUserProfiles.html', 
       'toolTitle': 'User Profile Management',
