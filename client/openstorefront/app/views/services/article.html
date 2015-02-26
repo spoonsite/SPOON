@@ -1,4 +1,4 @@
-<h3 style="margin-left:15px;">Select options (default)</h3>
+<h3 style="margin-left:15px;">Select options</h3>
 <div class="form-group col-xs-6">
   <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i>&nbsp;Show date range</label><br>
   <div class="form-group col-xs-6" style="padding-left:0px; padding-right:0px;">
@@ -45,22 +45,22 @@
   <div style="text-align:left; padding-left:15px; padding-right:15px;">
     <table style="" class="table table-striped table-bordered">
       <tr>
-        <th ng-click="changeSortOrder('name')" class="imitateLink">Name&nbsp;<span ng-show="query.filterObj.sortField === 'name' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'name' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('componentId')" class="imitateLink">Component ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
+        <th ng-click="changeSortOrder('updateUser')" class="imitateLink">Name&nbsp;<span ng-show="query.filterObj.sortField === 'updateUser' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'updateUser' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
+        <!-- <th ng-click="changeSortOrder('componentId')" class="imitateLink">Component ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('componentTrackingId')" class="imitateLink">Event Tracking ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentTrackingId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentTrackingId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('eventDts')" class="imitateLink">Date Of Event&nbsp;<span ng-show="query.filterObj.sortField === 'eventDts' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'eventDts' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('clientIp')" class="imitateLink">Client IP&nbsp;<span ng-show="query.filterObj.sortField === 'clientIp' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'clientIp' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('trackEventTypeCode')" class="imitateLink">Event Type&nbsp;<span ng-show="query.filterObj.sortField === 'trackEventTypeCode' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'trackEventTypeCode' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('storageVersion')" class="imitateLink">Storage Version&nbsp;<span ng-show="query.filterObj.sortField === 'storageVersion' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'storageVersion' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
+        <th ng-click="changeSortOrder('storageVersion')" class="imitateLink">Storage Version&nbsp;<span ng-show="query.filterObj.sortField === 'storageVersion' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'storageVersion' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th> -->
       </tr>
       <tr ng-repeat="item in data">
-        <td>{{item.name}}</td>
-        <td>{{item.data.componentId}}</td>
+        <td>{{item.updateUser}}</td>
+       <!--  <td>{{item.data.componentId}}</td>
         <td>{{item.data.componentTrackingId}}</td>
         <td>{{getDate(item.data.eventDts)}}</td>
         <td>{{item.data.clientIp}}</td>
         <td>{{getEventType(item.data.trackEventTypeCode)}}</td>
-        <td>{{item.data.storageVersion}}</td>
+        <td>{{item.data.storageVersion}}</td> -->
       </tr>
     </table>
   </div>

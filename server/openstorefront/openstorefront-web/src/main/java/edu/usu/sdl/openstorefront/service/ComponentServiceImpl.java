@@ -2212,17 +2212,32 @@ public class ComponentServiceImpl
 			response.add(wrapper);
 		}
 		if (filter.getSortField().equals("name")) {
-			Collections.sort(response, new Comparator<ComponentTrackingCompleteWrapper>()
-					 {
-						 @Override
-						 public int compare(ComponentTrackingCompleteWrapper p1, ComponentTrackingCompleteWrapper p2)
+			if (filter.getSortOrder().equals(OpenStorefrontConstant.SORT_DESCENDING)) {
+				Collections.sort(response, new Comparator<ComponentTrackingCompleteWrapper>()
 						 {
-							 return p1.getName().compareToIgnoreCase(p2.getName());
-						 }
+							 @Override
+							 public int compare(ComponentTrackingCompleteWrapper p1, ComponentTrackingCompleteWrapper p2)
+							 {
+								 return p1.getName().compareToIgnoreCase(p2.getName());
+							 }
 
-			});
+				});
+			}
+			else {
+				Collections.sort(response, new Comparator<ComponentTrackingCompleteWrapper>()
+						 {
+							 @Override
+							 public int compare(ComponentTrackingCompleteWrapper p1, ComponentTrackingCompleteWrapper p2)
+							 {
+								 return p2.getName().compareToIgnoreCase(p1.getName());
+							 }
+
+				});
+
+			}
+
 		}
-		
+
 		result.setResult(response);
 		return result;
 	}

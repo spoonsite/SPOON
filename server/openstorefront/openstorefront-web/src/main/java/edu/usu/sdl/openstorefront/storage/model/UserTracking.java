@@ -69,6 +69,14 @@ public class UserTracking
 
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
+	private String organization;
+
+	@ConsumeField
+	@Sanitize(TextSanitizer.class)
+	private String userTypeCode;
+
+	@ConsumeField
+	@Sanitize(TextSanitizer.class)
 	private String osPlatform;
 
 	@NotNull
@@ -186,6 +194,38 @@ public class UserTracking
 	public void setDeviceType(String deviceType)
 	{
 		this.deviceType = deviceType;
+	}
+
+	/**
+	 * @return the organization
+	 */
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
+
+	/**
+	 * @return the userTypeCode
+	 */
+	public String getUserTypeCode()
+	{
+		return userTypeCode;
+	}
+
+	/**
+	 * @param userTypeCode the userTypeCode to set
+	 */
+	public void setUserTypeCode(String userTypeCode)
+	{
+		this.userTypeCode = userTypeCode;
 	}
 
 }

@@ -20,17 +20,9 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.service.query.QueryType;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
-import java.util.Arrays;
-import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -52,9 +44,9 @@ public class ComponentTrackingResource
 {
 	@GET
 	@RequireAdmin
-	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
+	@APIDescription("Get the list of tracking details on a specified component passing in a filter.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentTrackingWrapper.class)
+	@DataType(ComponentTrackingResult.class)
 	public Response getActiveComponentTracking(
 			@PathParam("id")
 			@RequiredParam String componentId,
@@ -65,32 +57,6 @@ public class ComponentTrackingResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-//		ComponentTracking trackingExample = new ComponentTracking();
-//		if (!filterQueryParams.getAll()) {
-//			trackingExample.setActiveStatus(filterQueryParams.getStatus());
-//		}
-//
-//		QueryByExample<ComponentTracking> queryByExample = new QueryByExample(trackingExample);
-//		queryByExample.setMaxResults(filterQueryParams.getMax());
-//		queryByExample.setFirstResult(filterQueryParams.getOffset());
-//
-//		ComponentTracking trackingOrderExample = new ComponentTracking();
-//		trackingOrderExample.setCreateDts(QueryByExample.DATE_FLAG);
-//		queryByExample.setOrderBy(trackingOrderExample);
-//		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
-//
-//		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(ComponentTracking.class, queryByExample);
-//
-//		int index = 0;
-//
-//		for(ComponentTracking temp : componentTrackings){
-//			if (temp.getEventDts().compareTo(filterQueryParams.getEnd()) < 0) {
-//			index++;
-//		}
-//		}
-//		List<ComponentTracking> result = componentTrackings.subList(0, index);
-//		
-//		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
 		ComponentTrackingResult result = service.getComponentService().getComponentTracking(filterQueryParams, componentId);
 		return sendSingleEntityResponse(result);
 	}

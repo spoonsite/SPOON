@@ -49,6 +49,8 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingResult;
+import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -336,6 +338,8 @@ public class UserServiceImpl
 			oldTracking.setScreenHeight(tracking.getScreenHeight());
 			oldTracking.setScreenWidth(tracking.getScreenWidth());
 			oldTracking.setTrackEventTypeCode(tracking.getTrackEventTypeCode());
+			oldTracking.setOrganization(tracking.getOrganization());
+			oldTracking.setUserTypeCode(tracking.getUserTypeCode());
 			oldTracking.setUserAgent(tracking.getUserAgent());
 			return persistenceService.persist(oldTracking);
 		}
@@ -436,6 +440,8 @@ public class UserServiceImpl
 				userTracking.setEventDts(TimeUtil.currentDate());
 				userTracking.setUpdateUser(profile.getUsername());
 				userTracking.setCreateUser(profile.getUsername());
+				userTracking.setOrganization(profile.getOrganization());
+				userTracking.setUserTypeCode(profile.getUserTypeCode());
 
 				String userAgent = request.getHeader(OpenStorefrontConstant.HEADER_USER_AGENT);
 				ReadableUserAgent readableUserAgent = UserAgentManager.parse(userAgent);
@@ -826,4 +832,92 @@ public class UserServiceImpl
 		return userLoginMap;
 	}
 
+	
+		private Boolean objectHasProperty(Object obj, String propertyName)
+	{
+		List<Field> properties = getAllFields(obj);
+		for (Field field : properties) {
+			if (field.getName().equalsIgnoreCase(propertyName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static List<Field> getAllFields(Object obj)
+	{
+		List<Field> fields = new ArrayList<Field>();
+		getAllFieldsRecursive(fields, obj.getClass());
+		return fields;
+	}
+
+	private static List<Field> getAllFieldsRecursive(List<Field> fields, Class<?> type)
+	{
+		for (Field field : type.getDeclaredFields()) {
+			fields.add(field);
+		}
+
+		if (type.getSuperclass() != null) {
+			fields = getAllFieldsRecursive(fields, type.getSuperclass());
+		}
+
+		return fields;
+	}
+	
+	@Override
+	public UserTrackingResult getUserTracking(FilterQueryParams filter, String userId)
+	{
+		StringBuilder queryString = new StringBuilder();
+		String countStr;
+		Map<String, Object> mappedParams = new HashMap<>();
+		Map<String, Object> countParams = new HashMap<>();
+		UserTrackingResult result = new UserTrackingResult();
+
+		queryString.append("select * from UserTracking ");
+
+		String whereClause = "";
+		if (!filter.getAll()) {
+			whereClause += " where activeStatus=:activeStatusParam ";
+			mappedParams.put("activeStatusParam", filter.getStatus());
+			queryString.append(whereClause);
+		}
+
+		if (filter.getStart() != null && filter.getEnd() != null) {
+			if (StringUtils.isNotBlank(whereClause)) {
+				queryString.append(" AND ");
+			}
+			else {
+				queryString.append(" where ");
+			}
+
+			queryString.append(" eventDts >= :startDate ");
+			queryString.append(" AND eventDts <= :endDate ");
+			mappedParams.put("startDate", filter.getStart());
+			mappedParams.put("endDate", filter.getEnd());
+
+		}
+
+		if (filter.getSortField() != null) {
+			if (filter.getSortField() != null && objectHasProperty(new UserTracking(), filter.getSortField())) {
+				queryString.append(" order by ").append(filter.getSortField());
+				if (filter.getSortOrder() != null && (filter.getSortOrder().equals(OpenStorefrontConstant.SORT_ASCENDING) || filter.getSortOrder().equals(OpenStorefrontConstant.SORT_DESCENDING))) {
+					queryString.append(" ").append(filter.getSortOrder());
+				}
+			}
+		}
+		countStr = queryString.toString();
+		countParams = mappedParams;
+
+		if (filter.getOffset() > 0) {
+			queryString.append(" SKIP ").append(filter.getOffset());
+		}
+		if (filter.getMax() > 0) {
+			queryString.append(" LIMIT ").append(filter.getMax());
+		}
+
+		result.setCount(persistenceService.query(countStr, countParams).size());
+		result.setResult(persistenceService.query(queryString.toString(), mappedParams));
+		return result;
+	}
+	
 }
