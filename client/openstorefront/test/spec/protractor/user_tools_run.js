@@ -28,7 +28,7 @@ describe('user-tools_User logged in drop-down', function() {
         // Click on 2nd menu item which is "User Profile"
         element.all(by.css('.dropdown-menu a')).get(1).click();
         browser.driver.sleep(1000);
-        expect(element.all(by.css('.btn')).count()).toEqual(10);
+        expect(element.all(by.css('.btn')).count()).toEqual(13);
 
     }, 61000);
 
@@ -68,7 +68,7 @@ describe('user-tools_User logged in drop-down', function() {
       // Click on 2nd menu item which is "User Profile"
       element.all(by.css('.dropdown-menu a')).get(1).click();
       browser.driver.sleep(1500);
-      expect(element.all(by.css('.btn')).count()).toEqual(10);
+      expect(element.all(by.css('.btn')).count()).toEqual(13);
 
       // Check the Update User Info checkbox to allow editing
       element(by.id('myCheckValue')).click();
@@ -102,7 +102,7 @@ describe('user-tools_User logged in drop-down', function() {
         //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         element.all(by.css('.dropdown-menu a')).get(2).click();
         browser.driver.sleep(6000);
-        expect(element.all(by.css('.btn')).count()).toEqual(21);
+        expect(element.all(by.css('.btn')).count()).toEqual(22);
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(1000);
     }, 25000);
@@ -115,7 +115,7 @@ describe('user-tools_User logged in drop-down', function() {
         //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         element.all(by.css('.dropdown-menu a')).get(3).click();
         browser.driver.sleep(1800);
-        expect(element.all(by.css('.btn')).count()).toEqual(13);
+        expect(element.all(by.css('.btn')).count()).toEqual(31);
 
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(5000);

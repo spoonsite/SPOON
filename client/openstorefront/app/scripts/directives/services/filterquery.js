@@ -56,6 +56,13 @@ app.directive('filterquery',['business', function (Business) {
       }, function(){
         scope.eventCodes = [];
       })
+      Business.lookupservice.getLookupCodes('UserTypeCode').then(function(result){
+        // console.log('track event codes', result);
+        
+        scope.eventCodes = result? result: [];
+      }, function(){
+        scope.eventCodes = [];
+      })
 
       scope.sendRequest = function(){
         var query = angular.copy(scope.query);
@@ -133,6 +140,17 @@ app.directive('filterquery',['business', function (Business) {
       scope.getEventType = function(code){
         if (scope.eventCodes.length){
           var found = _.find(scope.eventCodes, {'code': code});
+          if (found) {
+            return found.description;
+          } else {
+            return code;
+          }
+        }
+        return code;
+      }
+      scope.getUserType = function(code){
+        if (scope.userCodes.length){
+          var found = _.find(scope.userCodes, {'code': code});
           if (found) {
             return found.description;
           } else {
