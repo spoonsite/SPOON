@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -46,7 +46,7 @@ public class ArticleTrackingResource
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component passing in a filter.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentTrackingResult.class)
+	@DataType(ArticleTrackingResult.class)
 	public Response getActiveComponentTracking(
 			@PathParam("id")
 			@RequiredParam String componentId,
@@ -57,7 +57,7 @@ public class ArticleTrackingResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		ComponentTrackingResult result = service.getComponentService().getComponentTracking(filterQueryParams, componentId);
+		ArticleTrackingResult result = service.getAttributeService().getAttributeTracking(filterQueryParams, componentId);
 		return sendSingleEntityResponse(result);
 	}
 }
