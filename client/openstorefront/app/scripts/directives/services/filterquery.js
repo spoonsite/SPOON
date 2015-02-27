@@ -31,10 +31,11 @@ app.directive('filterquery',['business', function (Business) {
     restrict: 'E',
     scope:{
       url: '@',
-      defaultMax: '@'
+      max: '@'
     },
     link: function postLink(scope, element, attrs) {
-      scope.defaultMax = scope.defaultMax? parseInt(scope.defaultMax): 50;
+      scope.defaultMax = 50;
+      scope.defaultMax = scope.max? parseInt(scope.max): 50;
       scope.today = new Date();
       scope.query = {};
       scope.query.filterObj = angular.copy(utils.queryFilter);
@@ -44,10 +45,16 @@ app.directive('filterquery',['business', function (Business) {
       scope.pagination = {};
       scope.pagination.currentPage = 1;
       scope.pagination.itemsPerPage = scope.defaultMax;
-      scope.pagination.maxSize = 10;
+      scope.pagination.maxSize = 6;
       scope.showPagination = true;
       scope.maxResults;
       scope.maxPerPage;
+      scope.query.filterObj.sortField = 'eventDts';
+      scope.query.filterObj.sortOrder = 'DESC';
+      scope.popover = {
+        "title": "Additional filters"
+      };
+
 
       Business.lookupservice.getLookupCodes('TrackEventCode').then(function(result){
         // console.log('track event codes', result);
@@ -59,9 +66,9 @@ app.directive('filterquery',['business', function (Business) {
       Business.lookupservice.getLookupCodes('UserTypeCode').then(function(result){
         // console.log('track event codes', result);
         
-        scope.eventCodes = result? result: [];
+        scope.userCodes = result? result: [];
       }, function(){
-        scope.eventCodes = [];
+        scope.userCodes = [];
       })
 
       scope.sendRequest = function(){
@@ -138,7 +145,7 @@ app.directive('filterquery',['business', function (Business) {
       }
 
       scope.getEventType = function(code){
-        if (scope.eventCodes.length){
+        if (scope.eventCodes && scope.eventCodes.length){
           var found = _.find(scope.eventCodes, {'code': code});
           if (found) {
             return found.description;
@@ -149,7 +156,7 @@ app.directive('filterquery',['business', function (Business) {
         return code;
       }
       scope.getUserType = function(code){
-        if (scope.userCodes.length){
+        if (scope.userCodes && scope.userCodes.length){
           var found = _.find(scope.userCodes, {'code': code});
           if (found) {
             return found.description;
