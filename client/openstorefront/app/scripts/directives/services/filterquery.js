@@ -24,6 +24,8 @@ app.directive('filterquery',['business', function (Business) {
       return 'views/services/component.html';
     } else if (attrs.type === 'article') {
       return 'views/services/article.html';
+    } else {
+      return 'views/services/default.html';
     }
   }
   return {
@@ -83,7 +85,7 @@ app.directive('filterquery',['business', function (Business) {
         }
         // console.log('We sent the request', query);
         Business.trackingservice.get(query).then(function(result){
-          // console.log('result', result);
+          console.log('result', result);
           scope.backupResult = result;
           scope.data = result? result.result: [];
           scope.pagination.totalItems = result.count;
@@ -108,6 +110,12 @@ app.directive('filterquery',['business', function (Business) {
         }
       }
 
+      scope.clearSort = function() {
+        scope.query.filterObj.sortField = 'eventDts';
+        scope.query.filterObj.sortOrder = 'DESC';
+        scope.sendRequest();
+      }
+
       scope.checkMax = function(){
         if (scope.maxResults) {
           scope.query.filterObj.offset = 0;
@@ -122,10 +130,10 @@ app.directive('filterquery',['business', function (Business) {
         jQuery('html,body').animate({scrollTop:0},0);
       }
 
-      scope.setPageMax = function(){
-        if (scope.maxPerPage){
-          scope.query.filterObj.max = scope.maxPerPage;
-          scope.pagination.itemsPerPage = scope.maxPerPage
+      scope.setPageMax = function(maxPerPage){
+        if (maxPerPage){
+          scope.query.filterObj.max = maxPerPage;
+          scope.pagination.itemsPerPage = maxPerPage
         } else {
           scope.query.filterObj.max = 20;
           scope.pagination.itemsPerPage = 20;

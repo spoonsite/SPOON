@@ -833,7 +833,7 @@ public class UserServiceImpl
 	}
 
 	
-		private Boolean objectHasProperty(Object obj, String propertyName)
+	private Boolean objectHasProperty(Object obj, String propertyName)
 	{
 		List<Field> properties = getAllFields(obj);
 		for (Field field : properties) {
