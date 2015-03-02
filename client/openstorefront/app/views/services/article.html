@@ -1,4 +1,4 @@
-<h3 style="margin-left:15px;">Select options</h3>
+<h3 style="margin-left:15px; margin-right:15px;">Select options <span class="pull-right"> <a ng-href="{{generateDownloadLink()}}" class="btn btn-default">Export&nbsp;<i class="fa fa-sign-out"></i></a></span></h3>
 <div class="form-group col-xs-6">
   <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i>&nbsp;Show date range</label><br>
   <div class="form-group col-xs-6" style="padding-left:0px; padding-right:0px;">
@@ -49,4 +49,6 @@
     </table>
   </div>
 </div>
-<pagination ng-show="showPagination" style="display:inline-block; margin: 0px; margin-left:15px; margin-top:-19px;" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" max-size="pagination.maxSize" boundary-links="true" rotate="false" num-pages="pagination.numPages" ng-change="pageChanged()"></pagination><a style="margin-top:-27px;" tabindex="0" role="button" class="btn btn-default" data-placement="bottom" title="{{popover.title}}" data-content-template="views/services/filter.html" data-animation="am-flip-x" bs-popover>Filter Options</a><button class="btn btn-default" style="margin-top:-27px;" ng-click="toTop();">Top&nbsp;<i class="fa fa-arrow-up"></i></button>
+<div style="margin-left:15px;">
+  <pagination ng-show="showPagination" style="display:inline-block; margin: 0px; margin-top:-19px;" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" max-size="pagination.maxSize" boundary-links="true" rotate="false" num-pages="pagination.numPages" ng-change="pageChanged()"></pagination><a style="margin-top:-27px;" tabindex="0" role="button" class="btn btn-default" data-placement="bottom" title="{{popover.title}}" data-content-template="views/services/filter.html" data-animation="am-flip-x" bs-popover>Filter Options</a><button class="btn btn-default" style="margin-top:-27px;" ng-click="toTop();">Top&nbsp;<i class="fa fa-arrow-up"></i></button>
+</div>
