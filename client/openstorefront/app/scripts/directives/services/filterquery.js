@@ -126,6 +126,27 @@ app.directive('filterquery',['business', function (Business) {
         }
       }
 
+      scope.generateDownloadLink = function(){
+        var url = 'api/v1/resource/';
+        if (attrs.type === 'user'){
+          url += 'usertracking/export?';
+        } else if (attrs.type === 'component'){
+          url += 'componenttracking/export?';
+        } else if (attrs.type === 'article'){
+          url += 'articletracking/export?';
+        }
+        var query = angular.copy(scope.query.filterObj);
+        if (scope.maxResults) {
+          query.offset = 0;
+          query.max = scope.maxResults;
+        } else {
+          query.offset = 0;
+          query.max = 0;
+        }
+        url += query.toQuery();
+        return url;
+      }
+
       scope.toTop = function(){
         jQuery('html,body').animate({scrollTop:0},0);
       }

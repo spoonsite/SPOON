@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import au.com.bytecode.opencsv.CSVWriter;
+import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  *
  * @author jlaw
  */
 public class ComponentTrackingCompleteWrapper
+		implements ExportImport
 {
+
 	private String name;
 	private ComponentTracking data;
 
-	public ComponentTrackingCompleteWrapper(){
+	public ComponentTrackingCompleteWrapper()
+	{
 	}
-	
+
 	/**
 	 * @return the name
 	 */
@@ -61,5 +68,30 @@ public class ComponentTrackingCompleteWrapper
 	{
 		this.data = data;
 	}
-	
+
+	@Override
+	public String export()
+	{
+		StringWriter stringWriter = new StringWriter();
+		CSVWriter writer = new CSVWriter(stringWriter);
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		
+		writer.writeNext(new String[]{getName(),
+			getData().getComponentId(),
+			getData().getComponentResourceId(),
+			getData().getComponentTrackingId(),
+			df.format(getData().getCreateDts()),
+			getData().getClientIp(),
+			getData().getTrackEventTypeCode(),
+			getData().getCreateUser()
+		});
+		return stringWriter.toString();
+	}
+
+	@Override
+	public void importData(String[] data)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 }
