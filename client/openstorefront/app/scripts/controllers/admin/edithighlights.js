@@ -88,7 +88,7 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
     return ' ';
   }
 
-  $scope.deleteHighlight = function(highlight){
+  $scope.deleteHighlights = function(highlight){
     var response = confirm("Are you sure you want to delete that highlight?")
     if (response) {
       Business.highlightservice.deleteHighlight(highlight.highlightId).then(function(result){
