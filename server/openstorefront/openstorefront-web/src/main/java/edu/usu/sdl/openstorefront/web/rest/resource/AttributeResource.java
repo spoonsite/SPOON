@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
@@ -38,6 +39,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -172,6 +174,31 @@ public class AttributeResource
 		response.header("Content-Disposition", "attachment; filename=\"allattributes.csv\"");
 		return response.build();
 	}
+	
+	@GET
+	@APIDescription("Gets all articles")
+	@RequireAdmin
+	@Produces({MediaType.WILDCARD})
+	@DataType(ArticleView.class)
+	@Path("/articles/export")
+	public Response getComponentExport()
+	{
+		List<ArticleView> articles = service.getAttributeService().getArticles();
+		if (articles != null) {
+			String componentJson;
+			try {
+				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(articles);
+			} catch (JsonProcessingException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to export articles.", ex);
+			}
+			Response.ResponseBuilder response = Response.ok(componentJson);
+			response.header("Content-Disposition", "attachment; filename=\"allArticlesExport.json\"");
+			return response.build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+	
 
 	@GET
 	@APIDescription("Gets codes with articles.")
