@@ -147,6 +147,15 @@ public class SystemServiceImpl
 	}
 
 	@Override
+	public void deleteHighlight(String hightlightId)
+	{
+		Highlight highlight = persistenceService.findById(Highlight.class, hightlightId);
+		if (highlight != null) {
+			persistenceService.delete(highlight);
+		}
+	}
+
+	@Override
 	public void activateHighlight(String hightlightId)
 	{
 		Highlight highlight = persistenceService.findById(Highlight.class, hightlightId);

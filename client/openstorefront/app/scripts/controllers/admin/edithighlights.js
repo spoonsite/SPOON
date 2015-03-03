@@ -88,6 +88,25 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
     return ' ';
   }
 
+  $scope.deleteHighlight = function(highlight){
+    var response = confirm("Are you sure you want to delete that highlight?")
+    if (response) {
+      Business.highlightservice.deleteHighlight(highlight.highlightId).then(function(result){
+        triggerAlert('The highlight was deleted', 'highlightAlert', 'body', 6000);
+        $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
+        $timeout(function(){
+          $scope.getHighlights(true);
+        }, 1000);
+      }, function(){
+        triggerAlert('There were errors when deleting the highlight', 'highlightAlert', 'highlightEditModal', 6000);
+        $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
+        $timeout(function(){
+          $scope.getHighlights(true);
+        }, 1000);
+      })
+    }
+  }
+
   $scope.changeActivity = function(highlight){
     var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). Continue?");
     if (cont) {
