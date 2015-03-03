@@ -1,6 +1,6 @@
 <!-- <button ng-click="setData()" class="btn btn-primary">Insert Resources</button> -->
 <div ng-controller="adminEditArticlesCtrl" style="padding-left: 20px; padding-right: 20px;">
-
+  <loader trigger="adminArticlesEdit"></loader>
   <form class="form-inline" role="form">
     <div class="form-group" style="margin-left:9px;">
       <label>Type</label>
@@ -17,6 +17,7 @@
     </div>
     
     <div class="form-group pull-right">
+      <button ng-click="importFile()" class="btn btn-default">Import&nbsp;<i class="fa fa-sign-in"></i></button>
       <a href="api/v1/resource/attributes/articles/export" class="btn btn-default">Export&nbsp;<i class="fa fa-sign-out"></i></a>
     </div>
 
@@ -28,16 +29,16 @@
     <tr>
       <th>Type</th>
       <th>Code</th>
-      <th>Title</th>
       <th>Description</th>
+      <th>Title</th>
       <th>Actions</th>
     </tr>
     <tr ng-repeat="article in articles">
       <td style="padding: 5px;">{{article.typeDescription}}</td>
       <td style="padding: 5px;">{{article.codeDescription}}</td>
-      <td style="padding: 5px;">{{article.title}}</td>
       <td ng-show="article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis;" width="40%" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{getArticleDesc(article.description)}}">{{article.description}}</td>
       <td ng-show="!article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
+      <td style="padding: 5px;">{{article.title}}</td>
       <td style="padding:0px 5px;">
         <button type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="deleteArticle(article)"><i class="fa fa-trash"></i></button>
       </td>

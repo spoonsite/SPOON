@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.action;
 import au.com.bytecode.opencsv.CSVReader;
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
@@ -26,10 +27,12 @@ import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,7 +63,7 @@ public class UploadAction
 
 	private static final Logger log = Logger.getLogger(UploadAction.class.getName());
 
-	@Validate(required = true, on = {"UploadLookup", "UploadComponent", "UploadAttributes", "UploadSvcv4"})
+	@Validate(required = true, on = {"UploadLookup", "UploadComponent", "UploadArticles", "UploadAttributes", "UploadSvcv4"})
 	private FileBean uploadFile;
 
 	@Validate(required = true, on = "UploadLookup")
@@ -101,21 +104,26 @@ public class UploadAction
 							LookupEntity lookupEntity = (LookupEntity) lookupClass.newInstance();
 							lookupEntity.importData(data);
 							lookupEntities.add(lookupEntity);
-						} catch (Exception e) {
+						}
+						catch (Exception e) {
 							errorsMessages.append(MessageFormat.format(e.toString() + " -  Unable Process line: {0}", new Object[]{Arrays.toString(data)}));
 						}
 					}
 					if (errorsMessages.length() > 0) {
 						errors.put("uploadFile", errorsMessages.toString());
 					}
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
-				} catch (ClassNotFoundException ex) {
+				}
+				catch (ClassNotFoundException ex) {
 					errors.put("entityName", "Unable to find Lookup Class:  " + entityName);
-				} finally {
+				}
+				finally {
 					try {
 						uploadFile.delete();
-					} catch (IOException ex) {
+					}
+					catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException(ex);
 					}
 				}
@@ -127,7 +135,8 @@ public class UploadAction
 				}
 			}
 			return streamUploadResponse(errors);
-		} else {
+		}
+		else {
 			return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 		}
 	}
@@ -165,18 +174,22 @@ public class UploadAction
 					taskRequest.setAllowMultiple(false);
 					taskRequest.setName("Processing Attribute Upload");
 					service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
-				} finally {
+				}
+				finally {
 					try {
 						uploadFile.delete();
-					} catch (IOException ex) {
+					}
+					catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException(ex);
 					}
 				}
 			}
 			return streamUploadResponse(errors);
-		} else {
+		}
+		else {
 			return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 		}
 	}
@@ -195,20 +208,70 @@ public class UploadAction
 			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			try {
 				List<ComponentAll> components = StringProcessor.defaultObjectMapper().readValue(uploadFile.getInputStream(), new TypeReference<List<ComponentAll>>()
-				{
+																						{
 				});
 
 				TaskRequest taskRequest = new TaskRequest();
 				taskRequest.setAllowMultiple(false);
 				taskRequest.setName("Uploading " + components.size() + " Component(s)");
 				service.getAyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
-			} catch (IOException ex) {
+			}
+			catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
-			} finally {
+			}
+			finally {
 				try {
 					uploadFile.delete();
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
+	@HandlesEvent("UploadArticles")
+	public Resolution uploadArticles()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			try {
+				List<ArticleView> articles = StringProcessor.defaultObjectMapper().readValue(uploadFile.getInputStream(), new TypeReference<List<ArticleView>>()
+			    {
+				});
+				Boolean flag = false;
+				for (ArticleView article : articles) {
+					AttributeCodePk pk = new AttributeCodePk();
+					pk.setAttributeCode(article.getAttributeCode());
+					pk.setAttributeType(article.getAttributeType());
+					AttributeCode temp = service.getPersistenceService().findById(AttributeCode.class, pk);
+					if (temp == null) {
+						flag = true;
+						errors.put("attributeCode", "Unable to find attribute code: " + article.getAttributeCode() + " of type: " + article.getAttributeType() + ". Make sure to use valid attribute code and types.");
+					}
+				}
+				if (!flag) {
+					TaskRequest taskRequest = new TaskRequest();
+					taskRequest.setAllowMultiple(false);
+					taskRequest.setName("Uploading " + articles.size() + " Articles(s)");
+					service.getAyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
+				}
+			}
+			catch (IOException ex) {
+				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+			}
+			finally {
+				try {
+					if (uploadFile != null){
+						uploadFile.delete();
+					}
+				}
+				catch (IOException ex) {
 					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
 			}

@@ -290,6 +290,32 @@ public class AttributeServiceImpl
 	}
 
 	@Override
+	public void saveArticle(ArticleView article)
+	{
+		getAttributeServicePrivate().performSaveArticle(article);
+		getSearchService().addIndex(article);
+	}
+	
+	@Override
+	public void performSaveArticle(ArticleView article)
+	{
+		AttributeCodePk pk = new AttributeCodePk();
+		AttributeCode code = new AttributeCode();
+		Article temp = new Article();
+		
+		pk.setAttributeCode(article.getAttributeCode());
+		pk.setAttributeType(article.getAttributeType());
+		
+		temp.setDescription(article.getDescription());
+		temp.setTitle(article.getTitle());
+		
+		code.setArticle(temp);
+		code.setAttributeCodePk(pk);
+		
+		performSaveArticle(code, article.getHtml());
+	}
+	
+	@Override
 	public void performSaveArticle(AttributeCode attributeCode, String articleContents)
 	{
 		Objects.requireNonNull(attributeCode, "AttributeCode is required.");
@@ -1165,6 +1191,17 @@ public class AttributeServiceImpl
 
 		result.setResult(response);
 		return result;
+	}
+
+	@Override
+	public void importArticles(List<ArticleView> articles)
+	{
+		articles.forEach(article -> {
+			AttributeCodePk temp = new AttributeCodePk();
+			temp.setAttributeCode(article.getAttributeCode());
+			temp.setAttributeType(article.getAttributeType());
+			saveArticle(article);
+		});
 	}
 
 }
