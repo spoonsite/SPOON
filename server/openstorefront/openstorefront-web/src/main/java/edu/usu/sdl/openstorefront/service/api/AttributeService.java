@@ -152,6 +152,13 @@ public interface AttributeService
 	public void saveArticle(AttributeCode attributeCode, String articleContents);
 
 	/**
+	 * Saves a new article (This will scrub the article data prior to save)
+	 *
+	 * @param article
+	 */
+	public void saveArticle(ArticleView article);
+
+	/**
 	 * Deletes a article. WARNING: This will remove the link and delete any
 	 * internal file.
 	 *
@@ -166,6 +173,13 @@ public interface AttributeService
 	 * @return 
 	 */
 	public ArticleTrackingResult getAttributeTracking(FilterQueryParams filter, String name);
+	
+	/**
+	 * This will handle syncing all the component of the list.
+	 *
+	 * @param articles
+	 */
+	public void importArticles(List<ArticleView> articles);
 	
 	/**
 	 * InActivates Type. Also it will inactive associated componentAttribute

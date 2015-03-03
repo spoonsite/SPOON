@@ -85,7 +85,6 @@ app.directive('filterquery',['business', function (Business) {
         }
         // console.log('We sent the request', query);
         Business.trackingservice.get(query).then(function(result){
-          console.log('result', result);
           scope.backupResult = result;
           scope.data = result? result.result: [];
           scope.pagination.totalItems = result.count;

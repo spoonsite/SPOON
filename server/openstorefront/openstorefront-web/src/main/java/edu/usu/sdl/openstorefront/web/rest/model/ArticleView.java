@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.io.ExportImport;
+import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -72,7 +73,7 @@ public class ArticleView
 	public ArticleView()
 	{
 	}
-
+	
 	public static ArticleView toView(AttributeCode attributeCode)
 	{
 		ServiceProxy service = new ServiceProxy();

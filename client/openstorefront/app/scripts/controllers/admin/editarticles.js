@@ -22,6 +22,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.attributeType = {};
   $scope.attributeCode = {};
   $scope.codes = {};
+  $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
 
   // /***************************************************************
   // * If we don't have a landing page, we're going to set up one for now so that
@@ -37,14 +38,12 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
     Business.articleservice.getType($scope.attributeType.type, true, true).then(function(result){
       result.codes.sort(compare);
       $scope.codes.codes = (result && result.codes)? angular.copy(result.codes): [];
-      console.log('$scope.codes', $scope.codes.codes);
     }, function(){
       $scope.codes.codes = [];
     });
   }
   $scope.$watch('attributeType', function(){
     if ($scope.attributeType.type){
-      console.log('$scope.attributeType.type', $scope.attributeType.type);
       $scope.getAttributeCodes();
     }
   }, true)
@@ -52,7 +51,6 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.getAttributes = function(override) {
     Business.getFilters(override, true).then(function(result){
       $scope.attributes = result? angular.copy(result): [];
-      console.log('$scope.attributes', $scope.attributes);
       
       $timeout(function(){
         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminAttributes');
@@ -66,9 +64,10 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.getArticles = function(override){
     Business.articleservice.getArticles(override, true).then(function(result){
       $scope.articles = result? angular.copy(result): [];
-      console.log('$scope.articles', $scope.articles);
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
     }, function(){
       $scope.articles = [];
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
     })
   }
   $scope.getArticles(true);
@@ -94,13 +93,9 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
     });
 
     modalInstance.result.then(function (result) {
-      console.log('result', result);
       $scope.getArticles(true);
-      
     }, function (result) {
-      console.log('result', result);
       $scope.getArticles(true);
-      
     });
   }
   
@@ -120,9 +115,45 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
     $scope.editContent(article);
   }
 
+  $scope.importFile = function(){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/fileupload.html',
+      controller: 'AdminAddMediaCtrl',
+      backdrop: 'static',
+      size: 'sm',
+      resolve: {
+        title: function () {
+          return "Import Articles File";
+        },
+        url: function () {
+          return "Upload.action?UploadArticles";
+        },
+        single: function () {
+          return true;
+        },
+        alias: function () {
+          return 'uploadFile';
+        }
+      }
+    });
+
+    modalInstance.result.then(function (result) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
+      $timeout(function(){
+        $scope.getArticles(true);
+      }, 1000);
+    }, function (result) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
+      $timeout(function(){
+        $scope.getArticles(true);
+      }, 1000);
+    });       
+  };
+
+
+
   $scope.deleteArticle = function(article){
     Business.articleservice.deleteArticle(article).then(function(result){
-      console.log('result', result);
       triggerAlert('The article was deleted.', 'articleAlert', 'body', 6000)
       $scope.getArticles(true);
 
@@ -150,10 +181,8 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
 
   $scope.preview = function(){
     $scope.article.html = $scope.getEditorContent();
-    console.log('$scope.article', $scope.article);
     
     Business.articleservice.previewArticle($scope.article).then(function(result){
-      console.log('Preview result', result);
       var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
       url = url + '/landing' + '?' + $.param({
         type: 'preview',
@@ -161,7 +190,6 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
       });
       window.open(url, 'Aritlce_Preview_' + $scope.article.attributeType + $scope.article.attributeCode, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
     }, function(){
-      console.log('We didnt get a preview');
       
     })
   }
@@ -176,8 +204,6 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
       html = '<div id="allTheContent">' + html + '</div>';
       var temp = $(html);
     }
-    console.log('$scope.editorcontent', html);
-    console.log('temp', temp);
     
     var content = $('<div></div>');
     _.each(temp, function(e){
@@ -212,7 +238,6 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
     // $scope.editorContentWatch = $scope.editorContent;
     $scope.article.html = $scope.getEditorContent();
     Business.articleservice.saveArticle($scope.article).then(function(result){
-      console.log('$scope.article', $scope.article);
       $uiModalInstance.close();
     }, function(){
       triggerAlert('There was an error saving your article, please try again.', 'articleAlert', 'articleEditModal', 6000);
@@ -225,7 +250,6 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
 
   $scope.getContent = function(){
     if ($scope.type && $scope.code && !$scope.article.html) {
-      console.log('type/code', $scope.type + '---' + $scope.code);
       Business.articleservice.getArticle($scope.type, $scope.code, true).then(function (result) { /*jshint unused:false*/
         $scope.editorContent = result || ' ';
       }, function(){
