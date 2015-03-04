@@ -37,6 +37,7 @@ public class LinkSanitizer
 					.addAttributes("a", "href")
 					.addProtocols("a", "href", "ftp", "http", "https", "mailto")
 					.addEnforcedAttribute("a", "rel", "nofollow"));
+			safe = safe.replace("&amp;", "&");
 			return safe;
 		}
 	}
