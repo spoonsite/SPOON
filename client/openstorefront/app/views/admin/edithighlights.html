@@ -1,5 +1,6 @@
 <div ng-controller="AdminEditHighlightsCtrl" style="padding-left: 20px; padding-right: 20px;">
   <loader trigger="adminHighlights"></loader>
+  <button type="button" class="btn btn-default" ng-click="editHighlights({})">Add Highlight&nbsp;<i class="fa fa-plus"></i></button>
   <table class="table table-striped table-bordered" style="table-layout:fixed;">
     <tr>
       <th ng-click="setPredicate('title')">Title&nbsp;<span ng-show="predicate === 'title'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></th>
@@ -16,7 +17,7 @@
       <td ng-show="highlight.link" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{highlight.link}}"><a href="{{highlight.link}}">Live Link</a></td>
       <td ng-show="!highlight.link" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
       <td style="padding:0px 5px;">
-        <button type="button" class="btn btn-sm btn-default" ng-click="editHighlights(highlight)"><i class="fa fa-edit"></i></button><!-- <button type="button" class="btn btn-sm btn-default" ng-click="deleteHighlights(highlight)"><i class="fa fa-trash"></i></button> --><button type="button" title="Activate/Deactivate Highlight" class="btn btn-default btn-sm" ng-click="changeActivity(highlight)" ng-class="highlight.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
+        <button type="button" class="btn btn-sm btn-default" ng-click="editHighlights(highlight)"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="deleteHighlights(highlight)"><i class="fa fa-trash"></i></button><button type="button" title="Activate/Deactivate Highlight" class="btn btn-default btn-sm" ng-click="changeActivity(highlight)" ng-class="highlight.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
       </td>
     </tr>
   </table>

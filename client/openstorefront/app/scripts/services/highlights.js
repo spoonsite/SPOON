@@ -201,5 +201,31 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     return deferred.promise;
   }
 
+  highlights.deleteHighlight = function(id) {
+    var deferred = $q.defer();
+    if (id) {
+      $http({
+        method: 'DELETE',
+        url: 'api/v1/resource/highlights/delete/' + id
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }
+
   return highlights;
 }]);
