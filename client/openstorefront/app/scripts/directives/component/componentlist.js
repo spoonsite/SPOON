@@ -239,15 +239,26 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                 }
                 $timeout(function(){
                   scope.init();
-                  scope.$apply();
+                  $timeout(function(){
+                    scope.$apply();
+                  })
                 })
               }, function(){
                 scope.data = [];
                 $timeout(function(){
                   scope.init();
-                  scope.$apply();
+                  $timeout(function(){
+                    scope.$apply();
+                  })
                 })
               });
+            } else {
+              $timeout(function(){
+                scope.init();
+                $timeout(function(){
+                  scope.$apply();
+                })
+              })
             }
             if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
               scope.isTitle = true;
