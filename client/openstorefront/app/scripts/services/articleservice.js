@@ -69,7 +69,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     } else if (type && code){
       $http({
         method: 'GET',
-        url: 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code+'/article'
+        url: 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(type)+'/attributecodes/'+encodeURIComponent(code)+'/article'
       }).success(function(data, status, headers, config){
         if (data && data !== 'false' && isNotRequestError(data)){
           removeError();
@@ -126,7 +126,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
 
     $http({
       method: 'GET',
-      url: 'api/v1/resource/attributes/attributetypes/'+type+'/architecture'
+      url: 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(type)+'/architecture'
     }).success(function(data, status, headers, config){        
       if (data && data !== 'false' && isNotRequestError(data)){
         removeError();
@@ -148,7 +148,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     var deferred = $q.defer();
     if (type) {
       var method = 'GET';
-      var url = 'api/v1/resource/attributes/attributetypes/'+type;
+      var url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(type);
       var params = {}
       if (view) {
         params = {
@@ -184,7 +184,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     var deferred = $q.defer();
     if (type && code) {
       var method = 'GET';
-      var url = 'api/v1/resource/attributes/attributetypes/'+ type + '/attributecodes/' + code;
+      var url = 'api/v1/resource/attributes/attributetypes/'+ encodeURIComponent(type) + '/attributecodes/' + encodeURIComponent(code);
       $http({
         method: method,
         url: url,
@@ -215,7 +215,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     if (type) {
       $http({
         method: 'DELETE',
-        url: 'api/v1/resource/attributes/attributetypes/' + type
+        url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(type)
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
@@ -241,7 +241,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     if (type) {
       $http({
         method: 'DELETE',
-        url: 'api/v1/resource/attributes/attributetypes/' + type + '/attributecodes/' + code
+        url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(type) + '/attributecodes/' + encodeURIComponent(code)
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
@@ -275,11 +275,11 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
         data.attributeCodePk = {};
         data.attributeCodePk.attributeCode = data.code;
         data.attributeCodePk.attributeType = type;
-        url = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes';
+        url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(type)+'/attributecodes';
         method = 'POST';
       } else {
         method = 'PUT';
-        url = 'api/v1/resource/attributes/attributetypes/'+type+'/attributecodes/'+code;
+        url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(type)+'/attributecodes/'+encodeURIComponent(code);
       }
       $http({
         method: method,
@@ -314,7 +314,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
         url = 'api/v1/resource/attributes/attributetypes/';
       } else {
         method = 'PUT';
-        url = 'api/v1/resource/attributes/attributetypes/'+type.attributeType;
+        url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(type.attributeType);
       }
       $http({
         method: method,
@@ -345,7 +345,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
       var url;
       var method;
       method = 'PUT';
-      url = 'api/v1/resource/attributes/attributetypes/'+attributeTypeView.type+'/sortorder';
+      url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(attributeTypeView.type)+'/sortorder';
       $http({
         method: method,
         url: url,
@@ -376,7 +376,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
       var url;
       var method;
       method = 'PUT';
-      url = 'api/v1/resource/attributes/attributetypes/'+article.attributeType+'/attributecodes/'+article.attributeCode+'/article';
+      url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(article.attributeType)+'/attributecodes/'+encodeURIComponent(article.attributeCode)+'/article';
       $http({
         method: method,
         url: url,
@@ -406,7 +406,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
       var url;
       var method;
       method = 'DELETE';
-      url = 'api/v1/resource/attributes/attributetypes/'+article.attributeType+'/attributecodes/'+article.attributeCode+'/article';
+      url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(article.attributeType)+'/attributecodes/'+encodeURIComponent(article.attributeCode)+'/article';
       $http({
         method: method,
         url: url,
@@ -434,7 +434,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     if (article && article.attributeType && article.attributeCode) {
       $http({
         method: 'POST',
-        url: 'Article.action?Preview&attributeType='+article.attributeType+'&attributeCode='+article.attributeCode,
+        url: 'Article.action?Preview&attributeType='+encodeURIComponent(article.attributeType)+'&attributeCode='+encodeURIComponent(article.attributeCode),
         data: $.param({html: article.html}),
         headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
       }).success(function(data, status, headers, config){
@@ -451,7 +451,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     if (type) {
       $http({
         method: 'POST',
-        url: 'api/v1/resource/attributes/attributetypes/' + type
+        url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(type)
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
@@ -477,7 +477,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     if (type) {
       $http({
         method: 'POST',
-        url: 'api/v1/resource/attributes/attributetypes/' + type + '/attributecodes/' + code
+        url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(type) + '/attributecodes/' + encodeURIComponent(code)
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();

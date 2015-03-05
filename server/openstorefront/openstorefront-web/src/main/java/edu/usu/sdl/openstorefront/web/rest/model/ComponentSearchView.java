@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -79,7 +80,7 @@ public class ComponentSearchView
 
 	public static ComponentSearchView toView(Component component, List<ComponentAttribute> attributes, List<ComponentReview> reviews, List<ComponentTag> tags)
 	{
-
+		ServiceProxy service = new ServiceProxy();
 		ComponentSearchView view = new ComponentSearchView();
 		view.setListingType(OpenStorefrontConstant.ListingType.COMPONENT.getDescription());
 		view.setComponentId(component.getComponentId());
@@ -97,6 +98,7 @@ public class ComponentSearchView
 
 		List<SearchResultAttribute> addMes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
+			
 			addMes.add(SearchResultAttribute.toView(attribute));
 		}
 		view.setAttributes(addMes);

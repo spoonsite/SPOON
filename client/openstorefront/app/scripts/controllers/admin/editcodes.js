@@ -419,9 +419,12 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
     return $scope.code? $scope.code.length? $scope.code.length: 100 : 100;
   };
   
-  $scope.ok = function (validity) {
-    if (validity) {
+  $scope.urlPattern = utils.URL_REGEX;
 
+  $scope.ok = function (validity) {
+    console.log('validity', validity);
+    
+    if (validity) {
       console.log('$scope.code', $scope.code);
       console.log('type', type);
       console.log('type', type);
@@ -431,6 +434,12 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
       }
       if ($scope.code && $scope.code.code && cont) {
         //save the code change.
+        // if (utils.URL_REGEX.test($scope.code.fullTextLink)) {
+        //   $scope.code.detailUrl = $scope.code.fullTextLink;
+        // } else {
+        //   $scope.myForm.url.$setValidity($scope.code.fullTextLink, false);
+        //   return false;
+        // } // this is so that we can check against an actual url... but sometimes we use relative paths...
         $scope.code.detailUrl = $scope.code.fullTextLink;
         // console.log('$scope.code', $scope.code);
         $scope.code.label = $scope.code.label || '';
@@ -456,7 +465,7 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
             Business.articleservice.saveCode(type, code.code, $scope.code, $scope.addCodeFlg).then(function(result){
               if (result) {
                 $scope.addCodeFlg = false;
-                // console.log('Code save result', result);
+                console.log('Code save result', result);
                 // console.log('$scope.code', $scope.code);
                 $uiModalInstance.close('success');
               } else {
@@ -464,14 +473,14 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
               }
             }, function(){
               // the save failed
-              // console.log('The code save failed');
+              console.log('The code save failed');
             })
           }
         }, function(){
           Business.articleservice.saveCode(type, code.code, $scope.code, $scope.addCodeFlg).then(function(result){
             if (result) {
               $scope.addCodeFlg = false;
-              // console.log('Code save result', result);
+              console.log('Code save result', result);
               // console.log('$scope.code', $scope.code);
               $uiModalInstance.close('success');
             } else {
@@ -479,11 +488,13 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
             }
           }, function(){
             // the save failed
-            // console.log('The code save failed');
+            console.log('The code save failed');
           })
           //unable to finish code check;
         })
       } //
+    } else {
+      triggerAlert('There was an issue with your form data. Please verify that all of the data is correct, then try again.', 'formResult', 'editAttributeCodeForm', 7000);
     }
   };
 

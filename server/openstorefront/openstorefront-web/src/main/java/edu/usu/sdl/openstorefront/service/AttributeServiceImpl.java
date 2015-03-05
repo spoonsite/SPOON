@@ -295,26 +295,26 @@ public class AttributeServiceImpl
 		getAttributeServicePrivate().performSaveArticle(article);
 		getSearchService().addIndex(article);
 	}
-	
+
 	@Override
 	public void performSaveArticle(ArticleView article)
 	{
 		AttributeCodePk pk = new AttributeCodePk();
 		AttributeCode code = new AttributeCode();
 		Article temp = new Article();
-		
+
 		pk.setAttributeCode(article.getAttributeCode());
 		pk.setAttributeType(article.getAttributeType());
-		
+
 		temp.setDescription(article.getDescription());
 		temp.setTitle(article.getTitle());
-		
+
 		code.setArticle(temp);
 		code.setAttributeCodePk(pk);
-		
+
 		performSaveArticle(code, article.getHtml());
 	}
-	
+
 	@Override
 	public void performSaveArticle(AttributeCode attributeCode, String articleContents)
 	{
@@ -641,6 +641,7 @@ public class AttributeServiceImpl
 				break;
 			}
 		}
+
 		return attributeCode;
 	}
 
@@ -1152,7 +1153,7 @@ public class AttributeServiceImpl
 		Map<AttributeCodePk, Article> codeMap = new HashMap<>();
 		AttributeCodePk newPk = new AttributeCodePk();
 
-		for(AttributeCode code: codes){
+		for (AttributeCode code : codes) {
 			codeMap.put(code.getAttributeCodePk(), code.getArticle());
 		}
 		for (ArticleTracking item : temp) {
@@ -1160,10 +1161,10 @@ public class AttributeServiceImpl
 
 			newPk.setAttributeCode(item.getAttributeCode());
 			newPk.setAttributeType(item.getAttributeType());
-			
+
 			wrapper.setData(item);
 			wrapper.setArticle(codeMap.get(newPk));
-			
+
 			response.add(wrapper);
 		}
 		if (filter.getSortField().equals("title")) {
