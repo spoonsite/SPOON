@@ -50,6 +50,7 @@ public class ComponentAttributeView
 	private String groupCode;
 	private boolean orphan;
 	private String activeStatus;
+	private String badgeUrl;
 
 	public ComponentAttributeView()
 	{
@@ -67,6 +68,7 @@ public class ComponentAttributeView
 		view.setExternalLink(code.getDetailUrl());
 		view.setCodeDescription(code.getLabel());
 		view.setCodeLongDescription(code.getDescription());
+		view.setBadgeUrl(code.getBadgeUrl());
 		view.setTypeDescription(type.getDescription());
 		view.setTypeLongDescription(type.getDescription());
 		view.setType(type.getAttributeType());
@@ -109,6 +111,7 @@ public class ComponentAttributeView
 		view.setTypeLongDescription(type.getDescription());
 		view.setType(type.getAttributeType());
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
+		view.setBadgeUrl(code.getBadgeUrl());
 		view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
 		view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
 		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
@@ -147,6 +150,7 @@ public class ComponentAttributeView
 			view.setTypeLongDescription(type.getDescription());
 			view.setType(type.getAttributeType());
 			view.setCode(code.getAttributeCodePk().getAttributeCode());
+			view.setBadgeUrl(code.getBadgeUrl());
 			view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
 			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
 			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
@@ -411,6 +415,22 @@ public class ComponentAttributeView
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+
+	/**
+	 * @return the badgeUrl
+	 */
+	public String getBadgeUrl()
+	{
+		return badgeUrl;
+	}
+
+	/**
+	 * @param badgeUrl the badgeUrl to set
+	 */
+	public void setBadgeUrl(String badgeUrl)
+	{
+		this.badgeUrl = badgeUrl;
 	}
 
 }

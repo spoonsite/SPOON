@@ -2,17 +2,24 @@
 	<h3 style="display:inline-block; margin-top:0px; margin-bottom:0px; max-width:calc(100% - 30px)">Edit {{code.label}}</h3>
 	<button type="button" class="close" ng-click="cancel()" aria-hidden="true">×</button>
 </div> 
-<div class="modal-body">
+<div class="modal-body" id="editAttributeCodeForm">
 	<form name="myForm" style="margin-top:10px;" ng-submit="ok(myForm.$valid);">
-		<div class="col-sm-3" style="">Label</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.label" ng-maxlength="255" maxlength="255" placeholder="Label"/></div>
-		<div class="col-sm-3" style="">Code</div><div class="col-sm-9"><input ng-disabled="!addCodeFlg" class="form-control" type="text" ng-model="code.code" ng-maxlength="20" maxlength="20" placeholder="Code key" required/></div>
-		<div class="col-sm-3" style="">Description</div><div class="col-sm-9"><textarea ckeditor="editorOptions" ng-model="code.description" ng-watch="editorContent"></textarea></div>
-		<div class="col-sm-3" style="">Full Text Link</div><div class="col-sm-9"><input class="form-control" ng-model="code.fullTextLink" ng-maxlength="1024" maxlength="1024" placeholder="External link" type="url"/></div>
-		<div class="col-sm-3" style="">Group Code</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.groupCode" ng-maxlength="255" maxlength="255" placeholder="Group Code"/></div>
-		<div class="col-sm-3" style="">Sort Order</div><div class="col-sm-9"><input class="form-control" type="number" size="6" min="1" max="{{getMaxCode()}}" ng-model="code.sortOrder" placeholder="Sort Order (#)"/></div>
-		<div class="col-sm-3" style="">Architecture Code</div><div class="col-sm-9"><input class="form-control" type="text" ng-model="code.architectureCode" ng-maxlength="255" maxlength="255" placeholder="Architecture Code"/></div>
+		<div class="col-sm-3">Label</div>
+    <div class="col-sm-9"><input class="form-control" type="text" ng-model="code.label" ng-maxlength="255" maxlength="255" placeholder="Label"/></div>
+		<div class="col-sm-3">Code</div>
+    <div class="col-sm-9"><input ng-disabled="!addCodeFlg" class="form-control" type="text" ng-model="code.code" ng-maxlength="20" maxlength="20" placeholder="Code key" required/></div>
+		<div class="col-sm-3">Description</div>
+    <div class="col-sm-9"><textarea ckeditor="editorOptions" ng-model="code.description" ng-watch="editorContent"></textarea></div>
+		<div class="col-sm-3">Full Text Link</div>
+    <div class="col-sm-9"><input class="form-control" id="url" name="url" type="text" ng-model="code.fullTextLink" ng-maxlength="1024" maxlength="1024" placeholder="External link"/></div>
+		<div class="col-sm-3">Group Code</div>
+    <div class="col-sm-9"><input class="form-control" type="text" ng-model="code.groupCode" ng-maxlength="255" maxlength="255" placeholder="Group Code"/></div>
+		<div class="col-sm-3">Sort Order</div>
+    <div class="col-sm-9"><input class="form-control" type="number" size="6" min="1" max="{{getMaxCode()}}" ng-model="code.sortOrder" placeholder="Sort Order (#)"/></div>
+		<div class="col-sm-3">Architecture Code</div>
+    <div class="col-sm-9"><input class="form-control" type="text" ng-model="code.architectureCode" ng-maxlength="255" maxlength="255" placeholder="Architecture Code"/></div>
 		<div class="col-sm-3" style="float: none;">Badge URL</div>
-		<div class="col-sm-9" style="padding-left: 150px;width: 538px;top: -26px;"><input class="form-control" type="text" ng-model="code.badgeUrl" ng-maxlength="255" maxlength="255" placeholder="Badge Url"/></div>
+    <div class="col-sm-9" style="padding-left: 150px;width: 538px;top: -26px;"><input class="form-control" type="text" ng-model="code.badgeUrl" ng-maxlength="255" maxlength="255" placeholder="Badge Url"/></div>
 		<div style="padding-right: 200px; position: relative; top: 20px;padding-left: 194px;text-align: center;">
 			<button type="submit" class="btn btn-default">Save&nbsp;<i class="fa fa-save"></i></button>	
 		</div>

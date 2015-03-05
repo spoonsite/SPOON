@@ -47,6 +47,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       // setFilters: '=',
     },
     link: function postLink(scope, element, attrs) {
+      if (scope.data) {
+        console.log('scope.data', scope.data);
+        
+      }
       
       scope.getShortDescription = getShortDescription;
 
@@ -226,6 +230,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                 {
                   if (result.data && result.data.length > 0) { 
                     scope.data = angular.copy(result.data);
+                    console.log('scope.data', scope.data);
                   } else {
                     scope.data = [];
                   }
@@ -233,11 +238,13 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                   scope.data = [];
                 }
                 $timeout(function(){
+                  scope.init();
                   scope.$apply();
                 })
               }, function(){
                 scope.data = [];
                 $timeout(function(){
+                  scope.init();
                   scope.$apply();
                 })
               });
@@ -253,6 +260,17 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         } //
       }
       scope.setupData();
+
+      scope.getWidth = function(item){
+        var count = 0;
+        _.each(item.attributes, function(thing){
+          if (thing.badgeUrl) {
+            count++;
+          }
+        })
+        return count * 40;
+
+      }
 
       /***************************************************************
       * This funciton gives the correct component list the active class that

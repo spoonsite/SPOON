@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,8 @@ public class SearchResultAttribute
 
 	private String type;
 	private String code;
+	private String badgeUrl;
+	private String label;
 
 	public SearchResultAttribute()
 	{
@@ -35,9 +40,18 @@ public class SearchResultAttribute
 
 	public static SearchResultAttribute toView(ComponentAttribute attribute)
 	{
+		ServiceProxy service = new ServiceProxy();
 		SearchResultAttribute view = new SearchResultAttribute();
 		view.setCode(attribute.getComponentAttributePk().getAttributeCode());
 		view.setType(attribute.getComponentAttributePk().getAttributeType());
+		AttributeCodePk temp = new AttributeCodePk();
+		temp.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
+		temp.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+		AttributeCode code = service.getAttributeService().findCodeForType(temp);
+		if (code != null) {
+			view.setBadgeUrl(code.getBadgeUrl());
+			view.setLabel(code.getLabel());
+		}
 		return view;
 	}
 
@@ -68,6 +82,38 @@ public class SearchResultAttribute
 	public void setCode(String code)
 	{
 		this.code = code;
+	}
+
+	/**
+	 * @return the badgeUrl
+	 */
+	public String getBadgeUrl()
+	{
+		return badgeUrl;
+	}
+
+	/**
+	 * @param badgeUrl the badgeUrl to set
+	 */
+	public void setBadgeUrl(String badgeUrl)
+	{
+		this.badgeUrl = badgeUrl;
+	}
+
+	/**
+	 * @return the label
+	 */
+	public String getLabel()
+	{
+		return label;
+	}
+
+	/**
+	 * @param label the label to set
+	 */
+	public void setLabel(String label)
+	{
+		this.label = label;
 	}
 
 }
