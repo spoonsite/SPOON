@@ -51,7 +51,8 @@ public class SvcAttributeParser
 	private static final int JCSFL_ALIGNMENT = 10;
 	private static final int JARM_ALIGNMENT = 11;
 	private static final int INTERNAL_COMMENTS = 12;
-
+	
+	
 	@Override
 	protected void internalParse(CSVReader reader) throws IOException
 	{
@@ -99,6 +100,13 @@ public class SvcAttributeParser
 				log.log(Level.WARNING, MessageFormat.format("Skipping line: {0} + line is mssing required fields.", lineNumber));
 			}
 		}
+	}
+
+	@Override
+	public String getHEADER()
+	{
+		//TagValue_UID,TagValue_Number,TagValue_Service Name,TagNotes_Service Definition,TagNotes_Service Description,TagValue_Example Specification,TagValue_Example Solution,TagValue_DI2E Framework 
+		return "TagValue_UID";
 	}
 
 }
