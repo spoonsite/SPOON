@@ -171,4 +171,21 @@
     }
   };
 
+  utils.openWindow  = function(url, name, args, popupWin) {
+
+    if (typeof(popupWin) != "object"){
+      popupWin = window.open(url,name,args);
+    } else {
+      if (!popupWin.closed){ 
+        popupWin.close();
+        popupWin = window.open(url, name,args);
+      } else {
+        popupWin = window.open(url, name,args);
+      }
+    }
+    console.log('Opening window ', popupWin);
+    popupWin.focus();
+    return popupWin;
+  }
+
 })(window);

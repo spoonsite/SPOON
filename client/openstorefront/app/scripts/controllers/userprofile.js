@@ -126,13 +126,14 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     return null;
   };
 
+  var popupWin;
   /***************************************************************
   * This function adds a component to the watch list and toggles the buttons
   ***************************************************************/
   $scope.goToFullPage = function(id){
     var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
     url = url + '/single?id=' + id;
-    window.open(url, 'Component_' + id, 'scrollbars');
+    popupWin = utils.openWindow(url, 'Component_' + id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', popupWin);
   };
 
   /***************************************************************

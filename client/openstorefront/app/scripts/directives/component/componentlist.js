@@ -78,19 +78,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       scope.listOfClasses = attrs.classList;
 
       var popupWin = false;
-      function windowOpener(url, name, args) {
-        if (typeof(popupWin) != "object"){
-          popupWin = window.open(url,name,args);
-        } else {
-          if (!popupWin.closed){ 
-            popupWin.location.href = url;
-          } else {
-            popupWin = window.open(url, name,args);
-          }
-        }
-        popupWin.focus();
-      }
-
 
       if (scope.clickCallback === undefined) {
         scope.clickCallback =  function(id, article) {
@@ -113,7 +100,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             name = 'Component_' + id;
             args = 'window settings';
           }
-          windowOpener(root, name, args);
+          popupWin = utils.openWindow(root, name, args, popupWin);
         };
       }
 
