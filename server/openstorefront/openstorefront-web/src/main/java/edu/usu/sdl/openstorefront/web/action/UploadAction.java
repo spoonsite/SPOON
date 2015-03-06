@@ -166,24 +166,39 @@ public class UploadAction
 
 			if (errors.isEmpty()) {
 				//parse
-
 				try (InputStream in = uploadFile.getInputStream()) {
-					Map<AttributeType, List<AttributeCode>> attributeMap = parser.parse(in);
-
-					TaskRequest taskRequest = new TaskRequest();
-					taskRequest.setAllowMultiple(false);
-					taskRequest.setName("Processing Attribute Upload");
-					service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
+					try (CSVReader reader = new CSVReader(new InputStreamReader(in));) {
+						String[] first = reader.readNext();
+						if (!MainAttributeParser.getHEADER().equals(first[0])) {
+							errors.put("uploadFile", "The attributes file was malformatted. Please check the header line and assure that it is formatted correctly.");
+						}
+					}
+					catch (Exception e) {
+						throw new OpenStorefrontRuntimeException(e);
+					}
 				}
 				catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
 				}
-				finally {
-					try {
-						uploadFile.delete();
+				if (errors.isEmpty()) {
+					try (InputStream in = uploadFile.getInputStream()) {
+						Map<AttributeType, List<AttributeCode>> attributeMap = parser.parse(in);
+
+						TaskRequest taskRequest = new TaskRequest();
+						taskRequest.setAllowMultiple(false);
+						taskRequest.setName("Processing Attribute Upload");
+						service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
 					}
 					catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException(ex);
+						throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
+					}
+					finally {
+						try {
+							uploadFile.delete();
+						}
+						catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException(ex);
+						}
 					}
 				}
 			}
@@ -241,7 +256,7 @@ public class UploadAction
 			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			try {
 				List<ArticleView> articles = StringProcessor.defaultObjectMapper().readValue(uploadFile.getInputStream(), new TypeReference<List<ArticleView>>()
-			    {
+																					 {
 				});
 				Boolean flag = false;
 				for (ArticleView article : articles) {
@@ -267,7 +282,7 @@ public class UploadAction
 			}
 			finally {
 				try {
-					if (uploadFile != null){
+					if (uploadFile != null) {
 						uploadFile.delete();
 					}
 				}

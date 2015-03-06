@@ -56,11 +56,12 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
           scope.search = '';
           scope.full = false;
 
+          scope.oldCss = $('body').css('overflow'); 
           scope.$watch('full', function(){
             if (scope.full){
               $('body').css('overflow','hidden');
             } else {
-              $('body').css('overflow', 'auto');
+              $('body').css('overflow', scope.oldCss);
             }
           })
 
