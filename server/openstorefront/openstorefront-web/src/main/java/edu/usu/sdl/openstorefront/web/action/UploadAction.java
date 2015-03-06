@@ -169,8 +169,8 @@ public class UploadAction
 				try (InputStream in = uploadFile.getInputStream()) {
 					try (CSVReader reader = new CSVReader(new InputStreamReader(in));) {
 						String[] first = reader.readNext();
-						if (!MainAttributeParser.getHEADER().equals(first[0])) {
-							errors.put("uploadFile", "The attributes file was malformatted. Please check the header line and assure that it is formatted correctly.");
+						if (!parser.getHEADER().equals("false") && !parser.getHEADER().equals(first[0])) {
+							errors.put("uploadFile", "The attributes file was mal formatted. Please check the header line and assure that it is formatted correctly.");
 						}
 					}
 					catch (Exception e) {

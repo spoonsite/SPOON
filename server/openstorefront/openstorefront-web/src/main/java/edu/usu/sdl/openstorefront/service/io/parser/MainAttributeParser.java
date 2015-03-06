@@ -58,7 +58,8 @@ public class MainAttributeParser
 	/**
 	 * @return the HEADER
 	 */
-	public static String getHEADER()
+	@Override
+	public String getHEADER()
 	{
 		return HEADER;
 	}
