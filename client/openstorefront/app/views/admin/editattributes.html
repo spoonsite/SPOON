@@ -2,7 +2,7 @@
 <div style="margin-top: 65px; padding-left: 20px; padding-right: 20px;" ng-controller="AdminEditattributesCtrl">
 	<loader trigger="adminAttributes"></loader>
 	<div class="pull-left col-sm-6 " style="padding-left:0px; padding-right:0px;">
-		<button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="predicate = 'activeStatus'">Turn off sort</button>
+		<button ng-disabled="predicate === 'activeStatus'" type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="predicate = 'activeStatus'">Turn off sort</button>
 		<button type="button" title="Reset filters" class="btn btn-default btn-sm" ng-click="getFilters(true)">Refresh table&nbsp;<i class="fa fa-refresh"></i></button>
 	</div>
 	<div class="pull-right col-sm-6 " style="padding-left:0px; padding-right:0px;">
@@ -31,12 +31,12 @@
 		<tr>
 			<th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('description');">Description&nbsp;<span ng-show="predicate === 'description'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
 			<th style="padding: 8px 3px;"><a href="" ng-click="setPredicate('type');">Type code&nbsp;<span ng-show="predicate === 'type'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
-			<th style="padding: 8px 3px;"><a  data-toggle="tooltip" data-placement="top" title="Shows up under visible list of filters (Filter By Attribute)" href="" ng-click="setPredicate('visibleFlg', true);">Visible&nbsp;<span ng-show="predicate === 'visibleFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
-			<th style="padding: 8px 3px;"><a  data-toggle="tooltip" data-placement="top" title="Is require this attribute upon adding a new component" href="" ng-click="setPredicate('requiredFlg', true);">Required&nbsp;<span ng-show="predicate === 'requiredFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+			<th style="padding: 8px 3px;"><a  data-toggle="tooltip" data-placement="top" title="Shows to up under visible list of filters (Filter By Attribute)" href="" ng-click="setPredicate('visibleFlg', true);">Visible&nbsp;<span ng-show="predicate === 'visibleFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+			<th style="padding: 8px 3px;"><a  data-toggle="tooltip" data-placement="top" title="Is a required attribute upon adding a new component" href="" ng-click="setPredicate('requiredFlg', true);">Required&nbsp;<span ng-show="predicate === 'requiredFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
 			<th style="padding: 8px 3px;"><a  data-toggle="tooltip" data-placement="top" title="Shows up on summary page" href="" ng-click="setPredicate('importantFlg', true);">Important&nbsp;<span ng-show="predicate === 'importantFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
 			<th style="padding: 8px 3px;"><a  data-toggle="tooltip" data-placement="top" title="This attribute is an architecture" href="" ng-click="setPredicate('architectureFlg', true);">Architecture&nbsp;<span ng-show="predicate === 'architectureFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
 			<th style="padding: 8px 3px;"><a  data-toggle="tooltip" data-placement="top" title="Allows multiple codes of this type per component" href="" ng-click="setPredicate('allowMultipleFlg', true);">Allow Multiple&nbsp;<span ng-show="predicate === 'allowMultipleFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
-			<th style="padding: 8px 3px;"><a href="">Actions</a></th>
+			<th style="padding: 8px 3px;">Actions</th>
 		</tr>
 		<tr ng-repeat="filter in filters| orderBy:predicate:reverse"  ng-class="filter.activeStatus === 'I'? 'inactive':''">
 			<td style="padding:5px;">{{filter.description}}</td>

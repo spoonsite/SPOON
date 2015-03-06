@@ -138,6 +138,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
     });
 
     modalInstance.result.then(function (result) {
+      triggerAlert('Your changes to the article have been saved.', 'ArticleEditAlert', 'body', 6000);
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
       $timeout(function(){
         $scope.getArticles(true);
@@ -173,6 +174,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
 
 app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 'business', '$location', function ($scope, $uiModalInstance, article, Business, $location) {
 
+  var popupWin;
   $scope.article = angular.copy(article);
   $scope.type = $scope.article.attributeType;
   $scope.code = $scope.article.attributeCode;
@@ -181,6 +183,7 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
 
   $scope.preview = function(){
     $scope.article.html = $scope.getEditorContent();
+    console.log('$scope.article', $scope.article);
     
     Business.articleservice.previewArticle($scope.article).then(function(result){
       var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
@@ -188,7 +191,7 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
         type: 'preview',
         code: result
       });
-      window.open(url, 'Aritlce_Preview_' + $scope.article.attributeType + $scope.article.attributeCode, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
+      popupWin = utils.openWindow(url, 'Aritlce_Preview_' + $scope.article.attributeType + $scope.article.attributeCode, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', popupWin)
     }, function(){
       
     })
@@ -237,6 +240,8 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
   $scope.ok = function () {
     // $scope.editorContentWatch = $scope.editorContent;
     $scope.article.html = $scope.getEditorContent();
+    console.log('$scope.article', $scope.article);
+    
     Business.articleservice.saveArticle($scope.article).then(function(result){
       $uiModalInstance.close();
     }, function(){

@@ -251,7 +251,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       'label': 'Lookups', 
       'location': 'views/admin/manageLookups.html', 
       'toolTitle': 'Manage Lookups', 
-      'detailedDesc': 'Lookups are  tables of valid-values that are used to classify data in  a consistent way.',
+      'detailedDesc': 'Lookups are  tables of validvalues that are used to classify data in  a consistent way.',
       'key': 'lookups' 
     });    
     
