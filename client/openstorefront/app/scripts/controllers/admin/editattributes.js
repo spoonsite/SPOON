@@ -162,6 +162,8 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
         $scope.getFilters(true);
       } else {
         if (response.errors) {
+          console.log('response.errors', response);
+          
           var uploadError = response.errors.uploadFile;  
           var errorMessage = '';
           if (uploadError){
