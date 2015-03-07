@@ -270,7 +270,7 @@ var showServerError = function(errorObj, id){
     }if (errorObj.potentialResolution) {
       message = message + '<div class="leftIndent">Potential resolution:&nbsp;<span>' + errorObj.potentialResolution + '</span></div>';
     }
-    triggerAlert(message, 'serverError', id, 6000);
+    triggerAlert(message, 'serverError', id, 10000);
   }
 };
 
@@ -319,6 +319,8 @@ var triggerError = function(errorObj, useFormNames) {
         });
       }
     });
+  } else {
+    removeError();
   }
 };
 
