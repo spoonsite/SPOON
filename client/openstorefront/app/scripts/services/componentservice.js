@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-'use strict';
+ 'use strict';
 
-app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $q, localCache) {
+ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $q, localCache) {
 
     // default to 60 second expire time.
     var minute = 60 * 1000;
@@ -30,7 +30,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
      * returns: result -- The value of the object if it has not yet expired, and null for
      *                    result objects that are no longer valid
      ***************************************************************/
-    var checkExpire = function (name, expire) {
+     var checkExpire = function (name, expire) {
       var result = localCache.get(name, 'object');
       var cacheTime = null;
       if (result) {
@@ -52,7 +52,7 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
      * params: name -- The unique identifier for the entry in the local cache (usually a string)
      * params: value -- The value of the data that you will be storing
      ***************************************************************/
-    var save = function (name, value) {
+     var save = function (name, value) {
       localCache.save(name, value);
       localCache.save(name + '-time', new Date());
     };
@@ -74,24 +74,24 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           url: url,
           data: "test"
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                });
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+        });
         url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId + '/con';
         $http({
           method: 'DELETE',
           url: url,
           data: "test"
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    result.resolve(data);
-                    removeError();
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            result.resolve(data);
+            removeError();
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -109,16 +109,16 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           method: 'DELETE',
           url: url,
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    result.resolve(data);
-                    removeError();
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            result.resolve(data);
+            removeError();
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -145,16 +145,16 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           url: url,
           data: post
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data) {
-                    result.resolve(data.questionId);
-                    removeError();
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data) {
+            result.resolve(data.questionId);
+            removeError();
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -173,16 +173,16 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           method: 'DELETE',
           url: url
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    removeError();
-                    result.resolve(data.responseId);
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            removeError();
+            result.resolve(data.responseId);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -209,16 +209,16 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           url: url,
           data: post
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    removeError();
-                    result.resolve(data);
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            removeError();
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -236,16 +236,16 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           method: 'DELETE',
           url: url,
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    removeError();
-                    result.resolve(data);
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            removeError();
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -277,18 +277,18 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           url: url,
           data: review
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    console.log('data', data);
-                    removeError();
-                    result.resolve(data);
-                  } else {
-                    console.log('fail data', data);
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            console.log('data', data);
+            removeError();
+            result.resolve(data);
+          } else {
+            console.log('fail data', data);
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -319,16 +319,16 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           url: url,
           data: review
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    removeError();
-                    result.resolve(data);
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            removeError();
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -347,16 +347,16 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           url: url,
           data: pro
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    removeError();
-                    result.resolve(data);
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            removeError();
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -375,16 +375,16 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           url: url,
           data: con
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && isNotRequestError(data)) {
-                    removeError();
-                    result.resolve(data);
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && isNotRequestError(data)) {
+            removeError();
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was an error');
         });
       } else {
@@ -409,8 +409,8 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
             method: 'GET',
             url: url
           })
-                  .success(function (data, status, headers, config) { /*jshint unused:false*/
-                    if (data && !isEmpty(data) && isNotRequestError(data)) {
+          .success(function (data, status, headers, config) { /*jshint unused:false*/
+            if (data && !isEmpty(data) && isNotRequestError(data)) {
                       // console.log('data', data);
 
                       removeError();
@@ -423,21 +423,21 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
                       result.reject(false);
                     }
                   }).error(function (data, status, headers, config) {
-            result.reject('There was an error');
-          });
-        }
-      } else {
-        result.reject('A unique ID is required to retrieve component details');
-      }
-      return result.promise;
-    };
+                    result.reject('There was an error');
+                  });
+                }
+              } else {
+                result.reject('A unique ID is required to retrieve component details');
+              }
+              return result.promise;
+            };
 
-    componentservice.getComponentPrint = function (id, override) {
-      var result = $q.defer();
-      if (id)
-      {
-        var url = 'api/v1/resource/components/' + id + '/detail?type=print';
-        var value = null;
+            componentservice.getComponentPrint = function (id, override) {
+              var result = $q.defer();
+              if (id)
+              {
+                var url = 'api/v1/resource/components/' + id + '/detail?type=print';
+                var value = null;
         // if they don't give me an ID I send them back the whole list.
         value = checkExpire('component_print_' + id, minute * 2);
         if (value && !override) {
@@ -447,9 +447,9 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
             method: 'GET',
             url: url
           })
-                  .success(function (data, status, headers, config) { /*jshint unused:false*/
-                    if (data && !isEmpty(data) && isNotRequestError(data)) {
-                      removeError();
+          .success(function (data, status, headers, config) { /*jshint unused:false*/
+            if (data && !isEmpty(data) && isNotRequestError(data)) {
+              removeError();
                       // console.log('data', data);
                       save('component_print_' + id, data);
                       result.resolve(data);
@@ -459,19 +459,19 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
                       result.reject(false);
                     }
                   }).error(function (data, status, headers, config) {
-            result.reject('There was an error');
-          });
-        }
-      } else {
-        result.reject('A unique ID is required to retrieve component details');
-      }
-      return result.promise;
-    };
+                    result.reject('There was an error');
+                  });
+                }
+              } else {
+                result.reject('A unique ID is required to retrieve component details');
+              }
+              return result.promise;
+            };
 
-    componentservice.getComponentList = function () {
-      var result = $q.defer();
-      var url = 'api/v1/resource/components';
-      var value = null;
+            componentservice.getComponentList = function () {
+              var result = $q.defer();
+              var url = 'api/v1/resource/components';
+              var value = null;
       // if they don't give me an ID I send them back the whole list.
       value = checkExpire('componentList', minute * 10);
       if (value) {
@@ -481,23 +481,23 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
           method: 'GET',
           url: url
         })
-                .success(function (data, status, headers, config) { /*jshint unused:false*/
-                  if (data && !isEmpty(data) && isNotRequestError(data)) {
-                    removeError();
-                    var resultList = [];
-                    _.each(data, function (item) {
-                      var temp = item;
-                      temp.description = getShortDescription(item.description);
-                      resultList.push(temp);
-                    })
-                    save('componentList', resultList);
-                    result.resolve(resultList);
-                  } else {
-                    removeError();
-                    triggerError(data);
-                    result.reject(false);
-                  }
-                }).error(function (data, status, headers, config) {
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            var resultList = [];
+            _.each(data, function (item) {
+              var temp = item;
+              temp.description = getShortDescription(item.description);
+              resultList.push(temp);
+            })
+            save('componentList', resultList);
+            result.resolve(resultList);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
           result.reject('There was a server error');
         });
       }
@@ -611,19 +611,19 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
             url: url,
             params: paramsObj
           })
-                  .success(function (data, status, headers, config) {
-                    if (data && !isEmpty(data) && isNotRequestError(data)) {
-                      removeError();
-                      var temp = {};
-                      temp.data = data;
-                      save(name, temp);
-                      result.resolve(temp);
-                    } else {
-                      removeError();
-                      triggerError(data);
-                      result.reject(false);
-                    }
-                  }).error(function (data, status, headers, config) {
+          .success(function (data, status, headers, config) {
+            if (data && !isEmpty(data) && isNotRequestError(data)) {
+              removeError();
+              var temp = {};
+              temp.data = data;
+              save(name, temp);
+              result.resolve(temp);
+            } else {
+              removeError();
+              triggerError(data);
+              result.reject(false);
+            }
+          }).error(function (data, status, headers, config) {
             result.reject('There was a server error');
           });
         }
@@ -738,515 +738,515 @@ app.factory('componentservice', ['$http', '$q', 'localCache', function ($http, $
     
     
 //<editor-fold   desc="Component Admin">
-    componentservice.getFilteredComponents = function (queryParamFilter) {
-      var deferred = $q.defer();
+componentservice.getFilteredComponents = function (queryParamFilter) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/filterable?' + queryParamFilter.toQuery()
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/filterable?' + queryParamFilter.toQuery()
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
+  return deferred.promise;
+};
 
-    componentservice.activateComponent = function (componentId) {
-      var deferred = $q.defer();
+componentservice.activateComponent = function (componentId) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'PUT',
-        'url': 'api/v1/resource/components/' + componentId + '/activate'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'PUT',
+    'url': 'api/v1/resource/components/' + componentId + '/activate'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
+  return deferred.promise;
+};
 
-    componentservice.inactivateComponent = function (componentId) {
-      var deferred = $q.defer();
+componentservice.inactivateComponent = function (componentId) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/components/' + componentId
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + componentId
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
+  return deferred.promise;
+};
 
-    componentservice.deleteComponent = function (componentId) {
-      var deferred = $q.defer();
+componentservice.deleteComponent = function (componentId) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/components/' + componentId + '/cascade'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + componentId + '/cascade'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
+  return deferred.promise;
+};
 
-    componentservice.getComponentLookupList = function () {
-      var deferred = $q.defer();
+componentservice.getComponentLookupList = function () {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/lookup'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/lookup'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
+  return deferred.promise;
+};
 
-    componentservice.getComponentApproveStatus = function () {
-      var deferred = $q.defer();
+componentservice.getComponentApproveStatus = function () {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/approvalStatus'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/approvalStatus'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
-    
-    componentservice.addComponent = function (requiredForComponent) {
-      var deferred = $q.defer();
+  return deferred.promise;
+};
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/resource/components',
-        data: requiredForComponent
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+componentservice.addComponent = function (requiredForComponent) {
+  var deferred = $q.defer();
 
-      return deferred.promise;
-    };    
-    
-    componentservice.updateComponent = function (requiredForComponent, componentId) {
-      var deferred = $q.defer();
+  $http({
+    'method': 'POST',
+    'url': 'api/v1/resource/components',
+    data: requiredForComponent
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      $http({
-        'method': 'PUT',
-        'url': 'api/v1/resource/components/' + componentId,
-        data: requiredForComponent
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  return deferred.promise;
+};    
 
-      return deferred.promise;
-    };
-        
-    
+componentservice.updateComponent = function (requiredForComponent, componentId) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'PUT',
+    'url': 'api/v1/resource/components/' + componentId,
+    data: requiredForComponent
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};
+
+
 //</editor-fold>      
 
 //<editor-fold   desc="Attributes">
-    componentservice.getComponentAttributes = function (componentId, queryParamFilter) {
-      var deferred = $q.defer();
+componentservice.getComponentAttributes = function (componentId, queryParamFilter) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/' + componentId + '/attributes?' + queryParamFilter.toQuery()
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + componentId + '/attributes?' + queryParamFilter.toQuery()
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
-    
-    componentservice.getComponentAttributeView = function (componentId, queryParamFilter) {
-      var deferred = $q.defer();
+  return deferred.promise;
+};
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/' + componentId + '/attributes/view?' + queryParamFilter.toQuery()
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+componentservice.getComponentAttributeView = function (componentId, queryParamFilter) {
+  var deferred = $q.defer();
 
-      return deferred.promise;
-    };    
-    
-    componentservice.inactivateAttribute = function (componentId, type, code) {
-      var deferred = $q.defer();
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + componentId + '/attributes/view?' + queryParamFilter.toQuery()
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/components/' + componentId + '/attributes/' + type + '/' + code
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  return deferred.promise;
+};    
 
-      return deferred.promise;
-    }; 
-    
-    componentservice.activateAttribute = function (componentId, type, code) {
-      var deferred = $q.defer();
+componentservice.inactivateAttribute = function (componentId, type, code) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'PUT',
-        'url': 'api/v1/resource/components/' + componentId + '/attributes/' + type + '/' + code + "/activate"
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + componentId + '/attributes/' + type + '/' + code
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };   
-    
-    componentservice.saveAttribute = function (componentId, componentAttribute) {
-      var deferred = $q.defer();
+  return deferred.promise;
+}; 
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/resource/components/' + componentId + '/attributes',
-        data: componentAttribute
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+componentservice.activateAttribute = function (componentId, type, code) {
+  var deferred = $q.defer();
 
-      return deferred.promise;
-    };     
+  $http({
+    'method': 'PUT',
+    'url': 'api/v1/resource/components/' + componentId + '/attributes/' + type + '/' + code + "/activate"
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};   
+
+componentservice.saveAttribute = function (componentId, componentAttribute) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'POST',
+    'url': 'api/v1/resource/components/' + componentId + '/attributes',
+    data: componentAttribute
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};     
 //</editor-fold> 
 
 //<editor-fold  desc="Common Base Entity">
 
-    componentservice.getComponentSubEntity = function (loadOptions) {
-      var deferred = $q.defer();
+componentservice.getComponentSubEntity = function (loadOptions) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/' + loadOptions.componentId + '/' + loadOptions.entity + '/view?' + loadOptions.queryParamFilter.toQuery()
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + loadOptions.componentId + '/' + loadOptions.entity + '/view?' + loadOptions.queryParamFilter.toQuery()
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
-    
-    componentservice.inactivateEnity = function (options) {
-      var deferred = $q.defer();
+  return deferred.promise;
+};
 
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+componentservice.inactivateEnity = function (options) {
+  var deferred = $q.defer();
 
-      return deferred.promise;
-    };   
-    
-    componentservice.forceRemoveEnity = function (options) {
-      var deferred = $q.defer();
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId + '/force'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  return deferred.promise;
+};   
 
-      return deferred.promise;
-    };     
-    
-    componentservice.activateEntity = function (options) {
-      var deferred = $q.defer();
+componentservice.forceRemoveEnity = function (options) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'PUT',
-       'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId + '/activate'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId + '/force'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };   
-    
-    componentservice.addSubComponentEntity = function (options) {
-      var deferred = $q.defer();
+  return deferred.promise;
+};     
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entityName,
-        data: options.entity
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+componentservice.activateEntity = function (options) {
+  var deferred = $q.defer();
 
-      return deferred.promise;
-    }; 
-    
-    componentservice.updateSubComponentEntity = function (options) {
-      var deferred = $q.defer();
+  $http({
+    'method': 'PUT',
+    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId + '/activate'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      $http({
-        'method': 'PUT',
-        'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entityName + '/' + options.entityId,
-        data: options.entity
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  return deferred.promise;
+};   
 
-      return deferred.promise;
-    }; 
-        
+componentservice.addSubComponentEntity = function (options) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'POST',
+    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entityName,
+    data: options.entity
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+}; 
+
+componentservice.updateSubComponentEntity = function (options) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'PUT',
+    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entityName + '/' + options.entityId,
+    data: options.entity
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+}; 
+
 //</editor-fold>
 
 //<editor-fold  desc="Evaluation Section Entity">
 
-    componentservice.getEvaluationSections = function (componentId) {
-      var deferred = $q.defer();
+componentservice.getEvaluationSections = function (componentId) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/' + componentId + '/sections/view'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + componentId + '/sections/view'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
-    
-   componentservice.deleteEvaluationSection = function (componentId, sectionCode) {
-      var deferred = $q.defer();
+  return deferred.promise;
+};
 
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/components/' + componentId + '/sections/' + sectionCode
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+componentservice.deleteEvaluationSection = function (componentId, sectionCode) {
+  var deferred = $q.defer();
 
-      return deferred.promise;
-    };
-    
-   componentservice.deleteAllEvaluationSection = function (componentId) {
-      var deferred = $q.defer();      
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/components/' + componentId + '/sections'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
-      return deferred.promise;
-    };    
-    
-    componentservice.saveAllEvaluationSections = function (options) {
-      var deferred = $q.defer();
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + componentId + '/sections/' + sectionCode
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/resource/components/' + options.componentId + '/sections/all',
-        data: options.sections
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  return deferred.promise;
+};
 
-      return deferred.promise;
-    };     
-    
+componentservice.deleteAllEvaluationSection = function (componentId) {
+  var deferred = $q.defer();      
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + componentId + '/sections'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+  return deferred.promise;
+};    
+
+componentservice.saveAllEvaluationSections = function (options) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'POST',
+    'url': 'api/v1/resource/components/' + options.componentId + '/sections/all',
+    data: options.sections
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};     
+
 //</editor-fold>     
-    
+
 //<editor-fold  desc="Tags Entity">
-    componentservice.getComponentTags = function (componentId) {
-      var deferred = $q.defer();
+componentservice.getComponentTags = function (componentId) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/' + componentId + '/tags'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + componentId + '/tags'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };
-    
-    componentservice.getComponentAllTags = function () {
-      var deferred = $q.defer();
+  return deferred.promise;
+};
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/tagviews'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+componentservice.getComponentAllTags = function () {
+  var deferred = $q.defer();
 
-      return deferred.promise;
-    };    
-    
-    
-    
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/tagviews'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};    
+
+
+
 //</editor-fold> 
-   
+
 //<editor-fold  desc="ReviewEntity">
 
-    componentservice.getComponentAllReviews = function (queryParamFilter) {
-      var deferred = $q.defer();
+componentservice.getComponentAllReviews = function (queryParamFilter) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/reviewviews?' + queryParamFilter.toQuery()
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/reviewviews?' + queryParamFilter.toQuery()
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    }; 
+  return deferred.promise;
+}; 
 
 //</editor-fold>
-   
+
 //<editor-fold  desc="Question Reponses Entity">
 
-    componentservice.getComponentAllQuestions = function (queryParamFilter) {
-      var deferred = $q.defer();
+componentservice.getComponentAllQuestions = function (queryParamFilter) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/questionviews?' + queryParamFilter.toQuery()
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/questionviews?' + queryParamFilter.toQuery()
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    }; 
+  return deferred.promise;
+}; 
 
-    componentservice.inactivateQuestionResponse = function (options) {
-      var deferred = $q.defer();
+componentservice.inactivateQuestionResponse = function (options) {
+  var deferred = $q.defer();
 
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/resource/components/' + options.componentId + '/questions/'  + options.questionId + '/responses/' + options.responseId 
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + options.componentId + '/questions/'  + options.questionId + '/responses/' + options.responseId 
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-      return deferred.promise;
-    };   
-    
-    componentservice.activateQuestionResponse = function (options) {
-      var deferred = $q.defer();
+  return deferred.promise;
+};   
 
-      $http({
-        'method': 'PUT',
-        'url': 'api/v1/resource/components/' + options.componentId + '/questions/'  + options.questionId + '/responses/' + options.responseId  + '/activate'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
+componentservice.activateQuestionResponse = function (options) {
+  var deferred = $q.defer();
 
-      return deferred.promise;
-    };
+  $http({
+    'method': 'PUT',
+    'url': 'api/v1/resource/components/' + options.componentId + '/questions/'  + options.questionId + '/responses/' + options.responseId  + '/activate'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
 
-    componentservice.getCount = function () {
-      var deferred = $q.defer();
+  return deferred.promise;
+};
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/service/search/stats'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        console.log('data', data);
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject(false);
-      });
-      return deferred.promise;
-    };  
+componentservice.getCount = function () {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/service/search/stats'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    console.log('data', data);
+    deferred.resolve(data);
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject(false);
+  });
+  return deferred.promise;
+};  
 
 //</editor-fold> 
 
-    return componentservice;
-  }]);
+return componentservice;
+}]);
