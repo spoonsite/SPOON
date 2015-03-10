@@ -51,7 +51,7 @@ public class SecurityUtil
 				username = currentUser.getPrincipal().toString();
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
+			log.log(Level.FINE, "Determing Username.  No user is logged in.  This is likely an auto process.");
 		}
 		return username;
 	}
@@ -68,7 +68,7 @@ public class SecurityUtil
 			Subject currentUser = SecurityUtils.getSubject();
 			admin = currentUser.hasRole(ADMIN_ROLE);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started. Or no user is logged in.");
+			log.log(Level.FINE, "Determining admin user.  No user is logged in.  This is likely an auto process.");
 		}
 		return admin;
 	}
@@ -85,7 +85,7 @@ public class SecurityUtil
 			Subject currentUser = SecurityUtils.getSubject();
 			userContext = (UserContext) currentUser.getSession().getAttribute(USER_CONTEXT_KEY);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Security Manager hasn't started yet.  The user can't be obtain until the application has started. Or no user is logged in.");
+			log.log(Level.WARNING, "No user is logged in or security Manager hasn't started yet.");
 		}
 		return userContext;
 	}

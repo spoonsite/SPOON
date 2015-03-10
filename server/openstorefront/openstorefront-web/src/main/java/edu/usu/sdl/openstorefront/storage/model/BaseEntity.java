@@ -60,6 +60,8 @@ public abstract class BaseEntity<T>
 	@Version
 	private String storageVersion;
 
+	private Boolean adminModified;
+
 	public BaseEntity()
 	{
 	}
@@ -84,6 +86,7 @@ public abstract class BaseEntity<T>
 		if (StringUtils.isBlank(getUpdateUser())) {
 			setUpdateUser(SecurityUtil.getCurrentUserName());
 		}
+		setAdminModified(SecurityUtil.isAdminUser());
 	}
 
 	public void populateBaseCreateFields()
@@ -100,6 +103,7 @@ public abstract class BaseEntity<T>
 		if (StringUtils.isBlank(getUpdateUser())) {
 			setUpdateUser(SecurityUtil.getCurrentUserName());
 		}
+		setAdminModified(SecurityUtil.isAdminUser());
 	}
 
 	public String getActiveStatus()
@@ -160,6 +164,16 @@ public abstract class BaseEntity<T>
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+
+	public Boolean getAdminModified()
+	{
+		return adminModified;
+	}
+
+	public void setAdminModified(Boolean adminModified)
+	{
+		this.adminModified = adminModified;
 	}
 
 }

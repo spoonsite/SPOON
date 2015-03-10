@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
+import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import java.util.logging.Logger;
 
 /**
@@ -52,7 +53,7 @@ public class JiraIntegrationHandler
 			if (issue != null) {
 				serviceProxy.getComponentServicePrivate().mapComponentAttributes(issue, integrationConfig);
 			} else {
-				throw new OpenStorefrontRuntimeException("Unable to find Jira Ticket: " + integrationConfig.getIssueNumber() + " for component " + component.getName(), "Check the config also check Jira.");
+				throw new OpenStorefrontRuntimeException("Unable to find Jira Ticket: " + integrationConfig.getIssueNumber() + " for component " + component.getName(), "Check the config also check Jira.", ErrorTypeCode.INTEGRATION);
 			}
 		}
 	}

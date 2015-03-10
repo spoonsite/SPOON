@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
-import edu.usu.sdl.openstorefront.validation.BaseUniqueHandler;
+import edu.usu.sdl.openstorefront.validation.UniqueHandler;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -32,5 +32,5 @@ import java.lang.annotation.Target;
 public @interface Unique
 {
 
-	Class<? extends BaseUniqueHandler> value() default BaseUniqueHandler.class;
+	Class<? extends UniqueHandler> value() default UniqueHandler.class;
 }

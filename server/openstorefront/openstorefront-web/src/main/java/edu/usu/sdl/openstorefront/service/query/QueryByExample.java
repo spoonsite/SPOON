@@ -17,7 +17,9 @@ package edu.usu.sdl.openstorefront.service.query;
 
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Query by Example model
@@ -46,6 +48,7 @@ public class QueryByExample<T extends BaseEntity>
 	private String sortDirection = OpenStorefrontConstant.SORT_ASCENDING;
 	private T groupBy;
 	private T likeExample;
+	private List<SpecialOperatorModel<T>> extraWhereCauses = new ArrayList<>();
 
 	public QueryByExample()
 	{
@@ -190,6 +193,16 @@ public class QueryByExample<T extends BaseEntity>
 	public void setLikeExample(T likeExample)
 	{
 		this.likeExample = likeExample;
+	}
+
+	public List<SpecialOperatorModel<T>> getExtraWhereCauses()
+	{
+		return extraWhereCauses;
+	}
+
+	public void setExtraWhereCauses(List<SpecialOperatorModel<T>> extraWhereCauses)
+	{
+		this.extraWhereCauses = extraWhereCauses;
 	}
 
 }

@@ -57,10 +57,23 @@ public class OpenStorefrontRuntimeException
 		super(message, thrwbl);
 	}
 
+	public OpenStorefrontRuntimeException(String message, Throwable thrwbl, String errorTypeCode)
+	{
+		super(message, thrwbl);
+		this.errorTypeCode = errorTypeCode;
+	}
+
 	public OpenStorefrontRuntimeException(String message, String potentialResolution, Throwable thrwbl)
 	{
 		super(message, thrwbl);
 		this.potentialResolution = potentialResolution;
+	}
+
+	public OpenStorefrontRuntimeException(String message, String potentialResolution, Throwable thrwbl, String errorTypeCode)
+	{
+		super(message, thrwbl);
+		this.potentialResolution = potentialResolution;
+		this.errorTypeCode = errorTypeCode;
 	}
 
 	public OpenStorefrontRuntimeException(Throwable thrwbl)

@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
+import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -74,7 +75,7 @@ public class JiraClient
 			restClient = factory.createWithBasicHttpAuthentication(new URI(connectionModel.getUrl()), connectionModel.getUsername(), connectionModel.getCredential());
 			alive = true;
 		} catch (URISyntaxException ex) {
-			throw new OpenStorefrontRuntimeException("Jira Server url is mal-formed ", "Check server url in properties.", ex);
+			throw new OpenStorefrontRuntimeException("Jira Server url is mal-formed ", "Check server url in properties.", ex, ErrorTypeCode.INTEGRATION);
 		}
 	}
 
@@ -83,7 +84,7 @@ public class JiraClient
 		if (alive) {
 			return restClient;
 		} else {
-			throw new OpenStorefrontRuntimeException("Jira client has been closed.", "Obtain a new client from Manager.");
+			throw new OpenStorefrontRuntimeException("Jira client has been closed.", "Obtain a new client from Manager.", ErrorTypeCode.INTEGRATION);
 		}
 	}
 

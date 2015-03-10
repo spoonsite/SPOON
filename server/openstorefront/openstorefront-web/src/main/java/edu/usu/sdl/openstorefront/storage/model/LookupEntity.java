@@ -103,12 +103,18 @@ public abstract class LookupEntity
 
 	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description)
 	{
+		return newLookup(lookupClass, code, description, null);
+	}
+
+	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription)
+	{
 		T lookup = null;
 		try {
 			lookup = lookupClass.newInstance();
 			lookup.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 			lookup.setCode(code);
 			lookup.setDescription(description);
+			lookup.setDetailedDecription(detailedDescription);
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to create lookup", ex);
 		}

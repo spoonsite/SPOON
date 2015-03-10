@@ -327,14 +327,14 @@ public class SearchServiceImpl
 		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
 		List<String> ids = new ArrayList();
 		attributeCodes.forEach(code -> {
-			ids.add("'" + code.getAttributeCodePk().getAttributeCode() + "'");
+			ids.add(code.getAttributeCodePk().getAttributeCode());
 		});
 
-		String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode in [";
-		componentAttributeQuery = componentAttributeQuery + StringUtils.join(ids, ",") + "]";
+		String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("attributeType", pk.getAttributeType());
+		params.put("attributeCodeIdListParam", ids);
 		List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
 
 		for (ComponentAttribute componentAttribute : componentAttributes) {

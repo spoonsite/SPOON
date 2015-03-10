@@ -19,7 +19,9 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.transfermodel.AlertContext;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
+import edu.usu.sdl.openstorefront.storage.model.AlertType;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
@@ -40,6 +42,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
@@ -233,6 +236,11 @@ public class SystemServiceImpl
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			Files.write(path, ticket.toString().getBytes(Charset.defaultCharset()));
 
+			AlertContext alertContext = new AlertContext();
+			alertContext.setAlertType(AlertType.SYSTEM_ERROR);
+			alertContext.setDataTrigger(errorTicket);
+			getAlertService().checkAlert(alertContext);
+
 		} catch (Throwable t) {
 			//NOTE: this is a critial path.  if an error is thrown and not catch it would result in a info link or potential loop.
 			//So that's why there is a catch all here.
@@ -310,7 +318,7 @@ public class SystemServiceImpl
 
 		generalMedia.setFileName(generalMedia.getName());
 		try (InputStream in = fileInput) {
-			Files.copy(in, generalMedia.pathToMedia());
+			Files.copy(in, generalMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			generalMedia.populateBaseCreateFields();
 			persistenceService.persist(generalMedia);
 		} catch (IOException ex) {

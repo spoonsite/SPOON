@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  * @author dshurtleff
  */
 public class FileSystemManager
+		implements Initializable
 {
 
 	private static final Logger log = Logger.getLogger(FileSystemManager.class.getName());
@@ -54,6 +55,7 @@ public class FileSystemManager
 	public static final String GENERAL_MEDIA_DIR = MAIN_PERM_DIR + "/generalmedia";
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
+	public static final String REPORT_DIR = MAIN_PERM_DIR + "/report";
 	public static final String DB_DIR = MAIN_DIR + "/db";
 
 	private static final int BUFFER_SIZE = 8192;
@@ -161,6 +163,31 @@ public class FileSystemManager
 			nread += n;
 		}
 		return nread;
+	}
+
+	public static void init()
+	{
+		//setup Dirs
+		FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
+		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
+		FileSystemManager.getDir(FileSystemManager.REPORT_DIR);
+	}
+
+	public static void cleanup()
+	{
+		//Nothing to do for now
+	}
+
+	@Override
+	public void initialize()
+	{
+		FileSystemManager.init();
+	}
+
+	@Override
+	public void shutdown()
+	{
+		FileSystemManager.cleanup();
 	}
 
 }

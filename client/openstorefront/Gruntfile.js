@@ -461,8 +461,8 @@ module.exports = function (grunt) {
       ],
       dist: [
       'compass:dist',
-      'copy:styles',
-      'svgmin'
+      'copy:styles'
+      //'svgmin'
       ]//,
       // prod: [
       //   'compass:prod',

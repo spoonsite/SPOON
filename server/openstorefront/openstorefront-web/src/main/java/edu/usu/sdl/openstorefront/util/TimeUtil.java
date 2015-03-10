@@ -18,13 +18,17 @@ package edu.usu.sdl.openstorefront.util;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Useful method dealing with time. Help keep the time handling centralized.
+ * Useful method dealing with time. Helps keep the time handling centralized.
  *
  * @author dshurtleff
  */
@@ -64,6 +68,18 @@ public class TimeUtil
 	{
 		Instant instant = Instant.ofEpochMilli(date.getTime()).truncatedTo(ChronoUnit.DAYS);
 		return new Date(instant.toEpochMilli());
+	}
+
+	public static Date endOfDay(Date date)
+	{
+		Instant instant = Instant.ofEpochMilli(date.getTime());
+		LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		localDateTime = localDateTime.withHour(23)
+				.withMinute(59)
+				.withSecond(59)
+				.with(ChronoField.MILLI_OF_SECOND, 999);
+		return new Date(localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli());
+
 	}
 
 	public static String millisToString(long millis)

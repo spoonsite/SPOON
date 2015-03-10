@@ -32,9 +32,8 @@ public class ErrorTypeCode
 
 	public static final String SYSTEM = "SYS";
 	public static final String REST_API = "API";
-	public static final String USER_ERROR = "USER";
-	public static final String AUTO_SYSTEM = "AUTO";
-	public static final String IMPORT = "IMP";
+	public static final String INTEGRATION = "INT";
+	public static final String REPORT = "RPT";
 
 	public ErrorTypeCode()
 	{
@@ -46,9 +45,8 @@ public class ErrorTypeCode
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(SYSTEM, newLookup(ErrorTypeCode.class, SYSTEM, "System"));
 		codeMap.put(REST_API, newLookup(ErrorTypeCode.class, REST_API, "REST Api"));
-		codeMap.put(USER_ERROR, newLookup(ErrorTypeCode.class, USER_ERROR, "User Error"));
-		codeMap.put(AUTO_SYSTEM, newLookup(ErrorTypeCode.class, AUTO_SYSTEM, "Auto System"));
-		codeMap.put(IMPORT, newLookup(ErrorTypeCode.class, IMPORT, "Import"));
+		codeMap.put(INTEGRATION, newLookup(ErrorTypeCode.class, INTEGRATION, "Intergation"));
+		codeMap.put(REPORT, newLookup(ErrorTypeCode.class, REPORT, "Report"));
 		return codeMap;
 	}
 

@@ -51,7 +51,7 @@ public class ArticleAction
 	public Resolution previewArticle() throws IOException
 	{
 		String filename = previewFileName();
-		Files.write(Paths.get(FileSystemManager.SYSTEM_TEMP_DIR, filename), html.getBytes(), StandardOpenOption.CREATE);
+		Files.write(Paths.get(FileSystemManager.SYSTEM_TEMP_DIR, filename), html.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
 		return new StreamingResolution(MediaType.TEXT_PLAIN, "Article.action?View&attributeType="
 				+ URLEncoder.encode(attributeType, "UTF-8")

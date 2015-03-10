@@ -26,13 +26,14 @@ import java.util.Map;
  * @author dshurtleff
  */
 @SystemTable
-@APIDescription("Job Run Status")
+@APIDescription("Run Status")
 public class RunStatus
 		extends LookupEntity
 {
 
-	public static final String COMPLETE = "C";
+	public static final String PENDING = "P";
 	public static final String WORKING = "W";
+	public static final String COMPLETE = "C";
 	public static final String ERROR = "E";
 
 	public RunStatus()
@@ -43,6 +44,7 @@ public class RunStatus
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
+		codeMap.put(PENDING, newLookup(RunStatus.class, PENDING, "Pending"));
 		codeMap.put(COMPLETE, newLookup(RunStatus.class, COMPLETE, "Complete"));
 		codeMap.put(WORKING, newLookup(RunStatus.class, WORKING, "Working"));
 		codeMap.put(ERROR, newLookup(RunStatus.class, ERROR, "Error"));

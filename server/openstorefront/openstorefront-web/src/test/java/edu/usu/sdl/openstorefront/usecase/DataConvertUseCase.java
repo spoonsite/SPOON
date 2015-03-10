@@ -19,7 +19,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.usu.sdl.openstorefront.service.io.AttributeImport;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;

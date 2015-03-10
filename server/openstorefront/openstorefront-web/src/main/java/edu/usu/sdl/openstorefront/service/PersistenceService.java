@@ -25,8 +25,10 @@ import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.ComplexFieldStack;
 import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -145,12 +147,26 @@ public class PersistenceService
 		return attached;
 	}
 
+	public <T extends BaseEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
+	{
+		T found = findById(entity, id);
+		if (found != null) {
+			found.setUpdateUser(SecurityUtil.getCurrentUserName());
+			found.populateBaseUpdateFields();
+			found.setActiveStatus(activeStatus);
+			persist(found);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find entity to set status on.", "Check Input: " + entity.getSimpleName() + " id: " + id);
+		}
+		return found;
+	}
+
 	/**
 	 * This only works on managed objects
 	 *
 	 * @param <T>
 	 * @param entityClass
-	 * @param primaryKey (DB RID not our Entity PK
+	 * @param primaryKey (DB RID not our Entity PK)
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -373,6 +389,11 @@ public class PersistenceService
 		return updateCount;
 	}
 
+	public long countByExample(BaseEntity example)
+	{
+		return countByExample(new QueryByExample(example));
+	}
+
 	public long countByExample(QueryByExample queryByExample)
 	{
 		long count = 0;
@@ -389,14 +410,30 @@ public class PersistenceService
 		}
 		queryString.append("from ").append(queryByExample.getExample().getClass().getSimpleName());
 
+		Map<String, Object> mappedParams = new HashMap<>();
 		String whereClause = generateWhereClause(queryByExample.getExample());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
+			mappedParams.putAll(mapParameters(queryByExample.getExample()));
 		}
+
+		queryByExample.getExtraWhereCauses().forEach(item -> {
+			SpecialOperatorModel special = (SpecialOperatorModel) item;
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			if (StringUtils.isNotBlank(extraWhere)) {
+				if (queryString.indexOf(" where ") != -1) {
+					queryString.append(" AND ");
+				} else {
+					queryString.append(" where ");
+				}
+				queryString.append(extraWhere);
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+			}
+		});
 
 		OObjectDatabaseTx db = getConnection();
 		try {
-			List<ODocument> documents = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(queryByExample.getExample()));
+			List<ODocument> documents = db.command(new OCommandSQL(queryString.toString())).execute(mappedParams);
 			if (documents.isEmpty() == false) {
 				count = documents.get(0).field("count");
 			}
@@ -404,6 +441,18 @@ public class PersistenceService
 			closeConnection(db);
 		}
 		return count;
+	}
+
+	public List<ODocument> dbCommandQuery(String query, Map<String, Object> params)
+	{
+		List<ODocument> documents = new ArrayList<>();
+		OObjectDatabaseTx db = getConnection();
+		try {
+			documents = db.command(new OCommandSQL(query)).execute(params);
+		} finally {
+			closeConnection(db);
+		}
+		return documents;
 	}
 
 	/**
@@ -452,6 +501,19 @@ public class PersistenceService
 				mappedParams.putAll(mapParameters(queryByExample.getLikeExample()));
 			}
 		}
+		queryByExample.getExtraWhereCauses().forEach(item -> {
+			SpecialOperatorModel special = (SpecialOperatorModel) item;
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			if (StringUtils.isNotBlank(extraWhere)) {
+				if (queryString.indexOf(" where ") != -1) {
+					queryString.append(" AND ");
+				} else {
+					queryString.append(" where ");
+				}
+				queryString.append(extraWhere);
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+			}
+		});
 
 		if (queryByExample.getGroupBy() != null) {
 			String names = generateExampleNames(queryByExample.getGroupBy());
@@ -672,6 +734,9 @@ public class PersistenceService
 		OObjectDatabaseTx db = getConnection();
 		List<T> results = new ArrayList<>();
 		try {
+			if (log.isLoggable(Level.FINEST)) {
+				log.log(Level.FINEST, query);
+			}
 			results = db.query(new OSQLSynchQuery<>(query), parameterMap);
 			if (unwrap) {
 				results = unwrapProxy(db, dataClass, results);

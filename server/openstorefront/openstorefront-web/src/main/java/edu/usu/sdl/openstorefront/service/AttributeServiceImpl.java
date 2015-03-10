@@ -425,6 +425,11 @@ public class AttributeServiceImpl
 			attributeCodePk.setAttributeType(type);
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
 			persistenceService.deleteByExample(attributeCodeExample);
+
+			ArticleTracking articleTrackingExample = new ArticleTracking();
+			articleTrackingExample.setAttributeType(type);
+			persistenceService.deleteByExample(articleTrackingExample);
+
 			persistenceService.delete(attributeType);
 
 			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
@@ -444,6 +449,12 @@ public class AttributeServiceImpl
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
+
+			ArticleTracking articleTrackingExample = new ArticleTracking();
+			articleTrackingExample.setAttributeType(attributeCodePk.getAttributeType());
+			articleTrackingExample.setAttributeCode(attributeCodePk.getAttributeCode());
+			persistenceService.deleteByExample(articleTrackingExample);
+
 			persistenceService.delete(attributeCode);
 
 			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();

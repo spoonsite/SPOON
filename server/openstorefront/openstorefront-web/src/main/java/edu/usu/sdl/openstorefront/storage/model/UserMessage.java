@@ -16,8 +16,11 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -32,11 +35,17 @@ public class UserMessage
 
 	@PK(generated = true)
 	@NotNull
-	private String userMessageId;
+	private String messageId;
 
 	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ValidValueType(value = {}, lookupClass = UserMessageType.class)
+	private String userMessageType;
+
 	private String username;
+	private String emailAddress;
 	private String componentId;
+	private String alertId;
 	private String bodyOfMessage;
 	private String subject;
 	private String sentEmailAddress;
@@ -50,12 +59,12 @@ public class UserMessage
 
 	public String getUserMessageId()
 	{
-		return userMessageId;
+		return messageId;
 	}
 
 	public void setUserMessageId(String userMessageId)
 	{
-		this.userMessageId = userMessageId;
+		this.messageId = userMessageId;
 	}
 
 	public String getUsername()
@@ -116,6 +125,36 @@ public class UserMessage
 	public void setRetryCount(Integer retryCount)
 	{
 		this.retryCount = retryCount;
+	}
+
+	public String getEmailAddress()
+	{
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress)
+	{
+		this.emailAddress = emailAddress;
+	}
+
+	public String getUserMessageType()
+	{
+		return userMessageType;
+	}
+
+	public void setUserMessageType(String userMessageType)
+	{
+		this.userMessageType = userMessageType;
+	}
+
+	public String getAlertId()
+	{
+		return alertId;
+	}
+
+	public void setAlertId(String alertId)
+	{
+		this.alertId = alertId;
 	}
 
 }

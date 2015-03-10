@@ -41,7 +41,7 @@ public class UniqueRule
 				try {
 					String value = BeanUtils.getProperty(dataObject, field.getName());
 					if (value != null) {
-						BaseUniqueHandler handler = unique.value().newInstance();
+						UniqueHandler handler = unique.value().newInstance();
 						valid = handler.isUnique(field, value);
 					}
 				} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {

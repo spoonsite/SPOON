@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.manager.ReportManager;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import java.text.MessageFormat;
@@ -49,11 +50,8 @@ public class ApplicationInit
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
-		//set Dirs
-		FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
-		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
-
 		//Order is important
+		startupManager(new FileSystemManager());
 		startupManager(new DBManager());
 		startupManager(new SolrManager());
 		startupManager(new OSFCacheManager());
@@ -64,6 +62,7 @@ public class ApplicationInit
 		startupManager(new JobManager());
 		startupManager(new UserAgentManager());
 		startupManager(new AsyncTaskManager());
+		startupManager(new ReportManager());
 	}
 
 	private void startupManager(Initializable initializable)
@@ -84,6 +83,8 @@ public class ApplicationInit
 		shutdownManager(new OSFCacheManager());
 		shutdownManager(new SolrManager());
 		shutdownManager(new DBManager());
+		shutdownManager(new FileSystemManager());
+		shutdownManager(new ReportManager());
 	}
 
 	private void shutdownManager(Initializable initializable)
