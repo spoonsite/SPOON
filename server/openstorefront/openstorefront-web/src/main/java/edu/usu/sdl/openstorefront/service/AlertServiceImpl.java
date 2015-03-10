@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.storage.model.EmailAddress;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
@@ -30,6 +31,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserMessageType;
 import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -158,13 +160,17 @@ public class AlertServiceImpl
 			}
 
 			if (createUserMessage) {
-				for (String email : alert.getEmailAddresses()) {
+				if (alert.getEmailAddresses() == null) {
+					alert.setEmailAddresses(new ArrayList<>());
+				}
+				for (EmailAddress email : alert.getEmailAddresses()) {
 					UserMessage userMessage = new UserMessage();
-					userMessage.setEmailAddress(email);
+					userMessage.setEmailAddress(email.getEmail());
 					userMessage.setAlertId(alert.getAlertId());
 					userMessage.setUserMessageType(userMessageType);
 					getUserService().queueUserMessage(userMessage);
 				}
+
 			}
 		}
 	}

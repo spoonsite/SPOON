@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.job;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.storage.model.EmailAddress;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.Report;
 import edu.usu.sdl.openstorefront.storage.model.ReportType;
@@ -32,6 +33,7 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -102,12 +104,15 @@ public class ScheduledReportJob
 						throw new OpenStorefrontRuntimeException("Unable to read the report.", "Check disk permissions and disk space. ", ex, ErrorTypeCode.REPORT);
 					}
 
-					for (String emailAddress : report.getEmailAddresses()) {
+					if (report.getEmailAddresses() == null) {
+						report.setEmailAddresses(new ArrayList<>());
+					}
+					for (EmailAddress emailAddress : report.getEmailAddresses()) {
 						Email email = MailManager.newEmail();
 						email.setSubject(applicationTitle + " - " + TranslateUtil.translate(ReportType.class, report.getReportType()));
 						email.setTextHTML(message.toString());
-						email.addAttachment(emailAddress, reportData, report.getReportFormat().replace("-", "/"));
-						email.addRecipient("", emailAddress, Message.RecipientType.TO);
+						email.addAttachment(emailAddress.getEmail(), reportData, report.getReportFormat().replace("-", "/"));
+						email.addRecipient("", emailAddress.getEmail(), Message.RecipientType.TO);
 						MailManager.send(email);
 					}
 				} else {

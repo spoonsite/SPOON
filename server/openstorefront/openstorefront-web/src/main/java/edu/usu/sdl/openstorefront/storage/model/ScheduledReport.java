@@ -20,15 +20,12 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
-import edu.usu.sdl.openstorefront.validation.Sanitize;
-import edu.usu.sdl.openstorefront.validation.TextSanitizer;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -58,12 +55,10 @@ public class ScheduledReport
 	@ConsumeField
 	private ReportOption reportOption;
 
-	@DataType(String.class)
 	@ConsumeField
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
-	@Sanitize(TextSanitizer.class)
-	private List<String> emailAddresses = new ArrayList<>();
+	@DataType(EmailAddress.class)
+	@OneToMany(orphanRemoval = true)
+	private List<EmailAddress> emailAddresses;
 
 	@NotNull
 	@Min(1)
@@ -107,12 +102,12 @@ public class ScheduledReport
 		this.reportOption = reportOption;
 	}
 
-	public List<String> getEmailAddresses()
+	public List<EmailAddress> getEmailAddresses()
 	{
 		return emailAddresses;
 	}
 
-	public void setEmailAddresses(List<String> emailAddresses)
+	public void setEmailAddresses(List<EmailAddress> emailAddresses)
 	{
 		this.emailAddresses = emailAddresses;
 	}

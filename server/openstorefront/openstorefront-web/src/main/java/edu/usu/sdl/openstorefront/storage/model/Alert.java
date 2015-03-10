@@ -22,10 +22,9 @@ import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -52,12 +51,10 @@ public class Alert
 	@ConsumeField
 	private String name;
 
-	@DataType(String.class)
+	@DataType(EmailAddress.class)
 	@ConsumeField
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
-	@Sanitize(TextSanitizer.class)
-	private List<String> emailAddresses = new ArrayList<>();
+	@OneToMany(orphanRemoval = true)
+	private List<EmailAddress> emailAddresses;
 
 	@ConsumeField
 	private UserDataAlertOption userDataAlertOption;
@@ -99,12 +96,12 @@ public class Alert
 		this.name = name;
 	}
 
-	public List<String> getEmailAddresses()
+	public List<EmailAddress> getEmailAddresses()
 	{
 		return emailAddresses;
 	}
 
-	public void setEmailAddresses(List<String> emailAddresses)
+	public void setEmailAddresses(List<EmailAddress> emailAddresses)
 	{
 		this.emailAddresses = emailAddresses;
 	}
