@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.message;
 
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.storage.model.Alert;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 
@@ -31,6 +32,7 @@ public class MessageContext
 	private UserMessage userMessage;
 	private ComponentAll componentAll;
 	private RecentChangeMessage recentChangeMessage;
+	private Alert alert;
 
 	public MessageContext(UserProfile userProfile)
 	{
@@ -75,6 +77,16 @@ public class MessageContext
 	public void setRecentChangeMessage(RecentChangeMessage recentChangeMessage)
 	{
 		this.recentChangeMessage = recentChangeMessage;
+	}
+
+	public Alert getAlert()
+	{
+		return alert;
+	}
+
+	public void setAlert(Alert alert)
+	{
+		this.alert = alert;
 	}
 
 }

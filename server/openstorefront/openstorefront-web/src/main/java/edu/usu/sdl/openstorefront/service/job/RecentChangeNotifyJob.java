@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.util.Convert;
@@ -43,8 +42,7 @@ public class RecentChangeNotifyJob
 	{
 		long days = Convert.toLong(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_RECENT_CHANGE_DAYS, OpenStorefrontConstant.DEFAULT_RECENT_CHANGE_EMAIL_INTERVAL));
 		long daysInMillis = TimeUtil.daysToMillis(days);
-		ServiceProxy serviceProxy = new ServiceProxy();
-		String lastRunDtsString = serviceProxy.getSystemService().getPropertyValue(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS);
+		String lastRunDtsString = service.getSystemService().getPropertyValue(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS);
 
 		boolean process = false;
 		Date lastRunDts = null;
@@ -58,15 +56,15 @@ public class RecentChangeNotifyJob
 
 		if (process) {
 			log.log(Level.INFO, "Sending out Recent Changes email.");
-			serviceProxy.getUserService().sendRecentChangeEmail(lastRunDts);
+			service.getUserService().sendRecentChangeEmail(lastRunDts);
 			log.log(Level.INFO, "Completed sending out Recent Changes email.");
-			serviceProxy.getSystemService().saveProperty(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
+			service.getSystemService().saveProperty(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
 		} else {
 			Date nextSendDate = new Date(System.currentTimeMillis() + daysInMillis);
 			if (lastRunDts != null) {
 				nextSendDate = new Date(lastRunDts.getTime() + daysInMillis);
 			} else {
-				serviceProxy.getSystemService().saveProperty(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
+				service.getSystemService().saveProperty(ApplicationProperty.RECENT_CHANGE_EMAIL_LAST_DTS, TimeUtil.dateToString(TimeUtil.currentDate()));
 			}
 
 			log.log(Level.FINE, MessageFormat.format("Not time yet to send recent change email.  Next send time: {0}", nextSendDate));

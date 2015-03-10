@@ -60,12 +60,15 @@ public class DBQueryTest
 		results.append("Saved C, D").append("<br>");
 
 		results.append("Active").append("<br>");
-		List<TestEntity> testActiveRecords = service.getLookupService().findLookup(TestEntity.class);
+		TestEntity testEntityExample = new TestEntity();
+		testEntityExample.setActiveStatus(TestEntity.ACTIVE_STATUS);
+
+		List<TestEntity> testActiveRecords = service.getPersistenceService().queryByExample(TestEntity.class, testEntityExample);
 		testActiveRecords.stream().forEach(record -> {
 			results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 		});
 		results.append("Check All").append("<br>");
-		List<TestEntity> testInActiveRecords = service.getLookupService().findLookup(TestEntity.class, null);
+		List<TestEntity> testInActiveRecords = service.getPersistenceService().queryByExample(TestEntity.class, new TestEntity());
 		if (testInActiveRecords.size() == testActiveRecords.size()) {
 			failureReason.append("All return the same count and active.");
 		} else {

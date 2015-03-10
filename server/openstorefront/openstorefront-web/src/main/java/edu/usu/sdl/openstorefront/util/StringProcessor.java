@@ -66,6 +66,12 @@ public class StringProcessor
 		return resource;
 	}
 
+	/**
+	 * Looks for http link in a block of text
+	 *
+	 * @param text
+	 * @return found urls
+	 */
 	public static List<String> extractUrls(String text)
 	{
 		List<String> urls = new ArrayList<>();

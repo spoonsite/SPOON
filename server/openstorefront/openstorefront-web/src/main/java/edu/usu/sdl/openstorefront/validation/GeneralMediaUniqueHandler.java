@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
  * @author dshurtleff
  */
 public class GeneralMediaUniqueHandler
-		implements BaseUniqueHandler
+		implements UniqueHandler
 {
 
 	@Override

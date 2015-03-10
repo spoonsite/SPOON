@@ -23,20 +23,25 @@ import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
+import edu.usu.sdl.openstorefront.service.message.BaseMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.ComponentWatchMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
 import edu.usu.sdl.openstorefront.service.message.RecentChangeMessage;
 import edu.usu.sdl.openstorefront.service.message.RecentChangeMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.SystemErrorAlertMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.TestMessageGenerator;
-import edu.usu.sdl.openstorefront.service.message.WatchMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.UserDataAlertMessageGenerator;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.sort.UserMessageComparator;
+import edu.usu.sdl.openstorefront.storage.model.Alert;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
+import edu.usu.sdl.openstorefront.storage.model.UserMessageType;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
@@ -512,6 +517,7 @@ public class UserServiceImpl
 				UserMessage userMessage = new UserMessage();
 				userMessage.setUsername(userWatch.getUsername());
 				userMessage.setComponentId(component.getComponentId());
+				userMessage.setUserMessageType(UserMessageType.COMPONENT_WATCH);
 				userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
 				userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 				getUserService().queueUserMessage(userMessage);
@@ -526,6 +532,9 @@ public class UserServiceImpl
 		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 		userMessageExample.setUsername(userMessage.getUsername());
 		userMessageExample.setComponentId(userMessage.getComponentId());
+		userMessageExample.setUserMessageType(userMessage.getUserMessageType());
+		userMessageExample.setAlertId(userMessage.getAlertId());
+		userMessageExample.setEmailAddress(userMessage.getEmailAddress());
 
 		//Duplicate check;
 		UserMessage userMessageExisting = persistenceService.queryOneByExample(UserMessage.class, userMessageExample);
@@ -684,16 +693,40 @@ public class UserServiceImpl
 	{
 		UserProfile userProfile = getUserProfile(userMessage.getUsername());
 		UserMessage userMessageExisting = persistenceService.findById(UserMessage.class, userMessage.getUserMessageId());
-		if (StringUtils.isNotBlank(userProfile.getEmail())) {
+
+		String emailAddress = userMessage.getEmailAddress();
+		if (StringUtils.isBlank(emailAddress)) {
+			if (userProfile != null) {
+				emailAddress = userProfile.getEmail();
+			}
+		}
+
+		if (StringUtils.isNotBlank(emailAddress)) {
 			MessageContext messageContext = new MessageContext(userProfile);
 			messageContext.setUserMessage(userMessage);
-			WatchMessageGenerator watchMessageGenerator = new WatchMessageGenerator(messageContext);
-			Email email = watchMessageGenerator.generateMessage();
+			if (StringUtils.isNotBlank(userMessage.getAlertId())) {
+				messageContext.setAlert(persistenceService.findById(Alert.class, userMessage.getAlertId()));
+			}
+
+			BaseMessageGenerator generator = null;
+			if (UserMessageType.COMPONENT_WATCH.equals(userMessage.getUserMessageType())) {
+				generator = new ComponentWatchMessageGenerator(messageContext);
+			} else if (UserMessageType.USER_DATA_ALERT.equals(userMessage.getUserMessageType())) {
+				generator = new UserDataAlertMessageGenerator(messageContext);
+			} else if (UserMessageType.SYSTEM_ERROR_ALERT.equals(userMessage.getUserMessageType())) {
+				generator = new SystemErrorAlertMessageGenerator(messageContext);
+			}
+
+			if (generator == null) {
+				throw new UnsupportedOperationException("Message type not supported.  Type: " + userMessage.getUserMessageType());
+			}
+
+			Email email = generator.generateMessage();
 			if (email != null) {
 				MailManager.send(email);
 				userMessageExisting.setSubject(email.getSubject());
 				userMessageExisting.setBodyOfMessage(email.getTextHTML());
-				userMessageExisting.setSentEmailAddress(userProfile.getEmail());
+				userMessageExisting.setSentEmailAddress(emailAddress);
 			} else {
 				userMessageExisting.setBodyOfMessage("Message was empty no email sent.");
 			}
@@ -813,17 +846,18 @@ public class UserServiceImpl
 
 		StringBuilder query = new StringBuilder();
 		query.append("select MAX(eventDts), createUser from ").append(UserTracking.class.getSimpleName());
-		query.append(" where activeStatus = :userTrackingActiveStatusParam  and  trackEventTypeCode = :trackEventCodeParam and createUser IN [");
+		query.append(" where activeStatus = :userTrackingActiveStatusParam  and  trackEventTypeCode = :trackEventCodeParam and createUser IN :userListParam");
 
 		List<String> usernames = new ArrayList<>();
 		userProfiles.stream().forEach((userProfile) -> {
-			usernames.add("'" + userProfile.getUsername() + "'");
+			usernames.add(userProfile.getUsername());
 		});
-		query.append(StringUtils.join(usernames, ",")).append("] group by createUser");
+		query.append(" group by createUser");
 
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("userTrackingActiveStatusParam", UserTracking.ACTIVE_STATUS);
 		paramMap.put("trackEventCodeParam", TrackEventCode.LOGIN);
+		paramMap.put("userListParam", usernames);
 		List<ODocument> documents = persistenceService.query(query.toString(), paramMap);
 		documents.stream().forEach((document) -> {
 			userLoginMap.put(document.field("createUser"), document.field("MAX"));
@@ -832,7 +866,6 @@ public class UserServiceImpl
 		return userLoginMap;
 	}
 
-	
 	private Boolean objectHasProperty(Object obj, String propertyName)
 	{
 		List<Field> properties = getAllFields(obj);
@@ -863,7 +896,7 @@ public class UserServiceImpl
 
 		return fields;
 	}
-	
+
 	@Override
 	public UserTrackingResult getUserTracking(FilterQueryParams filter, String userId)
 	{
@@ -885,8 +918,7 @@ public class UserServiceImpl
 		if (filter.getStart() != null && filter.getEnd() != null) {
 			if (StringUtils.isNotBlank(whereClause)) {
 				queryString.append(" AND ");
-			}
-			else {
+			} else {
 				queryString.append(" where ");
 			}
 
@@ -919,5 +951,5 @@ public class UserServiceImpl
 		result.setResult(persistenceService.query(queryString.toString(), mappedParams));
 		return result;
 	}
-	
+
 }

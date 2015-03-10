@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quartz.Job;
@@ -30,6 +31,8 @@ public abstract class BaseJob
 {
 
 	private static final Logger log = Logger.getLogger(BaseJob.class.getName());
+
+	protected ServiceProxy service = new ServiceProxy();
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException

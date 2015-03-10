@@ -105,16 +105,24 @@ public abstract class BaseMessageGenerator
 	}
 
 	/**
-	 * Adds User if the user profile exists.
+	 * Adds Recipient (Fail
 	 *
 	 * @param email
 	 */
 	protected void addUserToEmail(Email email)
 	{
+		String name = "";
 		UserProfile userProfile = messageContext.getUserProfile();
 		if (userProfile != null) {
-			String name = userProfile.getFirstName() + " " + userProfile.getLastName();
-			email.addRecipient(name, userProfile.getEmail(), RecipientType.TO);
+			name = userProfile.getFirstName() + " " + userProfile.getLastName();
+		}
+
+		if (StringUtils.isNotBlank(messageContext.getUserMessage().getEmailAddress())) {
+			email.addRecipient(name, messageContext.getUserMessage().getEmailAddress(), RecipientType.TO);
+		} else {
+			if (userProfile != null) {
+				email.addRecipient(name, userProfile.getEmail(), RecipientType.TO);
+			}
 		}
 	}
 

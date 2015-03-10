@@ -15,12 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.service.api.AlertService;
 import edu.usu.sdl.openstorefront.service.api.AsyncService;
 import edu.usu.sdl.openstorefront.service.api.AttributeService;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
+import edu.usu.sdl.openstorefront.service.api.ReportService;
 import edu.usu.sdl.openstorefront.service.api.SearchService;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.api.UserService;
@@ -47,6 +49,8 @@ public class ServiceProxy
 	private UserService userService;
 	private UserServicePrivate userServicePrivate;
 	private SystemService systemService;
+	private AlertService alertService;
+	private ReportService reportService;
 
 	public ServiceProxy()
 	{
@@ -129,6 +133,22 @@ public class ServiceProxy
 			systemService = DynamicProxy.newInstance(new SystemServiceImpl());
 		}
 		return systemService;
+	}
+
+	public AlertService getAlertService()
+	{
+		if (alertService == null) {
+			alertService = DynamicProxy.newInstance(new AlertServiceImpl());
+		}
+		return alertService;
+	}
+
+	public ReportService getReportService()
+	{
+		if (reportService == null) {
+			reportService = DynamicProxy.newInstance(new ReportServiceImpl());
+		}
+		return reportService;
 	}
 
 	public AttributeServicePrivate getAttributeServicePrivate()

@@ -13,17 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.validation;
-
-import java.lang.reflect.Field;
+package edu.usu.sdl.openstorefront.service.transfermodel;
 
 /**
- * Used to determine Uniqueness
  *
  * @author dshurtleff
  */
-public interface BaseUniqueHandler
+public class AlertContext
 {
 
-	public boolean isUnique(Field field, Object value);
+	private String alertType;
+	private Object dataTrigger;
+
+	public AlertContext()
+	{
+	}
+
+	public AlertContext(String alertType, Object dataTrigger)
+	{
+		this.alertType = alertType;
+		this.dataTrigger = dataTrigger;
+	}
+
+	public String getAlertType()
+	{
+		return alertType;
+	}
+
+	public void setAlertType(String alertType)
+	{
+		this.alertType = alertType;
+	}
+
+	public Object getDataTrigger()
+	{
+		return dataTrigger;
+	}
+
+	public void setDataTrigger(Object dataTrigger)
+	{
+		this.dataTrigger = dataTrigger;
+	}
+
 }

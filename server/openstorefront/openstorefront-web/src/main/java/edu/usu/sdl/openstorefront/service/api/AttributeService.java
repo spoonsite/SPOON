@@ -119,10 +119,10 @@ public interface AttributeService
 	public ArticleView getArticle(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Grabs the article and the contents for a give code or type
+	 * Grabs the code that have articles.
 	 *
 	 * @param all
-	 * @return complete article
+	 * @return codes with articles
 	 */
 	public List<AttributeCode> getArticles(Boolean all);
 

@@ -19,21 +19,14 @@ import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingCompleteWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -50,7 +43,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 public class ArticleTrackingResource
 		extends BaseResource
 {
-	
+
 	@GET
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component passing in a filter.")
@@ -63,11 +56,11 @@ public class ArticleTrackingResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-		
+
 		ArticleTrackingResult result = service.getAttributeService().getAttributeTracking(filterQueryParams, null);
 		return sendSingleEntityResponse(result);
 	}
-	
+
 	@GET
 	@APIDescription("Exports article tracking information in csv formt (Requires Admin)")
 	@RequireAdmin
@@ -80,7 +73,7 @@ public class ArticleTrackingResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-		
+
 		StringBuilder data = new StringBuilder();
 		ArticleTrackingResult result = new ArticleTrackingResult();
 		result = service.getAttributeService().getAttributeTracking(filterQueryParams, null);
@@ -97,14 +90,14 @@ public class ArticleTrackingResource
 			"Client IP"
 		});
 		data.append(stringWriter.toString());
-		
+
 		for (ArticleTrackingCompleteWrapper wrapper : result.getResult()) {
 			data.append(wrapper.export());
 		}
-		
+
 		ResponseBuilder response = Response.ok(data.toString());
 		response.header("Content-Disposition", "attachment; filename=\"articleTrackingExport.csv\"");
 		return response.build();
 	}
-	
+
 }

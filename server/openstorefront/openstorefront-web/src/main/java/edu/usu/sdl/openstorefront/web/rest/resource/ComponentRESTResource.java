@@ -301,7 +301,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@APIDescription("Gets a component (Full)")
+	@APIDescription("Exports a set of components.  POST JSON to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
 	@RequireAdmin
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)

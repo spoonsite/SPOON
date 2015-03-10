@@ -31,11 +31,11 @@ import org.codemonkey.simplejavamail.Email;
  *
  * @author dshurtleff
  */
-public class WatchMessageGenerator
+public class ComponentWatchMessageGenerator
 		extends BaseMessageGenerator
 {
 
-	public WatchMessageGenerator(MessageContext messageContext)
+	public ComponentWatchMessageGenerator(MessageContext messageContext)
 	{
 		super(messageContext);
 	}

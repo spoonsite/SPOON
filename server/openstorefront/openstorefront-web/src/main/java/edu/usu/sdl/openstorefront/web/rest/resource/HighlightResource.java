@@ -65,8 +65,7 @@ public class HighlightResource
 	)
 	{
 		Highlight highlightExample = new Highlight();
-		String activeStatus;
-		if (!all){
+		if (!all) {
 			highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
 		}
 		List<Highlight> highlights = service.getPersistenceService().queryByExample(Highlight.class, new QueryByExample(highlightExample));
