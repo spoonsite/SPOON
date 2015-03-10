@@ -16,7 +16,7 @@ limitations under the License.
 <div id="mainContent">
 
 
-  <div class="search2 ">
+  <div class="search2">
     <div class="text-center bannerText">
       <h4>
         <blockquote>
@@ -35,7 +35,7 @@ limitations under the License.
         <label class="imitateLink" ng-click="focusOnSearch()" for="search-header">
           <img src="images/logo/logo-words.svg" alt="" style="height: 150px; width:100%">
           <br>
-          <small>Browse through <span ng-show="componentCount">{{componentCount.numberOfComponents}}</span> DI2E components
+          <smal ng-cloak>Browse through <span ng-show="componentCount" >{{componentCount.numberOfComponents}}</span> DI2E components
           </small>
           <br>
           <!-- <i class="fa fa-caret-down"></i> -->
@@ -73,7 +73,8 @@ limitations under the License.
   </div>
 
   <div class="nifty2col color_background_white">
-    <div class="col-sm-6 first" style="padding-bottom: 30px;">
+
+    <div class="col-sm-6 first" style="padding-bottom: 30px;" ng-cloak>
       <div>
         <h1>Highlights</h1> 
         <hr>
@@ -97,7 +98,7 @@ limitations under the License.
         </div>
       </div>
     </div>
-    <div class="col-sm-6 second">
+    <div class="col-sm-6 second" ng-cloak>
       <div><h1>Most Recently Added</h1> <hr></div>
       <div class="content">
         <div class="row">
