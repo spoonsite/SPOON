@@ -30,7 +30,6 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.openAdminMessage = $rootScope.openAdminMessage;
   $scope.appverison = '';
 
-
   // $scope.type = 'group';
   // $scope.contacts = {
   //   'code': "DEV",
