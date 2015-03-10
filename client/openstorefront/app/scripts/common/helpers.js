@@ -171,7 +171,7 @@
     }
   };
 
-  utils.openWindow  = function(url, name, args, popupWin) {
+  utils.openWindow  = function(url, name, args, popupWin, errorBody) {
 
     if (typeof(popupWin) != "object"){
       popupWin = window.open(url,name,args);
@@ -183,8 +183,14 @@
         popupWin = window.open(url, name,args);
       }
     }
-    console.log('Opening window ', popupWin);
-    popupWin.focus();
+    if (!popupWin) {
+      popupWin = false;
+      errorBody = errorBody || 'body';
+      triggerAlert('A popup blocker is stopping this site from opening a new window.<br><br>To allow the site to open the new window, please turn off popublockers or add this site as an exception.', 'popupblocker', errorBody, 10000)
+    } else {
+      console.log('Opening window ', popupWin);
+      popupWin.focus();
+    }
     return popupWin;
   }
 

@@ -23,7 +23,8 @@ app.directive('panel', ['$timeout', function($timeout) {
     restrict: 'E',
     scope:{
       title: '@',
-      openState: '@'
+      openState: '@',
+      classList: '@'
     },
     transclude: true,
     templateUrl: 'views/content/panel.html',

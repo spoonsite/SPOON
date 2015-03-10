@@ -35,6 +35,7 @@
 @import "includes/schedule.scss";
 @import "includes/compare.scss";
 @import "includes/architecture.scss";
+@import "includes/panel.scss";
 @import "fonts/fontello.scss";
 @import "fonts/icomoon.scss";
 
@@ -43,6 +44,12 @@
   color: #FF811A;
 }
 
+.required label:after {
+  color: #e32;
+  content: ' *';
+  display:inline;
+  margin-right: -10px;
+}
 
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -526,6 +533,9 @@ small button {
   #detailsToolButtons {
     clear:both;
     float: left !important;
+  }
+  .required label:after {
+    margin-right: 0px;
   }
   .fullWidthModal .modal-dialog {
     margin-left: 10px;
