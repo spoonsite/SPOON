@@ -60,7 +60,6 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -175,7 +174,7 @@ public class AttributeResource
 		response.header("Content-Disposition", "attachment; filename=\"allattributes.csv\"");
 		return response.build();
 	}
-	
+
 	@GET
 	@APIDescription("Gets all articles")
 	@RequireAdmin
@@ -199,7 +198,6 @@ public class AttributeResource
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
-	
 
 	@GET
 	@APIDescription("Gets codes with articles.")

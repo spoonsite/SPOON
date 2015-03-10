@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -46,6 +45,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 public class ComponentTrackingResource
 		extends BaseResource
 {
+
 	@GET
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component passing in a filter.")
@@ -64,7 +64,7 @@ public class ComponentTrackingResource
 		ComponentTrackingResult result = service.getComponentService().getComponentTracking(filterQueryParams, componentId);
 		return sendSingleEntityResponse(result);
 	}
-	
+
 	@GET
 	@APIDescription("Exports component tracking information in csv formt (Requires Admin)")
 	@RequireAdmin
@@ -77,7 +77,7 @@ public class ComponentTrackingResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-		
+
 		StringBuilder data = new StringBuilder();
 		ComponentTrackingResult result = new ComponentTrackingResult();
 		result = service.getComponentService().getComponentTracking(filterQueryParams, null);
@@ -94,11 +94,11 @@ public class ComponentTrackingResource
 			"Create User"
 		});
 		data.append(stringWriter.toString());
-		
+
 		for (ComponentTrackingCompleteWrapper wrapper : result.getResult()) {
 			data.append(wrapper.export());
 		}
-		
+
 		ResponseBuilder response = Response.ok(data.toString());
 		response.header("Content-Disposition", "attachment; filename=\"componentTrackingExport.csv\"");
 		return response.build();
