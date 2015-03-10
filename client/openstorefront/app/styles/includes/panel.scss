@@ -1,0 +1,10 @@
+.panelDirective.edges .titleButton{
+  text-align: left;
+}
+.panelDirective.edges .titleButton i{
+  float: right;
+}
+
+.panelDirective .titleButton:hover h3{
+  text-decoration: underline;
+}
