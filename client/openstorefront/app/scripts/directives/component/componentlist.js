@@ -47,6 +47,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       // setFilters: '=',
     },
     link: function postLink(scope, element, attrs) {
+      if (scope.data) {
+        console.log('scope.data', scope.data);
+        
+      }
       
       scope.getShortDescription = getShortDescription;
 
@@ -74,19 +78,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       scope.listOfClasses = attrs.classList;
 
       var popupWin = false;
-      function windowOpener(url, name, args) {
-        if (typeof(popupWin) != "object"){
-          popupWin = window.open(url,name,args);
-        } else {
-          if (!popupWin.closed){ 
-            popupWin.location.href = url;
-          } else {
-            popupWin = window.open(url, name,args);
-          }
-        }
-        popupWin.focus();
-      }
-
 
       if (scope.clickCallback === undefined) {
         scope.clickCallback =  function(id, article) {
@@ -109,7 +100,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             name = 'Component_' + id;
             args = 'window settings';
           }
-          windowOpener(root, name, args);
+          popupWin = utils.openWindow(root, name, args, popupWin);
         };
       }
 
@@ -226,6 +217,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                 {
                   if (result.data && result.data.length > 0) { 
                     scope.data = angular.copy(result.data);
+                    console.log('scope.data', scope.data);
                   } else {
                     scope.data = [];
                   }
@@ -233,14 +225,27 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                   scope.data = [];
                 }
                 $timeout(function(){
-                  scope.$apply();
+                  scope.init();
+                  $timeout(function(){
+                    scope.$apply();
+                  })
                 })
               }, function(){
                 scope.data = [];
                 $timeout(function(){
-                  scope.$apply();
+                  scope.init();
+                  $timeout(function(){
+                    scope.$apply();
+                  })
                 })
               });
+            } else {
+              $timeout(function(){
+                scope.init();
+                $timeout(function(){
+                  scope.$apply();
+                })
+              })
             }
             if (attrs.title !== null && attrs.title !== undefined && attrs.title !== '') {
               scope.isTitle = true;
@@ -253,6 +258,17 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         } //
       }
       scope.setupData();
+
+      scope.getWidth = function(item){
+        var count = 0;
+        _.each(item.attributes, function(thing){
+          if (thing.badgeUrl) {
+            count++;
+          }
+        })
+        return count * 40;
+
+      }
 
       /***************************************************************
       * This funciton gives the correct component list the active class that

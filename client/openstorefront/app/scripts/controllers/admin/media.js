@@ -14,66 +14,81 @@
  * limitations under the License.
  */
 
-'use strict';
+ 'use strict';
 
-app.controller('AdminMediaCtrl', ['$scope', 'business', '$rootScope', '$uiModal', function ($scope, Business, $rootScope, $uiModal) {
- 
-    $scope.predicate = [];
-    $scope.reverse = [];   
+ app.controller('AdminMediaCtrl', ['$scope', 'business', '$rootScope', '$uiModal', function ($scope, Business, $rootScope, $uiModal) {
 
-    $scope.setPredicate = function(predicate, table) {
-      if ($scope.predicate[table] === predicate) {
-        $scope.reverse[table] = !$scope.reverse[table];
-      } else {
-        $scope.predicate[table] = predicate;
-        $scope.reverse[table] = false;
+  $scope.predicate = [];
+  $scope.reverse = [];   
+
+  $scope.setPredicate = function(predicate, table) {
+    if ($scope.predicate[table] === predicate) {
+      $scope.reverse[table] = !$scope.reverse[table];
+    } else {
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
+    }
+  };    
+
+  $scope.refreshMedia = function(){
+    $scope.$emit('$TRIGGERLOAD', 'mediaLoader');
+
+    Business.mediaservice.getGeneralMedia().then(function (results) {
+      if (results) {
+        $scope.media = results;
       }
-    };    
- 
-    $scope.refreshMedia = function(){
-      $scope.$emit('$TRIGGERLOAD', 'mediaLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'mediaLoader');
+    });      
+  };
+  $scope.refreshMedia();
 
-      Business.mediaservice.getGeneralMedia().then(function (results) {
-        if (results) {
-          $scope.media = results;
-        }
-        $scope.$emit('$TRIGGERUNLOAD', 'mediaLoader');
-      });      
-    };
+  $scope.$on('$REFRESH_MEDIA', function(){        
     $scope.refreshMedia();
-    
-    $scope.$on('$REFRESH_MEDIA', function(){        
-        $scope.refreshMedia();
-    });    
-    
-    $scope.removeMedia = function(media){
-      var response = window.confirm("Are you sure you want DELETE " + media.name + "?");
-      if (response) {
+  });    
 
-        $scope.$emit('$TRIGGERLOAD', 'mediaLoader');
-        Business.mediaservice.removeMedia(media.name).then(function (results) {
-          $scope.refreshMedia();          
-          $scope.$emit('$TRIGGERUNLOAD', 'mediaLoader');
-        });
-      }
-    };
-    
-    $scope.addMedia = function(){
-        var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/addGeneralMedia.html',
-        controller: 'AdminAddMediaCtrl',
-        backdrop: 'static',
-        size: 'sm',
-        resolve: {          
+  $scope.removeMedia = function(media){
+    var response = window.confirm("Are you sure you want DELETE " + media.name + "?");
+    if (response) {
+
+      $scope.$emit('$TRIGGERLOAD', 'mediaLoader');
+      Business.mediaservice.removeMedia(media.name).then(function (results) {
+        $scope.refreshMedia();          
+        $scope.$emit('$TRIGGERUNLOAD', 'mediaLoader');
+      });
+    }
+  };
+
+  $scope.addMedia = function(){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/addGeneralMedia.html',
+      controller: 'AdminAddMediaCtrl',
+      backdrop: 'static',
+      size: 'sm',
+      resolve: {
+        title: function () {
+          return 'Import Media File';
+        },
+        url: function () {
+          return 'Media.action?UploadGeneralMedia';
+        },
+        single: function () {
+          return false;
+        },
+        alias: function () {
+          return 'file';
         }
-      });       
-    };
-    
+      }
+    });       
+  };
+
 }]);
 
-app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'business', '$uiModal', 'FileUploader',
-  function ($scope, $uiModalInstance, Business, $uiModal, FileUploader) {
-    
+app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url', 'alias', 'single', 'business', '$uiModal', 'FileUploader',
+  function ($scope, $uiModalInstance, title, url, alias, single, Business, $uiModal, FileUploader) {
+    $scope.title = title;
+    $scope.url = url;
+    $scope.single = single;
+    $scope.alias = alias;
     $scope.mediaForm = {};
     
     $scope.saveMedia = function(mediaUIForm){
@@ -84,15 +99,16 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'business', '
     
     var getNewFileUpload = function () {
       return new FileUploader({
-        url: 'Media.action?UploadGeneralMedia',
-        alias: 'file',
+        url: $scope.url,
+        alias: $scope.alias,
         queueLimit: 1,
         onBeforeUploadItem: function (item) {
           $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
-
-          item.formData.push({
-            "generalMedia.name": $scope.mediaForm.name
-          });
+          if (!$scope.single) {
+            item.formData.push({
+              "generalMedia.name": $scope.mediaForm.name
+            });
+          }
         },
         onSuccessItem: function (item, response, status, headers) {
           $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
@@ -109,7 +125,9 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'business', '
               var uploadError = response.errors.file;
               var enityError = response.errors.generalMedia;
               var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
-              $scope.mediaUIForm.name.$error.required = true;
+              if (!$scope.single) {
+                $scope.mediaUIForm.name.$error.required = true;
+              }
               $scope.mediaUploader.clearQueue();
               $scope.mediaUploader.cancelAll();               
               triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'body', 30000);
@@ -125,13 +143,13 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'business', '
           $scope.mediaUploader.cancelAll();
         }
       });
-    };
-    
-    $scope.mediaUploader = getNewFileUpload();
-    
-    
-    $scope.close = function(){
-      $uiModalInstance.dismiss('cancel');
-    };
-    
- }]);
+};
+
+$scope.mediaUploader = getNewFileUpload();
+
+
+$scope.close = function(){
+  $uiModalInstance.dismiss('cancel');
+};
+
+}]);

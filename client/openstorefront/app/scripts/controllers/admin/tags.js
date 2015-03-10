@@ -14,77 +14,84 @@
  * limitations under the License.
  */
 
-'use strict';
+ 'use strict';
 
-app.controller('AdminTagsCtrl', ['$scope', 'business', '$rootScope', '$uiModal', function ($scope, Business, $rootScope, $uiModal) {
+ app.controller('AdminTagsCtrl', ['$scope', 'business', '$rootScope', '$uiModal', function ($scope, Business, $rootScope, $uiModal) {
 
-    $scope.predicate = [];
-    $scope.reverse = [];
-    $scope.tagForm = {};
-    
-    $scope.setPredicate = function (predicate, table) {
-      if ($scope.predicate[table] === predicate) {
-        $scope.reverse[table] = !$scope.reverse[table];
-      } else {
-        $scope.predicate[table] = predicate;
-        $scope.reverse[table] = false;
+  $scope.predicate = [];
+  $scope.reverse = [];
+  $scope.tagForm = {};
+  $scope.predicate['tag'] = 'componentName';
+
+  $scope.setPredicate = function (predicate, table) {
+    if ($scope.predicate[table] === predicate) {
+      $scope.reverse[table] = !$scope.reverse[table];
+    } else {
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
+    }
+  };    
+
+  $scope.loadTags = function() {
+    $scope.$emit('$TRIGGERLOAD', 'tagsLoader');        
+    Business.componentservice.getComponentAllTags().then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', 'tagsLoader');
+      if (results) {
+        $scope.tags = results;
       }
-    };    
-    
-    $scope.loadTags = function() {
-      $scope.$emit('$TRIGGERLOAD', 'tagsLoader');        
-      Business.componentservice.getComponentAllTags().then(function (results) {
-        $scope.$emit('$TRIGGERUNLOAD', 'tagsLoader');
-        if (results) {
-          $scope.tags = results;
-        }
-      });     
-    };
-    $scope.loadTags();    
-   
-    $scope.loadComponentList = function(){
-      Business.componentservice.getComponentLookupList().then(function (results) {
-        if (results) {          
-          $scope.components = results;                            
-         }
-      });      
-    }; 
-    $scope.loadComponentList();
-   
-    $scope.saveTag = function () {
-      $scope.$emit('$TRIGGERLOAD', 'tagsLoader');    
-        Business.componentservice.addSubComponentEntity({
-          componentId: $scope.tagForm.componentId,
-          entityName: "tags",
-          entity: $scope.tagForm
-        }).then(function (result) {
-          $scope.$emit('$TRIGGERUNLOAD', 'tagsLoader'); 
-          if (result) {
-            if (result && result !== 'false' && isNotRequestError(result)){  
-              removeError();
-              triggerAlert('Saved successfully', 'tagSave', 'body', 3000);
-              $scope.tagForm = {};
-              $scope.loadTags();
-            } else {
-              removeError();
-              triggerError(result, true);
-            }
-          }
-        });      
-     };
-     
-     $scope.removeTag = function(tag){       
-        $scope.$emit('$TRIGGERLOAD', 'tagsLoader');        
+    });     
+  };
+  $scope.loadTags();    
+
+  var compare = function (a, b) {
+    return ((a.description == b.description) ? 0 : ((a.description > b.description) ? 1 : -1));
+  }
+
+  $scope.loadComponentList = function(){
+    Business.componentservice.getComponentLookupList().then(function (results) {
+      if (results) {
+        console.log('result', results);
         
-        Business.componentservice.inactivateEnity({
-          componentId: tag.componentId,
-          entityId: tag.tagId,
-          entity: 'tags'
-        }).then(function (results) {
-          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'tagsLoader');
-           $scope.loadTags();            
-        });         
-     };    
-    
+        $scope.components = results.sort(compare);                            
+      }
+    });      
+  }; 
+  $scope.loadComponentList();
+
+  $scope.saveTag = function () {
+    $scope.$emit('$TRIGGERLOAD', 'tagsLoader');    
+    Business.componentservice.addSubComponentEntity({
+      componentId: $scope.tagForm.componentId,
+      entityName: "tags",
+      entity: $scope.tagForm
+    }).then(function (result) {
+      $scope.$emit('$TRIGGERUNLOAD', 'tagsLoader'); 
+      if (result) {
+        if (result && result !== 'false' && isNotRequestError(result)){  
+          removeError();
+          triggerAlert('Saved successfully', 'tagSave', 'body', 3000);
+          $scope.tagForm = {};
+          $scope.loadTags();
+        } else {
+          removeError();
+          triggerError(result, true);
+        }
+      }
+    });      
+  };
+
+  $scope.removeTag = function(tag){       
+    $scope.$emit('$TRIGGERLOAD', 'tagsLoader');        
+
+    Business.componentservice.inactivateEnity({
+      componentId: tag.componentId,
+      entityId: tag.tagId,
+      entity: 'tags'
+    }).then(function (results) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'tagsLoader');
+      $scope.loadTags();            
+    });         
+  };    
+
 }]);
 

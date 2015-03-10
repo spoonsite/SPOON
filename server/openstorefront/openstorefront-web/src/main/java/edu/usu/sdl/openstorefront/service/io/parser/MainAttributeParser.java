@@ -55,6 +55,15 @@ public class MainAttributeParser
 
 	private static final String HEADER = "Attribute Type";
 
+	/**
+	 * @return the HEADER
+	 */
+	@Override
+	public String getHEADER()
+	{
+		return HEADER;
+	}
+
 	@Override
 	protected void internalParse(CSVReader reader) throws IOException
 	{
@@ -62,7 +71,7 @@ public class MainAttributeParser
 		String data[] = reader.readNext();
 		while (data != null) {
 			if (data.length > EXTERNAL_LINK
-					&& HEADER.equals(data[TYPE].trim()) == false) {
+					&& getHEADER().equals(data[TYPE].trim()) == false) {
 
 				AttributeType attributeType = new AttributeType();
 				attributeType.setAttributeType(data[TYPE].trim().toUpperCase());
@@ -109,7 +118,7 @@ public class MainAttributeParser
 				}
 
 			} else {
-				if (data.length > TYPE && HEADER.equals(data[TYPE]) == false) {
+				if (data.length > TYPE && getHEADER().equals(data[TYPE]) == false) {
 					log.log(Level.WARNING, MessageFormat.format("Line: {0} is missing fields. (Skipping)  data length: {1}", new Object[]{lineNumber, data.length}));
 				}
 			}

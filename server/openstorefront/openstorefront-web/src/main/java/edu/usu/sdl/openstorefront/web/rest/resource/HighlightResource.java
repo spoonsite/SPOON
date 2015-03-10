@@ -150,6 +150,17 @@ public class HighlightResource
 		service.getSystemService().removeHighlight(id);
 	}
 
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Deletes a highlight")
+	@Path("/delete/{id}")
+	public void deleteHighlight(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		service.getSystemService().deleteHighlight(id);
+	}
+
 	@PUT
 	@RequireAdmin
 	@APIDescription("Activates a highlight")

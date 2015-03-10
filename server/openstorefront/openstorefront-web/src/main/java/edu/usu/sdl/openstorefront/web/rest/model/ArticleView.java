@@ -15,17 +15,25 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.io.ExportImport;
+import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 public class ArticleView
+		implements ExportImport
 {
 
 	private String attributeCode;
@@ -64,7 +73,7 @@ public class ArticleView
 	public ArticleView()
 	{
 	}
-
+	
 	public static ArticleView toView(AttributeCode attributeCode)
 	{
 		ServiceProxy service = new ServiceProxy();
@@ -83,13 +92,15 @@ public class ArticleView
 		if (attributeCode.getArticle() != null) {
 			if (StringUtils.isNotBlank(attributeCode.getArticle().getTitle())) {
 				articleView.setTitle(attributeCode.getArticle().getTitle());
-			} else {
+			}
+			else {
 				articleView.setTitle(attributeCode.getLabel());
 			}
 
 			if (StringUtils.isNotBlank(attributeCode.getArticle().getDescription())) {
 				articleView.setDescription(attributeCode.getArticle().getDescription());
-			} else {
+			}
+			else {
 				articleView.setDescription(attributeCode.getDescription());
 			}
 
@@ -237,6 +248,49 @@ public class ArticleView
 	public void setCodeLongDescription(String codeLongDescription)
 	{
 		this.codeLongDescription = codeLongDescription;
+	}
+
+	@Override
+	public String export()
+	{
+		String componentJson = null;
+		try {
+			componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(this);
+		}
+		catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export component.", ex);
+		}
+		return componentJson;
+	}
+
+	@Override
+	public void importData(String[] data)
+	{
+		Objects.requireNonNull(data, "Input data cannot be null");
+		try {
+			ArticleView article = StringProcessor.defaultObjectMapper().readValue(data[0], new TypeReference<ArticleView>()
+																	  {
+			});
+			if (article != null) {
+//				this.component = article.getComponent();
+//				this.attributes = article.getAttributes();
+//				this.contacts = article.getContacts();
+//				this.evaluationSections = article.getEvaluationSections();
+//				this.externalDependencies = article.getExternalDependencies();
+//				this.media = article.getMedia();
+//				this.metadata = article.getMetadata();
+//				this.questions = article.getQuestions();
+//				this.resources = article.getResources();
+//				this.reviews = article.getReviews();
+//				this.tags = article.getTags();
+			}
+			else {
+				throw new OpenStorefrontRuntimeException("Unable to import component.", "Make sure the data is in the correct format");
+			}
+		}
+		catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to import component. Data could not be real", ex);
+		}
 	}
 
 }

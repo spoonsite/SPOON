@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.service.io.ExportImport;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.Article;
+import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -26,37 +28,19 @@ import java.text.SimpleDateFormat;
  *
  * @author jlaw
  */
-public class ComponentTrackingCompleteWrapper
-		implements ExportImport
+public class ArticleTrackingCompleteWrapper
+	implements ExportImport
 {
+	private Article article;
+	private ArticleTracking data;
 
-	private String name;
-	private ComponentTracking data;
-
-	public ComponentTrackingCompleteWrapper()
-	{
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
+	public ArticleTrackingCompleteWrapper(){
 	}
 
 	/**
 	 * @return the data
 	 */
-	public ComponentTracking getData()
+	public ArticleTracking getData()
 	{
 		return data;
 	}
@@ -64,9 +48,25 @@ public class ComponentTrackingCompleteWrapper
 	/**
 	 * @param data the data to set
 	 */
-	public void setData(ComponentTracking data)
+	public void setData(ArticleTracking data)
 	{
 		this.data = data;
+	}
+
+	/**
+	 * @return the article
+	 */
+	public Article getArticle()
+	{
+		return article;
+	}
+
+	/**
+	 * @param article the article to set
+	 */
+	public void setArticle(Article article)
+	{
+		this.article = article;
 	}
 
 	@Override
@@ -76,14 +76,14 @@ public class ComponentTrackingCompleteWrapper
 		CSVWriter writer = new CSVWriter(stringWriter);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 		
-		writer.writeNext(new String[]{getName(),
-			getData().getComponentId(),
-			getData().getComponentResourceId(),
-			getData().getComponentTrackingId(),
+		writer.writeNext(new String[]{getArticle().getTitle(),
+			getData().getAttributeType(),
+			getData().getAttributeCode(),
 			df.format(getData().getCreateDts()),
-			getData().getClientIp(),
 			getData().getTrackEventTypeCode(),
-			getData().getCreateUser()
+			getData().getArticleTrackingId(),
+			getData().getCreateUser(),
+			getData().getClientIp()
 		});
 		return stringWriter.toString();
 	}
@@ -93,5 +93,5 @@ public class ComponentTrackingCompleteWrapper
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-
+	
 }

@@ -1,7 +1,5 @@
-<h3 style="margin-left:15px;">Select options (user)</h3>
+<h3 style="margin-left:15px; margin-right:15px;">Select options <span class="pull-right"> <a ng-href="{{generateDownloadLink()}}" class="btn btn-default">Export&nbsp;<i class="fa fa-sign-out"></i></a></span></h3>
 <div class="form-group col-xs-6">
-  {{query.filterObj.start}}
-  {{query.filterObj.end}}
   <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i>&nbsp;Show date range</label><br>
   <div class="form-group col-xs-6" style="padding-left:0px; padding-right:0px;">
     <input type="text" class="form-control" ng-model="query.filterObj.start" data-max-date="{{today}}" placeholder="From" bs-datepicker>
@@ -14,109 +12,72 @@
   <label class="control-label">Show # of results <small>(up to 10000 &mdash; removes paging)</small></label><br>
   <input type="number" class="form-control" ng-model="maxResults" ng-change="checkMax();" placeholder="Max" max="10000">
 </div>
-<div style="clear:both;"></div>
-<h3 style="margin-left:15px;">Filter options</h3>
-<div class="form-group col-xs-6">
-  <label class="control-label">Max # of results per page <small>(Defaults to {{defaultMax}})</small></label><br>
-  <input ng-disable="maxResults" type="number" class="form-control" ng-model="maxPerPage" ng-change="setPageMax();" placeholder="Max" max="10000">
-</div>
-<div class="form-group col-xs-6">
-  <div class="form-group col-xs-12">
-    <label class="control-label">Retrieve All Active and Inactive results</label>
-    <input type="checkbox" ng-model="query.filterObj.all" ng-checked="query.filterObj.all">
-  </div>
-  <div class="form-group col-xs-12">
-    <label class="control-label">Select status</label>
-    <select ng-disabled="query.filterObj.all" ng-model="query.filterObj.status">
-      <option value="A">Active Status</option>
-      <option value="I">Inactive Status</option>
-    </select>
-  </div>
-</div>
+
 <div style="clear:both;">
   <button style="margin-left:15px; display:inline-block;" class="btn btn-default" ng-click="sendRequest()">Apply Changes <small>(refresh results)</small>&nbsp;<i class="fa fa-search"></i></button>
-  <button style="display:inline-block;" class="btn btn-default" ng-click="query.filterObj.sortField = ''; query.filterObj.sortOrder = ''; sendRequest();">Clear Sort&nbsp;<span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
+  <button style="display:inline-block;" class="btn btn-default" ng-click="clearSort();">Clear Sort&nbsp;<span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
     <i class="fa fa-sort fa-stack-1x"></i>
     <i class="fa fa-ban fa-stack-2x text-danger"></i>
   </span></button>
-  <pagination ng-show="showPagination" style="display:inline-block; margin: 0px; margin-bottom:-13px;" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" max-size="pagination.maxSize" boundary-links="true" rotate="false" num-pages="pagination.numPages" ng-change="pageChanged()"></pagination>
+  <pagination ng-show="showPagination" style="display:inline-block; margin: 0px; margin-bottom:-13px;" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" max-size="pagination.maxSize" boundary-links="true" rotate="false" num-pages="pagination.numPages" ng-change="pageChanged()"></pagination><a tabindex="0" role="button" class="btn btn-default" data-placement="bottom" title="{{popover.title}}" data-content-template="views/services/filter.html" data-animation="am-flip-x" bs-popover>Filter Options</a>
 </div>
 
 <!-- This part is unique to each different tracking class... -->
 <div style="">
   <div style="text-align:left; padding-left:15px; padding-right:15px;">
     <h4>Additional Sort By options:
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('organization')">Organization<span ng-show="query.filterObj.sortField === 'organization' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'organization' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('userTypeCode')">User Type<span ng-show="query.filterObj.sortField === 'userTypeCode' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'userTypeCode' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('browser')">Browser<span ng-show="query.filterObj.sortField === 'browser' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'browser' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('browserVersion')">Browser Version<span ng-show="query.filterObj.sortField === 'browserVersion' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'browserVersion' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('osPlatform')">OS Platform<span ng-show="query.filterObj.sortField === 'osPlatform' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'osPlatform' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
       <button class="btn btn-sm btn-default" ng-click="changeSortOrder('userAgent')">User Agent<span ng-show="query.filterObj.sortField === 'userAgent' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'userAgent' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('deviceType')">Device Type<span ng-show="query.filterObj.sortField === 'deviceType' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'deviceType' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('browserVersion')">Browser Version<span ng-show="query.filterObj.sortField === 'browserVersion' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'browserVersion' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('trackingId')">Tracking ID<span ng-show="query.filterObj.sortField === 'trackingId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'trackingId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
     </h4>
     <div style="clear:both;"></div>
     <table class="table table-striped table-bordered">
       <tr>
         <th ng-click="changeSortOrder('createUser')" class="imitateLink">Name&nbsp;<span ng-show="query.filterObj.sortField === 'createUser' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'createUser' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
+        <th ng-click="changeSortOrder('organization')" class="imitateLink">Organization&nbsp;<span ng-show="query.filterObj.sortField === 'organization' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'organization' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
+        <th ng-click="changeSortOrder('userTypeCode')" class="imitateLink">User Type&nbsp;<span ng-show="query.filterObj.sortField === 'userTypeCode' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'userTypeCode' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('eventDts')" class="imitateLink">Event Date&nbsp;<span ng-show="query.filterObj.sortField === 'eventDts' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'eventDts' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('trackEventTypeCode')" class="imitateLink">Event Type&nbsp;<span ng-show="query.filterObj.sortField === 'trackEventTypeCode' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'trackEventTypeCode' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('trackingId')" class="imitateLink">Tracking ID&nbsp;<span ng-show="query.filterObj.sortField === 'trackingId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'trackingId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('clientIp')" class="imitateLink">Client IP&nbsp;<span ng-show="query.filterObj.sortField === 'clientIp' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'clientIp' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('deviceType')" class="imitateLink">Device Type&nbsp;<span ng-show="query.filterObj.sortField === 'deviceType' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'deviceType' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <th ng-click="changeSortOrder('osPlatform')" class="imitateLink">Platform&nbsp;<span ng-show="query.filterObj.sortField === 'osPlatform' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'osPlatform' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
+        <th ng-click="changeSortOrder('browser')" class="imitateLink">Browser&nbsp;<span ng-show="query.filterObj.sortField === 'browser' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'browser' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th>Action</th>
       </tr>
       <tr ng-repeat-start="item in data" >
         <td>{{item.createUser}}</td>
+        <td>{{item.organization}}</td>
+        <td>{{getUserType(item.userTypeCode)}}</td>
         <td>{{getDate(item.eventDts)}}</td>
         <td>{{getEventType(item.trackEventTypeCode)}}</td>
-        <td>{{item.trackingId}}</td>
         <td>{{item.clientIp}}</td>
-        <td>{{item.deviceType}}</td>
-        <td>{{item.osPlatform}}</td>
+        <td>{{item.browser}}</td>
         <td style="padding:0px; width: 200px;">&nbsp;
           <button class="btn btn-default" ng-click="item.show = !item.show"><i class="fa fa-view"></i>View Details</button>
         </td>
       </tr>
       <tr ng-show="item.show" ng-repeat-end>
         <td colspan="8">
-          <label>User Information</label>
+          <label>Platform Information</label>
           <ul>
-            <li><strong>Organization:</strong>{{item.organization}}</li>
-            <li><strong>User Type:</strong>{{getUserType(item.userTypeCode)}}</li>
+            <li><strong>OS Platform:</strong>&nbsp;{{item.osPlatform}}</li>
+            <li><strong>User Agent:</strong>&nbsp;{{item.userAgent}}</li>
           </ul>
           <label>Browser Information</label>
           <ul>
-            <li><strong>Browser:</strong>{{item.browser}}</li>
-            <li><strong>Version:</strong>{{item.browserVersion}}</li>
-            <li><strong>User Agent:</strong>{{item.userAgent}}</li>
+            <li><strong>Device Type:</strong>&nbsp;{{item.deviceType}}</li>
+            <li><strong>Browser:</strong>&nbsp;{{item.browser}}</li>
+            <li><strong>Version:</strong>&nbsp;{{item.browserVersion}}</li>
+          </ul>
+          <label>Tracking Information</label>
+          <ul>
+            <li><strong>Tracking ID:</strong>&nbsp;{{item.trackingId}}</li>
           </ul>
         </td>
       </tr>
     </table>
-         <!--    {
-
-            "createUser": "admin",
-            "eventDts": "2015-02-26T10:36:32.88-07:00",
-            "trackEventTypeCode": "L",
-            "trackingId": "1e6c40cf-e36c-499c-af65-cc31ec28d11c",
-            "clientIp": "127.0.0.1",
-            "deviceType": "Browser",
-            "osPlatform": "Windows 8.1  version: 6.3",
-
-
-        
-
-            "organization": "test",
-            "userTypeCode": "PM"
-            "browser": "Chrome",
-            "browserVersion": "40.0.2214.115",
-            "activeStatus": "A",
-            "userAgent": "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36",
-
-            "storageVersion": "1",
-            "updateDts": "2015-02-26T10:36:32.922-07:00",
-            "updateUser": "admin",
-            "createDts": "2015-02-26T10:36:32.922-07:00",
-          } -->
-        </div>
-      </div>
-      <pagination ng-show="showPagination" style="display:inline-block; margin: 0px; margin-left:15px; margin-top:-19px;" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" max-size="pagination.maxSize" boundary-links="true" rotate="false" num-pages="pagination.numPages" ng-change="pageChanged()"></pagination><button class="btn btn-default" style="margin-top:-27px;" ng-click="toTop();">Top&nbsp;<i class="fa fa-arrow-up"></i></button>
+  </div>
+</div>
+<div style="margin-left:15px;">
+  <pagination ng-show="showPagination" style="display:inline-block; margin: 0px; margin-top:-19px;" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" max-size="pagination.maxSize" boundary-links="true" rotate="false" num-pages="pagination.numPages" ng-change="pageChanged()"></pagination><a style="margin-top:-27px;" tabindex="0" role="button" class="btn btn-default" data-placement="bottom" title="{{popover.title}}" data-content-template="views/services/filter.html" data-animation="am-flip-x" bs-popover>Filter Options</a><button class="btn btn-default" style="margin-top:-27px;" ng-click="toTop();">Top&nbsp;<i class="fa fa-arrow-up"></i></button>
+</div>

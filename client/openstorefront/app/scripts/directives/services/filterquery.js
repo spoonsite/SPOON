@@ -24,6 +24,8 @@ app.directive('filterquery',['business', function (Business) {
       return 'views/services/component.html';
     } else if (attrs.type === 'article') {
       return 'views/services/article.html';
+    } else {
+      return 'views/services/default.html';
     }
   }
   return {
@@ -31,10 +33,11 @@ app.directive('filterquery',['business', function (Business) {
     restrict: 'E',
     scope:{
       url: '@',
-      defaultMax: '@'
+      max: '@'
     },
     link: function postLink(scope, element, attrs) {
-      scope.defaultMax = scope.defaultMax? parseInt(scope.defaultMax): 50;
+      scope.defaultMax = 50;
+      scope.defaultMax = scope.max? parseInt(scope.max): 50;
       scope.today = new Date();
       scope.query = {};
       scope.query.filterObj = angular.copy(utils.queryFilter);
@@ -44,10 +47,16 @@ app.directive('filterquery',['business', function (Business) {
       scope.pagination = {};
       scope.pagination.currentPage = 1;
       scope.pagination.itemsPerPage = scope.defaultMax;
-      scope.pagination.maxSize = 10;
+      scope.pagination.maxSize = 6;
       scope.showPagination = true;
       scope.maxResults;
       scope.maxPerPage;
+      scope.query.filterObj.sortField = 'eventDts';
+      scope.query.filterObj.sortOrder = 'DESC';
+      scope.popover = {
+        "title": "Additional filters"
+      };
+
 
       Business.lookupservice.getLookupCodes('TrackEventCode').then(function(result){
         // console.log('track event codes', result);
@@ -59,9 +68,9 @@ app.directive('filterquery',['business', function (Business) {
       Business.lookupservice.getLookupCodes('UserTypeCode').then(function(result){
         // console.log('track event codes', result);
         
-        scope.eventCodes = result? result: [];
+        scope.userCodes = result? result: [];
       }, function(){
-        scope.eventCodes = [];
+        scope.userCodes = [];
       })
 
       scope.sendRequest = function(){
@@ -76,7 +85,6 @@ app.directive('filterquery',['business', function (Business) {
         }
         // console.log('We sent the request', query);
         Business.trackingservice.get(query).then(function(result){
-          // console.log('result', result);
           scope.backupResult = result;
           scope.data = result? result.result: [];
           scope.pagination.totalItems = result.count;
@@ -101,6 +109,12 @@ app.directive('filterquery',['business', function (Business) {
         }
       }
 
+      scope.clearSort = function() {
+        scope.query.filterObj.sortField = 'eventDts';
+        scope.query.filterObj.sortOrder = 'DESC';
+        scope.sendRequest();
+      }
+
       scope.checkMax = function(){
         if (scope.maxResults) {
           scope.query.filterObj.offset = 0;
@@ -111,14 +125,35 @@ app.directive('filterquery',['business', function (Business) {
         }
       }
 
+      scope.generateDownloadLink = function(){
+        var url = 'api/v1/resource/';
+        if (attrs.type === 'user'){
+          url += 'usertracking/export?';
+        } else if (attrs.type === 'component'){
+          url += 'componenttracking/export?';
+        } else if (attrs.type === 'article'){
+          url += 'articletracking/export?';
+        }
+        var query = angular.copy(scope.query.filterObj);
+        if (scope.maxResults) {
+          query.offset = 0;
+          query.max = scope.maxResults;
+        } else {
+          query.offset = 0;
+          query.max = 0;
+        }
+        url += query.toQuery();
+        return url;
+      }
+
       scope.toTop = function(){
         jQuery('html,body').animate({scrollTop:0},0);
       }
 
-      scope.setPageMax = function(){
-        if (scope.maxPerPage){
-          scope.query.filterObj.max = scope.maxPerPage;
-          scope.pagination.itemsPerPage = scope.maxPerPage
+      scope.setPageMax = function(maxPerPage){
+        if (maxPerPage){
+          scope.query.filterObj.max = maxPerPage;
+          scope.pagination.itemsPerPage = maxPerPage
         } else {
           scope.query.filterObj.max = 20;
           scope.pagination.itemsPerPage = 20;
@@ -138,7 +173,7 @@ app.directive('filterquery',['business', function (Business) {
       }
 
       scope.getEventType = function(code){
-        if (scope.eventCodes.length){
+        if (scope.eventCodes && scope.eventCodes.length){
           var found = _.find(scope.eventCodes, {'code': code});
           if (found) {
             return found.description;
@@ -149,7 +184,7 @@ app.directive('filterquery',['business', function (Business) {
         return code;
       }
       scope.getUserType = function(code){
-        if (scope.userCodes.length){
+        if (scope.userCodes && scope.userCodes.length){
           var found = _.find(scope.userCodes, {'code': code});
           if (found) {
             return found.description;

@@ -103,31 +103,9 @@ var app = angular
   $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
   $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
 
-  // /**
-  // * Global error handling
-  // */
-  var httpStatusCodeInterceptorFactory = function ($q) {
-    
-    function onSuccess(response) {
-//      if ("success_condition") {
-        return response.data;
-//      } else {
-//        //Show your global error dialog
-//        $q.reject(response.data); //Very important to reject the error
-//      }
-    };
-    
-    function onError(response) {
-      //Show global error dialog 
-      showServerError(response.data, 'body');
-      $q.reject(response); //Very important to reject the error 
-    };
 
-    return function (promise) {
-      return promise.then(onSuccess, onError);
-    };
-
-  };
+  // add the errorhandling interceptor
+  $httpProvider.interceptors.push('httpStatusCodeInterceptorFactory');
   
  //Activate your interceptor 
 // $httpProvider.responseInterceptors.push(httpStatusCodeInterceptorFactory);
@@ -416,6 +394,8 @@ var app = angular
         $location.path(path);
       };
 
+
+      var popupWin;
       /***************************************************************
       * This function sends the route to whatever path and search are passed in.
       ***************************************************************/
@@ -425,7 +405,7 @@ var app = angular
         $location.search(search);
         url = url + path + '?' + $.param($location.search());
         $location.search(oldSearch);
-        window.open(url, 'Component_Print_' + search.id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
+        popupWin = utils.openWindow(url, 'Component_Print_' + search.id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', popupWin);
       };
 
       /***************************************************************

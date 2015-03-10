@@ -24,9 +24,11 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.util.List;
 import java.util.Map;
 
@@ -142,12 +144,19 @@ public interface AttributeService
 	public List<ArticleView> getArticlesForCodeLike(AttributeCodePk attributeCodePk);
 
 	/**
-	 * Saves a new article (This will scub the article data prior to save)
+	 * Saves a new article (This will scrub the article data prior to save)
 	 *
 	 * @param attributeCode
 	 * @param articleContents
 	 */
 	public void saveArticle(AttributeCode attributeCode, String articleContents);
+
+	/**
+	 * Saves a new article (This will scrub the article data prior to save)
+	 *
+	 * @param article
+	 */
+	public void saveArticle(ArticleView article);
 
 	/**
 	 * Deletes a article. WARNING: This will remove the link and delete any
@@ -157,6 +166,21 @@ public interface AttributeService
 	 */
 	public void deleteArticle(AttributeCodePk attributeCodePk);
 
+	/**
+	 * 
+	 * @param filter
+	 * @param name
+	 * @return 
+	 */
+	public ArticleTrackingResult getAttributeTracking(FilterQueryParams filter, String name);
+	
+	/**
+	 * This will handle syncing all the component of the list.
+	 *
+	 * @param articles
+	 */
+	public void importArticles(List<ArticleView> articles);
+	
 	/**
 	 * InActivates Type. Also it will inactive associated componentAttribute
 	 *

@@ -136,25 +136,40 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   
   $scope.export = function(){
    window.location.href = "api/v1/resource/attributes/export"; 
-  };
-  
-  $scope.attributeUploader = new FileUploader({
-    url: 'Upload.action?UploadAttributes',
-    alias: 'uploadFile',
-    queueLimit: 1, 
-    removeAfterUpload: true,
-    filters: [{
-      name: 'csv',    
-      fn: function(item) {
-          return true;
-      }
-    }],
-    onBeforeUploadItem: function(item) {
-      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-    },
-    onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-     
+ };
+
+ $scope.confirmAttributeUpload = function(isAttributeUploader){
+  var cont = false;
+  if (isAttributeUploader){
+    cont = confirm('Please verify that this file is the allattributes.csv file with a header similiar to this: (order and letter case matters)\nAttribute Type, Description, Architecture Flag, Visible Flag, Important Flag, Required Flag, Code, Code Label, Code Description, External Link, Group, Sort Order, Architecture Code, Badge Url');
+    if (cont){
+      $scope.attributeUploader.uploadAll()
+    }
+  } else {
+    cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_Example Specification, TagValue_Example Solution, TagValue_DI2E Framework');
+    if (cont){
+      $scope.attributeUploader.uploadAll()
+    }
+  }
+}
+
+$scope.attributeUploader = new FileUploader({
+  url: 'Upload.action?UploadAttributes',
+  alias: 'uploadFile',
+  queueLimit: 1, 
+  removeAfterUpload: true,
+  filters: [{
+    name: 'csv',    
+    fn: function(item) {
+      return true;
+    }
+  }],
+  onBeforeUploadItem: function(item) {
+    $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+  },
+  onSuccessItem: function (item, response, status, headers) {
+    $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+
       //check response for a fail ticket or a error model
       if (response.success) {
         triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing.', 'importAttributes', 'body', 3000);          
@@ -162,6 +177,8 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
         $scope.getFilters(true);
       } else {
         if (response.errors) {
+          console.log('response.errors', response);
+          
           var uploadError = response.errors.uploadFile;  
           var errorMessage = '';
           if (uploadError){
@@ -178,24 +195,24 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       triggerAlert('Unable to import attributes. Failure communicating with server. ', 'importAttributes', 'body', 6000);    
     }      
   });  
-  
-  $scope.svcv4uploader = new FileUploader({
-    url: 'Upload.action?UploadSvcv4',
-    alias: 'uploadFile',
-    queueLimit: 1,
-    removeAfterUpload: true,
-    filters: [{
-      name: 'csv',    
-      fn: function(item) {
-          return true;
-      }
-    }],
-    onBeforeUploadItem: function(item) {
-      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-    },
-    onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-     
+
+$scope.svcv4uploader = new FileUploader({
+  url: 'Upload.action?UploadSvcv4',
+  alias: 'uploadFile',
+  queueLimit: 1,
+  removeAfterUpload: true,
+  filters: [{
+    name: 'csv',    
+    fn: function(item) {
+      return true;
+    }
+  }],
+  onBeforeUploadItem: function(item) {
+    $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+  },
+  onSuccessItem: function (item, response, status, headers) {
+    $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+
       //check response for a fail ticket or a error model
       if (response.success) {
         triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing', 'importAttributes', 'body', 3000);          
@@ -220,5 +237,5 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     }    
   });  
 
-  
+
 }]);

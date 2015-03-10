@@ -660,6 +660,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
 
+  $scope.init = function() {
+    $('.component-details [data-toggle=\'tooltip\']').tooltip();
+  }
 
   var onlyOnce = null;
 
@@ -683,7 +686,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         // setup the update list.
         if (onlyOnce !== $scope.details.details.componentId) {
           $timeout(function() {
-            $('.component-details [data-toggle=\'tooltip\']').tooltip();
+            $scope.init();
           }, 300);
           setupUpdateFlags();
           onlyOnce = $scope.details.details.componentId;

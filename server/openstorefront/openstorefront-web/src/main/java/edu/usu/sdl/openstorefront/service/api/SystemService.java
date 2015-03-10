@@ -86,7 +86,15 @@ public interface SystemService
 	public void removeHighlight(String hightlightId);
 
 	/**
-	 * Inactive Hightlight
+	 * Delete Hightlight
+	 *
+	 * @param hightlightId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteHighlight(String hightlightId);
+
+	/**
+	 * Activate Hightlight
 	 *
 	 * @param hightlightId
 	 */
