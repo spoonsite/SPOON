@@ -36,6 +36,7 @@
 @import "includes/compare.scss";
 @import "includes/architecture.scss";
 @import "includes/panel.scss";
+@import "includes/admin.scss";
 @import "fonts/fontello.scss";
 @import "fonts/icomoon.scss";
 
@@ -48,7 +49,15 @@
   color: #e32;
   content: ' *';
   display:inline;
-  margin-right: -10px;
+  position: absolute;
+  top: 5px;
+  right: 7px;
+}
+
+#componentWindowDiv #defaultTab .cke{
+  width: 80% !important;
+  margin-left: 15px;
+  float: left;
 }
 
 body {
@@ -533,6 +542,11 @@ small button {
   #detailsToolButtons {
     clear:both;
     float: left !important;
+  }
+  #componentWindowDiv #defaultTab .cke{
+    width: 100% !important;
+    margin-left:0px;
+    float: none;
   }
   .required label:after {
     margin-right: 0px;

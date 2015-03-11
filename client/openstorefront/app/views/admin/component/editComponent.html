@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>{{editModeText}}<span style="float: right; font-size: 18px;"><i class="fa fa-close" ng-click="close();"></i>&nbsp;&nbsp;</span></h2>
+<h2><i class="fa fa-edit"></i>&nbsp;{{editModeText}}<button type="submit" class="btn btn-primary" ng-click="close()" class="pull-right"><i class="fa fa-close"></i>&nbsp;Cancel</button></h2>
 <hr>
 <div  id="componentWindowDiv"  style="padding-left: 15px; padding-right: 15px;">
   <loader trigger="generalFormLoader"></loader>
@@ -25,7 +25,7 @@ limitations under the License.
       <div class="alert-warning" style="color: black; font-size: 18px; text-align: center;" ng-show="flags.showIntegrationBanner">
         Data is being partially managed by an Integration. {{integrationText}}
       </div>
-      <form class="form-horizontal" name='componentUIForm' role="form"  ng-submit="saveComponent()" style="padding-left: 10px; padding-right: 10px;">
+      <form class="form-horizontal" name='componentUIForm' id="defaultTab" role="form"  ng-submit="saveComponent()" style="padding-left: 10px; padding-right: 10px;">
         <div class="form-group">
           <label class="col-sm-2 control-label text-right">Last Activity Date </label><span style="display: inline-block; padding: 7px 20px;">&nbsp;{{componentForm.lastActivityDts | date:'MM/dd/yyyy h:mm:ss a'}}</span>
         </div>
@@ -102,26 +102,26 @@ limitations under the License.
         <div class="form-group required" show-errors >
           <label class="col-sm-2 control-label required">Approval State</label>
           <div class="col-sm-10">
-            <select type="text" class="form-control" name="approvalStatus" required  ng-change="loadComponentAttributesView()" style="width:125px;display: inline" ng-model="componentForm.approvalState" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in approvalStatuses"></select>					
+            <select type="text" class="form-control" name="approvalStatus" required  ng-change="loadComponentAttributesView()" style="width:125px;display: inline" ng-model="componentForm.approvalState" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in approvalStatuses"></select>          
             {{componentForm.approvedDts | date:'MM/dd/yyyy h:mm a'}}&nbsp; {{componentForm.approvedUser}}
             <p ng-show="componentUIForm.approvalStatus.$error.required && !componentUIForm.approvalStatus.$focused" class="help-block">Approval State is required.</p>
           </div>        
-        </div>				
+        </div>        
         <hr>
         <h3>Required Attributes</h3>
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered admin-table">
           <tr>
             <th>Attribute Type</th>
-            <th>Attribute Code</th>					
+            <th>Attribute Code</th>         
           </tr>
           <tr ng-repeat="attrib in requiredAttributes | orderBy:'description'" >
             <td>{{attrib.description}}</td>
-            <td><select type="text" class="form-control" style="width:auto" ng-model="generalForm.requiredAttribute[attrib.type]" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attrib.type)" placeholder="Select Code"></select></td>					
-          </tr>					
-        </table>			
-        <hr>			
-        <button type="submit" class="btn btn-primary" ng-disabled="componentUIForm.$invalid" ><i class="fa fa-save"></i>&nbsp;Save</button>	
-      </form>				
+            <td><select type="text" class="form-control" style="width: 100%" ng-model="generalForm.requiredAttribute[attrib.type]" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attrib.type)" placeholder="Select Code"></select></td>          
+          </tr>         
+        </table>      
+        <hr>      
+        <button type="submit" class="btn btn-primary" ng-disabled="componentUIForm.$invalid" ><i class="fa fa-save"></i>&nbsp;Save</button> 
+      </form>       
     </tab>
     <tab heading="Attributes" ng-show="editMode">
       <hr>
@@ -131,27 +131,33 @@ limitations under the License.
         <panel class-list="edges" open-state="true" title="Add Attribute">
           <form class="form-horizontal" name='attributeUIForm' role="form"  ng-submit="saveAttribute()" style="padding-left: 10px; padding-right: 10px;">
             <div class="form-group" show-errors >
-              <label class="control-label">Attribute Type</label><br>
-              <select type="text" class="form-control" name="attributeType" required style="width:500px;" ng-model="attributeForm.type" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="attribute.type as attribute.description for attribute in allAttributes" placeholder="Select Type"></select>
-              <p ng-show="attributeUIForm.attributeType.$error.required && !attributeUIForm.attributeType.$focused" class="help-block">Attribute Type is required.</p>
-            </div>	
+              <label class="control-label col-sm-2">Attribute Type</label>
+              <div class="col-sm-10">
+                <select type="text" class="form-control" name="attributeType" required ng-model="attributeForm.type" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="attribute.type as attribute.description for attribute in allAttributes" placeholder="Select Type"></select>
+                <p ng-show="attributeUIForm.attributeType.$error.required && !attributeUIForm.attributeType.$focused" class="help-block">Attribute Type is required.</p>
+              </div>  
+            </div>  
             <div class="form-group" show-errors >
-              <label class="control-label">Attribute Code</label><br>
-              <select type="text" class="form-control"  name="attributeCode"  required style="width:500px;" ng-model="attributeForm.code" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attributeForm.type)" placeholder="Select Code"></select>
-              <p ng-show="attributeUIForm.attributeCode.$error.required && !attributeUIForm.attributeCode.$focused" class="help-block">Attribute Code is required.</p>							
-            </div>	
-            <button type="submit" class="btn btn-primary" ng-disabled="attributeUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{attributeForm.saveText}}</button>
-            <a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancelEdit('attributeForm')" ng-show="attributeForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>	
+              <label class="col-sm-2 control-label">Attribute Code</label>
+              <div class="col-sm-10">
+                <select type="text" class="form-control"  name="attributeCode"  required ng-model="attributeForm.code" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attributeForm.type)" placeholder="Select Code"></select>
+                <p ng-show="attributeUIForm.attributeCode.$error.required && !attributeUIForm.attributeCode.$focused" class="help-block">Attribute Code is required.</p>							
+              </div>  
+            </div>
+            <div class="col-sm-12 col-sm-offset-2">
+              <button type="submit" class="btn btn-primary" ng-disabled="attributeUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{attributeForm.saveText}}</button>
+              <a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancelEdit('attributeForm')" ng-show="attributeForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a> 
+            </div>
           </form>
-        </panel>					
+        </panel>          
       </div>
       <div>	
         <br>
         Filter Status:
         <select type="text" class="form-control"  ng-change="loadComponentAttributesView()" style="width:110px;display: inline" ng-model="componentAttributeViewQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
-        <button class="btn btn-default" ng-click="loadComponentAttributesView()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+        <button class="btn btn-default" ng-click="loadComponentAttributesView()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('typeDescription', 'attribute');">Attribute Type <span ng-show="predicate['attribute'] === 'typeDescription'"><i ng-show="!reverse['attribute']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['attribute']" class="fa fa-sort-alpha-desc"></i></span></a></th>
           <th>Attribute Code</th>					
@@ -162,8 +168,8 @@ limitations under the License.
           <td>{{attribute.typeDescription}}</td>
           <td>{{attribute.codeDescription}}</td>					
           <td>{{attribute.orphan}}</td>																
-          <td style="padding:0px; width: 200px;">&nbsp;						
-            <button class="btn" ng-click="toggleAttributeStatus(attribute);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+          <td style="padding: 0px 3px !important;">&nbsp;						
+            <button class="btn btn-default btn-sm" ng-click="toggleAttributeStatus(attribute);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>					
       </table>
@@ -254,9 +260,9 @@ limitations under the License.
         <br>
         Filter Status:
         <select type="text" class="form-control"  ng-change="loadContacts()" style="width:110px;display: inline" ng-model="contactQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
-        <button class="btn btn-default" ng-click="loadContacts()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+        <button class="btn btn-default" ng-click="loadContacts()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('positionDescription', 'contacts');">Contact Type <span ng-show="predicate['contacts'] === 'positionDescription'"><i ng-show="!reverse['contacts']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['contacts']" class="fa fa-sort-alpha-desc"></i></span></a></th>
           <th>First Name</th>
@@ -273,9 +279,9 @@ limitations under the License.
           <td>{{contact.email}}</td>
           <td>{{contact.phone}}</td>
           <td>{{contact.organization}}</td>																			
-          <td style="padding:0px; width: 200px;">&nbsp;
-            <button class="btn" ng-click="editEntity('contactForm', contact);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn" ng-click="toggleContactStatus(contact);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+          <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
+            <button class="btn btn-default btn-sm" ng-click="editEntity('contactForm', contact);"  title="Edit"><i class="fa fa-edit"></i></button>
+            <button class="btn btn-default btn-sm" ng-click="toggleContactStatus(contact);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>					
       </table>			
@@ -329,9 +335,9 @@ limitations under the License.
         <br>
         Filter Status:
         <select type="text" class="form-control"  ng-change="loadResources()" style="width:110px;display: inline" ng-model="resourceQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
-        <button class="btn btn-default" ng-click="loadResources()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+        <button class="btn btn-default" ng-click="loadResources()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('key', 'resources');">Resource Type <span ng-show="predicate['resources'] === 'key'"><i ng-show="!reverse['resources']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['resources']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
           <th>Description</th>
@@ -348,10 +354,10 @@ limitations under the License.
           <td>{{resource.mimeType}}</td>
           <td><p ng-show="resource.localResourceName">{{resource.originalFileName}} ({{resource.localResourceName}})</p></td>
           <td>{{resource.restricted}}</td>
-          <td style="padding:0px; width: 200px;">&nbsp;
-            <button class="btn" ng-click="editEntity('resourceForm', resource);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn" ng-click="toggleResourceStatus(resource);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>	
-            <button class="btn btn-danger" ng-click="deleteResource(resource);"  title="Delete"><i class="fa fa-trash"></i></button>
+          <td style="padding:0px 3px !important; width: 125px; vertical-align: middle;">&nbsp;
+            <button class="btn btn-default btn-sm" ng-click="editEntity('resourceForm', resource);"  title="Edit"><i class="fa fa-edit"></i></button>
+            <button class="btn btn-default btn-sm" ng-click="toggleResourceStatus(resource);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>	
+            <button class="btn btn-danger btn-sm" ng-click="deleteResource(resource);"  title="Delete"><i class="fa fa-trash"></i></button>
           </td>
         </tr>					
       </table>				
@@ -401,9 +407,9 @@ limitations under the License.
         <br>
         Filter Status:				
         <select type="text" class="form-control"  ng-change="loadMedia()" style="width:110px;display: inline" ng-model="mediaQueryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>				
-        <button class="btn btn-default" ng-click="loadMedia()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+        <button class="btn btn-default" ng-click="loadMedia()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('key', 'media');">Media Type <span ng-show="predicate['media'] === 'key'"><i ng-show="!reverse['media']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
           <th>Caption</th>														
@@ -418,10 +424,10 @@ limitations under the License.
           <td>{{mediaItem.mimeType}}</td>
           <td><p ng-show="mediaItem.fileName">{{mediaItem.originalFileName}} ({{mediaItem.fileName}})</p></td>	
           <td>{{mediaItem.originalLink}}</td>	
-          <td style="padding:0px; width: 200px;">&nbsp;
-            <button class="btn" ng-click="editEntity('mediaForm', mediaItem);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn" ng-click="toggleMediaStatus(mediaItem);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
-            <button class="btn btn-danger" ng-click="deleteMedia(mediaItem);"  title="Delete"><i class="fa fa-trash"></i></button>
+          <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
+            <button class="btn btn-default btn-sm" ng-click="editEntity('mediaForm', mediaItem);"  title="Edit"><i class="fa fa-edit"></i></button>
+            <button class="btn btn-default btn-sm" ng-click="toggleMediaStatus(mediaItem);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
+            <button class="btn btn-danger btn-sm" ng-click="deleteMedia(mediaItem);"  title="Delete"><i class="fa fa-trash"></i></button>
           </td>
         </tr>					
       </table>
@@ -487,9 +493,9 @@ limitations under the License.
         <br>
         Filter Status:
         <select type="text" class="form-control"  ng-change="loadDependancies()" style="width:110px;display: inline" ng-model="dependencyFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>				
-        <button class="btn btn-default" ng-click="loadDependancies()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+        <button class="btn btn-default" ng-click="loadDependancies()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('dependencyName', 'depend');">Name <span ng-show="predicate['depend'] === 'dependencyName'"><i ng-show="!reverse['depend']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['depend']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
           <th>Version</th>	
@@ -502,9 +508,9 @@ limitations under the License.
           <td>{{depend.version}}</td>
           <td>{{depend.dependancyReferenceLink}}</td>
           <td>{{depend.comment}}</td>														
-          <td style="padding:0px; width: 200px;">&nbsp;
-            <button class="btn" ng-click="editEntity('dependencyForm', depend);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn" ng-click="toggleDependancyStatus(depend);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+          <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;
+            <button class="btn btn-default btn-sm" ng-click="editEntity('dependencyForm', depend);"  title="Edit"><i class="fa fa-edit"></i></button>
+            <button class="btn btn-default btn-sm" ng-click="toggleDependancyStatus(depend);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>					
       </table>			
@@ -550,9 +556,9 @@ limitations under the License.
         <br>
         Filter Status:
         <select type="text" class="form-control"  ng-change="loadMetadata()" style="width:110px;display: inline" ng-model="metadataFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>			
-        <button class="btn btn-default" ng-click="loadMetadata()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
+        <button class="btn btn-default" ng-click="loadMetadata()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>				
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('Label', 'meta');">Label<span ng-show="predicate['meta'] === 'key'"><i ng-show="!reverse['meta']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['meta']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
           <th>Value</th>																					
@@ -561,9 +567,9 @@ limitations under the License.
         <tr ng-repeat="meta in metadata | orderBy:predicate['meta']:reverse['meta']" >
           <td>{{meta.label}}</td>
           <td>{{meta.value}}</td>					
-          <td style="padding:0px; width: 200px;">&nbsp;						
-            <button class="btn" ng-click="editEntity('metadataForm', meta);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn" ng-click="toggleMetadataStatus(meta);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>							
+          <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;						
+            <button class="btn btn-default btn-sm" ng-click="editEntity('metadataForm', meta);"  title="Edit"><i class="fa fa-edit"></i></button>
+            <button class="btn btn-default btn-sm" ng-click="toggleMetadataStatus(meta);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>							
           </td>
         </tr>					
       </table>				
@@ -575,7 +581,7 @@ limitations under the License.
       <button type="submit" class="btn btn-danger" ng-click="clearAllEvaluationSections()"><i class="fa fa-trash"></i>&nbsp;Clear All Sections</button>
       <div ng-show="evaluationForm.oldSections">
         <h3>Old Evaluation Sections</h3>
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered admin-tabel">
           <tr>
             <th><a href="" ng-click="setPredicate('key', 'oldeval');">Section Name <span ng-show="predicate['oldeval'] === 'key'"><i ng-show="!reverse['oldeval']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['oldeval']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
             <th>Score</th>																					
@@ -592,16 +598,16 @@ limitations under the License.
               min=1
               ng-focus />								
             </td>																		
-            <td style="padding:0px; width: 200px;">&nbsp;						
-              <button class="btn btn-primary" ng-click="saveEvalSection(section);"  title="Save"><i class="fa fa-save"></i></button>
-              <button class="btn btn-danger" ng-click="removeEvaluationSection(section);"  title="Remove"><i class="fa fa-trash"></i></button>		
+            <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;						
+              <button class="btn btn-primary btn-sm" ng-click="saveEvalSection(section);"  title="Save"><i class="fa fa-save"></i></button>
+              <button class="btn btn-danger btn-sm" ng-click="removeEvaluationSection(section);"  title="Remove"><i class="fa fa-trash"></i></button>		
             </td>
           </tr>					
         </table>			
       </div>			
 
       <h3>Available Evaluation Sections</h3>
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('name', 'eval');">Section Name <span ng-show="predicate['eval'] === 'name'"><i ng-show="!reverse['eval']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['eval']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
           <th>Not Available</th>
@@ -611,10 +617,10 @@ limitations under the License.
         </tr>
         <tr ng-repeat="section in sections | orderBy:predicate['eval']:reverse['eval']" >
           <td>{{section.name}}</td>					
-          <td style="width: 100px;" align="center">
+          <td style="width: 100px; padding: 4px 3px !important;" align="center">
             <input type="checkbox" ng-model="section.notAvailable" />
           </td>
-          <td style="width: 100px;">
+          <td style="width: 100px; padding: 3px 3px !important;">
             <input  type="text" 
             name="score"
             ng-disabled="section.notAvailable"
@@ -624,11 +630,12 @@ limitations under the License.
             ng-blur="checkEvalScore(section);"
             max=5
             min=1
+            style="height:24px;"
             ng-focus />								
           </td>
           <td style="width: 75px;" align="center"><i class="fa" ng-class="section.activeStatus === 'A' ? 'fa-check' : ''"></td>
-          <td style="padding:0px; width: 200px;">&nbsp;												
-            <button class="btn btn-danger" ng-click="removeEvaluationSection(section);"  title="Remove"><i class="fa fa-trash"></i></button>		
+          <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;												
+            <button class="btn btn-danger btn-sm" ng-click="removeEvaluationSection(section);"  title="Remove"><i class="fa fa-trash"></i></button>		
           </td>
         </tr>					
       </table>
@@ -643,9 +650,9 @@ limitations under the License.
         <br>
         Filter Status:
         <select type="text" class="form-control"  ng-change="loadReviews()" style="width:110px;display: inline" ng-model="reviewFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
-        <button class="btn btn-default" ng-click="loadReviews()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
+        <button class="btn btn-default" ng-click="loadReviews()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>				
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('title', 'review');">Title<span ng-show="predicate['review'] === 'title'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
           <th>Rating</th>
@@ -676,8 +683,8 @@ limitations under the License.
           </td>	
           <td>{{review.username}}</td>
           <td>{{review.updateDate | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
-          <td style="padding:0px; width: 200px;">&nbsp;						
-            <button class="btn" ng-click="toggleReviewStatus(review);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+          <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;						
+            <button class="btn btn-default btn-sm" ng-click="toggleReviewStatus(review);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>					
       </table>				
@@ -690,9 +697,9 @@ limitations under the License.
         <br>
         Filter Status:
         <select type="text" class="form-control"  ng-change="loadQuestions()" style="width:110px;display: inline" ng-model="questionFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>			
-        <button class="btn btn-default" ng-click="loadQuestions()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
+        <button class="btn btn-default" ng-click="loadQuestions()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>				
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('question', 'question');">Question<span ng-show="predicate['question'] === 'question'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
           <th><a href="" ng-click="setPredicate('username', 'question');">Username<span ng-show="predicate['question'] === 'username'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
@@ -707,14 +714,14 @@ limitations under the License.
           <td>{{question.userType}}</td>
           <td>{{question.organization}}</td>
           <td>{{question.questionUpdateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
-          <td style="padding:0px; width: 200px;">&nbsp;
+          <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;
             <button class="btn btn-default" ng-click="showQuestionResponses(question);"  title="ShowResponse">{{questionDetailsShow[question.questionId].showResponsesText}} Responses</button>	
             <button class="btn" ng-click="toggleQuestionStatus(question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>
         <tr ng-show="questionDetailsShow[question.questionId].flag" ng-repeat-end>					
           <td colspan="6" style="padding: 10px">						
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered admin-table">
               <tr>
                 <th><a href="" ng-click="setPredicate('response', 'questionResponse');">Response<span ng-show="predicate['questionResponse'] === 'response'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
                 <th><a href="" ng-click="setPredicate('username', 'questionResponse');">Username<span ng-show="predicate['questionResponse'] === 'username'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
@@ -731,8 +738,8 @@ limitations under the License.
                 <td>{{response.organization}}</td>
                 <td>{{response.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
                 <td align="center">{{response.activeStatus}}</td>
-                <td style="padding:0px; width: 200px;">&nbsp;									
-                  <button class="btn" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+                <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;									
+                  <button class="btn btn-default btn-sm" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
                 </td>
               </tr>							
             </table>						
@@ -764,17 +771,17 @@ limitations under the License.
       </panel>	
       <div>	
         <br>
-        <button class="btn btn-default" ng-click="loadTags()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>				
+        <button class="btn btn-default" ng-click="loadTags()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>				
       </div>	
-      <table class="table table-striped table-bordered">
+      <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('text', 'tag');">Tag<span ng-show="predicate['tag'] === 'text'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th>																															
           <th>Action</th>
         </tr>
         <tr ng-repeat="tag in tags | orderBy:predicate['tag']:reverse['tag']" >
           <td>{{tag.text}}</td>
-          <td style="padding:0px; width: 200px;">&nbsp;						
-            <button class="btn btn-danger" ng-click="removeTag(tag);"  title="Remove"><i class="fa fa-trash"></i></button>						
+          <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;						
+            <button class="btn btn-danger btn-sm" ng-click="removeTag(tag);"  title="Remove"><i class="fa fa-trash"></i></button>						
           </td>
         </tr>					
       </table>	
@@ -785,5 +792,5 @@ limitations under the License.
 <br>
 <br>
 <div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
-  <button type="submit" class="btn btn-primary" ng-click="close()"><i class="fa fa-close"></i>&nbsp;Close</button>	
+  <button type="submit" class="btn btn-primary" ng-click="close()"><i class="fa fa-close"></i>&nbsp;Cancel</button>	
 </div>	
