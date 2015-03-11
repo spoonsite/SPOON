@@ -16,21 +16,25 @@
 describe('SvcV-4_button from the home page', function() {
     it('Expand the buttons in the categories', function () {
         // Navigate to the site
-        browser.ignoreSynchronization = false;
+        browser.ignoreSynchronization = true;
         browser.get(theSite, 8000);
 
         // Click the SvcV-4 button
         element.all(by.css('.btn.btn-primary.pull-right')).get(0).click();
         browser.driver.sleep(5000);
 
-        // Expand
-        numNow = 17;  // Couldn't get this dynamically, could change?
-        // loop get(0).click();
-        for (var i = 0; i <= numNow; i++) {
-            element.all(by.css('.diagram-toggle-btn')).get(i).click();
-            browser.driver.sleep(100);
-        }
-        // Brittle
-        expect(element.all(by.css('.btn')).count()).toEqual(7);
+        // Expand by clicking + button on "DI2E SvcV-4 Alignment"
+        element(by.css('.indented.tree-icon.fa.fa-plus')).click();
+        // click on 1 Infrastructure Services
+        element.all(by.css('.indented.tree-icon.fa.fa-plus')).get(0).click();
+        // click on 1.2 Security Management
+        element(by.css('.indented.tree-label.ng-binding')).click();
+
+
+        // Click Expand All, Collapse All
+        element.all(by.css('.btn.btn-default')).get(0).click();
+        expect(element.all(by.css('.indented.tree-icon.fa.fa-minus')).count()).toEqual(999);
+        element.all(by.css('.btn.btn-default')).get(1).click();
+        expect(element.all(by.css('.indented.tree-icon.fa.fa-minus')).count()).toEqual(0);
     }, 63000);
 });
