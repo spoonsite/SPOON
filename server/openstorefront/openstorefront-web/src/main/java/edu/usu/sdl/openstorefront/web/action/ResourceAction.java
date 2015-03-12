@@ -149,6 +149,8 @@ public class ResourceAction
 		} else {
 			componentTracking.setResourceLink(link);
 		}
+		componentTracking.setResourceType(componentResource.getResourceType());
+		componentTracking.setRestrictedResouce(componentResource.getRestricted());
 		componentTracking.setTrackEventTypeCode(TrackEventCode.EXTERNAL_LINK_CLICK);
 		componentTracking.setEventDts(TimeUtil.currentDate());
 		service.getComponentService().saveComponentTracking(componentTracking);

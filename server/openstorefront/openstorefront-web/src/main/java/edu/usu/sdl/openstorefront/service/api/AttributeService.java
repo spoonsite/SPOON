@@ -48,6 +48,15 @@ public interface AttributeService
 	public List<AttributeType> getRequiredAttributes();
 
 	/**
+	 * This is cached set of codes (post filters the status) This will be clear
+	 * upon data modification
+	 *
+	 * @param activeStatus
+	 * @return codes
+	 */
+	public List<AttributeCode> getAllAttributeCodes(String activeStatus);
+
+	/**
 	 * Gets the codes for a type Note active codes are cached.
 	 *
 	 * @param type
@@ -167,20 +176,21 @@ public interface AttributeService
 	public void deleteArticle(AttributeCodePk attributeCodePk);
 
 	/**
-	 * 
+	 * Gather article tracking record for attribute code PK
+	 *
 	 * @param filter
-	 * @param name
-	 * @return 
+	 * @param attributeCodePk
+	 * @return
 	 */
-	public ArticleTrackingResult getAttributeTracking(FilterQueryParams filter, String name);
-	
+	public ArticleTrackingResult getAttributeTracking(FilterQueryParams filter, AttributeCodePk attributeCodePk);
+
 	/**
 	 * This will handle syncing all the component of the list.
 	 *
 	 * @param articles
 	 */
 	public void importArticles(List<ArticleView> articles);
-	
+
 	/**
 	 * InActivates Type. Also it will inactive associated componentAttribute
 	 *

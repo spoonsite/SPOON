@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.io.StringWriter;
@@ -240,12 +241,12 @@ public class UserTracking
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-		
+
 		writer.writeNext(new String[]{getCreateUser(),
 			getOrganization(),
-			getUserTypeCode(),
+			TranslateUtil.translate(UserTypeCode.class, getUserTypeCode()),
 			df.format(getCreateDts()),
-			getTrackEventTypeCode(),
+			TranslateUtil.translate(TrackEventCode.class, getTrackEventTypeCode()),
 			getClientIp(),
 			getBrowser(),
 			getBrowserVersion(),
@@ -256,7 +257,7 @@ public class UserTracking
 		});
 		return stringWriter.toString();
 	}
-	
+
 	@Override
 	public void importData(String[] data)
 	{

@@ -64,7 +64,7 @@ public class UserTrackingResource
 		UserTrackingResult result = service.getUserService().getUserTracking(filterQueryParams, userId);
 		return sendSingleEntityResponse(result);
 	}
-	
+
 	@GET
 	@APIDescription("Exports user tracking information in csv formt (Requires Admin)")
 	@RequireAdmin
@@ -77,19 +77,17 @@ public class UserTrackingResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-		
+
 		StringBuilder data = new StringBuilder();
-		UserTrackingResult result = new UserTrackingResult();
-		result = service.getUserService().getUserTracking(filterQueryParams, null);
+		UserTrackingResult result = service.getUserService().getUserTracking(filterQueryParams, null);
 
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{"User Name",
 			"Organization",
-			"User Type Code",
+			"User Type",
 			"Event Date",
-			"Event Code",
-			"Client IP",
+			"Event",
 			"Client IP",
 			"Browser",
 			"Browser Version",
@@ -100,11 +98,11 @@ public class UserTrackingResource
 		});
 
 		data.append(stringWriter.toString());
-		
+
 		for (UserTracking wrapper : result.getResult()) {
 			data.append(wrapper.export());
 		}
-		
+
 		ResponseBuilder response = Response.ok(data.toString());
 		response.header("Content-Disposition", "attachment; filename=\"userTrackingExport.csv\"");
 		return response.build();

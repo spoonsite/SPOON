@@ -47,7 +47,8 @@ public class ComponentTracking
 	@NotNull
 	private String clientIp;
 
-	private String componentResourceId;
+	private String resourceType;
+	private Boolean restrictedResouce;
 
 	@APIDescription("External resource url")
 	private String resourceLink;
@@ -96,16 +97,6 @@ public class ComponentTracking
 		this.clientIp = clientIp;
 	}
 
-	public String getComponentResourceId()
-	{
-		return componentResourceId;
-	}
-
-	public void setComponentResourceId(String componentResourceId)
-	{
-		this.componentResourceId = componentResourceId;
-	}
-
 	public String getResourceLink()
 	{
 		return resourceLink;
@@ -114,6 +105,26 @@ public class ComponentTracking
 	public void setResourceLink(String resourceLink)
 	{
 		this.resourceLink = resourceLink;
+	}
+
+	public String getResourceType()
+	{
+		return resourceType;
+	}
+
+	public void setResourceType(String resourceType)
+	{
+		this.resourceType = resourceType;
+	}
+
+	public Boolean getRestrictedResouce()
+	{
+		return restrictedResouce;
+	}
+
+	public void setRestrictedResouce(Boolean restrictedResouce)
+	{
+		this.restrictedResouce = restrictedResouce;
 	}
 
 }

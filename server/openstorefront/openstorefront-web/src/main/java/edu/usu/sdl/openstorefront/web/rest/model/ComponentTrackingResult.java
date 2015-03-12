@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,43 +24,33 @@ import java.util.List;
  */
 public class ComponentTrackingResult
 {
-	private List<ComponentTrackingCompleteWrapper> result;
+
+	private List<ComponentTrackingCompleteWrapper> result = new ArrayList<>();
 	private long count;
 
-	public ComponentTrackingResult(){
-		
+	public ComponentTrackingResult()
+	{
+
 	}
-	
-	/**
-	 * @return the result
-	 */
+
 	public List<ComponentTrackingCompleteWrapper> getResult()
 	{
 		return result;
 	}
 
-	/**
-	 * @param result the result to set
-	 */
 	public void setResult(List<ComponentTrackingCompleteWrapper> result)
 	{
 		this.result = result;
 	}
 
-	/**
-	 * @return the count
-	 */
 	public long getCount()
 	{
 		return count;
 	}
 
-	/**
-	 * @param count the count to set
-	 */
 	public void setCount(long count)
 	{
 		this.count = count;
 	}
-	
+
 }

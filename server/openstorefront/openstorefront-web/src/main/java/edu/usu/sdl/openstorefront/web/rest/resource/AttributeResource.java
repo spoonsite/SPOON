@@ -44,16 +44,20 @@ import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingWrapper;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
@@ -100,10 +104,31 @@ public class AttributeResource
 		if (!all) {
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		}
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
+		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, attributeTypeExample);
+
+		String codeStatus = null;
+		if (all) {
+			codeStatus = AttributeCode.ACTIVE_STATUS;
+		}
+		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(codeStatus);
+
+		Map<String, List<AttributeCode>> codeMap = new HashMap<>();
+		for (AttributeCode code : attributeCodesAll) {
+			if (codeMap.containsKey(code.getAttributeCodePk().getAttributeType())) {
+				codeMap.get(code.getAttributeCodePk().getAttributeType()).add(code);
+			} else {
+				List<AttributeCode> codes = new ArrayList<>();
+				codes.add(code);
+				codeMap.put(code.getAttributeCodePk().getAttributeType(), codes);
+			}
+		}
+
 		for (AttributeType attributeType : attributeTypes) {
 			AttributeTypeView attributeTypeView = AttributeTypeView.toView(attributeType);
-			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType(), all);
+			List<AttributeCode> attributeCodes = codeMap.get(attributeType.getAttributeType());
+			if (attributeCodes == null) {
+				attributeCodes = new ArrayList<>();
+			}
 			attributeCodes.stream().forEach(code -> {
 				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
 			});
@@ -416,6 +441,39 @@ public class AttributeResource
 			return Response.ok(articleView.getHtml()).build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@GET
+	@APIDescription("Gets article tracking records for a given article")
+	@DataType(UserTrackingWrapper.class)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}/attributecodes/{code}/article/tracking")
+	public Response getAttributeArticleTracking(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode(code.toUpperCase());
+		attributeCodePk.setAttributeType(type.toUpperCase());
+
+		AttributeCode attributeCodeExample = new AttributeCode();
+		attributeCodeExample.setAttributeCodePk(attributeCodePk);
+		AttributeCode attributeCode = service.getPersistenceService().queryOneByExample(AttributeCode.class, attributeCodeExample);
+		if (attributeCode != null) {
+
+			ArticleTrackingResult articleTrackingResult = service.getAttributeService().getAttributeTracking(filterQueryParams, attributeCodePk);
+			return sendSingleEntityResponse(articleTrackingResult);
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 	}
 
 	@PUT
