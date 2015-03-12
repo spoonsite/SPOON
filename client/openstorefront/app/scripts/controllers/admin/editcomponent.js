@@ -49,7 +49,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
         $scope.predicate[table] = predicate;
         $scope.reverse[table] = false;
       }
-      refreshComponents();
+      $scope.refreshComponents();
     }
 
     $scope.refreshComponents = function () {
