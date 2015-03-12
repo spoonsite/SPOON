@@ -17,6 +17,7 @@
 /***************************************************************
 * This css is used for the styles found in the admin tools page
 ***************************************************************/
+@import "_variables.scss";
 .adminTools {
   position:fixed;
   z-index: 1;
@@ -56,6 +57,16 @@
 }
 .admin-table thead{
   background-color: #fff;
+}
+
+.stickytable.table-striped > tbody > tr:nth-child(odd) td, .stickytable.table-striped > tbody > tr:nth-child(odd) th {
+  background-color: white;
+}
+.stickytable.table-striped > tbody > tr:nth-child(even) td, .stickytable.table-striped > tbody > tr:nth-child(even) th {
+  background-color: #eee !important;
+}
+.stickytable.table-striped > thead > tr td, .stickytable.table-striped > thead > tr th {
+  background-color: #eee !important;
 }
 
 td.truthy{

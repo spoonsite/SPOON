@@ -255,7 +255,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $(".stickytable").stickyTableHeaders({
       fixedOffset: offset
     });
-  })
+  }, 100)
 
 }]);
 
