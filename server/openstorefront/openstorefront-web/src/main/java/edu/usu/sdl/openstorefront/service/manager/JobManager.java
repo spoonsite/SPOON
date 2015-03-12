@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
+import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import java.text.MessageFormat;
@@ -89,6 +90,7 @@ public class JobManager
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 
 		addCleanUpErrorsJob();
+		addTrackingCleanUpJob();
 		addNotificationJob();
 		addRecentChangeNotifyJob();
 		addScheduledReportJob();
@@ -223,6 +225,26 @@ public class JobManager
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInMinutes(5)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addTrackingCleanUpJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Tracking Cleanup Job");
+
+		JobDetail job = JobBuilder.newJob(TrackingCleanupJob.class)
+				.withIdentity("TrackingCleanupJob", JOB_GROUP_SYSTEM)
+				.withDescription("Removes old tracking records")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("TrackingCleanupJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInHours(24)
 						.repeatForever())
 				.build();
 

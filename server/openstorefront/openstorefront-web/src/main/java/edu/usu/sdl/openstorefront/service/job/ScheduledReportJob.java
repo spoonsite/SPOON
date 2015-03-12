@@ -63,7 +63,7 @@ public class ScheduledReportJob
 
 			if (report.getLastRanDts() != null) {
 				Instant instant = Instant.ofEpochMilli(report.getLastRanDts().getTime());
-				instant.plus(report.getScheduleIntevalDays(), ChronoUnit.DAYS);
+				instant = instant.plus(report.getScheduleIntevalDays(), ChronoUnit.DAYS);
 				if (Instant.now().isBefore(instant)) {
 					run = false;
 					if (log.isLoggable(Level.FINEST)) {

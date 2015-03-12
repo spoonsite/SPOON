@@ -313,21 +313,42 @@ public class PersistenceService
 		return count;
 	}
 
-	public <T> int deleteByExample(T example)
+	public <T> int deleteByExample(BaseEntity example)
+	{
+		return deleteByExample(new QueryByExample(example));
+	}
+
+	public <T> int deleteByExample(QueryByExample queryByExample)
 	{
 		int deleteCount = 0;
 		StringBuilder queryString = new StringBuilder();
 
-		queryString.append("delete from ").append(example.getClass().getSimpleName());
+		queryString.append("delete from ").append(queryByExample.getExample().getClass().getSimpleName());
 
-		String whereClause = generateWhereClause(example);
+		Map<String, Object> mappedParams = new HashMap<>();
+		String whereClause = generateWhereClause(queryByExample.getExample());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
+			mappedParams.putAll(mapParameters(queryByExample.getExample()));
 		}
+
+		queryByExample.getExtraWhereCauses().forEach(item -> {
+			SpecialOperatorModel special = (SpecialOperatorModel) item;
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			if (StringUtils.isNotBlank(extraWhere)) {
+				if (queryString.indexOf(" where ") != -1) {
+					queryString.append(" AND ");
+				} else {
+					queryString.append(" where ");
+				}
+				queryString.append(extraWhere);
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+			}
+		});
 
 		OObjectDatabaseTx db = getConnection();
 		try {
-			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(example));
+			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(mappedParams);
 		} finally {
 			closeConnection(db);
 		}
