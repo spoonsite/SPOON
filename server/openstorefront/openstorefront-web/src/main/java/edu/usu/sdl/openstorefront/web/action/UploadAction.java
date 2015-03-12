@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.web.action;
 import au.com.bytecode.opencsv.CSVReader;
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
@@ -104,26 +103,21 @@ public class UploadAction
 							LookupEntity lookupEntity = (LookupEntity) lookupClass.newInstance();
 							lookupEntity.importData(data);
 							lookupEntities.add(lookupEntity);
-						}
-						catch (Exception e) {
+						} catch (Exception e) {
 							errorsMessages.append(MessageFormat.format(e.toString() + " -  Unable Process line: {0}", new Object[]{Arrays.toString(data)}));
 						}
 					}
 					if (errorsMessages.length() > 0) {
 						errors.put("uploadFile", errorsMessages.toString());
 					}
-				}
-				catch (IOException ex) {
+				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
-				}
-				catch (ClassNotFoundException ex) {
+				} catch (ClassNotFoundException ex) {
 					errors.put("entityName", "Unable to find Lookup Class:  " + entityName);
-				}
-				finally {
+				} finally {
 					try {
 						uploadFile.delete();
-					}
-					catch (IOException ex) {
+					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException(ex);
 					}
 				}
@@ -135,8 +129,7 @@ public class UploadAction
 				}
 			}
 			return streamUploadResponse(errors);
-		}
-		else {
+		} else {
 			return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 		}
 	}
@@ -172,12 +165,10 @@ public class UploadAction
 						if (!parser.getHEADER().equals("false") && !parser.getHEADER().equals(first[0])) {
 							errors.put("uploadFile", "The attributes file was mal formatted. Please check the header line and assure that it is formatted correctly.");
 						}
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						throw new OpenStorefrontRuntimeException(e);
 					}
-				}
-				catch (IOException ex) {
+				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
 				}
 				if (errors.isEmpty()) {
@@ -188,23 +179,19 @@ public class UploadAction
 						taskRequest.setAllowMultiple(false);
 						taskRequest.setName("Processing Attribute Upload");
 						service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
-					}
-					catch (IOException ex) {
+					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
-					}
-					finally {
+					} finally {
 						try {
 							uploadFile.delete();
-						}
-						catch (IOException ex) {
+						} catch (IOException ex) {
 							throw new OpenStorefrontRuntimeException(ex);
 						}
 					}
 				}
 			}
 			return streamUploadResponse(errors);
-		}
-		else {
+		} else {
 			return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 		}
 	}
@@ -223,23 +210,20 @@ public class UploadAction
 			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			try {
 				List<ComponentAll> components = StringProcessor.defaultObjectMapper().readValue(uploadFile.getInputStream(), new TypeReference<List<ComponentAll>>()
-																						{
+				{
 				});
 
 				TaskRequest taskRequest = new TaskRequest();
 				taskRequest.setAllowMultiple(false);
 				taskRequest.setName("Uploading " + components.size() + " Component(s)");
 				service.getAyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
-			}
-			finally {
+			} finally {
 				try {
 					uploadFile.delete();
-				}
-				catch (IOException ex) {
+				} catch (IOException ex) {
 					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
 			}
@@ -256,7 +240,7 @@ public class UploadAction
 			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			try {
 				List<ArticleView> articles = StringProcessor.defaultObjectMapper().readValue(uploadFile.getInputStream(), new TypeReference<List<ArticleView>>()
-																					 {
+				{
 				});
 				Boolean flag = false;
 				for (ArticleView article : articles) {
@@ -275,18 +259,15 @@ public class UploadAction
 					taskRequest.setName("Uploading " + articles.size() + " Articles(s)");
 					service.getAyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
 				}
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
-			}
-			finally {
+			} finally {
 				try {
 					if (uploadFile != null) {
 						uploadFile.delete();
 					}
-				}
-				catch (IOException ex) {
+				} catch (IOException ex) {
 					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
 			}

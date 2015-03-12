@@ -45,6 +45,9 @@ public class TaskThreadExecutor
 
 	private static final Logger log = Logger.getLogger(TaskThreadExecutor.class.getName());
 
+	private static final int MAX_DELAY_CHECK = 5;
+	private static final long MAX_DELAY_MILLIS = 10;
+
 	private static List<TaskFuture> tasks = Collections.synchronizedList(new ArrayList<>());
 
 	public TaskThreadExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue)
@@ -86,20 +89,37 @@ public class TaskThreadExecutor
 	@Override
 	protected void beforeExecute(Thread t, Runnable r)
 	{
-		super.beforeExecute(t, r);
-
 		if (r instanceof Future<?>) {
 			Future future = ((Future<?>) r);
-			for (TaskFuture taskFuture : getTasks()) {
-				if (taskFuture.getFuture().equals(future)) {
-					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.WORKING);
 
-					if (taskFuture.getCallback() != null) {
-						taskFuture.getCallback().beforeExecute(taskFuture);
+			/**
+			 * There is a race condition on the task being added and when it
+			 * actually runs. So this is here to correct that by waiting for it
+			 * to be added.
+			 */
+			boolean foundTask = false;
+			int checks = 0;
+			do {
+				checks++;
+				for (TaskFuture taskFuture : getTasks()) {
+					if (taskFuture.getFuture().equals(future)) {
+						taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.WORKING);
+
+						if (taskFuture.getCallback() != null) {
+							taskFuture.getCallback().beforeExecute(taskFuture);
+						}
+						foundTask = true;
 					}
 				}
-			}
+				try {
+					Thread.sleep(MAX_DELAY_MILLIS);
+				} catch (InterruptedException ex) {
+					//**continue on interruption
+				}
+
+			} while (!foundTask && checks <= MAX_DELAY_CHECK);
 		}
+		super.beforeExecute(t, r);
 	}
 
 	public List<TaskFuture> getTasks()
