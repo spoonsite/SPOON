@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
@@ -63,7 +63,7 @@ public class ComponentReviewConPk
 	@Override
 	public String pkValue()
 	{
-		return getComponentReviewId() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getReviewCon();
+		return getComponentReviewId() + ReflectionUtil.COMPOSITE_KEY_SEPERATOR + getReviewCon();
 	}
 
 	@Override

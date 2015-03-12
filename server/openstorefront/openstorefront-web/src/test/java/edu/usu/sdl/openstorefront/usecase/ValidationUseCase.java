@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.usecase;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -118,7 +118,7 @@ public class ValidationUseCase
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+						if (ReflectionUtil.isComplexClass(returnObj.getClass())) {
 							if (StringUtils.isNotBlank(parentFieldName)) {
 								parentFieldName = parentFieldName + ".";
 							}
@@ -166,7 +166,7 @@ public class ValidationUseCase
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+						if (ReflectionUtil.isComplexClass(returnObj.getClass())) {
 							if (StringUtils.isNotBlank(parentFieldName)) {
 								parentFieldName = parentFieldName + "_";
 							}
@@ -208,7 +208,7 @@ public class ValidationUseCase
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+						if (ReflectionUtil.isComplexClass(returnObj.getClass())) {
 							if (StringUtils.isNotBlank(parentFieldName)) {
 								parentFieldName = parentFieldName + ".";
 							}

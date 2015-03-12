@@ -32,10 +32,10 @@ import org.junit.Test;
  *
  * @author dshurtleff
  */
-public class ServiceUtilTest
+public class ReflectionUtilTest
 {
 
-	public ServiceUtilTest()
+	public ReflectionUtilTest()
 	{
 	}
 
@@ -60,7 +60,7 @@ public class ServiceUtilTest
 	}
 
 	/**
-	 * Test of isComplexClass method, of class ServiceUtil.
+	 * Test of isComplexClass method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testIsComplexClass()
@@ -68,16 +68,16 @@ public class ServiceUtilTest
 		System.out.println("isComplexClass");
 
 		boolean expResult = true;
-		boolean result = ServiceUtil.isComplexClass(UserTypeCode.class);
+		boolean result = ReflectionUtil.isComplexClass(UserTypeCode.class);
 		assertEquals(expResult, result);
 
 		expResult = false;
-		result = ServiceUtil.isComplexClass(String.class);
+		result = ReflectionUtil.isComplexClass(String.class);
 		assertEquals(expResult, result);
 	}
 
 	/**
-	 * Test of isCollectionClass method, of class ServiceUtil.
+	 * Test of isCollectionClass method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testIsCollectionClass()
@@ -85,23 +85,23 @@ public class ServiceUtilTest
 		System.out.println("isCollectionClass");
 
 		boolean expResult = true;
-		boolean result = ServiceUtil.isCollectionClass(List.class);
+		boolean result = ReflectionUtil.isCollectionClass(List.class);
 		assertEquals(expResult, result);
 
 		expResult = false;
-		result = ServiceUtil.isCollectionClass(UserTypeCode.class);
+		result = ReflectionUtil.isCollectionClass(UserTypeCode.class);
 		assertEquals(expResult, result);
 	}
 
 	/**
-	 * Test of getAllFields method, of class ServiceUtil.
+	 * Test of getAllFields method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testGetAllFields()
 	{
 		System.out.println("getAllFields");
 
-		List<Field> result = ServiceUtil.getAllFields(UserTypeCode.class);
+		List<Field> result = ReflectionUtil.getAllFields(UserTypeCode.class);
 		System.out.println("Use Type Fields: ");
 		for (Field field : result) {
 			System.out.println(field.getName());
@@ -109,7 +109,7 @@ public class ServiceUtilTest
 	}
 
 	/**
-	 * Test of isSubLookupEntity method, of class ServiceUtil.
+	 * Test of isSubLookupEntity method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testIsSubLookupEntity()
@@ -117,17 +117,17 @@ public class ServiceUtilTest
 		System.out.println("isSubLookupEntity");
 
 		boolean expResult = false;
-		boolean result = ServiceUtil.isSubLookupEntity(Component.class);
+		boolean result = ReflectionUtil.isSubLookupEntity(Component.class);
 		assertEquals(expResult, result);
 
 		expResult = true;
-		result = ServiceUtil.isSubLookupEntity(UserTypeCode.class);
+		result = ReflectionUtil.isSubLookupEntity(UserTypeCode.class);
 		assertEquals(expResult, result);
 
 	}
 
 	/**
-	 * Test of isSubClass method, of class ServiceUtil.
+	 * Test of isSubClass method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testIsSubClass()
@@ -135,17 +135,17 @@ public class ServiceUtilTest
 		System.out.println("isSubClass");
 
 		boolean expResult = true;
-		boolean result = ServiceUtil.isSubClass(ServiceUtil.BASECOMPONENT_ENTITY, ComponentMedia.class);
+		boolean result = ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, ComponentMedia.class);
 		assertEquals(expResult, result);
 
 		expResult = false;
-		result = ServiceUtil.isSubClass(ServiceUtil.BASECOMPONENT_ENTITY, UserTypeCode.class);
+		result = ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, UserTypeCode.class);
 		assertEquals(expResult, result);
 
 	}
 
 	/**
-	 * Test of compareObjects method, of class ServiceUtil.
+	 * Test of compareObjects method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testCompareObjects()
@@ -158,7 +158,7 @@ public class ServiceUtilTest
 
 		boolean consumeFieldsOnly = true;
 		boolean expResult = false;
-		boolean result = ServiceUtil.isObjectsDifferent(userTypeCode, userTypeCode, consumeFieldsOnly);
+		boolean result = ReflectionUtil.isObjectsDifferent(userTypeCode, userTypeCode, consumeFieldsOnly);
 		assertEquals(expResult, result);
 
 		UserTypeCode userTypeCodeDiff = new UserTypeCode();
@@ -166,13 +166,13 @@ public class ServiceUtilTest
 		userTypeCodeDiff.setDescription("Test2");
 
 		expResult = true;
-		result = ServiceUtil.isObjectsDifferent(userTypeCode, userTypeCodeDiff, consumeFieldsOnly);
+		result = ReflectionUtil.isObjectsDifferent(userTypeCode, userTypeCodeDiff, consumeFieldsOnly);
 		assertEquals(expResult, result);
 
 	}
 
 	/**
-	 * Test of compareFields method, of class ServiceUtil.
+	 * Test of compareFields method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testCompareFields()
@@ -180,17 +180,17 @@ public class ServiceUtilTest
 		System.out.println("compareFields");
 
 		boolean expResult = true;
-		boolean result = ServiceUtil.isFieldsDifferent("Test", "TEST");
+		boolean result = ReflectionUtil.isFieldsDifferent("Test", "TEST");
 		assertEquals(expResult, result);
 
 		expResult = false;
-		result = ServiceUtil.isFieldsDifferent("Test", "Test");
+		result = ReflectionUtil.isFieldsDifferent("Test", "Test");
 		assertEquals(expResult, result);
 
 	}
 
 	/**
-	 * Test of isObjectsDifferent method, of class ServiceUtil.
+	 * Test of isObjectsDifferent method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testIsObjectsDifferent()
@@ -202,13 +202,13 @@ public class ServiceUtilTest
 
 		boolean consumeFieldsOnly = true;
 		boolean expResult = false;
-		boolean result = ServiceUtil.isObjectsDifferent(component, component, consumeFieldsOnly);
+		boolean result = ReflectionUtil.isObjectsDifferent(component, component, consumeFieldsOnly);
 		assertEquals(expResult, result);
 
 	}
 
 	/**
-	 * Test of isFieldsDifferent method, of class ServiceUtil.
+	 * Test of isFieldsDifferent method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testIsFieldsDifferent()
@@ -217,13 +217,13 @@ public class ServiceUtilTest
 		Object original = "Test";
 		Object newField = "Test2";
 		boolean expResult = true;
-		boolean result = ServiceUtil.isFieldsDifferent(original, newField);
+		boolean result = ReflectionUtil.isFieldsDifferent(original, newField);
 		assertEquals(expResult, result);
 
 	}
 
 	/**
-	 * Test of getPKField method, of class ServiceUtil.
+	 * Test of getPKField method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testGetPKField() throws IllegalArgumentException, IllegalAccessException
@@ -232,7 +232,7 @@ public class ServiceUtilTest
 		Component entity = new Component();
 		entity.setComponentId("Test");
 
-		Field result = ServiceUtil.getPKField(entity);
+		Field result = ReflectionUtil.getPKField(entity);
 		result.setAccessible(true);
 		if ("Test".equals(result.get(entity)) == false) {
 			fail("Unable to get Id");
@@ -241,7 +241,7 @@ public class ServiceUtilTest
 	}
 
 	/**
-	 * Test of isPKFieldGenerated method, of class ServiceUtil.
+	 * Test of isPKFieldGenerated method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testIsPKFieldGenerated()
@@ -249,13 +249,13 @@ public class ServiceUtilTest
 		System.out.println("isPKFieldGenerated");
 		Component entity = new Component();
 		boolean expResult = true;
-		boolean result = ServiceUtil.isPKFieldGenerated(entity);
+		boolean result = ReflectionUtil.isPKFieldGenerated(entity);
 		assertEquals(expResult, result);
 
 	}
 
 	/**
-	 * Test of getPKFieldValue method, of class ServiceUtil.
+	 * Test of getPKFieldValue method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testGetPKFieldValue()
@@ -264,13 +264,13 @@ public class ServiceUtilTest
 		Component entity = new Component();
 		entity.setComponentId("Test");
 		String expResult = "Test";
-		String result = ServiceUtil.getPKFieldValue(entity);
+		String result = ReflectionUtil.getPKFieldValue(entity);
 		assertEquals(expResult, result);
 
 	}
 
 	/**
-	 * Test of updatePKFieldValue method, of class ServiceUtil.
+	 * Test of updatePKFieldValue method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testUpdatePKFieldValue()
@@ -278,12 +278,12 @@ public class ServiceUtilTest
 		System.out.println("updatePKFieldValue");
 		Component entity = new Component();
 		String value = "Test";
-		ServiceUtil.updatePKFieldValue(entity, value);
+		ReflectionUtil.updatePKFieldValue(entity, value);
 		assertEquals("Test", entity.getComponentId());
 	}
 
 	/**
-	 * Test of compareConsumeFields method, of class ServiceUtil.
+	 * Test of compareConsumeFields method, of class ReflectionUtil.
 	 */
 	@Test
 	public void testCompareConsumeFields()
@@ -297,13 +297,13 @@ public class ServiceUtilTest
 		component2.setName("Test");
 		component2.setActiveStatus(Component.ACTIVE_STATUS);
 		int expResult = 0;
-		int result = ServiceUtil.compareConsumeFields(component, component2);
+		int result = ReflectionUtil.compareConsumeFields(component, component2);
 		assertEquals(expResult, result);
 
 		component2 = new Component();
 		component2.setName("Test2");
 		expResult = -1;
-		result = ServiceUtil.compareConsumeFields(component, component2);
+		result = ReflectionUtil.compareConsumeFields(component, component2);
 		assertEquals(expResult, result);
 
 	}

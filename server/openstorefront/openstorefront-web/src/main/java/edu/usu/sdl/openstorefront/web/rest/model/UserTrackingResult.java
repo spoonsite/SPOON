@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
@@ -25,43 +24,33 @@ import java.util.List;
  */
 public class UserTrackingResult
 {
+
 	private List<UserTracking> result;
 	private long count;
 
-	public UserTrackingResult(){
-		
+	public UserTrackingResult()
+	{
+
 	}
-	
-	/**
-	 * @return the result
-	 */
+
 	public List<UserTracking> getResult()
 	{
 		return result;
 	}
 
-	/**
-	 * @param result the result to set
-	 */
 	public void setResult(List<UserTracking> result)
 	{
 		this.result = result;
 	}
 
-	/**
-	 * @return the count
-	 */
 	public long getCount()
 	{
 		return count;
 	}
 
-	/**
-	 * @param count the count to set
-	 */
 	public void setCount(long count)
 	{
 		this.count = count;
 	}
-	
+
 }

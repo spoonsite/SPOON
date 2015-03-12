@@ -27,7 +27,10 @@ import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.AlertContext;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.BulkComponentAttributeChange;
@@ -36,6 +39,7 @@ import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.service.transfermodel.QuestionAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
+import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.sort.SortUtil;
 import edu.usu.sdl.openstorefront.storage.model.AlertType;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
@@ -71,8 +75,8 @@ import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.LockSwitch;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -107,8 +111,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -119,6 +121,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.ehcache.Element;
+import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -985,6 +988,9 @@ public class ComponentServiceImpl
 			oldTracking.setEventDts(tracking.getEventDts());
 			oldTracking.setTrackEventTypeCode(tracking.getTrackEventTypeCode());
 			oldTracking.setActiveStatus(tracking.getActiveStatus());
+			oldTracking.setResourceLink(tracking.getResourceLink());
+			oldTracking.setResourceType(tracking.getResourceType());
+			oldTracking.setRestrictedResouce(tracking.getRestrictedResouce());
 			oldTracking.populateBaseUpdateFields();
 			persistenceService.persist(oldTracking);
 		} else {
@@ -1211,7 +1217,7 @@ public class ComponentServiceImpl
 		List<T> existingComponents = getBaseComponent(baseComponentClass, componentId, null);
 		Map<String, T> existingMap = new HashMap<>();
 		for (T entity : existingComponents) {
-			existingMap.put(ServiceUtil.getPKFieldValue(entity), entity);
+			existingMap.put(ReflectionUtil.getPKFieldValue(entity), entity);
 		}
 
 		Set<String> inputMap = new HashSet<>();
@@ -1225,7 +1231,7 @@ public class ComponentServiceImpl
 			if (validationResult.valid() == false) {
 				throw new OpenStorefrontRuntimeException(validationResult.toString());
 			}
-			inputMap.add(ServiceUtil.getPKFieldValue(baseComponent));
+			inputMap.add(ReflectionUtil.getPKFieldValue(baseComponent));
 
 			//Look for match
 			boolean match = false;
@@ -1233,7 +1239,7 @@ public class ComponentServiceImpl
 				//compare
 				if (entity.compareTo(baseComponent) == 0) {
 					match = true;
-					inputMap.add(ServiceUtil.getPKFieldValue(entity));
+					inputMap.add(ReflectionUtil.getPKFieldValue(entity));
 					break;
 				}
 			}
@@ -1278,7 +1284,7 @@ public class ComponentServiceImpl
 			if (inputMap.contains(existing) == false) {
 				BaseComponent oldEnity = existingMap.get(existing);
 				try {
-					Field pkField = ServiceUtil.getPKField(oldEnity);
+					Field pkField = ReflectionUtil.getPKField(oldEnity);
 					if (pkField != null) {
 						pkField.setAccessible(true);
 						deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
@@ -1303,8 +1309,8 @@ public class ComponentServiceImpl
 
 		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
-			if (ServiceUtil.BASECOMPONENT_ENTITY.equals(entityClass.getSimpleName()) == false) {
-				if (ServiceUtil.isSubClass(ServiceUtil.BASECOMPONENT_ENTITY, entityClass)) {
+			if (ReflectionUtil.BASECOMPONENT_ENTITY.equals(entityClass.getSimpleName()) == false) {
+				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {
 					try {
 						deleteBaseComponent((BaseComponent) entityClass.newInstance(), componentId);
 					} catch (InstantiationException | IllegalAccessException ex) {
@@ -2034,138 +2040,60 @@ public class ComponentServiceImpl
 		});
 	}
 
-	private Boolean objectHasProperty(Object obj, String propertyName)
-	{
-		List<Field> properties = getAllFields(obj);
-		for (Field field : properties) {
-			if (field.getName().equalsIgnoreCase(propertyName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static List<Field> getAllFields(Object obj)
-	{
-		List<Field> fields = new ArrayList<Field>();
-		getAllFieldsRecursive(fields, obj.getClass());
-		return fields;
-	}
-
-	private static List<Field> getAllFieldsRecursive(List<Field> fields, Class<?> type)
-	{
-		for (Field field : type.getDeclaredFields()) {
-			fields.add(field);
-		}
-
-		if (type.getSuperclass() != null) {
-			fields = getAllFieldsRecursive(fields, type.getSuperclass());
-		}
-
-		return fields;
-	}
-
 	@Override
 	public ComponentTrackingResult getComponentTracking(FilterQueryParams filter, String componentId)
 	{
-		StringBuilder queryString = new StringBuilder();
-		String countStr;
-		Map<String, Object> mappedParams = new HashMap<>();
-		Map<String, Object> countParams = new HashMap<>();
-		List<ComponentTracking> temp = new ArrayList<>();
-		List<ComponentTrackingCompleteWrapper> response = new ArrayList<>();
 		ComponentTrackingResult result = new ComponentTrackingResult();
 
-		queryString.append("select * from ComponentTracking ");
+		ComponentTracking componentTrackingExample = new ComponentTracking();
+		componentTrackingExample.setActiveStatus(filter.getStatus());
+		componentTrackingExample.setComponentId(componentId);
 
-		String whereClause = "";
-		if (!filter.getAll()) {
-			whereClause += " where activeStatus=:activeStatusParam ";
-			mappedParams.put("activeStatusParam", filter.getStatus());
-			queryString.append(whereClause);
+		ComponentTracking componentTrackingStartExample = new ComponentTracking();
+		componentTrackingStartExample.setEventDts(filter.getStart());
+
+		ComponentTracking componentTrackingEndExample = new ComponentTracking();
+		componentTrackingEndExample.setEventDts(filter.getEnd());
+
+		QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(componentTrackingStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(componentTrackingEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		queryByExample.setMaxResults(filter.getMax());
+		queryByExample.setFirstResult(filter.getOffset());
+		queryByExample.setSortDirection(filter.getSortOrder());
+
+		ComponentTracking componentTrackingOrderExample = new ComponentTracking();
+		Field sortField = ReflectionUtil.getField(componentTrackingOrderExample, filter.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), componentTrackingOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(componentTrackingOrderExample);
 		}
 
-		if (filter.getStart() != null && filter.getEnd() != null) {
-			if (StringUtils.isNotBlank(whereClause)) {
-				queryString.append(" AND ");
-			} else {
-				queryString.append(" where ");
-			}
+		List<ComponentTracking> componentTrackings = persistenceService.queryByExample(ComponentTracking.class, queryByExample);
 
-			queryString.append(" eventDts >= :startDate ");
-			queryString.append(" AND eventDts <= :endDate ");
-			mappedParams.put("startDate", filter.getStart());
-			mappedParams.put("endDate", filter.getEnd());
-
-		}
-
-		if (filter.getSortField() != null) {
-//			if (filter.getSortField() != null) {
-//				String names = generateExampleNames(queryByExample.getGroupBy());
-//				if (StringUtils.isNotBlank(names)) {
-//					queryString.append(" group by ").append(names);
-//				}
-//			}
-			if (filter.getSortField() != null && objectHasProperty(new ComponentTracking(), filter.getSortField())) {
-				queryString.append(" order by ").append(filter.getSortField());
-				if (filter.getSortOrder() != null && (filter.getSortOrder().equals(OpenStorefrontConstant.SORT_ASCENDING) || filter.getSortOrder().equals(OpenStorefrontConstant.SORT_DESCENDING))) {
-					queryString.append(" ").append(filter.getSortOrder());
-				}
-			}
-
-			//mappedParams.putAll(mapParameters(queryByExample.getLikeExample()));
-		}
-		countStr = queryString.toString();
-		countParams = mappedParams;
-
-		if (filter.getOffset() > 0) {
-			queryString.append(" SKIP ").append(filter.getOffset());
-		}
-		if (filter.getMax() > 0) {
-			queryString.append(" LIMIT ").append(filter.getMax());
-		}
-
-//		if (queryByExample.getTimeout() != null) {
-//			queryString.append(" TIMEOUT ").append(queryByExample.getTimeout()).append(" ").append(queryByExample.getTimeoutStrategy());
-//		}
-//		if (queryByExample.isParallelQuery()) {
-//			queryString.append(" PARALLEL ");
-//		}
-		result.setCount(persistenceService.query(countStr, countParams).size());
-		temp = persistenceService.query(queryString.toString(), mappedParams);
-		for (ComponentTracking item : temp) {
+		for (ComponentTracking item : componentTrackings) {
 			ComponentTrackingCompleteWrapper wrapper = new ComponentTrackingCompleteWrapper();
 			wrapper.setData(item);
-			wrapper.setName(this.getComponentName(item.getComponentId()));
-			response.add(wrapper);
-		}
-		if (filter.getSortField().equals("name")) {
-			if (filter.getSortOrder().equals(OpenStorefrontConstant.SORT_DESCENDING)) {
-				Collections.sort(response, new Comparator<ComponentTrackingCompleteWrapper>()
-				{
-					@Override
-					public int compare(ComponentTrackingCompleteWrapper p1, ComponentTrackingCompleteWrapper p2)
-					{
-						return p1.getName().compareToIgnoreCase(p2.getName());
-					}
-
-				});
-			} else {
-				Collections.sort(response, new Comparator<ComponentTrackingCompleteWrapper>()
-				{
-					@Override
-					public int compare(ComponentTrackingCompleteWrapper p1, ComponentTrackingCompleteWrapper p2)
-					{
-						return p2.getName().compareToIgnoreCase(p1.getName());
-					}
-
-				});
-
-			}
-
+			wrapper.setName(getComponentName(item.getComponentId()));
+			result.getResult().add(wrapper);
 		}
 
-		result.setResult(response);
+		if (filter.getSortField().equals(ComponentTrackingCompleteWrapper.FIELD_NAME)) {
+			result.getResult().sort(new BeanComparator<>(filter.getSortOrder(), filter.getSortField()));
+		}
+
+		queryByExample.setQueryType(QueryType.COUNT);
+		result.setCount(persistenceService.countByExample(queryByExample));
+
 		return result;
 	}
 

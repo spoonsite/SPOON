@@ -79,18 +79,19 @@ public class ComponentTrackingResource
 		}
 
 		StringBuilder data = new StringBuilder();
-		ComponentTrackingResult result = new ComponentTrackingResult();
-		result = service.getComponentService().getComponentTracking(filterQueryParams, null);
+		ComponentTrackingResult result = service.getComponentService().getComponentTracking(filterQueryParams, null);
 
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{"Name",
 			"Component ID",
-			"Component Resource ID",
 			"Tracking ID",
 			"Create Date",
 			"Client IP",
-			"Event Code",
+			"Event",
+			"Resource Link",
+			"Resource Type",
+			"Restricted Resource",
 			"Create User"
 		});
 		data.append(stringWriter.toString());

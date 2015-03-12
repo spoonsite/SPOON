@@ -25,7 +25,7 @@ import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SystemTable;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -79,8 +79,8 @@ public class LookupTypeResource
 
 		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
-			if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
-				if (ServiceUtil.isSubLookupEntity(entityClass)) {
+			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
+				if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 					boolean add = true;
 
 					if (systemTables != null) {
@@ -372,10 +372,10 @@ public class LookupTypeResource
 	private void checkEntity(String entityName)
 	{
 		boolean valid = false;
-		if (ServiceUtil.LOOKUP_ENTITY.equals(entityName) == false) {
+		if (ReflectionUtil.LOOKUP_ENTITY.equals(entityName) == false) {
 			try {
 				Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
-				valid = ServiceUtil.isSubLookupEntity(lookupClass);
+				valid = ReflectionUtil.isSubLookupEntity(lookupClass);
 			} catch (ClassNotFoundException e) {
 				valid = false;
 			}

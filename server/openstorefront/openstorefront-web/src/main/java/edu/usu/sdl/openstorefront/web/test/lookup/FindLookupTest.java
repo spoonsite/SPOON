@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.web.test.lookup;
 
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.Collection;
 import java.util.List;
@@ -40,8 +40,8 @@ public class FindLookupTest
 	{
 		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
-			if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
-				if (ServiceUtil.isSubLookupEntity(entityClass)) {
+			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
+				if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 					List<LookupEntity> lookupEnities = service.getLookupService().findLookup(entityClass);
 					results.append("Lookup: ").append(entityClass.getSimpleName()).append("<br>");
 					lookupEnities.forEach(entity -> {

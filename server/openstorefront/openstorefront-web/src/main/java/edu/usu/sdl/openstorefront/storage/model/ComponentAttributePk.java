@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -70,9 +70,9 @@ public class ComponentAttributePk
 	@Override
 	public String pkValue()
 	{
-		return getComponentId() + ServiceUtil.COMPOSITE_KEY_SEPERATOR
-				+ getAttributeType() + ServiceUtil.COMPOSITE_KEY_SEPERATOR
-				+ getAttributeCode() + ServiceUtil.COMPOSITE_KEY_SEPERATOR;
+		return getComponentId() + ReflectionUtil.COMPOSITE_KEY_SEPERATOR
+				+ getAttributeType() + ReflectionUtil.COMPOSITE_KEY_SEPERATOR
+				+ getAttributeCode() + ReflectionUtil.COMPOSITE_KEY_SEPERATOR;
 	}
 
 	@Override

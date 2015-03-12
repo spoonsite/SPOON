@@ -31,9 +31,12 @@ public class OSFCacheManager
 
 	private static final Logger log = Logger.getLogger(OSFCacheManager.class.getName());
 
+	public static final String ALLCODE_KEY = "ALLCODES";
+
 	private static Cache lookupCache;
 	private static Cache attributeCache;
 	private static Cache attributeTypeCache;
+	private static Cache attributeCodeAllCache;
 	private static Cache userAgentCache;
 	private static Cache componentCache;
 	private static Cache componentLookupCache;
@@ -56,6 +59,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("attributeTypeCache", 500, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeTypeCache = singletonManager.getCache("attributeTypeCache");
+
+			memoryOnlyCache = new Cache("attributeCodeAllCache", 1, false, true, 7200, 7200);
+			singletonManager.addCache(memoryOnlyCache);
+			attributeCodeAllCache = singletonManager.getCache("attributeCodeAllCache");
 
 			memoryOnlyCache = new Cache("userAgentCache", 100, false, false, 7200, 7200);
 			singletonManager.addCache(memoryOnlyCache);
@@ -108,6 +115,16 @@ public class OSFCacheManager
 	public static Cache getComponentLookupCache()
 	{
 		return componentLookupCache;
+	}
+
+	public static Cache getAttributeCodeAllCache()
+	{
+		return attributeCodeAllCache;
+	}
+
+	public static void setAttributeCodeAllCache(Cache aAttributeCodeAllCache)
+	{
+		attributeCodeAllCache = aAttributeCodeAllCache;
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.ComponentApprovalStatus;
 import edu.usu.sdl.openstorefront.util.PK;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -109,13 +109,13 @@ public class Component
 		int value = super.compareTo(o);
 
 		if (value == 0) {
-			value = ServiceUtil.compareConsumeFields(this, o);
+			value = ReflectionUtil.compareConsumeFields(this, o);
 		}
 		if (value == 0) {
-			value = ServiceUtil.compareObjects(this.getApprovedUser(), o.getApprovedUser());
+			value = ReflectionUtil.compareObjects(this.getApprovedUser(), o.getApprovedUser());
 		}
 		if (value == 0) {
-			value = ServiceUtil.compareObjects(this.getApprovedDts(), o.getApprovedDts());
+			value = ReflectionUtil.compareObjects(this.getApprovedDts(), o.getApprovedDts());
 		}
 
 		return value;

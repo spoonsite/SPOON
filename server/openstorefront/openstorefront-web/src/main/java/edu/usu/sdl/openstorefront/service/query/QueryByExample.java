@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.service.query;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +54,26 @@ public class QueryByExample<T extends BaseEntity>
 
 	public QueryByExample()
 	{
+	}
+
+	public static Object getFlagForType(Class fieldType)
+	{
+		Object trigger = null;
+
+		if (fieldType.getName().equals(Boolean.class.getName())) {
+			trigger = Boolean.TRUE;
+		} else if (fieldType.getName().equals(Integer.class.getName())) {
+			trigger = 1;
+		} else if (fieldType.getName().equals(BigDecimal.class.getName())) {
+			trigger = BigDecimal.ONE;
+		} else {
+			try {
+				trigger = fieldType.newInstance();
+			} catch (InstantiationException | IllegalAccessException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to create a query trigger.", ex);
+			}
+		}
+		return trigger;
 	}
 
 	public QueryByExample(T example)

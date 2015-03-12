@@ -28,8 +28,8 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -275,7 +275,7 @@ public class PersistenceService
 			for (Field field : entityClass.getDeclaredFields()) {
 				PK idAnnotation = field.getAnnotation(PK.class);
 				if (idAnnotation != null) {
-					if (ServiceUtil.isComplexClass(field.getType())) {
+					if (ReflectionUtil.isComplexClass(field.getType())) {
 						//PK class should only be one level deep
 						for (Field pkField : field.getType().getDeclaredFields()) {
 							try {
@@ -527,10 +527,10 @@ public class PersistenceService
 				queryString.append(" order by ").append(names).append(" ").append(queryByExample.getSortDirection());
 			}
 		}
-		if (queryByExample.getFirstResult() != null) {
+		if (queryByExample.getFirstResult() != null && queryByExample.getFirstResult() > 0) {
 			queryString.append(" SKIP ").append(queryByExample.getFirstResult());
 		}
-		if (queryByExample.getMaxResults() != null) {
+		if (queryByExample.getMaxResults() != null && queryByExample.getMaxResults() > 0) {
 			queryString.append(" LIMIT ").append(queryByExample.getMaxResults());
 		}
 		if (queryByExample.getTimeout() != null) {
@@ -564,7 +564,7 @@ public class PersistenceService
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+						if (ReflectionUtil.isComplexClass(returnObj.getClass())) {
 							complexFieldStack.getFieldStack().push(field.toString());
 							if (addAnd) {
 								where.append(generateStatementOption.getCondition());
@@ -618,7 +618,7 @@ public class PersistenceService
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+						if (ReflectionUtil.isComplexClass(returnObj.getClass())) {
 							complexFieldStack.getFieldStack().push(field.toString());
 							if (addAnd) {
 								where.append(",");
@@ -658,7 +658,7 @@ public class PersistenceService
 	{
 		Map<String, Object> parameterMap = new HashMap<>();
 		try {
-			List<Field> fields = ServiceUtil.getAllFields(example.getClass());
+			List<Field> fields = ReflectionUtil.getAllFields(example.getClass());
 			for (Field field : fields) {
 
 				if ("class".equalsIgnoreCase(field.getName()) == false) {
@@ -666,7 +666,7 @@ public class PersistenceService
 					//Note: this may not work for proxy object....they may need to be call through a get method
 					Object value = field.get(example);
 					if (value != null) {
-						if (ServiceUtil.isComplexClass(value.getClass())) {
+						if (ReflectionUtil.isComplexClass(value.getClass())) {
 							complexFieldStack.getFieldStack().push(field.getName());
 							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption));
 							complexFieldStack.getFieldStack().pop();
@@ -752,10 +752,10 @@ public class PersistenceService
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {
-			String pkValue = ServiceUtil.getPKFieldValue(entity);
+			String pkValue = ReflectionUtil.getPKFieldValue(entity);
 			if (pkValue == null) {
-				if (ServiceUtil.isPKFieldGenerated(entity)) {
-					ServiceUtil.updatePKFieldValue(entity, generateId());
+				if (ReflectionUtil.isPKFieldGenerated(entity)) {
+					ReflectionUtil.updatePKFieldValue(entity, generateId());
 				}
 			}
 			ValidationModel validationModel = new ValidationModel(entity);
