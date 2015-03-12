@@ -99,7 +99,7 @@ public class AttributeCode
 	 *
 	 * @return code
 	 */
-	public String architectureCode()
+	public String adjustedArchitectureCode()
 	{
 		if (StringUtils.isNotBlank(getArchitectureCode())) {
 			return getArchitectureCode();

@@ -601,7 +601,7 @@ public class AttributeServiceImpl
 										existingCode.setDescription(attributeCode.getDescription());
 										existingCode.setDetailUrl(attributeCode.getDetailUrl());
 										existingCode.setLabel(attributeCode.getLabel());
-										existingCode.setArchitectureCode(attributeCode.architectureCode());
+										existingCode.setArchitectureCode(attributeCode.getArchitectureCode());
 										existingCode.setBadgeUrl(attributeCode.getBadgeUrl());
 										existingCode.setGroupCode(attributeCode.getGroupCode());
 										existingCode.setSortOrder(attributeCode.getSortOrder());
@@ -734,11 +734,11 @@ public class AttributeServiceImpl
 				String rootCode = "0";
 				List<AttributeCode> attributeCodes = findCodesForType(attributeType);
 				for (AttributeCode attributeCode : attributeCodes) {
-					if (rootCode.equals(attributeCode.architectureCode())) {
-						architecture.setAttributeCode(attributeCode.architectureCode());
+					if (rootCode.equals(attributeCode.adjustedArchitectureCode())) {
+						architecture.setAttributeCode(attributeCode.adjustedArchitectureCode());
 						architecture.setDescription(attributeCode.getDescription());
 					} else {
-						String codeTokens[] = attributeCode.architectureCode().split(Pattern.quote("."));
+						String codeTokens[] = attributeCode.adjustedArchitectureCode().split(Pattern.quote("."));
 						Architecture rootArchtecture = architecture;
 						StringBuilder codeKey = new StringBuilder();
 						for (int i = 0; i < codeTokens.length - 1; i++) {
@@ -765,7 +765,7 @@ public class AttributeServiceImpl
 						//now find the correct postion and add/update
 						boolean found = false;
 						for (Architecture child : rootArchtecture.getChildren()) {
-							if (child.getAttributeCode().equals(attributeCode.architectureCode())) {
+							if (child.getAttributeCode().equals(attributeCode.adjustedArchitectureCode())) {
 								child.setName(attributeCode.getLabel());
 								child.setDescription(attributeCode.getDescription());
 								found = true;
@@ -773,7 +773,7 @@ public class AttributeServiceImpl
 						}
 						if (!found) {
 							Architecture newChild = new Architecture();
-							newChild.setAttributeCode(attributeCode.architectureCode());
+							newChild.setAttributeCode(attributeCode.adjustedArchitectureCode());
 							newChild.setOriginalAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 							newChild.setArchitectureCode(attributeCode.getArchitectureCode());
 							newChild.setSortOrder(attributeCode.getSortOrder());
