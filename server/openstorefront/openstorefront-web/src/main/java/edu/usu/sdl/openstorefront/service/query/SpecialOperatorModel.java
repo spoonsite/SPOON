@@ -32,6 +32,11 @@ public class SpecialOperatorModel< T extends BaseEntity>
 	{
 	}
 
+	public SpecialOperatorModel(T example)
+	{
+		this.example = example;
+	}
+
 	public GenerateStatementOption getGenerateStatementOption()
 	{
 		return generateStatementOption;
