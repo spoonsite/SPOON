@@ -67,17 +67,10 @@ app.directive('stickydiv', ['$timeout', function($timeout) {
       }
 
 
-      console.log('scope.top', scope.topOffset);
-      console.log('scope.left', scope.leftOffset);
-      console.log('stickydiv Scope', scope);
-      
-
       scope.setPositionValues = function () {
-        console.log('setting positions');
-        
+        $('.popover').hide();
         var winScrollTop = $(window).scrollTop();
         if (winScrollTop < 0 || winScrollTop + $(window).height() > $(document).height() || winScrollTop < scope.topOffsetScroll) {
-          console.log('setting positions STATIC');
           element.find('#'+scope.elementId).css({
             'position': 'static',
             'background': 'transparent',
@@ -88,12 +81,12 @@ app.directive('stickydiv', ['$timeout', function($timeout) {
           })
           return;
         }
-        console.log('setting positions FIXED');
         element.find('#'+scope.elementId).css({
           'position': 'fixed',
           'background': 'url(/openstorefront/images/squared_metal.png)',
           'top': scope.topOffset,
-          'width': 'calc(100% - '+ scope.currentLeft+'px)'
+          'width': 'calc(100% - '+ scope.currentLeft+'px)',
+          'z-index': 1010
         });
         element.find('#'+scope.fillerId).css({
           'min-height': scope.notElementHeight
