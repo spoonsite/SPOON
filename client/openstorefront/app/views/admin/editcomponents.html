@@ -17,96 +17,99 @@ limitations under the License.
 <div ng-controller="AdminEditcomponentCtrl" style="padding-left: 20px; padding-right: 20px;">
 	
 	<loader trigger="componentLoader"></loader>
-	<div id="editComponentToolbar">	
-		<br>		
-		Filter Status:
-		<button type="button"  class="btn btn-default"  id="filterstatus" ng-model="componentFilter.status" data-html="1" ng-change="refreshComponents()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
-			Active <span class="caret"></span>
-		</button> 
-		Filter Results: <input  type="text" 
-    id="componentFilter.search"
-    name="filter.search"
-    placeholder="Component Name"
-    class="form-control"									
-    style="width: auto; display:inline-block;"
-    ng-model="componentFilter.search" 
-    ng-change="filterComponentResults()"				
-    ng-minlength=0
-    ng-maxlength=100				
-    ng-focus />	
-    <br>
-    <div class="pagination row row-centered" >
-     <div style="text-align: center;">
+  <stickydiv fixed-offset-top=".top" fixed-offset-left="" element-id="editComponentToolbar">
+    <div>
+      <br>    
+      Filter Status:
+      <button type="button"  class="btn btn-default"  id="filterstatus" ng-model="componentFilter.status" data-html="1" ng-change="refreshComponents()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
+        Active <span class="caret"></span>
+      </button> 
+      Filter Results: <input  type="text" 
+      id="componentFilter.search"
+      name="filter.search"
+      placeholder="Component Name"
+      class="form-control"                  
+      style="width: auto; display:inline-block;"
+      ng-model="componentFilter.search" 
+      ng-change="filterComponentResults()"        
+      ng-minlength=0
+      ng-maxlength=100        
+      ng-focus /> 
+      <br>
+      <div class="pagination row row-centered" >
+        <div style="text-align: center;">
 
-       <span class="glyphicon glyphicon-fast-backward imitateLink" ng-click="firstPage()">&nbsp;</span>
-       <span class="glyphicon glyphicon-chevron-left imitateLink" ng-click="prevPage()">&nbsp;</span>
-       <span class="imitateLink"> Page </span>
-       <span class="imitateLink"> 
-        <span class="imitateLink" ng-bind="pageNumber"  style="width:25px" />
+          <span class="glyphicon glyphicon-fast-backward imitateLink" ng-click="firstPage()">&nbsp;</span>
+          <span class="glyphicon glyphicon-chevron-left imitateLink" ng-click="prevPage()">&nbsp;</span>
+          <span class="imitateLink"> Page </span>
+          <span class="imitateLink"> 
+            <span class="imitateLink" ng-bind="pageNumber"  style="width:25px" />
+          </span>
+          <span class="imitateLink"> of </span>
+          <span class="imitateLink" ng-bind="maxPageNumber"></span>
+          <span class="glyphicon glyphicon-chevron-right imitateLink" ng-click="nextPage()">&nbsp;</span>
+          <span class="glyphicon glyphicon-fast-forward imitateLink"  ng-click="lastPage()">&nbsp;</span>          
+          <span class="imitateLink"> 
+            <input type="text"  ng-model="queryFilter.max" onkeypress='return event.charCode >= 48 && event.charCode <= 57' ng-blur="setPageSize()"  style="width:35px" min="1" max="500"  maxlength="3"> Per page
+          </span>   
+          (Total Records: <b><span class="imitateLink" ng-bind="components.totalNumber"></span></b>)        
+        </div>          
+      </div>    
+      <button class="btn btn-default" ng-click="refreshComponents()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+      <span style="position: absolute; right: 0px; padding-right: 20px;">
+        <button class="btn btn-default" ng-click="addComponent()" title="Add Component"><i class="fa fa-plus"></i>&nbsp;Add</button>
+        <button class="btn btn-default" ng-click="exportAll()" ng-disabled="selectedComponents.length === 0" title="Export Selected Components"><i class="fa fa-sign-out"></i>&nbsp;Export</button>
+        <button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Components"><i class="fa fa-sign-in"></i>&nbsp;Import</button>      
       </span>
-      <span class="imitateLink"> of </span>
-      <span class="imitateLink" ng-bind="maxPageNumber"></span>
-      <span class="glyphicon glyphicon-chevron-right imitateLink" ng-click="nextPage()">&nbsp;</span>
-      <span class="glyphicon glyphicon-fast-forward imitateLink"  ng-click="lastPage()">&nbsp;</span>          
-      <span class="imitateLink"> 
-        <input type="text"  ng-model="queryFilter.max" onkeypress='return event.charCode >= 48 && event.charCode <= 57' ng-blur="setPageSize()"  style="width:35px" min="1" max="500"  maxlength="3"> Per page
-      </span> 	
-      (Total Records: <b><span class="imitateLink" ng-bind="components.totalNumber"></span></b>)			  
-    </div>					
-  </div>		
-  <button class="btn btn-default" ng-click="refreshComponents()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
-  <span style="position: absolute; right: 0px; padding-right: 20px;">
-   <button class="btn btn-default" ng-click="addComponent()" title="Add Component"><i class="fa fa-plus"></i>&nbsp;Add</button>
-   <button class="btn btn-default" ng-click="exportAll()" ng-disabled="selectedComponents.length === 0" title="Export Selected Components"><i class="fa fa-sign-out"></i>&nbsp;Export</button>
-   <button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Components"><i class="fa fa-sign-in"></i>&nbsp;Import</button>			
- </span>
- <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 20px;" >	
-   <div class="form-group">
-    <label>File Input</label>
-    <input type="file" nv-file-select uploader="componentUploader" name="uploadFile" width="100" />
-    <p class="help-block">JSON of full component model</p>	
-    <input type="checkbox" ng-model="componentUploadOptions.uploadReviews" /> Upload Reviews<br>
-    <input type="checkbox" ng-model="componentUploadOptions.uploadQuestions" /> Upload Questions<br>
-    <input type="checkbox" ng-model="componentUploadOptions.uploadTags" /> Upload Tags<br>
-  </div>
-  <button ng-click="componentUploader.uploadAll()" class="btn btn-primary">Upload</button> 			
-</div>	
-<form name="exportForm" action="api/v1/resource/components/export" method="POST" >
- <p ng-repeat="id in selectedComponents">
-  <input type="hidden" name="id" value="{{id}}" />
-</p>			
-</form>
-</div>	
-<table class="table table-striped table-bordered admin-table stickytable">
-  <thead>
-    <tr>
-      <th style="width: 25px;"><input type="checkbox" ng-click="selectAllComponents();" ng-model="selectAllComps.flag" /></th>
-      <th><a href="" ng-click="setPredicate('component.name', 'components');">Name <span ng-show="predicate['components']  === 'component.name'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-      <th>Description</th>
-      <th><a href="" ng-click="setPredicate('component.lastActivityDts', 'components');" title="Last time the component of any component date was updated">Last Activity Date <span ng-show="predicate['components']  === 'component.lastActivityDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-      <th><a href="" ng-click="setPredicate('component.approvedDts', 'components');">Approval Date<span ng-show="predicate['components']  === 'component.approvedDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-      <th><a href="" ng-click="setPredicate('component.approvalState', 'components');">Approval State<span ng-show="predicate['components']  === 'component.approvalState'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-      <th><a href="" ng-click="setPredicate('integrationManagement', 'components');"  title="Shows if the component's data is being patially managed by an external system ">Integration Management<span ng-show="predicate['components']  === 'integrationManagement'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
-      <th style="min-width: 170px;">Action</th>
-    </tr>	
-  </thead>
-  <tbody>
-    <tr ng-repeat="component in filteredComponents | orderBy:predicate['components']:reverse['components']" >
-      <td><input type="checkbox" ng-click="selectComponent(component);" ng-model="component.selected"  /></td>
-      <td>{{component.component.name}}</td>
-      <td>{{component.component.description | limitTo: 100}}</td>
-      <td>{{component.component.lastActivityDts}}</td>
-      <td>{{component.component.approvedDts}}</td>
-      <td align="center">{{component.component.approvalState}}</td>
-      <td>{{component.integrationManagement}}</td>
-      <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
-        <button class="btn btn-primary btn-sm" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>
-        <button class="btn btn-primary btn-sm" ng-click="toggleStatus(component)"  title="Activate/Inactivate" ng-class="component.component.activeStatus === 'I' ? 'inverted':'' "><i class="fa fa-power-off"></i></button>          
-        <button class="btn btn-info btn-sm" ng-click="exportComponent(component.component.componentId)"  title="Export"><i class="fa fa-sign-out"></i></button>
-        <button class="btn btn-danger btn-sm" ng-click="deleteComponent(component.component)"  title="Delete"><i class="fa fa-trash"></i></button>
-      </td>
-    </tr>         
-  </tbody>
-</table>
+      <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 20px;" > 
+        <div class="form-group">
+          <label>File Input</label>
+          <input type="file" nv-file-select uploader="componentUploader" name="uploadFile" width="100" />
+          <p class="help-block">JSON of full component model</p>  
+          <input type="checkbox" ng-model="componentUploadOptions.uploadReviews" /> Upload Reviews<br>
+          <input type="checkbox" ng-model="componentUploadOptions.uploadQuestions" /> Upload Questions<br>
+          <input type="checkbox" ng-model="componentUploadOptions.uploadTags" /> Upload Tags<br>
+        </div>
+        <button ng-click="componentUploader.uploadAll()" class="btn btn-primary">Upload</button>      
+      </div>  
+      <form name="exportForm" action="api/v1/resource/components/export" method="POST" >
+        <p ng-repeat="id in selectedComponents">
+          <input type="hidden" name="id" value="{{id}}" />
+        </p>      
+      </form>
+    </div>
+    <div style="clear:both" id="endOfComponentToolbar"></div>
+  </stickydiv>
+  <table class="table table-striped table-bordered admin-table stickytable">
+    <thead>
+      <tr>
+        <th style="width: 25px;"><input type="checkbox" ng-click="selectAllComponents();" ng-model="selectAllComps.flag" /></th>
+        <th><a href="" ng-click="setPredicate('component.name', 'components');">Name <span ng-show="predicate['components']  === 'component.name'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th>Description</th>
+        <th><a href="" ng-click="setPredicate('component.lastActivityDts', 'components');" title="Last time the component of any component date was updated">Last Activity Date <span ng-show="predicate['components']  === 'component.lastActivityDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th><a href="" ng-click="setPredicate('component.approvedDts', 'components');">Approval Date<span ng-show="predicate['components']  === 'component.approvedDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th><a href="" ng-click="setPredicate('component.approvalState', 'components');">Approval State<span ng-show="predicate['components']  === 'component.approvalState'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th><a href="" ng-click="setPredicate('integrationManagement', 'components');"  title="Shows if the component's data is being patially managed by an external system ">Integration Management<span ng-show="predicate['components']  === 'integrationManagement'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
+        <th style="min-width: 170px;">Action</th>
+      </tr>	
+    </thead>
+    <tbody>
+      <tr ng-repeat="component in filteredComponents | orderBy:predicate['components']:reverse['components']" >
+        <td><input type="checkbox" ng-click="selectComponent(component);" ng-model="component.selected"  /></td>
+        <td>{{component.component.name}}</td>
+        <td>{{component.component.description | limitTo: 100}}</td>
+        <td>{{component.component.lastActivityDts}}</td>
+        <td>{{component.component.approvedDts}}</td>
+        <td align="center">{{component.component.approvalState}}</td>
+        <td>{{component.integrationManagement}}</td>
+        <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
+          <button class="btn btn-primary btn-sm" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>
+          <button class="btn btn-primary btn-sm" ng-click="toggleStatus(component)"  title="Activate/Inactivate" ng-class="component.component.activeStatus === 'I' ? 'inverted':'' "><i class="fa fa-power-off"></i></button>          
+          <button class="btn btn-info btn-sm" ng-click="exportComponent(component.component.componentId)"  title="Export"><i class="fa fa-sign-out"></i></button>
+          <button class="btn btn-danger btn-sm" ng-click="deleteComponent(component.component)"  title="Delete"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>         
+    </tbody>
+  </table>
 
 </div>
