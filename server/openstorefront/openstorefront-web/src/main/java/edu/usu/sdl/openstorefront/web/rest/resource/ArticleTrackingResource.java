@@ -75,8 +75,7 @@ public class ArticleTrackingResource
 		}
 
 		StringBuilder data = new StringBuilder();
-		ArticleTrackingResult result = new ArticleTrackingResult();
-		result = service.getAttributeService().getAttributeTracking(filterQueryParams, null);
+		ArticleTrackingResult result = service.getAttributeService().getAttributeTracking(filterQueryParams, null);
 
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
@@ -84,7 +83,7 @@ public class ArticleTrackingResource
 			"Attribute Type",
 			"Attribute Code",
 			"Create Date",
-			"Event Code",
+			"Event",
 			"Tracking ID",
 			"Create User",
 			"Client IP"

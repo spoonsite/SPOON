@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -78,9 +78,9 @@ public class ComponentResource
 	@Override
 	public int customCompareTo(BaseComponent o)
 	{
-		int value = ServiceUtil.compareObjects(getFileName(), ((ComponentResource) o).getFileName());
+		int value = ReflectionUtil.compareObjects(getFileName(), ((ComponentResource) o).getFileName());
 		if (value == 0) {
-			value = ServiceUtil.compareObjects(getMimeType(), ((ComponentResource) o).getMimeType());
+			value = ReflectionUtil.compareObjects(getMimeType(), ((ComponentResource) o).getMimeType());
 		}
 		return value;
 	}

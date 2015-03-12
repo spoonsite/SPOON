@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
+import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,41 +30,33 @@ import java.text.SimpleDateFormat;
  * @author jlaw
  */
 public class ArticleTrackingCompleteWrapper
-	implements ExportImport
+		implements ExportImport
 {
+
+	public static final String FIELD_TITLE = "title";
+
 	private Article article;
 	private ArticleTracking data;
 
-	public ArticleTrackingCompleteWrapper(){
+	public ArticleTrackingCompleteWrapper()
+	{
 	}
 
-	/**
-	 * @return the data
-	 */
 	public ArticleTracking getData()
 	{
 		return data;
 	}
 
-	/**
-	 * @param data the data to set
-	 */
 	public void setData(ArticleTracking data)
 	{
 		this.data = data;
 	}
 
-	/**
-	 * @return the article
-	 */
 	public Article getArticle()
 	{
 		return article;
 	}
 
-	/**
-	 * @param article the article to set
-	 */
 	public void setArticle(Article article)
 	{
 		this.article = article;
@@ -75,12 +68,12 @@ public class ArticleTrackingCompleteWrapper
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-		
+
 		writer.writeNext(new String[]{getArticle().getTitle(),
 			getData().getAttributeType(),
 			getData().getAttributeCode(),
 			df.format(getData().getCreateDts()),
-			getData().getTrackEventTypeCode(),
+			TranslateUtil.translate(TrackEventCode.class, getData().getTrackEventTypeCode()),
 			getData().getArticleTrackingId(),
 			getData().getCreateUser(),
 			getData().getClientIp()
@@ -91,7 +84,7 @@ public class ArticleTrackingCompleteWrapper
 	@Override
 	public void importData(String[] data)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
-	
+
 }

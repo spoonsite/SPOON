@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.security.UserProfileRequireHandler;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
@@ -369,7 +368,7 @@ public class UserProfileResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking/{trackingId}")
-	public Response getComponentTracking(
+	public Response getUserTracking(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@PathParam("trackingId")
@@ -388,7 +387,7 @@ public class UserProfileResource
 	@APIDescription("Remove a tracking entry from the specified user")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tracking/{trackingId}")
-	public void deleteComponentTracking(
+	public void deleteUserTracking(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@PathParam("id")
@@ -403,7 +402,7 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
-	public Response addComponentTracking(
+	public Response addUserTracking(
 			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@RequiredParam UserTracking tracking)
@@ -418,14 +417,14 @@ public class UserProfileResource
 	@APIDescription("Update a tracking entry for the specified user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
-	public Response updateComponentTracking(
+	public Response updateUserTracking(
 			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("trackingId")
 			@RequiredParam String trackingId,
 			@RequiredParam UserTracking tracking)
 	{
-		tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
+		tracking.setActiveStatus(UserTracking.ACTIVE_STATUS);
 		tracking.setTrackingId(trackingId);
 		tracking.setCreateUser(userId);
 		return saveTracking(tracking, false);

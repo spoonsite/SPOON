@@ -31,7 +31,10 @@ import edu.usu.sdl.openstorefront.service.message.RecentChangeMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.SystemErrorAlertMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.TestMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.UserDataAlertMessageGenerator;
+import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.sort.UserMessageComparator;
 import edu.usu.sdl.openstorefront.storage.model.Alert;
@@ -48,6 +51,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -73,6 +77,7 @@ import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.uadetector.ReadableUserAgent;
+import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.codemonkey.simplejavamail.Email;
@@ -866,89 +871,48 @@ public class UserServiceImpl
 		return userLoginMap;
 	}
 
-	private Boolean objectHasProperty(Object obj, String propertyName)
-	{
-		List<Field> properties = getAllFields(obj);
-		for (Field field : properties) {
-			if (field.getName().equalsIgnoreCase(propertyName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static List<Field> getAllFields(Object obj)
-	{
-		List<Field> fields = new ArrayList<Field>();
-		getAllFieldsRecursive(fields, obj.getClass());
-		return fields;
-	}
-
-	private static List<Field> getAllFieldsRecursive(List<Field> fields, Class<?> type)
-	{
-		for (Field field : type.getDeclaredFields()) {
-			fields.add(field);
-		}
-
-		if (type.getSuperclass() != null) {
-			fields = getAllFieldsRecursive(fields, type.getSuperclass());
-		}
-
-		return fields;
-	}
-
 	@Override
 	public UserTrackingResult getUserTracking(FilterQueryParams filter, String userId)
 	{
-		StringBuilder queryString = new StringBuilder();
-		String countStr;
-		Map<String, Object> mappedParams = new HashMap<>();
-		Map<String, Object> countParams = new HashMap<>();
 		UserTrackingResult result = new UserTrackingResult();
 
-		queryString.append("select * from UserTracking ");
+		UserTracking userTrackingExample = new UserTracking();
+		userTrackingExample.setActiveStatus(filter.getStatus());
+		userTrackingExample.setCreateUser(userId);
 
-		String whereClause = "";
-		if (!filter.getAll()) {
-			whereClause += " where activeStatus=:activeStatusParam ";
-			mappedParams.put("activeStatusParam", filter.getStatus());
-			queryString.append(whereClause);
+		UserTracking userTrackingStartExample = new UserTracking();
+		userTrackingStartExample.setEventDts(filter.getStart());
+
+		UserTracking userTrackingEndExample = new UserTracking();
+		userTrackingEndExample.setEventDts(filter.getEnd());
+
+		QueryByExample queryByExample = new QueryByExample(userTrackingExample);
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(userTrackingStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(userTrackingEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		queryByExample.setMaxResults(filter.getMax());
+		queryByExample.setFirstResult(filter.getOffset());
+		queryByExample.setSortDirection(filter.getSortOrder());
+
+		UserTracking userTrackingOrderExample = new UserTracking();
+		Field sortField = ReflectionUtil.getField(userTrackingOrderExample, filter.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), userTrackingOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(userTrackingOrderExample);
 		}
 
-		if (filter.getStart() != null && filter.getEnd() != null) {
-			if (StringUtils.isNotBlank(whereClause)) {
-				queryString.append(" AND ");
-			} else {
-				queryString.append(" where ");
-			}
+		result.setResult(persistenceService.queryByExample(UserTracking.class, queryByExample));
+		queryByExample.setQueryType(QueryType.COUNT);
+		result.setCount(persistenceService.countByExample(queryByExample));
 
-			queryString.append(" eventDts >= :startDate ");
-			queryString.append(" AND eventDts <= :endDate ");
-			mappedParams.put("startDate", filter.getStart());
-			mappedParams.put("endDate", filter.getEnd());
-
-		}
-
-		if (filter.getSortField() != null) {
-			if (filter.getSortField() != null && objectHasProperty(new UserTracking(), filter.getSortField())) {
-				queryString.append(" order by ").append(filter.getSortField());
-				if (filter.getSortOrder() != null && (filter.getSortOrder().equals(OpenStorefrontConstant.SORT_ASCENDING) || filter.getSortOrder().equals(OpenStorefrontConstant.SORT_DESCENDING))) {
-					queryString.append(" ").append(filter.getSortOrder());
-				}
-			}
-		}
-		countStr = queryString.toString();
-		countParams = mappedParams;
-
-		if (filter.getOffset() > 0) {
-			queryString.append(" SKIP ").append(filter.getOffset());
-		}
-		if (filter.getMax() > 0) {
-			queryString.append(" LIMIT ").append(filter.getMax());
-		}
-
-		result.setCount(persistenceService.query(countStr, countParams).size());
-		result.setResult(persistenceService.query(queryString.toString(), mappedParams));
 		return result;
 	}
 

@@ -154,7 +154,7 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     if (id) {
       $http({
         method: 'PUT',
-        url: 'api/v1/resource/highlights/activate/' + id
+        url: 'api/v1/resource/highlights/' + id + '/activate'
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
@@ -180,7 +180,7 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     if (id) {
       $http({
         method: 'DELETE',
-        url: 'api/v1/resource/highlights/deactivate/' + id
+        url: 'api/v1/resource/highlights/' + id + '/deactivate'
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
@@ -206,7 +206,7 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     if (id) {
       $http({
         method: 'DELETE',
-        url: 'api/v1/resource/highlights/delete/' + id
+        url: 'api/v1/resource/highlights/' + id + '/delete'
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();

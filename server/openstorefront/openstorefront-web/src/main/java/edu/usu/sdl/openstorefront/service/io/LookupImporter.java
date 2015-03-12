@@ -22,7 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.NewFileHandler;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SystemTable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,8 +63,8 @@ public class LookupImporter
 
 			Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 			for (Class entityClass : entityClasses) {
-				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
-					if (ServiceUtil.isSubLookupEntity(entityClass)) {
+				if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
+					if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 						SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
 						if (systemTable != null) {
 							log.log(Level.WARNING, "Skipping System Table.   System Tables are not user-definable.");
@@ -83,8 +83,8 @@ public class LookupImporter
 			//Put in defaults, if needed
 			Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 			for (Class entityClass : entityClasses) {
-				if (ServiceUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
-					if (ServiceUtil.isSubLookupEntity(entityClass)) {
+				if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
+					if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 						SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
 						if (systemTable == null) {
 							FileSystemManager.getImportLookup(entityClass.getSimpleName() + ".csv", new NewFileHandler()

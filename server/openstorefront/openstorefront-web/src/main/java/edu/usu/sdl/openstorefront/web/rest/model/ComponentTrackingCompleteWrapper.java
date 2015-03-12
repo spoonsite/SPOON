@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,6 +32,8 @@ public class ComponentTrackingCompleteWrapper
 		implements ExportImport
 {
 
+	public static final String FIELD_NAME = "name";
+
 	private String name;
 	private ComponentTracking data;
 
@@ -37,33 +41,21 @@ public class ComponentTrackingCompleteWrapper
 	{
 	}
 
-	/**
-	 * @return the name
-	 */
 	public String getName()
 	{
 		return name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name)
 	{
 		this.name = name;
 	}
 
-	/**
-	 * @return the data
-	 */
 	public ComponentTracking getData()
 	{
 		return data;
 	}
 
-	/**
-	 * @param data the data to set
-	 */
 	public void setData(ComponentTracking data)
 	{
 		this.data = data;
@@ -75,14 +67,16 @@ public class ComponentTrackingCompleteWrapper
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-		
+
 		writer.writeNext(new String[]{getName(),
 			getData().getComponentId(),
-			getData().getComponentResourceId(),
 			getData().getComponentTrackingId(),
-			df.format(getData().getCreateDts()),
+			df.format(getData().getEventDts()),
 			getData().getClientIp(),
-			getData().getTrackEventTypeCode(),
+			TranslateUtil.translate(TrackEventCode.class, getData().getTrackEventTypeCode()),
+			getData().getResourceLink(),
+			getData().getResourceType(),
+			getData().getRestrictedResouce() != null ? Boolean.toString(getData().getRestrictedResouce()) : "",
 			getData().getCreateUser()
 		});
 		return stringWriter.toString();
@@ -91,7 +85,7 @@ public class ComponentTrackingCompleteWrapper
 	@Override
 	public void importData(String[] data)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 }

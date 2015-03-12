@@ -141,7 +141,7 @@ public class HighlightResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Deactivates a highlight")
-	@Path("/deactivate/{id}")
+	@Path("/{id}/deactivate")
 	public void deactivateHighlight(
 			@PathParam("id")
 			@RequiredParam String id)
@@ -152,7 +152,7 @@ public class HighlightResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Deletes a highlight")
-	@Path("/delete/{id}")
+	@Path("/{id}/delete")
 	public void deleteHighlight(
 			@PathParam("id")
 			@RequiredParam String id)
@@ -164,7 +164,7 @@ public class HighlightResource
 	@RequireAdmin
 	@APIDescription("Activates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/activate/{id}")
+	@Path("/{id}/activate")
 	public void activateHighlight(
 			@PathParam("id")
 			@RequiredParam String id)

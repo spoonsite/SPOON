@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -76,13 +76,13 @@ public class AttributeCodePk
 
 	public String toKey()
 	{
-		return getAttributeType() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getAttributeCode();
+		return getAttributeType() + ReflectionUtil.COMPOSITE_KEY_SEPERATOR + getAttributeCode();
 	}
 
 	public static AttributeCodePk fromKey(String key)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		String keySplit[] = key.split(ServiceUtil.COMPOSITE_KEY_SEPERATOR);
+		String keySplit[] = key.split(ReflectionUtil.COMPOSITE_KEY_SEPERATOR);
 		attributeCodePk.setAttributeType(keySplit[0]);
 		attributeCodePk.setAttributeCode(keySplit[1]);
 		return attributeCodePk;

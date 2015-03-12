@@ -39,10 +39,10 @@ import org.apache.commons.beanutils.BeanUtils;
  *
  * @author dshurtleff
  */
-public class ServiceUtil
+public class ReflectionUtil
 {
 
-	private static final Logger log = Logger.getLogger(ServiceUtil.class.getName());
+	private static final Logger log = Logger.getLogger(ReflectionUtil.class.getName());
 
 	public static final String LOOKUP_ENTITY = "LookupEntity";
 	public static final String BASECOMPONENT_ENTITY = "BaseComponent";
@@ -302,6 +302,28 @@ public class ServiceUtil
 			}
 		}
 		return pkField;
+	}
+
+	/**
+	 * Finds the Field given an object
+	 *
+	 * @param entity
+	 * @param fieldName (Ignores case) (use the returned field for the exact
+	 * member name)
+	 * @return field or null if not found
+	 */
+	public static Field getField(Object entity, String fieldName)
+	{
+		Objects.requireNonNull(entity, "Entity must not be NULL");
+		Field fieldFound = null;
+
+		List<Field> fields = getAllFields(entity.getClass());
+		for (Field field : fields) {
+			if (field.getName().equalsIgnoreCase(fieldName)) {
+				fieldFound = field;
+			}
+		}
+		return fieldFound;
 	}
 
 	public static <T extends BaseEntity> boolean isPKFieldGenerated(T entity)

@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -114,7 +114,7 @@ public class ValidationUtil
 					}
 
 					if (process) {
-						if (ServiceUtil.isComplexClass(fieldClass)) {
+						if (ReflectionUtil.isComplexClass(fieldClass)) {
 							//composition class
 							if (Logger.class.getName().equals(fieldClass.getName()) == false) {
 								try {

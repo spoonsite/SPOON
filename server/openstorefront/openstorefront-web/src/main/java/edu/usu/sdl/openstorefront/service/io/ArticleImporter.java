@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -57,7 +57,7 @@ public class ArticleImporter
 					key = file.getName().substring(0, index);
 				}
 
-				if (key.contains(ServiceUtil.COMPOSITE_KEY_SEPERATOR)) {
+				if (key.contains(ReflectionUtil.COMPOSITE_KEY_SEPERATOR)) {
 					AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(key);
 					String articleText = new String(Files.readAllBytes(Paths.get(file.getPath())));
 					AttributeCode attributeCode = serviceProxy.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
@@ -69,7 +69,7 @@ public class ArticleImporter
 						log.log(Level.SEVERE, MessageFormat.format("Unable to process article: {0}  Unable able to find attribute code.  Check the filename.", file.getPath()));
 					}
 				} else {
-					log.log(Level.WARNING, MessageFormat.format("Invalid filename: {0} make sure to follow this format.  <TYPE>" + ServiceUtil.COMPOSITE_KEY_SEPERATOR + "<CODE>.htm", file.getName()));
+					log.log(Level.WARNING, MessageFormat.format("Invalid filename: {0} make sure to follow this format.  <TYPE>" + ReflectionUtil.COMPOSITE_KEY_SEPERATOR + "<CODE>.htm", file.getName()));
 				}
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Unable to process article: " + file.getPath(), e);
