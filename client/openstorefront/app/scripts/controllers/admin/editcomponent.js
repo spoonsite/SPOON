@@ -251,10 +251,11 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     // to resize manually -- $(window).trigger('resize.stickyTableHeaders');
 
   $timeout(function(){  //
+    var offset = $('.top').outerHeight() + $('#editComponentToolbar').outerHeight();
     $(".stickytable").stickyTableHeaders({
-      fixedOffset: $('.top')
+      fixedOffset: offset
     });
-  })
+  }, 100)
 
 }]);
 
