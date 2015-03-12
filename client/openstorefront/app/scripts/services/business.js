@@ -280,6 +280,32 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       return null;
     }
   }
+  business.get = function(query, override) {
+    var deferred = $q.defer();
+    if (query) { 
+      var url = query.url + '?' + query.filterObj.toQuery();
+      $http({
+        'method': 'GET',
+        'url': url,
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
 
 
 

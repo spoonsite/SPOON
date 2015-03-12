@@ -13,59 +13,25 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     ];
     $scope.queryFilter = angular.copy(utils.queryFilter);    
     $scope.queryFilter.max = 500;
-    $scope.queryFilter.sortField = 'name';
-    $scope.maxPageNumber = 1;
-    $scope.pageNumber = 1;    
+    $scope.queryFilter.sortField = 'name'; 
     $scope.components = [];
     $scope.filteredComponents = [];
-    $scope.allComponents = [];
-    $scope.componentFilter = {};
-    $scope.componentFilter.search = '';
-    $scope.componentFilter.status = $scope.statusFilterOptions[0];
+    $scope.allComponentsWatch = {};
+    $scope.allComponentsWatch.data = [];
     $scope.flags = {};
     $scope.flags.showUpload = false;
     $scope.componentUploadOptions = {};
     $scope.selectedComponents = [];
     $scope.selectAllComps = {};
     $scope.selectAllComps.flag = false;
+    $scope.paginationControl;
 
-    $scope.firstPage = function () {
-      $scope.pageNumber = 1;
-      $scope.refreshComponents();
-    };
-
-    $scope.lastPage = function () {
-      $scope.pageNumber = $scope.maxPageNumber;
-      $scope.refreshComponents();
-    };
-
-    $scope.prevPage = function () {
-      $scope.pageNumber = $scope.pageNumber - 1;
-      if ($scope.pageNumber < 1) {
-        $scope.pageNumber = 1;
+    $scope.$watch('allComponentsWatch', function(){
+      if ($scope.allComponentsWatch.data){
+        console.log('scope allComponents changed', $scope.allComponentsWatch.data);
+        $scope.filteredComponents = $scope.allComponentsWatch.data.components || [];
       }
-      $scope.refreshComponents();
-    };
-
-    $scope.nextPage = function () {
-      $scope.pageNumber = $scope.pageNumber + 1;
-      if ($scope.pageNumber > $scope.maxPageNumber) {
-        $scope.pageNumber = $scope.maxPageNumber;
-      }
-      $scope.refreshComponents();
-    };
-
-    $scope.setPageSize = function () {
-      $scope.pageNumber = 1;
-      $scope.refreshComponents();
-    };
-
-    $scope.jumpPage = function () {
-      if ($scope.pageNumber > $scope.maxPageNumber) {
-        $scope.pageNumber = $scope.maxPageNumber;
-      }
-      $scope.refreshComponents();
-    };
+    }, true);
 
     $scope.setPredicate = function (predicate, table) {
       if ($scope.predicate[table] === predicate) {
@@ -76,38 +42,25 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       }
     };
 
+    $scope.setPredicatePaged = function (predicate, table) {
+      if ($scope.predicate[table] === predicate) {
+        $scope.reverse[table] = !$scope.reverse[table];
+      } else {
+        $scope.predicate[table] = predicate;
+        $scope.reverse[table] = false;
+      }
+      refreshComponents();
+    }
 
     $scope.refreshComponents = function () {
       $scope.$emit('$TRIGGERLOAD', 'componentLoader');
-      $scope.queryFilter.status = $scope.componentFilter.status.code;
-      $scope.queryFilter.offset = ($scope.pageNumber - 1) * $scope.queryFilter.max;
-      Business.componentservice.getFilteredComponents($scope.queryFilter).then(function (results) {
-        if (results) {
-          $scope.componentFilter.search = '';
-          $scope.components = results;
-          $scope.filteredComponents = $scope.components.components; 
-          $scope.allComponents = $scope.components.components;
-
-          $scope.maxPageNumber = Math.ceil($scope.components.totalNumber / $scope.queryFilter.max);
-        }
+      $scope.paginationControl.refresh().then(function(){
         $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
       });
     };
-    $scope.refreshComponents();
     $scope.$on('$REFRESH_COMPONENTS', function(){       
       $scope.refreshComponents();
     });     
-
-    $scope.filterComponentResults = function(){
-      if ($scope.componentFilter.search === '') {
-        $scope.filteredComponents = $scope.allComponents;
-      } else {      
-        $scope.filteredComponents = _.filter($scope.allComponents, function (item){
-          return item.component.name.toLowerCase().indexOf($scope.componentFilter.search.toLowerCase()) === 0;
-        });
-      }
-    };
-
 
     $scope.editComponent = function(component){
       var modalInstance = $uiModal.open({
