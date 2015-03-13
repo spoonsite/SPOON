@@ -15,8 +15,8 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice',
-  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice',
+  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -76,6 +76,8 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.systemservice = systemservice;
   business.mediaservice = mediaservice;
   business.trackingservice = trackingservice;
+  business.alertservice = alertservice;
+  business.reportservice = reportservice;
 
 
   business.updateCache = function(name, value) {
