@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.directive('filterquery',['business', function (Business) {
+app.directive('filterquery',['business', '$q', function (Business, $q) {
   var returnFilterQuerySource = function(element, attrs){
     if (attrs.type === 'user') {
       return 'views/services/user.html';
@@ -33,7 +33,11 @@ app.directive('filterquery',['business', function (Business) {
     restrict: 'E',
     scope:{
       url: '@',
-      max: '@'
+      max: '@',
+      sortBy: '@',
+      data: '=',
+      features: '&',
+      contro: '='
     },
     link: function postLink(scope, element, attrs) {
       scope.defaultMax = 50;
@@ -59,21 +63,19 @@ app.directive('filterquery',['business', function (Business) {
 
 
       Business.lookupservice.getLookupCodes('TrackEventCode').then(function(result){
-        // console.log('track event codes', result);
-        
         scope.eventCodes = result? result: [];
       }, function(){
         scope.eventCodes = [];
       })
+
       Business.lookupservice.getLookupCodes('UserTypeCode').then(function(result){
-        // console.log('track event codes', result);
-        
         scope.userCodes = result? result: [];
       }, function(){
         scope.userCodes = [];
       })
 
       scope.sendRequest = function(){
+        var deferred = $q.defer();
         var query = angular.copy(scope.query);
         if (query.filterObj.end) {
           var d = new Date(query.filterObj.end);
@@ -83,21 +85,39 @@ app.directive('filterquery',['business', function (Business) {
         if (query.filterObj.start) {
           query.filterObj.start = new Date(query.filterObj.start).toISOString();
         }
-        // console.log('We sent the request', query);
-        Business.trackingservice.get(query).then(function(result){
-          scope.backupResult = result;
-          scope.data = result? result.result: [];
-          scope.pagination.totalItems = result.count;
-          // console.log('pagination', scope.pagination);
-        }, function(){
-          scope.data = [];
-          // console.log('The request failed');
-        });
+        if (scope.type === 'user' || scope.type === 'component' || scope.type === 'article') {
+          // for tracking types
+          Business.trackingservice.get(query).then(function(result){
+            scope.backupResult = result;
+            scope.data = result? result.result: [];
+            scope.pagination.totalItems = result.count;
+            deferred.resolve();
+          }, function(){
+            deferred.resolve();
+            scope.data = [];
+          }); 
+        }else {
+          Business.get(query).then(function(result){
+            console.log('data', result);
+            scope.backupResult = result;
+            scope.data = result? result: [];
+            scope.pagination.totalItems = result.totalNumber;
+            deferred.resolve();
+          }, function(){
+            scope.data = [];
+            deferred.resolve();
+          });
+        }
+        return deferred.promise;
       }
+      console.log('default call');
+
       scope.sendRequest();
 
       scope.pageChanged = function(){
         scope.query.filterObj.offset = (scope.pagination.currentPage - 1) * scope.pagination.itemsPerPage;
+        console.log('Page Changed');
+        
         scope.sendRequest();
       };
 
@@ -112,6 +132,7 @@ app.directive('filterquery',['business', function (Business) {
       scope.clearSort = function() {
         scope.query.filterObj.sortField = 'eventDts';
         scope.query.filterObj.sortOrder = 'DESC';
+        console.log('Sort Changed');
         scope.sendRequest();
       }
 
@@ -169,6 +190,7 @@ app.directive('filterquery',['business', function (Business) {
           scope.query.filterObj.sortOrder = 'DESC';
         }
         scope.oldField = field;
+        console.log('Sort Changed 2');
         scope.sendRequest();
       }
 
@@ -197,6 +219,18 @@ app.directive('filterquery',['business', function (Business) {
 
       scope.getDate = function(d) {
         return utils.getDate(d);
+      }
+
+      scope.$watch('sortBy', function(){
+        if (scope.sortBy) {
+          console.log('SortByTriggered');
+          scope.changeSortOrder(scope.sortBy);
+        }
+      })
+
+      scope.internalControl = scope.control || {};
+      scope.internalControl.refresh = function(){
+        return scope.sendRequest();
       }
     }
   };
