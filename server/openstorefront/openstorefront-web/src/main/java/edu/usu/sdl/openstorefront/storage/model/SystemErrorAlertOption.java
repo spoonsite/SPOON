@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import java.io.Serializable;
+import javax.persistence.Version;
 
 /**
  * Part of the Alert entity
@@ -23,7 +25,7 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
  * @author dshurtleff
  */
 public class SystemErrorAlertOption
-		extends BaseEntity<SystemErrorAlertOption>
+		implements Serializable
 {
 
 	@ConsumeField
@@ -37,6 +39,9 @@ public class SystemErrorAlertOption
 
 	@ConsumeField
 	private Boolean alertOnReport;
+
+	@Version
+	private String storageVersion;
 
 	public SystemErrorAlertOption()
 	{
@@ -80,6 +85,16 @@ public class SystemErrorAlertOption
 	public void setAlertOnReport(Boolean alertOnReport)
 	{
 		this.alertOnReport = alertOnReport;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

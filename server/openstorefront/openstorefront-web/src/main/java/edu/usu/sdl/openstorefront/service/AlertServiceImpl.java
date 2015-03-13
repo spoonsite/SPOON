@@ -57,25 +57,13 @@ public class AlertServiceImpl
 			oldAlert.setEmailAddresses(alert.getEmailAddresses());
 			oldAlert.setName(alert.getName());
 			oldAlert.setSystemErrorAlertOption(alert.getSystemErrorAlertOption());
-			if (oldAlert.getSystemErrorAlertOption() != null) {
-				oldAlert.getSystemErrorAlertOption().populateBaseUpdateFields();
-			}
 			oldAlert.setUserDataAlertOption(alert.getUserDataAlertOption());
-			if (oldAlert.getUserDataAlertOption() != null) {
-				oldAlert.getUserDataAlertOption().populateBaseUpdateFields();
-			}
 			oldAlert.populateBaseUpdateFields();
 			persistenceService.persist(oldAlert);
 			alert = oldAlert;
 		} else {
 			alert.setAlertId(persistenceService.generateId());
 			alert.populateBaseCreateFields();
-			if (alert.getSystemErrorAlertOption() != null) {
-				alert.populateBaseCreateFields();
-			}
-			if (alert.getUserDataAlertOption() != null) {
-				alert.populateBaseCreateFields();
-			}
 			persistenceService.persist(alert);
 		}
 		return alert;

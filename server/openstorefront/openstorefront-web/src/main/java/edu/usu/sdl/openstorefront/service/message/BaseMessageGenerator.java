@@ -117,7 +117,8 @@ public abstract class BaseMessageGenerator
 			name = userProfile.getFirstName() + " " + userProfile.getLastName();
 		}
 
-		if (StringUtils.isNotBlank(messageContext.getUserMessage().getEmailAddress())) {
+		if (messageContext.getUserMessage() != null
+				&& StringUtils.isNotBlank(messageContext.getUserMessage().getEmailAddress())) {
 			email.addRecipient(name, messageContext.getUserMessage().getEmailAddress(), RecipientType.TO);
 		} else {
 			if (userProfile != null) {

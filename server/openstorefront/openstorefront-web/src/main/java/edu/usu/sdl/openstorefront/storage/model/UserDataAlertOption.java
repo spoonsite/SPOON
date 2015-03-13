@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import java.io.Serializable;
+import javax.persistence.Version;
 
 /**
  * This is part of the alert object
@@ -23,7 +25,7 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
  * @author dshurtleff
  */
 public class UserDataAlertOption
-		extends BaseEntity<UserDataAlertOption>
+		implements Serializable
 {
 
 	@ConsumeField
@@ -34,6 +36,9 @@ public class UserDataAlertOption
 
 	@ConsumeField
 	private Boolean alertOnQuestions;
+
+	@Version
+	private String storageVersion;
 
 	public UserDataAlertOption()
 	{
@@ -67,6 +72,16 @@ public class UserDataAlertOption
 	public void setAlertOnQuestions(Boolean alertOnQuestions)
 	{
 		this.alertOnQuestions = alertOnQuestions;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

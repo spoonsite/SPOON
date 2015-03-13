@@ -97,15 +97,15 @@ public class ReportResource
 	@APIDescription("Gets report supported formats")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
-	@Path("/{id}/formats")
+	@Path("/{reportType}/formats")
 	public Response getReportFormats(
-			@PathParam("id") String reportId
+			@PathParam("reportType") String reportType
 	)
 	{
 		Map<String, List<String>> reportFormatMap = service.getReportService().getSupportedFormats();
 
 		List<LookupModel> formats = new ArrayList<>();
-		List<String> formatList = reportFormatMap.get(reportId);
+		List<String> formatList = reportFormatMap.get(reportType);
 		for (String format : formatList) {
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(format);
