@@ -19,7 +19,95 @@ app.factory('alertservice', ['$http', '$q', 'localCache', function($http, $q, lo
     
     var alertservice = {};
   
-  
+    alertservice.getAlerts = function (queryParamFilter) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/alerts?' + queryParamFilter.toQuery()
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/    
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    }; 
+    
+    alertservice.saveAlert = function (alert) {
+      var deferred = $q.defer();
+      
+      if (alert.alertId) {
+        $http({
+          'method': 'PUT',
+          'url': 'api/v1/resource/alerts/' + alert.alertId,
+          data: alert
+        }).success(function (data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);
+        }).error(function (data, status, headers, config) { /*jshint unused:false*/
+          deferred.reject('There was an error');
+        });
+      } else {
+        $http({
+          'method': 'POST',
+          'url': 'api/v1/resource/alerts',
+          data: alert
+        }).success(function (data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);
+        }).error(function (data, status, headers, config) { /*jshint unused:false*/
+          deferred.reject('There was an error');
+        });
+      }
+
+      return deferred.promise;
+    };     
+    
+    
+    alertservice.activateAlert = function (id) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/alerts/' + id + '/activate'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/    
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    }; 
+    
+    alertservice.inactivateAlert = function (id) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/alerts' + id
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/    
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };     
+    
+    alertservice.removeAlert = function (id) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/alerts/' + id + '/force'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };      
   
     return alertservice;
 }]);

@@ -22,14 +22,22 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
 
   //this object is used to contain the tree functions
   $scope.myTree = {};
+  $scope.systemTree = {};
 
   $scope.collection = null;
   $scope.collectionSelection = null;
   $scope.data = [];
+  $scope.systemTools = [];
   $scope.incLoc = '';
   $scope.saveContent = '';
   $scope.editedTopic = 'Types';
-  $scope.toolTitle = 'Admin Tools';
+  $scope.toolTitle = 'Admin Tools'
+  $scope.menuPanel = {};
+  $scope.menuPanel.data = {};
+  $scope.menuPanel.data.open = true;
+  $scope.menuPanel.system = {};
+  $scope.menuPanel.system.open = true;
+  $scope.oneAtATime = false;
 
   Business.getFilters().then(function(result) {
     if (result) {
@@ -54,11 +62,12 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * This function changes the content in the admin tool section to the tool the
   * admin clicks on
   ***************************************************************/
-  $scope.editor = function(branch) {
+  $scope.editor = function(branch, tree, otherTree) {
     $scope.incLoc = branch.location;
     $scope.toolTitle = branch.toolTitle;
-    $scope.detailedDesc = branch.detailedDesc;
-    $scope.myTree.selectBranch(branch);
+    $scope.detailedDesc = branch.detailedDesc;    
+    tree.selectBranch(branch);
+    otherTree.selectBranch(branch);
   };
 
 
@@ -174,7 +183,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     attributes.detailedDesc = "Attributes are used to categorize components and other listings.  They can be searched on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code respresents a specific value.  The data is linked by the type and code which allows for a simple change of the description.";
     attributes.key = 'attributes';
     attributes.parentKey = null;
-    attributes.data = $scope.filters;
+    attributes.data = $scope.filters;   
     // attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
     // attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
 
@@ -240,14 +249,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     });
     
     $scope.data.push({
-      'label': 'Jobs', 
-      'location':'views/admin/manageJobs.html',      
-      'toolTitle': 'Job Management', 
-      'detailedDesc': 'Allows for controling and viewing scheduled jobs and background tasks',
-      'key': 'JOBS' 
-    });
-    
-    $scope.data.push({
       'label': 'Lookups', 
       'location': 'views/admin/manageLookups.html', 
       'toolTitle': 'Manage Lookups', 
@@ -278,13 +279,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       'detailedDesc': "User reviews and ratings about a component.",
       'key': 'reviews' 
     });    
-    
-    $scope.data.push({
-      'label': 'System', 'location':'views/admin/manageSystem.html', 
-      'toolTitle': 'System Management', 
-      'detailedDesc': 'Allows for viewing system status and managing system properties',
-      'key': 'SYSTEM'
-    });
 
     $scope.data.push({
       'label': 'Tags', 
@@ -295,6 +289,46 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     });
 
     $scope.data.push({
+      'label': 'User Profiles', 
+      'location':'views/admin/manageUserProfiles.html', 
+      'toolTitle': 'User Profile Management',
+      'detailedDesc': "A user profile represents a user in the system and contains the user's information.",
+      'key': 'USER_PROFILE' 
+    });
+   
+
+    $scope.systemTools.push({
+      'label': 'Alerts', 
+      'location':'views/admin/manageAlerts.html', 
+      'toolTitle': 'Manage Alerts',
+      'detailedDesc': "Alert are triggers setup to watch the data that user can subscribe to.",
+      'key': 'alerts'
+    });    
+
+    $scope.systemTools.push({
+      'label': 'Jobs', 
+      'location':'views/admin/manageJobs.html',      
+      'toolTitle': 'Job Management', 
+      'detailedDesc': 'Allows for controling and viewing scheduled jobs and background tasks',
+      'key': 'JOBS' 
+    });
+
+    $scope.systemTools.push({
+      'label': 'Reports', 
+      'location':'views/admin/manageReports.html', 
+      'toolTitle': 'Manage Reports',
+      'detailedDesc': "System generated hard reports.",
+      'key': 'reports'
+    });  
+
+    $scope.systemTools.push({
+      'label': 'System', 'location':'views/admin/manageSystem.html', 
+      'toolTitle': 'System Management', 
+      'detailedDesc': 'Allows for viewing system status and managing system properties',
+      'key': 'SYSTEM'
+    });
+
+    $scope.systemTools.push({
       'label': 'Tracking', 
       'location':'views/admin/tracking.html', 
       'toolTitle': 'Manage Tracking', 
@@ -302,22 +336,13 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       'key': 'tracking' 
     });
 
-    $scope.data.push({
-      'label': 'User Profiles', 
-      'location':'views/admin/manageUserProfiles.html', 
-      'toolTitle': 'User Profile Management',
-      'detailedDesc': "A user profile represents a user in the system and contains the user's information.",
-      'key': 'USER_PROFILE' 
-    });
-    
-    $scope.data.push({
+    $scope.systemTools.push({
       'label': 'User Messages', 
       'location':'views/admin/manageUserMessages.html', 
       'toolTitle': 'User Message Management', 
       'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. ',
       'key': 'USER_MESSAGE' 
-    });
-
+    });    
     
     // $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });
 

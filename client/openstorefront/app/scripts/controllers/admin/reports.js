@@ -13,5 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+'use strict';
 
+app.controller('AdminReportCtrl', ['$scope', 'business', '$rootScope', '$uiModal', function ($scope, Business, $rootScope, $uiModal) {
+  
+    $scope.predicate = [];
+    $scope.reverse = [];
+    
+    $scope.setPredicate = function (predicate, table) {
+      if ($scope.predicate[table] === predicate) {
+        $scope.reverse[table] = !$scope.reverse[table];
+      } else {
+        $scope.predicate[table] = predicate;
+        $scope.reverse[table] = false;
+      }
+    };    
+    
+}]);
+
+app.controller('AdminNewReportCtrl', ['$scope', '$uiModalInstance', 'business', '$uiModal',
+  function ($scope, $uiModalInstance, Business, $uiModal) {
+    
+    
+}]);
 

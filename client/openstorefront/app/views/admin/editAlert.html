@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<h2>&nbsp&nbsp<i class="fa fa-edit"></i>&nbsp;{{title}}</h2>
+<hr>
+<div  style="padding-left: 15px; padding-right: 15px;">
+	<loader trigger="alertLoader"></loader>
+	<form class="form-horizontal" name='alertUIForm' role="form"  ng-submit="saveAlert()" style="padding-left: 10px; padding-right: 10px;">
+		<input type="hidden" ng-model="alertForm.alertId" name="alertForm.alertId" />
+
+		<div class="form-group" show-errors >
+			<label class="control-label col-sm-2 required">Name</label>
+			<div class="col-sm-10">
+				  <input  type="text" 				
+				  name="name"									
+				  class="form-control" 
+				  ng-model="alertForm.name" 									 
+				  ng-maxlength=255
+				  maxlength=255
+				  required
+				  ng-focus />					
+				<p ng-show="alertUIForm.name.$error.required && !alertUIForm.name.$focused" class="help-block">Name is required.</p>
+			</div>  
+		</div>  				  
+		<div class="form-group" show-errors >
+			<label class="control-label col-sm-2 required">Alert Type</label>
+			<div class="col-sm-10">
+				<select type="text" class="form-control" name="alertType" ng-change="showOptions(alertUIForm.alertType)" required ng-model="alertForm.alertType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="alertType.code as alertType.description for alertType in alertTypes" placeholder="Select Type"></select>
+				<p ng-show="alertUIForm.alertType.$error.required && !alertUIForm.alertType.$focused" class="help-block">Alert Type is required.</p>
+			</div>  
+		</div>  
+		<div class="form-group" show-errors >
+			<label class="col-sm-2 control-label required">Email</label>
+			<div class="col-sm-10">
+				  <input  type="text" 				
+				  name="email"									
+				  class="form-control" 
+				  ng-model="alertForm.emailAddressMulti" 									 
+				  ng-maxlength=4000
+				  maxlength=4000 	
+				  required
+				  ng-focus />	
+				<!-- <contact-list type="users" contacts="alertForm.emailAddressMulti"></contact-list> -->				  
+				<p ng-show="alertUIForm.email.$error.required && !alertUIForm.email.$focused" class="help-block">Email is required.</p>							
+			</div>  
+		</div>
+		<panel class-list="edges" open-state="true" title="System Error Options" ng-show="options.system">
+			<input  type="checkbox" 				
+			  name="alertOnSystem"									
+			  ng-model="alertForm.systemErrorAlertOption.alertOnSystem" 									 					  
+			  ng-focus /> System Errors <br>
+			<input  type="checkbox" 				
+			  name="alertOnSystem"									
+			  ng-model="alertForm.systemErrorAlertOption.alertOnREST" 									 					  
+			  ng-focus /> API Errors <br>	
+			<input  type="checkbox" 				
+			  name="alertOnSystem"									
+			  ng-model="alertForm.systemErrorAlertOption.alertOnIntegration" 									 					  
+			  ng-focus /> Integration Errors <br>						
+			<input  type="checkbox" 				
+			  name="alertOnSystem"									
+			  ng-model="alertForm.systemErrorAlertOption.alertOnReport" 									 					  
+			  ng-focus /> Report Errors 											
+		</panel>
+		<panel class-list="edges" open-state="true" title="User Data Options" ng-show="options.user">
+			<input  type="checkbox" 				
+			  name="alertOnTags"									
+			  ng-model="alertForm.userDataAlertOption.alertOnTags" 									 					  
+			  ng-focus /> Tags <br>
+			<input  type="checkbox" 				
+			  name="alertOnReviews"									
+			  ng-model="alertForm.userDataAlertOption.alertOnReviews" 									 					  
+			  ng-focus /> Reviews <br>	
+			<input  type="checkbox" 				
+			  name="alertOnQuestions"									
+			  ng-model="alertForm.userDataAlertOption.alertOnQuestions" 									 					  
+			  ng-focus  /> Questions <br>																
+		</panel>		
+		<hr>
+		<br>
+		<br>
+		<span style="float: left; margin-top: -45px;">   
+		 <button type="submit" class="btn btn-primary" ng-disabled="alertUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;Save</button>
+		</span>				
+		<span style="float: right; margin-top: -45px;">   
+		  <button type="submit" class="btn btn-warning" ng-click="close()"><i class="fa fa-close"></i>&nbsp;Cancel</button>	
+		</span>		
+	</form>
+</div>
+	

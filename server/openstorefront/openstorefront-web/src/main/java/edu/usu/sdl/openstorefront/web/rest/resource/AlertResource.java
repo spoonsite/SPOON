@@ -44,7 +44,7 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/alerts")
-@APIDescription("Alert are triggers setup to watch the  data that user and subscribe to.")
+@APIDescription("Alert are triggers setup to watch the data that user can subscribe to.")
 public class AlertResource
 		extends BaseResource
 {
