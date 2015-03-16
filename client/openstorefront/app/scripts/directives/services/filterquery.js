@@ -85,7 +85,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         if (query.filterObj.start) {
           query.filterObj.start = new Date(query.filterObj.start).toISOString();
         }
-        if (scope.type === 'user' || scope.type === 'component' || scope.type === 'article') {
+        if (attrs.type === 'user' || attrs.type === 'component' || attrs.type === 'article') {
           // for tracking types
           Business.trackingservice.get(query).then(function(result){
             scope.backupResult = result;
