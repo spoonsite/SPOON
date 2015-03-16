@@ -1090,6 +1090,8 @@ public class ComponentServiceImpl
 				});
 				component.setAttributeChanged(true);
 			}
+		} else {
+			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
 		return component;
 	}
