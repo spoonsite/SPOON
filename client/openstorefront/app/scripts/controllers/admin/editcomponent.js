@@ -27,6 +27,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.selectAllComps.flag = false;
     $scope.pagination = {};
     $scope.pagination.control;
+    $scope.pagination.features = {'dates': false, 'max': false};
 
     $scope.$watch('allComponentsWatch', function(){
       if ($scope.allComponentsWatch.data){

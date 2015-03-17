@@ -24,7 +24,7 @@ limitations under the License.
         <button class="btn btn-default" ng-click="exportAll()" ng-disabled="selectedComponents.length === 0" title="Export Selected Components"><i class="fa fa-sign-out"></i>&nbsp;Export</button>
         <button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Components"><i class="fa fa-sign-in"></i>&nbsp;Import</button>      
       </span>
-      <filterquery data="allComponentsWatch.data" url="api/v1/resource/components/filterable" sort-by="name" type="default" features="{'dates': false, 'max': false}" control="pagination.control"></filterquery>
+      <filterquery data="allComponentsWatch.data" url="api/v1/resource/components/filterable" sort-by="name" type="default" set-features="pagination.features" control="pagination.control"></filterquery>
       <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 20px;" > 
         <div class="form-group">
           <label>File Input</label>

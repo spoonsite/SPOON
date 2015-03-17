@@ -36,11 +36,14 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       max: '@',
       sortBy: '@',
       data: '=',
-      features: '&',
+      setFeatures: '=',
       control: '='
     },
     link: function postLink(scope, element, attrs) {
       scope.defaultMax = 50;
+      scope.setFeatures = scope.setFeatures || {'dates': true, 'max': true};
+      console.log('setFeatures', scope.setFeatures);
+      
       scope.defaultMax = scope.max? parseInt(scope.max): 50;
       scope.today = new Date();
       scope.query = {};
