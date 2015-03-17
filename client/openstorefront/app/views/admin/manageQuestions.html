@@ -65,7 +65,7 @@ limitations under the License.
 						<td>{{response.updateDts| date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
 						<td align="center">{{response.activeStatus}}</td>
 						<td style="padding:0px; width: 200px;">&nbsp;									
-							<button class="btn" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+							<button class="btn" ng-disabled="question.activeStatus !== 'A'" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
 						</td>
 					</tr>							
 				</table>						
