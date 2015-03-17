@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import org.codemonkey.simplejavamail.Email;
 
@@ -56,8 +58,11 @@ public class SystemErrorAlertMessageGenerator
 		ErrorTicket errorTicketExample = new ErrorTicket();
 		errorTicketExample.setActiveStatus(ErrorTicket.ACTIVE_STATUS);
 
+		//We need to back up a bit to capture the error that triggered the message. It's possible it will pick old ones if there are close.
 		ErrorTicket errorTicketStartExample = new ErrorTicket();
-		errorTicketStartExample.setCreateDts(messageContext.getUserMessage().getCreateDts());
+		Instant instant = Instant.ofEpochMilli(messageContext.getUserMessage().getCreateDts().getTime());
+		instant = instant.minusSeconds(1);
+		errorTicketStartExample.setCreateDts(new Date(instant.toEpochMilli()));
 
 		QueryByExample queryByExample = new QueryByExample(errorTicketExample);
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
@@ -73,9 +78,9 @@ public class SystemErrorAlertMessageGenerator
 		}
 		for (ErrorTicket ticket : tickets) {
 			message.append("  ").append(TranslateUtil.translate(ErrorTypeCode.class, ticket.getErrorTypeCode()))
-					.append(" - ").append(ticket.getErrorTicketId());
+					.append(" - ").append(ticket.getErrorTicketId()).append("<br>");
 		}
-		message.append("See attached for details.<br>");
+		message.append(" See attached for details.<br>");
 
 		int max = tickets.size();
 		if (tickets.size() > MAX_TICKETS_TO_ATTACH) {

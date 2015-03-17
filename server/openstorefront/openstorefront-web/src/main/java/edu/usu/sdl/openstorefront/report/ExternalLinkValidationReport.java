@@ -24,10 +24,10 @@ import edu.usu.sdl.openstorefront.storage.model.ResourceType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -60,8 +61,8 @@ public class ExternalLinkValidationReport
 	private static final String NETWORK_SIPR = "SIPR";
 	private static final String NETWORK_JWICS = "JWICS";
 
-	private static final int MAX_CHECKPOOL_SIZE = 10;
-	private static final int MAX_CONNECTION_TIME_MILLIS = 10000;
+	private static final int MAX_CHECKPOOL_SIZE = 20;
+	private static final int MAX_CONNECTION_TIME_MILLIS = 5000;
 
 	private List<LinkCheckModel> links = new ArrayList<>();
 
@@ -98,6 +99,7 @@ public class ExternalLinkValidationReport
 		});
 
 		//exact all links
+		long linkCountId = 1;
 		for (Component component : componentMap.values()) {
 
 			Document doc = Jsoup.parseBodyFragment(component.getDescription());
@@ -106,7 +108,7 @@ public class ExternalLinkValidationReport
 			for (Element element : elements) {
 				String link = element.attr("href");
 				LinkCheckModel linkCheckModel = new LinkCheckModel();
-				linkCheckModel.setId(component.getComponentId());
+				linkCheckModel.setId(component.getComponentId() + "-" + (linkCountId++));
 				linkCheckModel.setComponentName(component.getName());
 				linkCheckModel.setLink(link);
 				linkCheckModel.setNetworkOfLink(getNetworkOfLink(link));
@@ -117,10 +119,20 @@ public class ExternalLinkValidationReport
 			List<ComponentResource> resources = resourceMap.get(component.getComponentId());
 			if (resources != null) {
 				for (ComponentResource resource : resources) {
+					String link = resource.getLink();
+					if (resource.getLink().toLowerCase().contains("<a")) {
+						doc = Jsoup.parseBodyFragment(resource.getLink());
+						elements = doc.select("a");
+						for (Element element : elements) {
+							link = element.attr("href");
+							break;
+						}
+					}
+
 					LinkCheckModel linkCheckModel = new LinkCheckModel();
 					linkCheckModel.setId(component.getComponentId() + "-" + resource.getResourceId());
 					linkCheckModel.setComponentName(component.getName());
-					linkCheckModel.setLink(resource.getLink());
+					linkCheckModel.setLink(link);
 					linkCheckModel.setNetworkOfLink(getNetworkOfLink(resource.getLink()));
 					linkCheckModel.setResourceType(TranslateUtil.translate(ResourceType.class, resource.getResourceType()));
 					links.add(linkCheckModel);
@@ -137,7 +149,7 @@ public class ExternalLinkValidationReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("User Report - ", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine("External Link Validation Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine(
 				"Component Name",
 				"Resource Type",
@@ -188,22 +200,36 @@ public class ExternalLinkValidationReport
 			tasks.add(forkJoinPool.submit(new CheckLinkTask(link)));
 		});
 
+		int completedCount = 0;
 		for (ForkJoinTask<LinkCheckModel> task : tasks) {
 			try {
-				LinkCheckModel processed = task.get();
-				LinkCheckModel reportModel = linkMap.get(processed.getId());
-				reportModel.setStatus(processed.getStatus());
-				reportModel.setCheckResults(processed.getCheckResults());
-				reportModel.setHttpStatus(processed.getCheckResults());
+				LinkCheckModel processed;
+				try {
+					processed = task.get(MAX_CONNECTION_TIME_MILLIS, TimeUnit.MILLISECONDS);
+					LinkCheckModel reportModel = linkMap.get(processed.getId());
+					reportModel.setStatus(processed.getStatus());
+					reportModel.setCheckResults(processed.getCheckResults());
+					reportModel.setHttpStatus(processed.getCheckResults());
+				} catch (TimeoutException e) {
+					task.cancel(true);
+				}
+
+				completedCount++;
 			} catch (InterruptedException | ExecutionException ex) {
 				log.log(Level.WARNING, "Check task  was interrupted.  Report results may be not complete.", ex);
 			}
-
+			log.log(Level.FINE, MessageFormat.format("Complete Checking Link Count: {0} out of {1}", new Object[]{completedCount, links.size()}));
 		}
 
-		forkJoinPool.shutdown();
+		for (LinkCheckModel checkModel : links) {
+			if (StringUtils.isBlank(checkModel.getStatus())) {
+				checkModel.setStatus("Unable to verify.  Timed out while waiting.");
+			}
+		}
+
+		forkJoinPool.shutdownNow();
 		try {
-			forkJoinPool.awaitTermination(3000, TimeUnit.MILLISECONDS);
+			forkJoinPool.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException ex) {
 			log.log(Level.WARNING, "Check task shutdown was interrupted.  The application will recover and continue.", ex);
 		}
@@ -226,33 +252,42 @@ public class ExternalLinkValidationReport
 			LinkCheckModel linkCheckModel = new LinkCheckModel();
 			linkCheckModel.setId(modelToCheck.getId());
 
-			if (StringUtils.isNotBlank(linkCheckModel.getNetworkOfLink())) {
+			long startTime = System.currentTimeMillis();
+			log.log(Level.FINEST, MessageFormat.format("Checking link: {0}", modelToCheck.getLink()));
+
+			if (StringUtils.isNotBlank(modelToCheck.getNetworkOfLink())) {
 				linkCheckModel.setCheckResults("Not checked");
 				linkCheckModel.setStatus(OpenStorefrontConstant.NOT_AVAILABLE);
 			} else {
-				URL url = new URL(modelToCheck.getLink());
-				URLConnection connection = url.openConnection();
-				connection.setConnectTimeout(MAX_CONNECTION_TIME_MILLIS);
-				connection.setReadTimeout(MAX_CONNECTION_TIME_MILLIS);
-				connection.setUseCaches(false);
+				try {
+					URL url = new URL(modelToCheck.getLink());
+					URLConnection connection = url.openConnection();
+					connection.setConnectTimeout(MAX_CONNECTION_TIME_MILLIS);
+					connection.setReadTimeout(MAX_CONNECTION_TIME_MILLIS);
+					connection.setUseCaches(false);
 
-				HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-				httpConnection.setInstanceFollowRedirects(true);
+					HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+					httpConnection.setInstanceFollowRedirects(true);
 
-				//ingore connection results;
-				try (InputStream in = httpConnection.getInputStream()) {
-					linkCheckModel.setHttpStatus(Integer.toString(httpConnection.getResponseCode()));
-					linkCheckModel.setStatus(httpConnection.getResponseMessage());
-					if (StringUtils.isNotBlank(linkCheckModel.getStatus())
-							&& "OK".equalsIgnoreCase(linkCheckModel.getStatus().trim()) == false) {
-						linkCheckModel.setCheckResults("Bad Link");
+					try {
+						connection.connect();
+						linkCheckModel.setHttpStatus(Integer.toString(httpConnection.getResponseCode()));
+						linkCheckModel.setStatus(httpConnection.getResponseMessage());
+						if (StringUtils.isNotBlank(linkCheckModel.getStatus())
+								&& "OK".equalsIgnoreCase(linkCheckModel.getStatus().trim()) == false) {
+							linkCheckModel.setCheckResults("Bad Link");
+						}
+					} catch (Exception e) {
+						log.log(Level.FINER, "Actual connection error: ", e);
+						linkCheckModel.setStatus("Timeout/Error Connecting");
+						linkCheckModel.setCheckResults("Error occur when trying to connect.  This may be a temporary case or the link may be bad.");
 					}
 				} catch (Exception e) {
-					log.log(Level.FINER, "Actual connection erro", e);
-					linkCheckModel.setStatus("TIME OUT/Error Connecting");
-					linkCheckModel.setCheckResults("Error occur when tyr to connect.  This may be a temporary case or the link may be bad.");
+					linkCheckModel.setStatus("URL is bad");
+					linkCheckModel.setCheckResults("Check link to make sure it's properly formed");
 				}
 			}
+			log.log(Level.FINEST, MessageFormat.format("Finish checking link: {0} Check Time: {1} ms", modelToCheck.getLink(), System.currentTimeMillis() - startTime));
 
 			return linkCheckModel;
 		}

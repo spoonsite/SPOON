@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -26,7 +28,7 @@ import javax.validation.constraints.Min;
  * @author dshurtleff
  */
 public class ReportOption
-		extends BaseEntity<ReportOption>
+		implements Serializable
 {
 
 	@ConsumeField
@@ -39,6 +41,9 @@ public class ReportOption
 	@Max(30)
 	@ConsumeField
 	private Integer previousDays;
+
+	@Version
+	private String storageVersion;
 
 	public ReportOption()
 	{
@@ -72,6 +77,16 @@ public class ReportOption
 	public void setPreviousDays(Integer previousDays)
 	{
 		this.previousDays = previousDays;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

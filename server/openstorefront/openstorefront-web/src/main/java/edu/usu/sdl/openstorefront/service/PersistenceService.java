@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.ComplexFieldStack;
 import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -412,6 +413,8 @@ public class PersistenceService
 
 	public long countByExample(BaseEntity example)
 	{
+		QueryByExample queryByExample = new QueryByExample(example);
+		queryByExample.setQueryType(QueryType.COUNT);
 		return countByExample(new QueryByExample(example));
 	}
 
@@ -419,6 +422,9 @@ public class PersistenceService
 	{
 		long count = 0;
 		StringBuilder queryString = new StringBuilder();
+		if (QueryType.SELECT.equals(queryByExample.getQueryType())) {
+			queryByExample.setQueryType(QueryType.COUNT);
+		}
 		switch (queryByExample.getQueryType()) {
 			case COUNT:
 				queryString.append("select count(*) ");

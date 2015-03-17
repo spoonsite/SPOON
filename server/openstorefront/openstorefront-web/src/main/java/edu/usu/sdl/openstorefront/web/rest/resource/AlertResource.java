@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.storage.model.Alert;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.AlertView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.net.URI;
 import java.util.List;
@@ -53,7 +54,7 @@ public class AlertResource
 	@RequireAdmin
 	@APIDescription("Gets alert subscribion records.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Alert.class)
+	@DataType(AlertView.class)
 	public Response getAlerts(@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -66,7 +67,7 @@ public class AlertResource
 		List<Alert> alerts = service.getPersistenceService().queryByExample(Alert.class, alertExample);
 		alerts = filterQueryParams.filter(alerts);
 
-		GenericEntity<List<Alert>> entity = new GenericEntity<List<Alert>>(alerts)
+		GenericEntity<List<AlertView>> entity = new GenericEntity<List<AlertView>>(AlertView.toView(alerts))
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -128,7 +129,7 @@ public class AlertResource
 		if (post) {
 			return Response.created(URI.create("v1/resource/alerts/" + alert.getAlertId())).entity(alert).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(alert).build();
 		}
 	}
 
@@ -141,7 +142,7 @@ public class AlertResource
 	public Response activatesAlert(
 			@PathParam("id") String alertId)
 	{
-		Alert alert = service.getPersistenceService().setStatusOnEntity(Alert.class, alertId, Alert.INACTIVE_STATUS);
+		Alert alert = service.getPersistenceService().setStatusOnEntity(Alert.class, alertId, Alert.ACTIVE_STATUS);
 		return sendSingleEntityResponse(alert);
 	}
 

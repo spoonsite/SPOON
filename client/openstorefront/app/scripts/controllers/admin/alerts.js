@@ -84,7 +84,7 @@ app.controller('AdminAlertCtrl', ['$scope', 'business', '$rootScope', '$uiModal'
   
   $scope.toggleStatus = function(alert){
       $scope.$emit('$TRIGGERLOAD', 'alertLoader');
-      if (component.component.activeStatus === 'A') {
+      if (alert.activeStatus === 'A') {
         Business.alertservice.inactivateAlert(alert.alertId).then(function (results) {
           $scope.refreshAlerts();
           $scope.$emit('$TRIGGERUNLOAD', 'alertLoader');
@@ -98,7 +98,7 @@ app.controller('AdminAlertCtrl', ['$scope', 'business', '$rootScope', '$uiModal'
   };  
    
   $scope.deleteAlert = function(alert){
-      var response = window.confirm("Are you sure you want DELETE  "+ alert.name + "?");
+      var response = window.confirm("Are you sure you want DELETE "+ alert.name + "?");
       if (response) {
         $scope.$emit('$TRIGGERLOAD', 'alertLoader');
         Business.alertservice.removeAlert(alert.alertId).then(function (result) {          
@@ -110,8 +110,8 @@ app.controller('AdminAlertCtrl', ['$scope', 'business', '$rootScope', '$uiModal'
     
 }]);
 
-app.controller('AdminEditAlertCtrl', ['$scope', '$uiModalInstance', 'alert', 'business', '$uiModal',
-  function ($scope, $uiModalInstance, alert, Business, $uiModal) {
+app.controller('AdminEditAlertCtrl', ['$scope', '$uiModalInstance', 'alert', 'business', '$uiModal', '$timeout',
+  function ($scope, $uiModalInstance, alert, Business, $uiModal, $timeout) {
 
     $scope.alertForm = angular.copy(alert);
     $scope.email = {};    
@@ -120,8 +120,16 @@ app.controller('AdminEditAlertCtrl', ['$scope', '$uiModalInstance', 'alert', 'bu
       $scope.title = "Edit Alert";
       
       //Pack email 
-      
-      
+      $scope.alertForm.emailAddressMulti = "";
+      _.forEach($scope.alertForm.emailAddresses, function(email){
+        $scope.alertForm.emailAddressMulti = $scope.alertForm.emailAddressMulti + email.email + "; ";          
+       });
+       
+       $timeout(function(){
+         $scope.showOptions({
+           '$viewValue': $scope.alertForm.alertType
+         });
+       }, 250);             
     } else {
       $scope.title = "Add Alert";
        $scope.alertForm = {};
@@ -161,18 +169,26 @@ app.controller('AdminEditAlertCtrl', ['$scope', '$uiModalInstance', 'alert', 'bu
       //unpack emails
       var emails = $scope.alertForm.emailAddressMulti.split(";");
       $scope.alertForm.emailAddresses = [];
-      _.forEach(emails, function(email){
-          $scope.alertForm.emailAddresses.push({
-            email: email
-          });
+      _.forEach(emails, function(email){        
+          email = email.trim();
+          if (email !== "") {
+            $scope.alertForm.emailAddresses.push({
+              email: email
+           });
+         }
       });
 
       Business.alertservice.saveAlert($scope.alertForm).then(function(results) {
         if (results) {
-          removeError();
-          triggerAlert('Saved successfully', 'alertId', 'body', 3000);
-          $scope.$emit('$TRIGGEREVENT', '$REFRESH_ALERTS');            
-          $uiModalInstance.dismiss('success');
+          if (results.success && results.success === false) {
+            removeError();
+            triggerError(results, true);
+          } else {
+            removeError();
+            triggerAlert('Saved successfully', 'alertId', 'body', 3000);
+            $scope.$emit('$TRIGGEREVENT', '$REFRESH_ALERTS');            
+            $uiModalInstance.dismiss('success');
+          }
         } else {
           removeError();
           triggerError(results, true);

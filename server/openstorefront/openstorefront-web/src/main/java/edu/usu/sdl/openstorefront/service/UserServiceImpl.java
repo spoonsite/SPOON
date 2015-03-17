@@ -896,6 +896,7 @@ public class UserServiceImpl
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(userTrackingEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filter.getMax());

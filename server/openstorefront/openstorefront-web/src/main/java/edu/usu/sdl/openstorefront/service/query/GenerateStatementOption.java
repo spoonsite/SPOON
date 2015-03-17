@@ -39,6 +39,7 @@ public class GenerateStatementOption
 
 	public static final String PARAMETER_SUFFIX_DEFAULT = "Param";
 	public static final String PARAMETER_SUFFIX_SET = "SetParam";
+	public static final String PARAMETER_SUFFIX_END_RANGE = "EndRangeParam";
 
 	private String operation = OPERATION_EQUALS;
 	private String condition = CONDITION_AND;

@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,7 @@ public class UsageReport
 		extends BaseReport
 {
 
-	private List<String> userTrackingUsers;
+	private List<String> userTrackingUsers = new ArrayList<>();
 
 	public UsageReport(Report report)
 	{
@@ -75,13 +76,13 @@ public class UsageReport
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(userTrackingEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(UserTracking.class, queryByExample);
-		userTrackings.forEach(tracking -> {
-			userTrackingUsers.add(tracking.getCreateUser());
-		});
-
+		for (UserTracking userTracking : userTrackings) {
+			userTrackingUsers.add(userTracking.getCreateUser());
+		}
 	}
 
 	private void updateReportTimeRange()
@@ -100,8 +101,8 @@ public class UsageReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("Usage Report - ", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Data Time Range:  ", sdf.format(report.getReportOption().getStartDts()), " - ", sdf.format(report.getReportOption().getEndDts()));
+		cvsGenerator.addLine("Usage Report", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine("Data Time Range:  ", sdf.format(report.getReportOption().getStartDts()) + " - " + sdf.format(report.getReportOption().getEndDts()));
 		cvsGenerator.addLine("Summary");
 		cvsGenerator.addLine(
 				"# Logins",
@@ -134,6 +135,7 @@ public class UsageReport
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(componentTrackingEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		long componentViews = service.getPersistenceService().countByExample(queryByExample);
@@ -160,6 +162,7 @@ public class UsageReport
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(articleTrackingEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		long articleViews = service.getPersistenceService().countByExample(queryByExample);
@@ -223,6 +226,7 @@ public class UsageReport
 			specialOperatorModel = new SpecialOperatorModel();
 			specialOperatorModel.setExample(componentTrackingEndExample);
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+			specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 			long userComponentViews = service.getPersistenceService().countByExample(queryByExample);
@@ -249,13 +253,14 @@ public class UsageReport
 			specialOperatorModel = new SpecialOperatorModel();
 			specialOperatorModel.setExample(articleTrackingEndExample);
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+			specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 			long userArticleViews = service.getPersistenceService().countByExample(queryByExample);
 
 			cvsGenerator.addLine(
 					userProfile.getUsername(),
-					userProfile.getExternalGuid(),
+					userProfile.getExternalGuid() != null ? userProfile.getExternalGuid() : userProfile.getInternalGuid(),
 					userProfile.getOrganization(),
 					TranslateUtil.translate(UserTypeCode.class, userProfile.getUserTypeCode()),
 					userProfile.getEmail(),

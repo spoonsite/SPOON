@@ -156,7 +156,7 @@ public class ReportServiceImpl
 			existing.setReportFormat(scheduledReport.getReportFormat());
 			existing.setReportOption(scheduledReport.getReportOption());
 			existing.setReportType(scheduledReport.getReportType());
-			existing.setScheduleIntevalDays(scheduledReport.getScheduleIntevalDays());
+			existing.setScheduleIntervalDays(scheduledReport.getScheduleIntervalDays());
 			existing.populateBaseUpdateFields();
 			persistenceService.persist(existing);
 		} else {
