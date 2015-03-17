@@ -34,6 +34,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.ReportView;
+import edu.usu.sdl.openstorefront.web.rest.model.ReportWrapper;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -81,7 +82,7 @@ public class ReportResource
 		}
 
 		Report reportExample = new Report();
-		reportExample.setActiveStatus(Report.ACTIVE_STATUS);
+		reportExample.setActiveStatus(filterQueryParams.getStatus());
 
 		Report reportStartExample = new Report();
 		reportStartExample.setCreateDts(filterQueryParams.getStart());
@@ -114,12 +115,12 @@ public class ReportResource
 		}
 
 		List<Report> reports = service.getPersistenceService().queryByExample(Report.class, queryByExample);
-		reports = filterQueryParams.filter(reports);
 
-		GenericEntity<List<ReportView>> entity = new GenericEntity<List<ReportView>>(ReportView.toReportView(reports))
-		{
-		};
-		return sendSingleEntityResponse(entity);
+		ReportWrapper reportWrapper = new ReportWrapper();
+		reportWrapper.getData().addAll(ReportView.toReportView(reports));
+		reportWrapper.setTotalResults(service.getPersistenceService().countByExample(queryByExample));
+
+		return sendSingleEntityResponse(reportWrapper);
 	}
 
 	@GET
