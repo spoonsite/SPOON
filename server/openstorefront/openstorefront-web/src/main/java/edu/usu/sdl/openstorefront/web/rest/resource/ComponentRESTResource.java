@@ -193,47 +193,8 @@ public class ComponentRESTResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		Component componentExample = new Component();
-		componentExample.setActiveStatus(filterQueryParams.getStatus());
-		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-		long total = components.size();
-		components = filterQueryParams.filter(components);
-
-		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
-		integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
-
-		List<ComponentIntegrationConfig> componentIntegrationConfigs = service.getPersistenceService().queryByExample(ComponentIntegrationConfig.class, integrationConfigExample);
-		Map<String, List<ComponentIntegrationConfig>> configMap = new HashMap<>();
-		componentIntegrationConfigs.forEach(config -> {
-			if (configMap.containsKey(config.getComponentId())) {
-				configMap.get(config.getComponentId()).add(config);
-			} else {
-				List<ComponentIntegrationConfig> configList = new ArrayList<>();
-				configList.add(config);
-				configMap.put(config.getComponentId(), configList);
-			}
-		});
-
-		List<ComponentAdminView> componentAdminViews = new ArrayList<>();
-		for (Component component : components) {
-			ComponentAdminView componentAdminView = new ComponentAdminView();
-			componentAdminView.setComponent(component);
-			StringBuilder configs = new StringBuilder();
-			List<ComponentIntegrationConfig> configList = configMap.get(component.getComponentId());
-			if (configList != null) {
-				configList.forEach(config -> {
-					if (StringUtils.isNotBlank(config.getIssueNumber())) {
-						configs.append("(").append(config.getIntegrationType()).append(" - ").append(config.getIssueNumber()).append(") ");
-					} else {
-						configs.append("(").append(config.getIntegrationType()).append(") ");
-					}
-				});
-			}
-			componentAdminView.setIntegrationManagement(configs.toString());
-			componentAdminView.setComponent(component);
-			componentAdminViews.add(componentAdminView);
-		}
-		ComponentAdminWrapper componentAdminWrapper = new ComponentAdminWrapper(componentAdminViews, total);
+		ComponentAdminWrapper componentAdminWrapper = service.getComponentService().getFilteredComponents(filterQueryParams, null);
+		
 		return sendSingleEntityResponse(componentAdminWrapper);
 	}
 

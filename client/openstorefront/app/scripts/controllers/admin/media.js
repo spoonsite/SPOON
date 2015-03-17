@@ -114,17 +114,25 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
           $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
 
           //check response for a fail ticket or a error model
-          if (response.success) {  
+          if (response.success) { 
+            console.log('response', response);
+            
             $scope.mediaUploader.clearQueue();
             $scope.mediaUploader.cancelAll();
             triggerAlert('Uploaded successfully', 'saveMedia', 'body', 3000);
             $scope.close();
             $scope.$emit('$TRIGGEREVENT', '$REFRESH_MEDIA');
           } else {
-            if (response.errors) {              
+            if (response.errors) {  
+            console.log('response', response);
+                                    
               var uploadError = response.errors.file;
               var enityError = response.errors.generalMedia;
-              var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
+              var errorMessage = (uploadError !== undefined) ? uploadError : ((enityError !== undefined)? '  ' + enityError : '');
+              var keys = _.keys(response.errors);
+              _.each(keys, function(key) {
+                errorMessage += '<br>' + response.errors[key];
+              })
               if (!$scope.single) {
                 $scope.mediaUIForm.name.$error.required = true;
               }

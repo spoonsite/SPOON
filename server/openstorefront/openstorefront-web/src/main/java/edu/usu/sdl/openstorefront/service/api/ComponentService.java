@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
@@ -474,5 +475,14 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange);
+	
+	/**
+	 * 
+	 * @param filter
+	 * @param componentId
+	 * @return 
+	 */
+	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId);
+
 	
 }

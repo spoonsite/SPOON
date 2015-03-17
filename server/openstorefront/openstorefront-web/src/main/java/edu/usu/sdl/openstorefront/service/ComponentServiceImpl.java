@@ -81,6 +81,8 @@ import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
@@ -2097,6 +2099,90 @@ public class ComponentServiceImpl
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setCount(persistenceService.countByExample(queryByExample));
 
+		return result;
+	}
+	
+	@Override
+	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId){
+		ComponentAdminWrapper result = new ComponentAdminWrapper();
+
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(filter.getStatus());
+		componentExample.setComponentId(componentId);
+		
+//		Component componentStartExample = new Component();
+//		componentStartExample.setEventDts(filter.getStart());
+//
+//		Component componentEndExample = new Component();
+//		componentEndExample.setEventDts(filter.getEnd());
+
+		QueryByExample queryByExample = new QueryByExample(componentExample);
+//		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+//		specialOperatorModel.setExample(componentStartExample);
+//		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+//		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+//
+//		specialOperatorModel = new SpecialOperatorModel();
+//		specialOperatorModel.setExample(componentEndExample);
+//		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+//		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		
+		queryByExample.setMaxResults(filter.getMax());
+		queryByExample.setFirstResult(filter.getOffset());
+		queryByExample.setSortDirection(filter.getSortOrder());
+
+		Component componentOrderExample = new Component();
+		Field sortField = ReflectionUtil.getField(componentOrderExample, filter.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), componentOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(componentOrderExample);
+		}
+
+		List<Component> components = persistenceService.queryByExample(Component.class, queryByExample);
+		// figure out how to sort by integrationManagement
+//		if (filter.getSortField().equals(ComponentTrackingCompleteWrapper.FIELD_NAME)) {
+//			components.sort(new BeanComparator<>(filter.getSortOrder(), filter.getSortField()));
+//		}
+		
+		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
+		integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
+
+		List<ComponentIntegrationConfig> componentIntegrationConfigs = persistenceService.queryByExample(ComponentIntegrationConfig.class, integrationConfigExample);
+		Map<String, List<ComponentIntegrationConfig>> configMap = new HashMap<>();
+		componentIntegrationConfigs.forEach(config -> {
+			if (configMap.containsKey(config.getComponentId())) {
+				configMap.get(config.getComponentId()).add(config);
+			} else {
+				List<ComponentIntegrationConfig> configList = new ArrayList<>();
+				configList.add(config);
+				configMap.put(config.getComponentId(), configList);
+			}
+		});
+		
+		List<ComponentAdminView> componentAdminViews = new ArrayList<>();
+		for (Component component : components) {
+			ComponentAdminView componentAdminView = new ComponentAdminView();
+			componentAdminView.setComponent(component);
+			StringBuilder configs = new StringBuilder();
+			List<ComponentIntegrationConfig> configList = configMap.get(component.getComponentId());
+			if (configList != null) {
+				configList.forEach(config -> {
+					if (StringUtils.isNotBlank(config.getIssueNumber())) {
+						configs.append("(").append(config.getIntegrationType()).append(" - ").append(config.getIssueNumber()).append(") ");
+					} else {
+						configs.append("(").append(config.getIntegrationType()).append(") ");
+					}
+				});
+			}
+			componentAdminView.setIntegrationManagement(configs.toString());
+			componentAdminView.setComponent(component);
+			componentAdminViews.add(componentAdminView);
+		}
+		
+		result.setComponents(componentAdminViews);
+
+		queryByExample.setQueryType(QueryType.COUNT);
+		result.setTotalNumber(persistenceService.countByExample(queryByExample));
 		return result;
 	}
 

@@ -6,6 +6,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
   function ($scope, Business, $timeout, $uiModal, FileUploader) {
 
     $scope.predicate = [];
+    $scope.predicate['components'] = 'name';
     $scope.reverse = [];
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},
@@ -24,7 +25,9 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.selectedComponents = [];
     $scope.selectAllComps = {};
     $scope.selectAllComps.flag = false;
-    $scope.paginationControl;
+    $scope.pagination = {};
+    $scope.pagination.control;
+    $scope.pagination.features = {'dates': false, 'max': false};
 
     $scope.$watch('allComponentsWatch', function(){
       if ($scope.allComponentsWatch.data){
@@ -40,23 +43,20 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
         $scope.predicate[table] = predicate;
         $scope.reverse[table] = false;
       }
+      if (table === 'components') {
+        $scope.pagination.control.changeSortOrder(predicate);
+      }
     };
 
-    $scope.setPredicatePaged = function (predicate, table) {
-      if ($scope.predicate[table] === predicate) {
-        $scope.reverse[table] = !$scope.reverse[table];
-      } else {
-        $scope.predicate[table] = predicate;
-        $scope.reverse[table] = false;
-      }
-      $scope.refreshComponents();
-    }
-
     $scope.refreshComponents = function () {
-      $scope.$emit('$TRIGGERLOAD', 'componentLoader');
-      $scope.paginationControl.refresh().then(function(){
-        $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
-      });
+      console.log('$scope.pagination.control', $scope.pagination.control);
+      
+      if ($scope.pagination.control && $scope.pagination.control.refresh) {
+        $scope.$emit('$TRIGGERLOAD', 'componentLoader');
+        $scope.pagination.control.refresh().then(function(){
+          $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+        });
+      }
     };
     $scope.$on('$REFRESH_COMPONENTS', function(){       
       $scope.refreshComponents();

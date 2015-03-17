@@ -117,7 +117,7 @@ public class ReportResource
 
 		ReportWrapper reportWrapper = new ReportWrapper();
 		reportWrapper.getData().addAll(ReportView.toReportView(reports));
-		reportWrapper.setTotalResults(service.getPersistenceService().countByExample(queryByExample));
+		reportWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(reportWrapper);
 	}

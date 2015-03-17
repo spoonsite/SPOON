@@ -25,21 +25,21 @@ import java.util.List;
 public class ReportWrapper
 {
 
-	private long totalResults;
+	private long totalNumber;
 	private List<ReportView> data = new ArrayList<>();
 
 	public ReportWrapper()
 	{
 	}
 
-	public long getTotalResults()
+	public long getTotalNumber()
 	{
-		return totalResults;
+		return totalNumber;
 	}
 
-	public void setTotalResults(long totalResults)
+	public void setTotalNumber(long totalNumber)
 	{
-		this.totalResults = totalResults;
+		this.totalNumber = totalNumber;
 	}
 
 	public List<ReportView> getData()
