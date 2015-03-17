@@ -26,6 +26,8 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.codemonkey.simplejavamail.Email;
@@ -55,7 +57,12 @@ public class UserDataAlertMessageGenerator
 	protected String generateMessageInternal(Email email)
 	{
 		StringBuilder message = new StringBuilder();
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
+
+		Instant instant = Instant.ofEpochMilli(messageContext.getUserMessage().getCreateDts().getTime());
+		instant = instant.minusSeconds(3);
+
+		Date checkDate = new Date(instant.toEpochMilli());
 
 		Alert alert = messageContext.getAlert();
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnTags())) {
@@ -63,7 +70,7 @@ public class UserDataAlertMessageGenerator
 			componentTagExample.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 
 			ComponentTag componentTagStartExample = new ComponentTag();
-			componentTagStartExample.setUpdateDts(messageContext.getUserMessage().getCreateDts());
+			componentTagStartExample.setUpdateDts(checkDate);
 
 			QueryByExample queryByExample = new QueryByExample(componentTagExample);
 			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
@@ -80,8 +87,10 @@ public class UserDataAlertMessageGenerator
 				message.append("Tags Added: ").append(tags.size()).append("<hr>");
 			}
 			for (ComponentTag tag : tags) {
-				message.append("   ").append(tag.getText()).append(" added on  ")
+				message.append("   '").append(tag.getText())
+						.append("' added on  ")
 						.append(serviceProxy.getComponentService().getComponentName(tag.getComponentId()))
+						.append("' by ").append(tag.getUpdateUser())
 						.append("<br>");
 			}
 			if (!tags.isEmpty()) {
@@ -94,7 +103,7 @@ public class UserDataAlertMessageGenerator
 			componentReviewExample.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 
 			ComponentReview componentReviewStartExample = new ComponentReview();
-			componentReviewStartExample.setUpdateDts(messageContext.getUserMessage().getCreateDts());
+			componentReviewStartExample.setUpdateDts(checkDate);
 
 			QueryByExample queryByExample = new QueryByExample(componentReviewExample);
 			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
@@ -113,7 +122,7 @@ public class UserDataAlertMessageGenerator
 			for (ComponentReview review : reviews) {
 				message.append("  '").append(review.getTitle())
 						.append("' modified by ").append(review.getUpdateUser())
-						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(review.getComponentId()));
+						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(review.getComponentId())).append("<br>");
 			}
 			if (!reviews.isEmpty()) {
 				message.append("<br>");
@@ -125,7 +134,7 @@ public class UserDataAlertMessageGenerator
 			componentQuestionExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 
 			ComponentQuestion componentQuestionStartExample = new ComponentQuestion();
-			componentQuestionStartExample.setUpdateDts(messageContext.getUserMessage().getCreateDts());
+			componentQuestionStartExample.setUpdateDts(checkDate);
 
 			QueryByExample queryByExample = new QueryByExample(componentQuestionExample);
 			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
@@ -144,7 +153,7 @@ public class UserDataAlertMessageGenerator
 			for (ComponentQuestion question : questions) {
 				message.append("  '").append(StringProcessor.eclipseString(question.getQuestion(), MAX_SENSTIVE_DATA_LENGTH))
 						.append("' modified by ").append(question.getUpdateUser())
-						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId()));
+						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId())).append("<br>");
 			}
 			if (!questions.isEmpty()) {
 				message.append("<br>");
@@ -154,7 +163,7 @@ public class UserDataAlertMessageGenerator
 			componentQuestionResponseExample.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 
 			ComponentQuestionResponse componentQuestionResponseStartExample = new ComponentQuestionResponse();
-			componentQuestionResponseStartExample.setUpdateDts(messageContext.getUserMessage().getCreateDts());
+			componentQuestionResponseStartExample.setUpdateDts(checkDate);
 
 			queryByExample = new QueryByExample(componentQuestionResponseExample);
 			specialOperatorModel = new SpecialOperatorModel();
@@ -173,7 +182,7 @@ public class UserDataAlertMessageGenerator
 			for (ComponentQuestionResponse question : questionReponses) {
 				message.append("  '").append(StringProcessor.eclipseString(question.getResponse(), MAX_SENSTIVE_DATA_LENGTH))
 						.append("' modified by ").append(question.getUpdateUser())
-						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId()));
+						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId())).append("<br>");
 			}
 			if (!questionReponses.isEmpty()) {
 				message.append("<br>");
