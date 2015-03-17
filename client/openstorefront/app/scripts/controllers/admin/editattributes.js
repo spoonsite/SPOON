@@ -177,8 +177,6 @@ $scope.attributeUploader = new FileUploader({
         $scope.getFilters(true);
       } else {
         if (response.errors) {
-          console.log('response.errors', response);
-          
           var uploadError = response.errors.uploadFile;  
           var errorMessage = '';
           if (uploadError){

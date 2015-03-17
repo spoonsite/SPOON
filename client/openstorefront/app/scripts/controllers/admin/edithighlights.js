@@ -54,7 +54,6 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
 
   $scope.getHighlightCodes = function() {
     Business.lookupservice.getHighlightCodes().then(function(result){
-      console.log('highlightCodes', result);
       
       $scope.highlightCodes = result || [];
     }, function(){
@@ -183,8 +182,6 @@ app.controller('AdminEditHighlightsModalCtrl',['$scope', '$uiModalInstance', 'hi
   $scope.highlightCodes;
 
   Business.lookupservice.getHighlightCodes().then(function(result){
-    console.log('highlightCodes', result);
-    
     $scope.highlightCodes = result || [];
   }, function(){
     $scope.highlightCodes = [];
@@ -193,7 +190,6 @@ app.controller('AdminEditHighlightsModalCtrl',['$scope', '$uiModalInstance', 'hi
 
   $scope.ok = function () {
     $scope.highlight.description = $scope.editorContentWatch;
-    console.log('$scope.highlight', $scope.highlight);
     Business.highlightservice.saveHighlight($scope.highlight).then(function(result){
       triggerAlert('The changes to the highlight were saved', 'highlightAlert', 'body', 6000);
       $uiModalInstance.close();

@@ -115,7 +115,6 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
 
           //check response for a fail ticket or a error model
           if (response.success) { 
-            console.log('response', response);
             
             $scope.mediaUploader.clearQueue();
             $scope.mediaUploader.cancelAll();
@@ -124,7 +123,6 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
             $scope.$emit('$TRIGGEREVENT', '$REFRESH_MEDIA');
           } else {
             if (response.errors) {  
-            console.log('response', response);
                                     
               var uploadError = response.errors.file;
               var enityError = response.errors.generalMedia;

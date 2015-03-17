@@ -223,8 +223,6 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   $scope.saveType = function(validity){
     if (validity) {
 
-      console.log('type', $scope.type);
-      console.log('type.type', $scope.type.type);
       var cont = true;
       if ($scope.addTypeFlg) {
         cont = confirm("Once this form is saved, the type field will be fixed. Continue?");
@@ -422,12 +420,8 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
   $scope.urlPattern = utils.URL_REGEX;
 
   $scope.ok = function (validity) {
-    console.log('validity', validity);
     
     if (validity) {
-      console.log('$scope.code', $scope.code);
-      console.log('type', type);
-      console.log('type', type);
       var cont = true;
       if ($scope.addCodeFlg) {
         cont = confirm("Once this form is saved, the code field will be fixed. Continue?");
@@ -465,7 +459,6 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
             Business.articleservice.saveCode(type, code.code, $scope.code, $scope.addCodeFlg).then(function(result){
               if (result) {
                 $scope.addCodeFlg = false;
-                console.log('Code save result', result);
                 // console.log('$scope.code', $scope.code);
                 $uiModalInstance.close('success');
               } else {
@@ -473,14 +466,12 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
               }
             }, function(){
               // the save failed
-              console.log('The code save failed');
             })
           }
         }, function(){
           Business.articleservice.saveCode(type, code.code, $scope.code, $scope.addCodeFlg).then(function(result){
             if (result) {
               $scope.addCodeFlg = false;
-              console.log('Code save result', result);
               // console.log('$scope.code', $scope.code);
               $uiModalInstance.close('success');
             } else {
@@ -488,7 +479,6 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
             }
           }, function(){
             // the save failed
-            console.log('The code save failed');
           })
           //unable to finish code check;
         })

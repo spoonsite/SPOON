@@ -178,7 +178,6 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'method': 'PUT',
         'url': 'api/v1/resource/userprofiles/'+userId+'/reactivate',
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        console.log('reactivate data', data);
         
         if (data && isNotRequestError(data)) {
           removeError();
@@ -188,7 +187,6 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           deferred.reject(false);
         }
       }, function(data, status, headers, config){
-        console.log('reactivate error data', data);
         
         deferred.reject('There was an error');
       });

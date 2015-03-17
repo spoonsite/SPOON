@@ -188,7 +188,6 @@
       errorBody = errorBody || 'body';
       triggerAlert('A popup blocker is stopping this site from opening a new window.<br><br>To allow the site to open the new window, please turn off popublockers or add this site as an exception.', 'popupblocker', errorBody, 10000)
     } else {
-      console.log('Opening window ', popupWin);
       popupWin.focus();
     }
     return popupWin;

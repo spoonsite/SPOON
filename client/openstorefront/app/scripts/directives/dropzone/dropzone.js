@@ -208,7 +208,6 @@ app.directive('dropzone', ['$http', '$compile', 'business', '$timeout', function
         scope[ngModel].scopeId = ngModel;
         scope[ngModel].fileInfo = upFile;
         scope[ngModel].new = true;
-        console.log('STUFF', $('#'+ngModel+'image'));
         
         // var blob = dataURItoBlob($('#'+ngModel+'image').attr('src'));
         // formData.append('thumbnail', blob);
@@ -222,8 +221,6 @@ app.directive('dropzone', ['$http', '$compile', 'business', '$timeout', function
           // worry about the scope getting HUGE
           delete scope[response.scopeId];
         }
-        console.log('file', file);
-        console.log('response', response);
         // var dropzone = this;
         // dropzone.processQueue.bind(dropzone);
       }
@@ -243,7 +240,6 @@ app.directive('dropzone', ['$http', '$compile', 'business', '$timeout', function
 
       // when a file is done uploading do this.
       config.eventHandlers.canceled = function(file) {
-        console.log('file', file.status);
       };
 
       // here we set up the actual dropzone.

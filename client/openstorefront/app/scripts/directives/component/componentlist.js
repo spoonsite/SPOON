@@ -48,7 +48,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
     },
     link: function postLink(scope, element, attrs) {
       if (scope.data) {
-        console.log('scope.data', scope.data);
         
       }
       
@@ -217,7 +216,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                 {
                   if (result.data && result.data.length > 0) { 
                     scope.data = angular.copy(result.data);
-                    console.log('scope.data', scope.data);
                   } else {
                     scope.data = [];
                   }

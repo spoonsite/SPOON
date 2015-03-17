@@ -262,7 +262,6 @@ var showServerError = function(errorObj, id){
   var message = 'There was a server error. Contact a System Admin or try again';
   //message, potential resolution, ticketNumber, contact;
   if (errorObj && typeof errorObj === 'object') {
-    console.log('errorObj', errorObj);
     if (errorObj.message) {
       message = message + ': <div class="leftIndent">Message:&nbsp;<span>' + errorObj.message + '</span></div>';
     }if (errorObj.errorTicketNumber) {

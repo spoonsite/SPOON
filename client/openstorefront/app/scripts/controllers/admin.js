@@ -105,8 +105,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     var branch = checkCollection($scope.data, 0, 'landing');
     $scope.type = type;
     $scope.code = code;
-    console.log('We set the type and code', type + '---' + code);
-    
     $scope.editor(branch);
   };
 

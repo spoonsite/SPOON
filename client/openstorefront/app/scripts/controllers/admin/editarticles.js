@@ -183,8 +183,6 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
 
   $scope.preview = function(){
     $scope.article.html = $scope.getEditorContent();
-    console.log('$scope.article', $scope.article);
-    
     Business.articleservice.previewArticle($scope.article).then(function(result){
       var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
       url = url + '/landing' + '?' + $.param({
@@ -240,8 +238,6 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
   $scope.ok = function () {
     // $scope.editorContentWatch = $scope.editorContent;
     $scope.article.html = $scope.getEditorContent();
-    console.log('$scope.article', $scope.article);
-    
     Business.articleservice.saveArticle($scope.article).then(function(result){
       $uiModalInstance.close();
     }, function(){
