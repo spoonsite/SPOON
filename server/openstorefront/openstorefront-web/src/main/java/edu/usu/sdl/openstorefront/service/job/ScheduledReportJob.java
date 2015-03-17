@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.EmailAddress;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.Report;
+import edu.usu.sdl.openstorefront.storage.model.ReportFormat;
 import edu.usu.sdl.openstorefront.storage.model.ReportType;
 import edu.usu.sdl.openstorefront.storage.model.RunStatus;
 import edu.usu.sdl.openstorefront.storage.model.ScheduledReport;
@@ -63,7 +64,7 @@ public class ScheduledReportJob
 
 			if (report.getLastRanDts() != null) {
 				Instant instant = Instant.ofEpochMilli(report.getLastRanDts().getTime());
-				instant = instant.plus(report.getScheduleIntevalDays(), ChronoUnit.DAYS);
+				instant = instant.plus(report.getScheduleIntervalDays(), ChronoUnit.DAYS);
 				if (Instant.now().isBefore(instant)) {
 					run = false;
 					if (log.isLoggable(Level.FINEST)) {
@@ -84,7 +85,7 @@ public class ScheduledReportJob
 
 				report.setLastRanDts(TimeUtil.currentDate());
 				report.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-				service.getReportService().saveScheduledReport(scheduleReportExample);
+				service.getReportService().saveScheduledReport(report);
 
 				if (RunStatus.COMPLETE.equals(reportProcessed.getRunStatus())) {
 					//send email
@@ -109,9 +110,11 @@ public class ScheduledReportJob
 					}
 					for (EmailAddress emailAddress : report.getEmailAddresses()) {
 						Email email = MailManager.newEmail();
-						email.setSubject(applicationTitle + " - " + TranslateUtil.translate(ReportType.class, report.getReportType()));
+						email.setSubject(applicationTitle + " - " + TranslateUtil.translate(ReportType.class, report.getReportType()) + " Report");
 						email.setTextHTML(message.toString());
-						email.addAttachment(emailAddress.getEmail(), reportData, report.getReportFormat().replace("-", "/"));
+
+						String extenstion = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(report.getReportFormat()));
+						email.addAttachment(TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion, reportData, ReportFormat.mimeType(report.getReportFormat()));
 						email.addRecipient("", emailAddress.getEmail(), Message.RecipientType.TO);
 						MailManager.send(email);
 					}

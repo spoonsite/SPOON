@@ -70,7 +70,7 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/reports' + id
+        'url': 'api/v1/resource/reports/' + id
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    
@@ -145,7 +145,7 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/scheduledreports' + id
+        'url': 'api/v1/resource/scheduledreports/' + id
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    

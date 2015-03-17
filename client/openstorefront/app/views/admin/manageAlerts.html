@@ -28,13 +28,14 @@ limitations under the License.
 		
 			<tr>
 				<th><a href="" ng-click="setPredicate('name', 'alert');">Name <span ng-show="predicate['alert'] === 'name'"><i ng-show="!reverse['alert'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['alert']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-				<th><a href="" ng-click="setPredicate('alertType', 'alert');">Type <span ng-show="predicate['alert'] === 'alertType'"><i ng-show="!reverse['alert'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['alert']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-				<th>Email Addresses</th>				
+				<th><a href="" ng-click="setPredicate('alertTypeDesciption', 'alert');">Type <span ng-show="predicate['alert'] === 'alertTypeDesciption'"><i ng-show="!reverse['alert'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['alert']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th>Email Addresses</th>	
+				<th>Options</th>
 				<th>Action</th>
 			</tr>
 			<tr ng-repeat="alert in alerts | orderBy:predicate['name']:reverse['name']" >
 				<td>{{alert.name}}</td>
-				<td>{{alert.alertType}}</td>
+				<td>{{alert.alertTypeDesciption}}</td>
 				<td>
 					<ul ng-repeat="email in alert.emailAddresses">
 						<li>
@@ -42,10 +43,39 @@ limitations under the License.
 						</li>
 					</ul>
 				</td>				
-				<td style="padding:0px; width: 200px;">&nbsp;
-					<button class="btn btn-primary" ng-click=""  title="View">View Options</button>
-					<button class="btn btn-primary" ng-click="editAlert(alert);"  title="Edit Alert"><i class="fa fa-edit"></i></button>
-					<button class="btn btn-primary" ng-click="toggleStatus(alert);"  title="Activate/Inactivate"><i class="fa fa-power-off"></i></button>
+				<td ng-show="alert.systemErrorAlertOption">
+					<ul>
+						<li ng-show="alert.systemErrorAlertOption.alertOnSystem">
+							System Errors
+						</li>
+						<li ng-show="alert.systemErrorAlertOption.alertOnREST">
+							API Errors
+						</li>
+						<li ng-show="alert.systemErrorAlertOption.alertOnIntegration">
+							Integration Errors
+						</li>
+						<li ng-show="alert.systemErrorAlertOption.alertOnReport">
+							Report Errors
+						</li>					
+					</ul>
+				</td>	
+				<td ng-show="alert.userDataAlertOption">
+					<ul>
+						<li ng-show="alert.userDataAlertOption.alertOnTags">
+							Tags
+						</li>
+						<li ng-show="alert.userDataAlertOption.alertOnReviews">
+							Reviews
+						</li>
+						<li ng-show="alert.userDataAlertOption.alertOnQuestions">
+							Question/Responses
+						</li>				
+					</ul>
+				</td>				
+							
+				<td style="padding:0px; width: 200px;">&nbsp;					
+					<button class="btn" ng-click="editAlert(alert);"  title="Edit Alert"><i class="fa fa-edit"></i></button>
+					<button class="btn" ng-click="toggleStatus(alert);"  title="Activate/Inactivate"><i class="fa fa-power-off"></i></button>
 					<button class="btn btn-danger" ng-click="deleteAlert(alert);"  title="Delete"><i class="fa fa-trash"></i></button>
 				</td>
 			</tr>

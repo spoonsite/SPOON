@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.ScheduledReportView;
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -54,7 +55,7 @@ public class ScheduledReportResource
 	@RequireAdmin
 	@APIDescription("Gets scheduled report records.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ScheduledReport.class)
+	@DataType(ScheduledReportView.class)
 	public Response getReports(@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -63,11 +64,11 @@ public class ScheduledReportResource
 		}
 
 		ScheduledReport reportExample = new ScheduledReport();
-		reportExample.setActiveStatus(Report.ACTIVE_STATUS);
+		reportExample.setActiveStatus(filterQueryParams.getStatus());
 		List<ScheduledReport> reports = service.getPersistenceService().queryByExample(ScheduledReport.class, reportExample);
 		reports = filterQueryParams.filter(reports);
 
-		GenericEntity<List<ScheduledReport>> entity = new GenericEntity<List<ScheduledReport>>(reports)
+		GenericEntity<List<ScheduledReportView>> entity = new GenericEntity<List<ScheduledReportView>>(ScheduledReportView.toReportView(reports))
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -130,7 +131,7 @@ public class ScheduledReportResource
 		if (post) {
 			return Response.created(URI.create("v1/resource/scheduledreports/" + scheduledReport.getScheduleReportId())).entity(scheduledReport).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(scheduledReport).build();
 		}
 	}
 
@@ -143,7 +144,7 @@ public class ScheduledReportResource
 	public Response activatesAlert(
 			@PathParam("id") String scheduleReportId)
 	{
-		ScheduledReport scheduledReport = service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.INACTIVE_STATUS);
+		ScheduledReport scheduledReport = service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.ACTIVE_STATUS);
 		return sendSingleEntityResponse(scheduledReport);
 	}
 

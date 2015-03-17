@@ -2069,6 +2069,7 @@ public class ComponentServiceImpl
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(componentTrackingEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filter.getMax());

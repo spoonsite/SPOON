@@ -57,7 +57,7 @@ public class ComponentReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("Component Report - ", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine("Component Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine(
 				"Name",
 				"Organization",
@@ -117,7 +117,7 @@ public class ComponentReport
 			ComponentTracking componentTrackingOrderExample = new ComponentTracking();
 			componentTrackingOrderExample.setEventDts(QueryByExample.DATE_FLAG);
 
-			QueryByExample queryByExample = new QueryByExample(componentQuestionExample);
+			QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
 			queryByExample.setMaxResults(1);
 			queryByExample.setOrderBy(componentTrackingOrderExample);
 			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
@@ -133,10 +133,11 @@ public class ComponentReport
 					component.getOrganization(),
 					sdf.format(component.getLastActivityDts()),
 					component.getApprovalState(),
+					component.getApprovedDts() == null ? "" : sdf.format(component.getApprovedDts()),
 					component.getApprovedUser(),
 					component.getActiveStatus(),
 					sdf.format(component.getCreateDts()),
-					sdf.format(component.getCreateUser()),
+					component.getCreateUser(),
 					lastViewed,
 					views,
 					resourcesClicked,

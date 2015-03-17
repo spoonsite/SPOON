@@ -34,6 +34,7 @@ public class TextSanitizer
 			return fieldData;
 		} else {
 			String safe = Jsoup.clean(fieldData.toString(), Whitelist.none());
+			safe = safe.replace("&amp;", "&");
 			return safe;
 		}
 	}

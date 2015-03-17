@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +67,13 @@ public class TaskThreadExecutor
 				if (taskFuture.getFuture().equals(future)) {
 					taskFuture.setCompletedDts(TimeUtil.currentDate());
 					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.DONE);
-					if (t != null) {
+
+					try {
+						future.get();
+					} catch (CancellationException ce) {
+						taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.CANCELLED);
+					} catch (ExecutionException ee) {
+						t = ee.getCause();
 						taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.FAILED);
 
 						ServiceProxy serviceProxy = new ServiceProxy();
@@ -74,9 +82,11 @@ public class TaskThreadExecutor
 						errorInfo.setInputData("Background Task Error");
 						SystemErrorModel systemErrorModel = serviceProxy.getSystemService().generateErrorTicket(errorInfo);
 						taskFuture.setError("Task failed.  " + systemErrorModel.toString());
-					}
-					if (taskFuture.getCallback() != null) {
-						taskFuture.getCallback().afterExecute(taskFuture);
+						if (taskFuture.getCallback() != null) {
+							taskFuture.getCallback().afterExecute(taskFuture);
+						}
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt(); // ignore/reset
 					}
 				}
 			}

@@ -35,7 +35,7 @@ public class UserMessage
 
 	@PK(generated = true)
 	@NotNull
-	private String messageId;
+	private String userMessageId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
@@ -59,12 +59,12 @@ public class UserMessage
 
 	public String getUserMessageId()
 	{
-		return messageId;
+		return userMessageId;
 	}
 
 	public void setUserMessageId(String userMessageId)
 	{
-		this.messageId = userMessageId;
+		this.userMessageId = userMessageId;
 	}
 
 	public String getUsername()

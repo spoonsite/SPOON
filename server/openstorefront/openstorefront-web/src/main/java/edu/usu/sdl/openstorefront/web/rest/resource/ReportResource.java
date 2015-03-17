@@ -19,15 +19,27 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
+import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.Report;
 import edu.usu.sdl.openstorefront.storage.model.ReportFormat;
+import edu.usu.sdl.openstorefront.storage.model.ReportType;
+import edu.usu.sdl.openstorefront.storage.model.UserTracking;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.ReportView;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +51,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import net.sourceforge.stripes.util.bean.BeanUtil;
 
 /**
  *
@@ -57,7 +72,7 @@ public class ReportResource
 	@RequireAdmin
 	@APIDescription("Gets report records.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Report.class)
+	@DataType(ReportView.class)
 	public Response getReports(@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -67,10 +82,41 @@ public class ReportResource
 
 		Report reportExample = new Report();
 		reportExample.setActiveStatus(Report.ACTIVE_STATUS);
-		List<Report> reports = service.getPersistenceService().queryByExample(Report.class, reportExample);
+
+		Report reportStartExample = new Report();
+		reportStartExample.setCreateDts(filterQueryParams.getStart());
+
+		Report reportEndExample = new Report();
+		reportEndExample.setCreateDts(filterQueryParams.getEnd());
+
+		QueryByExample queryByExample = new QueryByExample(reportExample);
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(reportStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(reportEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		queryByExample.setMaxResults(filterQueryParams.getMax());
+		queryByExample.setFirstResult(filterQueryParams.getOffset());
+		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
+
+		UserTracking userTrackingOrderExample = new UserTracking();
+		Field sortField = ReflectionUtil.getField(userTrackingOrderExample, filterQueryParams.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), userTrackingOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(userTrackingOrderExample);
+		}
+
+		List<Report> reports = service.getPersistenceService().queryByExample(Report.class, queryByExample);
 		reports = filterQueryParams.filter(reports);
 
-		GenericEntity<List<Report>> entity = new GenericEntity<List<Report>>(reports)
+		GenericEntity<List<ReportView>> entity = new GenericEntity<List<ReportView>>(ReportView.toReportView(reports))
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -90,6 +136,42 @@ public class ReportResource
 		reportExample.setReportId(reportId);
 		Report report = service.getPersistenceService().queryOneByExample(Report.class, reportExample);
 		return sendSingleEntityResponse(report);
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets a report record.")
+	@Produces({MediaType.WILDCARD})
+	@DataType(Report.class)
+	@Path("/{id}/report")
+	public Response getReportData(
+			@PathParam("id") String reportId
+	)
+	{
+		Report reportExample = new Report();
+		reportExample.setReportId(reportId);
+		Report report = service.getPersistenceService().queryOneByExample(Report.class, reportExample);
+		if (report != null) {
+
+			java.nio.file.Path path = report.pathToReport();
+
+			if (path.toFile().exists()) {
+				String extenstion = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(report.getReportFormat()));
+				Response.ResponseBuilder response = Response.ok(new StreamingOutput()
+				{
+
+					@Override
+					public void write(OutputStream output) throws IOException, WebApplicationException
+					{
+						Files.copy(path, output);
+					}
+
+				});
+				response.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
+				return response.build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
 	@GET

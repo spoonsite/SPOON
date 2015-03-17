@@ -61,7 +61,7 @@ public class CSVGenerator
 			}
 		}
 
-		writer.writeNext((String[]) processedData.toArray());
+		writer.writeNext((String[]) processedData.toArray(new String[0]));
 	}
 
 	@Override
