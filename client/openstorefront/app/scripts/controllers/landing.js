@@ -49,10 +49,8 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
     if (search && search.type === 'preview' && $location.path() === '/landing'){
       var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
       url = url.substring(0, url.length - 1);
-      console.log('url', url);
       
       $scope.landingRoute = url + search.code;
-      console.log('$scope.landingRoute', $scope.landingRoute);
       $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
       $scope.loaded = true;
     } else {
@@ -78,9 +76,7 @@ app.controller('LandingCtrl', ['$scope', 'business', 'localCache', '$location', 
       if (search && search.type === 'preview' && $location.path()) {
         var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
         url = url.substring(0, url.length - 1);
-        console.log('url', url);
         $scope.landingRoute = url + search.code;
-        console.log('$scope.landingRoute', $scope.landingRoute);
         $scope.$emit('$TRIGGERUNLOAD', 'landingLoader');
         $scope.loaded = true;
       } else {

@@ -42,8 +42,6 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
     link: function postLink(scope, element, attrs) {
       scope.defaultMax = 50;
       scope.setFeatures = scope.setFeatures || {'dates': true, 'max': true};
-      console.log('setFeatures', scope.setFeatures);
-      
       scope.defaultMax = scope.max? parseInt(scope.max): 50;
       scope.today = new Date();
       scope.query = {};
@@ -100,10 +98,8 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
             scope.data = [];
           }); 
         }else {
-          console.log('Query filter object', query);
           
           Business.get(query).then(function(result){
-            console.log('data', result);
             scope.backupResult = result;
             scope.data = result? result: [];
             scope.pagination.totalItems = result.totalNumber;
@@ -115,13 +111,11 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         }
         return deferred.promise;
       }
-      console.log('default call');
 
       scope.sendRequest();
 
       scope.pageChanged = function(){
         scope.query.filterObj.offset = (scope.pagination.currentPage - 1) * scope.pagination.itemsPerPage;
-        console.log('Page Changed');
         
         scope.sendRequest();
       };
@@ -137,7 +131,6 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       scope.clearSort = function() {
         scope.query.filterObj.sortField = 'eventDts';
         scope.query.filterObj.sortOrder = 'DESC';
-        console.log('Sort Changed');
         scope.sendRequest();
       }
 
@@ -195,7 +188,6 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
           scope.query.filterObj.sortOrder = 'DESC';
         }
         scope.oldField = field;
-        console.log('Sort Changed 2');
         scope.sendRequest();
       }
 

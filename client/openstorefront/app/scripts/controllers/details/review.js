@@ -165,7 +165,6 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
       body.componentReviewId = reviewId;
     }
     Business.componentservice.saveCompleteReview(componentId, body, reviewId).then(function(result){
-      console.log('result', result);
       if (!revs) {
         $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
         $scope.$emit('$TRIGGEREVENT', '$newReview');

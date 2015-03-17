@@ -29,16 +29,12 @@ app.directive('panel', ['$timeout', function($timeout) {
     transclude: true,
     templateUrl: 'views/content/panel.html',
     link: function postlink(scope, element, attrs) {
-      console.log('scope.open', scope.openState);
-      console.log('attrs', attrs);
       
       scope.open = (scope.openState !== 'false' && scope.openState !== '0' && scope.openState !== '' && scope.openState !== undefined && scope.openState !== null)? true: false;
-      console.log('scope.open', scope.open);
       
       // set up the uniqueID for the panel
       scope.panelId = nextId2++;
       $timeout(function(){
-        console.log('scope.open', scope.open);
 
         if (scope.open) {
           $('#collapseThis'+scope.panelId).collapse('show');

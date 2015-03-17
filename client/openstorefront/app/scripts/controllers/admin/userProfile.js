@@ -21,8 +21,6 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
   $scope.deactivateButtons = false;
   $scope.getUsers = function(override) {
     Business.userservice.getAllUserProfiles(true, override).then(function(result){
-      console.log('result', result);
-
       $scope.userProfiles = result? result: []
     }, function() {
       $scope.userProfiles = [];
@@ -133,7 +131,6 @@ app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profil
     }
   });
   $scope.saveUserProfile = function(){
-    console.log('$scope.userProfileForm', $scope.userProfileForm);
     $scope.userProfileForm.mySwitch = false;
     $scope.ok();
   }
@@ -189,7 +186,6 @@ app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profil
       $uiModalInstance.close('success');
     }, function(){
       // triggerAlert();
-      console.log('There was an error');
       
       $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
     })

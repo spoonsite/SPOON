@@ -50,8 +50,6 @@
   $scope.loadComponentList = function(){
     Business.componentservice.getComponentLookupList().then(function (results) {
       if (results) {
-        console.log('result', results);
-        
         $scope.components = results.sort(compare);                            
       }
     });      

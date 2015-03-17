@@ -270,7 +270,6 @@
           url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId + '/detail';
           methodString = 'PUT';
         }
-        console.log('review', review);
 
         $http({
           method: methodString,
@@ -279,11 +278,9 @@
         })
         .success(function (data, status, headers, config) { /*jshint unused:false*/
           if (data && isNotRequestError(data)) {
-            console.log('data', data);
             removeError();
             result.resolve(data);
           } else {
-            console.log('fail data', data);
             removeError();
             triggerError(data);
             result.reject(false);
@@ -1237,7 +1234,6 @@ componentservice.getCount = function () {
     'method': 'GET',
     'url': 'api/v1/service/search/stats'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    console.log('data', data);
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');

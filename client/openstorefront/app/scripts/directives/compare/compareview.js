@@ -48,7 +48,6 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
           delete temp.value;
         }
         // details.checkedLabel = camelToSentence();
-        console.log('scope.checked', scope.checked);
         
         return temp;
       }

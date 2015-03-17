@@ -31,7 +31,6 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
 
     $scope.$watch('allComponentsWatch', function(){
       if ($scope.allComponentsWatch.data){
-        console.log('scope allComponents changed', $scope.allComponentsWatch.data);
         $scope.filteredComponents = $scope.allComponentsWatch.data.components || [];
       }
     }, true);
@@ -49,7 +48,6 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };
 
     $scope.refreshComponents = function () {
-      console.log('$scope.pagination.control', $scope.pagination.control);
       
       if ($scope.pagination.control && $scope.pagination.control.refresh) {
         $scope.$emit('$TRIGGERLOAD', 'componentLoader');

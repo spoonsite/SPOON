@@ -264,9 +264,6 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
   
   article.saveCode = function(type, code, data, newCode){
     var deferred = $q.defer();
-    console.log('type', type);
-    console.log('code', code);
-    console.log('data', data);
     
     if (type && data) {
       var url;
