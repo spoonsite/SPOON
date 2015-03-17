@@ -159,7 +159,15 @@ public class ValidationUtil
 											ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
 										}
 									} else {
-										throw new OpenStorefrontRuntimeException("Field value is null. If this is a collection it should be set to an empty collection.");
+										NotNull notNull = field.getAnnotation(NotNull.class);
+										if (notNull != null) {
+											RuleResult ruleResult = new RuleResult();
+											ruleResult.setMessage("Collection is required");
+											ruleResult.setEntityClassName(validateModel.getDataObject().getClass().getSimpleName());
+											ruleResult.setFieldName(field.getName());
+											ruleResult.setValidationRule("Requires value");
+											ruleResults.add(ruleResult);
+										}
 									}
 								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 									throw new OpenStorefrontRuntimeException(ex);

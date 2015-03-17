@@ -39,6 +39,11 @@ public class ReportFormat
 	{
 	}
 
+	public static String mimeType(String formatCode)
+	{
+		return formatCode.replace("-", "/");
+	}
+
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{

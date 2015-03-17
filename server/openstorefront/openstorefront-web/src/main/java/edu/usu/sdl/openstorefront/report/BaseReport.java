@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.report;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.Report;
 import edu.usu.sdl.openstorefront.storage.model.ReportType;
 import java.text.SimpleDateFormat;
@@ -54,11 +55,17 @@ public abstract class BaseReport
 				case ReportType.USAGE:
 					baseReport = new UsageReport(report);
 					break;
+				case ReportType.ORGANIZATION:
+					baseReport = new OrganizationReport(report);
+					break;
+				case ReportType.USER:
+					baseReport = new UserReport(report);
+					break;
 				case ReportType.LINK_VALIDATION:
 					baseReport = new ExternalLinkValidationReport(report);
 					break;
 				default:
-					throw new OpenStorefrontRuntimeException("Report Type not supported", "Check type and/or add support. Type" + report.getReportType());
+					throw new OpenStorefrontRuntimeException("Report Type not supported", "Check type and/or add support. Type: " + report.getReportType(), ErrorTypeCode.REPORT);
 			}
 		} else {
 			Objects.requireNonNull(report.getReportType(), "Report Type required");
@@ -78,7 +85,7 @@ public abstract class BaseReport
 			writeReport();
 		} catch (Exception e) {
 			generator.setFailed(true);
-			throw new OpenStorefrontRuntimeException("Report failed to generate.", e);
+			throw new OpenStorefrontRuntimeException("Report failed to generate.", e, ErrorTypeCode.REPORT);
 		} finally {
 			generator.finish();
 		}

@@ -62,7 +62,7 @@ public class UserReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("User Report - ", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine("User Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine(
 				"Username",
 				"Organization",
@@ -131,7 +131,7 @@ public class UserReport
 			cvsGenerator.addLine(
 					userProfile.getUsername(),
 					userProfile.getOrganization(),
-					userProfile.getExternalGuid(),
+					userProfile.getExternalGuid() != null ? userProfile.getExternalGuid() : userProfile.getInternalGuid(),
 					userProfile.getFirstName(),
 					userProfile.getLastName(),
 					userProfile.getEmail(),

@@ -45,7 +45,7 @@ public class ReportType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(USAGE, newLookup(ReportType.class, USAGE, "Report Type", "Reports on overall application usage."));
+		codeMap.put(USAGE, newLookup(ReportType.class, USAGE, "Usage", "Reports on overall application usage."));
 		codeMap.put(LINK_VALIDATION, newLookup(ReportType.class, LINK_VALIDATION, "Link Validation", "Reports on potentially broken external url links."));
 		codeMap.put(COMPONENT, newLookup(ReportType.class, COMPONENT, "Component", "Reports on component statistic and usage."));
 		codeMap.put(USER, newLookup(ReportType.class, USER, "User", "Reports on users and thier usage of the application"));

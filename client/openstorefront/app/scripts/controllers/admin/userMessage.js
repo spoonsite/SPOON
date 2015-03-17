@@ -24,7 +24,7 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
   {code: 'I', desc: 'Archived'}
   ];
   $scope.queryFilter = angular.copy(utils.queryFilter);
-  $scope.queryFilter.status = $scope.statusFilterOptions[0];
+  $scope.queryFilter.status = $scope.statusFilterOptions[0].code;
   $scope.predicate = [];
   $scope.reverse = [];  
   

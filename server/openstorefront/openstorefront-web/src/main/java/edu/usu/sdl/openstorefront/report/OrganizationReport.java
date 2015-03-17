@@ -62,7 +62,7 @@ public class OrganizationReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("Organization Report - ", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine("Organization Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine(
 				"Organization",
 				"# Users",

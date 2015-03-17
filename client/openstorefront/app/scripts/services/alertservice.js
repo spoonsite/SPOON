@@ -83,7 +83,7 @@ app.factory('alertservice', ['$http', '$q', 'localCache', function($http, $q, lo
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/alerts' + id
+        'url': 'api/v1/resource/alerts/' + id
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    

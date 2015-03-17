@@ -64,7 +64,7 @@ public class ScheduledReport
 	@Min(1)
 	@Max(30)
 	@ConsumeField
-	private Integer scheduleIntevalDays;
+	private Integer scheduleIntervalDays;
 
 	private Date lastRanDts;
 
@@ -112,16 +112,6 @@ public class ScheduledReport
 		this.emailAddresses = emailAddresses;
 	}
 
-	public Integer getScheduleIntevalDays()
-	{
-		return scheduleIntevalDays;
-	}
-
-	public void setScheduleIntevalDays(Integer scheduleIntevalDays)
-	{
-		this.scheduleIntevalDays = scheduleIntevalDays;
-	}
-
 	public String getReportFormat()
 	{
 		return reportFormat;
@@ -140,6 +130,16 @@ public class ScheduledReport
 	public void setLastRanDts(Date lastRanDts)
 	{
 		this.lastRanDts = lastRanDts;
+	}
+
+	public Integer getScheduleIntervalDays()
+	{
+		return scheduleIntervalDays;
+	}
+
+	public void setScheduleIntervalDays(Integer scheduleIntervalDays)
+	{
+		this.scheduleIntervalDays = scheduleIntervalDays;
 	}
 
 }

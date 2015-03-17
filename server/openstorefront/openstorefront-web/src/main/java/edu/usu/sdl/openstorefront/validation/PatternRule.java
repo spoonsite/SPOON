@@ -52,7 +52,7 @@ public class PatternRule
 	@Override
 	protected String getMessage()
 	{
-		return "Value must pattern";
+		return "Value must follow pattern";
 	}
 
 	@Override
