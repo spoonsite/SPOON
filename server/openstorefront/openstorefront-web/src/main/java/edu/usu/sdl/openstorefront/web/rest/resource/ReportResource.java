@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.Report;
 import edu.usu.sdl.openstorefront.storage.model.ReportFormat;
 import edu.usu.sdl.openstorefront.storage.model.ReportType;
-import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
@@ -107,11 +106,11 @@ public class ReportResource
 		queryByExample.setFirstResult(filterQueryParams.getOffset());
 		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
 
-		UserTracking userTrackingOrderExample = new UserTracking();
-		Field sortField = ReflectionUtil.getField(userTrackingOrderExample, filterQueryParams.getSortField());
+		Report reportSortExample = new Report();
+		Field sortField = ReflectionUtil.getField(reportSortExample, filterQueryParams.getSortField());
 		if (sortField != null) {
-			BeanUtil.setPropertyValue(sortField.getName(), userTrackingOrderExample, QueryByExample.getFlagForType(sortField.getType()));
-			queryByExample.setOrderBy(userTrackingOrderExample);
+			BeanUtil.setPropertyValue(sortField.getName(), reportSortExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(reportSortExample);
 		}
 
 		List<Report> reports = service.getPersistenceService().queryByExample(Report.class, queryByExample);
