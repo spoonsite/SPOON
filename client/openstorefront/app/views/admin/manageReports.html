@@ -32,13 +32,8 @@ limitations under the License.
 	</div>	
 	<tabset>
 		<tab heading="History">
-			<div>	
-				<br>	
-				<button class="btn btn-default" ng-click="refreshReports()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
-			</div>				
-			
+      <filterquery data="reports" url="api/v1/resource/reports" sort-by="createDts" type="default" set-features="pagination.features" control="pagination.control"></filterquery>
 			<table class="table table-striped table-bordered admin-table">
-
 				<tr>
 					<th><a href="" ng-click="setPredicate('reportTypeDescription', 'report');">Report <span ng-show="predicate['report'] === 'reportTypeDescription'"><i ng-show="!reverse['report'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['report']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 					<th><a href="" ng-click="setPredicate('reportFormatDescription', 'report');">Format <span ng-show="predicate['report'] === 'reportFormatDescription'"><i ng-show="!reverse['report'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['report']" class="fa fa-sort-alpha-desc"></i></span></a></th>
@@ -49,7 +44,7 @@ limitations under the License.
 					<th>Options</th>
 					<th>Action</th>
 				</tr>
-				<tr ng-repeat="report in reports | orderBy:predicate['report']:reverse['report']" >
+				<tr ng-repeat="report in reports.data" >
 					<td><a href="" ng-click="download(report);">{{report.reportTypeDescription}}</a></td>
 					<td>{{report.reportFormatDescription}}</td>					
 					<td align="center" class="runstatus-{{report.runStatus}}">{{report.runStatusDescription}}</td>

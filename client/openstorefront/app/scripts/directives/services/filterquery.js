@@ -36,11 +36,14 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       max: '@',
       sortBy: '@',
       data: '=',
-      features: '&',
-      contro: '='
+      setFeatures: '=',
+      control: '='
     },
     link: function postLink(scope, element, attrs) {
       scope.defaultMax = 50;
+      scope.setFeatures = scope.setFeatures || {'dates': true, 'max': true};
+      console.log('setFeatures', scope.setFeatures);
+      
       scope.defaultMax = scope.max? parseInt(scope.max): 50;
       scope.today = new Date();
       scope.query = {};
@@ -55,7 +58,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       scope.showPagination = true;
       scope.maxResults;
       scope.maxPerPage;
-      scope.query.filterObj.sortField = 'eventDts';
+      scope.query.filterObj.sortField = scope.sortyBy || 'eventDts';
       scope.query.filterObj.sortOrder = 'DESC';
       scope.popover = {
         "title": "Additional filters"
@@ -97,6 +100,8 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
             scope.data = [];
           }); 
         }else {
+          console.log('Query filter object', query);
+          
           Business.get(query).then(function(result){
             console.log('data', result);
             scope.backupResult = result;
@@ -221,17 +226,14 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         return utils.getDate(d);
       }
 
-      scope.$watch('sortBy', function(){
-        if (scope.sortBy) {
-          console.log('SortByTriggered');
-          scope.changeSortOrder(scope.sortBy);
-        }
-      })
-
       scope.internalControl = scope.control || {};
       scope.internalControl.refresh = function(){
         return scope.sendRequest();
       }
+      scope.internalControl.changeSortOrder = function(field){
+        scope.changeSortOrder(field);
+      }
+      scope.control = scope.internalControl;
     }
   };
 }]);
