@@ -213,33 +213,30 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   };
 
   // This function builds the typeahead options.
-  business.typeahead = function(collection, pluckItem) {
+  business.typeahead = function(search) {
     var deferred = $q.defer();
     // lets refresh the typeahead every 15 min until we actually get this
     // working with a http request upon user interaction.
-    var result = checkExpire('typeahead', minute * 15);
-    if (result) {
-      deferred.resolve(result);
-    } else{
-      if (!collection) {
-        deferred.reject('We broke it!');
-      } else {
-        if (pluckItem !== undefined && pluckItem !== null) {
-          collection = _.pluck(collection, pluckItem);
-          if (collection && isNotRequestError(collection)) {
-            removeError();
-            save('typeahead', collection);
-            deferred.resolve(collection);
-          } else {
-            removeError();
-            triggerError(collection);
-            deferred.reject('We need a new target in order to refresh the data');
-          }
-        } else if (isNotRequestError(collection)) {
-          save('typeahead', collection);
-          deferred.resolve(collection);
+    if (!search) {
+      deferred.reject('There was no search');
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/components/typeahead',
+        'params': {'search': search}
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject('There was an error grabbing the typeahead');
         }
-      }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error grabbing the typeahead');
+      });
     }
     return deferred.promise;
   };

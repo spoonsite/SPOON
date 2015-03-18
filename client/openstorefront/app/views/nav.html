@@ -91,7 +91,7 @@
             <button type="submit" class="btn btn-warning pull-right"><i class="fa fa-search"></i></button>
           </div>
           <div class="navSearchBar">
-            <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" ng-options="key.name as key.name for key in typeahead" placeholder="New Search" bs-typeahead>
+            <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" ng-options="key as key.description for key in typeahead" placeholder="New Search" bs-typeahead>
           </div>
         </form>
       </div>

@@ -59,6 +59,7 @@ import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -90,6 +91,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -196,6 +198,21 @@ public class ComponentRESTResource
 		ComponentAdminWrapper componentAdminWrapper = service.getComponentService().getFilteredComponents(filterQueryParams, null);
 		
 		return sendSingleEntityResponse(componentAdminWrapper);
+	}
+
+	@GET
+	@APIDescription("Get a list of all components from search query")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Component.class)
+	@Path("/typeahead")
+	public Set<LookupModel> getTypeahead(
+			@QueryParam("search")
+			@RequiredParam String search)
+	{
+		TextSanitizer sanitizer = new TextSanitizer();
+		search = (String) sanitizer.santize(search);
+		Set<LookupModel> lookups = service.getComponentService().getTypeahead(search);
+		return lookups;
 	}
 
 	@GET
