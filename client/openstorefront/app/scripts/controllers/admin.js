@@ -65,7 +65,11 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   $scope.editor = function(branch, tree, otherTree) {
     $scope.incLoc = branch.location;
     $scope.toolTitle = branch.toolTitle;
-    $scope.detailedDesc = branch.detailedDesc;    
+    $scope.detailedDesc = branch.detailedDesc;
+    if (branch.toolTitle !== 'Manage Articles') {
+      $scope.type = null;
+      $scope.code = null;
+    }
     tree.selectBranch(branch);
     otherTree.selectBranch(branch);
   };
@@ -105,7 +109,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     var branch = checkCollection($scope.data, 0, 'landing');
     $scope.type = type;
     $scope.code = code;
-    $scope.editor(branch);
+    $scope.editor(branch, $scope.myTree);
   };
 
   /***************************************************************
@@ -293,7 +297,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       'detailedDesc': "A user profile represents a user in the system and contains the user's information.",
       'key': 'USER_PROFILE' 
     });
-   
+
 
     $scope.systemTools.push({
       'label': 'Alerts', 

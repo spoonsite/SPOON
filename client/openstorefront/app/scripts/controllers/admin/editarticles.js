@@ -16,9 +16,12 @@
 
 'use strict';
 
-app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeout', function ($scope, Business, $uiModal, $timeout) {
+app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeout', '$q', function ($scope, Business, $uiModal, $timeout, $q) {
   $scope.type = $scope.$parent.type || null;
   $scope.code = $scope.$parent.code || null;
+  console.log('type', $scope.type);
+  console.log('code', $scope.code);
+  
   $scope.attributeType = {};
   $scope.attributeCode = {};
   $scope.codes = {};
@@ -62,13 +65,17 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.getAttributes(true);
 
   $scope.getArticles = function(override){
+    var deferred = $q.defer();
     Business.articleservice.getArticles(override, true).then(function(result){
       $scope.articles = result? angular.copy(result): [];
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
+      deferred.resolve();
     }, function(){
       $scope.articles = [];
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
+      deferred.resolve();
     })
+    return deferred.promise;
   }
   $scope.getArticles(true);
 
@@ -113,6 +120,38 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       article = found;
     }
     $scope.editContent(article);
+  }
+  
+  $scope.activateCode = function(article){
+    if (article && article.attributeType && article.attributeCode) {
+      var message = "Warning: You are about to change the active status of an Attribute Code. This will activate or deactivate the code and all related metadata. Continue?";
+      var cont = confirm();
+      if (cont) {
+        if (article.activeStatus === 'A') {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
+          Business.articleservice.activateCode(articleattributeType, article.attributeCode).then(function(){
+            $timeout(function(){
+              $scope.getArticles(true);
+            }, 1000);
+          }, function(){
+            $timeout(function(){
+              $scope.getArticles(true);
+            }, 1000);
+          })
+        } else {
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
+          Business.articleservice.deactivateCode(articleattributeType, article.attributeCode).then(function(){
+            $timeout(function(){
+              $scope.getArticles(true);
+            }, 1000);
+          }, function(){
+            $timeout(function(){
+              $scope.getArticles(true);
+            }, 1000);
+          })
+        }
+      }
+    }
   }
 
   $scope.importFile = function(){
@@ -162,7 +201,20 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   }
 
   if ($scope.type && $scope.code) {
-    $scope.editContent($scope.type, $scope.code);
+    $scope.getArticles().then(function(){
+      console.log('$scope.articles', $scope.articles);
+      var article = _.find($scope.articles, {'attributeCode': $scope.code, 'attributeType': $scope.type});
+      if (article) {
+        $scope.editContent(article);
+      } else {
+        $scope.editContent({
+          attributeCode: $scope.attributeCode.code,
+          attributeType: $scope.attributeType.type,
+          description: '',
+          title: '',
+        });
+      }
+    })
   }
 
 
@@ -191,7 +243,7 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
       });
       popupWin = utils.openWindow(url, 'Aritlce_Preview_' + $scope.article.attributeType + $scope.article.attributeCode, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', popupWin, 'articleEditModal');
     }, function(){
-      
+
     })
   }
 

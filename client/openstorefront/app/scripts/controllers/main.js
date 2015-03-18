@@ -39,16 +39,16 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     $scope.componentCount = result? result: 0;
   });
 
-  Business.getFilters().then(function(result){
-    if (result) {
-      $scope.filters = result;
-      $scope.filters    = _.filter($scope.filters, function(item) {
-        return item.showOnFront;
-      });
-    } else {
-      $scope.filters = null;
-    }
-  });
+  // Business.getFilters().then(function(result){
+  //   if (result) {
+  //     $scope.filters = result;
+  //     $scope.filters    = _.filter($scope.filters, function(item) {
+  //       return item.showOnFront;
+  //     });
+  //   } else {
+  //     $scope.filters = null;
+  //   }
+  // });
 
   Business.highlightservice.getHighlights().then(function(result){
     if (result) {

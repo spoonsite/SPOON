@@ -53,6 +53,7 @@ public class ArticleView
 	private String codeDescription;
 	private String typeLongDescription;
 	private String codeLongDescription;
+	private String attributeCodeActiveStatus;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -83,7 +84,8 @@ public class ArticleView
 
 		articleView.setCodeDescription(attributeCode.getLabel());
 		articleView.setCodeLongDescription(attributeCode.getDescription());
-
+		articleView.setAttributeCodeActiveStatus(attributeCode.getActiveStatus());
+		
 		AttributeType type = service.getPersistenceService().findById(AttributeType.class, attributeCode.getAttributeCodePk().getAttributeType());
 		if (type != null) {
 			articleView.setTypeDescription(type.getDescription());
@@ -291,6 +293,22 @@ public class ArticleView
 		catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to import component. Data could not be real", ex);
 		}
+	}
+
+	/**
+	 * @return the attributeCodeActiveStatus
+	 */
+	public String getAttributeCodeActiveStatus()
+	{
+		return attributeCodeActiveStatus;
+	}
+
+	/**
+	 * @param attributeCodeActiveStatus the attributeCodeActiveStatus to set
+	 */
+	public void setAttributeCodeActiveStatus(String attributeCodeActiveStatus)
+	{
+		this.attributeCodeActiveStatus = attributeCodeActiveStatus;
 	}
 
 }
