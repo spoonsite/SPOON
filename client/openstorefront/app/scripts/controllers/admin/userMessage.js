@@ -27,20 +27,35 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
   $scope.queryFilter.status = $scope.statusFilterOptions[0].code;
   $scope.predicate = [];
   $scope.reverse = [];  
+
+  $scope.pagination = {};
+  $scope.pagination.control;
+  $scope.pagination.features = {'dates': true, 'max': true};  
   
-  $scope.setPredicate = function(predicate, table){
-    if ($scope.predicate[table] === predicate){
+  $scope.setPredicate = function (predicate, table) {
+    if ($scope.predicate[table] === predicate) {
       $scope.reverse[table] = !$scope.reverse[table];
     } else {
       $scope.predicate[table] = predicate;
       $scope.reverse[table] = false;
     }
-  };  
+    if (table === 'userM') {
+      $scope.pagination.control.changeSortOrder(predicate);
+    }
+  }; 
   
-  $scope.deleteUserMessage = function(username, userMessageId){     
-    var response = window.confirm("Are you sure you want to delete this message for " + username + " ?");
+  $scope.showMessage = function(message){
+     if (message.details) {
+       message.details = !message.details;
+     } else {
+       message.details = true;
+     }     
+  };
+  
+  $scope.deleteUserMessage = function(message){     
+    var response = window.confirm("Are you sure you want to delete this message for " + (message.username ? message.username : message.emailAddress) + " ?");
     if (userMessageId && response){
-      Business.userservice.removeUserMessages(userMessageId).then(function(results){
+      Business.userservice.removeUserMessages(message.userMessageId).then(function(results){
         $scope.refreshData();          
       });
     }

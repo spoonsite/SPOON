@@ -1,22 +1,35 @@
 <h3 style="margin-left:15px;">Filter options</h3>
-<div class="form-group col-xs-12">
-  <label class="control-label">Max # of results per page <small>(Defaults to {{defaultMax}})</small></label><br>
-  <input ng-disable="maxResults" type="number" class="form-control" ng-model="maxPerPage" ng-change="setPageMax(maxPerPage);" placeholder="Max" max="10000">
-</div>
-<div class="form-group col-xs-12">
-  <div class="form-group col-xs-12" style="padding-left:0px; padding-right:0px;">
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" ng-model="query.filterObj.all" ng-checked="query.filterObj.all"> Retrieve All Active and Inactive results
-      </label>
-    </div>
-    <label class="control-label"></label>
-  </div>
-  <div class="form-group col-xs-12" style="padding-left:0px; padding-right:0px;">
+<div class="form-group col-xs-12" style="padding-left:0px; padding-right:0px;">
     <label class="control-label">Select status</label>
     <select ng-disabled="query.filterObj.all" ng-model="query.filterObj.status">
-      <option value="A">Active Status</option>
-      <option value="I">Inactive Status</option>
+		<option value="A">Active Status</option>
+		<option value="I">Inactive Status</option>
     </select>
-  </div>
+</div>
+<div class="form-group col-xs-12"  ng-show="setFeatures && setFeatures.dates">
+	<label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i>&nbsp;Show date range</label><br>
+	<div class="form-group col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+		<input type="text" class="form-control" ng-model="query.filterObj.start" data-max-date="{{today}}" placeholder="From" bs-datepicker>
+	</div>
+	<div class="form-group col-xs-12"  style="padding-left: 0px; padding-right: 0px;" >
+		<input type="text" class="form-control" ng-model="query.filterObj.end" data-min-date="{{query.filterObj.start}}" data-max-date="{{today}}" placeholder="Until" bs-datepicker>
+	</div>
+</div>
+<div class="form-group col-xs-12"  ng-show="setFeatures && setFeatures.max">
+	<label class="control-label">Show # of results <small>(up to 10000 &mdash; removes paging)</small></label><br>
+	<input type="number" class="form-control" ng-model="maxResults" ng-change="checkMax();" placeholder="Max" max="10000">
+</div>
+<div class="form-group col-xs-12">
+	<label class="control-label">Max # of results per page <small>(Defaults to {{defaultMax}})</small></label><br>
+	<input ng-disable="maxResults" type="number" class="form-control" ng-model="maxPerPage" ng-change="setPageMax(maxPerPage);" placeholder="Max" max="10000">
+</div>
+<div class="form-group col-xs-12">
+	<div class="form-group col-xs-12" style="padding-left:0px; padding-right:0px;" ng-show="allowAllOption">
+		<div class="checkbox">
+			<label >
+				<input type="checkbox" ng-model="query.filterObj.all" ng-checked="query.filterObj.all" > Retrieve All Active and Inactive results
+			</label>
+		</div>
+		<label class="control-label"></label>
+	</div>
 </div>

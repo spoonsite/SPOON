@@ -36,7 +36,6 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
-import edu.usu.sdl.openstorefront.sort.UserMessageComparator;
 import edu.usu.sdl.openstorefront.storage.model.Alert;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
@@ -549,19 +548,6 @@ public class UserServiceImpl
 			userMessage.populateBaseCreateFields();
 			persistenceService.persist(userMessage);
 		}
-	}
-
-	@Override
-	public List<UserMessage> findUserMessages(FilterQueryParams filter)
-	{
-		UserMessage userMessageExample = new UserMessage();
-		userMessageExample.setActiveStatus(filter.getStatus());
-
-		List<UserMessage> userMessages = persistenceService.queryByExample(UserMessage.class, userMessageExample);
-		filter.setSortField(null);
-		userMessages = filter.filter(userMessages);
-		userMessages.sort(new UserMessageComparator<>());
-		return userMessages;
 	}
 
 	@Override
