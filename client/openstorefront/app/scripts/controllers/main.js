@@ -30,23 +30,11 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.openAdminMessage = $rootScope.openAdminMessage;
   $scope.appverison = '';
 
-  // $scope.type = 'group';
-  // $scope.contacts = {
-  //   'code': "DEV",
-  //   'description': "Developer"
-  // }
-  // $scope.subject = 'This is a test';
-  // $scope.message = 'This is the test message';
-  // Business.userservice.getAllUserProfiles().then(function(result) {
-  //   $scope.type = 'users';
-  //   var newList = result;
-  //   $scope.contacts = newList;
-  // })
-  
+
   Business.systemservice.getAppVersion().then(function(result){
     $scope.appverison = result;
   });  
-  
+
   Business.componentservice.getCount().then(function(result){
     $scope.componentCount = result? result: 0;
   });
@@ -84,18 +72,20 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
     }
   });
 
-  Business.componentservice.getComponentList().then(function(result) {
-    // console.log('result', result);
-    
-    Business.typeahead(result, null).then(function(value){
-      if (value) {
-        $scope.typeahead = value;
-      } else {
-        $scope.typeahead = null;
-      }
-    });
-  });
+  $scope.getTypeahead = function(){
+    Business.typeahead($scope.searchKey).then(function(result){
+      $scope.typeahead = result || [];
+    }, function(){
+      $scope.typeahead = [];
+    })
+  }
 
+  $scope.$watch('searchKey', function(newValue, oldValue){
+    if ($scope.searchKey) {
+      $rootScope.searchKey = $scope.searchKey;
+      $scope.getTypeahead();
+    }
+  })
 
   //////////////////////////////////////////////////////////////////////////////
   // Event Watchers
@@ -105,6 +95,11 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   * Catch the enter/select event here
   ***************************************************************/
   $scope.$on('$typeahead.select', function(event, value, index) {
+    if (typeof value === 'object') {
+      value = '"' + value.description + '"';
+    }
+    $scope.searchKey = value;
+    $rootScope.searchKey = value;
     if (value !== undefined) {
       $scope.goToSearch('search', $scope.searchKey);
       $scope.$apply();
@@ -213,10 +208,6 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $rootScope.$watch('searchKey', function() {
     $scope.searchKey = $rootScope.searchKey;
   });
-  $scope.$watch('searchKey', function() {
-    $rootScope.searchKey = $scope.searchKey;
-  });
-
 
 
   // this calls the setup for the page-specific js

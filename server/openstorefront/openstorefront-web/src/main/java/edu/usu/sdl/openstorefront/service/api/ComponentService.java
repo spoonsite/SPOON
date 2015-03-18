@@ -47,8 +47,10 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingCompleteWrappe
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Services that handle all component classes
@@ -483,6 +485,13 @@ public interface ComponentService
 	 * @return 
 	 */
 	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId);
+
+	/**
+	 * 
+	 * @param search
+	 * @return 
+	 */
+	public Set<LookupModel> getTypeahead(String search);
 
 	
 }

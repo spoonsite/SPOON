@@ -51,7 +51,7 @@ var app = angular
 .filter('moment', function () {
   return function (input, momentFn) {
     var args = Array.prototype.slice.call(arguments, 2),
-        momentObj = moment(input);
+    momentObj = moment(input);
     return momentObj[momentFn].apply(momentObj, args);
   };
 })
@@ -289,12 +289,6 @@ var app = angular
       * This function is what is called when the view has finally been loaded
       ***************************************************************/
       $rootScope.$on('$viewContentLoaded', function() {
-        Business.componentservice.getComponentDetails().then(function(result) {
-          Business.typeahead(result, null).then(function(value){
-            $rootScope.typeahead = value;
-          });
-        });
-        
         $timeout(function() {
           $('[data-toggle=\'tooltip\']').tooltip();
         }, 300);
@@ -471,10 +465,10 @@ var app = angular
      /***************************************************************
              * This function removes all tooltip from the display 
              ***************************************************************/
-     $rootScope.removeAllTooltips = function () {
-       $('.popover').remove();
-     };
-      
+             $rootScope.removeAllTooltips = function () {
+               $('.popover').remove();
+             };
+
 
       /***************************************************************
       * This is a local function used in the httpBackend functions
