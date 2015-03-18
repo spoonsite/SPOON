@@ -3,13 +3,11 @@
 
 	<!-- Filter -->
 	<div>
-		Filter:
-		<select type="text" class="form-control"  ng-change="refreshData()" style="width:110px;display: inline" ng-model="queryFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>		
-		<button class="btn btn-default" ng-click="refreshData()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
-		<span style="position: absolute; right: 0px; padding-right: 20px;">
+		<span style="float: right">
 			<button class="btn btn-default" ng-click="removeAllTooltips(); processUserMessageNow()" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="" data-container="body" data-content="Processes all active message and sends them immediately">Process Now&nbsp;<i class="fa fa-bolt"></i></button>
 			<button class="btn btn-default" ng-click="removeAllTooltips(); cleanoldUserMessagesNow()" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="" data-container="body" data-content="Removes old archive message according to configuration (default is older than 28 days)">Cleanup Old Message Now&nbsp;<i class="fa fa-trash-o"></i></button>
-		</span>		
+		</span>			
+		<filterquery data="userMessages" url="api/v1/resource/usermessages" sort-by="updateDts" type="default" set-features="pagination.features" control="pagination.control" show-export="false" allow-all-option="false"></filterquery>			
 	</div>
 
 	<table class="table table-striped table-bordered">
@@ -19,22 +17,28 @@
 				<th><a href="" ng-click="setPredicate('componentId', 'userM');">Component Id / Alert Id <span ng-show="predicate['userM'] == 'componentId'"><i ng-show="!reverse['userM']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['userM']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th align="center"><a href="" ng-click="setPredicate('activeStatus', 'userM');">Status<span ng-show="predicate['userM'] == 'activeStatus'"><i ng-show="!reverse['userM']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['userM']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th><a href="" ng-click="setPredicate('updateDts', 'userM');">Update Date <span ng-show="predicate['userM'] == 'updateDts'"><i ng-show="!reverse['userM']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['userM']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-				<th><a href="" ng-click="setPredicate('subject', 'userM');">Subject <span ng-show="predicate['userM'] == 'subject'"><i ng-show="!reverse['userM']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['userM']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-				<th><a href="" ng-click="setPredicate('bodyOfMessage', 'userM');">Message <span ng-show="predicate['userM'] == 'bodyOfMessage'"><i ng-show="!reverse['userM']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['userM']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th><a href="" ng-click="setPredicate('subject', 'userM');">Subject <span ng-show="predicate['userM'] == 'subject'"><i ng-show="!reverse['userM']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['userM']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
 				<th><a href="" ng-click="setPredicate('sentEmailAddress', 'userM');">Sent Email Address <span ng-show="predicate['userM'] == 'sentEmailAddress'"><i ng-show="!reverse['userM']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['userM']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th>Action</th>
 
 			</tr>
-			<tr ng-repeat="message in userMessages | orderBy:predicate['userM']:reverse['userM']" >
+			<tr ng-repeat-start="message in userMessages.data" >
 				<td>{{message.username}} {{message.emailAddress}}</td>
 				<td>{{message.userMessageType}}</td>
 				<td>{{message.componentId}} {{message.alertId}}</td>
 				<td align="center">{{message.activeStatus}}</td>
 				<td>{{message.updateDts | date:'MM/dd/yyyy h:mm:ss a'}}</td>
-				<td>{{message.subject}}</td>
-				<td style="width: 350px;" ><p ng-bind-html="message.bodyOfMessage"></p></td>
+				<td>{{message.subject}}</td>				
 				<td>{{message.sentEmailAddress}}</td>
-				<td style="padding:0px;">&nbsp;<button class="btn btn-danger" ng-click="deleteUserMessage(message.username, message.userMessageId)">Delete&nbsp;<i class="fa fa-trash-o"></i></button></td>
+				<td style="padding:0px;">
+					&nbsp;<button class="btn btn-default" ng-click="showMessage(message)">View Message</button>
+					&nbsp;<button class="btn btn-danger" ng-click="deleteUserMessage(message)"><i class="fa fa-trash-o"></i></button>
+				</td>
+			</tr>
+			<tr ng-show="message.details" ng-repeat-end>
+				<td colspan="8">
+					<p ng-bind-html="message.bodyOfMessage"></p>
+				</td>				
 			</tr>
 	</table>
 

@@ -1,17 +1,5 @@
-<h3 style="margin-left:15px; margin-right:15px;" ng-show="setFeatures && (setFeatures.dates || setFeatures.max)">Select options <span class="pull-right"> <a ng-href="{{generateDownloadLink()}}" class="btn btn-default">Export&nbsp;<i class="fa fa-sign-out"></i></a></span></h3>
-<div class="form-group col-xs-6" style="padding-left:0px;" ng-show="setFeatures && setFeatures.dates">
-  <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i>&nbsp;Show date range</label><br>
-  <div class="form-group col-xs-6" style="padding-left:0px; padding-right:0px;">
-    <input type="text" class="form-control" ng-model="query.filterObj.start" data-max-date="{{today}}" placeholder="From" bs-datepicker>
-  </div>
-  <div class="form-group col-xs-6" style="padding-left:0px; padding-right:0px;">
-    <input type="text" class="form-control" ng-model="query.filterObj.end" data-min-date="{{query.filterObj.start}}" data-max-date="{{today}}" placeholder="Until" bs-datepicker>
-  </div>
-</div>
-<div class="form-group col-xs-6"  style="padding-left:0px;" ng-show="setFeatures && setFeatures.max">
-  <label class="control-label">Show # of results <small>(up to 10000 &mdash; removes paging)</small></label><br>
-  <input type="number" class="form-control" ng-model="maxResults" ng-change="checkMax();" placeholder="Max" max="10000">
-</div>
+<span class="pull-right"> <a ng-href="{{generateDownloadLink()}}" class="btn btn-default" ng-show="showExport">Export&nbsp;<i class="fa fa-sign-out"></i></a></span>
+
 <div style="clear:both;">
   <button style="display:inline-block;" class="btn btn-default" ng-click="sendRequest()">Apply Changes <small>(<i class="fa fa-refresh"></i>&nbsp;refresh results)</small>&nbsp;<i class="fa fa-search"></i></button>
   <button style="display:inline-block;" class="btn btn-default" ng-click="clearSort();">Clear Sort&nbsp;<span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">

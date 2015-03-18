@@ -88,9 +88,9 @@ public class UserDataAlertMessageGenerator
 			}
 			for (ComponentTag tag : tags) {
 				message.append("   '").append(tag.getText())
-						.append("' added on  ")
+						.append("' was added on  ")
 						.append(serviceProxy.getComponentService().getComponentName(tag.getComponentId()))
-						.append("' by ").append(tag.getUpdateUser())
+						.append(" by ").append(tag.getUpdateUser())
 						.append("<br>");
 			}
 			if (!tags.isEmpty()) {

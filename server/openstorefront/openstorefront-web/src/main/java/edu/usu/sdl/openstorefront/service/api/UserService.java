@@ -116,10 +116,10 @@ public interface UserService
 	/**
 	 * @param filter
 	 * @param userId
-	 * @return 
+	 * @return
 	 */
 	public UserTrackingResult getUserTracking(FilterQueryParams filter, String userId);
-	
+
 	/**
 	 *
 	 * @param watch
@@ -250,14 +250,6 @@ public interface UserService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void queueUserMessage(UserMessage userMessage);
-
-	/**
-	 * Finds the messages based on filter
-	 *
-	 * @param filter
-	 * @return
-	 */
-	public List<UserMessage> findUserMessages(FilterQueryParams filter);
 
 	/**
 	 * This will inactivate a user message
