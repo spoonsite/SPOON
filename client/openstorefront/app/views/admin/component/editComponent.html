@@ -623,10 +623,11 @@ limitations under the License.
           <td style="width: 100px; padding: 3px 3px !important;">
             <input  type="text" 
             name="score"
+            id="evaluationSectionScore"
             ng-disabled="section.notAvailable"
             class="form-control"							
             ng-model="section.actualScore" 
-            onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+            onkeypress='return !((event.charCode != 46 || $(this).val().indexOf(".") != -1) && (event.charCode < 48 || event.charCode > 57))'
             ng-blur="checkEvalScore(section);"
             max=5
             min=1
