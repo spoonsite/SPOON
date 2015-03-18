@@ -14,7 +14,7 @@
         </tr>
         <tr data-ng-repeat="row in details.details.evaluation.evaluationSections | partition:2">
           <td data-ng-repeat="col in row" class="valign" style="padding: 0px;">
-            <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" >
+            <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" data-toggle="tooltip" data-placement="bottom" data-title="{{col.actualScore}}" data-trigger="hover">
               <i ng-if="!col.notAvailable && col.actualScore > 0" ng-repeat="t in getTimes(col.actualScore) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
               </i>
               <span ng-if="!col.notAvailable && col.actualScore <= 0">&nbsp;</span>
