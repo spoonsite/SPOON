@@ -33,7 +33,7 @@ describe('SvcV-4_button from the home page', function() {
 
         // Click Expand All, Collapse All
         element.all(by.css('.btn.btn-default')).get(0).click();
-        expect(element.all(by.css('.indented.tree-icon.fa.fa-minus')).count()).toEqual(123);
+        expect(element.all(by.css('.indented.tree-icon.fa.fa-minus')).count()).toEqual(70);
         element.all(by.css('.btn.btn-default')).get(1).click();
         expect(element.all(by.css('.indented.tree-icon.fa.fa-minus')).count()).toEqual(0);
     }, 63000);
