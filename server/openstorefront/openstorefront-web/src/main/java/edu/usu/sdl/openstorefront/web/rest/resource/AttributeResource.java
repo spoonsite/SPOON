@@ -722,7 +722,7 @@ public class AttributeResource
 
 		TaskRequest taskRequest = new TaskRequest();
 		taskRequest.setAllowMultiple(false);
-		taskRequest.setName("Inactivate Attribute Dode");
+		taskRequest.setName("Inactivate Attribute Code");
 		service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeCode(attributeCodePk);
 	}
 

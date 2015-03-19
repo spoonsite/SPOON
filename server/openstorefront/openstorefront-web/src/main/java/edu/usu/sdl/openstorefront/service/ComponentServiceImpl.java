@@ -165,8 +165,7 @@ public class ComponentServiceImpl
 			baseComponentExample.setComponentId(componentId);
 			baseComponentExample.setActiveStatus(activeStatus);
 			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
-		}
-		catch (InstantiationException | IllegalAccessException ex) {
+		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 	}
@@ -287,8 +286,7 @@ public class ComponentServiceImpl
 			if (updateComponentActivity) {
 				updateComponentLastActivity(componentId);
 			}
-		}
-		catch (InstantiationException | IllegalAccessException ex) {
+		} catch (InstantiationException | IllegalAccessException ex) {
 			Logger.getLogger(ComponentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
@@ -336,8 +334,7 @@ public class ComponentServiceImpl
 		Element element = OSFCacheManager.getComponentLookupCache().get(componentId);
 		if (element != null) {
 			componentName = (String) element.getObjectValue();
-		}
-		else {
+		} else {
 			String query = "select componentId, name from " + Component.class.getSimpleName();
 			List<ODocument> documents = persistenceService.query(query, null);
 			documents.forEach(document -> {
@@ -370,8 +367,7 @@ public class ComponentServiceImpl
 			if (attributeMaps.containsKey(attribute.getComponentAttributePk().getComponentId())) {
 				List<ComponentAttribute> attributes = attributeMaps.get(attribute.getComponentAttributePk().getComponentId());
 				attributes.add(attribute);
-			}
-			else {
+			} else {
 				List<ComponentAttribute> attributes = new ArrayList<>();
 				attributes.add(attribute);
 				attributeMaps.put(attribute.getComponentAttributePk().getComponentId(), attributes);
@@ -415,8 +411,7 @@ public class ComponentServiceImpl
 		Component tempParentComponent;
 		if (tempComponent.getParentComponentId() != null) {
 			tempParentComponent = persistenceService.findById(Component.class, tempComponent.getParentComponentId());
-		}
-		else {
+		} else {
 			tempParentComponent = new Component();
 		}
 		result.setComponentDetails(tempComponent, tempParentComponent);
@@ -534,8 +529,7 @@ public class ComponentServiceImpl
 				oldAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 				oldAttribute.populateBaseUpdateFields();
 				persistenceService.persist(oldAttribute);
-			}
-			else {
+			} else {
 				if (type.getAllowMultipleFlg() == false) {
 					ComponentAttribute example = new ComponentAttribute();
 					example.setComponentAttributePk(new ComponentAttributePk());
@@ -553,8 +547,7 @@ public class ComponentServiceImpl
 				updateComponentLastActivity(attribute.getComponentAttributePk().getComponentId());
 			}
 
-		}
-		else {
+		} else {
 			StringBuilder error = new StringBuilder();
 			if (type == null) {
 				error.append("Attribute type not found.  Type: ").append(attribute.getComponentAttributePk().getAttributeType());
@@ -580,8 +573,7 @@ public class ComponentServiceImpl
 			OSFCacheManager.getComponentLookupCache().remove(componentId);
 			getUserService().checkComponentWatches(component);
 			getSearchService().addIndex(persistenceService.findById(Component.class, componentId));
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Component not found to update last Activity", "Check component Id: " + componentId);
 		}
 	}
@@ -606,8 +598,7 @@ public class ComponentServiceImpl
 			oldContact.setUpdateDts(TimeUtil.currentDate());
 			oldContact.setUpdateUser(contact.getUpdateUser());
 			persistenceService.persist(oldContact);
-		}
-		else {
+		} else {
 			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 			contact.setContactId(persistenceService.generateId());
 			contact.setCreateDts(TimeUtil.currentDate());
@@ -638,8 +629,7 @@ public class ComponentServiceImpl
 			oldDependency.setUpdateDts(TimeUtil.currentDate());
 			oldDependency.setUpdateUser(dependency.getUpdateUser());
 			persistenceService.persist(oldDependency);
-		}
-		else {
+		} else {
 			dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
 			dependency.setDependencyId(persistenceService.generateId());
 			dependency.setCreateDts(TimeUtil.currentDate());
@@ -679,8 +669,7 @@ public class ComponentServiceImpl
 			oldSection.setUpdateDts(TimeUtil.currentDate());
 			oldSection.setUpdateUser(section.getUpdateUser());
 			persistenceService.persist(oldSection);
-		}
-		else {
+		} else {
 			section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
 			section.setCreateDts(TimeUtil.currentDate());
 			section.setUpdateDts(TimeUtil.currentDate());
@@ -707,8 +696,7 @@ public class ComponentServiceImpl
 				oldMedia.setFileName(null);
 				oldMedia.setOriginalName(null);
 				oldMedia.setMimeType(null);
-			}
-			else {
+			} else {
 				oldMedia.setFileName(media.getFileName());
 				oldMedia.setOriginalName(media.getOriginalName());
 				oldMedia.setMimeType(media.getMimeType());
@@ -721,8 +709,7 @@ public class ComponentServiceImpl
 			oldMedia.setUpdateUser(media.getUpdateUser());
 			persistenceService.persist(oldMedia);
 			media = oldMedia;
-		}
-		else {
+		} else {
 			media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			media.setComponentMediaId(persistenceService.generateId());
 			media.setCreateDts(TimeUtil.currentDate());
@@ -752,8 +739,7 @@ public class ComponentServiceImpl
 			oldMetadata.setUpdateDts(TimeUtil.currentDate());
 			oldMetadata.setUpdateUser(metadata.getUpdateUser());
 			persistenceService.persist(oldMetadata);
-		}
-		else {
+		} else {
 			metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 			metadata.setMetadataId(persistenceService.generateId());
 			metadata.setCreateDts(TimeUtil.currentDate());
@@ -783,8 +769,7 @@ public class ComponentServiceImpl
 			oldQuestion.populateBaseUpdateFields();
 			persistenceService.persist(oldQuestion);
 			question = oldQuestion;
-		}
-		else {
+		} else {
 			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 			question.setQuestionId(persistenceService.generateId());
 			question.populateBaseCreateFields();
@@ -815,8 +800,7 @@ public class ComponentServiceImpl
 			oldResponse.populateBaseUpdateFields();
 			persistenceService.persist(oldResponse);
 			response = oldResponse;
-		}
-		else {
+		} else {
 			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			response.setResponseId(persistenceService.generateId());
 			response.populateBaseCreateFields();
@@ -845,8 +829,7 @@ public class ComponentServiceImpl
 				oldResource.setFileName(null);
 				oldResource.setOriginalName(null);
 				oldResource.setMimeType(null);
-			}
-			else {
+			} else {
 				oldResource.setFileName(resource.getFileName());
 				oldResource.setOriginalName(resource.getOriginalName());
 				oldResource.setMimeType(resource.getMimeType());
@@ -861,8 +844,7 @@ public class ComponentServiceImpl
 			oldResource.setUpdateUser(resource.getUpdateUser());
 			persistenceService.persist(oldResource);
 			resource = oldResource;
-		}
-		else {
+		} else {
 			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 			resource.setResourceId(persistenceService.generateId());
 			resource.setCreateDts(TimeUtil.currentDate());
@@ -898,8 +880,7 @@ public class ComponentServiceImpl
 			oldReview.populateBaseUpdateFields();
 			persistenceService.persist(oldReview);
 			review = oldReview;
-		}
-		else {
+		} else {
 			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			review.setComponentReviewId(persistenceService.generateId());
 			review.populateBaseCreateFields();
@@ -926,8 +907,7 @@ public class ComponentServiceImpl
 			oldCon.setUpdateDts(TimeUtil.currentDate());
 			oldCon.setUpdateUser(con.getUpdateUser());
 			persistenceService.persist(oldCon);
-		}
-		else {
+		} else {
 			con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 			con.setCreateDts(TimeUtil.currentDate());
 			con.setUpdateDts(TimeUtil.currentDate());
@@ -953,8 +933,7 @@ public class ComponentServiceImpl
 			oldPro.setUpdateDts(TimeUtil.currentDate());
 			oldPro.setUpdateUser(pro.getUpdateUser());
 			persistenceService.persist(oldPro);
-		}
-		else {
+		} else {
 			pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 			pro.setCreateDts(TimeUtil.currentDate());
 			pro.setUpdateDts(TimeUtil.currentDate());
@@ -982,8 +961,7 @@ public class ComponentServiceImpl
 			oldTag.populateBaseUpdateFields();
 			persistenceService.persist(oldTag);
 			tag = oldTag;
-		}
-		else {
+		} else {
 			tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 			tag.setTagId(persistenceService.generateId());
 			tag.populateBaseCreateFields();
@@ -1018,8 +996,7 @@ public class ComponentServiceImpl
 			oldTracking.setRestrictedResouce(tracking.getRestrictedResouce());
 			oldTracking.populateBaseUpdateFields();
 			persistenceService.persist(oldTracking);
-		}
-		else {
+		} else {
 			tracking.populateBaseCreateFields();
 			tracking.setComponentTrackingId(persistenceService.generateId());
 			persistenceService.persist(tracking);
@@ -1057,8 +1034,7 @@ public class ComponentServiceImpl
 						}
 						oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
 						oldComponent.setApprovedDts(component.getComponent().getApprovedDts());
-					}
-					else if (OpenStorefrontConstant.ComponentApprovalStatus.A.name().equals(oldComponent.getApprovalState())
+					} else if (OpenStorefrontConstant.ComponentApprovalStatus.A.name().equals(oldComponent.getApprovalState())
 							&& OpenStorefrontConstant.ComponentApprovalStatus.P.name().equals(component.getComponent().getApprovalState())) {
 						oldComponent.setApprovalState(component.getComponent().getApprovalState());
 						oldComponent.setApprovedUser(null);
@@ -1086,8 +1062,7 @@ public class ComponentServiceImpl
 				});
 				component.setAttributeChanged(handleBaseComponetSave(ComponentAttribute.class, component.getAttributes(), oldComponent.getComponentId()));
 
-			}
-			else {
+			} else {
 
 				if (StringUtils.isBlank(component.getComponent().getComponentId())) {
 					component.getComponent().setComponentId(persistenceService.generateId());
@@ -1118,8 +1093,7 @@ public class ComponentServiceImpl
 				});
 				component.setAttributeChanged(true);
 			}
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
 		return component;
@@ -1194,8 +1168,7 @@ public class ComponentServiceImpl
 			requiredForComponent = doSaveComponent(requiredForComponent);
 			lockSwitch.setSwitched(requiredForComponent.isComponentChanged());
 			lockSwitch.setSwitched(requiredForComponent.isAttributeChanged());
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
 
@@ -1281,44 +1254,31 @@ public class ComponentServiceImpl
 				changed = true;
 				if (baseComponent instanceof ComponentContact) {
 					saveComponentContact((ComponentContact) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentAttribute) {
+				} else if (baseComponent instanceof ComponentAttribute) {
 					saveComponentAttribute((ComponentAttribute) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentEvaluationSection) {
+				} else if (baseComponent instanceof ComponentEvaluationSection) {
 					saveComponentEvaluationSection((ComponentEvaluationSection) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentExternalDependency) {
+				} else if (baseComponent instanceof ComponentExternalDependency) {
 					saveComponentDependency((ComponentExternalDependency) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentMedia) {
+				} else if (baseComponent instanceof ComponentMedia) {
 					saveComponentMedia((ComponentMedia) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentMetadata) {
+				} else if (baseComponent instanceof ComponentMetadata) {
 					saveComponentMetadata((ComponentMetadata) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentResource) {
+				} else if (baseComponent instanceof ComponentResource) {
 					saveComponentResource((ComponentResource) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentTag) {
+				} else if (baseComponent instanceof ComponentTag) {
 					doSaveComponentTag((ComponentTag) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentQuestion) {
+				} else if (baseComponent instanceof ComponentQuestion) {
 					saveComponentQuestion((ComponentQuestion) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentQuestionResponse) {
+				} else if (baseComponent instanceof ComponentQuestionResponse) {
 					saveComponentQuestionResponse((ComponentQuestionResponse) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentReview) {
+				} else if (baseComponent instanceof ComponentReview) {
 					saveComponentReview((ComponentReview) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentReviewPro) {
+				} else if (baseComponent instanceof ComponentReviewPro) {
 					saveComponentReviewPro((ComponentReviewPro) baseComponent, false);
-				}
-				else if (baseComponent instanceof ComponentReviewCon) {
+				} else if (baseComponent instanceof ComponentReviewCon) {
 					saveComponentReviewCon((ComponentReviewCon) baseComponent, false);
-				}
-				else {
+				} else {
 					throw new OpenStorefrontRuntimeException("Save not supported for this base component: " + baseComponent.getClass().getName(), "Add support (Developement task)");
 				}
 			}
@@ -1333,12 +1293,10 @@ public class ComponentServiceImpl
 					if (pkField != null) {
 						pkField.setAccessible(true);
 						deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
-					}
-					else {
+					} else {
 						throw new OpenStorefrontRuntimeException("Unable to find PK field on entity.", "Check enity: " + oldEnity.getClass().getName());
 					}
-				}
-				catch (IllegalArgumentException | IllegalAccessException ex) {
+				} catch (IllegalArgumentException | IllegalAccessException ex) {
 					throw new OpenStorefrontRuntimeException(ex);
 				}
 				changed = true;
@@ -1360,8 +1318,7 @@ public class ComponentServiceImpl
 				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {
 					try {
 						deleteBaseComponent((BaseComponent) entityClass.newInstance(), componentId);
-					}
-					catch (InstantiationException | IllegalAccessException ex) {
+					} catch (InstantiationException | IllegalAccessException ex) {
 						throw new OpenStorefrontRuntimeException("Class is not a base component class: " + entityClass.getName(), "Check class");
 					}
 				}
@@ -1439,8 +1396,7 @@ public class ComponentServiceImpl
 			Files.copy(in, media.pathToMedia());
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveComponentMedia(media);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 	}
@@ -1459,8 +1415,7 @@ public class ComponentServiceImpl
 			Files.copy(in, resource.pathToResource());
 			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveComponentResource(resource);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store resource file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
 	}
@@ -1477,8 +1432,7 @@ public class ComponentServiceImpl
 			watch.setLastViewDts(TimeUtil.currentDate());
 			persistenceService.persist(watch);
 			return Boolean.TRUE;
-		}
-		else {
+		} else {
 			return Boolean.FALSE;
 		}
 	}
@@ -1513,12 +1467,10 @@ public class ComponentServiceImpl
 				proCode = getLookupService().getLookupEnityByDesc(ReviewPro.class, reviewPro.getComponentReviewProPk().getReviewPro());
 				if (proCode == null) {
 					reviewPro.getComponentReviewProPk().setReviewPro(null);
-				}
-				else {
+				} else {
 					reviewPro.getComponentReviewProPk().setReviewPro(proCode.getCode());
 				}
-			}
-			else {
+			} else {
 				reviewPro.getComponentReviewProPk().setReviewPro(proCode.getCode());
 			}
 			validationModel = new ValidationModel(reviewPro);
@@ -1533,12 +1485,10 @@ public class ComponentServiceImpl
 				conCode = getLookupService().getLookupEnityByDesc(ReviewCon.class, reviewCon.getComponentReviewConPk().getReviewCon());
 				if (conCode == null) {
 					reviewCon.getComponentReviewConPk().setReviewCon(null);
-				}
-				else {
+				} else {
 					reviewCon.getComponentReviewConPk().setReviewCon(conCode.getCode());
 				}
-			}
-			else {
+			} else {
 				reviewCon.getComponentReviewConPk().setReviewCon(conCode.getCode());
 			}
 			validationModel = new ValidationModel(reviewCon);
@@ -1609,25 +1559,21 @@ public class ComponentServiceImpl
 			String jiraValue = null;
 			if (STATUS_FIELD.equals(xrefAttributeType.getFieldName())) {
 				jiraValue = issue.getStatus().getName();
-			}
-			else {
+			} else {
 				IssueField jiraField = issue.getField(xrefAttributeType.getFieldId());
 				if (jiraField != null) {
 					if (jiraField.getValue() instanceof JSONObject) {
 						JSONObject json = (JSONObject) jiraField.getValue();
 						try {
 							jiraValue = json.getString("value");
-						}
-						catch (JSONException ex) {
+						} catch (JSONException ex) {
 							throw new OpenStorefrontRuntimeException("Unable to get field value from: " + jiraField.getValue(), ErrorTypeCode.INTEGRATION);
 						}
-					}
-					else {
+					} else {
 						jiraValue = jiraField.getValue().toString();
 					}
 
-				}
-				else {
+				} else {
 					throw new OpenStorefrontRuntimeException("Unable to find Jira Field: " + xrefAttributeType.getFieldName(), ErrorTypeCode.INTEGRATION);
 				}
 			}
@@ -1668,17 +1614,14 @@ public class ComponentServiceImpl
 						componentAttribute.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 						saveComponentAttribute(componentAttribute, false);
 						componentChanged = true;
-					}
-					else {
+					} else {
 						log.log(Level.FINEST, "Attibute already exists in that state...skipping");
 					}
-				}
-				else {
+				} else {
 					throw new OpenStorefrontRuntimeException("Unable to find attribute code.  Attribute Type: " + componentAttributePk.getAttributeType() + " Code: " + componentAttributePk.getAttributeCode(),
-															 "Check data (Attributes and Input)", ErrorTypeCode.INTEGRATION);
+							"Check data (Attributes and Input)", ErrorTypeCode.INTEGRATION);
 				}
-			}
-			else {
+			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find Mapping for Jira Field value: " + jiraValue, ErrorTypeCode.INTEGRATION);
 			}
 		}
@@ -1713,8 +1656,7 @@ public class ComponentServiceImpl
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeMap.containsKey(componentAttribute.getComponentId())) {
 					attributeMap.get(componentAttribute.getComponentId()).add(componentAttribute);
-				}
-				else {
+				} else {
 					List<ComponentAttribute> attributes = new ArrayList<>();
 					attributes.add(componentAttribute);
 					attributeMap.put(componentAttribute.getComponentId(), attributes);
@@ -1728,8 +1670,7 @@ public class ComponentServiceImpl
 			for (ComponentReview componentReview : componentReviews) {
 				if (reviewMap.containsKey(componentReview.getComponentId())) {
 					reviewMap.get(componentReview.getComponentId()).add(componentReview);
-				}
-				else {
+				} else {
 					List<ComponentReview> reviews = new ArrayList<>();
 					reviews.add(componentReview);
 					reviewMap.put(componentReview.getComponentId(), reviews);
@@ -1743,8 +1684,7 @@ public class ComponentServiceImpl
 			for (ComponentTag componentTag : componentTags) {
 				if (tagMap.containsKey(componentTag.getComponentId())) {
 					tagMap.get(componentTag.getComponentId()).add(componentTag);
-				}
-				else {
+				} else {
 					List<ComponentTag> tags = new ArrayList<>();
 					tags.add(componentTag);
 					tagMap.put(componentTag.getComponentId(), tags);
@@ -1790,8 +1730,7 @@ public class ComponentServiceImpl
 			componentIntegration.setUpdateDts(TimeUtil.currentDate());
 			persistenceService.persist(componentIntegration);
 			integration = componentIntegration;
-		}
-		else {
+		} else {
 			integration.setStatus(RunStatus.COMPLETE);
 			integration.populateBaseCreateFields();
 			persistenceService.persist(integration);
@@ -1811,12 +1750,10 @@ public class ComponentServiceImpl
 
 			if (Component.ACTIVE_STATUS.equals(status)) {
 				JobManager.updateComponentIntegrationJob(componentIntegration);
-			}
-			else {
+			} else {
 				JobManager.removeComponentIntegrationJob(componentId);
 			}
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Component Integration doesn't exist", "Check input", ErrorTypeCode.INTEGRATION);
 		}
 	}
@@ -1849,12 +1786,10 @@ public class ComponentServiceImpl
 					if (maxLocalDateTime.compareTo(LocalDateTime.now()) <= 0) {
 						log.log(Level.FINE, "Overriding the working state...assume it was stuck.");
 						run = true;
-					}
-					else {
+					} else {
 						run = false;
 					}
-				}
-				else {
+				} else {
 					throw new OpenStorefrontRuntimeException("Missing Last Start time.  Data is corrupt.", "Delete the job (Integration) and recreate it.", ErrorTypeCode.INTEGRATION);
 				}
 			}
@@ -1893,8 +1828,7 @@ public class ComponentServiceImpl
 							BaseIntegrationHandler baseIntegrationHandler = BaseIntegrationHandler.getIntegrationHandler(integrationConfig);
 							if (baseIntegrationHandler != null) {
 								baseIntegrationHandler.processConfig();
-							}
-							else {
+							} else {
 								throw new OpenStorefrontRuntimeException("Intergration handler not supported for " + integrationConfig.getIntegrationType(), "Add handler", ErrorTypeCode.INTEGRATION);
 							}
 
@@ -1905,8 +1839,7 @@ public class ComponentServiceImpl
 							persistenceService.persist(liveConfig);
 
 							log.log(Level.FINE, MessageFormat.format("Completed {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()));
-						}
-						catch (Exception e) {
+						} catch (Exception e) {
 							errorConfig = true;
 							//This is a critical loop
 							ErrorInfo errorInfo = new ErrorInfo(e, null);
@@ -1924,15 +1857,13 @@ public class ComponentServiceImpl
 							log.log(Level.FINE, MessageFormat.format("Failed on {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()), e);
 						}
 					}
-				}
-				else {
+				} else {
 					log.log(Level.WARNING, MessageFormat.format("No Active Integration configs for: {0} (Integration is doing nothing)", component.getName()));
 				}
 
 				if (errorConfig) {
 					liveIntegration.setStatus(RunStatus.ERROR);
-				}
-				else {
+				} else {
 					liveIntegration.setStatus(RunStatus.COMPLETE);
 				}
 				liveIntegration.setLastEndTime(TimeUtil.currentDate());
@@ -1941,12 +1872,10 @@ public class ComponentServiceImpl
 				persistenceService.persist(liveIntegration);
 
 				log.log(Level.FINE, MessageFormat.format("Completed Integration for: {0}", component.getName()));
-			}
-			else {
+			} else {
 				log.log(Level.FINE, MessageFormat.format("Not time to run integration or the system is currently working on the integration. Component Id: {0}", componentId));
 			}
-		}
-		else {
+		} else {
 			log.log(Level.WARNING, MessageFormat.format("There is no active integration for this component. Id: {0}", componentId));
 		}
 	}
@@ -1972,8 +1901,7 @@ public class ComponentServiceImpl
 			componentIntegrationConfig.populateBaseUpdateFields();
 			persistenceService.persist(componentIntegrationConfig);
 			integrationConfig = componentIntegrationConfig;
-		}
-		else {
+		} else {
 			integrationConfig.setIntegrationConfigId(persistenceService.generateId());
 			integrationConfig.populateBaseCreateFields();
 			integrationConfig.setStatus(RunStatus.COMPLETE);
@@ -1991,8 +1919,7 @@ public class ComponentServiceImpl
 			componentIntegrationConfig.setUpdateDts(TimeUtil.currentDate());
 			componentIntegrationConfig.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(componentIntegrationConfig);
-		}
-		else {
+		} else {
 			throw new OpenStorefrontRuntimeException("Component Integration Config doesn't exist", "Check input", ErrorTypeCode.INTEGRATION);
 		}
 	}
@@ -2029,8 +1956,7 @@ public class ComponentServiceImpl
 		Element element = OSFCacheManager.getComponentCache().get(componentId);
 		if (element != null) {
 			componentAll = (ComponentAll) element.getObjectValue();
-		}
-		else {
+		} else {
 			componentAll = new ComponentAll();
 
 			Component componentExample = new Component();
@@ -2227,8 +2153,7 @@ public class ComponentServiceImpl
 		componentIntegrationConfigs.forEach(config -> {
 			if (configMap.containsKey(config.getComponentId())) {
 				configMap.get(config.getComponentId()).add(config);
-			}
-			else {
+			} else {
 				List<ComponentIntegrationConfig> configList = new ArrayList<>();
 				configList.add(config);
 				configMap.put(config.getComponentId(), configList);
@@ -2245,8 +2170,7 @@ public class ComponentServiceImpl
 				configList.forEach(config -> {
 					if (StringUtils.isNotBlank(config.getIssueNumber())) {
 						configs.append("(").append(config.getIntegrationType()).append(" - ").append(config.getIssueNumber()).append(") ");
-					}
-					else {
+					} else {
 						configs.append("(").append(config.getIntegrationType()).append(") ");
 					}
 				});
@@ -2273,7 +2197,7 @@ public class ComponentServiceImpl
 		params.put("search", search);
 		String query = "SELECT FROM " + Component.class.getSimpleName() + " WHERE name.toLowerCase() LIKE :search LIMIT 10";
 		List<Component> components = persistenceService.query(query, params);
-		for(Component component: components){
+		for (Component component : components) {
 			LookupModel temp = new LookupModel();
 			temp.setCode(component.getComponentId());
 			temp.setDescription(component.getName());

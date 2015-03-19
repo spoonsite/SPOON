@@ -90,6 +90,10 @@
     }       
   };
 
+  $scope.sheduleMode = function(mode){
+    $scope.sheduleFlag = mode;
+  };
+
   $scope.newReport = function(){
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editReport.html',
@@ -99,6 +103,9 @@
       resolve: {
         report: function () {
           return null;
+        },
+        sheduleFlag: function () {
+          return $scope.sheduleFlag;
         }
       }
     });       
@@ -113,6 +120,9 @@
       resolve: {
         report: function () {
           return report;
+        },
+        sheduleFlag: function () {
+          return $scope.sheduleFlag;
         }
       }
     });         
@@ -166,14 +176,14 @@
 
 }]);
 
-app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', 'business', '$uiModal', '$filter', '$timeout',
-  function ($scope, $uiModalInstance, report, Business, $uiModal, $filter, $timeout) {
+app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', 'business', '$uiModal', '$filter', '$timeout', 'sheduleFlag',
+  function ($scope, $uiModalInstance, report, Business, $uiModal, $filter, $timeout, sheduleFlag) {
 
     $scope.reportForm = angular.copy(report);
     $scope.actionText = 'Generate';
     $scope.email = {};    
     $scope.flag = {};
-    $scope.flag.schedule = false;    
+    $scope.flag.schedule = sheduleFlag || false;    
     $scope.options = {};   
     if (!report) {
       $scope.reportForm = {};
@@ -223,10 +233,49 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
     $scope.showOptions = function(option){
       if (option.$viewValue === 'USAGE') {
         $scope.options.useage=true;
+        $scope.options.link=false;
+      } if (option.$viewValue === 'LINKVALID') {
+        $scope.options.useage=false;
+        $scope.options.link=true;
       } else {
         $scope.options.useage=false;
+        $scope.options.link=false;
       }      
     };  
+    
+    $scope.checkWaitValue = function (value, form) {
+
+      form.$invalid = false;
+      form.$valid = true;
+      removeError();
+      if (value.$viewValue) {     
+          if (value.$viewValue < 1) {
+            form.$invalid = true;
+            form.$valid = false;
+            triggerError({
+              errors: {
+                entry: [{
+                    key: 'maxWaitSeconds',
+                    value: 'Value is out of range. (1-300)'
+                }]
+              },
+              success: false
+            }, true);                    
+          } else if (value.$viewValue > 300) {
+            form.$invalid = true;
+            form.$valid = false;            
+            triggerError({
+              errors: {
+                entry: [{
+                    key: 'maxWaitSeconds',
+                    value: 'Value is out of range. (1-300)'
+                }]
+              },
+              success: false
+            }, true);                        
+          }
+      }
+    };
     
     $scope.setSchedule = function(){
       if ($scope.flag.schedule) {
