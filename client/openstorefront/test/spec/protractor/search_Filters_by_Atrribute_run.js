@@ -42,12 +42,12 @@ describe('search_Filters_by_Attribute', function() {
     browser.driver.sleep(1000);
   });
 
-  var checkB0 = 'DI2E Evaluation Level_LEVEL0'; var expResults0 = 35;
+  var checkB0 = 'DI2E Evaluation Level_LEVEL0'; var expResults0 = 37;
   it('Filter By Attribute- ' + checkB0 + ' gives ' + expResults0 + ' results', function() {
     attribFilter(checkB0, expResults0);
   }, 63000);
 
-  var checkB1 = 'DI2E Evaluation Level_LEVEL1'; var expResults1 = 4;
+  var checkB1 = 'DI2E Evaluation Level_LEVEL1'; var expResults1 = 5;
   it('Filter By Attribute- ' + checkB1 + ' gives ' + expResults1 + ' results', function() {
     attribFilter(checkB1, expResults1);
   }, 45000);

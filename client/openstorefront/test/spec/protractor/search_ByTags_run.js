@@ -44,7 +44,7 @@ describe('Search by TAGS', function() {
         // Clear the Search
         element(by.id('globalSearch')).clear();
         element(by.id('globalSearch')).sendKeys(protractor.Key.ENTER);
-        expect(element.all(by.repeater('item in data')).count()).toEqual(59);
+        expect(element.all(by.repeater('item in data')).count()).toEqual(64);
 
         element.all(by.css('.input.ng-pristine.ng-valid')).get(0).clear();
         element.all(by.css('.input.ng-pristine.ng-valid')).get(0).sendKeys('iAddedThis');
