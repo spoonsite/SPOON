@@ -57,23 +57,40 @@ limitations under the License.
 				<div class="col-sm-10">
 					<select type="text" class="form-control" name="previousDays"  ng-model="reportForm.reportOption.previousDays" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="day.code as day.desc for day in daysOptions" placeholder="Select Type"></select>				
 				</div>  
-			</div> 			
-			
+			</div> 						
 		</panel>
+		<panel class-list="edges" open-state="true" title="Report Options" ng-show="options.link">
+			<div class="form-group" show-errors >
+				<label class="control-label col-sm-2">Wait Time (Seconds)</label>
+				<div class="col-sm-10">
+					<input type="text" 
+						   class="form-control"
+						   id="maxWaitSeconds" 
+						   name="maxWaitSeconds" 
+						   ng-model="reportForm.reportOption.maxWaitSeconds" 
+						   onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						   ng-blur="checkWaitValue(reportUIForm.maxWaitSeconds, reportUIForm)"
+						   placeholder="Default: 5 seconds, min 1 and max 300"
+			                                    ng-maxlength=3
+						   />						
+				</div>  
+			</div> 			
+		</panel>		
+		
 		<input  type="checkbox" 	
 		  ng-change="setSchedule();"		
 		  ng-model="flag.schedule" 									 					  
 		  ng-focus /> Schedule<br>		
 		<panel class-list="edges" open-state="true" title="Schedule Options" ng-show="flag.schedule">
-			<div class="form-group" show-errors >
-				<label class="control-label col-sm-2">Interval</label>
-				<div class="col-sm-10">
-					<select type="text" class="form-control" name="interval"  ng-model="reportForm.scheduleIntervalDays" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="interval.code as interval.desc for interval in intervalOptions" placeholder="Select Type"></select>
-					<p ng-show="reportUIForm.interval.$error.required && !reportUIForm.interval.$focused" class="help-block">Interval is required.</p>	
-				</div>  
-			</div>			
+		
+			<label class="control-label col-sm-2">Interval</label>
+			<div class="col-sm-10" style="padding-left: 0px; padding-right: 0px;padding-bottom: 10px;">
+				<select type="text" class="form-control" name="interval"  ng-model="reportForm.scheduleIntervalDays" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="interval.code as interval.desc for interval in intervalOptions" placeholder="Select Type"></select>
+				<p ng-show="reportUIForm.interval.$error.required && !reportUIForm.interval.$focused" class="help-block">Interval is required.</p>	
+			</div>  
+		
 			<label class="control-label col-sm-2">Email</label>
-			<div class="col-sm-10">
+			<div class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">
 				  <input  type="text" 				
 				  name="email"									
 				  class="form-control" 

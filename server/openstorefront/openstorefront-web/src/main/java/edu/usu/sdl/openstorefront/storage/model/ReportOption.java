@@ -42,6 +42,10 @@ public class ReportOption
 	@ConsumeField
 	private Integer previousDays;
 
+	@Min(1)
+	@Max(300)
+	private Integer maxWaitSeconds;
+
 	@Version
 	private String storageVersion;
 
@@ -87,6 +91,16 @@ public class ReportOption
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+
+	public Integer getMaxWaitSeconds()
+	{
+		return maxWaitSeconds;
+	}
+
+	public void setMaxWaitSeconds(Integer maxWaitSeconds)
+	{
+		this.maxWaitSeconds = maxWaitSeconds;
 	}
 
 }

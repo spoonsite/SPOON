@@ -102,7 +102,7 @@ describe('user-tools_User logged in drop-down', function() {
         //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         element.all(by.css('.dropdown-menu a')).get(2).click();
         browser.driver.sleep(6000);
-        expect(element.all(by.css('.btn')).count()).toEqual(22);
+        expect(element.all(by.css('.btn')).count()).toEqual(10);
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(1000);
     }, 25000);
@@ -115,7 +115,7 @@ describe('user-tools_User logged in drop-down', function() {
         //element.all(by.css('.dropdown-toggle.ng-binding')).get(0).click();
         element.all(by.css('.dropdown-menu a')).get(3).click();
         browser.driver.sleep(1800);
-        expect(element.all(by.css('.btn')).count()).toEqual(31);
+        expect(element.all(by.css('.btn')).count()).toEqual(22);
 
         element.all(by.css('.close')).get(0).click();
         browser.driver.sleep(5000);

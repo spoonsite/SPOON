@@ -40,7 +40,8 @@ exports.config = {
     showColors: true,
     includeStackTrace: true,
     defaultTimeoutInterval: 181000,
-    allScriptsTimeout: 47000
+    getPageTimeout: 33000,
+    allScriptsTimeout: 49000
   },
 
     multiCapabilities: [
