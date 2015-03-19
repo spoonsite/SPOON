@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.SSLHandshakeException;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -156,8 +157,8 @@ public class ExternalLinkValidationReport
 				"Network Of Link",
 				"Link",
 				"Status",
-				"Check Results",
-				"Http Status"
+				"Http Status",
+				"Check Results"
 		);
 
 		//write Body
@@ -168,8 +169,8 @@ public class ExternalLinkValidationReport
 					linkCheckModel.getNetworkOfLink(),
 					linkCheckModel.getLink(),
 					linkCheckModel.getStatus(),
-					linkCheckModel.getCheckResults(),
-					linkCheckModel.getHttpStatus()
+					linkCheckModel.getHttpStatus(),
+					linkCheckModel.getCheckResults()
 			);
 		});
 
@@ -191,25 +192,32 @@ public class ExternalLinkValidationReport
 
 	private void checkLinks()
 	{
+		int timeOutTime = MAX_CONNECTION_TIME_MILLIS;
+		if (report.getReportOption() != null) {
+			if (report.getReportOption().getMaxWaitSeconds() != null) {
+				timeOutTime = report.getReportOption().getMaxWaitSeconds() * 1000;
+			}
+		}
+
 		ForkJoinPool forkJoinPool = new ForkJoinPool(MAX_CHECKPOOL_SIZE);
 
 		Map<String, LinkCheckModel> linkMap = new HashMap();
 		List<ForkJoinTask<LinkCheckModel>> tasks = new ArrayList<>();
-		links.forEach(link -> {
+		for (LinkCheckModel link : links) {
 			linkMap.put(link.getId(), link);
-			tasks.add(forkJoinPool.submit(new CheckLinkTask(link)));
-		});
+			tasks.add(forkJoinPool.submit(new CheckLinkTask(link, timeOutTime)));
+		}
 
 		int completedCount = 0;
 		for (ForkJoinTask<LinkCheckModel> task : tasks) {
 			try {
 				LinkCheckModel processed;
 				try {
-					processed = task.get(MAX_CONNECTION_TIME_MILLIS, TimeUnit.MILLISECONDS);
+					processed = task.get(timeOutTime, TimeUnit.MILLISECONDS);
 					LinkCheckModel reportModel = linkMap.get(processed.getId());
 					reportModel.setStatus(processed.getStatus());
 					reportModel.setCheckResults(processed.getCheckResults());
-					reportModel.setHttpStatus(processed.getCheckResults());
+					reportModel.setHttpStatus(processed.getHttpStatus());
 				} catch (TimeoutException e) {
 					task.cancel(true);
 				}
@@ -240,10 +248,12 @@ public class ExternalLinkValidationReport
 	{
 
 		private final LinkCheckModel modelToCheck;
+		private int timeOutTime;
 
-		public CheckLinkTask(LinkCheckModel modelToCheck)
+		public CheckLinkTask(LinkCheckModel modelToCheck, int timeOutTime)
 		{
 			this.modelToCheck = modelToCheck;
+			this.timeOutTime = timeOutTime;
 		}
 
 		@Override
@@ -262,8 +272,8 @@ public class ExternalLinkValidationReport
 				try {
 					URL url = new URL(modelToCheck.getLink());
 					URLConnection connection = url.openConnection();
-					connection.setConnectTimeout(MAX_CONNECTION_TIME_MILLIS);
-					connection.setReadTimeout(MAX_CONNECTION_TIME_MILLIS);
+					connection.setConnectTimeout(timeOutTime);
+					connection.setReadTimeout(timeOutTime);
 					connection.setUseCaches(false);
 
 					HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
@@ -275,16 +285,19 @@ public class ExternalLinkValidationReport
 						linkCheckModel.setStatus(httpConnection.getResponseMessage());
 						if (StringUtils.isNotBlank(linkCheckModel.getStatus())
 								&& "OK".equalsIgnoreCase(linkCheckModel.getStatus().trim()) == false) {
-							linkCheckModel.setCheckResults("Bad Link");
+							linkCheckModel.setCheckResults("Bad Link or it is restricted. (See HTTP Status Code)");
 						}
+					} catch (SSLHandshakeException e) {
+						linkCheckModel.setStatus("Certificate Request/Error");
+						linkCheckModel.setCheckResults("Client Certificate Requested (CAC) or Server Certificate Error.  Actual error Message: " + e.getMessage());
 					} catch (Exception e) {
 						log.log(Level.FINER, "Actual connection error: ", e);
 						linkCheckModel.setStatus("Timeout/Error Connecting");
-						linkCheckModel.setCheckResults("Error occur when trying to connect.  This may be a temporary case or the link may be bad.");
+						linkCheckModel.setCheckResults("Error occur when trying to connect.  This may be a temporary case or the link may be bad. Actual error Message: " + e.getMessage());
 					}
 				} catch (Exception e) {
 					linkCheckModel.setStatus("URL is bad");
-					linkCheckModel.setCheckResults("Check link to make sure it's properly formed");
+					linkCheckModel.setCheckResults("Check link to make sure it's properly formated");
 				}
 			}
 			log.log(Level.FINEST, MessageFormat.format("Finish checking link: {0} Check Time: {1} ms", modelToCheck.getLink(), System.currentTimeMillis() - startTime));

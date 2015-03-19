@@ -62,7 +62,10 @@ limitations under the License.
 							</li>							
 							<li ng-show="report.reportOption.previousDays">
 								Pervious Days: {{report.reportOption.previousDays}}
-							</li>				
+							</li>
+							<li ng-show="report.reportOption.maxWaitSeconds">
+								Max Wait Time (seconds): {{report.reportOption.maxWaitSeconds}}
+							</li>								
 						</ul>
 					</td>	
 					<td style="padding:0px; width: 200px;">&nbsp;					
@@ -71,7 +74,7 @@ limitations under the License.
 				</tr>
 			</table>				
 		</tab>
-		<tab heading="Scheduled">
+		<tab heading="Scheduled" select="sheduleMode(true);" deselect="sheduleMode(false);">
 			<div>	
 				<br>	
 				Filter Status:
