@@ -37,9 +37,13 @@
 @import "includes/architecture.scss";
 @import "includes/panel.scss";
 @import "includes/admin.scss";
+@import "includes/notifications.scss";
 @import "fonts/fontello.scss";
 @import "fonts/icomoon.scss";
 
+.slimBottoms{
+  margin-bottom:10px;
+}
 
 .colorizeMe {
   color: #FF811A;

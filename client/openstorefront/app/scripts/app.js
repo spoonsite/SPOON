@@ -43,7 +43,8 @@ var app = angular
     'angularFileUpload',
     'ngIdle',    
     'multi-select',
-    'angular.filter'
+    'angular.filter',
+    'notifications'
   // end of dependency injections
   ]
 // end of the module creation
