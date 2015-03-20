@@ -25,6 +25,25 @@
     }
   }
 
+  utils.getStatus = function(val){
+    switch(val){
+      case 'DONE':
+      return 'info'
+      break;
+      case 'CANCELLED':
+      return 'warning'
+      break;
+      case 'FAILED':
+      return 'danger'
+      break;
+      case 'QUEUED':
+      case 'WORKING':
+      default:
+      return 'success'
+      break;
+    }
+  }
+
   // function to convert the eval status code to a string. 
   // (might think about moving this to the server so it doesn't require a code change)
   utils.calcEvalStatus = function(statusCode, actual, estimated){

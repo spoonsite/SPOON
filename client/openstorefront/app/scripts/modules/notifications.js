@@ -21,41 +21,125 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
     scope: {},
     template: $templateCache.get('notifications/notifications.tpl.html'),
     link: function (scope, ele, attrs) {
+
+      scope.history = [];
+      scope.interval = null;
+      scope.getTasks = function(){
+        clearInterval(scope.interval);
+        scope.interval = setInterval(function(){
+          Factory.get('api/v1/service/jobs/tasks/status').then(function(result){
+            if (result) {
+
+              var total = angular.copy(scope.history);
+              _.each(result.tasks, function(item){
+                var found = _.find(total, {'taskId': item.taskId});
+                // console.log('total', total);
+                // console.log('item', item);
+                
+                var message = '';
+                var type = '';
+                var id = '';
+                if (found && found.status !== item.status) {
+                  message = 'Task "' + item.taskName + '"\'s status has changed and is now: "' + item.status +'"';
+                  type = utils.getStatus(item.status);
+                  id = item.taskId + type;
+                  Factory.update(item, type, message);
+                  var index = _.find(scope.history, {'taskId': item.taskId});
+                  if (index) {
+                    index = _.indexOf(scope.history, index);
+                    scope.history[index] = item;
+                  } 
+                  index = _.indexOf(total, found);
+                  total.splice(index, 1);
+                } else if (!found && item.status !== 'DONE' && item.status !== 'CANCELLED' && item.status !== 'FAILED') {
+                  if (item.status === 'QUEUED') {
+                    message = 'Task "' + item.taskName + '" has been queued';
+                  } else {
+                    message = 'Task "' + item.taskName + '" has started';
+                  }
+                  type = utils.getStatus(item.status);
+                  Factory.add(item, type, message);
+                  scope.history.push(item);
+                } else if (!found && item.status !== 'QUEUED' && item.status !== 'WORKING') {
+                  if (item.status === 'DONE') {
+                    message = 'Task "' + item.taskName + '" was started and is now complete';
+                  } else if (item.status === 'CANCELLED') {
+                    message = 'Task "' + item.taskName + '" was started and has been cancelled';
+                  } else {
+                    message = 'Task "' + item.taskName + '" was started and has failed';
+                  }
+                  type = utils.getStatus(item.status);
+                  Factory.add(item, type, message);
+                  scope.history.push(item);
+                } else if (found) {
+                  var index = _.indexOf(total, found);
+                  total.splice(index, 1);
+                }
+              });
+              _.each(total, function(item){ //
+                Factory.remove(item)
+                var alert = {'type': 'warning', 'msg': 'Task "' + item.taskName + '" has been removed from the task queue.', 'id': item.taskId + 'removed'};
+                scope.addAlert(alert);
+                setTimeout(closeAlertTrigger.bind(null, alert), 7000);
+                var index = _.find(scope.history, {'taskId': item.taskId});
+                if (index) {
+                  index = _.indexOf(scope.history, index);
+                  scope.history.splice(index, 1);
+                } 
+              })
+            } 
+          }, function(){
+            // console.log('There was an error getting the status');
+          })
+        }, 5000); //
+      } //
+
+      scope.getTasks();
+      scope.$on('$REFRESHTASKS', function(event, data){
+        $timeout(function(){
+          scope.getTasks();
+        }, 2000);
+      })
+
       scope.getSize = function () {
         return Factory.get().length;
       }
-      scope.$on('$NOTIFICATIONADDED', function (event, data) {
+
+      var closeAlertTrigger = function(alert){
+        // console.log('closing alert', alert);
+        scope.closeAlert(alert);
+        scope.$apply();
+      }
+
+      scope.$on('$NOTIFICATIONADDED', function (event, alert) {
         $('.notificationsBox').stop(true, true).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
         scope.getSize();
-        var alert = scope.addAlert("Here is a new alert");
-        setTimeout(function(alert){
-          scope.closeAlert(alert);
-          scope.$apply();
-        },10000);
+        scope.addAlert(alert);
+        // console.log('alert', alert);
+        setTimeout(closeAlertTrigger.bind(null, alert), 7000);
       });
-      scope.$on('$NOTIFICATIONREMOVED', function (event, data) {
+      scope.$on('$NOTIFICATIONREMOVED', function (event, alert) {
         $('.notificationsBox').stop(true, true).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-        console.log('We\'re refreshing notifications');
+        // console.log('We\'re refreshing notifications');
         scope.getSize();
+        scope.addAlert(alert);
+        // console.log('alert', alert);
+        setTimeout(closeAlertTrigger.bind(null, alert), 7000);
       });
 
       scope.alerts = [];
 
       scope.checkDanger = function() {
-        return scope.getSize > 10;
+        return scope.getSize() > 10;
       }
 
-      scope.addAlert = function(message) {
-        var id = new Date().getTime();
-        var alert = {'type': 'success', 'msg': message, 'id':id};
+      scope.addAlert = function(alert) {
         scope.alerts.push(alert);
-        return alert;
       };
 
       scope.closeAlert = function(alert) {
-        console.log('alert', alert);
-        
-        var index = _.find(scope.alerts, {'id': alert.id});
+        // console.log('scope.alerts', scope.alerts);
+        var index = _.find(scope.alerts, alert);
         if (index) {
           index = _.indexOf(scope.alerts, index);
           scope.alerts.splice(index, 1);
@@ -166,27 +250,68 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
     }
   };
 }])
-.factory('notificationsFactory', ['$rootScope', '$q', '$location', function ($rootScope, $q, $location) {
+.factory('notificationsFactory', ['$rootScope', '$http', '$q', '$location', function ($rootScope, $http, $q, $location) {
   // This variable will hold the state. (there is only 1 per factory -- singleton)  
   var notifications = {};
 
   var data = {};
   data.tasks = [];
-  notifications.add = function (task) {
-    data.tasks.push(task);
-    $rootScope.$emit('$MAKEITHAPPEN', '$NOTIFICATIONADDED');
+  notifications.update = function (task, type, message) {
+    // console.log('updating a task');
+    var found = _.find(data.tasks, {'taskId': task.taskId});
+    if (found) {
+      var index = _.indexOf(data.tasks, found);
+      var alert = angular.copy(task);
+      data.tasks[index] = angular.copy(task);
+      alert.msg = message;
+      alert.type = type;
+      alert.id = alert.id + type;
+      $rootScope.$emit('$N-EVENT', '$NOTIFICATIONADDED', alert);
+    }
   };
-  notifications.remove = function (task) {
-    index = _.find(data.tasks, task);
+  notifications.add = function (task, type, message) {
+    // console.log('adding a task');
+    
+    var found = _.find(data.tasks, {'taskId': task.taskId});
+    if (!found) {
+      data.tasks.push(angular.copy(task));
+      task.msg = message;
+      task.type = type;
+      task.id = task.id + type;
+      $rootScope.$emit('$N-EVENT', '$NOTIFICATIONADDED', task);
+    }
+  };
+  notifications.remove = function (task, type, message) {
+    // console.log('removing a task');
+    index = _.find(data.tasks, {'taskId': task.taskId});
     if (index) {
       index = _.indexOf(data.tasks, index);
       data.tasks.splice(index, 1);
-      $rootScope.$emit('$MAKEITHAPPEN', '$NOTIFICATIONREMOVED');
+      if (type && message) {
+        task = angular.copy(task);
+        task.msg = message;
+        task.type = type;
+        task.id = task.id + type;
+        $rootScope.$emit('$N-EVENT', '$NOTIFICATIONREMOVED', task);
+      }
     }
 
   };
-  notifications.get = function () {
-    return data.tasks;
+  notifications.get = function (url) {
+    if (!url) {
+      return data.tasks;
+    } else {
+      var deferred = $q.defer();
+      $http({
+        'method': 'GET',
+        'url': url
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+      return deferred.promise;
+    }
   };
 
   return notifications;
@@ -195,16 +320,17 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
   var num = 0;
   $scope.addToFactory = function () {
     Factory.add({
-      'test': '' + num++
-    });
+      'id': num++,
+    }, 'success');
   }
   // console.log("We've added a cool test", Factory.get());
   $scope.removeFromFactory = function () {
+    // console.log('Factory', Factory.get());
+    
     if (Factory.get().length) {
-      --num;
       Factory.remove({
-        'test': '' + num
-      });
+        'id': --num,
+      }, 'info');
     }
   }
   // console.log("We tried to remove one", Factory.get());
@@ -232,14 +358,12 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
 
     function ($templateCache, $rootScope, $timeout) {
 
-      $rootScope.$on('$MAKEITHAPPEN', function(event, newEvent, infoArray){
+      $rootScope.$on('$N-EVENT', function(event, newEvent, infoArray){
         $rootScope.$broadcast(newEvent, infoArray);
       });
 
-
-
-      $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{getSize()}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert(alert)">{{alert.msg}}</alert></div-stick>');
-      $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"> <h3 class="modal-title">I\'m a modal!</h3> </div> <div class="modal-body"> <ul> <li ng-repeat="item in items"> <a ng-click="selected.item = item">{{ item }}</a> </li> </ul> Selected: <b>{{ selected.item }}</b> </div> <div class="modal-footer"> <button class="btn btn-primary" ng-click="ok()">OK</button> <button class="btn btn-warning" ng-click="cancel()">Cancel</button> </div>');
+      $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{getSize()}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><alert ng-repeat="alert in alerts track by alert.id" type="{{alert.type}}" close="closeAlert(alert)">{{alert.msg}}</alert></div-stick>');
+      $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"> <h3 class="modal-title">I\'m a modal!</h3> </div> <div class="modal-body"> <ul> <li ng-repeat="item in data"> <a ng-click="selected.item = item">{{ item }}</a> </li> </ul> Selected: <b>{{ selected.item }}</b> </div> <div class="modal-footer"> <button class="btn btn-primary" ng-click="ok()">OK</button> <button class="btn btn-warning" ng-click="cancel()">Cancel</button> </div>');
     }]);
 
 
