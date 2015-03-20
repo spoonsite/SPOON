@@ -31,18 +31,16 @@
       <th>Code</th>
       <th>Description</th>
       <th>Title</th>
-      <th>Visible</th>
       <th>Actions</th>
     </tr>
     <tr ng-repeat="article in articles">
       <td style="padding: 5px;">{{article.typeDescription}}</td>
       <td style="padding: 5px;">{{article.codeDescription}}</td>
-      <td ng-show="article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis;" width="40%" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{getArticleDesc(article.description)}}">{{article.description}}</td>
+      <td ng-show="article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis;" width="40%" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{getArticleDesc(article.description)}}"><p ng-bind-html="article.description"></p></td>
       <td ng-show="!article.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
       <td style="padding: 5px;">{{article.title}}</td>
-      <td style="padding: 5px; vertical-align: middle; text-align: center;" ng-class="article.attributeCodeActiveStatus === 'A'? 'truthy':'falsey'"><i class="fa" ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-check':'fa-times'"></i></td>
       <td style="padding:0px 5px;">
-        <button type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="activateCode(article)"><i ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-eye':'fa-eye-slash'" class="fa"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="deleteArticle(article)"><i class="fa fa-trash"></i></button>
+        <button type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="deleteArticle(article)"><i class="fa fa-trash"></i></button>
       </td>
     </tr>
   </table>
