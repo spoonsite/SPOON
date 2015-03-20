@@ -19,10 +19,12 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.transfermodel.AlertContext;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.AlertType;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.AsyncTask;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
@@ -347,6 +349,41 @@ public class SystemServiceImpl
 				}
 			}
 			persistenceService.delete(generalMedia);
+		}
+	}
+
+	@Override
+	public void saveAsyncTask(TaskFuture taskFuture)
+	{
+		AsyncTask existingTask = persistenceService.findById(AsyncTask.class, taskFuture.getTaskId());
+		if (existingTask != null) {
+			persistenceService.delete(existingTask);
+		}
+
+		AsyncTask asyncTask = new AsyncTask();
+		asyncTask.setTaskId(taskFuture.getTaskId());
+		asyncTask.setAllowMultiple(taskFuture.isAllowMultiple());
+		asyncTask.setCompletedDts(taskFuture.getCompletedDts());
+		asyncTask.setError(taskFuture.getError());
+		asyncTask.setStatus(taskFuture.getStatus());
+		asyncTask.setSubmitedDts(taskFuture.getSubmitedDts());
+		asyncTask.setTaskName(taskFuture.getTaskName());
+		asyncTask.setDetails(taskFuture.getDetails());
+
+		asyncTask.setCreateUser(taskFuture.getCreateUser());
+		asyncTask.setUpdateUser(taskFuture.getCreateUser());
+		asyncTask.populateBaseCreateFields();
+
+		persistenceService.persist(asyncTask);
+
+	}
+
+	@Override
+	public void removeAsyncTask(String taskId)
+	{
+		AsyncTask task = persistenceService.findById(AsyncTask.class, taskId);
+		if (task != null) {
+			persistenceService.delete(task);
 		}
 	}
 

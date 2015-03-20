@@ -170,6 +170,21 @@ app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, loca
       return deferred.promise;
     }; 
     
+    var deleteTask = function (taskId) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/service/jobs/tasks/' + taskId 
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    };     
+    
     
     return {
       getJobStatus: getJobStatus,
@@ -181,7 +196,8 @@ app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, loca
       resumeJob: resumeJob,
       runJobNow: runJobNow,
       getTasksAndStatus: getTasksAndStatus,
-      cancelTask: cancelTask      
+      cancelTask: cancelTask,
+      deleteTask: deleteTask
     };
     
 }]);

@@ -100,10 +100,34 @@ app.controller('AdminJobsCtrl', ['$scope', 'business', function ($scope, Busines
   };
   
   
-  $scope.cancelTask = function(taskId){
-    Business.jobservice.cancelTask(taskId).then(function (results) {
-      $scope.refreshTasks();
-    });
-  };
+    $scope.cancelTask = function (task) {
+      var response = window.confirm("Are you sure you want CANCEL " + task.name + "?");
+      if (response) {
+        $scope.$emit('$TRIGGERLOAD', 'taskLoader');
+        Business.jobservice.cancelTask(task.taskId).then(function (results) {
+          $scope.$emit('$TRIGGERUNLOAD', 'taskLoader');  
+          $scope.refreshTasks();
+        });        
+      }
+    };
+  
+  $scope.deleteTask = function(task){    
+      var response = window.confirm("Are you sure you want DELETE " + task.name + "?");
+      if (response) {
+        $scope.$emit('$TRIGGERLOAD', 'taskLoader');
+        Business.jobservice.deleteTask(task.taskId).then(function (results) {
+          $scope.$emit('$TRIGGERUNLOAD', 'taskLoader');
+          $scope.refreshTasks();
+        });
+      }
+  };  
+  
+  $scope.showError = function(task){
+     if (task.showDetails) {
+       task.showDetails = !task.showDetails;
+     } else {
+       task.showDetails = true;
+     }     
+  };  
   
 }]);

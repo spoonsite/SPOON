@@ -41,14 +41,14 @@ limitations under the License.
 			<div class="form-group" show-errors >
 				<label class="control-label col-sm-2">Start Date</label>
 				<div class="col-sm-10">
-					<input type="text" name="startDts" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="reportForm.reportOption.startDts" data-max-date="{{reportForm.endDts}}" placeholder="Start Date" data-date-type="number" bs-datepicker>;<i class="fa fa-calendar"></i>  					
+					<input type="text" name="startDts" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="reportForm.reportOption.startDts" data-max-date="{{reportForm.reportOption.endDts}}" placeholder="Start Date" data-date-type="number" bs-datepicker>;<i class="fa fa-calendar"></i>  					
 				</div>  
 			</div> 
 
 			<div class="form-group" show-errors >
 				<label class="control-label col-sm-2">End Date</label>
 				<div class="col-sm-10">
-					<input type="text" name="endDts" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="reportForm.reportOption.endDts" data-min-date="{{reportForm.startDts}}" placeholder="End Date" data-date-type="number" bs-datepicker>;<i class="fa fa-calendar"></i>  					
+					<input type="text" name="endDts" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="reportForm.reportOption.endDts" data-min-date="{{reportForm.reportOption.startDts}}" placeholder="End Date" data-date-type="number" bs-datepicker>;<i class="fa fa-calendar"></i>  					
 				</div>  
 			</div> 			
 

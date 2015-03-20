@@ -15,9 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.service.manager.model;
 
+import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.TaskStatus;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -29,18 +33,21 @@ import java.util.concurrent.Future;
 public class TaskFuture
 {
 
-	public static int EXPIRED_TIME = 60000 * 5;
 	public static int MAX_ORPHAN_QUEUE_TIME = 60000;
 
 	private transient Future future;
 	private Date submitedDts;
 	private Date completedDts;
 	private String taskName;
+	private String details;
 	private String taskId;
 	private boolean allowMultiple;
 	private String error;
+	private String createUser;
 	private TaskStatus status = TaskStatus.QUEUED;
 	private AsyncTaskCallback callback;
+	private Map<String, Object> taskData = new HashMap<>();
+	private Date expireDts;
 
 	public TaskFuture()
 	{
@@ -58,7 +65,15 @@ public class TaskFuture
 	{
 		boolean expired = false;
 		if (completedDts != null) {
-			if (System.currentTimeMillis() > (completedDts.getTime() + EXPIRED_TIME)) {
+			String expireTimeMinutes;
+			if (TaskStatus.DONE.equals(status) || TaskStatus.CANCELLED.equals(status)) {
+				expireTimeMinutes = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_COMPLETE_EXPIRE, "5");
+			} else {
+				expireTimeMinutes = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_ERROR_EXPIRE, "4320");
+			}
+			long expireTime = Convert.toLong(expireTimeMinutes) * 60000;
+
+			if (System.currentTimeMillis() > (completedDts.getTime() + Convert.toLong(expireTime))) {
 				expired = true;
 			}
 		}
@@ -67,11 +82,23 @@ public class TaskFuture
 
 	public Date getExpireDts()
 	{
-		Date expireDts = null;
 		if (completedDts != null) {
-			expireDts = new Date(completedDts.getTime() + EXPIRED_TIME);
+			String expireTimeMinutes;
+			if (TaskStatus.DONE.equals(status) || TaskStatus.CANCELLED.equals(status)) {
+				expireTimeMinutes = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_COMPLETE_EXPIRE, "5");
+			} else {
+				expireTimeMinutes = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_ERROR_EXPIRE, "4320");
+			}
+			long expireTime = Convert.toLong(expireTimeMinutes) * 60000;
+
+			expireDts = new Date(completedDts.getTime() + expireTime);
 		}
 		return expireDts;
+	}
+
+	public void setExpireDts(Date expiredDts)
+	{
+		this.expireDts = expiredDts;
 	}
 
 	public boolean isDone()
@@ -192,6 +219,36 @@ public class TaskFuture
 	public void setCallback(AsyncTaskCallback callback)
 	{
 		this.callback = callback;
+	}
+
+	public String getCreateUser()
+	{
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser)
+	{
+		this.createUser = createUser;
+	}
+
+	public Map<String, Object> getTaskData()
+	{
+		return taskData;
+	}
+
+	public void setTaskData(Map<String, Object> taskData)
+	{
+		this.taskData = taskData;
+	}
+
+	public String getDetails()
+	{
+		return details;
+	}
+
+	public void setDetails(String details)
+	{
+		this.details = details;
 	}
 
 }

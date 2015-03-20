@@ -65,11 +65,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   $scope.editor = function(branch, tree, otherTree) {
     $scope.incLoc = branch.location;
     $scope.toolTitle = branch.toolTitle;
-    $scope.detailedDesc = branch.detailedDesc;
-    if (branch.toolTitle !== 'Manage Articles') {
-      $scope.type = null;
-      $scope.code = null;
-    }
+    $scope.detailedDesc = branch.detailedDesc;    
     tree.selectBranch(branch);
     otherTree.selectBranch(branch);
   };
@@ -109,7 +105,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     var branch = checkCollection($scope.data, 0, 'landing');
     $scope.type = type;
     $scope.code = code;
-    $scope.editor(branch, $scope.myTree);
+    $scope.editor(branch);
   };
 
   /***************************************************************
@@ -297,13 +293,13 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       'detailedDesc': "A user profile represents a user in the system and contains the user's information.",
       'key': 'USER_PROFILE' 
     });
-
+   
 
     $scope.systemTools.push({
       'label': 'Alerts', 
       'location':'views/admin/manageAlerts.html', 
       'toolTitle': 'Manage Alerts',
-      'detailedDesc': "Alert are triggers setup to watch the data that user can subscribe to.",
+      'detailedDesc': "Alerts are triggers set up to watch the data, that an administrator can subscribe to.",
       'key': 'alerts'
     });    
 

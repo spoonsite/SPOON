@@ -142,6 +142,9 @@ public class UserMessageResource
 		taskRequest.setAllowMultiple(false);
 		taskRequest.setName("Process All User Messages Now");
 
+		UserMessage userMessageExample = new UserMessage();
+		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
+		taskRequest.setDetails("Sending messages: " + service.getPersistenceService().countByExample(userMessageExample));
 		service.getAyncProxy(service.getUserService(), taskRequest).processAllUserMessages(true);
 		return Response.ok().build();
 	}

@@ -116,7 +116,8 @@ public class ValidationUtil
 					if (process) {
 						if (ReflectionUtil.isComplexClass(fieldClass)) {
 							//composition class
-							if (Logger.class.getName().equals(fieldClass.getName()) == false) {
+							if (Logger.class.getName().equals(fieldClass.getName()) == false
+									&& fieldClass.isEnum() == false) {
 								try {
 									Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 									Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);

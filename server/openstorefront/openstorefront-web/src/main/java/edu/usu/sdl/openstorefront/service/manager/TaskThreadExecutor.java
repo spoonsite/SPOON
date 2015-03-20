@@ -15,18 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import static edu.usu.sdl.openstorefront.service.manager.model.TaskFuture.MAX_ORPHAN_QUEUE_TIME;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
+import edu.usu.sdl.openstorefront.storage.model.AsyncTask;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.TaskStatus;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -63,7 +69,7 @@ public class TaskThreadExecutor
 		super.afterExecute(r, t);
 		if (r instanceof Future<?>) {
 			Future future = ((Future<?>) r);
-			for (TaskFuture taskFuture : getTasks()) {
+			for (TaskFuture taskFuture : getTasks(true)) {
 				if (taskFuture.getFuture().equals(future)) {
 					taskFuture.setCompletedDts(TimeUtil.currentDate());
 					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.DONE);
@@ -82,11 +88,17 @@ public class TaskThreadExecutor
 						errorInfo.setInputData("Background Task Error");
 						SystemErrorModel systemErrorModel = serviceProxy.getSystemService().generateErrorTicket(errorInfo);
 						taskFuture.setError("Task failed.  " + systemErrorModel.toString());
-						if (taskFuture.getCallback() != null) {
-							taskFuture.getCallback().afterExecute(taskFuture);
-						}
 					} catch (InterruptedException ie) {
 						Thread.currentThread().interrupt(); // ignore/reset
+					}
+
+					if (taskFuture.getCallback() != null) {
+						taskFuture.getCallback().afterExecute(taskFuture);
+					}
+
+					if (TaskStatus.CANCELLED.equals(taskFuture.getStatus()) == false) {
+						ServiceProxy serviceProxy = ServiceProxy.getProxy();
+						serviceProxy.getSystemService().saveAsyncTask(taskFuture);
 					}
 				}
 			}
@@ -111,7 +123,7 @@ public class TaskThreadExecutor
 			int checks = 0;
 			do {
 				checks++;
-				for (TaskFuture taskFuture : getTasks()) {
+				for (TaskFuture taskFuture : getTasks(true)) {
 					if (taskFuture.getFuture().equals(future)) {
 						taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.WORKING);
 
@@ -134,19 +146,46 @@ public class TaskThreadExecutor
 
 	public List<TaskFuture> getTasks()
 	{
+		return getTasks(false);
+	}
+
+	public List<TaskFuture> getTasks(boolean liveonly)
+	{
+		Map<String, TaskFuture> taskMap = new HashMap<>();
 		for (int i = tasks.size() - 1; i >= 0; i--) {
 			TaskFuture taskFuture = tasks.get(i);
 			if (taskFuture.isExpired()) {
 				tasks.remove(i);
-			}
-			if (this.getQueue().isEmpty()
+			} else if (this.getQueue().isEmpty()
 					&& OpenStorefrontConstant.TaskStatus.QUEUED.equals(taskFuture.getStatus())
 					&& System.currentTimeMillis() > (taskFuture.getSubmitedDts().getTime() + MAX_ORPHAN_QUEUE_TIME)) {
 				//Remove rejected queued tasks or orphan tasks
 				tasks.remove(i);
+			} else {
+				taskMap.put(taskFuture.getTaskId(), taskFuture);
 			}
 		}
-		return tasks;
+
+		if (liveonly == false) {
+			ServiceProxy serviceProxy = ServiceProxy.getProxy();
+
+			AsyncTask asyncTaskExample = new AsyncTask();
+			asyncTaskExample.setActiveStatus(AsyncTask.ACTIVE_STATUS);
+
+			List<AsyncTask> asyncTasks = serviceProxy.getPersistenceService().queryByExample(AsyncTask.class, asyncTaskExample);
+			for (AsyncTask asyncTask : asyncTasks) {
+				TaskFuture taskFuture = asyncTask.toTaskFuture();
+				if (taskFuture.isExpired()) {
+					serviceProxy.getSystemService().removeAsyncTask(taskFuture.getTaskId());
+				} else {
+					if (taskMap.containsKey(taskFuture.getTaskId()) == false) {
+						taskMap.put(taskFuture.getTaskId(), taskFuture);
+					}
+				}
+			}
+		}
+
+		return new ArrayList<>(taskMap.values());
 	}
 
 	/**
@@ -159,7 +198,7 @@ public class TaskThreadExecutor
 	{
 		boolean runJob = true;
 		if (taskRequest.isAllowMultiple() == false) {
-			List<TaskFuture> currentTasks = getTasks();
+			List<TaskFuture> currentTasks = getTasks(true);
 			for (TaskFuture taskFuture : currentTasks) {
 				if (taskFuture.getTaskName().equals(taskRequest.getName())
 						&& OpenStorefrontConstant.TaskStatus.WORKING.equals(taskFuture.getStatus())) {
@@ -172,6 +211,9 @@ public class TaskThreadExecutor
 		if (runJob) {
 			Future future = submit(taskRequest.getTask());
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
+			taskFuture.setCreateUser(SecurityUtil.getCurrentUserName());
+			taskFuture.setDetails(taskFuture.getDetails());
+			taskFuture.setTaskData(taskRequest.getTaskData());
 			taskFuture.setTaskName(taskRequest.getName());
 			taskFuture.setCallback(taskRequest.getCallback());
 			tasks.add(taskFuture);
@@ -183,13 +225,34 @@ public class TaskThreadExecutor
 	{
 		boolean cancelled = false;
 
-		for (TaskFuture taskFuture : getTasks()) {
+		for (TaskFuture taskFuture : getTasks(true)) {
 			if (taskFuture.getTaskId().equals(taskId)) {
 				cancelled = taskFuture.cancel(interrupt);
 			}
 		}
 
 		return cancelled;
+	}
+
+	public void removeTask(String taskId)
+	{
+
+		TaskFuture taskFuture = AsyncTaskManager.getTaskById(taskId);
+
+		if (taskFuture != null) {
+			if (taskFuture.getCompletedDts() != null) {
+				for (int i = tasks.size() - 1; i >= 0; i--) {
+					TaskFuture taskFutureInMemory = tasks.get(i);
+					if (taskFutureInMemory.getTaskId().equals(taskId)) {
+						tasks.remove(i);
+					}
+				}
+				ServiceProxy service = ServiceProxy.getProxy();
+				service.getSystemService().removeAsyncTask(taskId);
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to remove task.", "Wait for task to complete or cancel it first");
+			}
+		}
 	}
 
 }
