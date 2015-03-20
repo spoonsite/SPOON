@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.storage.model.ReportFormat;
 import edu.usu.sdl.openstorefront.storage.model.ReportType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -215,7 +216,8 @@ public class ReportResource
 
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(true);
-			taskRequest.setName("Generating Report: " + report.getReportType() + " id: " + report.getReportId());
+			taskRequest.setName("Generating Report");
+			taskRequest.setDetails("Report: " + report.getReportType() + " id: " + report.getReportId() + " for user: " + SecurityUtil.getCurrentUserName());
 			service.getAyncProxy(service.getReportService(), taskRequest).generateReport(report);
 
 		} else {

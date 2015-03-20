@@ -21,7 +21,9 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
+import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
@@ -38,6 +40,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
@@ -588,10 +591,35 @@ public class AttributeResource
 			@PathParam("type")
 			@RequiredParam String type)
 	{
-		TaskRequest taskRequest = new TaskRequest();
-		taskRequest.setAllowMultiple(false);
-		taskRequest.setName("Inactivating Attribute Type");
-		service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeType(type.toUpperCase());
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Inactivating Attribute Type");
+			taskRequest.setDetails("Attribute Type: " + type);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Status", attributeType.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+						service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeType(type);
+		}
 	}
 
 	@DELETE
@@ -602,10 +630,35 @@ public class AttributeResource
 			@PathParam("type")
 			@RequiredParam String type)
 	{
-		TaskRequest taskRequest = new TaskRequest();
-		taskRequest.setAllowMultiple(false);
-		taskRequest.setName("Deleting Attribute Type");
-		service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(type.toUpperCase());
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Deleting Attribute Type");
+			taskRequest.setDetails("Attribute Type: " + type);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Status", attributeType.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+						service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(type);
+		}
 	}
 
 	@POST
@@ -617,10 +670,34 @@ public class AttributeResource
 			@PathParam("type")
 			@RequiredParam String type)
 	{
-		TaskRequest taskRequest = new TaskRequest();
-		taskRequest.setAllowMultiple(false);
-		taskRequest.setName("Activating Attribute Type");
-		service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeType(type.toUpperCase());
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Activating Attribute Type");
+			taskRequest.setDetails("Attribute Type: " + type);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Status", attributeType.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+						service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeType(type);
+		}
 	}
 
 	@PUT
@@ -717,13 +794,44 @@ public class AttributeResource
 			@RequiredParam String code)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code.toUpperCase());
-		attributeCodePk.setAttributeType(type.toUpperCase());
+		attributeCodePk.setAttributeCode(code);
+		attributeCodePk.setAttributeType(type);
 
-		TaskRequest taskRequest = new TaskRequest();
-		taskRequest.setAllowMultiple(false);
-		taskRequest.setName("Inactivate Attribute Code");
-		service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeCode(attributeCodePk);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, type, AttributeCode.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Inactivate Attribute Code");
+			taskRequest.setDetails("Type: " + type + " Code: " + code);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Code", code);
+			taskRequest.getTaskData().put("Status", attributeCode.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+
+						AttributeCodePk extisingAttributeCodePk = new AttributeCodePk();
+						extisingAttributeCodePk.setAttributeCode((String) taskFuture.getTaskData().get("Code"));
+						extisingAttributeCodePk.setAttributeType((String) taskFuture.getTaskData().get("Type"));
+
+						service.getPersistenceService().setStatusOnEntity(AttributeCode.class, extisingAttributeCodePk, (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeCode(attributeCodePk);
+		}
 	}
 
 	@DELETE
@@ -737,13 +845,44 @@ public class AttributeResource
 			@RequiredParam String code)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code.toUpperCase());
-		attributeCodePk.setAttributeType(type.toUpperCase());
+		attributeCodePk.setAttributeCode(code);
+		attributeCodePk.setAttributeType(type);
 
-		TaskRequest taskRequest = new TaskRequest();
-		taskRequest.setAllowMultiple(false);
-		taskRequest.setName("Deleting Attribute Code");
-		service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeCode(attributeCodePk);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, type, AttributeCode.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Deleting Attribute Code");
+			taskRequest.setDetails("Type: " + type + " Code: " + code);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Code", code);
+			taskRequest.getTaskData().put("Status", attributeCode.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+
+						AttributeCodePk extisingAttributeCodePk = new AttributeCodePk();
+						extisingAttributeCodePk.setAttributeCode((String) taskFuture.getTaskData().get("Code"));
+						extisingAttributeCodePk.setAttributeType((String) taskFuture.getTaskData().get("Type"));
+
+						service.getPersistenceService().setStatusOnEntity(AttributeCode.class, extisingAttributeCodePk, (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeCode(attributeCodePk);
+		}
 	}
 
 	@POST
@@ -758,13 +897,44 @@ public class AttributeResource
 			@RequiredParam String code)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code.toUpperCase());
-		attributeCodePk.setAttributeType(type.toUpperCase());
+		attributeCodePk.setAttributeCode(code);
+		attributeCodePk.setAttributeType(type);
 
-		TaskRequest taskRequest = new TaskRequest();
-		taskRequest.setAllowMultiple(false);
-		taskRequest.setName("Activating Attribute Code");
-		service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeCode(attributeCodePk);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, type, AttributeCode.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Activating Attribute Code");
+			taskRequest.setDetails("Type: " + type + " Code: " + code);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Code", code);
+			taskRequest.getTaskData().put("Status", attributeCode.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+
+						AttributeCodePk extisingAttributeCodePk = new AttributeCodePk();
+						extisingAttributeCodePk.setAttributeCode((String) taskFuture.getTaskData().get("Code"));
+						extisingAttributeCodePk.setAttributeType((String) taskFuture.getTaskData().get("Type"));
+
+						service.getPersistenceService().setStatusOnEntity(AttributeCode.class, extisingAttributeCodePk, (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeCode(attributeCodePk);
+		}
 	}
 
 	@GET

@@ -105,7 +105,7 @@ public class Search
 		TaskRequest taskRequest = new TaskRequest();
 		taskRequest.setAllowMultiple(false);
 		taskRequest.setName("Resetting Indexer");
-
+		taskRequest.setDetails("Reindexing components and articles");
 		service.getAyncProxy(service.getSearchService(), taskRequest).resetIndexer();
 		return Response.ok().build();
 	}

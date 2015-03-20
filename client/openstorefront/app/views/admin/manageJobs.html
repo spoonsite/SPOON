@@ -8,6 +8,22 @@
 	}
 	.jobstatus-BLOCKING{		
 		background-color: lightcoral !important;
+	}
+	.taskstatus-WORKING{		
+		background-color: lightgreen !important;
+	}
+	.taskstatus-CANCELED{		
+		background-color: lightgrey !important;
+	}
+	.taskstatus-FAILED{		
+		background-color: lightcoral !important;
+		font-weight: bold;
+	}
+	.taskstatus-DONE{		
+		background-color: white !important;
+	}
+	.taskstatus-QUEUED{		
+		background-color: lightgray !important;
 	}	
 </style>	
 	<tabset>
@@ -66,7 +82,7 @@
 						<td>{{tasks.completedCount}}</td>
 						<td>Total Count</td>
 						<td>{{tasks.totalTaskCount}}</td>
-						<td>Thread Pool Size</td>
+						<td>Worker Pool Size</td>
 						<td>{{tasks.threadPoolSize}}</td>
 						<td>Largest Pool Size</td>
 						<td>{{tasks.largestPoolSize}}</td>
@@ -79,28 +95,36 @@
 			<div>
 				<button class="btn btn-default" ng-click="refreshTasks()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
 			</div>
-			Tasks automatically expire  and are removed.  Also, note state is not persistent across application restarts.
+			Tasks automatically expire and are removed according to configuration.
 			<table class="table table-striped table-bordered">
 					<tr>
 						<th><a href="" ng-click="setPredicate('taskName', 'tasks');">Task Name <span ng-show="predicate['tasks'] === 'taskName'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('status', 'tasks');">Status <span ng-show="predicate['tasks'] === 'status'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('submitedDts', 'tasks');">Submitted Date <span ng-show="predicate['tasks'] === 'submitedDts'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('completedDts', 'tasks');">Completion Date <span ng-show="predicate['tasks'] === 'completedDts'"><i ng-show="!reverse['tasks']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tasks']" class="fa fa-sort-alpha-desc"></i></span></a></th>												
-						<th style="width: 175px;">Allows Multiple Tasks</th>
-						<th>Error</th>
+						<th style="width: 175px;">Allows Multiple Tasks</th>						
 						<th>Action</th>
 					</tr>
-					<tr ng-repeat="task in tasks.tasks | orderBy:predicate['tasks']:reverse['tasks']" >
-						<td>{{task.taskName}}</td>
-						<td>{{task.status}}</td>
+					<tr ng-repeat-start="task in tasks.tasks | orderBy:predicate['tasks']:reverse['tasks']" >
+						<td><b>{{task.taskName}}</b><br>{{task.detail}}</td>
+						<td class="taskstatus-{{task.status}}">{{task.status}}</td>
 						<td>{{task.submitedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
-						<td>{{task.completedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>						
-						<td style="width: 175px;">{{task.allowMultiple}}</td>										
-						<td>{{task.error}}</td>										
+						<td>
+							{{task.completedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}<br>
+							<span style="font-size: 9px; color: gray;">(Expires: {{task.expireDts | date:'MM/dd/yyyy h:mm:ss.sss a'}})</span>
+						</td>						
+						<td style="width: 175px;">{{task.allowMultiple}}</td>																										
 						<td style="padding:0px; width: 200px;">&nbsp;
-							<button class="btn btn-danger" ng-show="task.status === 'WORKING'" ng-click="removeAllTooltips(); cancelTask(task.taskId)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Cancel task and Interrupt">Cancel&nbsp;<i class="fa fa-trash-o"></i></button>														
+							<button class="btn btn-default" ng-show="task.error" ng-click="showError(task)">View Error</button>
+							<button class="btn btn-danger" ng-show="task.status === 'WORKING'" ng-click="removeAllTooltips(); cancelTask(task)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Cancel task and Interrupt">Cancel&nbsp;<i class="fa fa-trash-o"></i></button>
+							<button class="btn btn-danger" ng-show="task.completedDts" ng-click="removeAllTooltips(); deleteTask(task)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Deletes a completed task">Delete&nbsp;<i class="fa fa-trash-o"></i></button>
 						</td>
-					</tr>				
+					</tr>
+					<tr ng-show="task.showDetails" ng-repeat-end>
+						<td colspan="6">
+							{{task.error}}
+						</td>				
+					</tr>					
 			</table>			
 		</tab>		
 	</tabset>	

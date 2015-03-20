@@ -177,6 +177,14 @@ app.controller('AdminEditAlertCtrl', ['$scope', '$uiModalInstance', 'alert', 'bu
            });
          }
       });
+      
+      //Clear bad data
+      delete $scope.alertForm.type;      
+      if ($scope.alertForm.alertType === 'USERD') {
+        delete $scope.alertForm.systemErrorAlertOption;
+      } else if ($scope.alertForm.alertType === 'SYSERROR') {
+        delete $scope.alertForm.userDataAlertOption;
+      }
 
       Business.alertservice.saveAlert($scope.alertForm).then(function(results) {
         if (results) {

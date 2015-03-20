@@ -178,6 +178,7 @@ public class UploadAction
 						TaskRequest taskRequest = new TaskRequest();
 						taskRequest.setAllowMultiple(false);
 						taskRequest.setName("Processing Attribute Upload");
+						taskRequest.setDetails("File name: " + uploadFile.getFileName());
 						service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
@@ -215,7 +216,8 @@ public class UploadAction
 
 				TaskRequest taskRequest = new TaskRequest();
 				taskRequest.setAllowMultiple(false);
-				taskRequest.setName("Uploading " + components.size() + " Component(s)");
+				taskRequest.setName("Uploading Component(s).");
+				taskRequest.setDetails("Component(s) Processing: " + components.size() + " from Filename: " + uploadFile.getFileName());
 				service.getAyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
 			} catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
@@ -256,7 +258,8 @@ public class UploadAction
 				if (!flag) {
 					TaskRequest taskRequest = new TaskRequest();
 					taskRequest.setAllowMultiple(false);
-					taskRequest.setName("Uploading " + articles.size() + " Articles(s)");
+					taskRequest.setName("Uploading Articles(s).");
+					taskRequest.setDetails("File name: " + uploadFile.getFileName());
 					service.getAyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
 				}
 			} catch (IOException ex) {

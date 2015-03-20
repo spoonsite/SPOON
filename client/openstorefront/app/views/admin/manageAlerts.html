@@ -43,7 +43,7 @@ limitations under the License.
 						</li>
 					</ul>
 				</td>				
-				<td ng-show="alert.systemErrorAlertOption">
+				<td ng-show="alert.systemErrorAlertOption && alert.alertType === 'SYSERROR'">
 					<ul>
 						<li ng-show="alert.systemErrorAlertOption.alertOnSystem">
 							System Errors
@@ -59,7 +59,7 @@ limitations under the License.
 						</li>					
 					</ul>
 				</td>	
-				<td ng-show="alert.userDataAlertOption">
+				<td ng-show="alert.userDataAlertOption && alert.alertType === 'USERD'">
 					<ul>
 						<li ng-show="alert.userDataAlertOption.alertOnTags">
 							Tags

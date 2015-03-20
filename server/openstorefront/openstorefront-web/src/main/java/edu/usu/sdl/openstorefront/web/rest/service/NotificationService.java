@@ -34,6 +34,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.RecentChangesStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -66,7 +67,8 @@ public class NotificationService
 		if (validationResult.valid()) {
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(true);
-			taskRequest.setName("Send Admin Message");
+			taskRequest.setName("Sending Admin Message");
+			taskRequest.setDetails("Emailing: " + Arrays.toString(adminMessage.getUsersToEmail().toArray(new String[0])));
 			service.getAyncProxy(service.getUserService(), taskRequest).sendAdminMessage(adminMessage);
 			return Response.ok().build();
 		} else {
@@ -102,6 +104,11 @@ public class NotificationService
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(true);
 			taskRequest.setName("Send Recent Change Email");
+			String email = "";
+			if (StringUtils.isNotBlank(emailAddress)) {
+				email = " Email: " + emailAddress;
+			}
+			taskRequest.setDetails("Start Date: " + lastRunDts + email);
 			service.getAyncProxy(service.getUserService(), taskRequest).sendRecentChangeEmail(lastRunDts, emailAddress);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to parse last run dts", "Check last run dts param format (MM/dd/yyyy) ");

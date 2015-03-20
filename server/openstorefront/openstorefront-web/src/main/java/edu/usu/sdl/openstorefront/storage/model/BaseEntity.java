@@ -17,8 +17,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.io.Serializable;
 import java.util.Date;
@@ -38,6 +38,7 @@ public abstract class BaseEntity<T>
 
 	public static final String ACTIVE_STATUS = "A";
 	public static final String INACTIVE_STATUS = "I";
+	public static final String PENDING_STATUS = "P";
 
 	@NotNull
 	@ValidValueType({"A", "I"})

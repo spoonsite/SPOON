@@ -234,7 +234,7 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       if (option.$viewValue === 'USAGE') {
         $scope.options.useage=true;
         $scope.options.link=false;
-      } if (option.$viewValue === 'LINKVALID') {
+      } else if (option.$viewValue === 'LINKVALID') {
         $scope.options.useage=false;
         $scope.options.link=true;
       } else {
