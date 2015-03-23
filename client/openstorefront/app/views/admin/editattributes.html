@@ -41,11 +41,11 @@
 		<tr ng-repeat="filter in filters| orderBy:predicate:reverse"  ng-class="filter.activeStatus === 'I'? 'inactive':''">
 			<td>{{filter.description}}</td>
 			<td>{{filter.type}}</td>
-			<td ng-class="filter.visibleFlg? 'truthy':'falsey'">{{filter.visibleFlg}}</td>
-			<td ng-class="filter.requiredFlg? 'truthy':'falsey'">{{filter.requiredFlg}}</td>
-			<td ng-class="filter.importantFlg? 'truthy':'falsey'">{{filter.importantFlg}}</td>
-			<td ng-class="filter.architectureFlg? 'truthy':'falsey'">{{filter.architectureFlg}}</td>
-			<td ng-class="filter.allowMultipleFlg? 'truthy':'falsey'">{{filter.allowMultipleFlg}}</td>
+			<td ng-class="filter.visibleFlg? 'success':'danger'">{{filter.visibleFlg}}</td>
+			<td ng-class="filter.requiredFlg? 'success':'danger'">{{filter.requiredFlg}}</td>
+			<td ng-class="filter.importantFlg? 'success':'danger'">{{filter.importantFlg}}</td>
+			<td ng-class="filter.architectureFlg? 'success':'danger'">{{filter.architectureFlg}}</td>
+			<td ng-class="filter.allowMultipleFlg? 'success':'danger'">{{filter.allowMultipleFlg}}</td>
 			<td style="padding: 0px 3px;">
 				<button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editType(filter)" ng-disabled="filter.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button><button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(filter)" ng-class="filter.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
 			</td>

@@ -148,7 +148,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   } else {
     cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_Example Specification, TagValue_Example Solution, TagValue_DI2E Framework');
     if (cont){
-      $scope.attributeUploader.uploadAll()
+      $scope.svcv4uploader.uploadAll()
     }
   }
 }

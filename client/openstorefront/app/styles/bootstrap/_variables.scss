@@ -103,11 +103,11 @@ $table-cell-padding:                 8px !default;
 $table-condensed-cell-padding:       5px !default;
 
 $table-bg:                           transparent !default; // overall background-color
-$table-bg-accent:                    #f9f9f9 !default; // for striping
-$table-bg-hover:                     #f5f5f5 !default;
+$table-bg-accent:                    #eeeeee !default; // for striping
+$table-bg-hover:                     #dddddd !default;
 $table-bg-active:                    $table-bg-hover !default;
 
-$table-border-color:                 #ddd !default; // table and cell border
+$table-border-color:                 #d0d0d0 !default; // table and cell border
 
 
 // Buttons
@@ -390,6 +390,10 @@ $state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%) 
 $state-danger-text:              #b94a48 !default;
 $state-danger-bg:                #f2dede !default;
 $state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%) !default;
+
+$state-inverse-text:             #ffffff !default;
+$state-inverse-bg:               #333333 !default;
+$state-inverse-border:           lighten(adjust-hue($state-inverse-bg, -10), 5%) !default;
 
 
 // Tooltips
