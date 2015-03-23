@@ -177,7 +177,7 @@ public class UploadAction
 
 						TaskRequest taskRequest = new TaskRequest();
 						taskRequest.setAllowMultiple(false);
-						taskRequest.setName("Processing Attribute Upload");
+						taskRequest.setName("Uploading Attribute(s)");
 						taskRequest.setDetails("File name: " + uploadFile.getFileName());
 						service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
 					} catch (IOException ex) {
@@ -258,7 +258,7 @@ public class UploadAction
 				if (!flag) {
 					TaskRequest taskRequest = new TaskRequest();
 					taskRequest.setAllowMultiple(false);
-					taskRequest.setName("Uploading Articles(s)");
+					taskRequest.setName("Uploading Article");
 					taskRequest.setDetails("File name: " + uploadFile.getFileName());
 					service.getAyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
 				}
