@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -52,12 +53,11 @@ public class MainAttributeParser
 	private static final int SORT_ORDER = 11;
 	private static final int ARCHITECTURE_CODE = 12;
 	private static final int BADGE_URL = 13;
+	private static final int HIGHLIGHT_STYLE = 14;
+	private static final int ALLOW_MULTIPLE = 15;
 
 	private static final String HEADER = "Attribute Type";
 
-	/**
-	 * @return the HEADER
-	 */
 	@Override
 	public String getHEADER()
 	{
@@ -107,6 +107,17 @@ public class MainAttributeParser
 
 				if (data.length > BADGE_URL) {
 					attributeCode.setBadgeUrl(data[BADGE_URL].trim());
+				}
+
+				if (data.length > HIGHLIGHT_STYLE) {
+					attributeCode.setHighlightStyle(data[HIGHLIGHT_STYLE].trim());
+				}
+
+				if (data.length > ALLOW_MULTIPLE) {
+					String allowMultiple = data[ALLOW_MULTIPLE].trim();
+					if (StringUtils.isNotBlank(allowMultiple)) {
+						attributeType.setAllowMultipleFlg(Convert.toBoolean(allowMultiple));
+					}
 				}
 
 				if (attributeMap.containsKey(attributeType)) {

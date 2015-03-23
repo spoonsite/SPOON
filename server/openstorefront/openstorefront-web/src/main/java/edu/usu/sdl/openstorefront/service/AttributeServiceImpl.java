@@ -270,6 +270,7 @@ public class AttributeServiceImpl
 			existing.setBadgeUrl(attributeCode.getBadgeUrl());
 			existing.setGroupCode(attributeCode.getGroupCode());
 			existing.setSortOrder(attributeCode.getSortOrder());
+			existing.setHighlightStyle(attributeCode.getHighlightStyle());
 			persistenceService.persist(existing);
 		} else {
 			attributeCode.populateBaseCreateFields();
@@ -605,6 +606,7 @@ public class AttributeServiceImpl
 										existingCode.setBadgeUrl(attributeCode.getBadgeUrl());
 										existingCode.setGroupCode(attributeCode.getGroupCode());
 										existingCode.setSortOrder(attributeCode.getSortOrder());
+										existingCode.setHighlightStyle(attributeCode.getHighlightStyle());
 										existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 										existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);

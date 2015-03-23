@@ -79,8 +79,7 @@ public class FindAttributeTest
 		});
 
 		results.append("<br>Remove attribute").append("<br>");
-		service.getAttributeService().removeAttributeCode(attributeCodePk);
-		service.getAttributeService().removeAttributeType(attributeType.getAttributeType());
+		service.getAttributeService().cascadeDeleteAttributeType(attributeType.getAttributeType());
 	}
 
 }

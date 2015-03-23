@@ -98,7 +98,9 @@ public class AttributeTypeView
 				code.getGroupCode(),
 				code.getSortOrder() == null ? "" : code.getSortOrder().toString(),
 				code.getArchitectureCode(),
-				code.getBadgeUrl()
+				code.getBadgeUrl(),
+				code.getHighlightStyle(),
+				Boolean.toString(getAllowMultipleFlg())
 			});
 		});
 		return stringWriter.toString();

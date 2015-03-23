@@ -77,7 +77,7 @@ public class UserReport
 				"# Active Reviews",
 				"# Active Questions",
 				"# Active Question Responses",
-				"# Tag",
+				"# Tags",
 				"# Component Views",
 				"# Article Views"
 		);

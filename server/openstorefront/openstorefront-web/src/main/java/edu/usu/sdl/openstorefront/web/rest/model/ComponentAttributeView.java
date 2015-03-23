@@ -51,6 +51,7 @@ public class ComponentAttributeView
 	private boolean orphan;
 	private String activeStatus;
 	private String badgeUrl;
+	private String highlightStyle;
 
 	public ComponentAttributeView()
 	{
@@ -120,6 +121,7 @@ public class ComponentAttributeView
 		view.setUpdateDts(attribute.getUpdateDts());
 		view.setSortOrder(code.getSortOrder());
 		view.setGroupCode(code.getGroupCode());
+		view.setHighlightStyle(code.getHighlightStyle());
 		view.setActiveStatus(attribute.getActiveStatus());
 
 		return view;
@@ -417,20 +419,24 @@ public class ComponentAttributeView
 		this.activeStatus = activeStatus;
 	}
 
-	/**
-	 * @return the badgeUrl
-	 */
 	public String getBadgeUrl()
 	{
 		return badgeUrl;
 	}
 
-	/**
-	 * @param badgeUrl the badgeUrl to set
-	 */
 	public void setBadgeUrl(String badgeUrl)
 	{
 		this.badgeUrl = badgeUrl;
+	}
+
+	public String getHighlightStyle()
+	{
+		return highlightStyle;
+	}
+
+	public void setHighlightStyle(String highlightStyle)
+	{
+		this.highlightStyle = highlightStyle;
 	}
 
 }
