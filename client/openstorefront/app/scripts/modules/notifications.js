@@ -150,10 +150,10 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
         var modalInstance = $uiModal.open({
           template: $templateCache.get('notifications/notificationsModal.tpl.html'),
           controller: 'notificationsModalCtrl',
-          size: 'sm',
+          size: 'lg',
           resolve: {
             size: function() {
-              return 'sm';
+              return 'lg';
             }
           }
         });
@@ -316,28 +316,70 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
 
   return notifications;
 }])
-.controller('notificationsCtrl', ['$scope', 'notificationsFactory', function ($scope, Factory) {
-  var num = 0;
-  $scope.addToFactory = function () {
-    Factory.add({
-      'id': num++,
-    }, 'success');
-  }
-  // console.log("We've added a cool test", Factory.get());
-  $scope.removeFromFactory = function () {
-    // console.log('Factory', Factory.get());
-    
-    if (Factory.get().length) {
-      Factory.remove({
-        'id': --num,
-      }, 'info');
-    }
-  }
-  // console.log("We tried to remove one", Factory.get());
-  $scope.name = 'Superhero';
-}])
 .controller('notificationsModalCtrl', ['$scope', '$uiModalInstance', 'size', 'notificationsFactory', '$timeout', function ($scope, $uiModalInstance, size, Factory, $timeout) {
   $scope.data = Factory.get();
+
+  $scope.predicate = 'expireDts';
+  $scope.reverse = false;
+
+  $scope.setPredicate = function(predicate, override){
+    if ($scope.predicate === predicate){
+      $scope.reverse = !$scope.reverse;
+    } else {
+      $scope.predicate = predicate;
+      $scope.reverse = !!override;
+    }
+  };
+
+  $scope.remove = function(item){
+    // return utils.getStatus(item);
+  }
+
+  $scope.getStatus = function(status){
+    return utils.getStatus(status);
+  }
+
+  $scope.checkStatus = function(val){
+    switch(val){
+      case 'DONE':
+      case 'CANCELLED':
+      case 'FAILED':
+      return false
+      break;
+      case 'QUEUED':
+      case 'WORKING':
+      default:
+      return true
+      break;
+    }
+  }
+
+  $scope.timer = function() {
+    var result;
+    var minutes;
+    var seconds;
+    var diff;
+    _.each($scope.data, function(item){
+      var start = new Date(item.expireDts);
+      diff = ((start - Date.now()) / 1000) | 0;
+      if (!diff || diff <= 0) {
+        item.countDown = '00:00';
+      }
+
+      // does the same job as parseInt truncates the float
+      minutes = (diff / 60) | 0;
+      seconds = (diff % 60) | 0;
+
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = (seconds > 0 && seconds < 10)? "0" + seconds : (seconds > 0)? seconds : "00";
+
+      item.countDown = minutes + ":" + seconds; 
+    })
+    $scope.$apply();
+  };
+  $scope.timer();
+  // we don't want to wait a full second before the timer starts
+  setInterval($scope.timer, 1000);
 
   $scope.ok = function (validity) {
     $uiModalInstance.close('success');
@@ -363,7 +405,7 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
       });
 
       $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{getSize()}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><alert ng-repeat="alert in alerts track by alert.id" type="{{alert.type}}" close="closeAlert(alert)">{{alert.msg}}</alert></div-stick>');
-      $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"> <h3 class="modal-title">I\'m a modal!</h3> </div> <div class="modal-body"> <ul> <li ng-repeat="item in data"> <a ng-click="selected.item = item">{{ item }}</a> </li> </ul> Selected: <b>{{ selected.item }}</b> </div> <div class="modal-footer"> <button class="btn btn-primary" ng-click="ok()">OK</button> <button class="btn btn-warning" ng-click="cancel()">Cancel</button> </div>');
+      $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue</h3> </div> <div class="modal-body"> <table class="table table-bordered table-striped admin-table"> <tr> <th><a href="" ng-click="setPredicate(\'taskName\');">Name&nbsp;<span ng-show="predicate === \'taskName\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'details\');">Details&nbsp;<span ng-show="predicate === \'details\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'status\', false);">Status&nbsp;<span ng-show="predicate === \'status\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'expireDts\', false);">Expires In&nbsp;<span ng-show="predicate === \'expireDts\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th style="padding: 8px 3px;">Actions</th> </tr> <tr ng-repeat="item in data| orderBy:predicate:reverse"> <td>{{item.taskName}}</td> <td>{{item.details}}</td> <td ng-class="getStatus(item.status)">{{item.status}}</td> <td ng-class="">{{item.countDown}}</td> <td style="padding: 0px 3px;"> <button type="button" title="Remove Old Task" class="btn btn-default btn-sm" ng-click="remove(item)" ng-disabled="checkStatus(item.status)"><i class="fa fa-trash fa-aw"></i></button> </td> </tr> </table> </div> <div class="modal-footer"> <button class="btn btn-warning" ng-click="cancel()">Close</button> </div>');
     }]);
 
 
