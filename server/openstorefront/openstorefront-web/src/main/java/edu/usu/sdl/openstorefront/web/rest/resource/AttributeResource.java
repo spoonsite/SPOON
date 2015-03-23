@@ -803,7 +803,7 @@ public class AttributeResource
 
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(false);
-			taskRequest.setName("Inactivate Attribute Code");
+			taskRequest.setName("Inactivating Attribute Code");
 			taskRequest.setDetails("Type: " + type + " Code: " + code);
 			taskRequest.getTaskData().put("Type", type);
 			taskRequest.getTaskData().put("Code", code);
