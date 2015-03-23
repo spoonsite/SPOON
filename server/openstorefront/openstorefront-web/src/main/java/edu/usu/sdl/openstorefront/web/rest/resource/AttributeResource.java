@@ -799,7 +799,7 @@ public class AttributeResource
 
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
-			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, type, AttributeCode.PENDING_STATUS);
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, attributeCodePk, AttributeCode.PENDING_STATUS);
 
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(false);
@@ -850,7 +850,7 @@ public class AttributeResource
 
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
-			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, type, AttributeCode.PENDING_STATUS);
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, attributeCodePk, AttributeCode.PENDING_STATUS);
 
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(false);
