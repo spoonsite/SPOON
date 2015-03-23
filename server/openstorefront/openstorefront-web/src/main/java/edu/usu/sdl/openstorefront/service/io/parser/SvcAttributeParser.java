@@ -43,14 +43,10 @@ public class SvcAttributeParser
 	private static final int LABEL = 2;
 	private static final int DEFINITION = 3;
 	private static final int DESCRIPTION = 4;
-	private static final int EXAMPLE_SPEC = 5;
-	private static final int EXAMPLE_SOLUTION = 6;
-	private static final int DI2E_STATUS = 7;
-	private static final int DSGS_ENTERPRISE = 8;
-	private static final int JCA_ALIGNMENT = 9;
-	private static final int JCSFL_ALIGNMENT = 10;
-	private static final int JARM_ALIGNMENT = 11;
-	private static final int INTERNAL_COMMENTS = 12;
+	private static final int JCA_ALIGNMENT = 5;
+	private static final int JCSFL_ALIGNMENT = 6;
+	private static final int JARM_ALIGNMENT = 7;
+	private static final int INTERNAL_COMMENTS = 8;
 	
 	
 	@Override

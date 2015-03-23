@@ -168,9 +168,11 @@ table {
 }
 
 // Generate the contextual variants
-@include table-row-variant('success', $state-success-bg, $state-success-border);
-@include table-row-variant('danger', $state-danger-bg, $state-danger-border);
-@include table-row-variant('warning', $state-warning-bg, $state-warning-border);
+@include table-row-variant('success', $state-success-bg, $state-success-border, $state-success-text);
+@include table-row-variant('danger', $state-danger-bg, $state-danger-border, $state-danger-text);
+@include table-row-variant('warning', $state-warning-bg, $state-warning-border, $state-warning-text);
+@include table-row-variant('info', $state-info-bg, $state-info-border, $state-info-text);
+@include table-row-variant('inverse', $state-inverse-bg, $state-inverse-border, $state-inverse-text);
 
 
 // Responsive tables
