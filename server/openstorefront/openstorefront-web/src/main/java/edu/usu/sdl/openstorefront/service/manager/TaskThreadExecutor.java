@@ -212,7 +212,7 @@ public class TaskThreadExecutor
 			Future future = submit(taskRequest.getTask());
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
 			taskFuture.setCreateUser(SecurityUtil.getCurrentUserName());
-			taskFuture.setDetails(taskFuture.getDetails());
+			taskFuture.setDetails(taskRequest.getDetails());
 			taskFuture.setTaskData(taskRequest.getTaskData());
 			taskFuture.setTaskName(taskRequest.getName());
 			taskFuture.setCallback(taskRequest.getCallback());

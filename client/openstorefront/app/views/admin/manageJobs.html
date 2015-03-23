@@ -106,7 +106,7 @@
 						<th>Action</th>
 					</tr>
 					<tr ng-repeat-start="task in tasks.tasks | orderBy:predicate['tasks']:reverse['tasks']" >
-						<td><b>{{task.taskName}}</b><br>{{task.detail}}</td>
+						<td><b>{{task.taskName}}</b><br>{{task.details}}</td>
 						<td class="taskstatus-{{task.status}}">{{task.status}}</td>
 						<td>{{task.submitedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
 						<td>
