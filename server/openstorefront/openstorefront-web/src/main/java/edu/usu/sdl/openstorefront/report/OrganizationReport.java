@@ -68,9 +68,9 @@ public class OrganizationReport
 				"# Users",
 				"# Reviews",
 				"# Questions",
-				"# Question Response",
+				"# Question Responses",
 				"# Component Views",
-				"# Component Resource Clicked",
+				"# Component Resources Clicked",
 				"# Article Views",
 				"# Logins"
 		);

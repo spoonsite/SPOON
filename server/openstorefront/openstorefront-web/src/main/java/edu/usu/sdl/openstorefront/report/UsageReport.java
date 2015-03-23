@@ -108,7 +108,7 @@ public class UsageReport
 				"# Logins",
 				"Current Active Watches",
 				"Component Views",
-				"Component Resources Click",
+				"Component Resources Clicked",
 				"Article Views"
 		);
 

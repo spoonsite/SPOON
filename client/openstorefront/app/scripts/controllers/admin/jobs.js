@@ -101,7 +101,7 @@ app.controller('AdminJobsCtrl', ['$scope', 'business', function ($scope, Busines
   
   
     $scope.cancelTask = function (task) {
-      var response = window.confirm("Are you sure you want CANCEL " + task.name + "?");
+      var response = window.confirm("Are you sure you want CANCEL " + task.taskName + "?");
       if (response) {
         $scope.$emit('$TRIGGERLOAD', 'taskLoader');
         Business.jobservice.cancelTask(task.taskId).then(function (results) {
@@ -111,8 +111,8 @@ app.controller('AdminJobsCtrl', ['$scope', 'business', function ($scope, Busines
       }
     };
   
-  $scope.deleteTask = function(task){    
-      var response = window.confirm("Are you sure you want DELETE " + task.name + "?");
+  $scope.deleteTask = function (task){    
+      var response = window.confirm("Are you sure you want DELETE " + task.taskName + "?");
       if (response) {
         $scope.$emit('$TRIGGERLOAD', 'taskLoader');
         Business.jobservice.deleteTask(task.taskId).then(function (results) {

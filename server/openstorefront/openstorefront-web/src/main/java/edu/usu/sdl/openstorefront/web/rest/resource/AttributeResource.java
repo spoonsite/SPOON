@@ -192,7 +192,9 @@ public class AttributeResource
 		data.append("Group").append(",");
 		data.append("Sort Order").append(",");
 		data.append("Architecture Code").append(",");
-		data.append("Badge Url").append("\n");
+		data.append("Badge Url").append(",");
+		data.append("Highlight Style").append(",");
+		data.append("Allow Multiple Codes").append("\n");
 
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 			data.append(attributeTypeView.export());

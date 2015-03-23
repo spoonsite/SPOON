@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
-import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -38,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 @APIDescription("Attribute code are used to link metadata and create articles on topics")
 public class AttributeCode
 		extends BaseEntity
-		implements ExportImport
 {
 
 	@PK
@@ -84,6 +82,9 @@ public class AttributeCode
 	@ConsumeField
 	private Integer sortOrder;
 
+	@ConsumeField
+	private String highlightStyle;
+
 	public static final String DI2ELEVEL_NA = "NA";
 	public static final String DI2ELEVEL_LEVEL0 = "LEVEL0";
 	public static final String DI2ELEVEL_LEVEL1 = "LEVEL1";
@@ -106,18 +107,6 @@ public class AttributeCode
 		} else {
 			return getAttributeCodePk().getAttributeCode();
 		}
-	}
-
-	@Override
-	public String export()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public void importData(String[] data)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
@@ -276,6 +265,16 @@ public class AttributeCode
 	public void setBadgeUrl(String badgeUrl)
 	{
 		this.badgeUrl = badgeUrl;
+	}
+
+	public String getHighlightStyle()
+	{
+		return highlightStyle;
+	}
+
+	public void setHighlightStyle(String highlightStyle)
+	{
+		this.highlightStyle = highlightStyle;
 	}
 
 }

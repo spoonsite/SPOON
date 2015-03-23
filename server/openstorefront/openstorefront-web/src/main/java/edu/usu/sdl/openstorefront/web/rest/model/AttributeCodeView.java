@@ -33,6 +33,7 @@ public class AttributeCodeView
 	private String groupCode;
 	private Integer sortOrder;
 	private String activeStatus;
+	private String highlightStyle;
 
 	public AttributeCodeView()
 	{
@@ -46,6 +47,7 @@ public class AttributeCodeView
 		attributeCodeView.setDescription(attributeCode.getDescription());
 		attributeCodeView.setGroupCode(attributeCode.getGroupCode());
 		attributeCodeView.setSortOrder(attributeCode.getSortOrder());
+		attributeCodeView.setHighlightStyle(attributeCode.getHighlightStyle());
 		attributeCodeView.setBadgeUrl(attributeCode.getBadgeUrl());
 		attributeCodeView.setArchitectureCode(attributeCode.getArchitectureCode());
 		attributeCodeView.setActiveStatus(attributeCode.getActiveStatus());
@@ -146,6 +148,16 @@ public class AttributeCodeView
 	public void setArchitectureCode(String architectureCode)
 	{
 		this.architectureCode = architectureCode;
+	}
+
+	public String getHighlightStyle()
+	{
+		return highlightStyle;
+	}
+
+	public void setHighlightStyle(String highlightStyle)
+	{
+		this.highlightStyle = highlightStyle;
 	}
 
 }
