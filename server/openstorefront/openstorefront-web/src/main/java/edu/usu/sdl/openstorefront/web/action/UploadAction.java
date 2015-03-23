@@ -216,7 +216,7 @@ public class UploadAction
 
 				TaskRequest taskRequest = new TaskRequest();
 				taskRequest.setAllowMultiple(false);
-				taskRequest.setName("Uploading Component(s).");
+				taskRequest.setName("Uploading Component(s)");
 				taskRequest.setDetails("Component(s) Processing: " + components.size() + " from Filename: " + uploadFile.getFileName());
 				service.getAyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
 			} catch (IOException ex) {
@@ -258,7 +258,7 @@ public class UploadAction
 				if (!flag) {
 					TaskRequest taskRequest = new TaskRequest();
 					taskRequest.setAllowMultiple(false);
-					taskRequest.setName("Uploading Articles(s).");
+					taskRequest.setName("Uploading Articles(s)");
 					taskRequest.setDetails("File name: " + uploadFile.getFileName());
 					service.getAyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
 				}
