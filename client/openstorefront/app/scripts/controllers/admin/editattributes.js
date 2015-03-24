@@ -18,25 +18,32 @@
 
 app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$timeout', 'FileUploader', function ($scope, Business, $uiModal, $timeout, FileUploader) {
   $scope.predicate = 'description';
-  $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminAttributes');
   $scope.reverse = false;
   $scope.flags = {};
   $scope.flags.showUpload = false;
-  
-  $scope.getFilters = function(override) {
-    Business.getFilters(override, true).then(function(result){
-      $scope.filters = result? angular.copy(result): [];
-      $timeout(function(){
-        $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminAttributes');
-      })
-    }, function(){
-      $scope.filters = [];
-    });
+  $scope.allTypes = {};
+  $scope.allTypes.data = [];
+  $scope.pagination = {};
+  $scope.pagination.control;
+  $scope.pagination.features = {'dates': false, 'max': false};
+
+
+  $scope.getFilters = function (override, all) {
+    console.log('we\'re getting types');
+    $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+    if ($scope.pagination.control && $scope.pagination.control.refresh) {
+      $scope.pagination.control.refresh().then(function(){
+        console.log('we\'re DONE getting types');
+        $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+      });
+    }
   };
-  $scope.getFilters(false);
+  $timeout(function(){
+    $scope.getFilters();
+  })
 
   $scope.refreshFilterCache = function() {
-    Business.getFilters(true, false);
+    $scope.getFilters(true, false);
   };
 
   $scope.setPredicate = function(predicate, override){
@@ -46,6 +53,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       $scope.predicate = predicate;
       $scope.reverse = !!override;
     }
+    $scope.pagination.control.changeSortOrder(predicate);
   };
 
   $scope.editLanding = function(type, code) {
@@ -101,6 +109,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       templateUrl: 'views/admin/editcodes.html',
       controller: 'AdminEditcodesCtrl',
       size: 'lg',
+      backdrop: 'static',
       resolve: {
         type: function () {
           return type;
@@ -135,40 +144,43 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   }, 300);
   
   $scope.export = function(){
-   window.location.href = "api/v1/resource/attributes/export"; 
- };
+    window.location.href = "api/v1/resource/attributes/export"; 
+  };
 
- $scope.confirmAttributeUpload = function(isAttributeUploader){
-  var cont = false;
-  if (isAttributeUploader){
-    cont = confirm('Please verify that this file is the allattributes.csv file with a header similiar to this: (order and letter case matters)\nAttribute Type, Description, Architecture Flag, Visible Flag, Important Flag, Required Flag, Code, Code Label, Code Description, External Link, Group, Sort Order, Architecture Code, Badge Url');
-    if (cont){
-      $scope.attributeUploader.uploadAll()
-    }
-  } else {
-    cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_Example Specification, TagValue_Example Solution, TagValue_DI2E Framework');
-    if (cont){
-      $scope.svcv4uploader.uploadAll()
+  $scope.confirmAttributeUpload = function(isAttributeUploader){
+    var cont = false;
+    if (isAttributeUploader){
+      cont = confirm('Please verify that this file is the allattributes.csv file with a header similiar to this: (order and letter case matters)\nAttribute Type, Description, Architecture Flag, Visible Flag, Important Flag, Required Flag, Code, Code Label, Code Description, External Link, Group, Sort Order, Architecture Code, Badge Url');
+      if (cont){
+        $scope.attributeUploader.uploadAll()
+      }
+    } else {
+      cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
+      if (cont){
+        $scope.svcv4uploader.uploadAll()
+      }
     }
   }
-}
+  $scope.clearSort = function(){
+    $scope.predicate = 'description';
+  }
 
-$scope.attributeUploader = new FileUploader({
-  url: 'Upload.action?UploadAttributes',
-  alias: 'uploadFile',
-  queueLimit: 1, 
-  removeAfterUpload: true,
-  filters: [{
-    name: 'csv',    
-    fn: function(item) {
-      return true;
-    }
-  }],
-  onBeforeUploadItem: function(item) {
-    $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-  },
-  onSuccessItem: function (item, response, status, headers) {
-    $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+  $scope.attributeUploader = new FileUploader({
+    url: 'Upload.action?UploadAttributes',
+    alias: 'uploadFile',
+    queueLimit: 1, 
+    removeAfterUpload: true,
+    filters: [{
+      name: 'csv',    
+      fn: function(item) {
+        return true;
+      }
+    }],
+    onBeforeUploadItem: function(item) {
+      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+    },
+    onSuccessItem: function (item, response, status, headers) {
+      $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
 
       //check response for a fail ticket or a error model
       if (response.success) {
@@ -235,5 +247,14 @@ $scope.svcv4uploader = new FileUploader({
     }    
   });  
 
+var stickThatTable = function(){
+  var offset = $('.top').outerHeight() + $('#editAttributesToolbar').outerHeight();
+  $(".stickytable").stickyTableHeaders({
+    fixedOffset: offset
+  });
+}
+
+$(window).resize(stickThatTable);
+$timeout(stickThatTable, 100);
 
 }]);

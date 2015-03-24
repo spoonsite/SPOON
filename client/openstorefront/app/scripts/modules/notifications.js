@@ -357,7 +357,7 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
   }
 
   $scope.deleteTask = function(task){    
-    var response = window.confirm("Are you sure you want DELETE " + task.name + "?");
+    var response = window.confirm("Are you sure you want DELETE " + task.taskName + "? (This may take a few seconds to apply)");
     if (response) {
       Factory.deleteTask('api/v1/service/jobs/tasks/', task.taskId).then(function (results) {
         $scope.refresh();
@@ -410,7 +410,9 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
 
       item.countDown = hours? hours + ":" + minutes + ":" + seconds : minutes + ":" + seconds; 
     })
-    $scope.$apply();
+    if(!$scope.$$phase) {
+      $scope.$apply();
+    }
   };
   $scope.timer();
   // we don't want to wait a full second before the timer starts
@@ -440,7 +442,7 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
       });
 
       $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{getSize()}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><alert ng-repeat="alert in alerts track by alert.id" type="{{alert.type}}" close="closeAlert(alert)">{{alert.msg}}</alert></div-stick>');
-      $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue</h3> </div> <div class="modal-body"> <button class="btn btn-default" ng-click="refresh"><i class="fa fa-refresh"></i>&nbsp;Refresh</button> <table class="table table-bordered table-striped admin-table"> <tr> <th><a href="" ng-click="setPredicate(\'taskName\');">Name&nbsp;<span ng-show="predicate === \'taskName\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'details\');">Details&nbsp;<span ng-show="predicate === \'details\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'status\', false);">Status&nbsp;<span ng-show="predicate === \'status\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'expireDts\', false);">Expires In&nbsp;<span ng-show="predicate === \'expireDts\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th style="padding: 8px 3px;">Actions</th> </tr> <tr ng-repeat="item in data| orderBy:predicate:reverse"> <td>{{item.taskName}}</td> <td>{{item.details}}</td> <td ng-class="getStatus(item.status)">{{item.status}}</td> <td ng-class="">{{item.countDown}}</td> <td style="padding: 0px 3px;"> <button type="button" title="Remove Old Task" class="btn btn-default btn-sm" ng-click="deleteTask(item)" ng-disabled="checkStatus(item.status)"><i class="fa fa-trash fa-aw"></i></button> </td> </tr> </table> </div> <div class="modal-footer"> <button class="btn btn-warning" ng-click="cancel()">Close</button> </div>');
+      $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue</h3> </div> <div class="modal-body"> <button class="btn btn-default" ng-click="refresh()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button> <table class="table table-bordered table-striped admin-table"> <tr> <th><a href="" ng-click="setPredicate(\'taskName\');">Name&nbsp;<span ng-show="predicate === \'taskName\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'details\');">Details&nbsp;<span ng-show="predicate === \'details\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'status\', false);">Status&nbsp;<span ng-show="predicate === \'status\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'expireDts\', false);">Expires In&nbsp;<span ng-show="predicate === \'expireDts\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th style="padding: 8px 3px;">Actions</th> </tr> <tr ng-repeat="item in data| orderBy:predicate:reverse"> <td>{{item.taskName}}</td> <td>{{item.details}}</td> <td ng-class="getStatus(item.status)">{{item.status}}</td> <td ng-class="">{{item.countDown}}</td> <td style="padding: 0px 3px;"> <button type="button" title="Remove Old Task" class="btn btn-default btn-sm" ng-click="deleteTask(item)" ng-disabled="checkStatus(item.status)"><i class="fa fa-trash fa-aw"></i></button> </td> </tr> </table> </div> <div class="modal-footer"> <button class="btn btn-warning" ng-click="cancel()">Close</button> </div>');
     }]);
 
 
