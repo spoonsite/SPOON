@@ -25,6 +25,8 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.attributeType = {};
   $scope.attributeCode = {};
   $scope.codes = {};
+  $scope.predicate = 'title';
+  $scope.reverse = false;
   $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
 
   // /***************************************************************
@@ -35,6 +37,14 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
 
   var compare = function (a, b) {
     return ((a.label == b.label) ? 0 : ((a.label > b.label) ? 1 : -1));
+  }
+
+  $scope.clearSort = function() {
+    $scope.predicate = 'title'; 
+    $scope.reverse = false;
+    if(!$scope.$$phase) {
+      $scope.$apply();
+    }
   }
 
   $scope.getAttributeCodes = function(override) {
@@ -50,6 +60,15 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       $scope.getAttributeCodes();
     }
   }, true)
+
+  $scope.setPredicate = function (predicate) {
+    if ($scope.predicate === predicate) {
+      $scope.reverse = !$scope.reverse;
+    } else {
+      $scope.predicate = predicate;
+      $scope.reverse = false;
+    }
+  };
 
   $scope.getAttributes = function(override) {
     Business.getFilters(override, true).then(function(result){
@@ -221,6 +240,16 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $timeout(function() {
     $('[data-toggle=\'tooltip\']').tooltip();
   }, 300);
+
+  var stickThatTable = function(){
+    var offset = $('.top').outerHeight() + $('#editArticlesToolbar').outerHeight();
+    $(".stickytable").stickyTableHeaders({
+      fixedOffset: offset
+    });
+  }
+
+  $(window).resize(stickThatTable);
+  $timeout(stickThatTable, 100);
 
 }]);
 

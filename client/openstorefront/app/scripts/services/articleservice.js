@@ -178,6 +178,39 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     }
 
     return deferred.promise;
+  };  
+
+  article.getTypes = function(filterQueryObj){
+    var deferred = $q.defer();
+    if (filterQueryObj) {
+      var method = 'GET';
+      var url = 'api/v1/resource/attributes/attributetypes';
+      var params = {}
+      if (view) {
+        params = filterQueryObj
+      }
+      $http({
+        method: method,
+        url: url,
+        params: params
+      }).success(function(data, status, headers, config){        
+        if (data && data !== 'false' && isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject(false);
+    }
+
+    return deferred.promise;
   };
 
   article.getCode = function(type, code, override){
