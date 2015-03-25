@@ -64,8 +64,9 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
       Business.articleservice.getCodeViews($scope.type.attributeType, $scope.filter.toString()).then(function(result){
         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
         if (result) {
-          $scope.clearCache();
+          console.log('We got the results', result);
           $scope.type.codes = result;
+          $scope.clearCache();
         } else {
           $scope.type.codes = null;
         }
@@ -362,6 +363,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
         templateUrl: 'views/admin/editcode.html',
         controller: 'AdminEditCodeCtrl',
         size: 'sm',
+        backdrop: 'static',
         resolve: {
           code: function () {
             return code;

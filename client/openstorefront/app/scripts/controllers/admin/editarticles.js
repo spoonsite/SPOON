@@ -214,11 +214,13 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
 
 
   $scope.deleteArticle = function(article){
-    Business.articleservice.deleteArticle(article).then(function(result){
-      triggerAlert('The article was deleted.', 'articleAlert', 'body', 6000)
-      $scope.getArticles(true);
-
-    })
+    var conf = confirm("You are about to remove an article permanently. Would you like to continue?");
+    if (cont) {
+      Business.articleservice.deleteArticle(article).then(function(result){
+        triggerAlert('The article was deleted.', 'articleAlert', 'body', 6000)
+        $scope.getArticles(true);
+      })
+    }
   }
 
   if ($scope.type && $scope.code) {

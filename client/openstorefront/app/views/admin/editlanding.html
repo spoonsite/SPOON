@@ -4,28 +4,28 @@
   <stickydiv fixed-offset-top=".top" fixed-offset-left="" element-id="editArticlesToolbar">
     <div style="padding-left: 15px; padding-right: 15px;">
       <form class="form-inline" role="form">
-        <button type="button" class="btn btn-default" ng-click="getArticles(true)"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
-        <button type="button" class="btn btn-default" ng-click="clearSort()" ng-disabled="predicate === 'title'"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
+        <button type="button" title="Refresh articles list" class="btn btn-default" ng-click="getArticles(true)"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+        <button type="button" title="Reset Sort" class="btn btn-default" ng-click="clearSort()" ng-disabled="predicate === 'title'"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
           <i class="fa fa-sort fa-stack-1x"></i>
           <i class="fa fa-ban fa-stack-2x text-danger"></i>
         </span>&nbsp;Clear Sort</button>
         <div class="form-group" style="margin-left:9px;">
           <label>Type</label>
-          <select class="form-control" style="width:auto" id="attributeType" ng-model="attributeType.type" ng-options="attr.attributeType as attr.description for attr in attributes">
+          <select class="form-control" title="Select a type" style="width:auto" id="attributeType" ng-model="attributeType.type" ng-options="attr.attributeType as attr.description for attr in attributes">
           </select>
         </div>
         <div class="form-group" style="margin-left:9px;">
           <label>Code</label>
-          <select type="text" class="form-control" style="width:auto" ng-model="attributeCode.code" ng-options="code.code as code.label for code in codes.codes"></select>
+          <select type="text" class="form-control" title="Select a code" style="width:auto" ng-model="attributeCode.code" ng-options="code.code as code.label for code in codes.codes"></select>
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-default ng-pristine ng-valid" id="createAttribute" ng-click="newArticle()"><i class="fa fa-edit"></i>&nbsp;Create Article</span>
+          <button type="button" class="btn btn-default ng-pristine ng-valid" title="Create a new Article" id="createAttribute" ng-click="newArticle()" ng-disabled="!attributeType.type || !attributeCode.code"><i class="fa fa-edit"></i>&nbsp;Create Article</span>
           </button>
         </div>
 
         <div class="form-group">
-          <a href="api/v1/resource/attributes/articles/export" class="btn btn-default"><i class="fa fa-sign-out"></i>&nbsp;Export</a>
-          <button ng-click="importFile()" class="btn btn-default"><i class="fa fa-sign-in"></i>&nbsp;Import</button>
+          <a href="api/v1/resource/attributes/articles/export" title="Export Articles" class="btn btn-default"><i class="fa fa-sign-out"></i>&nbsp;Export</a>
+          <button ng-click="importFile()" title="Import Articles" class="btn btn-default"><i class="fa fa-sign-in"></i>&nbsp;Import</button>
         </div>
 
       </form>
