@@ -46,6 +46,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       scope.defaultMax = 50;
       scope.setFeatures = scope.setFeatures || {'dates': true, 'max': true};
       console.log('setFeatures', scope.setFeatures);
+      scope.internalControl = scope.control || {};
       
       scope.defaultMax = scope.max? parseInt(scope.max): 50;
       scope.today = new Date();
@@ -110,7 +111,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
             scope.backupResult = result;
             scope.data = result? result: [];
             scope.pagination.totalItems = result.totalNumber;
-            deferred.resolve();
+            deferred.resolve(result);
           }, function(){
             scope.data = [];
             deferred.resolve();
@@ -138,9 +139,13 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       }
 
       scope.clearSort = function() {
-        scope.query.filterObj.sortField = 'eventDts';
-        scope.query.filterObj.sortOrder = 'DESC';
-        console.log('Sort Changed');
+        if (scope.internalControl.setPredicate) {
+          scope.query.filterObj.sortField = scope.sortBy || 'eventDts';
+          scope.internalControl.setPredicate(scope.query.filterObj.sortField);
+        } else {
+          scope.query.filterObj.sortField = scope.sortBy || 'eventDts';
+        }
+        scope.query.filterObj.sortOrder = scope.sortOrder || 'ASC';
         scope.sendRequest();
       }
 
@@ -195,7 +200,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
           scope.query.filterObj.sortOrder = scope.switchOrder(scope.query.filterObj.sortOrder);
         } else {
           scope.query.filterObj.sortField = field;
-          scope.query.filterObj.sortOrder = 'DESC';
+          scope.query.filterObj.sortOrder = scope.sortOrder || 'ASC';
         }
         scope.oldField = field;
         console.log('Sort Changed 2');
@@ -229,7 +234,6 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         return utils.getDate(d);
       }
 
-      scope.internalControl = scope.control || {};
       scope.internalControl.refresh = function(){
         return scope.sendRequest();
       }

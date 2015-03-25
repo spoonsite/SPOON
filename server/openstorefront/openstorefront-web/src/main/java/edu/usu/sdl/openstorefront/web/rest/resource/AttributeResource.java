@@ -51,6 +51,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
@@ -262,13 +263,7 @@ public class AttributeResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		AttributeType attributeTypeExample = new AttributeType();
-		attributeTypeExample.setActiveStatus(filterQueryParams.getStatus());
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
-		attributeTypes = filterQueryParams.filter(attributeTypes);
-		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(attributeTypes)
-		{
-		};
+		AttributeTypeWrapper entity = service.getAttributeService().getFilteredTypes(filterQueryParams);
 		return sendSingleEntityResponse(entity);
 	}
 
@@ -353,6 +348,45 @@ public class AttributeResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
+		List<AttributeCode> attributeCodes = getAttributeCodesFunc(type, filterQueryParams);
+
+		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+	
+	@GET
+	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeCode.class)
+	@Path("/attributetypes/{type}/attributecodeviews")
+	public Response getAttributeCodeViews(
+			@PathParam("type")
+			@RequiredParam String type,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		List<AttributeCode> attributeCodes = getAttributeCodesFunc(type, filterQueryParams);
+		List<AttributeCodeView> views = AttributeCodeView.toViews(attributeCodes);
+		
+		GenericEntity<List<AttributeCodeView>> entity = new GenericEntity<List<AttributeCodeView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	/**
+	 * 
+	 * @param type
+	 * @param filterQueryParams
+	 * @return 
+	 */
+	private List<AttributeCode> getAttributeCodesFunc(String type, FilterQueryParams filterQueryParams){
 		AttributeCode attributeCodeExample = new AttributeCode();
 		attributeCodeExample.setActiveStatus(filterQueryParams.getStatus());
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
@@ -362,11 +396,7 @@ public class AttributeResource
 		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
 		attributeCodes = filterQueryParams.filter(attributeCodes);
 		attributeCodes.sort(new AttributeCodeComparator<>());
-
-		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
-		{
-		};
-		return sendSingleEntityResponse(entity);
+		return attributeCodes;
 	}
 
 	@GET

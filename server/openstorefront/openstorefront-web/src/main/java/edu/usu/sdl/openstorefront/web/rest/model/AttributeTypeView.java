@@ -34,7 +34,7 @@ public class AttributeTypeView
 {
 
 	@NotNull
-	private String type;
+	private String attributeType;
 
 	@NotNull
 	private String description;
@@ -67,7 +67,7 @@ public class AttributeTypeView
 	public static AttributeTypeView toView(AttributeType attributeType)
 	{
 		AttributeTypeView attributeTypeView = new AttributeTypeView();
-		attributeTypeView.setType(attributeType.getAttributeType());
+		attributeTypeView.setAttributeType(attributeType.getAttributeType());
 		attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(attributeType.getAllowMultipleFlg()));
 		attributeTypeView.setArchitectureFlg(Convert.toBoolean(attributeType.getArchitectureFlg()));
 		attributeTypeView.setDescription(attributeType.getDescription());
@@ -85,7 +85,7 @@ public class AttributeTypeView
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		codes.stream().forEach((code) -> {
-			writer.writeNext(new String[]{getType(),
+			writer.writeNext(new String[]{getAttributeType(),
 				getDescription(),
 				Boolean.toString(getArchitectureFlg()),
 				Boolean.toString(getVisibleFlg()),
@@ -112,14 +112,14 @@ public class AttributeTypeView
 		throw new UnsupportedOperationException("Use Parser");
 	}
 
-	public String getType()
+	public String getAttributeType()
 	{
-		return type;
+		return attributeType;
 	}
 
-	public void setType(String type)
+	public void setAttributeType(String attributeType)
 	{
-		this.type = type;
+		this.attributeType = attributeType;
 	}
 
 	public String getDescription()

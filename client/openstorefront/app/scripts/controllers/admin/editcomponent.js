@@ -26,7 +26,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.selectAllComps = {};
     $scope.selectAllComps.flag = false;
     $scope.pagination = {};
-    $scope.pagination.control;
+    $scope.pagination.control = {};
     $scope.pagination.features = {'dates': false, 'max': false};
 
     $scope.$watch('allComponentsWatch', function(){
@@ -47,8 +47,12 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       }
     };
 
+    $scope.pagination.control.setPredicate = function(val){
+      $scope.setPredicate(val, 'components')
+    };
+
     $scope.refreshComponents = function () {
-      
+
       if ($scope.pagination.control && $scope.pagination.control.refresh) {
         $scope.$emit('$TRIGGERLOAD', 'componentLoader');
         $scope.pagination.control.refresh().then(function(){

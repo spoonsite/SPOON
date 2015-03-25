@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
@@ -49,6 +50,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingCompleteWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
@@ -1136,6 +1138,36 @@ public class AttributeServiceImpl
 	public void importArticles(List<ArticleView> articles)
 	{
 		articles.forEach(this::saveArticle);
+	}
+
+	@Override
+	public AttributeTypeWrapper getFilteredTypes(FilterQueryParams filter)
+	{
+		AttributeTypeWrapper result = new AttributeTypeWrapper();
+
+		AttributeType attributeExample = new AttributeType();
+		attributeExample.setActiveStatus(filter.getStatus());
+
+		QueryByExample queryByExample = new QueryByExample(attributeExample);
+
+		queryByExample.setMaxResults(filter.getMax());
+		queryByExample.setFirstResult(filter.getOffset());
+		queryByExample.setSortDirection(filter.getSortOrder());
+
+		AttributeType attributeOrderExample = new AttributeType();
+		Field sortField = ReflectionUtil.getField(attributeOrderExample, filter.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), attributeOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(attributeOrderExample);
+		}
+
+		List<AttributeType> attributes = persistenceService.queryByExample(AttributeType.class, queryByExample);
+
+		result.setData(attributes);
+
+		queryByExample.setQueryType(QueryType.COUNT);
+		result.setTotalNumber(persistenceService.countByExample(queryByExample));
+		return result;
 	}
 
 }

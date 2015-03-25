@@ -695,7 +695,7 @@ public class DataConvertUseCase
 			for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 				for (AttributeCodeView attributeCodeView : attributeTypeView.getCodes()) {
 					data = new ArrayList<>();
-					data.add(attributeTypeView.getType());
+					data.add(attributeTypeView.getAttributeType());
 					data.add(attributeTypeView.getDescription());
 					data.add(Boolean.toString(attributeTypeView.getArchitectureFlg()));
 					data.add(Boolean.toString(attributeTypeView.getVisibleFlg()));
