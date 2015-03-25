@@ -73,6 +73,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.getAttributes = function(override) {
     Business.getFilters(override, true).then(function(result){
       $scope.attributes = result? angular.copy(result): [];
+      console.log('result', result);
       
       $timeout(function(){
         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminAttributes');
@@ -111,6 +112,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       templateUrl: 'views/admin/editlandingform.html',
       controller: 'AdminEditLandingCtrl',
       size: 'lg',
+      backdrop: 'static',
       resolve: {
         article: function () {
           return article;

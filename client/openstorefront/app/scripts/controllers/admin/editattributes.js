@@ -34,11 +34,13 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       $scope.pagination.control.refresh().then(function(){
         $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
       });
+    } else {
+      $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
     }
   };
   $timeout(function(){
     $scope.getFilters();
-  })
+  },10)
 
   $scope.refreshFilterCache = function() {
     $scope.getFilters(true, false);
@@ -163,7 +165,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       }
     }
   }
-  
+
   $scope.attributeUploader = new FileUploader({
     url: 'Upload.action?UploadAttributes',
     alias: 'uploadFile',

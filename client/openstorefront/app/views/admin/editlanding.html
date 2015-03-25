@@ -11,7 +11,7 @@
         </span>&nbsp;Clear Sort</button>
         <div class="form-group" style="margin-left:9px;">
           <label>Type</label>
-          <select class="form-control" style="width:auto" id="attributeType" ng-model="attributeType.type" ng-options="attr.type as attr.description for attr in attributes">
+          <select class="form-control" style="width:auto" id="attributeType" ng-model="attributeType.type" ng-options="attr.attributeType as attr.description for attr in attributes">
           </select>
         </div>
         <div class="form-group" style="margin-left:9px;">
@@ -19,7 +19,7 @@
           <select type="text" class="form-control" style="width:auto" ng-model="attributeCode.code" ng-options="code.code as code.label for code in codes.codes"></select>
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-default ng-pristine ng-valid" id="attributeType" ng-click="newArticle()"><i class="fa fa-edit"></i>&nbsp;Create Article</span>
+          <button type="button" class="btn btn-default ng-pristine ng-valid" id="createAttribute" ng-click="newArticle()"><i class="fa fa-edit"></i>&nbsp;Create Article</span>
           </button>
         </div>
 
@@ -55,9 +55,9 @@
           <td style="padding: 5px;">{{article.title}}</td>
           <td style="padding: 5px; vertical-align: middle; text-align: center;" ng-class="article.attributeCodeActiveStatus === 'A'? 'success':'danger'"><i class="fa fa-fw " ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-check':'fa-times'"></i></td>
           <td style="padding:0px 3px !important; vertical-align: middle;">
-            <button type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit fa-fw"></i></button>
-            <button type="button" class="btn btn-sm btn-default" ng-click="changeActivity(article)"><i ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-eye':'fa-eye-slash'" class="fa fa-fw"></i></button>
-            <button type="button" class="btn btn-sm btn-danger" ng-click="deleteArticle(article)"><i class="fa fa-fw fa-trash"></i></button>
+            <button title="Edit Article" type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit fa-fw"></i></button>
+            <button title="Set Viewability" type="button" class="btn btn-sm btn-default" ng-click="changeActivity(article)"><i ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-eye':'fa-eye-slash'" class="fa fa-fw"></i></button>
+            <button title="Delete Article" type="button" class="btn btn-sm btn-danger" ng-click="deleteArticle(article)"><i class="fa fa-fw fa-trash"></i></button>
           </td>
         </tr>
       </tbody>
