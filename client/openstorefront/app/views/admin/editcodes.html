@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <h3 style="display:inline-block; margin-top:0px; margin-bottom:0px; max-width:calc(100% - 30px)">Edit {{type.description}}</h3>
+  <button type="button" title="Cancel Changes" class="btn btn-primary pull-right" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+  <h3 style="display:inline-block; margin-top:0px; margin-bottom:0px; max-width:calc(100% - 90px)">Edit {{type.description}}</h3>
 </div> 
 <div class="modal-body" id="editTypeModalDiv">
   <loader trigger="adminTypeRefresh"></loader>
@@ -20,7 +21,7 @@
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.architectureFlg" ng-checked="type.architectureFlg" data-toggle="tooltip" data-placement="top" title="This attribute is an architecture"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Allow Multiple Flag</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" ng-model="type.allowMultipleFlg" ng-checked="type.allowMultipleFlg" data-toggle="tooltip" data-placement="top" title="Allow multiple codes for this type per component"/></div>
-        <button type="submit" class="btn btn-default" style="margin-top:20px;" >Save&nbsp;<i class="fa fa-save"></i></button>
+        <button type="submit" class="btn btn-default" style="margin-top:20px;" title="Save Changes"><i class="fa fa-save"></i>&nbsp;Save</button>
       </form>
     </tab>
     <tab heading="Manage Codes" ng-show="!addTypeFlg">
@@ -79,11 +80,11 @@
           </tr>
         </table>
       </div>
-      <button class="btn btn-primary" ng-click="saveSortOrder()" ng-show="dirty" data-toggle="tooltip" data-placement="top" title="This can take a few minutes if saving changes to an architecture (SvcV-4 for example)">Save Sort Order Changes&nbsp;<i class='fa fa-save'></i></button>
-      <button class="btn btn-default" ng-click="cancelChanges()" ng-show="dirty">Cancel Changes&nbsp;<i class='fa fa-times'></i></button>
+      <button class="btn btn-default" ng-click="saveSortOrder()" ng-show="dirty" data-toggle="tooltip" data-placement="top" title="This can take a few minutes if saving changes to an architecture (SvcV-4 for example)"><i class='fa fa-save'></i>&nbsp;Save Sort Order Changes</button>
+      <button class="btn btn-primary" ng-click="cancelChanges()" ng-show="dirty"><i class='fa fa-times'></i>&nbsp;Cancel Changes</button>
     </tab>
   </tabset>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default ng-scope" ng-click="cancel()">Close</button>
+  <button type="button" title="Cancel Changes" class="btn btn-primary ng-scope" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
 </div>
