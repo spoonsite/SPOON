@@ -1,17 +1,20 @@
 <div id="articleEditModal">
   <div>
-    <div class="pull-left"style="width: calc(100% - 50px); padding:5px 10px;"><h3 style="margin-top:10px;">Article/Landing Page for {{type}}&mdash;{{code}}</h3></div><i class="fa fa-times pull-right" style="margin: 0px; padding: 15px; " ng-click="cancel();"></i>
+    <div class="" style="width: 100%; padding:15px;">
+      <button type="submit" class="btn btn-primary pull-right" style="display:inline-block" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+      <h3 style="margin:0px; display:inline-block;">Article/Landing Page for {{type}}&mdash;{{code}}</h3>
+    </div>
     <div style="clear:both"></div>
   </div>
   <hr style="margin:5px 0px;">
   <form ng-submit="ok();" id="editLandingPages" style="overflow:hidden; margin: 0px;">
-    <div class="form-group" style="margin-bottom:0px;">
+    <div class="form-group required" style="margin-bottom:0px;">
       <label class="col-md-2" style="text-align:right;" for="title">Title</label>
       <div class="col-md-10">
         <input type="text" class="form-control" id="title" placeholder="Title" ng-model="article.title">
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group required">
       <label class="col-md-2" style="text-align:right;" for="description">Description</label>
       <div class="col-md-10">
         <textarea id="description" class="form-control" rows="5" ng-model="article.description"></textarea>
@@ -20,8 +23,8 @@
     <div style="clear:both; margin-bottom:5px;"></div>
     <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
     <div style="text-align: center; padding:5px;">
-      <button type="submit" style="display:inline-block;" class="btn btn-primary">Save Changes</button>
-      <button type="button" style="display:inline-block;" class="btn btn-primary" ng-click="preview()">Preview Changes</button>
+      <button type="submit" style="display:inline-block;" class="btn btn-primary" ng-disabled="!article.title || !article.description || !editorContentWatch">Save Changes</button>
+      <button type="button" style="display:inline-block;" class="btn btn-primary" ng-click="preview()" ng-disabled="!article.title || !article.description || !editorContentWatch">Preview Changes</button>
       <button type="button" style="display:inline-block;" class="btn btn-danger" ng-click="cancel()">Cancel Changes</button>
     </div>
   </form>
