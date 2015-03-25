@@ -1130,6 +1130,8 @@ public class AttributeServiceImpl
 				result.getResult().sort((ArticleTrackingCompleteWrapper p1, ArticleTrackingCompleteWrapper p2) -> p2.getArticle().getTitle().compareToIgnoreCase(p1.getArticle().getTitle()));
 			}
 		}
+		queryByExample.setQueryType(QueryType.COUNT);
+		result.setCount(persistenceService.countByExample(queryByExample));
 
 		return result;
 	}
