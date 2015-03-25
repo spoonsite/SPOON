@@ -71,6 +71,7 @@ import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.RunStatus;
+import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.LockSwitch;
@@ -461,7 +462,11 @@ public class ComponentServiceImpl
 			result.getContacts().add(ComponentContactView.toView(contact));
 		});
 
-		result.setComponentViews(Integer.MIN_VALUE /*figure out a way to get component views*/);
+		ComponentTracking componentTrackingExample = new ComponentTracking();
+		componentTrackingExample.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
+		componentTrackingExample.setTrackEventTypeCode(TrackEventCode.VIEW);
+		componentTrackingExample.setComponentId(componentId);
+		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
 
 		List<ComponentReview> tempReviews = getBaseComponent(ComponentReview.class, componentId);
 		List<ComponentReviewView> reviews = new ArrayList();

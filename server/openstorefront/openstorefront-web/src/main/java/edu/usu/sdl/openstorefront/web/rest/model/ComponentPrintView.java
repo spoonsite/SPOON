@@ -15,14 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.ParamTypeDescription;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 
 /**
  * ComponentDetailView Resource
@@ -53,7 +50,7 @@ public class ComponentPrintView
 	private List<ComponentReviewView> reviews = new ArrayList<>();
 	private List<ComponentExternalDependencyView> dependencies = new ArrayList<>();
 
-	private Integer componentViews = 0;
+	private long componentViews = 0;
 
 	public ComponentPrintView()
 	{
@@ -72,11 +69,13 @@ public class ComponentPrintView
 		parentComponent.setUpdateDts(parentComponent.getUpdateDts());
 		setLastActivityDate(component.getLastActivityDts());
 	}
-	
-	public static ComponentPrintView toView(ComponentDetailView component){
+
+	public static ComponentPrintView toView(ComponentDetailView component)
+	{
 		ComponentPrintView view = new ComponentPrintView();
-		
+
 		view.setComponentId(component.getComponentId());
+		view.setComponentViews(component.getComponentViews());
 		view.setComponentName(component.getName());
 		view.setDescription(component.getDescription());
 		view.setVersion(component.getVersion());
@@ -95,7 +94,7 @@ public class ComponentPrintView
 		view.setResources(component.getResources());
 		view.setReviews(component.getReviews());
 		view.setDependencies(component.getDependencies());
-		
+
 		return view;
 	}
 
@@ -406,7 +405,7 @@ public class ComponentPrintView
 	/**
 	 * @return the componentViews
 	 */
-	public Integer getComponentViews()
+	public long getComponentViews()
 	{
 		return componentViews;
 	}
@@ -414,7 +413,7 @@ public class ComponentPrintView
 	/**
 	 * @param componentViews the componentViews to set
 	 */
-	public void setComponentViews(Integer componentViews)
+	public void setComponentViews(long componentViews)
 	{
 		this.componentViews = componentViews;
 	}

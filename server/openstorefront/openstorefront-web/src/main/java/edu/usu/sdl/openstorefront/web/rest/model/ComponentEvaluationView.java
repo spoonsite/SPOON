@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.DataType;
+import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,7 @@ public class ComponentEvaluationView
 	public static ComponentEvaluationView toViewFromStorage(List<ComponentEvaluationSection> sections)
 	{
 		List<ComponentEvaluationSectionView> newSections = ComponentEvaluationSectionView.toViewList(sections);
+		newSections.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentEvaluationSectionView.NAME_FIELD));
 		return ComponentEvaluationView.toView(newSections);
 	}
 
