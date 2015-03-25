@@ -44,10 +44,11 @@
               <!-- Currently this table only shows if there is a start date -->
               <tr data-ng-repeat="row in detailsleft.evaluation.data.evaluationSections | partition:2">
                 <td data-ng-repeat="col in row" class="valign" style="padding: 0px;">
-                  <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" ng-class="col.score > 0? '':'shadeME'">
-                    <i ng-if="col.score > 0" ng-repeat="t in getTimes(col.score) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
+                  <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" ng-class="col.actualScore > 0? '':'shadeME'">
+                    <i ng-if="!col.notAvailable && col.actualScore > 0" ng-repeat="t in getTimes(col.actualScore) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
                     </i>
-                    <span ng-if="col.score <= 0">&nbsp;</span>
+		<span ng-if="!col.notAvailable && col.actualScore <= 0">&nbsp;</span>
+		<span ng-if="col.notAvailable" ><b>N/A</b></span>
                   </div>
                   <div  class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>{{getEvalDescription(col)}}" >
                     <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
@@ -147,7 +148,7 @@
             <div ng-if="detailsleft.reviews.data.length" ng-repeat="review in detailsleft.reviews.data">
               <div class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
                 <h5 style="margin-top: 0px">
-                  <strong>Title:&nbsp;</strong>{{review.title}}&mdash;<span ng-repeat="index in getFullRating(review.rating) track by $index"><i class="fa fa-star"></i></span><span ng-repeat="index in getEmptyRating(review.rating) track by $index"><i class="fa fa-star-o"></i></span><span  ng-if="review.recommend" style="font-size: 14px;"><span ng-if="review.rating">&mdash;</span>I would recommend this component</span>
+                  <strong>Title:&nbsp;</strong>{{review.title}}&mdash;<span ng-repeat="index in getFullRating(review.rating) track by $index"><i class="fa fa-star"></i></span><span ng-repeat="index in getEmptyRating(review.rating) track by $index"><i class="fa fa-star-o"></i></span><span  ng-if="review.recommend" style="font-size: 14px;"><span ng-if="review.rating"></span>&mdash;I would recommend this component</span>
                 </h5>
               </div>
               <div style="font-size:11px;">
@@ -245,10 +246,11 @@
               <!-- Currently this table only shows if there is a start date -->
               <tr data-ng-repeat="row in detailsright.evaluation.data.evaluationSections | partition:2">
                 <td data-ng-repeat="col in row" class="valign" style="padding: 0px;">
-                  <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" ng-class="col.score > 0? '':'shadeME'">
-                    <i ng-if="col.score > 0" ng-repeat="t in getTimes(col.score) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
+                  <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" ng-class="col.actualScore > 0? '':'shadeME'">
+                    <i ng-if="!col.notAvailable && col.actualScore > 0" ng-repeat="t in getTimes(col.actualScore) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
                     </i>
-                    <span ng-if="col.score <= 0">&nbsp;</span>
+		<span ng-if="!col.notAvailable && col.actualScore <= 0">&nbsp;</span>
+		<span ng-if="col.notAvailable" ><b>N/A</b></span>
                   </div>
                   <div  class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>{{getEvalDescription(col)}}" >
                     <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
@@ -279,7 +281,7 @@
                 <td>
                   {{attribute.typeDescription}}
                 </td>
-                <td>
+                <td class="{{attribute.highlightStyle}}">
                   {{attribute.codeDescription}}
                 </td>
               </tr>
@@ -348,7 +350,7 @@
             <div ng-repeat="review in detailsright.reviews.data">
               <div ng-if="detailsright.reviews.data.length" class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
                 <h5 style="margin-top: 0px">
-                  <strong>Title:&nbsp;</strong>{{review.title}}&mdash;<span ng-repeat="index in getFullRating(review.rating) track by $index"><i class="fa fa-star"></i></span><span ng-repeat="index in getEmptyRating(review.rating) track by $index"><i class="fa fa-star-o"></i></span><span  ng-if="review.recommend" style="font-size: 14px;"><span ng-if="review.rating">&mdash;</span>I would recommend this component</span>
+                  <strong>Title:&nbsp;</strong>{{review.title}}&mdash;<span ng-repeat="index in getFullRating(review.rating) track by $index"><i class="fa fa-star"></i></span><span ng-repeat="index in getEmptyRating(review.rating) track by $index"><i class="fa fa-star-o"></i></span><span  ng-if="review.recommend" style="font-size: 14px;"><span ng-if="review.rating"></span>&mdash;I would recommend this component</span>
                 </h5>
               </div>
               <div style="font-size:11px;">

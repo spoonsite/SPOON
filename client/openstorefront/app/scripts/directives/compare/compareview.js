@@ -92,7 +92,11 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
       }
 
       scope.getTimes = function(n){
-        return new Array(parseInt(n));
+        if (n) {
+          return new Array(parseInt(n));
+        } else {
+          return new Array(0);
+        }
       };
 
       scope.$watch('dataleft', function(){
