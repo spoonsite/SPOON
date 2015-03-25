@@ -213,6 +213,53 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     return deferred.promise;
   };
 
+  article.getCodeViews = function(type, filter){
+    var deferred = $q.defer();
+    if (type) {
+      var method = 'GET';
+      var url = 'api/v1/resource/attributes/attributetypes/'+ encodeURIComponent(type) + '/attributecodeviews?'+filter;
+      $http({
+        method: method,
+        url: url,
+      }).success(function(data, status, headers, config){        
+        if (data && data !== 'false' && isNotRequestError(data)){
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject(false);
+    }
+
+    return deferred.promise;
+  };
+  article.getCodes = function(type, filter){
+    var deferred = $q.defer();
+    if (type) {
+      var method = 'GET';
+      var url = 'api/v1/resource/attributes/attributetypes/'+ encodeURIComponent(type) + '/attributecodes?'+filter;
+      $http({
+        method: method,
+        url: url,
+      }).success(function(data, status, headers, config){        
+        if (data && data !== 'false' && isNotRequestError(data)){
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject(false);
+    }
+
+    return deferred.promise;
+  };
+
   article.getCode = function(type, code, override){
     var deferred = $q.defer();
     if (type && code) {

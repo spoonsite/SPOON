@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+
+import java.util.ArrayList;
+import java.util.List;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 
 /**
@@ -58,6 +61,15 @@ public class AttributeCodeView
 		}
 
 		return attributeCodeView;
+	}
+	
+	public static List<AttributeCodeView> toViews(List<AttributeCode> codes)
+	{
+		List<AttributeCodeView> views = new ArrayList<>();
+		for(AttributeCode code: codes) {
+			views.add(AttributeCodeView.toView(code));
+		}
+		return views;
 	}
 
 	public String getCode()

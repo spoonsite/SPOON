@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
@@ -55,6 +56,13 @@ public interface AttributeService
 	 * @return codes
 	 */
 	public List<AttributeCode> getAllAttributeCodes(String activeStatus);
+
+	/**
+	 * 
+	 * @param filter
+	 * @return 
+	 */
+	public AttributeTypeWrapper getFilteredTypes(FilterQueryParams filter);
 
 	/**
 	 * Gets the codes for a type Note active codes are cached.

@@ -21,19 +21,17 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   $scope.reverse = false;
   $scope.flags = {};
   $scope.flags.showUpload = false;
-  $scope.allTypes = {};
-  $scope.allTypes.data = [];
+  $scope.data = {};
+  $scope.data.allTypes = {};
   $scope.pagination = {};
-  $scope.pagination.control;
+  $scope.pagination.control = {};
   $scope.pagination.features = {'dates': false, 'max': false};
-
 
   $scope.getFilters = function (override, all) {
     console.log('we\'re getting types');
     $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
     if ($scope.pagination.control && $scope.pagination.control.refresh) {
       $scope.pagination.control.refresh().then(function(){
-        console.log('we\'re DONE getting types');
         $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
       });
     }
@@ -54,6 +52,10 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       $scope.reverse = !!override;
     }
     $scope.pagination.control.changeSortOrder(predicate);
+  };
+
+  $scope.pagination.control.setPredicate = function(val){
+    $scope.setPredicate(val, false)
   };
 
   $scope.editLanding = function(type, code) {
@@ -161,10 +163,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       }
     }
   }
-  $scope.clearSort = function(){
-    $scope.predicate = 'description';
-  }
-
+  
   $scope.attributeUploader = new FileUploader({
     url: 'Upload.action?UploadAttributes',
     alias: 'uploadFile',

@@ -84,7 +84,7 @@ public class AttributeImport
 							else
 							{							
 								attributeTypeView = new AttributeTypeView();
-								attributeTypeView.setType(data[0].trim());
+								attributeTypeView.setAttributeType(data[0].trim());
 								attributeTypeView.setDescription(data[1].trim());
 								attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
 								attributeTypeView.setVisibleFlg(Convert.toBoolean(data[3].trim()));
@@ -120,16 +120,16 @@ public class AttributeImport
 		
 		//load archtec
 		AttributeTypeView archView = loadDI2EArch();
-		attributeMap.put(archView.getType(), archView);
+		attributeMap.put(archView.getAttributeType(), archView);
 		
 		archView = loadJCFSLArch();
-		attributeMap.put(archView.getType(), archView);		
+		attributeMap.put(archView.getAttributeType(), archView);		
 
 		archView = loadJCAArch();
-		attributeMap.put(archView.getType(), archView);		
+		attributeMap.put(archView.getAttributeType(), archView);		
 		
 		archView = loadJARMESArch();
-		attributeMap.put(archView.getType(), archView);		
+		attributeMap.put(archView.getAttributeType(), archView);		
 		
 		return attributeMap;
 	}
@@ -148,8 +148,7 @@ public class AttributeImport
 			//read type
 			try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream("\\var\\openstorefront\\import\\svcv-4_export.csv")));)
 			{
-				String data[] = parser.parseLine(lines.get(1));
-								
+				String data[] = parser.parseLine(lines.get(setAttributeType						
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
 				attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
@@ -211,8 +210,7 @@ public class AttributeImport
 			//read type
 			try
 			{
-				String data[] = parser.parseLine(lines.get(1));
-								
+				String data[] = parser.parseLine(lines.get(setAttributeType						
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
 				attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
@@ -275,8 +273,7 @@ public class AttributeImport
 			//read type
 			try
 			{
-				String data[] = parser.parseLine(lines.get(1));
-								
+				String data[] = parser.parseLine(lines.get(setAttributeType						
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
 				attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
@@ -334,8 +331,7 @@ public class AttributeImport
 			//read type
 			try
 			{
-				String data[] = parser.parseLine(lines.get(1));
-								
+				String data[] = parser.parseLine(lines.get(setAttributeType						
 				attributeTypeView.setType(data[0].trim());
 				attributeTypeView.setDescription(data[1].trim());
 				attributeTypeView.setArchitectureFlg(Convert.toBoolean(data[2].trim()));
