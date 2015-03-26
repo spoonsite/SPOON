@@ -20,7 +20,7 @@
             <div class="container-fluid">
               <div class="row" style="margin-left: 0px; margin-right: 0px">
                 <div class="results-content">
-                  <div class="results-content-title">
+                  <div class="results-content-title" ng-click="clickCallback(item.componentId, item)">
                     <div ng-show="blankTarget" style="display:inline-block">
                       <a ng-if="item.listingType === 'Article'" href="#/landing?type={{item.articleAttributeType}}&code={{item.articleAttributeCode}}" target="_blank">
                         <div class="results-content-title-content" >{{item.name}}
@@ -32,7 +32,7 @@
                         </div>
                       </a>
                     </div>
-                    <div ng-show="!blankTarget" ng-click="clickCallback(item.componentId, item)" id="{{item.componentId}}" style="display:inline-block">
+                    <div ng-show="!blankTarget" id="{{item.componentId}}" style="display:inline-block">
                       <div class="results-content-title-content" >{{item.name}}
                         <br ng-show="item.attributes.length">
                         <div ng-repeat="attribute in item.attributes" style="display:inline-block;">

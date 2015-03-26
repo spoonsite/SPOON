@@ -169,7 +169,7 @@ public class AttributeCode
 	{
 		setAttributeCodePk(attributeCodePk);
 		setDescription(code.getDescription());
-		setDetailUrl(code.getFullTextLink());
+		setDetailUrl(code.getDetailUrl());
 		setArchitectureCode(code.getArchitectureCode());
 		setBadgeUrl(code.getBadgeUrl());
 		setGroupCode(code.getGroupCode());

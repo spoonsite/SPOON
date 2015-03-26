@@ -50,6 +50,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
@@ -371,10 +372,9 @@ public class AttributeResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		List<AttributeCode> attributeCodes = getAttributeCodesFunc(type, filterQueryParams);
-		List<AttributeCodeView> views = AttributeCodeView.toViews(attributeCodes);
+		AttributeCodeWrapper views = service.getAttributeService().getFilteredCodes(filterQueryParams, type);
 		
-		GenericEntity<List<AttributeCodeView>> entity = new GenericEntity<List<AttributeCodeView>>(views)
+		GenericEntity<AttributeCodeWrapper> entity = new GenericEntity<AttributeCodeWrapper>(views)
 		{
 		};
 		return sendSingleEntityResponse(entity);

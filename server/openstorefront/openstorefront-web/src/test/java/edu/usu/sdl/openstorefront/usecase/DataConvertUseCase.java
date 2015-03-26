@@ -704,7 +704,7 @@ public class DataConvertUseCase
 					data.add(attributeCodeView.getCode());
 					data.add(attributeCodeView.getLabel());
 					data.add(attributeCodeView.getDescription());
-					data.add(attributeCodeView.getFullTextLink());
+					data.add(attributeCodeView.getDetailUrl());
 					out.writeNext(data.toArray(new String[0]));
 				}
 			}

@@ -68,6 +68,28 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     // console.log('Deleted filter', filter);
   };
 
+  $scope.deleteFilter = function(filter){
+    var cont = confirm("You are about to permanently remove an attribute from the system. This will affect all related components.  Continue?");
+    if (cont) {
+      $scope.deactivateButtons = true;
+      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+      Business.articleservice.deleteFilter(filter.type).then(function(){
+        $timeout(function(){
+          triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusAttributes', 'body', 3000);    
+          $scope.getFilters(true);
+          $scope.deactivateButtons = false;
+          $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+        }, 1000);
+      }, function(){
+        $timeout(function(){
+          $scope.getFilters(true);
+          $scope.deactivateButtons = false;
+          $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+        }, 1000);
+      })
+    }
+  }
+
   $scope.changeActivity = function(filter){
     var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). This will affect all related component attributes.  Continue?");
     if (cont) {
@@ -109,6 +131,8 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   }
 
   $scope.editType = function(type){
+    console.log('type', type);
+    
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editcodes.html',
       controller: 'AdminEditcodesCtrl',
@@ -125,20 +149,14 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     });
 
     modalInstance.result.then(function (result) {
-      if (result && result.refresh === true) {
-        $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-        $scope.getFilters(true);
-        $scope.refreshFilterCache()
-      } else if (result.type && result.code) {
-        $scope.editLanding(result.type, result.code);
-      }
+      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+      $scope.getFilters(true);
     }, function (result) {
-      if (result && result.refresh === true) {
+      if (result.type && result.code) {
+        $scope.editLanding(result.type, result.code);
+      } else {
         $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
         $scope.getFilters(true);
-        $scope.refreshFilterCache()
-      } else if (result.type && result.code) {
-        $scope.editLanding(result.type, result.code);
       }  
     });
   }

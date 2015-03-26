@@ -126,3 +126,54 @@ html, body,
 @include sticky-table-row-variant('info', $state-info-bg, $state-info-border, $state-info-text);
 @include sticky-table-row-variant('inverse', $state-inverse-bg, $state-inverse-border, $state-inverse-text);
 
+
+@mixin form-control-validation-inverse($text-color: #555, $border-color: #ccc, $background-color: #f5f5f5) {
+  // Color the label and help text
+  .help-block,
+  .control-label,
+  .radio,
+  .checkbox,
+  .radio-inline,
+  .checkbox-inline  {
+    background-color: $background-color; 
+    color: $text-color;
+  }
+  // Set the border and box shadow on specific inputs to match
+  .form-control {
+    border-color: $border-color;
+    @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075)); // Redeclare so transitions work
+    &:focus {
+      border-color: lighten($border-color, 10%);
+      $shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten($border-color, 20%);
+      @include box-shadow($shadow);
+    }
+  }
+  // Set validation states also for addons
+  .input-group-addon {
+    color: $text-color;
+    border-color: $border-color;
+    background-color: $background-color;
+  }
+}
+
+
+// Warning
+.has-warning {
+  @include form-control-validation($state-warning-text, $state-warning-text, $state-warning-bg);
+}
+// Error
+.has-danger {
+  @include form-control-validation($state-danger-text, $state-danger-text, $state-danger-bg);
+}
+// Success
+.has-success {
+  @include form-control-validation($state-success-text, $state-success-text, $state-success-bg);
+}
+// info
+.has-info {
+  @include form-control-validation($state-info-text, $state-info-text, $state-info-bg);
+}
+// inverse
+.has-inverse {
+  @include form-control-validation-inverse($state-inverse-text, $state-inverse-bg, $state-inverse-bg);
+}
