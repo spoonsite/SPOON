@@ -1,15 +1,11 @@
-<div  ng-controller="AdminSystemCtrl" style="padding-left: 20px; padding-right: 20px;">
+<div  ng-controller="AdminSystemCtrl" style="padding-left: 15px; padding-right: 15px;">
 	<tabset>
 		<tab heading="General">			
-			<div>
-				<h2>Search Control</h2>
-				<hr>
-				<button class="btn btn-default" ng-click="removeAllTooltips(); reindexListings();" popover data-trigger="hover" data-placement="right" data-html="true"  data-original-title="" data-container="body" data-content="This will re-index the listing.  This will effect search results while running."><i class="fa fa-refresh"></i>&nbsp;Re-Index Listings</button>
-				<hr>
-			</div>
-			<div>
-				<h2><i class="fa fa-envelope-o"></i>&nbsp;Recent Changes Email</h2>
-				<hr>
+			<panel class-list="edges" open-state="true" title="Search Control">				
+				<button class="btn btn-danger" ng-click="removeAllTooltips(); reindexListings();" popover data-trigger="hover" data-placement="right" data-html="true"  data-original-title="" data-container="body" data-content="This will re-index the listing.  This will effect search results while running."><i class="fa fa-refresh"></i>&nbsp;Re-Index Listings</button>
+				<br>
+			</panel>	
+			<panel class-list="edges" open-state="true" title="Recent Changes Emai">
 				Last Automated Email Sent:  {{recentChangesStatus.lastSentDts | date:'MM/dd/yyyy h:mm a'}}<br>
 				Next Automated Email: {{recentChangesStatus.nextSendDts | date:'MM/dd/yyyy h:mm a'}}<br><br>
 				<div class="row">
@@ -51,10 +47,8 @@
 						</div>
 					</div>					
 				</div>	
-				
-				
-				<button class="btn btn-default" ng-click="removeAllTooltips(); sendRecentChangesEmail();" popover data-trigger="hover" data-placement="right" data-html="true"  data-original-title="" data-container="body" data-content="Sends a recent change email now. Note: this doesn't effect the schedule email."><i class="fa fa-envelope-o"></i>&nbsp;Send Email</button>
-			</div>
+				<button class="btn btn-warning" ng-click="removeAllTooltips(); sendRecentChangesEmail();" popover data-trigger="hover" data-placement="right" data-html="true"  data-original-title="" data-container="body" data-content="Sends a recent change email now. Note: this doesn't effect the schedule email."><i class="fa fa-envelope-o"></i>&nbsp;Send Email</button>
+			</panel>	
 		</tab>
 		<tab heading="Error Tickets">
 			<loader trigger="ticketLoader"></loader>
@@ -81,7 +75,7 @@
 					  </span> 					
 					</div>					
 				  </div>
-				<button class="btn btn-default" ng-click="refreshTickets()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				<button class="btn btn-default" ng-click="refreshTickets()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
 			</div>
 			<table class="table table-striped table-bordered">
 					<tr>
@@ -100,8 +94,8 @@
 						<td>{{ticket.calledAction}}</td>
 						<td >{{wrapString(ticket.input)}}</td>
 						<td>{{ticket.errorTypeCode}}</td>										
-						<td style="padding:0px; width: 200px;">&nbsp;
-							<button class="btn btn-danger" ng-click="showErrorDetails(ticket.errorTicketId)"><i class="fa fa-view"></i>{{ticket.detailText}}</button>
+						<td style="padding:0px 3px !important; width: 200px;">&nbsp;
+							<button class="btn btn-default btn-sm" ng-click="showErrorDetails(ticket.errorTicketId)"><i class="fa fa-view"></i>{{ticket.detailText}}</button>
 						</td>
 					</tr>
 					<tr ng-show="ticket.details" ng-repeat-end  >
@@ -116,7 +110,7 @@
 			<div>	
 				<br>
 				Application properties are properties that hold the application's internal state.<br>
-				<button class="btn btn-default" ng-click="refreshAppProperties()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				<button class="btn btn-default" ng-click="refreshAppProperties()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
 			</div>	
 			<table class="table table-striped table-bordered">
 					<tr>
@@ -131,8 +125,8 @@
 						<td>{{prop.value}}</td>
 						<td>{{prop.updateUser}}</td>
 						<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
-						<td style="padding:0px; width: 200px;">&nbsp;
-							<button class="btn" ng-click="editAppProperty(prop);"  title="Edit"><i class="fa fa-edit"></i></button>
+						<td style="padding:0px 3px !important; width: 200px;">&nbsp;
+							<button class="btn btn-default btn-sm" ng-click="editAppProperty(prop);"  title="Edit"><i class="fa fa-edit"></i></button>
 						</td>
 					</tr>					
 			</table>			
@@ -143,7 +137,7 @@
 				<br>
 				Configuration properties are the properties use to initialize the system they are reflected from the configuration file.  
 				The system admin maintains these properties and they are applied upon restart.<br>
-				<button class="btn btn-default" ng-click="refreshConfigProps()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				<button class="btn btn-default" ng-click="refreshConfigProps()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
 			</div>	
 			<table class="table table-striped table-bordered">
 					<tr>
@@ -162,7 +156,7 @@
 			<div>	
 				<br>
 				Displays all loggers in the system.  A blank Level means the logger inherits its level from the parent logger. Note change's made here reset upon application restart.<br>
-				<button class="btn btn-default" ng-click="refreshLoggers()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				<button class="btn btn-default" ng-click="refreshLoggers()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
 			</div>	
 			<table class="table table-striped table-bordered">
 					<tr>
@@ -175,8 +169,8 @@
 						<td>{{log.name}}</td>
 						<td>{{log.level}}</td>
 						<td>{{log.handlers}}</td>						
-						<td style="padding:0px; width: 200px;">&nbsp;
-							<button class="btn" ng-click="editLogger(log);" title="Edit"><i class="fa fa-edit"></i></button>
+						<td style="padding:0px 3px !important; width: 200px;">&nbsp;
+							<button class="btn btn-default btn-sm" ng-click="editLogger(log);" title="Edit"><i class="fa fa-edit"></i></button>
 						</td>
 					</tr>
 			</table>			
@@ -186,7 +180,7 @@
 			<div>	
 				<br>
 				Shows the system status which provides useful information for troubleshooting.<br>
-				<button class="btn btn-default" ng-click="refreshAppStatus()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				<button class="btn btn-default" ng-click="refreshAppStatus()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
 			</div>
 			<table class="table table-striped table-bordered">
 					<tr>
@@ -235,7 +229,7 @@
 			<br>
 			<b>Threads Status</b>
 			<div>					
-				<button class="btn btn-default" ng-click="refreshThreads()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+				<button class="btn btn-default" ng-click="refreshThreads()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
 			</div>
 			<table class="table table-striped table-bordered">
 					<tr>

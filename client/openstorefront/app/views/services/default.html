@@ -1,10 +1,10 @@
 <span class="pull-right"> <a ng-href="{{generateDownloadLink()}}" class="btn btn-default" ng-show="showExport">Export&nbsp;<i class="fa fa-sign-out"></i></a></span>
 
 <div style="clear:both;">
-  <button style="display:inline-block;" class="btn btn-default" ng-click="sendRequest()">Apply Changes <small>(<i class="fa fa-refresh"></i>&nbsp;refresh results)</small>&nbsp;<i class="fa fa-search"></i></button>
+  <button style="display:inline-block;" class="btn btn-default" ng-click="sendRequest()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
   <button style="display:inline-block;" class="btn btn-default" ng-click="clearSort();"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
         <i class="fa fa-sort fa-stack-1x"></i>
         <i class="fa fa-ban fa-stack-2x text-danger"></i>
       </span>&nbsp;Clear Sort</button>
-  <pagination ng-show="showPagination" style="display:inline-block; margin: 0px; margin-bottom:-13px;" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" max-size="pagination.maxSize" boundary-links="true" rotate="false" num-pages="pagination.numPages" ng-change="pageChanged()"></pagination><a tabindex="0" role="button" class="btn btn-default" data-placement="bottom" title="{{popover.title}}" data-content-template="views/services/filter.html" data-animation="am-flip-x" data-auto-close="1" bs-popover>Filter Options</a> {{pagination.totalItems}} total record(s)
+  <pagination ng-show="showPagination" style="display:inline-block; margin: 0px; margin-bottom:-13px;" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" max-size="pagination.maxSize" boundary-links="true" rotate="false" num-pages="pagination.numPages" ng-change="pageChanged()"></pagination><button tabindex="0"  class="btn btn-default" data-placement="bottom" title="{{popover.title}}" data-content-template="views/services/filter.html" data-animation="am-flip-x" data-auto-close="1"  bs-popover='filterPopover'   data-trigger='click'  ng-click="updateFilter();">{{pagination.applyChangesText ? pagination.applyChangesText : 'Filter Options'}}</button> {{pagination.totalItems}} total record(s)
 </div>

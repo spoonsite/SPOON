@@ -58,12 +58,12 @@ public class RecentChangeMessageGenerator
 		}
 
 		if (messageContext.getRecentChangeMessage().getArticlesAdded().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getArticlesAdded().size()).append(" artilcle(s) added.<br>");
+			message.append(messageContext.getRecentChangeMessage().getArticlesAdded().size()).append(" article(s) added.<br>");
 			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getArticlesUpdated().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getArticlesUpdated().size()).append(" artilcle(s) updated.<br>");
+			message.append(messageContext.getRecentChangeMessage().getArticlesUpdated().size()).append(" article(s) updated.<br>");
 			changes = true;
 		}
 

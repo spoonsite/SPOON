@@ -136,7 +136,18 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         } else {
           return 'DESC';
         }
-      }
+      };
+      
+      scope.updateFilter = function() {
+        if (scope.pagination.applyChanges){ 
+          scope.pagination.applyChanges = false; 
+          scope.pagination.applyChangesText='Filter Options'; 
+          scope.sendRequest(); 
+        } else { 
+          scope.pagination.applyChangesText='Apply'; 
+          scope.pagination.applyChanges=true; 
+        }        
+      };
 
       scope.clearSort = function() {
         if (scope.internalControl.setPredicate) {
