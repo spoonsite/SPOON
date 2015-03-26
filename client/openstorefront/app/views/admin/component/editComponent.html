@@ -369,6 +369,7 @@ limitations under the License.
       <panel class-list="edges" open-state="true" title="Add/Edit Media">
         <form class="form-horizontal" name='mediaUIForm' role="form"  ng-submit="saveMedia()" style="padding-left: 10px; padding-right: 10px;">
           <div class="form-group" show-errors >
+	 Only images are currently supported (.png, .jpg, .gif, .bmp, .svg)<br>		  
             <label class="control-label required">Media Type</label><br>
             <select type="text" class="form-control" name="mediaTypeCode" required style="width:500px;" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"></select>
             <p ng-show="mediaUIForm.mediaTypeCode.$error.required && !mediaUIForm.mediaTypeCode.$focused" class="help-block">Media Type is required.</p>							
