@@ -145,7 +145,8 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
         var modalInstance = $uiModal.open({
         templateUrl: 'views/admin/editLookupCodeForm.html',
         controller: 'AdminEditLookupCodeCtrl',
-        size: 'lg',
+        backdrop: 'static',
+        size: 'sm',
         resolve: {
           lookupCode: function () {
             return lookupCode;
@@ -164,7 +165,8 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
         var modalInstance = $uiModal.open({
         templateUrl: 'views/admin/editLookupCodeForm.html',
         controller: 'AdminEditLookupCodeCtrl',
-        size: 'lg',
+        backdrop: 'static',
+        size: 'sm',
         resolve: {
           lookupCode: function () {
             return {};

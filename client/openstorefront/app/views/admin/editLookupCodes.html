@@ -26,23 +26,23 @@ limitations under the License.
 		<button type="button"  class="btn btn-default"  id="filterstatus" ng-model="filterstatus.status" data-html="1" ng-change="refreshLookupCodes()" ng-options="status.desc for status in statusFilterOptions" data-animation="am-flip-x" bs-select>
 			Active <span class="caret"></span>
 		</button>  		
-		<button class="btn btn-default" ng-click="refreshLookupCodes()">Refresh&nbsp;<i class="fa fa-refresh"></i></button>
+		<button class="btn btn-default" ng-click="refreshLookupCodes()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
 		<span style="position: absolute; right: 0px; padding-right: 20px;">
-			<button class="btn btn-default" ng-click="addLookupCode()" title="Add Code">Add&nbsp;<i class="fa fa-add"></i></button>
-			<button class="btn btn-default" ng-click="export()" title="Export Codes">Export&nbsp;<i class="fa fa-sign-out"></i></button>
-			<button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Codes">Import&nbsp;<i class="fa fa-sign-in"></i></button>			
+			<button class="btn btn-default" ng-click="addLookupCode()" title="Add Code"><i class="fa fa-plus"></i>&nbsp;Add</button>
+			<button class="btn btn-default" ng-click="export()" title="Export Codes"><i class="fa fa-sign-out"></i>&nbsp;Export</button>
+			<button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Codes"><i class="fa fa-sign-in"></i>&nbsp;Import</button>			
 		</span>		
 		<div ng-show="flags.showUpload" style="border: 2px lightgrey solid; padding: 20px;" >			
 			
 			<div class="form-group">
 				<label>File Input</label>
 				<input type="file" nv-file-select uploader="uploader" name="uploadFile" width="100" />
-				<p class="help-block">CVS (code, description, detail description(optional), sort order (optional)</p>	
+				<p class="help-block">CVS (code, description, detail description(optional), sort order (optional))</p>	
 			</div>
-			<button ng-click="uploader.uploadAll()" class="btn-primary">Upload</button> 			
+			<button ng-click="uploader.uploadAll()" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp;Upload</button> 			
 		</div>		
 	</div>	
-	<table class="table table-striped table-bordered">
+	<table class="table table-bordered table-striped admin-table">
 			<tr>
 				<th><a href="" ng-click="setPredicate('code', 'lookupProp');">Code <span ng-show="predicate['lookupProp']  === 'code'"><i ng-show="!reverse['lookupProp'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['lookupProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th><a href="" ng-click="setPredicate('description', 'lookupProp');">Description <span ng-show="predicate['lookupProp']  === 'description'"><i ng-show="!reverse['lookupProp'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['lookupProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
@@ -61,8 +61,8 @@ limitations under the License.
 				<td align="center">{{code.activeStatus}}</td>
 				<td>{{code.updateUser}}</td>				
 				<td>{{code.updateDts | date:'MM/dd/yyyy h:mm:ss a'}}</td>				
-				<td style="padding:0px; width: 200px;">&nbsp;
-					<button class="btn" ng-click="editLookupCode(code);"  title="Edit Code"><i class="fa fa-edit"></i></button>
+				<td style="padding:0px 3px !important; width: 200px;">&nbsp;
+					<button class="btn btn-default btn-sm" ng-click="editLookupCode(code);"  title="Edit Code"><i class="fa fa-edit"></i></button>
 					<button type="button" title="Activate/Deactivate Code" class="btn btn-default btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I' ? 'inverted':'' " ><i class="fa fa-power-off"></i></button>
 				</td>
 			</tr>
@@ -72,7 +72,7 @@ limitations under the License.
 	<br>
 	<br>
 	<div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
-		<button type="submit" class="btn btn-primary" ng-click="close()"><i class="fa fa-times"></i>&nbsp;Cancel</button>			
+		<button type="submit" class="btn btn-primary" ng-click="close()"><i class="fa fa-times"></i>&nbsp;Close</button>			
 	</div>	
 </div>
 

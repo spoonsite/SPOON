@@ -24,7 +24,7 @@ limitations under the License.
 			<button class="btn btn-default" ng-click="addMedia()"><i class="fa fa-plus"></i>&nbsp;Add</button>
 		</span>
 	</div>	
-	<table class="table table-striped table-bordered">
+	<table class="table table-bordered table-striped admin-table">
 			<tr>
 				<th><a href="" ng-click="setPredicate('name', 'media');">Name <span ng-show="predicate['media']  === 'name'"><i ng-show="!reverse['media'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th><a href="" ng-click="setPredicate('mediaLink', 'media');">Resource URL <span ng-show="predicate['media']  === 'mediaLink'"><i ng-show="!reverse['media'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>
@@ -41,8 +41,8 @@ limitations under the License.
 				<td>{{item.mimeType}}</td>
 				<td>{{item.updateUser}}</td>
 				<td>{{item.updateDts | date:'MM/dd/yyyy h:mm a'}}</td>				
-				<td style="padding:0px; width: 200px;">&nbsp;
-					<button class="btn btn-danger" ng-click="removeMedia(item);"  title="Remove Media"><i class="fa fa-trash"></i></button>
+				<td style="padding:0px 3px !important;  width: 200px;">&nbsp;
+					<button class="btn btn-danger btn-sm" ng-click="removeMedia(item);"  title="Remove Media"><i class="fa fa-trash"></i></button>
 				</td>
 			</tr>
 	</table>	

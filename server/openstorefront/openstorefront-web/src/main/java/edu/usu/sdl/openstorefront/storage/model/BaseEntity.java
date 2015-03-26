@@ -41,7 +41,7 @@ public abstract class BaseEntity<T>
 	public static final String PENDING_STATUS = "P";
 
 	@NotNull
-	@ValidValueType({"A", "I"})
+	@ValidValueType({"A", "I", "P"})
 	private String activeStatus;
 
 	@NotNull

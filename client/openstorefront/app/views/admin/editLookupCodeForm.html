@@ -20,63 +20,78 @@ limitations under the License.
 <div  id="editLookupWindowDiv" style="padding-left: 20px; padding-right: 20px;">
 	<loader trigger="codeFormLoader"></loader>
 
-	<label class="col-sm-3 control-label">Code <span style="color: red; font-weight: bold;">*</span></label>
-	<input  type="text" 
-			id="code"
-			name="code"
-			placeholder="Code"					
-      class="form-control" 
-			style="display: inline-block" 
-			ng-disabled="editMode"
-			ng-model="lookupCodeForm.code" 
-			ng-minlength=1 
-			ng-maxlength=20
-			required 
-			ng-focus />			
-	<p ng-show="lookupCodeForm.description.$error.required && !lookupCodeForm.description.$focused" class="help-block">Description is required</p>	
-	
-	<label class="col-sm-3 control-label">Description <span style="color: red; font-weight: bold;">*</span></label>
-	<input  type="text" 
-			id="description"
-			name="description"
-			placeholder="Description"					
-			class="form-control" 
-			ng-model="lookupCodeForm.description" 
-			ng-minlength=1 
-			ng-maxlength=255
-			required 
-			ng-focus />			
-	<p ng-show="lookupCodeForm.description.$error.required && !lookupCodeForm.description.$focused" class="help-block">Description is required</p>
-	<label class="col-sm-3 control-label">Detailed Description</label>
-	<input  type="text" 
-			id="detailedDecription"
-			name="detailedDecription"
-			placeholder="Detail Description"					
-			class="form-control" 
-			ng-model="lookupCodeForm.detailedDecription" 
-			ng-minlength=0
-			ng-maxlength=4000
-			required 
-			ng-focus />	
-
-	<label class="col-sm-3 control-label">Sort Order (integer less than 9999)</label>
-	<input  type="number" 
-			id="sortOrder"
-			name="sortOrder"
-			placeholder="Sort Order"				
-			class="form-control"
-			onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-			ng-model="lookupCodeForm.sortOrder" 			
-			max="9999"
-			min="0"
-			required 
-			ng-focus />		
-
-	<hr>
-	<br>
-	<br>
-	<div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
-		<button type="submit" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;Save</button>
-		<a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancel()"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>		
-	</div>		
+	<form class="form-horizontal" name='lookupCodeUIForm' role="form"  ng-submit="save()" style="padding-left: 10px; padding-right: 10px;">
+		<div class="form-group"  >
+			<label class="col-sm-3 control-label">Code <span style="color: red; font-weight: bold;">*</span></label>
+			<div class="col-sm-9">				
+				<input  type="text" 
+						id="code"
+						name="code"
+						placeholder="Code"					
+						class="col-sm-3 form-control" 					
+						ng-disabled="editMode"
+						ng-model="lookupCodeForm.code" 
+						ng-minlength=1 
+						ng-maxlength=20
+						required 
+						ng-focus />			
+				<p ng-show="lookupCodeUIForm.code.$error.required && !lookupCodeUIForm.code.$focused" class="help-block">Code is required</p>	
+			</div>
+		</div>	
+		<div class="form-group"  >
+			<label class="col-sm-3 control-label">Description <span style="color: red; font-weight: bold;">*</span></label>
+			<div class="col-sm-9">
+				<input  type="text" 
+						id="description"
+						name="description"
+						placeholder="Description"					
+						class=" col-sm-3 form-control" 
+						ng-model="lookupCodeForm.description" 
+						ng-minlength=1 
+						ng-maxlength=255
+						required 
+						ng-focus />			
+				<p ng-show="lookupCodeUIForm.description.$error.required && !lookupCodeUIForm.description.$focused" class="help-block">Description is required</p>
+			</div>
+		</div>	
+		<div class="form-group"  >
+			<label class="col-sm-3 control-label">Detailed Description</label>
+			<div class="col-sm-9">
+				<input  type="text" 
+						id="detailedDecription"
+						name="detailedDecription"
+						placeholder="Detail Description"					
+						class="col-sm-3 form-control" 
+						ng-model="lookupCodeForm.detailedDecription" 
+						ng-minlength=0
+						ng-maxlength=4000						 
+						ng-focus />	
+			</div>
+		</div>	
+		<div class="form-group"  >	
+			<label class="col-sm-3 control-label">Sort Order (0 - 9999)</label>
+			<div class="col-sm-9">
+				<input  type="text" 
+						id="sortOrder"
+						name="sortOrder"
+						placeholder="Sort Order"				
+						class="col-sm-3 form-control"
+						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						ng-model="lookupCodeForm.sortOrder" 	
+						maxlength="4"
+						max="9999"
+						min="0"						 
+						ng-focus />	
+			</div>
+		</div>	
+		<hr>
+		<br>
+		<br>
+		<span style="float: left; margin-top: -45px;">   
+			<button type="submit" class="btn btn-primary" ng-disabled="lookupCodeUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;Save</button>					
+		</span>
+	</form>
+	<span style="float: right; margin-top: -45px;">
+		<button class="btn btn-danger" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+	</span>   
 </div>

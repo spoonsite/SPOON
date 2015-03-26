@@ -149,7 +149,19 @@ public class MediaAction
 		generalMediaExample.setName(name);
 		generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
 		if (generalMedia == null) {
-			throw new OpenStorefrontRuntimeException("Media not Found", "Check media name");
+			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is not found.", name));
+			return new StreamingResolution("image/png")
+			{
+
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream("/image/close-red.png")) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+
+			}.setFilename("MediaNotFound.png");
 		}
 
 		return new StreamingResolution(generalMedia.getMimeType())
