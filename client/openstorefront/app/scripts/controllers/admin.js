@@ -106,6 +106,8 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * sends us there 
   ***************************************************************/
   $scope.editLanding = function(type, code) {
+    console.log('We\'ve been sent to edit a landing page');
+    
     var branch = checkCollection($scope.data, 0, 'landing');
     $scope.type = type;
     $scope.code = code;

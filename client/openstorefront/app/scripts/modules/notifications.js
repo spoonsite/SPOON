@@ -91,7 +91,7 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
           }, function(){
             // console.log('There was an error getting the status');
           })
-        }, 15000); //
+        }, 5000); //
       } //
 
       scope.getTasks();

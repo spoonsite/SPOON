@@ -79,20 +79,18 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
 
 
   $scope.ok = function (type, code) {
+    console.log('we closed the edit code');
+    
     var result = {};
-    result.refresh = $scope.changed;
-    result.type = type;
-    result.code = code;
-    $scope.type = null;
     $uiModalInstance.close(result);
   };
 
   $scope.cancel = function (type, code) {
+    console.log('we closed the edit code');
+    
     var result = {};
-    result.refresh = $scope.changed;
     result.type = type;
     result.code = code;
-    $scope.type = null;
     $uiModalInstance.dismiss(result);
   };
 

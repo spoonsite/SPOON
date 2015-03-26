@@ -149,20 +149,14 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     });
 
     modalInstance.result.then(function (result) {
-      if (result && result.refresh === true) {
-        $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-        $scope.getFilters(true);
-        $scope.refreshFilterCache()
-      } else if (result.type && result.code) {
-        $scope.editLanding(result.type, result.code);
-      }
+      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+      $scope.getFilters(true);
     }, function (result) {
-      if (result && result.refresh === true) {
+      if (result.type && result.code) {
+        $scope.editLanding(result.type, result.code);
+      } else {
         $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
         $scope.getFilters(true);
-        $scope.refreshFilterCache()
-      } else if (result.type && result.code) {
-        $scope.editLanding(result.type, result.code);
       }  
     });
   }

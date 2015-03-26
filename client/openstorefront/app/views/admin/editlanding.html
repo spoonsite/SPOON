@@ -56,7 +56,7 @@
           <td style="padding: 5px; vertical-align: middle; text-align: center;" ng-class="article.attributeCodeActiveStatus === 'A'? 'success':'danger'"><i class="fa fa-fw " ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-check':'fa-times'"></i></td>
           <td style="padding:0px 3px !important; vertical-align: middle;">
             <button title="Edit Article" type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit fa-fw"></i></button>
-            <button title="Set Viewability" type="button" class="btn btn-sm btn-default" ng-click="changeActivity(article)"><i ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-eye':'fa-eye-slash'" class="fa fa-fw"></i></button>
+            <button title="Set Visibility" type="button" class="btn btn-sm btn-warning" ng-click="changeActivity(article)"><i ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-eye':'fa-eye-slash'" class="fa fa-fw"></i></button>
             <button title="Delete Article" type="button" class="btn btn-sm btn-danger" ng-click="deleteArticle(article)"><i class="fa fa-fw fa-trash"></i></button>
           </td>
         </tr>
