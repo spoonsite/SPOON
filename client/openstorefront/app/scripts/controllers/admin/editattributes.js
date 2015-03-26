@@ -68,6 +68,28 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     // console.log('Deleted filter', filter);
   };
 
+  $scope.deleteFilter = function(filter){
+    var cont = confirm("You are about to permanently remove an attribute from the system. This will affect all related components.  Continue?");
+    if (cont) {
+      $scope.deactivateButtons = true;
+      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+      Business.articleservice.deleteFilter(filter.type).then(function(){
+        $timeout(function(){
+          triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusAttributes', 'body', 3000);    
+          $scope.getFilters(true);
+          $scope.deactivateButtons = false;
+          $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+        }, 1000);
+      }, function(){
+        $timeout(function(){
+          $scope.getFilters(true);
+          $scope.deactivateButtons = false;
+          $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+        }, 1000);
+      })
+    }
+  }
+
   $scope.changeActivity = function(filter){
     var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). This will affect all related component attributes.  Continue?");
     if (cont) {

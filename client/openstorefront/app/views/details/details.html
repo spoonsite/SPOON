@@ -136,7 +136,7 @@
         <tr>
           <th class="valign" colspan="16"><h4>Component Vitals</h4></th>
         </tr>             
-        <tr id="attributes{{$index}}Update" ng-repeat="row in details.details.attributes">
+        <tr class="row.highlightStyle" id="attributes{{$index}}Update" ng-repeat="row in details.details.attributes">
           <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('attributes'+$index)? 'updatedForUser': ''" colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
           <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.codeLongDescription" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" class="{{row.highlightStyle}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>
           <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.codeLongDescription" colspan="11" class="text-left {{row.highlightStyle}}">{{row.codeDescription}}</td>

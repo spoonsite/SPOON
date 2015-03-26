@@ -161,6 +161,27 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
     }
   }
 
+  $scope.deleteCode = function(code){
+    var cont = confirm("You are about to permanently remove an attribute code from the system. This will affect all related components. Continue?");
+    if (cont) {
+      $scope.deactivateButtons = true;
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
+      Business.articleservice.deleteCode($scope.type.attributeType, code.code).then(function(){
+        $timeout(function(){
+          $scope.getCodes();
+          $scope.deactivateButtons = false;
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
+        }, 1000);
+      }, function(){
+        $timeout(function(){
+          $scope.getCodes();
+          $scope.deactivateButtons = false;
+          $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
+        }, 1000);
+      })
+    }
+  }
+
   $scope.changeActivity = function(code){
     if ($scope.type && $scope.type.attributeType && code && code.code) {
       var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). Continue?");

@@ -57,6 +57,7 @@
           <td style="padding:0px 3px !important; vertical-align: middle;">
             <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editType(filter)" ng-disabled="filter.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button>
             <button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(filter)" ng-class="filter.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
+            <button type="button" title="Delete Attribute" class="btn btn-default btn-sm" ng-click="deleteFilter(filter)" ng-disabled="deactivateButtons"><i class="fa fa-trash"></i></button>
           </td>
         </tbody>
       </tr>

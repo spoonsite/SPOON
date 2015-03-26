@@ -54,11 +54,12 @@
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.sortOrder}}</td>
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">{{code.architectureCode}}</td>
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.badgeUrl}}</td>
-            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.highlightStyle}}</td>
+            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" class="{{code.highlightStyle}}">{{code.highlightStyle}}</td>
             <td style="padding: 0px 3px;">
               <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editCode(code)" ng-disabled="code.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button>
               <button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
               <button type="button" title="Edit Landing Page" class="btn btn-default btn-sm" ng-click="cancel(type.type, code.code)"><i class="fa fa-pencil"></i></button><!-- <button type="button" title="Delete Type" class="btn btn-default btn-sm" ng-click="deleteAttribute(code)"><i class="fa fa-trash"></i></button> -->
+              <button type="button" title="Delete Attribute Code" class="btn btn-danger btn-sm" ng-click="deleteCode(code)" ng-disabled="deactivateButtons"><i class="fa fa-trash"></i></button>
             </td>
           </tr>
         </table>

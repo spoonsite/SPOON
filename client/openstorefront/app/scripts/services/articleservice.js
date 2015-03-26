@@ -315,6 +315,32 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
 
     return deferred.promise;
   }
+
+  article.deleteFilter = function(type){
+    var deferred = $q.defer();
+    if (type) {
+      $http({
+        method: 'DELETE',
+        url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(type) + '/force'
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }
   
   article.deactivateCode = function(type, code){
     var deferred = $q.defer();
@@ -322,6 +348,32 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
       $http({
         method: 'DELETE',
         url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(type) + '/attributecodes/' + encodeURIComponent(code)
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }  
+
+  article.deleteCode = function(type, code){
+    var deferred = $q.defer();
+    if (type) {
+      $http({
+        method: 'DELETE',
+        url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(type) + '/attributecodes/' + encodeURIComponent(code) +'/force'
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
