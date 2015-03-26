@@ -111,7 +111,7 @@
 						<td>{{task.submitedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
 						<td>
 							{{task.completedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}<br>
-							<span style="font-size: 9px; color: gray;">(Expires: {{task.expireDts | date:'MM/dd/yyyy h:mm:ss.sss a'}})</span>
+							<span style="font-size: 9px; color: gray;" ng-show="task.completedDts">(Expires: {{task.expireDts | date:'MM/dd/yyyy h:mm:ss.sss a'}})</span>
 						</td>						
 						<td style="width: 175px;">{{task.allowMultiple}}</td>																										
 						<td style="padding:0px; width: 200px;">&nbsp;
