@@ -109,6 +109,8 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   }
 
   $scope.editType = function(type){
+    console.log('type', type);
+    
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editcodes.html',
       controller: 'AdminEditcodesCtrl',

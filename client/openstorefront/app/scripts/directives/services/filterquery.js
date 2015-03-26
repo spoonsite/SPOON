@@ -58,7 +58,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       scope.pagination = {};
       scope.pagination.currentPage = 1;
       scope.pagination.itemsPerPage = scope.defaultMax;
-      scope.pagination.maxSize = 6;
+      scope.pagination.maxSize = 5;
       scope.showPagination = true;
       scope.maxResults;
       scope.maxPerPage;

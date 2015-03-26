@@ -30,7 +30,7 @@ public class AttributeCodeView
 	private String code;
 	private String label;
 	private String description;
-	private String fullTextLink;
+	private String detailUrl;
 	private String badgeUrl;
 	private String architectureCode;
 	private String groupCode;
@@ -55,9 +55,9 @@ public class AttributeCodeView
 		attributeCodeView.setArchitectureCode(attributeCode.getArchitectureCode());
 		attributeCodeView.setActiveStatus(attributeCode.getActiveStatus());
 		if (attributeCode.getArticle() != null) {
-			attributeCodeView.setFullTextLink("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
+			attributeCodeView.setDetailUrl("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
 		} else {
-			attributeCodeView.setFullTextLink(attributeCode.getDetailUrl());
+			attributeCodeView.setDetailUrl(attributeCode.getDetailUrl());
 		}
 
 		return attributeCodeView;
@@ -102,14 +102,14 @@ public class AttributeCodeView
 		this.label = label;
 	}
 
-	public String getFullTextLink()
+	public String getDetailUrl()
 	{
-		return fullTextLink;
+		return detailUrl;
 	}
 
-	public void setFullTextLink(String fullTextLink)
+	public void setDetailUrl(String detailUrl)
 	{
-		this.fullTextLink = fullTextLink;
+		this.detailUrl = detailUrl;
 	}
 
 	public Integer getSortOrder()

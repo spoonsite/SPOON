@@ -25,53 +25,36 @@
       </form>
     </tab>
     <tab heading="Manage Codes" ng-show="!addTypeFlg">
-      <div ng-show="type.codes.length > windowSize" style="margin-top:5px;">
-        <div>
-          Show&nbsp;<input id="windowSize" type="number" min="5" max="50" ng-model="check.windowSize" ng-change="applyWindow()">&nbsp;per page (5-50).
-        </div>
-        <div style="margin-top:5px;">
-          <button class="btn btn-default" ng-click="previous()"><i class="fa fa-arrow-left"></i>&nbsp;Previous</button>
-          <button class="btn btn-default" ng-click="next()">Next&nbsp;<i class="fa fa-arrow-right"></i></button>
-          Go to page&nbsp;<input id="pageNumber" type="number" min="1" max="{{getMaxPage()}}" ng-model="check.pageNumber" ng-change="applyPage()">&nbsp;of {{getMaxPage()}}.
-        </div>
-      </div>
-      
       <div class="pull-left" style="display:inline-block; margin-top: 5px;">
-        <button type="button" title="Reset filters" class="btn btn-default" ng-click="editCode(false)"><i class="fa fa-plus"></i>Add New Code</button>
-        <button type="button" title="Reset filters" class="btn btn-default" ng-click="setPredicate('activeStatus')"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
-          <i class="fa fa-sort fa-stack-1x"></i>
-          <i class="fa fa-ban fa-stack-2x text-danger"></i>
-        </span>&nbsp;Clear Sort</button>
-        <button type="button" title="Reset filters" class="btn btn-default" ng-click="clearCache(); getType();"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
-      </div>
-      <div class="pull-right" style="display:inline-block; margin-top: 5px;">
-        <button type="button" title="Reset filters" class="btn btn-default" ng-click="applySortOrder(false)"><i class="fa fa-sort-alpha-asc"></i>&nbsp;Apply Sort to Sort Order</button>
-        <button type="button" title="Reset filters" class="btn btn-default" ng-click="applySortOrder(true)">Remove Sort Order</button>
+        <button type="button" title="Reset filters" class="btn btn-default" ng-click="editCode(false)"><i class="fa fa-plus"></i>&nbsp;Add New Code</button>
       </div>
       <div style="clear:both;"></div>
       <div style="margin-top:5px;">
-        <table class="table table-bordered table-striped" style="table-layout:fixed;">
+        <filterquery data="data.allCodes" url="api/v1/resource/attributes/attributetypes/{{type.attributeType}}/attributecodeviews" sort-by="label" sort-order="ASC" type="default" set-features="pagination.features" control="pagination.control"></filterquery>
+        <table class="table table-bordered table-striped">
           <tr>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('label');">Label&nbsp;<span ng-show="predicate === 'label'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('code');">Code&nbsp;<span ng-show="predicate === 'code'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('description');">Description&nbsp;<span ng-show="predicate === 'description'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
-            <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('fullTextLink');">Link&nbsp;<span ng-show="predicate === 'fullTextLink'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+            <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('detailUrl');">Link&nbsp;<span ng-show="predicate === 'detailUrl'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('groupCode');">Group Code&nbsp;<span ng-show="predicate === 'groupCode'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('sortOrder');">Sort Order&nbsp;<span ng-show="predicate === 'sortOrder'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('architectureCode');">Architecture Code&nbsp;<span ng-show="predicate === 'architectureCode'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
             <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('badgeUrl');">Badge Url&nbsp;<span ng-show="predicate === 'badgeUrl'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
+            <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('highlightStyle');">Highlight Style&nbsp;<span ng-show="predicate === 'highlightStyle'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
             <th style="padding: 8px 3px;"><a href="">Actions</a></th>
           </tr>
-          <tr ng-repeat="code in (type.codes | orderBy:predicate:reverse | pageme:current:windowSize:getUniqueId())"  ng-class="code.activeStatus === 'I'? 'inactive':''">
-            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" dynamichtml="code.label"></td>
+          <tr ng-repeat="code in type.codes">
+            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;" dynamichtml="code.label"></td>
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.code}}</td>
-            <td ng-show="code.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" popover data-trigger="hover" data-placement="right" data-html="true"  data-selector="" data-original-title="Description" data-container="#editTypeModalDiv" data-content="{{getCodeDesc(code.description)}}">{{code.description}}</td>
+            <td ng-show="code.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;" popover data-trigger="hover" data-placement="right" data-html="true"  data-selector="" data-original-title="Description" data-container="#editTypeModalDiv" data-content="{{getCodeDesc(code.description)}}">{{code.description}}</td>
             <td ng-show="!code.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
-            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.fullTextLink}}</td>
+            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.detailUrl}}</td>
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.groupCode}}</td>
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.sortOrder}}</td>
-            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.architectureCode}}</td>
+            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">{{code.architectureCode}}</td>
             <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.badgeUrl}}</td>
+            <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">{{code.highlightStyle}}</td>
             <td style="padding: 0px 3px;">
               <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editCode(code)" ng-disabled="code.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button>
               <button type="button" title="Activate/Deactivate Attribute" class="btn btn-default btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
@@ -80,8 +63,6 @@
           </tr>
         </table>
       </div>
-      <button class="btn btn-default" ng-click="saveSortOrder()" ng-show="dirty" data-toggle="tooltip" data-placement="top" title="This can take a few minutes if saving changes to an architecture (SvcV-4 for example)"><i class='fa fa-save'></i>&nbsp;Save Sort Order Changes</button>
-      <button class="btn btn-primary" ng-click="cancelChanges()" ng-show="dirty"><i class='fa fa-times'></i>&nbsp;Cancel Changes</button>
     </tab>
   </tabset>
 </div>

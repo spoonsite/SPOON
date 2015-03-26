@@ -94,7 +94,7 @@ public class AttributeTypeView
 				code.getCode(),
 				code.getLabel(),
 				code.getDescription(),
-				code.getFullTextLink(),
+				code.getDetailUrl(),
 				code.getGroupCode(),
 				code.getSortOrder() == null ? "" : code.getSortOrder().toString(),
 				code.getArchitectureCode(),
