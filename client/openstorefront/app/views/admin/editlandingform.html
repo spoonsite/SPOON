@@ -2,12 +2,25 @@
   <div>
     <div class="" style="width: 100%; padding:15px;">
       <button type="submit" title="Cancel Article Edits" class="btn btn-primary pull-right" style="display:inline-block" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
-      <h3 style="margin:0px; display:inline-block;">Article/Landing Page for {{type}}&mdash;{{code}}</h3>
+      <h3 style="margin:0px; display:inline-block;">Article/Landing Page for {{type.type}}&mdash;{{code.code}}</h3>
     </div>
     <div style="clear:both"></div>
   </div>
   <hr style="margin:5px 0px;">
   <form ng-submit="ok();" id="editLandingPages" style="overflow:hidden; margin: 0px;">
+    <div class="form-group required" style="margin-bottom:0px;">
+      <label class="col-md-2" style="text-align:right;" for="attrirubteType">Type</label>
+      <div class="col-md-10">
+        <select class="form-control" title="Select a type" id="attributeType" ng-model="type.type" ng-options="attr.attributeType as attr.description for attr in attributes">
+        </select>
+      </div>
+    </div>
+    <div class="form-group required" style="margin-bottom:0px;">
+      <label class="col-md-2" style="text-align:right;" for="attrirubteCode">Code</label>
+      <div class="col-md-10">
+        <select type="text" ng-disabled="!type" class="form-control" title="Select a code" id="attributeCode" ng-model="code.code" ng-options="code.code as code.label for code in codes"></select>
+      </div>
+    </div>
     <div class="form-group required" style="margin-bottom:0px;">
       <label class="col-md-2" style="text-align:right;" for="title">Title</label>
       <div class="col-md-10">

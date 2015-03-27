@@ -73,7 +73,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     if (cont) {
       $scope.deactivateButtons = true;
       $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-      Business.articleservice.deleteFilter(filter.type).then(function(){
+      Business.articleservice.deleteFilter(filter.attributeType).then(function(){
         $timeout(function(){
           triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusAttributes', 'body', 3000);    
           $scope.getFilters(true);
@@ -96,7 +96,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       $scope.deactivateButtons = true;
       if (filter.activeStatus === 'A') {
         $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-        Business.articleservice.deactivateFilter(filter.type).then(function(){
+        Business.articleservice.deactivateFilter(filter.attributeType).then(function(){
           $timeout(function(){
             triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusAttributes', 'body', 3000);    
             $scope.getFilters(true);
@@ -112,7 +112,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
         })
       } else {
         $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-        Business.articleservice.activateFilter(filter.type).then(function() {
+        Business.articleservice.activateFilter(filter.attributeType).then(function() {
           $timeout(function(){
             triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusAttributes', 'body', 3000);    
             $scope.getFilters(true);

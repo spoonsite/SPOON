@@ -387,12 +387,12 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
   }
 
   $scope.timer = function() {
-    var result;
-    var hours;
-    var minutes;
-    var seconds;
-    var diff;
     _.each($scope.data, function(item){
+      var result;
+      var hours;
+      var minutes;
+      var seconds;
+      var diff;
       var start = new Date(item.expireDts);
       diff = ((start - Date.now()) / 1000) | 0;
       if (!diff || diff <= 0) {

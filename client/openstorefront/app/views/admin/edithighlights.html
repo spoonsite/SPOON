@@ -1,7 +1,7 @@
 <div ng-controller="AdminEditHighlightsCtrl" style="padding-left: 20px; padding-right: 20px;">
   <loader trigger="adminHighlights"></loader>
-  <button type="button" class="btn btn-default" ng-click="editHighlights({})">Add Highlight&nbsp;<i class="fa fa-plus"></i></button>
-  <table class="table table-striped table-bordered" style="table-layout:fixed;">
+  <button type="button" class="btn btn-default" ng-click="editHighlights({})"><i class="fa fa-plus"></i>&nbsp;Add Highlight</button>
+  <table class="table table-striped table-bordered admin-table" style="table-layout:fixed;">
     <tr>
       <th ng-click="setPredicate('title')">Title&nbsp;<span ng-show="predicate === 'title'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></th>
       <th ng-click="setPredicate('description')">Description&nbsp;<span ng-show="predicate === 'description'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></th>
@@ -10,14 +10,16 @@
       <th>Actions</th>
     </tr>
     <tr ng-repeat="highlight in data.highlights | orderBy:predicate:reverse"  ng-class="highlight.activeStatus === 'I'? 'inactive':''">
-      <td style="padding: 5px;">{{highlight.title}}</td>
-      <td ng-show="highlight.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" popover data-trigger="hover" data-placement="right" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{getHighlightsDesc(highlight.description)}}">{{highlight.description}}</td>
-      <td ng-show="!highlight.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
-      <td style="padding: 5px;">{{getHighlightCode(highlight.highlightType)}}</td>
-      <td ng-show="highlight.link" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{highlight.link}}"><a href="{{highlight.link}}">Live Link</a></td>
-      <td ng-show="!highlight.link" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
-      <td style="padding:0px 5px;">
-        <button type="button" class="btn btn-sm btn-default" ng-click="editHighlights(highlight)"><i class="fa fa-edit"></i></button><button type="button" class="btn btn-sm btn-default" ng-click="deleteHighlights(highlight)"><i class="fa fa-trash"></i></button><button type="button" title="Activate/Deactivate Highlight" class="btn btn-default btn-sm" ng-click="changeActivity(highlight)" ng-class="highlight.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
+      <td>{{highlight.title}}</td>
+      <td ng-show="highlight.description" style="overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" popover data-trigger="hover" data-placement="right" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{getHighlightsDesc(highlight.description)}}">{{highlight.description}}</td>
+      <td ng-show="!highlight.description" style="overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
+      <td>{{getHighlightCode(highlight.highlightType)}}</td>
+      <td ng-show="highlight.link" style="overflow:hidden; text-overflow: ellipsis; white-space: nowrap;" popover data-trigger="hover" data-placement="left" data-html="true"  data-selector="" data-original-title="Description" data-container="body" data-content="{{highlight.link}}"><a href="{{highlight.link}}">Live Link</a></td>
+      <td ng-show="!highlight.link" style="overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
+      <td style="padding:0px 3px !important; vertical-align: middle;">
+        <button type="button" class="btn btn-sm btn-default" ng-click="editHighlights(highlight)"><i class="fa fa-edit"></i></button>
+        <button type="button" title="Activate/Deactivate Highlight" class="btn btn-warning btn-sm" ng-click="changeActivity(highlight)" ng-class="highlight.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
+        <button type="button" class="btn btn-sm btn-danger" ng-click="deleteHighlights(highlight)"><i class="fa fa-trash"></i></button>
       </td>
     </tr>
   </table>
