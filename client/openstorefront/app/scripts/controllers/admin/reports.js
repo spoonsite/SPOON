@@ -60,7 +60,6 @@
       });
     }
   };
-  $scope.refreshReports();
 
   $scope.refreshScheduledReports = function(){
     $scope.$emit('$TRIGGERLOAD', 'reportLoader');

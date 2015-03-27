@@ -366,7 +366,7 @@ public class SearchServiceImpl
 			solrService.deleteById(id);
 			solrService.commit();
 		} catch (IOException | SolrServerException ex) {
-			throw new OpenStorefrontRuntimeException("Failed Deleting Index", "Make sure Search is active and can be reached", ex);
+			throw new OpenStorefrontRuntimeException("Failed Deleting Index", "Make sure Search server is active and can be reached", ex);
 		}
 	}
 
@@ -378,7 +378,7 @@ public class SearchServiceImpl
 			// CAUTION: deletes everything!
 			solrService.deleteByQuery(SolrManager.SOLR_ALL_QUERY);
 		} catch (SolrServerException | IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to clear all indexes", "Make sure Search is active and can be reached", ex);
+			throw new OpenStorefrontRuntimeException("Unable to clear all indexes", "Make sure Search server is active and can be reached", ex);
 		}
 	}
 
