@@ -356,7 +356,7 @@ public class AttributeResource
 		};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@GET
 	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -373,7 +373,7 @@ public class AttributeResource
 		}
 
 		AttributeCodeWrapper views = service.getAttributeService().getFilteredCodes(filterQueryParams, type);
-		
+
 		GenericEntity<AttributeCodeWrapper> entity = new GenericEntity<AttributeCodeWrapper>(views)
 		{
 		};
@@ -381,12 +381,13 @@ public class AttributeResource
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type
 	 * @param filterQueryParams
-	 * @return 
+	 * @return
 	 */
-	private List<AttributeCode> getAttributeCodesFunc(String type, FilterQueryParams filterQueryParams){
+	private List<AttributeCode> getAttributeCodesFunc(String type, FilterQueryParams filterQueryParams)
+	{
 		AttributeCode attributeCodeExample = new AttributeCode();
 		attributeCodeExample.setActiveStatus(filterQueryParams.getStatus());
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
@@ -934,7 +935,7 @@ public class AttributeResource
 
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
-			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, type, AttributeCode.PENDING_STATUS);
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, attributeCodePk, AttributeCode.PENDING_STATUS);
 
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(false);
