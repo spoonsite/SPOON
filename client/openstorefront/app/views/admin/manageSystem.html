@@ -208,16 +208,24 @@
 					</tr>	
 					<tr>
 						<th>Heap Memory</th>
-						<td>{{appStatus.heapMemory}}</td>
-						<th>Non-Heap Memory</th>
-						<td>{{appStatus.nonHeapMemory}}</td>
+						<td>
+							<progressbar class="progress-striped active" value="getPercent(appStatus.heapMemoryStatus.usedKb, appStatus.heapMemoryStatus.maxKb)"  type="{{getPercentColor(getPercent(appStatus.heapMemoryStatus.usedKb, appStatus.heapMemoryStatus.maxKb))}}">{{getPercent(appStatus.heapMemoryStatus.usedKb, appStatus.heapMemoryStatus.maxKb)}}%</progressbar>
+							<small>{{appStatus.heapMemoryStatus.details}}</small>
+						</td>
+						<th>Non-Heap Memory</th>						
+						<td>
+							<progressbar value="getPercent(appStatus.nonHeapMemoryStatus.usedKb, appStatus.nonHeapMemoryStatus.usedKb)"  type="success">{{getPercent(appStatus.nonHeapMemoryStatus.usedKb, appStatus.nonHeapMemoryStatus.usedKb)}}%</progressbar>
+							<small>{{appStatus.nonHeapMemoryStatus.details}}</small>
+						</td>
 					</tr>						
 					<tr>
 						<th>Memory Pools</th>
 						<td>
 							<ul>
-								<li ng-repeat="info in appStatus.memoryPoolInfos">
-									{{info}}<br><br>
+								<li ng-repeat="info in appStatus.memoryPools">
+									<b>{{info.name}}</b><br>
+									<progressbar value="getPercent(info.usedKb, info.maxKb)"  type="{{getPercentColor(getPercent(info.usedKb, info.maxKb))}}">{{getPercent(info.usedKb, info.maxKb)}}%</progressbar>
+									<small>{{info.details}}</small>									
 								</li>
 							</ul>
 						</td>

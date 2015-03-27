@@ -707,10 +707,33 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           
           $scope.currentTab = $scope.detailResultsTabs[0].id;
           $scope.selectedTab = $scope.detailResultsTabs[0];
-
+          $scope.evaluationDetails($scope.details.details.attributes);
         }
       }
     }
   }, true);
+
+  $scope.evaluationAttributes = {};
+  $scope.evaluationAttributes.exist = false;
+  $scope.evaluationDetails = function (attributes) {
+    if (attributes) {
+      _.forEach(attributes, function (item) {
+        if (item.type === 'DI2ELEVEL') {
+          $scope.evaluationAttributes.exist = true;
+          $scope.evaluationAttributes.level = item;
+        }
+        if (item.type === 'DI2ESTATE') {
+          $scope.evaluationAttributes.exist = true;
+          $scope.evaluationAttributes.state = item;
+        }
+        if (item.type === 'DI2EINTENT') {
+          $scope.evaluationAttributes.exist = true;
+          $scope.evaluationAttributes.intent = item;
+        }
+      });
+    }
+  };
+  
+
 
 }]);

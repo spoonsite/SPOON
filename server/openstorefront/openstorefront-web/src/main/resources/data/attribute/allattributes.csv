@@ -28,11 +28,11 @@ DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,DI2ECOM,DI2E Component,Component has b
 DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,NOTREUSE,Not DI2E Reusable,"Component was evaluated and determined to not support reusability, is not interoperable, or does not conform to DI2E standards and specifications",,,,,,danger,TRUE
 DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,NOTEVAL,Not Evaluated,Evaluation has not started,,,,,,,TRUE
 DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,OBSOLETE,Obsolete,"Component has been retired, superseded, or is generally considered not reusable by DI2E",,,,,,danger,TRUE
-DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,PEND,Evaluation Not Started,,,,,,,,TRUE
-DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,NOEVAL,No Evaluation Planned,,,,,,,,TRUE
-DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,INPROG,Evaluation In Progress,,,,,,,warning,TRUE
-DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,COMPLETE,Evaluation Complete,,,,,,,success,TRUE
-DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,SUPENDED,"Evaluation Suspended, No Further Evaluation Planned",,,,,,,danger,TRUE
+DI2EINTENT,DI2E Intent,FALSE,TRUE,TRUE,TRUE,PEND,Evaluation Not Started,,,,,,,,TRUE
+DI2EINTENT,DI2E Intent,FALSE,TRUE,TRUE,TRUE,NOEVAL,No Evaluation Planned,,,,,,,,TRUE
+DI2EINTENT,DI2E Intent,FALSE,TRUE,TRUE,TRUE,INPROG,Evaluation In Progress,,,,,,,warning,TRUE
+DI2EINTENT,DI2E Intent,FALSE,TRUE,TRUE,TRUE,COMPLETE,Evaluation Complete,,,,,,,success,TRUE
+DI2EINTENT,DI2E Intent,FALSE,TRUE,TRUE,TRUE,SUPENDED,"Evaluation Suspended, No Further Evaluation Planned",,,,,,,danger,TRUE
 "FUNDED","Funded","false","false","false","false","Y","Yes","",
 "FUNDED","Funded","false","false","false","false","N","No","",
 "ITAR","ITAR Exportable","false","false","false","false","Y","Yes","",

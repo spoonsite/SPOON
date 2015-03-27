@@ -83,13 +83,18 @@
           </div>
         </div>
       </div>
-      <div class="left liners" ng-if="details.componentName.checked || details.organization.checked || details.version.checked || details.organization.checked || details.lastActivityDate.checked || details.lastViewedDate.checked || details.componentViews.checked">
-        <div class="line" ng-if="details.componentName.checked"><strong>Component:&nbsp;</strong> {{details.componentName.data}}</div>
-        <div class="line" ng-if="details.version.checked"><strong>Version:&nbsp;</strong> {{details.version.data}}</div>
-        <div class="line" ng-if="details.organization.checked"><strong>Organization:&nbsp;</strong> {{details.organization.data}}</div>
-        <div class="line" ng-if="details.lastActivityDate.checked"><strong>Last Activity Date:&nbsp;</strong> {{getDate(details.lastActivityDate.data)}}</div>
-        <div class="line" ng-if="details.lastViewedDate.checked"><strong>Last View Date:&nbsp;</strong> {{getDate(details.lastViewedDate.data)}}</div>
-        <div class="line" ng-if="details.componentViews.checked"><strong>Views:&nbsp;</strong> {{details.componentViews.data}}</div>
+      <div class="left liners" ng-if="details.componentName.checked || details.organization.checked || details.version.checked || details.organization.checked || details.lastActivityDate.checked || details.lastViewedDate.checked || details.componentViews.checked || details.badges.checked">
+		  <div class="line" ng-if="details.componentName.checked"><strong>Component:&nbsp;</strong> {{details.componentName.data}}</div>
+		  <div class="line" ng-if="details.version.checked"><strong>Version:&nbsp;</strong> {{details.version.data}}</div>
+		  <div class="line" ng-if="details.organization.checked"><strong>Organization:&nbsp;</strong> {{details.organization.data}}</div>
+		  <div class="line" ng-if="details.lastActivityDate.checked"><strong>Last Activity Date:&nbsp;</strong> {{getDate(details.lastActivityDate.data)}}</div>
+		  <div class="line" ng-if="details.lastViewedDate.checked"><strong>Last View Date:&nbsp;</strong> {{getDate(details.lastViewedDate.data)}}</div>
+		  <div class="line" ng-if="details.componentViews.checked"><strong>Views:&nbsp;</strong> {{details.componentViews.data}}</div>
+		  <div ng-if="details.badges.checked">
+			  <div ng-repeat="attribute in details.attributes.data" style="display:inline-block;">
+				<img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge"  data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style=" width: auto; height: 40px;">
+			  </div>
+		  </div>		
       </div>
       <div class="left border" ng-if="details.tags.checked"><strong>Tags:&nbsp;</strong> <span ng-repeat="tag in details.tags.data" style="border: 1px solid lightgray; border-radius: 4px; padding: 3px;">{{tag.text}}</span></div>
       <div class="left" ng-if="details.description.checked"><strong>Description:&nbsp;</strong><span dynamichtml="details.description.data"></span></div>

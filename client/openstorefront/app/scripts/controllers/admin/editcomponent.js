@@ -454,7 +454,6 @@ $scope.getAttributes = function (override) {
   Business.getFilters(override, false).then(function (result) {
     $scope.allAttributes = result ? angular.copy(result) : [];
     $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true});
-
   });
 };    
 
@@ -492,7 +491,7 @@ $scope.loadAllComponentForms = function(){
 $scope.loadAllComponentForms();
 
 $scope.getCodesForType = function(type){
-  var foundType = _.find($scope.allAttributes, {type: type});
+  var foundType = _.find($scope.allAttributes, {attributeType: type});
   return foundType !== undefined ? foundType.codes : [];
 };  
 
