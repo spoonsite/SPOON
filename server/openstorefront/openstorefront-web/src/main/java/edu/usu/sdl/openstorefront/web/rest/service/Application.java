@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.ApplicationStatus;
 import edu.usu.sdl.openstorefront.web.rest.model.LoggerView;
+import edu.usu.sdl.openstorefront.web.rest.model.MemoryPoolStatus;
 import edu.usu.sdl.openstorefront.web.rest.model.ThreadStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
@@ -86,10 +87,24 @@ public class Application
 		applicationStatus.setProcessorCount(operatingSystemMXBean.getAvailableProcessors());
 		applicationStatus.setSystemLoad(operatingSystemMXBean.getSystemLoadAverage());
 		applicationStatus.setSystemProperties(runtimeMXBean.getSystemProperties());
-		applicationStatus.setHeapMemory(memoryMXBean.getHeapMemoryUsage().toString());
+
+		applicationStatus.getHeapMemoryStatus().setName("Heap");
+		applicationStatus.getHeapMemoryStatus().setDetails(memoryMXBean.getHeapMemoryUsage().toString());
+		applicationStatus.getHeapMemoryStatus().setInitKb(memoryMXBean.getHeapMemoryUsage().getInit() != 0 ? memoryMXBean.getHeapMemoryUsage().getInit() / 1024 : 0);
+		applicationStatus.getHeapMemoryStatus().setUsedKb(memoryMXBean.getHeapMemoryUsage().getUsed() != 0 ? memoryMXBean.getHeapMemoryUsage().getUsed() / 1024 : 0);
+		applicationStatus.getHeapMemoryStatus().setMaxKb(memoryMXBean.getHeapMemoryUsage().getMax() != 0 ? memoryMXBean.getHeapMemoryUsage().getMax() / 1024 : 0);
+		applicationStatus.getHeapMemoryStatus().setCommitedKb(memoryMXBean.getHeapMemoryUsage().getCommitted() != 0 ? memoryMXBean.getHeapMemoryUsage().getCommitted() / 1024 : 0);
+
+		applicationStatus.getNonHeapMemoryStatus().setName("Non-Heap");
+		applicationStatus.getNonHeapMemoryStatus().setDetails(memoryMXBean.getNonHeapMemoryUsage().toString());
+		applicationStatus.getNonHeapMemoryStatus().setInitKb(memoryMXBean.getNonHeapMemoryUsage().getInit() != 0 ? memoryMXBean.getNonHeapMemoryUsage().getInit() / 1024 : 0);
+		applicationStatus.getNonHeapMemoryStatus().setUsedKb(memoryMXBean.getNonHeapMemoryUsage().getUsed() != 0 ? memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1024 : 0);
+		applicationStatus.getNonHeapMemoryStatus().setMaxKb(memoryMXBean.getNonHeapMemoryUsage().getMax() != 0 ? memoryMXBean.getNonHeapMemoryUsage().getMax() / 1024 : 0);
+		applicationStatus.getNonHeapMemoryStatus().setCommitedKb(memoryMXBean.getNonHeapMemoryUsage().getCommitted() != 0 ? memoryMXBean.getNonHeapMemoryUsage().getCommitted() / 1024 : 0);
+
 		applicationStatus.setLiveThreadCount(threadMXBean.getThreadCount());
 		applicationStatus.setTotalThreadCount(threadMXBean.getTotalStartedThreadCount());
-		applicationStatus.setNonHeapMemory(memoryMXBean.getNonHeapMemoryUsage().toString());
+
 		applicationStatus.setStartTime(new Date(runtimeMXBean.getStartTime()));
 		applicationStatus.setUpTime(TimeUtil.millisToString(runtimeMXBean.getUptime()));
 
@@ -98,7 +113,15 @@ public class Application
 		}
 
 		for (MemoryPoolMXBean memoryPoolMXBean : memoryPoolMXBeans) {
-			applicationStatus.getMemoryPoolInfos().add(memoryPoolMXBean.getName() + " - " + memoryPoolMXBean.getType() + " (" + memoryPoolMXBean.getUsage().toString() + ")");
+			MemoryPoolStatus memoryPoolStatus = new MemoryPoolStatus();
+			memoryPoolStatus.setName(memoryPoolMXBean.getName() + " - " + memoryPoolMXBean.getType());
+			memoryPoolStatus.setDetails(memoryPoolMXBean.getUsage().toString());
+			memoryPoolStatus.setInitKb(memoryPoolMXBean.getUsage().getInit() != 0 ? memoryPoolMXBean.getUsage().getInit() / 1024 : 0);
+			memoryPoolStatus.setUsedKb(memoryPoolMXBean.getUsage().getUsed() != 0 ? memoryPoolMXBean.getUsage().getUsed() / 1024 : 0);
+			memoryPoolStatus.setMaxKb(memoryPoolMXBean.getUsage().getMax() != 0 ? memoryPoolMXBean.getUsage().getMax() / 1024 : 0);
+			memoryPoolStatus.setCommitedKb(memoryPoolMXBean.getUsage().getCommitted() != 0 ? memoryPoolMXBean.getUsage().getCommitted() / 1024 : 0);
+
+			applicationStatus.getMemoryPools().add(memoryPoolStatus);
 		}
 
 		return sendSingleEntityResponse(applicationStatus);

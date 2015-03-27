@@ -62,6 +62,20 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
     }    
   };
 
+  $scope.getPercent = function(value,max) {
+    return Math.round((value / max) * 100);
+  };
+  
+  $scope.getPercentColor = function(value) {
+    if (value < 65) {
+      return 'success';
+    } else  if (value >= 65 && value <= 80) {
+      return 'warning';
+    } else {
+      return 'danger';
+    }
+  };
+
   $scope.firstPage = function(){
     $scope.pageNumber=1;
     $scope.refreshTickets();      

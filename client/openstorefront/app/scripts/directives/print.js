@@ -52,6 +52,12 @@ app.directive('print', ['business', '$timeout', '$location', function (Business,
         if (temp.value){
           delete temp.value;
         }
+        temp['badges']={
+          checkedLabel: 'Badges',
+          checked: true,
+          data: ''
+        };
+        
         // details.checkedLabel = camelToSentence();
         return temp;
       }

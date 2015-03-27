@@ -36,9 +36,9 @@ public class ApplicationStatus
 	private String upTime;
 	private long totalThreadCount;
 	private long liveThreadCount;
-	private String heapMemory;
-	private String nonHeapMemory;
-	private List<String> memoryPoolInfos = new ArrayList<>();
+	private MemoryPoolStatus heapMemoryStatus = new MemoryPoolStatus();
+	private MemoryPoolStatus nonHeapMemoryStatus = new MemoryPoolStatus();
+	private List<MemoryPoolStatus> memoryPools = new ArrayList<>();
 	private List<String> garbageCollectionInfos = new ArrayList<>();
 
 	public ApplicationStatus()
@@ -125,36 +125,6 @@ public class ApplicationStatus
 		this.liveThreadCount = liveThreadCount;
 	}
 
-	public String getHeapMemory()
-	{
-		return heapMemory;
-	}
-
-	public void setHeapMemory(String heapMemory)
-	{
-		this.heapMemory = heapMemory;
-	}
-
-	public String getNonHeapMemory()
-	{
-		return nonHeapMemory;
-	}
-
-	public void setNonHeapMemory(String nonHeapMemory)
-	{
-		this.nonHeapMemory = nonHeapMemory;
-	}
-
-	public List<String> getMemoryPoolInfos()
-	{
-		return memoryPoolInfos;
-	}
-
-	public void setMemoryPoolInfos(List<String> memoryPoolInfos)
-	{
-		this.memoryPoolInfos = memoryPoolInfos;
-	}
-
 	public List<String> getGarbageCollectionInfos()
 	{
 		return garbageCollectionInfos;
@@ -163,6 +133,36 @@ public class ApplicationStatus
 	public void setGarbageCollectionInfos(List<String> garbageCollectionInfos)
 	{
 		this.garbageCollectionInfos = garbageCollectionInfos;
+	}
+
+	public MemoryPoolStatus getHeapMemoryStatus()
+	{
+		return heapMemoryStatus;
+	}
+
+	public void setHeapMemoryStatus(MemoryPoolStatus heapMemoryStatus)
+	{
+		this.heapMemoryStatus = heapMemoryStatus;
+	}
+
+	public MemoryPoolStatus getNonHeapMemoryStatus()
+	{
+		return nonHeapMemoryStatus;
+	}
+
+	public void setNonHeapMemoryStatus(MemoryPoolStatus nonHeapMemoryStatus)
+	{
+		this.nonHeapMemoryStatus = nonHeapMemoryStatus;
+	}
+
+	public List<MemoryPoolStatus> getMemoryPools()
+	{
+		return memoryPools;
+	}
+
+	public void setMemoryPools(List<MemoryPoolStatus> memoryPools)
+	{
+		this.memoryPools = memoryPools;
 	}
 
 }
