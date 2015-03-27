@@ -169,7 +169,7 @@ limitations under the License.
           <td>{{attribute.codeDescription}}</td>					
           <td>{{attribute.orphan}}</td>																
           <td style="padding: 0px 3px !important;">&nbsp;						
-            <button class="btn btn-default btn-sm" ng-click="toggleAttributeStatus(attribute);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+            <button class="btn btn-warning btn-sm" ng-click="toggleAttributeStatus(attribute);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>					
       </table>
@@ -281,7 +281,7 @@ limitations under the License.
           <td>{{contact.organization}}</td>																			
           <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
             <button class="btn btn-default btn-sm" ng-click="editEntity('contactForm', contact);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn btn-default btn-sm" ng-click="toggleContactStatus(contact);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+            <button class="btn btn-warning btn-sm" ng-click="toggleContactStatus(contact);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>					
       </table>			
@@ -356,7 +356,7 @@ limitations under the License.
           <td>{{resource.restricted}}</td>
           <td style="padding:0px 3px !important; width: 125px; vertical-align: middle;">&nbsp;
             <button class="btn btn-default btn-sm" ng-click="editEntity('resourceForm', resource);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn btn-default btn-sm" ng-click="toggleResourceStatus(resource);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>	
+            <button class="btn btn-warning btn-sm" ng-click="toggleResourceStatus(resource);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>	
             <button class="btn btn-danger btn-sm" ng-click="deleteResource(resource);"  title="Delete"><i class="fa fa-trash"></i></button>
           </td>
         </tr>					
@@ -427,7 +427,7 @@ limitations under the License.
           <td>{{mediaItem.originalLink}}</td>	
           <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
             <button class="btn btn-default btn-sm" ng-click="editEntity('mediaForm', mediaItem);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn btn-default btn-sm" ng-click="toggleMediaStatus(mediaItem);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
+            <button class="btn btn-warning btn-sm" ng-click="toggleMediaStatus(mediaItem);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
             <button class="btn btn-danger btn-sm" ng-click="deleteMedia(mediaItem);"  title="Delete"><i class="fa fa-trash"></i></button>
           </td>
         </tr>					
@@ -511,7 +511,7 @@ limitations under the License.
           <td>{{depend.comment}}</td>														
           <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;
             <button class="btn btn-default btn-sm" ng-click="editEntity('dependencyForm', depend);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn btn-default btn-sm" ng-click="toggleDependancyStatus(depend);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+            <button class="btn btn-warning btn-sm" ng-click="toggleDependancyStatus(depend);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>					
       </table>			
@@ -570,7 +570,7 @@ limitations under the License.
           <td>{{meta.value}}</td>					
           <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;						
             <button class="btn btn-default btn-sm" ng-click="editEntity('metadataForm', meta);"  title="Edit"><i class="fa fa-edit"></i></button>
-            <button class="btn btn-default btn-sm" ng-click="toggleMetadataStatus(meta);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>							
+            <button class="btn btn-warning btn-sm" ng-click="toggleMetadataStatus(meta);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>							
           </td>
         </tr>					
       </table>				
@@ -686,7 +686,7 @@ limitations under the License.
           <td>{{review.username}}</td>
           <td>{{review.updateDate | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
           <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;						
-            <button class="btn btn-default btn-sm" ng-click="toggleReviewStatus(review);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+            <button class="btn btn-warning btn-sm" ng-click="toggleReviewStatus(review);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>					
       </table>				
@@ -717,8 +717,8 @@ limitations under the License.
           <td>{{question.organization}}</td>
           <td>{{question.questionUpdateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
           <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;
-            <button class="btn btn-default" ng-click="showQuestionResponses(question);"  title="ShowResponse">{{questionDetailsShow[question.questionId].showResponsesText}} Responses</button>	
-            <button class="btn" ng-click="toggleQuestionStatus(question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+            <button class="btn btn-default btn-sm" ng-click="showQuestionResponses(question);"  title="ShowResponse">{{questionDetailsShow[question.questionId].showResponsesText}} Responses</button>	
+            <button class="btn btn-warning btn-sm" ng-click="toggleQuestionStatus(question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
           </td>
         </tr>
         <tr ng-show="questionDetailsShow[question.questionId].flag" ng-repeat-end>					
@@ -741,7 +741,7 @@ limitations under the License.
                 <td>{{response.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
                 <td align="center">{{response.activeStatus}}</td>
                 <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;									
-                  <button class="btn btn-default btn-sm" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+                  <button class="btn btn-warning btn-sm" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
                 </td>
               </tr>							
             </table>						
