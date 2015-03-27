@@ -54,7 +54,7 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
   
   $scope.deleteUserMessage = function(message){     
     var response = window.confirm("Are you sure you want to delete this message for " + (message.username ? message.username : message.emailAddress) + " ?");
-    if (userMessageId && response){
+    if (message.userMessageId && response){
       Business.userservice.removeUserMessages(message.userMessageId).then(function(results){
         $scope.refreshData();          
       });
@@ -62,16 +62,15 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
   };    
   
   $scope.refreshData = function() {  
-    $scope.$emit('$TRIGGERLOAD', 'messageLoader'); 
-    Business.userservice.getUserMessages($scope.queryFilter).then(function (results) {
-      if (results) {
-        $scope.userMessages = results;
-      }  
-      $scope.$emit('$TRIGGERUNLOAD', 'messageLoader');        
-    });                
+    $scope.$emit('$TRIGGERLOAD', 'messageLoader');
+    if ($scope.pagination.control && $scope.pagination.control.refresh) {
+      $scope.pagination.control.refresh().then(function(){
+        $scope.$emit('$TRIGGERUNLOAD', 'messageLoader');
+      });
+    } else {
+      $scope.$emit('$TRIGGERUNLOAD', 'messageLoader');
+    }     
   };
-  
-  $scope.refreshData();
   
   $scope.processUserMessageNow = function() {  
     $scope.$emit('$TRIGGERLOAD', 'messageLoader'); 

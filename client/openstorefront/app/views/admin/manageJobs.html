@@ -1,31 +1,4 @@
 <div  ng-controller="AdminJobsCtrl" style="padding-left: 20px; padding-right: 20px;">
-<style>
-	.jobstatus-NORMAL{		
-		background-color: lightgreen !important;
-	}
-	.jobstatus-PAUSED{		
-		background-color: lightgrey !important;
-	}
-	.jobstatus-BLOCKING{		
-		background-color: lightcoral !important;
-	}
-	.taskstatus-WORKING{		
-		background-color: lightgreen !important;
-	}
-	.taskstatus-CANCELED{		
-		background-color: lightgrey !important;
-	}
-	.taskstatus-FAILED{		
-		background-color: lightcoral !important;
-		font-weight: bold;
-	}
-	.taskstatus-DONE{		
-		background-color: white !important;
-	}
-	.taskstatus-QUEUED{		
-		background-color: lightgray !important;
-	}	
-</style>	
 	<tabset>
 		<tab heading="Jobs">			
 			<loader trigger="jobLoader"></loader>
@@ -56,7 +29,7 @@
 						<td>{{job.jobName}}</td>
 						<td>{{job.groupName}}</td>
 						<td>{{job.description}}</td>
-						<td class="jobstatus-{{job.status}}">{{job.status}}</td>
+						<td ng-class="job.status === 'NORMAL' ? 'success' :  job.status === 'PAUSED' ?  'warning' : job.status === 'BLOCKING' ?  'danger' : '' ">{{job.status}}</td>
 						<td>{{job.perviousFiredTime | date:'MM/dd/yyyy h:mm:ss a'}}</td>
 						<td>{{job.nextFiredTime | date:'MM/dd/yyyy h:mm:ss a'}}</td>
 						<td>{{job.jobData}}</td>						
@@ -107,7 +80,7 @@
 					</tr>
 					<tr ng-repeat-start="task in tasks.tasks | orderBy:predicate['tasks']:reverse['tasks']" >
 						<td><b>{{task.taskName}}</b><br>{{task.details}}</td>
-						<td class="taskstatus-{{task.status}}">{{task.status}}</td>
+						<td ng-class="getStatus(task.status)">{{task.status}}</td>
 						<td>{{task.submitedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
 						<td>
 							{{task.completedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}<br>
@@ -116,8 +89,8 @@
 						<td style="width: 175px;">{{task.allowMultiple}}</td>																										
 						<td style="padding:0px 3px !important;  width: 200px;">&nbsp;
 							<button class="btn btn-default btn-sm" ng-show="task.error" ng-click="showError(task)">View Error</button>
-							<button class="btn btn-danger btn-sm" ng-show="task.status === 'WORKING'" ng-click="removeAllTooltips(); cancelTask(task)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Cancel task and Interrupt">Cancel&nbsp;<i class="fa fa-trash-o"></i></button>
-							<button class="btn btn-danger btn-sm" ng-show="task.completedDts" ng-click="removeAllTooltips(); deleteTask(task)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Deletes a completed task">Delete&nbsp;<i class="fa fa-trash-o"></i></button>
+							<button class="btn btn-danger btn-sm" ng-show="task.status === 'WORKING'" ng-click="removeAllTooltips(); cancelTask(task)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Cancel task and Interrupt"><i class="fa fa-trash-o"></i></button>
+							<button class="btn btn-danger btn-sm" ng-show="task.completedDts" ng-click="removeAllTooltips(); deleteTask(task)" popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Deletes a completed task"><i class="fa fa-trash-o"></i></button>
 						</td>
 					</tr>
 					<tr ng-show="task.showDetails" ng-repeat-end>

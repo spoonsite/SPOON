@@ -19,19 +19,29 @@
 app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiModal', function ($scope, Business, $timeout, $uiModal) {
   $scope.predicate = 'activeStatus';
   $scope.deactivateButtons = false;
+  
+  $scope.userProfiles = {};
+  $scope.pagination = {};
+  $scope.pagination.control;
+  $scope.pagination.features = {'dates': false, 'max': true};  
+  
   $scope.getUsers = function(override) {
-    Business.userservice.getAllUserProfiles(true, override).then(function(result){
-      $scope.userProfiles = result? result: []
-    }, function() {
-      $scope.userProfiles = [];
-    })
-  }
-  $scope.getUsers(false);
+    $scope.$emit('$TRIGGERLOAD', 'adminUserProfile');
+    if ($scope.pagination.control && $scope.pagination.control.refresh) {
+      $scope.pagination.control.refresh().then(function(){
+        $scope.$emit('$TRIGGERUNLOAD', 'adminUserProfile');
+      });
+    } else {
+      $scope.$emit('$TRIGGERUNLOAD', 'adminUserProfile');
+    }
+  }; 
+
+  
   Business.lookupservice.getUserTypeCodes().then(function(result){
-    $scope.userTypes = result? result: []
+    $scope.userTypes = result? result: [];
   }, function() {
     $scope.userTypes = [];
-  })
+  });
 
   $scope.$on('$RESETUSER', function(){
     $scope.getUsers(true);
@@ -43,8 +53,19 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
     } else {
       $scope.predicate = predicate;
       $scope.reverse = false;
-    }
-  }
+    }    
+    $scope.pagination.control.changeSortOrder(predicate);          
+  };
+  
+  var stickThatTable = function(){
+    var offset = $('.top').outerHeight() + $('#userProfileToolbar').outerHeight();
+    $(".stickytable").stickyTableHeaders({
+      fixedOffset: offset + 30
+    });
+  };
+
+  $(window).resize(stickThatTable);
+  $timeout(stickThatTable, 100); 
 
   $scope.getDate = function(date){
     return utils.getDate(date);
