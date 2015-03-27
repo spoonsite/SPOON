@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal', function ($scope, Business, $rootScope, $uiModal) {
+app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal', '$timeout', function ($scope, Business, $rootScope, $uiModal, $timeout) {
 
   $scope.recentChangesForm = {};
   $scope.recentChangesForm.lastRunDts = "";
@@ -36,24 +36,31 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
   $scope.threads = [];
   $scope.predicate = [];
   $scope.reverse = [];
+  $scope.tabs = {};
+  $scope.tabs.general = true;
+  
+  $scope.selectTab = function(tab){
+    _.forIn($scope.tabs, function(value, key){
+      $scope.tabs[key] = false;
+    });
+    
+    $scope.tabs[tab] = true;    
+  };
+
+  $scope.pagination = {};
+  $scope.pagination.control;
+  $scope.pagination.features = {'dates': false, 'max': true};  
 
   $scope.refreshTickets = function(){
-    $scope.$emit('$TRIGGERLOAD', 'ticketLoader');       
-    $scope.queryFilter.offset = ($scope.pageNumber - 1) * $scope.queryFilter.max;
-    Business.systemservice.getErrorTickets($scope.queryFilter).then(function (results) {
-      if (results) {          
-        $scope.errorTickets = results;
-
-        _.forEach($scope.errorTickets.errorTickets, function(ticket){
-          ticket.detailText="View Details";
-        });
-
-        $scope.maxPageNumber = Math.ceil($scope.errorTickets.totalNumber / $scope.queryFilter.max);          
-      }  
-      $scope.$emit('$TRIGGERUNLOAD', 'ticketLoader');        
-    });      
+    $scope.$emit('$TRIGGERLOAD', 'ticketLoader');
+    if ($scope.pagination.control && $scope.pagination.control.refresh) {
+      $scope.pagination.control.refresh().then(function(){
+        $scope.$emit('$TRIGGERUNLOAD', 'ticketLoader');
+      });
+    } else {
+      $scope.$emit('$TRIGGERUNLOAD', 'ticketLoader');
+    }    
   };
-  $scope.refreshTickets();
 
   $scope.firstPage = function(){
     $scope.pageNumber=1;
@@ -100,11 +107,24 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
       $scope.predicate[table] = predicate;
       $scope.reverse[table] = false;
     }
+    if (table === 'error') {
+      $scope.pagination.control.changeSortOrder(predicate);
+    }    
+  };
+  
+  var stickThatTable = function(){
+    var offset = $('.top').outerHeight() + $('#errorTicketToolbar').outerHeight();
+    $(".stickytable").stickyTableHeaders({
+      fixedOffset: offset + 30
+    });
   };
 
-  $scope.showErrorDetails = function(ticketId){
+  $(window).resize(stickThatTable);
+  $timeout(stickThatTable, 100);  
 
-    var ticket = _.find($scope.errorTickets.errorTickets, {'errorTicketId': ticketId});
+  $scope.showErrorDetails = function(ticket){
+
+   // var ticket = _.find($scope.errorTickets.errorTickets, {'errorTicketId': ticketId});
 
     if (ticket.details && ticket.details === true){
       ticket.details = false;
@@ -115,7 +135,7 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
     }
 
     if (!ticket.loadedDetails) {
-      Business.systemservice.getErrorTicketInfo(ticketId).then(function (results) {
+      Business.systemservice.getErrorTicketInfo(ticket.errorTicketId).then(function (results) {
         ticket.loadedDetails = results;
       });
     }
