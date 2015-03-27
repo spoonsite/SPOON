@@ -19,12 +19,7 @@
 app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeout', '$q', function ($scope, Business, $uiModal, $timeout, $q) {
   $scope.type = $scope.$parent.type || null;
   $scope.code = $scope.$parent.code || null;
-  console.log('type', $scope.type);
-  console.log('code', $scope.code);
   
-  $scope.attributeType = {};
-  $scope.attributeCode = {};
-  $scope.codes = {};
   $scope.predicate = 'title';
   $scope.reverse = false;
   $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
@@ -35,9 +30,6 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   // * that says 'add landing page'
   // ***************************************************************/
 
-  var compare = function (a, b) {
-    return ((a.label == b.label) ? 0 : ((a.label > b.label) ? 1 : -1));
-  }
 
   $scope.clearSort = function() {
     $scope.predicate = 'title'; 
@@ -46,20 +38,6 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       $scope.$apply();
     }
   }
-
-  $scope.getAttributeCodes = function(override) {
-    Business.articleservice.getType($scope.attributeType.type, true, true).then(function(result){
-      result.codes.sort(compare);
-      $scope.codes.codes = (result && result.codes)? angular.copy(result.codes): [];
-    }, function(){
-      $scope.codes.codes = [];
-    });
-  }
-  $scope.$watch('attributeType', function(){
-    if ($scope.attributeType.type){
-      $scope.getAttributeCodes();
-    }
-  }, true)
 
   $scope.setPredicate = function (predicate) {
     if ($scope.predicate === predicate) {
@@ -70,19 +48,6 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
     }
   };
 
-  $scope.getAttributes = function(override) {
-    Business.getFilters(override, true).then(function(result){
-      $scope.attributes = result? angular.copy(result): [];
-      console.log('result', result);
-      
-      $timeout(function(){
-        $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminAttributes');
-      })
-    }, function(){
-      $scope.attributes = [];
-    });
-  }
-  $scope.getAttributes(true);
 
   $scope.getArticles = function(override){
     var deferred = $q.defer();
@@ -107,15 +72,21 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
     return ' ';
   }
 
-  $scope.editContent = function(article){
+  $scope.editContent = function(type, code){
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editlandingform.html',
       controller: 'AdminEditLandingCtrl',
       size: 'lg',
       backdrop: 'static',
       resolve: {
-        article: function () {
-          return article;
+        type: function () {
+          return type;
+        },
+        code: function () {
+          return code;
+        },
+        articles: function () {
+          return $scope.articles;
         }
       }
     });
@@ -127,46 +98,33 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
     });
   }
   
-  $scope.newArticle = function(){
-    var found = _.find($scope.articles, {'attributeType': $scope.attributeType.type, 'attributeCode': $scope.attributeCode.code});
-    var article;
-    if (!found && $scope.attributeType.type && $scope.attributeCode.code){
-      article = {
-        attributeCode: $scope.attributeCode.code,
-        attributeType: $scope.attributeType.type,
-        description: '',
-        title: '',
-      };
-    } else {
-      article = found;
-    }
-    $scope.editContent(article);
-  }
-  
-  $scope.activateCode = function(article){
+  $scope.changeActivity = function(article){
     if (article && article.attributeType && article.attributeCode) {
       var message = "Warning: You are about to change the active status of an Attribute Code. This will activate or deactivate the code and all related metadata. Continue?";
-      var cont = confirm();
-      if (cont) {
+      var conf = confirm(message);
+      if (conf) {
         if (article.activeStatus === 'A') {
           $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
-          Business.articleservice.activateCode(articleattributeType, article.attributeCode).then(function(){
+          Business.articleservice.activateCode(article.attributeType, article.attributeCode).then(function(){
             $timeout(function(){
+              $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
               $scope.getArticles(true);
             }, 1000);
           }, function(){
             $timeout(function(){
+              $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
               $scope.getArticles(true);
             }, 1000);
           })
         } else {
-          $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
-          Business.articleservice.deactivateCode(articleattributeType, article.attributeCode).then(function(){
+          Business.articleservice.deactivateCode(article.attributeType, article.attributeCode).then(function(){
             $timeout(function(){
+              $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
               $scope.getArticles(true);
             }, 1000);
           }, function(){
             $timeout(function(){
+              $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
               $scope.getArticles(true);
             }, 1000);
           })
@@ -215,7 +173,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
 
   $scope.deleteArticle = function(article){
     var conf = confirm("You are about to remove an article permanently. Would you like to continue?");
-    if (cont) {
+    if (conf) {
       Business.articleservice.deleteArticle(article).then(function(result){
         triggerAlert('The article was deleted.', 'articleAlert', 'body', 6000)
         $scope.getArticles(true);
@@ -224,22 +182,10 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   }
 
   if ($scope.type && $scope.code) {
-    $scope.getArticles().then(function(){
-      console.log('$scope.articles', $scope.articles);
-      var article = _.find($scope.articles, {'attributeCode': $scope.code, 'attributeType': $scope.type});
-      if (article) {
-        $scope.editContent(article);
-      } else {
-        $scope.editContent({
-          attributeCode: $scope.attributeCode.code,
-          attributeType: $scope.attributeType.type,
-          description: '',
-          title: '',
-        });
-      }
+    $scope.getArticles(true).then(function(){
+      $scope.editContent($scope.type, $scope.code, $scope.articles);
     })
   }
-
 
   $timeout(function() {
     $('[data-toggle=\'tooltip\']').tooltip();
@@ -257,27 +203,84 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
 
 }]);
 
-app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 'business', '$location', function ($scope, $uiModalInstance, article, Business, $location) {
+app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'code', 'articles', 'business', '$location', function ($scope, $uiModalInstance, type, code, articles, Business, $location) {
+
+  $scope.type = {};
+  $scope.type.type = type || null;
+  $scope.code = {};
+  $scope.code.code = code || null;
+  $scope.articles = articles;
+  $scope.article;
+  $scope.attributes;
+  $scope.codes;
+
+  var compare = function (a, b) {
+    return ((a.label == b.label) ? 0 : ((a.label > b.label) ? 1 : -1));
+  }
+
+  $scope.getAttributeCodes = function(override) {
+    console.log('we\'re getting codes', $scope.type.type);
+    if ($scope.type && $scope.type.type) {
+      Business.articleservice.getType($scope.type.type, true, true).then(function(result){
+        result.codes.sort(compare);
+        console.log('result', result);
+
+        $scope.codes = (result && result.codes)? angular.copy(result.codes): [];
+      }, function(){
+        $scope.codes = [];
+      });
+    } else {
+      $scope.codes = [];
+    }   
+  }
+  $scope.getAttributes = function(override) {
+    Business.getFilters(override, true).then(function(result){
+      $scope.attributes = result? angular.copy(result): [];
+    }, function(){
+      $scope.attributes = [];
+    });
+  }
+  $scope.getAttributes(true);
+
+
+  $scope.$watch('type', function(){
+    if ($scope.type.type){
+      console.log('The change triggered the code gathering');
+      
+      $scope.getAttributeCodes();
+    }
+  }, true)
+
+  $scope.$watch('code', function(){
+    if ($scope.code.code){
+      console.log('The change triggered the code gathering');
+      $scope.checkType($scope.type, $scope.code);
+    }
+  }, true)
+
 
   var popupWin;
-  $scope.article = angular.copy(article);
-  $scope.type = $scope.article.attributeType;
-  $scope.code = $scope.article.attributeCode;
   $scope.editorContent = '';
   $scope.editorOptions = getCkConfig();
 
   $scope.preview = function(){
     $scope.article.html = $scope.getEditorContent();
-    Business.articleservice.previewArticle($scope.article).then(function(result){
-      var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
-      url = url + '/landing' + '?' + $.param({
-        type: 'preview',
-        code: result
-      });
-      popupWin = utils.openWindow(url, 'Aritlce_Preview_' + $scope.article.attributeType + $scope.article.attributeCode, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', popupWin, 'articleEditModal');
-    }, function(){
+    $scope.article.attributeType = $scope.type.type;
+    $scope.article.attributeCode = $scope.code.code;
+    if ($scope.article && $scope.article.html && $scope.article.attributeType && $scope.article.attributeCode) {
+      Business.articleservice.previewArticle($scope.article).then(function(result){
+        var url = $location.absUrl().substring(0, $location.absUrl().length - $location.url().length);
+        url = url + '/landing' + '?' + $.param({
+          type: 'preview',
+          code: result
+        });
+        popupWin = utils.openWindow(url, 'Aritlce_Preview_' + $scope.article.attributeType + $scope.article.attributeCode, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', popupWin, 'articleEditModal');
+      }, function(){
 
-    })
+      })
+    } else {
+      triggerAlert('There is missing information required for previewing the article, please try again.', 'articleAlert', 'articleEditModal', 6000);
+    }
   }
 
   $scope.getEditorContent = function(){
@@ -323,11 +326,17 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
   $scope.ok = function () {
     // $scope.editorContentWatch = $scope.editorContent;
     $scope.article.html = $scope.getEditorContent();
-    Business.articleservice.saveArticle($scope.article).then(function(result){
-      $uiModalInstance.close();
-    }, function(){
-      triggerAlert('There was an error saving your article, please try again.', 'articleAlert', 'articleEditModal', 6000);
-    })
+    $scope.article.attributeType = $scope.type.type;
+    $scope.article.attributeCode = $scope.code.code;
+    if ($scope.article && $scope.article.html && $scope.article.attributeType && $scope.article.attributeCode) {
+      Business.articleservice.saveArticle($scope.article).then(function(result){
+        $uiModalInstance.close();
+      }, function(){
+        triggerAlert('There was an error saving your article, please try again.', 'articleAlert', 'articleEditModal', 6000);
+      })
+    } else {
+      triggerAlert('There is missing information required for saving the article, please try again.', 'articleAlert', 'articleEditModal', 6000);
+    }
   };
 
   $scope.cancel = function () {
@@ -335,18 +344,45 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'article', 
   };
 
   $scope.getContent = function(){
-    if ($scope.type && $scope.code && !$scope.article.html) {
-      Business.articleservice.getArticle($scope.type, $scope.code, true).then(function (result) { /*jshint unused:false*/
+    if ($scope.type && $scope.type.type && $scope.code && $scope.code.code && $scope.article && !$scope.article.html) {
+      Business.articleservice.getArticle($scope.type.type, $scope.code.code, true).then(function (result) { /*jshint unused:false*/
         $scope.editorContent = result || ' ';
       }, function(){
         $scope.editorContent = ' ';
       });
-    } else {
+    } else if ($scope.article && $scope.article.html) {
       $scope.editorContent = $scope.article.html;
+    } else {
+      $scope.editorContent = ' ';
     }
   }
 
-  $scope.getContent();
+  $scope.checkType = function(type, code) {
+    if (type && code) {
+      var article = _.find($scope.articles, {'attributeCode': code, 'attributeType': type});
+      if (article) {
+        $scope.article = angular.copy(article);
+      } else {
+        $scope.article = {
+          attributeCode: code,
+          attributeType: type,
+          description: '',
+          title: '',
+        };
+      }
+    }else {
+      $scope.article = {
+        attributeCode: code,
+        attributeType: type,
+        description: '',
+        title: '',
+      };
+    }
+
+    $scope.getContent();
+  }
+  $scope.checkType($scope.type.type, $scope.code.code);
+
 
 }]);
 

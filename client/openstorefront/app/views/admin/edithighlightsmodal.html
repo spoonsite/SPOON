@@ -1,38 +1,36 @@
 <div id="highlightEditModal">
-  <div>
-    <div class="pull-left"style="width: calc(100% - 50px); padding:5px 10px;"><h3 style="margin-top:10px;">Edit Highlight</h3></div><i class="fa fa-times pull-right" style="margin: 0px; padding: 15px; " ng-click="cancel();"></i>
-    <div style="clear:both"></div>
-  </div>
-  <hr style="margin:5px 0px;">
-  <form ng-submit="ok();" id="editLandingPages" style="overflow:hidden; margin: 0px;">
-    <div class="form-group" style="margin-bottom:0px;">
-      <label class="col-md-2" style="text-align:right;" for="title">Title</label>
-      <div class="col-md-10">
-        <input type="text" class="form-control" id="title" placeholder="Title" ng-model="highlight.title">
+  <div class="modal-header">
+    <button type="button" title="Cancel Changes" class="btn btn-primary pull-right" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+    <h3 style="display:inline-block; margin-top:0px; margin-bottom:0px; max-width:calc(100% - 90px)">Edit Highlight</h3> 
+  </div> 
+  <div class="modal-body" id="editAttributeCodeForm" style=" padding: 20px 0px; ">
+    <form ng-submit="ok();" id="editLandingPages" style="overflow:hidden; margin: 0px;">
+      <div class="form-group required" style="margin-bottom:0px;">
+        <label class="col-md-2" style="text-align:right;" for="title">Title</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="title" placeholder="Title" ng-model="highlight.title">
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="col-md-2" style="text-align:right;" for="description">Highlight Code</label>
-      <div class="col-md-10">
-        <select class="form-control" ng-model="highlight.highlightType" ng-options="type.code as type.description for type in highlightCodes"></select>
+      <div class="form-group required">
+        <label class="col-md-2" style="text-align:right;" for="description">Highlight Code</label>
+        <div class="col-md-10">
+          <select class="form-control" ng-model="highlight.highlightType" ng-options="type.code as type.description for type in highlightCodes"></select>
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="col-md-2" style="text-align:right;" for="description">Highlight Link</label>
-      <div class="col-md-10">
-        <input type="URL" class="form-control" id="title" placeholder="Link to highlight" ng-model="highlight.link">
+      <div class="form-group">
+        <label class="col-md-2" style="text-align:right;" for="description">Highlight Link</label>
+        <div class="col-md-10">
+          <input type="URL" class="form-control" id="title" placeholder="Link to highlight" ng-model="highlight.link">
+        </div>
       </div>
-    </div>
-    <div style="clear:both; margin-bottom:5px;"></div>
+      <div style="clear:both; margin-bottom:5px;"></div>
 
 
-    <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
-    
-
-
-    <div style="text-align: center; padding:5px;">
-      <button type="submit" style="display:inline-block;" class="btn btn-primary">Save Changes</button>
-      <button type="button" style="display:inline-block;" class="btn btn-danger" ng-click="cancel()">Cancel Changes</button>
-    </div>
-  </form>
+      <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
+      <div style="text-align: center; padding:5px;">
+        <button type="submit" style="display:inline-block;" class="btn btn-default"><i class="fa fa-save"></i>&nbsp;Save Changes</button>
+        <button type="button" style="display:inline-block;" class="btn btn-primary" ng-click="cancel()"><i class="fa fa-close"></i>Cancel</button>
+      </div>
+    </form>
+  </div>  
 </div>

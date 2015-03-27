@@ -105,7 +105,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
       if ($scope.type && $scope.type.attributeType && cont) {
         $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
         var type = angular.copy($scope.type);
-        type.attributeType = type.type;
+        type.attributeType = type.attributeType;
         type.description = type.description || '';
         type.visibleFlg = type.visibleFlg || false;
         type.requiredFlg = type.requiredFlg || false;
@@ -115,7 +115,6 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
 
 
         // console.log('Type save', type);
-        delete type.type;
         delete type.codes;
 
         Business.articleservice.getType($scope.type.attributeType, false, true).then(function(result){

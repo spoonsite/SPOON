@@ -9,17 +9,9 @@
           <i class="fa fa-sort fa-stack-1x"></i>
           <i class="fa fa-ban fa-stack-2x text-danger"></i>
         </span>&nbsp;Clear Sort</button>
-        <div class="form-group" style="margin-left:9px;">
-          <label>Type</label>
-          <select class="form-control" title="Select a type" style="width:auto" id="attributeType" ng-model="attributeType.type" ng-options="attr.attributeType as attr.description for attr in attributes">
-          </select>
-        </div>
-        <div class="form-group" style="margin-left:9px;">
-          <label>Code</label>
-          <select type="text" class="form-control" title="Select a code" style="width:auto" ng-model="attributeCode.code" ng-options="code.code as code.label for code in codes.codes"></select>
-        </div>
+
         <div class="form-group">
-          <button type="button" class="btn btn-default ng-pristine ng-valid" title="Create a new Article" id="createAttribute" ng-click="newArticle()" ng-disabled="!attributeType.type || !attributeCode.code"><i class="fa fa-edit"></i>&nbsp;Create Article</span>
+          <button type="button" class="btn btn-default ng-pristine ng-valid" title="Create a new Article" id="createAttribute" ng-click="editContent('','')"><i class="fa fa-edit"></i>&nbsp;Create Article</span>
           </button>
         </div>
 
@@ -55,7 +47,7 @@
           <td style="padding: 5px;">{{article.title}}</td>
           <td style="padding: 5px; vertical-align: middle; text-align: center;" ng-class="article.attributeCodeActiveStatus === 'A'? 'success':'danger'"><i class="fa fa-fw " ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-check':'fa-times'"></i></td>
           <td style="padding:0px 3px !important; vertical-align: middle;">
-            <button title="Edit Article" type="button" class="btn btn-sm btn-default" ng-click="editContent(article)"><i class="fa fa-edit fa-fw"></i></button>
+            <button title="Edit Article" type="button" class="btn btn-sm btn-default" ng-click="editContent(article.attributeType, article.attributeCode)"><i class="fa fa-edit fa-fw"></i></button>
             <button title="Set Visibility" type="button" class="btn btn-sm btn-warning" ng-click="changeActivity(article)"><i ng-class="article.attributeCodeActiveStatus === 'A'? 'fa-eye':'fa-eye-slash'" class="fa fa-fw"></i></button>
             <button title="Delete Article" type="button" class="btn btn-sm btn-danger" ng-click="deleteArticle(article)"><i class="fa fa-fw fa-trash"></i></button>
           </td>
