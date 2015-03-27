@@ -34,6 +34,10 @@ app.controller('AdminJobsCtrl', ['$scope', 'business', function ($scope, Busines
     }
   };  
   
+  $scope.getStatus = function(status){
+    return utils.getStatus(status);
+  };  
+  
   $scope.refreshJobs = function(showIntegration){
     $scope.$emit('$TRIGGERLOAD', 'jobLoader');       
     Business.jobservice.getJobs(showIntegration).then(function (results) {

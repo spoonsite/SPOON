@@ -80,7 +80,7 @@
 					</tr>
 					<tr ng-repeat-start="task in tasks.tasks | orderBy:predicate['tasks']:reverse['tasks']" >
 						<td><b>{{task.taskName}}</b><br>{{task.details}}</td>
-						<td ng-class="task.status === 'WORKING' ? 'success' : task.status === 'DONE' ?  'info' : task.status === 'QUEUED' ?  'warning' : task.status === 'CANCELED' ?  'warning' : task.status === 'FAILED' ?  'danger' : '' ">{{task.status}}</td>
+						<td ng-class="getStatus(task.status)">{{task.status}}</td>
 						<td>{{task.submitedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
 						<td>
 							{{task.completedDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}<br>

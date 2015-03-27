@@ -28,18 +28,19 @@
   utils.getStatus = function(val){
     switch(val){
       case 'DONE':
-      return 'info'
+      return 'info';
       break;
       case 'CANCELLED':
-      return 'warning'
+      return 'warning';
       break;
       case 'FAILED':
-      return 'danger'
+      return 'danger';
       break;
       case 'QUEUED':
+      return 'warning';
       case 'WORKING':
       default:
-      return 'success'
+      return 'success';
       break;
     }
   }

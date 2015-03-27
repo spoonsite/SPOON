@@ -1,4 +1,4 @@
-"Attribute Type","Type Description","Architecture flag","Visible","Important","Required","Code","Code Label","Code Description","External Link","Group","Sort Order"
+"Attribute Type","Type Description","Architecture flag","Visible","Important","Required","Code","Code Label","Code Description","External Link","Group","Sort Order",Architecture Code,Badge Url,Highlight Style,Allow Multiple Codes
 "ACCPROCESS","Accreditation Process","false","false","false","false","DOD8500","DoD 8500","",
 "ACCPROCESS","Accreditation Process","false","false","false","false","DCID6/3","DCID 6/3","",
 "ACCPROCESS","Accreditation Process","false","false","false","false","ICD 503","DoD 8500","",
@@ -18,17 +18,21 @@
 "DATAR","Data Rights","false","false","false","false","SBIR","SBIR Data Rights","All uses; no restrictions",
 "DATAR","Data Rights","false","false","false","false","COMTD","Commercial TD License Rights","Unlimited in FFF and OMIT; other rights as negotiated.",
 "DATAR","Data Rights","false","false","false","false","COMCS","Commercial CS Licenses","As specified in the commercial license customarily offered to the public4",
-"DI2ELEVEL","DI2E Evaluation Level","false","true","true","true","NA","No Evaluation Planned","Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Storefront (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.). N/A indicates no evaluation is expected.",,"NA","1"
-"DI2ELEVEL","DI2E Evaluation Level","false","true","true","true","PRE","Pre-Evaluation","Pre-Evaluation",,"PRE","2"
-"DI2ELEVEL","DI2E Evaluation Level","false","true","true","true","LEVEL0","Level 0 - Available for Reuse/No Evaluation Completed","Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse. Asset has completed the Component Prep and Analysis phase.",,"LEVEL","3"
-"DI2ELEVEL","DI2E Evaluation Level","false","true","true","true","LEVEL1","Level 1 - Inspection Complete","Inspection portion of DI2E Framework Evaluation Checklist complete. These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided. This level does not represent the pass or fail, the Consumer must read the Evaluation Report.",,"LEVEL","4"
-"DI2ELEVEL","DI2E Evaluation Level","false","true","true","true","LEVEL2","Level 2 - Integration and Testing Complete","Integration and Test portion of the DI2E Framework Evaluation Checklist complete. These questions focus on the interoperability and ease of reuse, and will normally include an I&T plan. This level does not indicate a pass or fail of the conformance test. Consumer will read the Test Report linked in the storefront entry for program functionality.",,"LEVEL","5"
-"DI2ELEVEL","DI2E Evaluation Level","false","true","true","true","LEVEL3","Level 3 - Evaluation Complete","Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.",,"LEVEL","6"
-"DI2ESTATE","DI2E State","false","true","true","true","NOTEVAL","Not evaluated","Evaluation has not started",
-"DI2ESTATE","DI2E State","false","true","true","true","DI2ECAN","DI2E Candidate","Component is considered as a potential reuse candidate but has not completed the DI2E Framework Evaluation Process.",
-"DI2ESTATE","DI2E State","false","true","true","true","DI2ECOM","DI2E Component","Component has been through the DI2E Evaluation Process and determined to be reusable and interoperable",
-"DI2ESTATE","DI2E State","false","true","true","true","NOTREUSE","Not DI2E Reusable","Component was evaluated and determined to not support reusability, is not interoperable, or does not conform to DI2E standards and specifications",
-"DI2ESTATE","DI2E State","false","true","true","true","OBSOLETE","Obsolete","Component has been retired, superseded, or is generally considered not reusable by DI2E",
+DI2ELEVEL,DI2E Evaluation Level,FALSE,TRUE,TRUE,TRUE,NA,No Evaluation Planned,"Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Storefront (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.). N/A indicates no evaluation is expected.",,NA,1,,,,TRUE
+DI2ELEVEL,DI2E Evaluation Level,FALSE,TRUE,TRUE,TRUE,LEVEL0,Level 0 - Available for Reuse/No Evaluation Completed,Asset is added to the Storefront for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse. Asset has completed the Component Prep and Analysis phase.,,LEVEL,3,,,,TRUE
+DI2ELEVEL,DI2E Evaluation Level,FALSE,TRUE,TRUE,TRUE,LEVEL1,Level 1 - Checklist Inspection,"Inspection portion of DI2E Framework Evaluation Checklist complete. These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided. This level does not represent the pass or fail, the Consumer must read the Evaluation Report.",,LEVEL,4,,,,TRUE
+DI2ELEVEL,DI2E Evaluation Level,FALSE,TRUE,TRUE,TRUE,LEVEL2,Level 2 - Integration and Testing,"Integration and Test portion of the DI2E Framework Evaluation Checklist complete. These questions focus on the interoperability and ease of reuse, and will normally include an I&amp;T plan. This level does not indicate a pass or fail of the conformance test. Consumer will read the Test Report linked in the storefront entry for program functionality.",,LEVEL,5,,,,TRUE
+DI2ELEVEL,DI2E Evaluation Level,FALSE,TRUE,TRUE,TRUE,LEVEL3,Level 3 - Reference Implementation,"Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.",,LEVEL,6,,,success,TRUE
+DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,DI2ECAN,DI2E Candidate,Component is considered as a potential reuse candidate but has not completed the DI2E Framework Evaluation Process.,,,,,,warning,TRUE
+DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,DI2ECOM,DI2E Component,Component has been through the DI2E Evaluation Process and determined to be reusable and interoperable,,,,,,success,TRUE
+DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,NOTREUSE,Not DI2E Reusable,"Component was evaluated and determined to not support reusability, is not interoperable, or does not conform to DI2E standards and specifications",,,,,,danger,TRUE
+DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,NOTEVAL,Not Evaluated,Evaluation has not started,,,,,,,TRUE
+DI2ESTATE,DI2E State,FALSE,TRUE,TRUE,TRUE,OBSOLETE,Obsolete,"Component has been retired, superseded, or is generally considered not reusable by DI2E",,,,,,danger,TRUE
+DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,PEND,Evaluation Not Started,,,,,,,,TRUE
+DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,NOEVAL,No Evaluation Planned,,,,,,,,TRUE
+DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,INPROG,Evaluation In Progress,,,,,,,warning,TRUE
+DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,COMPLETE,Evaluation Complete,,,,,,,success,TRUE
+DI2EINTENT,DI2E Intents,FALSE,TRUE,TRUE,TRUE,SUPENDED,"Evaluation Suspended, No Further Evaluation Planned",,,,,,,danger,TRUE
 "FUNDED","Funded","false","false","false","false","Y","Yes","",
 "FUNDED","Funded","false","false","false","false","N","No","",
 "ITAR","ITAR Exportable","false","false","false","false","Y","Yes","",
