@@ -42,7 +42,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   }, true)
 
   $scope.getCodes = function (override, all) {
-    console.log('we\'re getting types');
+    // console.log('we\'re getting types');
     $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
     if ($scope.pagination.control && $scope.pagination.control.refresh) {
       $scope.pagination.control.refresh().then(function(){
@@ -79,14 +79,14 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
 
 
   $scope.ok = function (type, code) {
-    console.log('we closed the edit code');
+    // console.log('we closed the edit code');
     
     var result = {};
     $uiModalInstance.close(result);
   };
 
   $scope.cancel = function (type, code) {
-    console.log('we closed the edit code');
+    // console.log('we closed the edit code');
     
     var result = {};
     result.type = type;
@@ -118,7 +118,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
         delete type.codes;
 
         Business.articleservice.getType($scope.type.attributeType, false, true).then(function(result){
-          console.log('result', result);
+          // console.log('result', result);
 
           var cont = true;
           if (result && $scope.addTypeFlg) {
