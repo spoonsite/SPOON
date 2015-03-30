@@ -121,22 +121,26 @@ public class ExternalLinkValidationReport
 			if (resources != null) {
 				for (ComponentResource resource : resources) {
 					String link = resource.getLink();
-					if (resource.getLink().toLowerCase().contains("<a")) {
-						doc = Jsoup.parseBodyFragment(resource.getLink());
-						elements = doc.select("a");
-						for (Element element : elements) {
-							link = element.attr("href");
-							break;
-						}
-					}
 
-					LinkCheckModel linkCheckModel = new LinkCheckModel();
-					linkCheckModel.setId(component.getComponentId() + "-" + resource.getResourceId());
-					linkCheckModel.setComponentName(component.getName());
-					linkCheckModel.setLink(link);
-					linkCheckModel.setNetworkOfLink(getNetworkOfLink(resource.getLink()));
-					linkCheckModel.setResourceType(TranslateUtil.translate(ResourceType.class, resource.getResourceType()));
-					links.add(linkCheckModel);
+					//Blank means it's an internal resource
+					if (StringUtils.isNotBlank(link)) {
+						if (link.toLowerCase().contains("<a")) {
+							doc = Jsoup.parseBodyFragment(link);
+							elements = doc.select("a");
+							for (Element element : elements) {
+								link = element.attr("href");
+								break;
+							}
+						}
+
+						LinkCheckModel linkCheckModel = new LinkCheckModel();
+						linkCheckModel.setId(component.getComponentId() + "-" + resource.getResourceId());
+						linkCheckModel.setComponentName(component.getName());
+						linkCheckModel.setLink(link);
+						linkCheckModel.setNetworkOfLink(getNetworkOfLink(resource.getLink()));
+						linkCheckModel.setResourceType(TranslateUtil.translate(ResourceType.class, resource.getResourceType()));
+						links.add(linkCheckModel);
+					}
 				}
 			}
 
