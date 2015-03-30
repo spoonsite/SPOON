@@ -53,7 +53,11 @@ app.directive('schedule', ['business', '$timeout', function (Business, $timeout)
       })
       updateColumns();
 
-      if (scope.ngModel && scope.ngModel.code) {
+      scope.getCurrent = function(code) {
+        return utils.getIntent(code);
+      }
+
+      if (scope.ngModel && scope.ngModel.level.code) {
         Business.lookupservice.getEvalLevels().then(function(result){
           scope.levels = result? result: [];
           scope.display = _.find(scope.levels, function(item){
@@ -61,7 +65,7 @@ app.directive('schedule', ['business', '$timeout', function (Business, $timeout)
               return false
             }
             if (item.attributeCodePk) {
-              if (item.attributeCodePk.attributeCode === scope.ngModel.code) {
+              if (item.attributeCodePk.attributeCode === scope.ngModel.level.code) {
                 item.current = true;
                 scope.group = item.groupCode;
                 return true;

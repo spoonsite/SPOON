@@ -38,10 +38,38 @@
       break;
       case 'QUEUED':
       return 'warning';
+      break;
       case 'WORKING':
-      default:
       return 'info';
       break;
+      default:
+      return 'default';
+      break;
+    }
+  }
+
+  utils.getIntent = function(intent){
+    if (intent.highlightStyle){
+      return intent.highlightStyle;
+    } else {
+      switch(intent.code){
+        case 'COMPLETE':
+        return 'success';
+        break;
+        case 'PEND':
+        return 'warning';
+        break;
+        case 'SUSPENDED':
+        return 'danger';
+        break;
+        case 'INPROG':
+        return 'info';
+        break;
+        case 'NOEVAL':
+        default:
+        return 'default';
+        break;
+      }
     }
   }
 
