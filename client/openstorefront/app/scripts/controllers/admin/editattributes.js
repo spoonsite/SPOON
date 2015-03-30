@@ -28,7 +28,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   $scope.pagination.features = {'dates': false, 'max': false};
 
   $scope.getFilters = function (override, all) {
-    console.log('we\'re getting types');
+    // console.log('we\'re getting types');
     $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
     if ($scope.pagination.control && $scope.pagination.control.refresh) {
       $scope.pagination.control.refresh().then(function(){
@@ -131,7 +131,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   }
 
   $scope.editType = function(type){
-    console.log('type', type);
+    // console.log('type', type);
     
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editcodes.html',

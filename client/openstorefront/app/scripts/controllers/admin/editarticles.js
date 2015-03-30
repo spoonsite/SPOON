@@ -219,11 +219,11 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
   }
 
   $scope.getAttributeCodes = function(override) {
-    console.log('we\'re getting codes', $scope.type.type);
+    // console.log('we\'re getting codes', $scope.type.type);
     if ($scope.type && $scope.type.type) {
       Business.articleservice.getType($scope.type.type, true, true).then(function(result){
         result.codes.sort(compare);
-        console.log('result', result);
+        // console.log('result', result);
 
         $scope.codes = (result && result.codes)? angular.copy(result.codes): [];
       }, function(){
@@ -245,7 +245,7 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
 
   $scope.$watch('type', function(){
     if ($scope.type.type){
-      console.log('The change triggered the code gathering');
+      // console.log('The change triggered the code gathering');
       
       $scope.getAttributeCodes();
     }
@@ -253,7 +253,7 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
 
   $scope.$watch('code', function(){
     if ($scope.code.code){
-      console.log('The change triggered the code gathering');
+      // console.log('The change triggered the code gathering');
       $scope.checkType($scope.type, $scope.code);
     }
   }, true)
