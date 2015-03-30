@@ -85,7 +85,7 @@
 						<th><a href="" ng-click="setPredicate('updateDts', 'error');">Update Date <span ng-show="predicate['error'] === 'updateDts'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('clientIp', 'error');">Client IP<span ng-show="predicate['error'] === 'clientIp'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('calledAction', 'error');">Called Action<span ng-show="predicate['error'] === 'calledAction'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-						<th ><a href="" ng-click="setPredicate('input', 'error');">Input<span ng-show="predicate['error'] === 'input'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>						
+						<th ><a href="" ng-click="setPredicate('message', 'error');">Message<span ng-show="predicate['message'] === 'input'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>						
 						<th><a href="" ng-click="setPredicate('errorTypeCode', 'error');">Type <span ng-show="predicate['error'] === 'errorTypeCode'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>										
 						<th>Action</th>
 					</tr>					
@@ -96,7 +96,9 @@
 						<td>{{ticket.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
 						<td>{{ticket.clientIp}}</td>
 						<td>{{ticket.calledAction}}</td>
-						<td >{{wrapString(ticket.input)}}</td>
+						<td ><b>{{ticket.message}}</b><br>
+							{{ticket.potentialResolution}}
+						</td>
 						<td>{{ticket.errorTypeCode}}</td>										
 						<td style="padding:0px 3px !important; width: 200px;">&nbsp;
 							<button class="btn btn-default btn-sm" ng-click="showErrorDetails(ticket)"><i class="fa fa-view"></i>{{ticket.detailText ? ticket.detailText : 'View Details'}}</button>

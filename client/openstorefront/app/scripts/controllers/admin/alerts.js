@@ -187,21 +187,15 @@ app.controller('AdminEditAlertCtrl', ['$scope', '$uiModalInstance', 'alert', 'bu
       }
 
       Business.alertservice.saveAlert($scope.alertForm).then(function(results) {
-        if (results) {
-          if (results.success && results.success === false) {
-            removeError();
-            triggerError(results, true);
-          } else {
-            removeError();
-            triggerAlert('Saved successfully', 'alertId', 'body', 3000);
-            $scope.$emit('$TRIGGEREVENT', '$REFRESH_ALERTS');            
-            $uiModalInstance.dismiss('success');
-          }
-        } else {
-          removeError();
-          triggerError(results, true);
-        }
         $scope.$emit('$TRIGGERUNLOAD', 'alertLoader');
+        if (results) {
+          triggerAlert('Saved successfully', 'alertId', 'body', 3000);
+          $scope.$emit('$TRIGGEREVENT', '$REFRESH_ALERTS');            
+          $uiModalInstance.dismiss('success');
+        }
+      }, function(failData){
+        $scope.$emit('$TRIGGERUNLOAD', 'alertLoader');
+        triggerAlert('Validation Error: <br> Make sure Email(s) are valid.', 'alertId', 'body', 3000);        
       }); 
     };
 

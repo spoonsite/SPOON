@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -216,6 +217,8 @@ public class SystemServiceImpl
 			ticket.append("TicketNumber: ").append(ticketNumber).append("\n");
 			ticket.append("Client IP: ").append(errorInfo.getClientIp()).append("\n");
 			ticket.append("User: ").append(SecurityUtil.getCurrentUserName()).append("\n");
+			ticket.append("Message: ").append(systemErrorModel.getMessage()).append("\n");
+			ticket.append("Potential Resolution: ").append(StringProcessor.blankIfNull(systemErrorModel.getPotentialResolution())).append("\n");
 			ticket.append("Request: ").append(errorInfo.getRequestUrl()).append("\n");
 			ticket.append("Request Method: ").append(errorInfo.getRequestMethod()).append("\n");
 			ticket.append("Input Data: \n").append(errorInfo.getInputData()).append("\n\n");
@@ -231,6 +234,8 @@ public class SystemServiceImpl
 			errorTicket.setErrorTicketId(ticketNumber);
 			errorTicket.setTicketFile(ticketNumber);
 			errorTicket.setClientIp(errorInfo.getClientIp());
+			errorTicket.setMessage(systemErrorModel.getMessage());
+			errorTicket.setPotentialResolution(systemErrorModel.getPotentialResolution());
 			if (StringUtils.isNotBlank(errorInfo.getRequestUrl())) {
 				errorTicket.setCalledAction(errorInfo.getRequestUrl() + " Method: " + errorInfo.getRequestMethod());
 			}
