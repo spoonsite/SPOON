@@ -47,6 +47,13 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
         if (temp.value){
           delete temp.value;
         }
+        var badgeProp = {
+          checkedLabel: 'Badges',
+          checked: true,
+          data: ''
+        };
+        temp['badges']=badgeProp;
+        scope.checked['badges'] = scope.checked['badges']? scope.checked['badges']: badgeProp;
         // details.checkedLabel = camelToSentence();
         
         return temp;
@@ -144,9 +151,10 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
       scope.resetHeights = function() {
         if (scope.detailsright && scope.detailsleft) {
           $timeout(function(){
-            element.find('*').css('height', 'auto');
+           // element.find('*').css('height', 'auto');
             resetHeight('linersleft', 'linersright');
             resetHeight('tagsleft', 'tagsright');
+            resetHeight('badgeleft', 'badgeright');
             resetHeight('detailsleft', 'detailsright');
             resetHeight('factorsleft', 'factorsright');
             resetHeight('resourcesleft', 'resourcesright');
