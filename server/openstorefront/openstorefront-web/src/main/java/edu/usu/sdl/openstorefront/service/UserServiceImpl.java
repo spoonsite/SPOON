@@ -835,24 +835,28 @@ public class UserServiceImpl
 	{
 		Map<String, Date> userLoginMap = new HashMap<>();
 
-		StringBuilder query = new StringBuilder();
-		query.append("select MAX(eventDts), createUser from ").append(UserTracking.class.getSimpleName());
-		query.append(" where activeStatus = :userTrackingActiveStatusParam  and  trackEventTypeCode = :trackEventCodeParam and createUser IN :userListParam");
+		if (userProfiles.isEmpty() == false) {
+			StringBuilder query = new StringBuilder();
+			query.append("select MAX(eventDts), createUser from ").append(UserTracking.class.getSimpleName());
+			query.append(" where activeStatus = :userTrackingActiveStatusParam  and  trackEventTypeCode = :trackEventCodeParam and createUser IN :userListParam");
 
-		List<String> usernames = new ArrayList<>();
-		userProfiles.stream().forEach((userProfile) -> {
-			usernames.add(userProfile.getUsername());
-		});
-		query.append(" group by createUser");
+			List<String> usernames = new ArrayList<>();
+			userProfiles.stream().forEach((userProfile) -> {
+				usernames.add(userProfile.getUsername());
+			});
+			query.append(" group by createUser");
 
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("userTrackingActiveStatusParam", UserTracking.ACTIVE_STATUS);
-		paramMap.put("trackEventCodeParam", TrackEventCode.LOGIN);
-		paramMap.put("userListParam", usernames);
-		List<ODocument> documents = persistenceService.query(query.toString(), paramMap);
-		documents.stream().forEach((document) -> {
-			userLoginMap.put(document.field("createUser"), document.field("MAX"));
-		});
+			if (usernames.isEmpty() == false) {
+				Map<String, Object> paramMap = new HashMap<>();
+				paramMap.put("userTrackingActiveStatusParam", UserTracking.ACTIVE_STATUS);
+				paramMap.put("trackEventCodeParam", TrackEventCode.LOGIN);
+				paramMap.put("userListParam", usernames);
+				List<ODocument> documents = persistenceService.query(query.toString(), paramMap);
+				documents.stream().forEach((document) -> {
+					userLoginMap.put(document.field("createUser"), document.field("MAX"));
+				});
+			}
+		}
 
 		return userLoginMap;
 	}

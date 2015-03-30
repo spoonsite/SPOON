@@ -39,6 +39,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -764,6 +765,17 @@ public class PersistenceService
 			if (log.isLoggable(Level.FINEST)) {
 				log.log(Level.FINEST, query);
 			}
+			//look for empty collection
+			if (parameterMap != null) {
+				for (Object value : parameterMap.values()) {
+					if (value != null && value instanceof Collection) {
+						if (((Collection) value).isEmpty()) {
+							throw new OpenStorefrontRuntimeException("Unable to complete query with a empty collection.", "Check query and parameter map");
+						}
+					}
+				}
+			}
+
 			results = db.query(new OSQLSynchQuery<>(query), parameterMap);
 			if (unwrap) {
 				results = unwrapProxy(db, dataClass, results);
