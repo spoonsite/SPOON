@@ -32,6 +32,11 @@
             <span ng-if="checked.tags.data.length" ng-repeat="tag in detailsleft.tags.data">{{tag.text}}</span>
             <div ng-if="!detailsleft.tags.data.length">There are no tags on this component</div>
           </div>
+	<div id="badgeleft" ng-if="checked.badges.checked">
+		  <div ng-repeat="attribute in detailsleft.attributes.data" style="display:inline-block;">
+			<img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge"  data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style=" width: auto; height: 40px;">
+		  </div>
+	  </div>			
           <div id="detailsleft" ng-if="checked.description.checked" style="position: relative"><strong>Description:&nbsp;</strong>
             <span ng-if="checked.description.data" dynamichtml="detailsleft.description.data"></span>
             <span ng-if="!detailsleft.description.data">There is no description for this component</span>
@@ -199,7 +204,7 @@
             <h4>Media</h4>
             <hr style="border-top: 1px solid #555; margin-top: 0px;">
             <div ng-if="detailsleft.componentMedia.data.length" ng-repeat="image in detailsleft.componentMedia.data">
-              <img ng-src="{{image.link}}" alt="" style="width: auto;">
+              <img ng-src="{{image.link}}" alt="" style="width: auto; max-width: 100%;">
               <br>
               <span style="color: #555; font-size: 11px;">Updated: {{getDate(image.updateDts)}}</span>
             </div>
@@ -234,6 +239,11 @@
             <span ng-if="detailsright.tags.data.length" ng-repeat="tag in detailsright.tags.data">{{tag.text}}</span>
             <div ng-if="!detailsright.tags.data.length">There are no tags on this component</div>
           </div>
+	  <div id="badgeright" ng-if="checked.badges.checked">
+		  <div ng-repeat="attribute in detailsright.attributes.data" style="display:inline-block;">
+			<img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge"  data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style=" width: auto; height: 40px;">
+		  </div>
+	  </div>			
           <div id="detailsright" ng-if="checked.description.checked" style="position: relative"><strong>Description:&nbsp;</strong>
             <span ng-if="detailsright.description.data" dynamichtml="detailsright.description.data"></span>
             <span ng-if="!detailsright.description.data">There is no description for this component</span>
