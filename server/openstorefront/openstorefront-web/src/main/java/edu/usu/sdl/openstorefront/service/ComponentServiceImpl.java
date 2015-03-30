@@ -1648,14 +1648,14 @@ public class ComponentServiceImpl
 					.append(Component.ACTIVE_STATUS)
 					.append("'and approvalState='")
 					.append(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED)
-					.append("' and componentId in :componentIdsParams");
+					.append("' and componentId IN :componentIdsParams");
 
 			Map<String, Object> paramMap = new HashMap<>();
 			paramMap.put("componentIdsParams", componentIds);
 			List<Component> components = persistenceService.query(componentQuery.toString(), paramMap, Component.class, true);
 
 			StringBuilder componentAttributeQuery = new StringBuilder();
-			componentAttributeQuery.append("select from ComponentAttribute where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId in :componentIdsParams");
+			componentAttributeQuery.append("select from ComponentAttribute where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId IN :componentIdsParams");
 			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery.toString(), paramMap, ComponentAttribute.class, true);
 			Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 			for (ComponentAttribute componentAttribute : componentAttributes) {
@@ -1669,7 +1669,7 @@ public class ComponentServiceImpl
 			}
 
 			StringBuilder componentReviewQuery = new StringBuilder();
-			componentReviewQuery.append("select from ComponentReview where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId in :componentIdsParams");
+			componentReviewQuery.append("select from ComponentReview where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId IN :componentIdsParams");
 			List<ComponentReview> componentReviews = persistenceService.query(componentReviewQuery.toString(), paramMap, ComponentReview.class, true);
 			Map<String, List<ComponentReview>> reviewMap = new HashMap<>();
 			for (ComponentReview componentReview : componentReviews) {
@@ -1683,7 +1683,7 @@ public class ComponentServiceImpl
 			}
 
 			StringBuilder componentTagQuery = new StringBuilder();
-			componentTagQuery.append("select from ComponentTag where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId in :componentIdsParams");
+			componentTagQuery.append("select from ComponentTag where activeStatus='").append(Component.ACTIVE_STATUS).append("' and componentId IN :componentIdsParams");
 			List<ComponentTag> componentTags = persistenceService.query(componentTagQuery.toString(), paramMap, ComponentTag.class, true);
 			Map<String, List<ComponentTag>> tagMap = new HashMap<>();
 			for (ComponentTag componentTag : componentTags) {

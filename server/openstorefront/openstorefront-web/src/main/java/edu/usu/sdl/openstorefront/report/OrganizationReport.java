@@ -133,22 +133,24 @@ public class OrganizationReport
 			userIds.add(userProfile.getUsername());
 		}
 
-		StringBuilder query = new StringBuilder();
-		query.append("select count(*) from ")
-				.append(recordClass.getSimpleName())
-				.append(" where ").append(" createUser IN :createUserListParam ");
+		if (userIds.isEmpty() == false) {
+			StringBuilder query = new StringBuilder();
+			query.append("select count(*) from ")
+					.append(recordClass.getSimpleName())
+					.append(" where ").append(" createUser IN :createUserListParam ");
 
-		if (StringUtils.isNotBlank(trackCodeType)) {
-			query.append(" AND trackEventTypeCode = :eventCodeParam ");
-		}
+			if (StringUtils.isNotBlank(trackCodeType)) {
+				query.append(" AND trackEventTypeCode = :eventCodeParam ");
+			}
 
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("createUserListParam", userIds);
-		paramMap.put("eventCodeParam", trackCodeType);
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("createUserListParam", userIds);
+			paramMap.put("eventCodeParam", trackCodeType);
 
-		List<ODocument> documents = service.getPersistenceService().query(query.toString(), paramMap);
-		if (documents.isEmpty() == false) {
-			count = documents.get(0).field("count");
+			List<ODocument> documents = service.getPersistenceService().query(query.toString(), paramMap);
+			if (documents.isEmpty() == false) {
+				count = documents.get(0).field("count");
+			}
 		}
 
 		return count;
