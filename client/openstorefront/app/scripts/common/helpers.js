@@ -28,7 +28,7 @@
   utils.getStatus = function(val){
     switch(val){
       case 'DONE':
-      return 'info';
+      return 'success';
       break;
       case 'CANCELLED':
       return 'warning';
@@ -40,7 +40,7 @@
       return 'warning';
       case 'WORKING':
       default:
-      return 'success';
+      return 'info';
       break;
     }
   }

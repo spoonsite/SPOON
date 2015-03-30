@@ -1,4 +1,4 @@
-<!-- <div ng-if="details.details.evaluation.evaluationSchedule.length > 0" class="row">
+<div ng-if="details.details.evaluation.evaluationSchedule.length > 0" class="row">
   <div class="col-md-12">
     <div class="section-headers addBorders"><h4>DI2E Evaluation Schedule</h4></div>
     <div ng-class="getIsUpdated('evaluationSchedule')? 'updatedForUser': ''" class="container component2-div component2-border">
@@ -31,8 +31,8 @@
       </div>
     </div>
   </div>
-</div> -->
-<div ng-if="evaluationAttributes.exist" class="row">
+</div>
+<!-- <div ng-if="evaluationAttributes.exist" class="row">
   <div class="col-md-12">
     <div class="section-headers addBorders"><h4>DI2E Evaluation Level</h4></div>
 	<table class="table table-bordered table-hover" >
@@ -45,15 +45,6 @@
 				<span  dynamichtml="evaluationAttributes.level.codeLongDescription"></span>
 			</td>			
 		</tr>
-		<tr ng-if="evaluationAttributes.state">
-			<th style="vertical-align: middle">
-				{{evaluationAttributes.state.typeDescription}}
-			</th>
-			<td  class="{{evaluationAttributes.state.highlightStyle}}" >
-				<h4>{{evaluationAttributes.state.codeDescription}}</h4>
-				<span  dynamichtml="evaluationAttributes.state.codeLongDescription"></span>
-			</td>			
-		</tr>
 		<tr ng-if="evaluationAttributes.intent">
 			<th style="vertical-align: middle">
 				{{evaluationAttributes.intent.typeDescription}}
@@ -63,9 +54,18 @@
 				<span  dynamichtml="evaluationAttributes.intent.codeLongDescription"></span>
 			</td>			
 		</tr>		
+    <tr ng-if="evaluationAttributes.state">
+      <th style="vertical-align: middle">
+        {{evaluationAttributes.state.typeDescription}}
+      </th>
+      <td  class="{{evaluationAttributes.state.highlightStyle}}" >
+        <h4>{{evaluationAttributes.state.codeDescription}}</h4>
+        <span  dynamichtml="evaluationAttributes.state.codeLongDescription"></span>
+      </td>     
+    </tr>
 	</table>	
   </div>
-</div>
+</div> -->
 <!-- angular lightbox gallery -->
 
 
