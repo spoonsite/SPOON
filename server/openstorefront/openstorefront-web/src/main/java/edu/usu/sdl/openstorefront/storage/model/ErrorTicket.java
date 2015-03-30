@@ -41,6 +41,8 @@ public class ErrorTicket
 	@NotNull
 	private String ticketFile;
 	private String clientIp;
+	private String message;
+	private String potentialResolution;
 
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = ErrorTypeCode.class)
@@ -108,6 +110,26 @@ public class ErrorTicket
 	public void setErrorTypeCode(String errorTypeCode)
 	{
 		this.errorTypeCode = errorTypeCode;
+	}
+
+	public String getMessage()
+	{
+		return message;
+	}
+
+	public void setMessage(String message)
+	{
+		this.message = message;
+	}
+
+	public String getPotentialResolution()
+	{
+		return potentialResolution;
+	}
+
+	public void setPotentialResolution(String potentialResolution)
+	{
+		this.potentialResolution = potentialResolution;
 	}
 
 }

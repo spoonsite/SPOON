@@ -25,14 +25,14 @@ limitations under the License.
 		<div class="form-group" show-errors >
 			<label class="control-label col-sm-2 required">Report Type</label>
 			<div class="col-sm-10">
-				<select type="text" class="form-control" name="reportType" ng-change="showOptions(reportUIForm.reportType); loadReportFormat(reportUIForm.reportType);" required ng-model="reportForm.reportType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="reportType.code as reportType.description for reportType in reportTypes" placeholder="Select Type"></select>
+				<select type="text" class="form-control" name="reportType" id="reportType" ng-change="showOptions(reportUIForm.reportType); loadReportFormat(reportUIForm.reportType);" required ng-model="reportForm.reportType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="reportType.code as reportType.description for reportType in reportTypes" placeholder="Select Type"></select>
 				<p ng-show="reportUIForm.reportType.$error.required && !reportUIForm.reportType.$focused" class="help-block">Report Type is required.</p>
 			</div>  
 		</div>  
 		<div class="form-group" show-errors >
 			<label class="control-label col-sm-2 required">Report Format</label>
 			<div class="col-sm-10">
-				<select type="text" class="form-control" name="reportFormat" required ng-model="reportForm.reportFormat" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="reportFormat.code as reportFormat.description for reportFormat in reportFormats" placeholder="Select Type"></select>
+				<select type="text" class="form-control" name="reportFormat" id="reportFormat" required ng-model="reportForm.reportFormat" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="reportFormat.code as reportFormat.description for reportFormat in reportFormats" placeholder="Select Type"></select>
 				<p ng-show="reportUIForm.reportFormat.$error.required && !reportUIForm.reportFormat.$focused" class="help-block">Report Format is required.</p>
 			</div>  
 		</div>  		
@@ -41,21 +41,21 @@ limitations under the License.
 			<div class="form-group" show-errors >
 				<label class="control-label col-sm-2">Start Date</label>
 				<div class="col-sm-10">
-					<input type="text" name="startDts" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="reportForm.reportOption.startDts" data-max-date="{{reportForm.reportOption.endDts}}" placeholder="Start Date" data-date-type="number" bs-datepicker>;<i class="fa fa-calendar"></i>  					
+					<input type="text" name="startDts"  id="startDts" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="reportForm.reportOption.startDts" data-max-date="{{reportForm.reportOption.endDts}}" placeholder="Start Date" data-date-type="number" bs-datepicker>;<i class="fa fa-calendar"></i>  					
 				</div>  
 			</div> 
 
 			<div class="form-group" show-errors >
 				<label class="control-label col-sm-2">End Date</label>
 				<div class="col-sm-10">
-					<input type="text" name="endDts" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="reportForm.reportOption.endDts" data-min-date="{{reportForm.reportOption.startDts}}" placeholder="End Date" data-date-type="number" bs-datepicker>;<i class="fa fa-calendar"></i>  					
+					<input type="text" name="endDts"  id="endDts" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="reportForm.reportOption.endDts" data-min-date="{{reportForm.reportOption.startDts}}" placeholder="End Date" data-date-type="number" bs-datepicker>;<i class="fa fa-calendar"></i>  					
 				</div>  
 			</div> 			
 
 			<div class="form-group" show-errors >
 				<label class="control-label col-sm-2">Previous Days</label>
 				<div class="col-sm-10">
-					<select type="text" class="form-control" name="previousDays"  ng-model="reportForm.reportOption.previousDays" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="day.code as day.desc for day in daysOptions" placeholder="Select Type"></select>				
+					<select type="text" class="form-control" name="previousDays" id="previousDays"  ng-model="reportForm.reportOption.previousDays" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="day.code as day.desc for day in daysOptions" placeholder="Select Type"></select>				
 				</div>  
 			</div> 						
 		</panel>
@@ -85,20 +85,22 @@ limitations under the License.
 		
 			<label class="control-label col-sm-2">Interval</label>
 			<div class="col-sm-10" style="padding-left: 0px; padding-right: 0px;padding-bottom: 10px;">
-				<select type="text" class="form-control" name="interval"  ng-model="reportForm.scheduleIntervalDays" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="interval.code as interval.desc for interval in intervalOptions" placeholder="Select Type"></select>
+				<select type="text" class="form-control" name="interval" id="interval" ng-model="reportForm.scheduleIntervalDays" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="interval.code as interval.desc for interval in intervalOptions" placeholder="Select Type"></select>
 				<p ng-show="reportUIForm.interval.$error.required && !reportUIForm.interval.$focused" class="help-block">Interval is required.</p>	
 			</div>  
 		
 			<label class="control-label col-sm-2">Email</label>
 			<div class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">
-				  <input  type="text" 				
+				  <input  type="text" 
+				  id="email"
 				  name="email"									
 				  class="form-control" 
 				  ng-model="reportForm.emailAddressMulti" 									 
 				  ng-maxlength=4000
 				  maxlength=4000 				
 				  ng-focus />	
-				<!-- <contact-list type="users" contacts="alertForm.emailAddressMulti"></contact-list> -->				  								
+				<!-- <contact-list type="users" contacts="alertForm.emailAddressMulti"></contact-list> -->	
+				<small>Allows multiple email addresses separated by a <b>;</b></small>				
 			</div>  			
 		</panel>		
 		<hr>

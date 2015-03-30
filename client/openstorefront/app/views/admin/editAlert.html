@@ -24,7 +24,8 @@ limitations under the License.
 		<div class="form-group" show-errors >
 			<label class="control-label col-sm-2 required">Name</label>
 			<div class="col-sm-10">
-				  <input  type="text" 				
+				  <input  type="text" 
+					id="name"
 				  name="name"									
 				  class="form-control" 
 				  ng-model="alertForm.name" 									 
@@ -45,7 +46,8 @@ limitations under the License.
 		<div class="form-group" show-errors >
 			<label class="col-sm-2 control-label required">Email</label>
 			<div class="col-sm-10">
-				  <input  type="text" 				
+				  <input  type="text" 	
+				  id="email"
 				  name="email"									
 				  class="form-control" 
 				  ng-model="alertForm.emailAddressMulti" 									 
@@ -54,20 +56,21 @@ limitations under the License.
 				  required
 				  ng-focus />	
 				<!-- <contact-list type="users" contacts="alertForm.emailAddressMulti"></contact-list> -->				  
-				<p ng-show="alertUIForm.email.$error.required && !alertUIForm.email.$focused" class="help-block">Email is required.</p>							
-			</div>  
+				<p ng-show="alertUIForm.email.$error.required && !alertUIForm.email.$focused" class="help-block">Email is required.</p>		
+				<small>Allows multiple email addresses separated by a <b>;</b></small>
+			</div> 
 		</div>
 		<panel class-list="edges" open-state="true" title="System Error Options" ng-show="options.system">
 			<input  type="checkbox" 				
-			  name="alertOnSystem"									
+			  id="alertOnSystem"									
 			  ng-model="alertForm.systemErrorAlertOption.alertOnSystem" 									 					  
 			  ng-focus /> System Errors <br>
 			<input  type="checkbox" 				
-			  name="alertOnSystem"									
+			  id="alertOnSystem"									
 			  ng-model="alertForm.systemErrorAlertOption.alertOnREST" 									 					  
 			  ng-focus /> API Errors <br>	
 			<input  type="checkbox" 				
-			  name="alertOnSystem"									
+			  id="alertOnSystem"									
 			  ng-model="alertForm.systemErrorAlertOption.alertOnIntegration" 									 					  
 			  ng-focus /> Integration Errors <br>						
 			<input  type="checkbox" 				
@@ -77,15 +80,15 @@ limitations under the License.
 		</panel>
 		<panel class-list="edges" open-state="true" title="User Data Options" ng-show="options.user">
 			<input  type="checkbox" 				
-			  name="alertOnTags"									
+			  id="alertOnTags"									
 			  ng-model="alertForm.userDataAlertOption.alertOnTags" 									 					  
 			  ng-focus /> Tags <br>
 			<input  type="checkbox" 				
-			  name="alertOnReviews"									
+			  id="alertOnReviews"									
 			  ng-model="alertForm.userDataAlertOption.alertOnReviews" 									 					  
 			  ng-focus /> Reviews <br>	
 			<input  type="checkbox" 				
-			  name="alertOnQuestions"									
+			  id="alertOnQuestions"									
 			  ng-model="alertForm.userDataAlertOption.alertOnQuestions" 									 					  
 			  ng-focus  /> Questions/Responses <br>																
 		</panel>		
