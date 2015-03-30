@@ -119,12 +119,39 @@ html, body,
   }
 }
 
+@mixin ul-row-variant($state, $background, $border, $textColor) {
+  // Exact selectors below required to override `.table-striped` and prevent
+  // inheritance to nested tables.
+  ul {
+    > li.#{$state},
+    &.#{$state} > li{
+      color: $textColor;
+      background-color: $background;
+    }
+  }
+
+  // Hover states for `.table-hover`
+  // Note: this is not available for cells or rows within `thead` or `tfoot`.
+  ul {
+    > li.#{$state}:hover,
+    &.#{$state}:hover > li{
+      background-color: darken($background, 5%);
+    }
+  }
+}
+
 // Generate the contextual variants
 @include sticky-table-row-variant('success', $state-success-bg, $state-success-border, $state-success-text);
 @include sticky-table-row-variant('danger', $state-danger-bg, $state-danger-border, $state-danger-text);
 @include sticky-table-row-variant('warning', $state-warning-bg, $state-warning-border, $state-warning-text);
 @include sticky-table-row-variant('info', $state-info-bg, $state-info-border, $state-info-text);
 @include sticky-table-row-variant('inverse', $state-inverse-bg, $state-inverse-border, $state-inverse-text);
+
+@include ul-row-variant('success', $state-success-bg, $state-success-border, $state-success-text);
+@include ul-row-variant('danger', $state-danger-bg, $state-danger-border, $state-danger-text);
+@include ul-row-variant('warning', $state-warning-bg, $state-warning-border, $state-warning-text);
+@include ul-row-variant('info', $state-info-bg, $state-info-border, $state-info-text);
+@include ul-row-variant('inverse', $state-inverse-bg, $state-inverse-border, $state-inverse-text);
 
 
 @mixin form-control-validation-inverse($text-color: #555, $border-color: #ccc, $background-color: #f5f5f5) {

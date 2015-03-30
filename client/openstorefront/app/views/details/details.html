@@ -32,40 +32,48 @@
     </div>
   </div>
 </div> -->
+<!-- <div ng-if="evaluationAttributes.exist" class="row">
+  <div class="col-md-12">
+    <div class="section-headers addBorders"><h4>DI2E Evaluation Level</h4></div>
+  <table class="table table-bordered table-hover" >
+    <tr ng-if="evaluationAttributes.level">
+      <th style="vertical-align: middle">
+        {{evaluationAttributes.level.typeDescription}}
+      </th>
+      <td class="{{evaluationAttributes.level.highlightStyle}}" >
+        <h4>{{evaluationAttributes.level.codeDescription}}</h4>
+        <span dynamichtml="evaluationAttributes.level.codeLongDescription"></span>
+      </td>     
+    </tr>
+    <tr ng-if="evaluationAttributes.state">
+      <th style="vertical-align: middle">
+        {{evaluationAttributes.state.typeDescription}}
+      </th>
+      <td  class="{{evaluationAttributes.state.highlightStyle}}" >
+        <h4>{{evaluationAttributes.state.codeDescription}}</h4>
+        <span dynamichtml="evaluationAttributes.state.codeLongDescription"></span>
+      </td>     
+    </tr>
+    <tr ng-if="evaluationAttributes.intent">
+      <th style="vertical-align: middle">
+        {{evaluationAttributes.intent.typeDescription}}
+      </th>
+      <td  class="{{evaluationAttributes.intent.highlightStyle}}" >
+        <h4>{{evaluationAttributes.intent.codeDescription}}</h4>
+        <span dynamichtml="evaluationAttributes.intent.codeLongDescription"></span>
+      </td>     
+    </tr>   
+  </table>  
+  </div>
+</div> -->
+
 <div ng-if="evaluationAttributes.exist" class="row">
   <div class="col-md-12">
     <div class="section-headers addBorders"><h4>DI2E Evaluation Level</h4></div>
-	<table class="table table-bordered table-hover" >
-		<tr ng-if="evaluationAttributes.level">
-			<th style="vertical-align: middle">
-				{{evaluationAttributes.level.typeDescription}}
-			</th>
-			<td class="{{evaluationAttributes.level.highlightStyle}}" >
-				<h4>{{evaluationAttributes.level.codeDescription}}</h4>
-				<span  dynamichtml="evaluationAttributes.level.codeLongDescription"></span>
-			</td>			
-		</tr>
-		<tr ng-if="evaluationAttributes.state">
-			<th style="vertical-align: middle">
-				{{evaluationAttributes.state.typeDescription}}
-			</th>
-			<td  class="{{evaluationAttributes.state.highlightStyle}}" >
-				<h4>{{evaluationAttributes.state.codeDescription}}</h4>
-				<span  dynamichtml="evaluationAttributes.state.codeLongDescription"></span>
-			</td>			
-		</tr>
-		<tr ng-if="evaluationAttributes.intent">
-			<th style="vertical-align: middle">
-				{{evaluationAttributes.intent.typeDescription}}
-			</th>
-			<td  class="{{evaluationAttributes.intent.highlightStyle}}" >
-				<h4>{{evaluationAttributes.intent.codeDescription}}</h4>
-				<span  dynamichtml="evaluationAttributes.intent.codeLongDescription"></span>
-			</td>			
-		</tr>		
-	</table>	
+    <div schedule ng-model="evaluationAttributes"></div>
   </div>
 </div>
+
 <!-- angular lightbox gallery -->
 
 
@@ -102,7 +110,7 @@
           <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td> -->
           <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.description" colspan="5" class="text-left">&mdash;</td> -->
           <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks" ng-bind-html="{{row.link}}">{{row.link}}</td> -->
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks"><a  href="{{row.actualLink}}" target="_blank" ng-click="sendEvent('External-Link', details.details.name, row.link + ' -- ' + row.resourceTypeDesc)"><span  dynamichtml="row.link"></span></a><div>{{row.description}}</div></td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks"><a  href="{{row.actualLink}}" target="_blank" ng-click="sendEvent('External-Link', details.details.name, row.link + ' -- ' + row.resourceTypeDesc)"><span dynamichtml="row.link"></span></a><div>{{row.description}}</div></td>
         </tr>
       </tbody>
     </table>                  
