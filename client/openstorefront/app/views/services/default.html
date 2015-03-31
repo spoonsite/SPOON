@@ -2,7 +2,7 @@
 
 <div style="clear:both;">
   <button style="display:inline-block;" class="btn btn-default" ng-click="sendRequest()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
-  <button style="display:inline-block;" class="btn btn-default" ng-click="clearSort();"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
+  <button style="display:inline-block;" class="btn btn-default" ng-click="clearSort();" ng-disabled="query.filterObj.sortField === sortBy"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
         <i class="fa fa-sort fa-stack-1x"></i>
         <i class="fa fa-ban fa-stack-2x text-danger"></i>
       </span>&nbsp;Clear Sort</button>

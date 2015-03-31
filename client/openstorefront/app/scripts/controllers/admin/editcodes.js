@@ -286,7 +286,7 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
     $scope.addCodeFlg = true;
     $scope.code = {};
   }
-  $scope.highlights = ['success', 'info', 'warning', 'danger', 'inverse', 'default'];
+  $scope.highlights = ['', 'success', 'info', 'warning', 'danger', 'inverse', 'default'];
 
   $scope.getMaxCode = function() {
     return $scope.code? $scope.code.length? $scope.code.length: 100 : 100;
