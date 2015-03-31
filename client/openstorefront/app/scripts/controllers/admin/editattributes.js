@@ -28,7 +28,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   $scope.pagination.features = {'dates': false, 'max': false};
 
   $scope.getFilters = function (override, all) {
-    // console.log('we\'re getting types');
+    console.log('we\'re getting types');
     $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
     if ($scope.pagination.control && $scope.pagination.control.refresh) {
       $scope.pagination.control.refresh().then(function(){
@@ -57,7 +57,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   };
 
   $scope.pagination.control.setPredicate = function(val){
-    $scope.setPredicate(val, false)
+    $scope.setPredicate(val, false);
   };
 
   $scope.editLanding = function(type, code) {
@@ -131,7 +131,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   }
 
   $scope.editType = function(type){
-    // console.log('type', type);
+    console.log('type', type);
     
     var modalInstance = $uiModal.open({
       templateUrl: 'views/admin/editcodes.html',
@@ -174,15 +174,18 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     if (isAttributeUploader){
       cont = confirm('Please verify that this file is the allattributes.csv file with a header similiar to this: (order and letter case matters)\nAttribute Type, Description, Architecture Flag, Visible Flag, Important Flag, Required Flag, Code, Code Label, Code Description, External Link, Group, Sort Order, Architecture Code, Badge Url');
       if (cont){
-        $scope.attributeUploader.uploadAll()
+        $scope.attributeUploader.uploadAll();
+        document.getElementById('attributeUploadFile').value = null;
       }
     } else {
       cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
       if (cont){
-        $scope.svcv4uploader.uploadAll()
+        $scope.svcv4uploader.uploadAll();
+        document.resourceUIForm.uploadFile.value = null;
+        document.getElementById('svcv4UploadFile').value = null;
       }
     }
-  }
+  };
 
   $scope.attributeUploader = new FileUploader({
     url: 'Upload.action?UploadAttributes',
