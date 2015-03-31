@@ -217,6 +217,8 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   var setupFilters = function() {
     Business.getFilters(false, false).then(function(result) {
+      // console.log('Filters', result);
+      
       if (result) {
         result = _.sortBy(result, function(item){
           return item.description;
@@ -230,7 +232,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
       if ($scope.searchKey === 'attribute') {
         if ($scope.searchCode.type) {
-          var filter = _.find($scope.filters, {'type': $scope.searchCode.type});
+          var filter = _.find($scope.filters, {'attributeType': $scope.searchCode.type});
           if (filter){
             architecture = filter.architectureFlg;
           }
@@ -324,7 +326,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // grab all of the keys in the filters
       $scope.searchKey          = $scope.searchGroup[0].key;
       $scope.searchCode         = $scope.searchGroup[0].code;
-      var keys = _.pluck($scope.filters, 'type');
+      var keys = _.pluck($scope.filters, 'attributeType');
       
       var foundFilter = null;
       var foundCollection = null;
@@ -338,7 +340,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       if (_.contains(keys, $scope.searchCode.type)) {
         $scope.showSearch         = true;
         
-        foundFilter = _.find($scope.filters, {'type': $scope.searchCode.type});
+        foundFilter = _.find($scope.filters, {'attributeType': $scope.searchCode.type});
         foundCollection = _.find(foundFilter.codes, {'code': $scope.searchCode.key});
         // console.log('found', foundFilter);
         // console.log('found', foundCollection);

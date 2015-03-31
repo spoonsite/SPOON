@@ -49,9 +49,9 @@
   }
 
   utils.getIntent = function(intent){
-    if (intent.highlightStyle){
+    if (intent && intent.highlightStyle){
       return intent.highlightStyle;
-    } else {
+    } else if(intent && intent.code){
       switch(intent.code){
         case 'COMPLETE':
         return 'success';
@@ -70,6 +70,8 @@
         return 'default';
         break;
       }
+    } else {
+      return 'default';
     }
   }
 

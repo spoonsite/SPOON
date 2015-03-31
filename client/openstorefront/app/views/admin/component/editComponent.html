@@ -33,6 +33,7 @@ limitations under the License.
           <label class=" col-sm-2 control-label required">Name</label>
           <div class="col-sm-10">
             <input  type="text"                 
+            id="name"                         
             name="name"                         
             class="form-control" 
             ng-model="componentForm.name" 
@@ -46,18 +47,19 @@ limitations under the License.
         </div>      
         <div class="form-group required" show-errors >
           <span style="width: 100%;"><label class="col-sm-2 control-label required">Description</label></span>
-          <textarea ckeditor="editorOptions" class="col-sm-10" style="height: 100px;" ng-model="componentForm.description" ng-watch="editorContentWatch"></textarea>        
+          <textarea ckeditor="editorOptions" id="description" class="col-sm-10" style="height: 100px;" ng-model="componentForm.description" ng-watch="editorContentWatch"></textarea>        
         </div>
         <div class="form-group" show-errors >
           <label class="col-sm-2 control-label">Parent Component</label>
           <div class="col-sm-10">
-            <select type="text" class="form-control" ng-model="componentForm.parentComponentId" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="comp.code as comp.description for comp in parentComponents" placeholder="Select Component"></select>
+            <select type="text" class="form-control" id="parentComponentId" ng-model="componentForm.parentComponentId" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="comp.code as comp.description for comp in parentComponents" placeholder="Select Component"></select>
           </div>  
         </div>  
         <div class="form-group"  >
           <label class="col-sm-2 control-label " title="External Id">GUID</label>       
           <div class="col-sm-10">
             <input  type="text"                 
+            id="guid"                         
             name="guid"                         
             class="form-control" 
             ng-model="componentForm.guid" 
@@ -70,6 +72,7 @@ limitations under the License.
           <label class="col-sm-2 control-label required">Organization</label>       
           <div class="col-sm-10">
             <input  type="text"                 
+            id="organization"                         
             name="organization"                         
             class="form-control" 
             ng-model="componentForm.organization" 
@@ -84,13 +87,14 @@ limitations under the License.
         <div class="form-group"  >
           <label class="col-sm-2 control-label">Release Date</label>
           <div class="col-sm-10">
-            <input type="text"  class="form-control" style="display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="componentForm.releaseDate"  placeholder="Date" data-date-type="number" bs-datepicker>         
+            <input type="text"  class="form-control" style="display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="componentForm.releaseDate" id="releaseDate"  placeholder="Date" data-date-type="number" bs-datepicker>         
           </div>  
         </div>  
         <div class="form-group"  >
           <label class="col-sm-2 control-label">Version</label>       
           <div class="col-sm-10">
             <input  type="text"                 
+            id="version"                          
             name="version"                          
             class="form-control" 
             ng-model="componentForm.version" 
@@ -102,7 +106,7 @@ limitations under the License.
         <div class="form-group required" show-errors >
           <label class="col-sm-2 control-label required">Approval State</label>
           <div class="col-sm-10">
-            <select type="text" class="form-control" name="approvalStatus" required  ng-change="loadComponentAttributesView()" style="width:125px;display: inline" ng-model="componentForm.approvalState" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in approvalStatuses"></select>          
+            <select type="text" class="form-control" name="approvalStatus" id="approvalStatus" required  ng-change="loadComponentAttributesView()" style="width:125px;display: inline" ng-model="componentForm.approvalState" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in approvalStatuses"></select>          
             {{componentForm.approvedDts | date:'MM/dd/yyyy h:mm a'}}&nbsp; {{componentForm.approvedUser}}
             <p ng-show="componentUIForm.approvalStatus.$error.required && !componentUIForm.approvalStatus.$focused" class="help-block">Approval State is required.</p>
           </div>        
@@ -116,7 +120,9 @@ limitations under the License.
           </tr>
           <tr ng-repeat="attrib in requiredAttributes | orderBy:'description'" >
             <td>{{attrib.description}}</td>
-            <td><select type="text" class="form-control" style="width: 100%" ng-model="generalForm.requiredAttribute[attrib.attributeType]" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attrib.attributeType)" placeholder="Select Code"></select></td>          
+            <td>
+              <select type="text" class="form-control" style="width: 100%" ng-model="generalForm.requiredAttribute[attrib.attributeType]" id="{{generalForm.requiredAttribute[attrib.attributeType]}}" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attrib.attributeType)" placeholder="Select Code"></select>
+            </td>          
           </tr>         
         </table>      
         <hr>      
@@ -130,17 +136,17 @@ limitations under the License.
         <loader trigger="attributeFormLoader"></loader>
         <panel class-list="edges" open-state="true" title="Add Attribute">
           <form class="form-horizontal" name='attributeUIForm' role="form"  ng-submit="saveAttribute()" style="padding-left: 10px; padding-right: 10px;">
-            <div class="form-group" show-errors >
+            <div class="form-group required" show-errors >
               <label class="control-label col-sm-2">Attribute Type</label>
               <div class="col-sm-10">
-                <select type="text" class="form-control" name="attributeType" required ng-model="attributeForm.type" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="attribute.attributeType as attribute.description for attribute in allAttributes" placeholder="Select Type"></select>
+                <select type="text" class="form-control" name="attributeType" id="attributeType" required ng-model="attributeForm.type" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="attribute.attributeType as attribute.description for attribute in allAttributes" placeholder="Select Type"></select>
                 <p ng-show="attributeUIForm.attributeType.$error.required && !attributeUIForm.attributeType.$focused" class="help-block">Attribute Type is required.</p>
               </div>  
             </div>  
-            <div class="form-group" show-errors >
+            <div class="form-group required" show-errors >
               <label class="col-sm-2 control-label">Attribute Code</label>
               <div class="col-sm-10">
-                <select type="text" class="form-control"  name="attributeCode"  required ng-model="attributeForm.code" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attributeForm.type)" placeholder="Select Code"></select>
+                <select type="text" class="form-control"  name="attributeCode" id="attributeCode"  required ng-model="attributeForm.code" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attributeForm.type)" placeholder="Select Code"></select>
                 <p ng-show="attributeUIForm.attributeCode.$error.required && !attributeUIForm.attributeCode.$focused" class="help-block">Attribute Code is required.</p>							
               </div>  
             </div>
@@ -181,16 +187,17 @@ limitations under the License.
         <loader trigger="contactFormLoader"></loader>
         <panel class-list="edges" open-state="true" title="Add/Edit Contact">
           <form class="form-horizontal" name='contactUIForm' role="form"  ng-submit="saveContact()" style="padding-left: 10px; padding-right: 10px;">
-            <input type="hidden" ng-model="contactForm.contactId" name="contactId" />
-            <div class="form-group" show-errors >
+            <input type="hidden" ng-model="contactForm.contactId" name="contactId" id="contactId" />
+            <div class="form-group required" show-errors >
               <label class="control-label required">Contact Type</label><br>						  
-              <select type="text" name="contactType" class="form-control" required  style="width:500px;" ng-model="contactForm.contactType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in contactTypes" placeholder="Select Type"></select>
+              <select type="text" name="contactType" id="contactType" class="form-control" required  style="width:500px;" ng-model="contactForm.contactType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in contactTypes" placeholder="Select Type"></select>
               <p ng-show="contactUIForm.contactType.$error.required && !contactUIForm.contactType.$focused" class="help-block">Contact Type is required.</p>
             </div>								
-            <div class="form-group"  >
+            <div class="form-group required"  >
               <label class=" control-label required">First Name</label>				
               <input  type="text" 									
-              name="firstName"													
+              id="firstName"                          
+              name="firstName"                          
               class="form-control" 
               ng-model="contactForm.firstName" 
               ng-minlength=1
@@ -201,10 +208,11 @@ limitations under the License.
               <p ng-show="contactUIForm.firstName.$error.required && !contactUIForm.firstName.$focused" class="help-block">First Name is required.</p>
 
             </div>	
-            <div class="form-group"  >
+            <div class="form-group required"  >
               <label class=" control-label required">Last Name</label>				
               <input  type="text" 										
-              name="lastName"													
+              id="lastName"                         
+              name="lastName"                         
               class="form-control" 
               ng-model="contactForm.lastName" 
               ng-minlength=1
@@ -215,10 +223,11 @@ limitations under the License.
               <p ng-show="contactUIForm.lastName.$error.required && !contactUIForm.lastName.$focused" class="help-block">Last Name is required.</p>
 
             </div>	
-            <div class="form-group"  >
+            <div class="form-group required"  >
               <label class=" control-label required">Organization</label>				
               <input  type="text" 									
-              name="organization"													
+              id="organization"                         
+              name="organization"                         
               class="form-control" 
               ng-model="contactForm.organization" 
               ng-minlength=1
@@ -232,18 +241,19 @@ limitations under the License.
               <label class=" control-label">Email</label>				
               <input  type="text" 						
               ng-pattern="EMAIL_REGEXP"									
-              name="email"									
+              id="email"                  
+              name="email"                  
               class="form-control" 
               ng-model="contactForm.email" 									 
               ng-maxlength=200 
               maxlength=200 									
               ng-focus />	
-
             </div>	
             <div class="form-group"  >
               <label class=" control-label">Phone</label>				
               <input  type="tel" 								
-              name="phone"													
+              id="phone"                          
+              name="phone"                          
               class="form-control" 
               ng-model="contactForm.phone" 
               ng-maxlength=200									
@@ -293,15 +303,16 @@ limitations under the License.
         <loader trigger="resourceFormLoader"></loader>
         <panel class-list="edges" open-state="true" title="Add/Edit Resource">
           <form class="form-horizontal" name='resourceUIForm' role="form"  ng-submit="saveResource()" style="padding-left: 10px; padding-right: 10px;">
-            <div class="form-group" show-errors >
+            <div class="form-group required" show-errors >
               <label class="control-label required">Resource Type</label><br>
-              <select type="text" class="form-control" name="resourceType" required style="width:500px;" ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type"></select>
+              <select type="text" class="form-control" name="resourceType" id="resourceType" required style="width:500px;" ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type"></select>
               <p ng-show="resourceUIForm.resourceType.$error.required && !resourceUIForm.resourceType.$focused" class="help-block">Resource Type is required.</p>							
             </div>	
             <div class="form-group"  >
               <label class=" control-label ">Description</label>				
               <input  type="text" 								
-              name="description"													
+              name="description"                          
+              id="description"													
               class="form-control" 
               ng-model="resourceForm.description" 									
               ng-maxlength=250									
@@ -313,7 +324,8 @@ limitations under the License.
             <div class="form-group"  >
               <label class=" control-label">Link</label>				
               <input  type="text" 									
-              name="link"													
+              name="link"                         
+              id="link"													
               class="form-control" 
               ng-model="resourceForm.originalLink" 									
               ng-maxlength=250									
@@ -368,7 +380,7 @@ limitations under the License.
       <loader trigger="mediaFormLoader"></loader>
       <panel class-list="edges" open-state="true" title="Add/Edit Media">
         <form class="form-horizontal" name='mediaUIForm' role="form"  ng-submit="saveMedia()" style="padding-left: 10px; padding-right: 10px;">
-          <div class="form-group" show-errors >
+          <div class="form-group required" show-errors >
 	 Only images are currently supported (.png, .jpg, .gif, .bmp, .svg)<br>		  
             <label class="control-label required">Media Type</label><br>
             <select type="text" class="form-control" name="mediaTypeCode" required style="width:500px;" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"></select>
@@ -377,6 +389,7 @@ limitations under the License.
           <div class="form-group"  >
             <label class=" control-label">Caption</label>				
             <input  type="text" 								
+            id="caption"                          
             name="caption"													
             class="form-control" 
             ng-model="mediaForm.caption" 
@@ -392,6 +405,7 @@ limitations under the License.
           <div class="form-group"  >
             <label class=" control-label">Link</label>				
             <input  type="text" 								
+            id="originalLink"                         
             name="originalLink"													
             class="form-control" 
             placeholder="http:///www.example.com/image.png"
@@ -439,9 +453,10 @@ limitations under the License.
       <loader trigger="dependencyFormLoader"></loader>
       <panel class-list="edges" open-state="true" title="Add/Edit Dependency">
         <form class="form-horizontal" name='dependancyUIForm' role="form"  ng-submit="saveDependancy()" style="padding-left: 10px; padding-right: 10px;">
-          <div class="form-group"  >
+          <div class="form-group required"  >
             <label class=" control-labe required">Name</label>				
             <input  type="text" 
+            id="name"                         
             name="name"													
             class="form-control" 
             ng-model="dependencyForm.dependencyName" 
@@ -452,9 +467,10 @@ limitations under the License.
             <p ng-show="dependancyUIForm.name.$error.minlength && !dependancyUIForm.name.$focused" class="help-block">Name must be longer than 1 character in length.</p>
             <p ng-show="dependancyUIForm.name.$error.required && !dependancyUIForm.name.$focused" class="help-block">Name is required.</p>
           </div>	
-          <div class="form-group"  >
+          <div class="form-group required"  >
             <label class=" control-label required">Version</label>				
             <input  type="text" 						
+            id="version"                          
             name="version"													
             class="form-control" 
             ng-model="dependencyForm.version" 
@@ -468,6 +484,7 @@ limitations under the License.
           <div class="form-group"  >
             <label class=" control-label">External Link</label>				
             <input  type="text" 						
+            id="dependancyReferenceLink"                          
             name="dependancyReferenceLink"													
             class="form-control" 
             placeholder="http://www.example.com"
@@ -479,6 +496,7 @@ limitations under the License.
           <div class="form-group"  >
             <label class=" control-label">Comment</label>				
             <input  type="text" 						
+            id="comment"                          
             name="comment"													
             class="form-control" 
             ng-model="dependencyForm.comment" 
@@ -522,9 +540,10 @@ limitations under the License.
       <loader trigger="metadataFormLoader"></loader>
       <panel class-list="edges" open-state="true" title="Add/Edit Metadata">
         <form class="form-horizontal" name='metadataUIForm' role="form"  ng-submit="saveMetadata()" style="padding-left: 10px; padding-right: 10px;">
-          <div class="form-group"  >
+          <div class="form-group required"  >
             <label class=" control-label required">Label</label>				
             <input  type="text" 								
+            id="label"                          
             name="label"													
             class="form-control" 
             ng-model="metadataForm.label" 
@@ -535,9 +554,10 @@ limitations under the License.
             <p ng-show="metadataUIForm.label.$error.minlength && !metadataUIForm.label.$focused" class="help-block">Label must be longer than 1 character in length.</p>
             <p ng-show="metadataUIForm.label.$error.required && !metadataUIForm.label.$focused" class="help-block">Label is required.</p>
           </div>	
-          <div class="form-group"  >
+          <div class="form-group required"  >
             <label class=" control-labe required">Value</label>				
             <input  type="text" 								
+            id="value"                          
             name="value"													
             class="form-control" 
             ng-model="metadataForm.value" 
@@ -593,6 +613,7 @@ limitations under the License.
             <td>
               <input  type="number" 
               name="score"
+              id="score"
               class="form-control"							
               ng-model="section.score" 			
               max=5
@@ -755,9 +776,10 @@ limitations under the License.
       <loader trigger="tagFormLoader"></loader>
       <panel class-list="edges" open-state="true" title="Add Tag">
         <form class="form-horizontal" name='tagUIForm' role="form"  ng-submit="saveTag()" style="padding-left: 10px; padding-right: 10px;">
-          <div class="form-group"  >
+          <div class="form-group required"  >
             <label class=" control-label required">Tag</label>				
             <input  type="text" 								
+            id="text"                         
             name="text"													
             class="form-control" 
             ng-model="tagForm.text" 
