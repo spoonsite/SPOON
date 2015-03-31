@@ -836,10 +836,7 @@ public class AttributeResource
 		}
 		if (post) {
 			AttributeCode attributeCodeCreated = service.getPersistenceService().findById(AttributeCode.class, attributeCode.getAttributeCodePk());
-			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
-					+ attributeCode.getAttributeCodePk().getAttributeType()
-					+ "/attributecodes/"
-					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
+			return Response.ok(attributeCodeCreated).build();
 		} else {
 			return Response.ok(attributeCode).build();
 		}

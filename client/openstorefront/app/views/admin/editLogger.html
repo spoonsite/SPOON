@@ -14,39 +14,39 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <div>
-	<loader trigger="formLoader"></loader>
-	<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>Edit Logger Level</h2>
-	<hr>
-	<div style="padding: 20px;">
-		<label class="col-sm-3 control-label">Key</label>
-		<input  type="text" 
-				id="propertyKey"
-				name="key"
-				placeholder="Key"
-				ng-disabled="true"
-				class="form-control" 
-				ng-model="logger.name"           
-				required 
-				ng-focus />
-		<br>	
-		<label class="control-label">Level</label><br>
-		<button type="button" class="btn btn-default" ng-disabled="logger.useParentLevel"  id="logLevel" ng-model="logger.levelSelect" data-html="1" ng-options="level.description for level in logLevels" data-animation="am-flip-x" bs-select>
-                        Select <span class="caret"></span>
-		</button><br>		
-		<input  
-                          type="checkbox" 
-                          id="useParentLevel"
-                          name="useParentLevel"                          
-                          ng-model="logger.useParentLevel" 
-                          ng-checked="logger.useParentLevel" 
-                          ng-focus /> Use  parent level
-	</div>
-	<br>
-	<hr>
-	<br>
-	<br>
-	<div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
-		<button type="submit" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;Save Changes</button>	
-		<a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancel()"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
-	</div>
+  <loader trigger="formLoader"></loader>
+  <h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>Edit Logger Level</h2>
+  <hr>
+  <div style="padding: 20px;">
+    <label class="col-sm-3 control-label">Key</label>
+    <input  type="text" 
+    id="propertyKey"
+    name="key"
+    placeholder="Key"
+    ng-disabled="true"
+    class="form-control" 
+    ng-model="logger.name"           
+    required 
+    ng-focus />
+    <br>	
+    <label class="control-label">Level</label><br>
+    <button type="button" class="btn btn-default" ng-disabled="logger.useParentLevel"  id="logLevel" ng-model="logger.levelSelect" data-html="1" ng-options="level.description for level in logLevels" data-animation="am-flip-x" bs-select>
+      Select <span class="caret"></span>
+    </button><br>		
+    <input  
+    type="checkbox" 
+    id="useParentLevel"
+    name="useParentLevel"                          
+    ng-model="logger.useParentLevel" 
+    ng-checked="logger.useParentLevel" 
+    ng-focus /> Use  parent level
+  </div>
+  <br>
+  <hr>
+  <br>
+  <br>
+  <div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
+    <button type="submit" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;Save Changes</button>	
+    <a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancel()"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
+  </div>
 </div>
