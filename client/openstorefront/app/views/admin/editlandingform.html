@@ -34,7 +34,9 @@
       </div>
     </div>
     <div style="clear:both; margin-bottom:5px;"></div>
-    <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
+    <div ng-if="showEditor">
+      <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
+    </div>
     <div style="text-align: center; padding:5px;">
       <button type="submit" style="display:inline-block;" title="Save Changes" class="btn btn-primary" ng-disabled="!article.title || !article.description || !editorContentWatch"><i class="fa fa-save"></i>&nbsp;Save</button>
       <button type="button" style="display:inline-block;" title="Preview Changes" class="btn btn-primary" ng-click="preview()" ng-disabled="!article.title || !article.description || !editorContentWatch"><i class="fa fa-eye"></i>&nbsp;Preview</button>

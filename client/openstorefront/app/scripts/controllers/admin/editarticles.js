@@ -209,6 +209,10 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
   $scope.article;
   $scope.attributes;
   $scope.codes;
+  $scope.editorContent = '';
+  $scope.editorContentWatch;
+  $scope.showEditor = false;
+
   var compare = function (a, b) {
     return ((a.label == b.label) ? 0 : ((a.label > b.label) ? 1 : -1));
   }
@@ -252,6 +256,7 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
 
 
   $scope.$watch('type', function(){
+    $scope.showEditor = false;
     if ($scope.type.type){
       // console.log('The change triggered the code gathering');
       
@@ -260,6 +265,7 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
   }, true)
 
   $scope.$watch('code', function(){
+    $scope.showEditor = false;
     if ($scope.code.code){
       // console.log('The change triggered the code gathering');
       $scope.checkType($scope.type.type, $scope.code.code);
@@ -360,15 +366,20 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
         Business.articleservice.getArticle(type, code, true).then(function (result) { /*jshint unused:false*/
           lock = false;
           $scope.editorContent = result || '';
+          $scope.showEditor = true;
+
         }, function(){
           lock = false;
           $scope.editorContent = '';
+          $scope.showEditor = true;
         });
       }
     } else if ($scope.article && $scope.article.html) {
       $scope.editorContent = $scope.article.html;
+      $scope.showEditor = true;
     } else {
       $scope.editorContent = '';
+      $scope.showEditor = true;
     }
   }
 
