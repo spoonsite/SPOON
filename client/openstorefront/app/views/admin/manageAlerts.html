@@ -71,8 +71,9 @@ limitations under the License.
 							Question/Responses
 						</li>				
 					</ul>
-				</td>				
-							
+				</td>	
+				<td ng-show="!alert.userDataAlertOption && !alert.systemErrorAlertOption">
+				</td>								
 				<td style="padding:0px 3px !important; width: 200px;">&nbsp;					
 					<button class="btn btn-default btn-sm" ng-click="editAlert(alert);"  title="Edit Alert"><i class="fa fa-edit"></i></button>
 					<button class="btn btn-warning btn-sm" ng-click="toggleStatus(alert);"  title="Activate/Inactivate"><i class="fa fa-power-off"></i></button>
