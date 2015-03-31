@@ -209,8 +209,9 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
   $scope.article;
   $scope.attributes;
   $scope.codes;
-  $scope.editorContent = '';
-  $scope.editorContentWatch;
+  $scope.editor = {};
+  $scope.editor.editorContent = '';
+  $scope.editor.editorContentWatch;
   $scope.showEditor = false;
 
   var compare = function (a, b) {
@@ -297,7 +298,8 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
   }
 
   $scope.getEditorContent = function(){
-    var html = angular.copy($scope.editorContentWatch);
+    var html = angular.copy($scope.editor.editorContent);
+    // var html = angular.copy($scope.editor.editorContentWatch);
     var temp = null;
     if (_.contains(html, 'id="allTheDContent"')) {
       temp = $(html);
@@ -337,7 +339,6 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
   }
 
   $scope.ok = function () {
-    // $scope.editorContentWatch = $scope.editorContent;
     $scope.article.html = $scope.getEditorContent();
     $scope.article.attributeType = $scope.type.type;
     $scope.article.attributeCode = $scope.code.code;
@@ -365,20 +366,20 @@ app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'co
         lock = true;
         Business.articleservice.getArticle(type, code, true).then(function (result) { /*jshint unused:false*/
           lock = false;
-          $scope.editorContent = result || '';
+          $scope.editor.editorContent = result || '';
           $scope.showEditor = true;
 
         }, function(){
           lock = false;
-          $scope.editorContent = '';
+          $scope.editor.editorContent = '';
           $scope.showEditor = true;
         });
       }
     } else if ($scope.article && $scope.article.html) {
-      $scope.editorContent = $scope.article.html;
+      $scope.editor.editorContent = $scope.article.html;
       $scope.showEditor = true;
     } else {
-      $scope.editorContent = '';
+      $scope.editor.editorContent = '';
       $scope.showEditor = true;
     }
   }
