@@ -24,8 +24,9 @@ import edu.usu.sdl.openstorefront.service.PersistenceService;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.SystemTable;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -258,7 +259,9 @@ public class LookupTypeResource
 		}
 		if (post) {
 			LookupEntity lookupEntityCreated = service.getLookupService().getLookupEnity(entityName, lookupEntity.getCode());
-			return Response.created(URI.create("v1/resource/lookuptypes/" + entityName + "/" + lookupEntity.getCode())).entity(lookupEntityCreated).build();
+			return Response.created(URI.create("v1/resource/lookuptypes/"
+					+ entityName + "/"
+					+ StringProcessor.urlEncode(lookupEntity.getCode()))).entity(lookupEntityCreated).build();
 		} else {
 			return Response.ok().build();
 		}

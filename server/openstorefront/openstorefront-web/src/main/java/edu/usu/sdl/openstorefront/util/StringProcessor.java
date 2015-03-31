@@ -21,8 +21,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -271,6 +273,18 @@ public class StringProcessor
 			result = Convert.toBigDecimal(code, result);
 		}
 		return result;
+	}
+
+	public static String urlEncode(String value)
+	{
+		if (StringUtils.isNotBlank(value)) {
+			try {
+				value = URLEncoder.encode(value, "UTF-8");
+			} catch (UnsupportedEncodingException ex) {
+				throw new OpenStorefrontRuntimeException("Unsupport encoding", "Check encode character set for the platform");
+			}
+		}
+		return value;
 	}
 
 }
