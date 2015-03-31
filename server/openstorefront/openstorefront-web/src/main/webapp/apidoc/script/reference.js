@@ -36,10 +36,10 @@ var setupAttributes = function(types, contentId) {
     for (var i = 0; i < types.length; i++) {
         var codes = types[i].codes;
         if (codes && codes.length > 0) {
-            $('#tableOfContents').append('<tr><td><span goTo="' + types[i].type + '" class="imitateLink">' + types[i].description + '</span></td></tr>');
-            $(contentId).append('<div id="' + types[i].type + '" style="margin-top: 50px;"><h3>' + types[i].description + ' (' + types[i].type + ')</h3><div style="margin-left: 20px;"><table><tr><th>Code</th><th>Label</th><th>Description</th></tr></table></div></div>');
+            $('#tableOfContents').append('<tr><td><span goTo="' + types[i].attributeType + '" class="imitateLink">' + types[i].description + '</span></td></tr>');
+            $(contentId).append('<div id="' + types[i].attributeType + '" style="margin-top: 50px;"><h3>' + types[i].description + ' (' + types[i].attributeType + ')</h3><div style="margin-left: 20px;"><table><tr><th>Code</th><th>Label</th><th>Description</th></tr></table></div></div>');
             for (var j = 0; codes && j < codes.length; j++) {
-                $('#' + types[i].type).find('table').append('<tr><td>' + codes[j].code + '</td><td>' + codes[j].label + '</td><td>' + codes[j].description + '</td></tr></div>');
+                $('#' + types[i].attributeType).find('table').append('<tr><td>' + codes[j].code + '</td><td>' + codes[j].label + '</td><td>' + codes[j].description + '</td></tr></div>');
             }
         }
     }

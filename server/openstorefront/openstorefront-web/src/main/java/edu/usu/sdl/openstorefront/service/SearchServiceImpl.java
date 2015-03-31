@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentModel;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -157,7 +158,7 @@ public class SearchServiceImpl
 
 		for (String componentId : componentIds) {
 			if (goodComponentIdSet.contains(componentId) == false) {
-				log.log(Level.FINE, "Removing bad index: " + componentId);
+				log.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", componentId));
 				deleteById(componentId);
 			}
 		}
@@ -178,7 +179,7 @@ public class SearchServiceImpl
 				if (view != null) {
 					views.add(view);
 				} else {
-					log.log(Level.FINE, "Removing bad index: " + result.getId());
+					log.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", result.getId()));
 					deleteById(result.getId());
 				}
 			}
@@ -227,10 +228,10 @@ public class SearchServiceImpl
 
 			if (code != null && type != null) {
 				attributeList = attributeList + code.getLabel() + ",";
-				if (!code.getDescription().equals("")) {
+				if (StringUtils.isNotBlank(code.getDescription())) {
 					attributeList = attributeList + code.getDescription() + ",";
 				}
-				if (!type.getDescription().equals("")) {
+				if (StringUtils.isNotBlank(type.getDescription())) {
 					attributeList = attributeList + type.getDescription() + ",";
 				}
 			}
@@ -272,7 +273,7 @@ public class SearchServiceImpl
 		solrDocModel.setDescription(article.getDescription());
 		solrDocModel.setUpdateDts(article.getUpdateDts());
 
-		String attributeList = type.getAttributeType() + "," + type.getDescription() + "," + code.getLabel() + "," + code.getDescription();
+		String attributeList = type.getAttributeType() + "," + StringProcessor.blankIfNull(type.getDescription()) + "," + code.getLabel() + "," + StringProcessor.blankIfNull(code.getDescription());
 		solrDocModel.setTags("");
 		solrDocModel.setAttributes(attributeList);
 
