@@ -17,189 +17,190 @@
 'use strict';
 
 app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, localCache) {
-    
 
-    var getJobStatus = function () {
-      var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/service/jobs/status'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+  var getJobStatus = function () {
+    var deferred = $q.defer();
 
-      return deferred.promise;
-    }; 
-    
-    var getJobs = function () {
-      var deferred = $q.defer();
+    $http({
+      'method': 'GET',
+      'url': 'api/v1/service/jobs/status'
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/service/jobs'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    return deferred.promise;
+  }; 
 
-      return deferred.promise;
-    };    
-    
-    var getJob = function (jobName) {
-      var deferred = $q.defer();
+  var getJobs = function () {
+    var deferred = $q.defer();
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/service/jobs/' + jobName
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    $http({
+      'method': 'GET',
+      'url': 'api/v1/service/jobs'
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
 
-      return deferred.promise;
-    };    
-    
-    var pauseScheduler = function () {
-      var deferred = $q.defer();
+    return deferred.promise;
+  };    
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/service/jobs/pause'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+  var getJob = function (jobName) {
+    var deferred = $q.defer();
 
-      return deferred.promise;
-    };     
-    
-    var resumeScheduler = function () {
-      var deferred = $q.defer();
+    $http({
+      'method': 'GET',
+      'url': 'api/v1/service/jobs/' + jobName
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/service/jobs/resume'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    return deferred.promise;
+  };    
 
-      return deferred.promise;
-    };     
+  var pauseScheduler = function () {
+    var deferred = $q.defer();
 
-    var pauseJob = function (jobName) {
-      var deferred = $q.defer();
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/service/jobs/pause'
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/service/jobs/' + jobName + '/pause'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    return deferred.promise;
+  };     
 
-      return deferred.promise;
-    }; 
-   
-    var resumeJob = function (jobName) {
-      var deferred = $q.defer();
+  var resumeScheduler = function () {
+    var deferred = $q.defer();
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/service/jobs/' + jobName + '/resume'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/service/jobs/resume'
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
 
-      return deferred.promise;
-    };     
-    
-    var runJobNow = function (jobName, groupName) {
-      var deferred = $q.defer();
+    return deferred.promise;
+  };     
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/service/jobs/' + jobName + '/' + groupName + '/runnow'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+  var pauseJob = function (jobName) {
+    var deferred = $q.defer();
 
-      return deferred.promise;
-    };     
-    
-    
-    var getTasksAndStatus = function () {
-      var deferred = $q.defer();
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/service/jobs/' + jobName + '/pause'
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
 
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/service/jobs/tasks/status'
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    return deferred.promise;
+  }; 
 
-      return deferred.promise;
-    };    
-        
-    var cancelTask = function (taskId) {
-      var deferred = $q.defer();
+  var resumeJob = function (jobName) {
+    var deferred = $q.defer();
 
-      $http({
-        'method': 'POST',
-        'url': 'api/v1/service/jobs/tasks/' + taskId + '/cancel' 
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/service/jobs/' + jobName + '/resume'
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
 
-      return deferred.promise;
-    }; 
-    
-    var deleteTask = function (taskId) {
-      var deferred = $q.defer();
+    return deferred.promise;
+  };     
 
-      $http({
-        'method': 'DELETE',
-        'url': 'api/v1/service/jobs/tasks/' + taskId 
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
+  var runJobNow = function (jobName, groupName) {
+    var deferred = $q.defer();
 
-      return deferred.promise;
-    };     
-    
-    
-    return {
-      getJobStatus: getJobStatus,
-      getJobs: getJobs,
-      getJob: getJob,
-      pauseScheduler: pauseScheduler,
-      resumeScheduler: resumeScheduler,
-      pauseJob: pauseJob,
-      resumeJob: resumeJob,
-      runJobNow: runJobNow,
-      getTasksAndStatus: getTasksAndStatus,
-      cancelTask: cancelTask,
-      deleteTask: deleteTask
-    };
-    
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/service/jobs/' + jobName + '/' + groupName + '/runnow'
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+
+    return deferred.promise;
+  };     
+
+
+  var getTasksAndStatus = function () {
+    var deferred = $q.defer();
+
+    $http({
+      'method': 'GET',
+      'url': 'api/v1/service/jobs/tasks/status',
+      'ignoreLoadingBar': true
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+
+    return deferred.promise;
+  };    
+
+  var cancelTask = function (taskId) {
+    var deferred = $q.defer();
+
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/service/jobs/tasks/' + taskId + '/cancel' 
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+
+    return deferred.promise;
+  }; 
+
+  var deleteTask = function (taskId) {
+    var deferred = $q.defer();
+
+    $http({
+      'method': 'DELETE',
+      'url': 'api/v1/service/jobs/tasks/' + taskId 
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+
+    return deferred.promise;
+  };     
+
+
+  return {
+    getJobStatus: getJobStatus,
+    getJobs: getJobs,
+    getJob: getJob,
+    pauseScheduler: pauseScheduler,
+    resumeScheduler: resumeScheduler,
+    pauseJob: pauseJob,
+    resumeJob: resumeJob,
+    runJobNow: runJobNow,
+    getTasksAndStatus: getTasksAndStatus,
+    cancelTask: cancelTask,
+    deleteTask: deleteTask
+  };
+
 }]);
 
 
