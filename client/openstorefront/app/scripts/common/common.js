@@ -300,7 +300,7 @@ var triggerError = function(errorObj, useFormNames) {
       var i = item.key;
       if (useFormNames){
         $("input[name='" + i + "']").addClass('errorOnInput');
-        $('#' + i).tooltip({
+        $("input[name='" + i + "']").tooltip({
           // container: 'body',
           html: 'true',
           placement: 'top',
@@ -318,8 +318,6 @@ var triggerError = function(errorObj, useFormNames) {
         });
       }
     });
-  } else {
-    removeError();
   }
 };
 

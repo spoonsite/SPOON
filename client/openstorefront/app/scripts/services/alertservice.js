@@ -43,7 +43,12 @@ app.factory('alertservice', ['$http', '$q', 'localCache', function($http, $q, lo
           'url': 'api/v1/resource/alerts/' + alert.alertId,
           data: alert
         }).success(function (data, status, headers, config) { /*jshint unused:false*/
-          deferred.resolve(data);
+          removeError();
+          if (data && isNotRequestError(data)) {
+            deferred.resolve(data);            
+          } else {
+            deferred.reject(data);
+          }
         }).error(function (data, status, headers, config) { /*jshint unused:false*/
           deferred.reject('There was an error');
         });
@@ -53,7 +58,12 @@ app.factory('alertservice', ['$http', '$q', 'localCache', function($http, $q, lo
           'url': 'api/v1/resource/alerts',
           data: alert
         }).success(function (data, status, headers, config) { /*jshint unused:false*/
-          deferred.resolve(data);
+          removeError();
+          if (data && isNotRequestError(data)) {
+            deferred.resolve(data);            
+          } else {
+            deferred.reject(data);
+          }
         }).error(function (data, status, headers, config) { /*jshint unused:false*/
           deferred.reject('There was an error');
         });

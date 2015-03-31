@@ -443,7 +443,7 @@ public class AttributeResource
 	@Path("/attributetypes/articlecodes")
 	public List<ArticleView> getAllCodesWithArticles(
 			@QueryParam("all")
-			@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
+			@APIDescription("Get's all the articles (Active and Inactive)")
 			@DefaultValue("false") boolean all)
 	{
 		List<ArticleView> codes = ArticleView.toViewList(service.getAttributeService().getArticles(all));
@@ -477,6 +477,35 @@ public class AttributeResource
 			return Response.ok(articleView.getHtml()).build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@GET
+	@APIDescription("Gets article if it existing for the given type and code.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ArticleView.class)
+	@Path("/attributetypes/{type}/attributecodes/{code}/article/detail")
+	public Response getAttributeArticleView(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		type = type.toUpperCase();
+		code = code.toUpperCase();
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode(code);
+		attributeCodePk.setAttributeType(type);
+		ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
+		if (articleView != null) {
+			ArticleTracking articleTracking = new ArticleTracking();
+			articleTracking.setAttributeCode(code);
+			articleTracking.setAttributeType(type);
+			articleTracking.setClientIp(SecurityUtil.getClientIp(request));
+			articleTracking.setEventDts(TimeUtil.currentDate());
+			articleTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
+			service.getAttributeService().addArticleTrackEvent(articleTracking);
+		}
+		return sendSingleEntityResponse(articleView);
 	}
 
 	@GET

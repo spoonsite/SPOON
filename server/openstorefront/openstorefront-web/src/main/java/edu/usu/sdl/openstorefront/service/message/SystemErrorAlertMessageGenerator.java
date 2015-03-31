@@ -72,15 +72,18 @@ public class SystemErrorAlertMessageGenerator
 
 		List<ErrorTicket> tickets = serviceProxy.getPersistenceService().queryByExample(ErrorTicket.class, queryByExample);
 		if (!tickets.isEmpty()) {
-			message.append("System error have occured.  ")
+			message.append("System errors have occured.  ")
 					.append(tickets.size()).append("  error(s) since: ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
 
 		}
+		message.append("<ul>");
 		for (ErrorTicket ticket : tickets) {
-			message.append("  ").append(TranslateUtil.translate(ErrorTypeCode.class, ticket.getErrorTypeCode()))
-					.append(" - ").append(ticket.getErrorTicketId()).append("<br>");
+			message.append("  <li> ").append(TranslateUtil.translate(ErrorTypeCode.class, ticket.getErrorTypeCode()))
+					.append(" - ").append(ticket.getMessage())
+					.append(" - ").append(ticket.getErrorTicketId()).append("</li><br>");
 		}
-		message.append(" See attached for details.<br>");
+		message.append("</ul>");
+		message.append("See attached for details.<br>");
 
 		int max = tickets.size();
 		if (tickets.size() > MAX_TICKETS_TO_ATTACH) {

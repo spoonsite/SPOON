@@ -333,35 +333,34 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
         }
       }
       
+      //Clear bad data
+      delete $scope.reportForm.type;
+      
       if ($scope.flag.schedule) {
         Business.reportservice.saveScheduledReport($scope.reportForm).then(function(results) {      
+          $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
           if (results) {
-            if (results.success && results.success === false) {
-              removeError();
-              triggerError(results, true);
-            } else {
-              removeError();
               triggerAlert('Scheduled  Report', 'reportId', 'body', 3000);
               $scope.$emit('$TRIGGEREVENT', '$REFRESH_REPORTS');            
               $uiModalInstance.dismiss('success');
-            }
-          }
+          }          
+        }, function(failData) {
           $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
+          triggerAlert('Validation Error: <br> Make sure Email(s) are valid', 'alertId', 'body', 3000);
         });        
       } else {
         Business.reportservice.generateReport($scope.reportForm).then(function(results) {      
+          $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
+          
           if (results) {
-            if (results.success && results.success === false) {
-              removeError();
-              triggerError(results, true);
-            } else {
-              removeError();
               triggerAlert('Generating Report', 'alertId', 'body', 3000);
               $scope.$emit('$TRIGGEREVENT', '$REFRESH_REPORTS');            
               $uiModalInstance.dismiss('success');
-            }
           }
+          
+        }, function(failData) {
           $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
+          triggerAlert('Validation Error: <br> Make sure Email(s) are valid', 'alertId', 'body', 3000);
         });        
       }      
     };    

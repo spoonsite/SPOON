@@ -237,6 +237,7 @@ public class UsageReport
 			articleTrackingExample = new ArticleTracking();
 			articleTrackingExample.setActiveStatus(ArticleTracking.ACTIVE_STATUS);
 			articleTrackingExample.setTrackEventTypeCode(TrackEventCode.VIEW);
+			articleTrackingExample.setCreateUser(username);
 
 			articletTrackingStartExample = new ArticleTracking();
 			articletTrackingStartExample.setEventDts(report.getReportOption().getStartDts());

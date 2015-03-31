@@ -330,17 +330,19 @@ public class SearchServiceImpl
 			ids.add(code.getAttributeCodePk().getAttributeCode());
 		});
 
-		String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
+		if (ids.isEmpty() == false) {
+			String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
 
-		Map<String, Object> params = new HashMap<>();
-		params.put("attributeType", pk.getAttributeType());
-		params.put("attributeCodeIdListParam", ids);
-		List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
+			Map<String, Object> params = new HashMap<>();
+			params.put("attributeType", pk.getAttributeType());
+			params.put("attributeCodeIdListParam", ids);
+			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
 
-		for (ComponentAttribute componentAttribute : componentAttributes) {
-			Component temp = persistenceService.findById(Component.class, componentAttribute.getComponentAttributePk().getComponentId());
-			if (OpenStorefrontConstant.ComponentApprovalStatus.APPROVED.equals(temp.getApprovalState())) {
-				componentMap.put(temp.getComponentId(), temp);
+			for (ComponentAttribute componentAttribute : componentAttributes) {
+				Component temp = persistenceService.findById(Component.class, componentAttribute.getComponentAttributePk().getComponentId());
+				if (OpenStorefrontConstant.ComponentApprovalStatus.APPROVED.equals(temp.getApprovalState())) {
+					componentMap.put(temp.getComponentId(), temp);
+				}
 			}
 		}
 

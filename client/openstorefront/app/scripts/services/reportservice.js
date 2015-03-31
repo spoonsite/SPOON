@@ -57,7 +57,12 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
         'url': 'api/v1/resource/reports',
         data: report
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
+        removeError();
+        if (data && isNotRequestError(data)) {
+          deferred.resolve(data);            
+        } else {
+          deferred.reject(data);
+        }
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    
         deferred.reject('There was an error');
       });
@@ -105,7 +110,12 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
           'url': 'api/v1/resource/scheduledreports/' + scheduledreport.scheduledReportId,
           data: scheduledreport
         }).success(function (data, status, headers, config) { /*jshint unused:false*/
-          deferred.resolve(data);
+          removeError();
+          if (data && isNotRequestError(data)) {
+            deferred.resolve(data);            
+          } else {
+            deferred.reject(data);
+          }
         }).error(function (data, status, headers, config) { /*jshint unused:false*/
           deferred.reject('There was an error');
         });
@@ -115,7 +125,12 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
           'url': 'api/v1/resource/scheduledreports',
           data: scheduledreport
         }).success(function (data, status, headers, config) { /*jshint unused:false*/
-          deferred.resolve(data);
+          removeError();
+          if (data && isNotRequestError(data)) {
+            deferred.resolve(data);            
+          } else {
+            deferred.reject(data);
+          }
         }).error(function (data, status, headers, config) { /*jshint unused:false*/
           deferred.reject('There was an error');
         });
