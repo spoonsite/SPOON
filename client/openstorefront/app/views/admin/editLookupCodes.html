@@ -36,10 +36,10 @@ limitations under the License.
 			
 			<div class="form-group">
 				<label>File Input</label>
-				<input type="file" nv-file-select uploader="uploader" name="uploadFile" width="100" />
+				<input type="file" nv-file-select uploader="uploader" id ="uploadFile" name="uploadFile" width="100" />
 				<p class="help-block">CVS (code, description, detail description(optional), sort order (optional))</p>	
 			</div>
-			<button ng-click="uploader.uploadAll()" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp;Upload</button> 			
+			<button ng-click="importFile()" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp;Upload</button> 			
 		</div>		
 	</div>	
 	<table class="table table-bordered table-striped admin-table">
