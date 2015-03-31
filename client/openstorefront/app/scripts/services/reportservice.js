@@ -39,7 +39,7 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/reports/' + reportType + '/formats'
+        'url': 'api/v1/resource/reports/' + encodeURIComponent(reportType) + '/formats'
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    
@@ -75,7 +75,7 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/reports/' + id
+        'url': 'api/v1/resource/reports/' + encodeURIComponent(id)
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    
@@ -107,7 +107,7 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
       if (scheduledreport.scheduledReportId) {
         $http({
           'method': 'PUT',
-          'url': 'api/v1/resource/scheduledreports/' + scheduledreport.scheduledReportId,
+          'url': 'api/v1/resource/scheduledreports/' + encodeURIComponent(scheduledreport.scheduledReportId),
           data: scheduledreport
         }).success(function (data, status, headers, config) { /*jshint unused:false*/
           removeError();
@@ -145,7 +145,7 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'POST',
-        'url': 'api/v1/resource/scheduledreports/' + id + '/activate'
+        'url': 'api/v1/resource/scheduledreports/' + encodeURIComponent(id) + '/activate'
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    
@@ -160,7 +160,7 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/scheduledreports/' + id
+        'url': 'api/v1/resource/scheduledreports/' + encodeURIComponent(id)
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    
@@ -175,7 +175,7 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/scheduledreports/' + id + '/force'
+        'url': 'api/v1/resource/scheduledreports/' + encodeURIComponent(id) + '/force'
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/

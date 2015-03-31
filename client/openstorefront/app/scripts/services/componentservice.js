@@ -68,7 +68,7 @@
       var result = $q.defer();
       if (id && reviewId && pro)
       {
-        var url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId + '/pro';
+        var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews/' + encodeURIComponent(reviewId) + '/pro';
         $http({
           method: 'DELETE',
           url: url,
@@ -76,7 +76,7 @@
         })
         .success(function (data, status, headers, config) { /*jshint unused:false*/
         });
-        url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId + '/con';
+        url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews/' + encodeURIComponent(reviewId) + '/con';
         $http({
           method: 'DELETE',
           url: url,
@@ -104,7 +104,7 @@
       var result = $q.defer();
       if (id && questionId)
       {
-        var url = 'api/v1/resource/components/' + id + '/questions/' + questionId;
+        var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/questions/' + encodeURIComponent(questionId);
         $http({
           method: 'DELETE',
           url: url,
@@ -135,10 +135,10 @@
         var methodString;
         if (questionId) {
           methodString = 'PUT';
-          url = 'api/v1/resource/components/' + id + '/questions/' + questionId;
+          url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/questions/' + encodeURIComponent(questionId);
         } else {
           methodString = 'POST';
-          url = 'api/v1/resource/components/' + id + '/questions';
+          url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/questions';
         }
         $http({
           method: methodString,
@@ -168,7 +168,7 @@
       var result = $q.defer();
       if (id && responseId && questionId)
       {
-        var url = 'api/v1/resource/components/' + id + '/questions/' + questionId + '/responses/' + responseId;
+        var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/questions/' + encodeURIComponent(questionId) + '/responses/' + encodeURIComponent(responseId);
         $http({
           method: 'DELETE',
           url: url
@@ -198,10 +198,10 @@
         var url;
         var methodString;
         if (!responseId) {
-          url = 'api/v1/resource/components/' + id + '/questions/' + questionId + '/responses';
+          url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/questions/' + encodeURIComponent(questionId) + '/responses';
           methodString = 'POST';
         } else {
-          url = 'api/v1/resource/components/' + id + '/questions/' + questionId + '/responses/' + responseId;
+          url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/questions/' + encodeURIComponent(questionId) + '/responses/' + encodeURIComponent(responseId);
           methodString = 'PUT';
         }
         $http({
@@ -231,7 +231,7 @@
       var result = $q.defer();
       if (id && reviewId)
       {
-        var url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId;
+        var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews/' + encodeURIComponent(reviewId);
         $http({
           method: 'DELETE',
           url: url,
@@ -264,10 +264,10 @@
         var url;
         var methodString;
         if (!reviewId) {
-          url = 'api/v1/resource/components/' + id + '/reviews/detail';
+          url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews/detail';
           methodString = 'POST';
         } else {
-          url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId + '/detail';
+          url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews/' + encodeURIComponent(reviewId) + '/detail';
           methodString = 'PUT';
         }
 
@@ -305,10 +305,10 @@
         var url;
         var methodString;
         if (!reviewId) {
-          url = 'api/v1/resource/components/' + id + '/reviews';
+          url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews';
           methodString = 'POST';
         } else {
-          url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId;
+          url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews/' + encodeURIComponent(reviewId);
           methodString = 'PUT';
         }
         $http({
@@ -338,7 +338,7 @@
       var result = $q.defer();
       if (id && reviewId && pro)
       {
-        var url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId + '/pros';
+        var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews/' + encodeURIComponent(reviewId) + '/pros';
         $http({
           method: 'POST',
           url: url,
@@ -366,7 +366,7 @@
       var result = $q.defer();
       if (id && reviewId && con)
       {
-        var url = 'api/v1/resource/components/' + id + '/reviews/' + reviewId + '/cons';
+        var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/reviews/' + encodeURIComponent(reviewId) + '/cons';
         $http({
           method: 'POST',
           url: url,
@@ -395,7 +395,7 @@
       var result = $q.defer();
       if (id)
       {
-        var url = 'api/v1/resource/components/' + id + '/detail';
+        var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/detail';
         var value = null;
         // if they don't give me an ID I send them back the whole list.
         value = checkExpire('component_' + id, minute * 2);
@@ -433,7 +433,7 @@
               var result = $q.defer();
               if (id)
               {
-                var url = 'api/v1/resource/components/' + id + '/detail?type=print';
+                var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/detail?type=print';
                 var value = null;
         // if they don't give me an ID I send them back the whole list.
         value = checkExpire('component_print_' + id, minute * 2);
@@ -594,7 +594,7 @@
         } else {
           var paramsObj = {};
           if (type !== 'search') {
-            url = 'api/v1/service/search/attribute/' + key.type + '/' + key.key;
+            url = 'api/v1/service/search/attribute/' + encodeURIComponent(key.type) + '/' + encodeURIComponent(key.key);
           } else {
             url = 'api/v1/service/search';
             if (key.toLowerCase() === 'all') {
@@ -660,10 +660,10 @@
 
     componentservice.saveTags = function (id, tags) {
       var deferred = $q.defer();
-      $http.delete('api/v1/resource/components/' + id + '/tags');
+      $http.delete('api/v1/resource/components/' + encodeURIComponent(id) + '/tags');
       $http({
         method: 'POST',
-        url: 'api/v1/resource/components/' + id + '/tags/list',
+        url: 'api/v1/resource/components/' + encodeURIComponent(id) + '/tags/list',
         data: tags
       }).success(function (data, status, headers, config) {
         if (data && data !== 'false' && isNotRequestError(data)) {
@@ -685,7 +685,7 @@
       if (id && tag) {
         $http({
           method: 'POST',
-          url: 'api/v1/resource/components/' + id + '/tags',
+          url: 'api/v1/resource/components/' + encodeURIComponent(id) + '/tags',
           data: tag
         }).success(function (data, status, headers, config) {
           if (data && data !== 'false' && isNotRequestError(data)) {
@@ -710,7 +710,7 @@
       if (id && tag) {
         $http({
           method: 'DELETE',
-          url: 'api/v1/resource/components/' + id + '/tags/text',
+          url: 'api/v1/resource/components/' + encodeURIComponent(id) + '/tags/text',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -756,7 +756,7 @@ componentservice.activateComponent = function (componentId) {
 
   $http({
     'method': 'PUT',
-    'url': 'api/v1/resource/components/' + componentId + '/activate'
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/activate'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -772,7 +772,7 @@ componentservice.inactivateComponent = function (componentId) {
 
   $http({
     'method': 'DELETE',
-    'url': 'api/v1/resource/components/' + componentId
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId)
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -788,7 +788,7 @@ componentservice.deleteComponent = function (componentId) {
 
   $http({
     'method': 'DELETE',
-    'url': 'api/v1/resource/components/' + componentId + '/cascade'
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/cascade'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -853,7 +853,7 @@ componentservice.updateComponent = function (requiredForComponent, componentId) 
 
   $http({
     'method': 'PUT',
-    'url': 'api/v1/resource/components/' + componentId,
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId),
     data: requiredForComponent
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
@@ -874,7 +874,7 @@ componentservice.getComponentAttributes = function (componentId, queryParamFilte
 
   $http({
     'method': 'GET',
-    'url': 'api/v1/resource/components/' + componentId + '/attributes?' + queryParamFilter.toQuery()
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes?' + queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -890,7 +890,7 @@ componentservice.getComponentAttributeView = function (componentId, queryParamFi
 
   $http({
     'method': 'GET',
-    'url': 'api/v1/resource/components/' + componentId + '/attributes/view?' + queryParamFilter.toQuery()
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes/view?' + queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -906,7 +906,7 @@ componentservice.inactivateAttribute = function (componentId, type, code) {
 
   $http({
     'method': 'DELETE',
-    'url': 'api/v1/resource/components/' + componentId + '/attributes/' + type + '/' + code
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes/' + encodeURIComponent(type) + '/' + encodeURIComponent(code)
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -922,7 +922,7 @@ componentservice.activateAttribute = function (componentId, type, code) {
 
   $http({
     'method': 'PUT',
-    'url': 'api/v1/resource/components/' + componentId + '/attributes/' + type + '/' + code + "/activate"
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes/' + encodeURIComponent(type) + '/' + encodeURIComponent(code) + "/activate"
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -938,7 +938,7 @@ componentservice.saveAttribute = function (componentId, componentAttribute) {
 
   $http({
     'method': 'POST',
-    'url': 'api/v1/resource/components/' + componentId + '/attributes',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes',
     data: componentAttribute
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
@@ -958,7 +958,7 @@ componentservice.getComponentSubEntity = function (loadOptions) {
 
   $http({
     'method': 'GET',
-    'url': 'api/v1/resource/components/' + loadOptions.componentId + '/' + loadOptions.entity + '/view?' + loadOptions.queryParamFilter.toQuery()
+    'url': 'api/v1/resource/components/' + encodeURIComponent(loadOptions.componentId) + '/' + encodeURIComponent(loadOptions.entity) + '/view?' + loadOptions.queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -974,7 +974,7 @@ componentservice.inactivateEnity = function (options) {
 
   $http({
     'method': 'DELETE',
-    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId
+    'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entity) + '/' + encodeURIComponent(options.entityId)
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -990,7 +990,7 @@ componentservice.forceRemoveEnity = function (options) {
 
   $http({
     'method': 'DELETE',
-    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId + '/force'
+    'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entity) + '/' + encodeURIComponent(options.entityId) + '/force'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1006,7 +1006,7 @@ componentservice.activateEntity = function (options) {
 
   $http({
     'method': 'PUT',
-    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entity + '/' + options.entityId + '/activate'
+    'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entity) + '/' + encodeURIComponent(options.entityId) + '/activate'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1022,7 +1022,7 @@ componentservice.addSubComponentEntity = function (options) {
 
   $http({
     'method': 'POST',
-    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entityName,
+    'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entityName),
     data: options.entity
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
@@ -1039,7 +1039,7 @@ componentservice.updateSubComponentEntity = function (options) {
 
   $http({
     'method': 'PUT',
-    'url': 'api/v1/resource/components/' + options.componentId + '/' + options.entityName + '/' + options.entityId,
+    'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entityName) + '/' + encodeURIComponent(options.entityId),
     data: options.entity
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
@@ -1060,7 +1060,7 @@ componentservice.getEvaluationSections = function (componentId) {
 
   $http({
     'method': 'GET',
-    'url': 'api/v1/resource/components/' + componentId + '/sections/view'
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/sections/view'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1076,7 +1076,7 @@ componentservice.deleteEvaluationSection = function (componentId, sectionCode) {
 
   $http({
     'method': 'DELETE',
-    'url': 'api/v1/resource/components/' + componentId + '/sections/' + sectionCode
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/sections/' + encodeURIComponent(sectionCode)
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1091,7 +1091,7 @@ componentservice.deleteAllEvaluationSection = function (componentId) {
   var deferred = $q.defer();      
   $http({
     'method': 'DELETE',
-    'url': 'api/v1/resource/components/' + componentId + '/sections'
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/sections'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1106,7 +1106,7 @@ componentservice.saveAllEvaluationSections = function (options) {
 
   $http({
     'method': 'POST',
-    'url': 'api/v1/resource/components/' + options.componentId + '/sections/all',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/sections/all',
     data: options.sections
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
@@ -1126,7 +1126,7 @@ componentservice.getComponentTags = function (componentId) {
 
   $http({
     'method': 'GET',
-    'url': 'api/v1/resource/components/' + componentId + '/tags'
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/tags'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1200,7 +1200,7 @@ componentservice.inactivateQuestionResponse = function (options) {
 
   $http({
     'method': 'DELETE',
-    'url': 'api/v1/resource/components/' + options.componentId + '/questions/'  + options.questionId + '/responses/' + options.responseId 
+    'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/questions/'  + encodeURIComponent(options.questionId) + '/responses/' + encodeURIComponent(options.responseId) 
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -1216,7 +1216,7 @@ componentservice.activateQuestionResponse = function (options) {
 
   $http({
     'method': 'PUT',
-    'url': 'api/v1/resource/components/' + options.componentId + '/questions/'  + options.questionId + '/responses/' + options.responseId  + '/activate'
+    'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/questions/'  + encodeURIComponent(options.questionId) + '/responses/' + encodeURIComponent(options.responseId)  + '/activate'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     deferred.resolve(data);
   }).error(function (data, status, headers, config) { /*jshint unused:false*/

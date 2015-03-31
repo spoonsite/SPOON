@@ -57,7 +57,7 @@ app.factory('mediaservice', ['$http', '$q', 'localCache', function($http, $q, lo
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/generalmedia/' + name
+        'url': 'api/v1/resource/generalmedia/' + encodeURIComponent(name)
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/

@@ -98,7 +98,7 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     if (highlight) {
 
       var method = highlight.highlightId? 'PUT': 'POST';
-      var url = highlight.highlightId? 'api/v1/resource/highlights/' + highlight.highlightId : 'api/v1/resource/highlights';
+      var url = highlight.highlightId? 'api/v1/resource/highlights/' + encodeURIComponent(highlight.highlightId) : 'api/v1/resource/highlights';
       $http({
         'method': method,
         'url': url,
@@ -154,7 +154,7 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     if (id) {
       $http({
         method: 'PUT',
-        url: 'api/v1/resource/highlights/' + id + '/activate'
+        url: 'api/v1/resource/highlights/' + encodeURIComponent(id) + '/activate'
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
@@ -180,7 +180,7 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     if (id) {
       $http({
         method: 'DELETE',
-        url: 'api/v1/resource/highlights/' + id + '/deactivate'
+        url: 'api/v1/resource/highlights/' + encodeURIComponent(id) + '/deactivate'
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
@@ -206,7 +206,7 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
     if (id) {
       $http({
         method: 'DELETE',
-        url: 'api/v1/resource/highlights/' + id + '/delete'
+        url: 'api/v1/resource/highlights/' + encodeURIComponent(id) + '/delete'
       }).success(function(data, status, headers, config){        
         if (isNotRequestError(data)){
           removeError();
