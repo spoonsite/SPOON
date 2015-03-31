@@ -408,33 +408,30 @@
           })
           .success(function (data, status, headers, config) { /*jshint unused:false*/
             if (data && !isEmpty(data) && isNotRequestError(data)) {
-                      // console.log('data', data);
+              removeError();
+              save('component_' + id, data);
+              result.resolve(data);
+            } else {
+              removeError();
+              triggerError(data);
+              result.reject(false);
+            }
+          }).error(function (data, status, headers, config) {
+            result.reject('There was an error');
+          });
+        }
+      } else {
+        result.reject('A unique ID is required to retrieve component details');
+      }
+      return result.promise;
+    };
 
-                      removeError();
-                      // console.log('data', data);
-                      save('component_' + id, data);
-                      result.resolve(data);
-                    } else {
-                      removeError();
-                      triggerError(data);
-                      result.reject(false);
-                    }
-                  }).error(function (data, status, headers, config) {
-                    result.reject('There was an error');
-                  });
-                }
-              } else {
-                result.reject('A unique ID is required to retrieve component details');
-              }
-              return result.promise;
-            };
-
-            componentservice.getComponentPrint = function (id, override) {
-              var result = $q.defer();
-              if (id)
-              {
-                var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/detail?type=print';
-                var value = null;
+    componentservice.getComponentPrint = function (id, override) {
+      var result = $q.defer();
+      if (id)
+      {
+        var url = 'api/v1/resource/components/' + encodeURIComponent(id) + '/detail?type=print';
+        var value = null;
         // if they don't give me an ID I send them back the whole list.
         value = checkExpire('component_print_' + id, minute * 2);
         if (value && !override) {
@@ -447,28 +444,28 @@
           .success(function (data, status, headers, config) { /*jshint unused:false*/
             if (data && !isEmpty(data) && isNotRequestError(data)) {
               removeError();
-                      // console.log('data', data);
-                      save('component_print_' + id, data);
-                      result.resolve(data);
-                    } else {
-                      removeError();
-                      triggerError(data);
-                      result.reject(false);
-                    }
-                  }).error(function (data, status, headers, config) {
-                    result.reject('There was an error');
-                  });
-                }
-              } else {
-                result.reject('A unique ID is required to retrieve component details');
-              }
-              return result.promise;
-            };
+              // console.log('data', data);
+              save('component_print_' + id, data);
+              result.resolve(data);
+            } else {
+              removeError();
+              triggerError(data);
+              result.reject(false);
+            }
+          }).error(function (data, status, headers, config) {
+            result.reject('There was an error');
+          });
+        }
+      } else {
+        result.reject('A unique ID is required to retrieve component details');
+      }
+      return result.promise;
+    };
 
-            componentservice.getComponentList = function () {
-              var result = $q.defer();
-              var url = 'api/v1/resource/components';
-              var value = null;
+    componentservice.getComponentList = function () {
+      var result = $q.defer();
+      var url = 'api/v1/resource/components';
+      var value = null;
       // if they don't give me an ID I send them back the whole list.
       value = checkExpire('componentList', minute * 10);
       if (value) {
@@ -742,7 +739,12 @@ componentservice.getFilteredComponents = function (queryParamFilter) {
     'method': 'GET',
     'url': 'api/v1/resource/components/filterable?' + queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -758,7 +760,12 @@ componentservice.activateComponent = function (componentId) {
     'method': 'PUT',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/activate'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -774,7 +781,12 @@ componentservice.inactivateComponent = function (componentId) {
     'method': 'DELETE',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId)
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -790,7 +802,12 @@ componentservice.deleteComponent = function (componentId) {
     'method': 'DELETE',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/cascade'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -806,7 +823,12 @@ componentservice.getComponentLookupList = function () {
     'method': 'GET',
     'url': 'api/v1/resource/components/lookup'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -822,7 +844,12 @@ componentservice.getComponentApproveStatus = function () {
     'method': 'GET',
     'url': 'api/v1/resource/components/approvalStatus'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -839,7 +866,12 @@ componentservice.addComponent = function (requiredForComponent) {
     'url': 'api/v1/resource/components',
     data: requiredForComponent
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -856,7 +888,12 @@ componentservice.updateComponent = function (requiredForComponent, componentId) 
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId),
     data: requiredForComponent
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -876,7 +913,12 @@ componentservice.getComponentAttributes = function (componentId, queryParamFilte
     'method': 'GET',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes?' + queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -892,7 +934,12 @@ componentservice.getComponentAttributeView = function (componentId, queryParamFi
     'method': 'GET',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes/view?' + queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -908,7 +955,12 @@ componentservice.inactivateAttribute = function (componentId, type, code) {
     'method': 'DELETE',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes/' + encodeURIComponent(type) + '/' + encodeURIComponent(code)
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -924,7 +976,12 @@ componentservice.activateAttribute = function (componentId, type, code) {
     'method': 'PUT',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes/' + encodeURIComponent(type) + '/' + encodeURIComponent(code) + "/activate"
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -941,7 +998,12 @@ componentservice.saveAttribute = function (componentId, componentAttribute) {
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes',
     data: componentAttribute
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -960,7 +1022,12 @@ componentservice.getComponentSubEntity = function (loadOptions) {
     'method': 'GET',
     'url': 'api/v1/resource/components/' + encodeURIComponent(loadOptions.componentId) + '/' + encodeURIComponent(loadOptions.entity) + '/view?' + loadOptions.queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -976,7 +1043,12 @@ componentservice.inactivateEnity = function (options) {
     'method': 'DELETE',
     'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entity) + '/' + encodeURIComponent(options.entityId)
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -992,7 +1064,12 @@ componentservice.forceRemoveEnity = function (options) {
     'method': 'DELETE',
     'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entity) + '/' + encodeURIComponent(options.entityId) + '/force'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1008,7 +1085,12 @@ componentservice.activateEntity = function (options) {
     'method': 'PUT',
     'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entity) + '/' + encodeURIComponent(options.entityId) + '/activate'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1025,7 +1107,12 @@ componentservice.addSubComponentEntity = function (options) {
     'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entityName),
     data: options.entity
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1042,7 +1129,12 @@ componentservice.updateSubComponentEntity = function (options) {
     'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entityName) + '/' + encodeURIComponent(options.entityId),
     data: options.entity
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1062,7 +1154,12 @@ componentservice.getEvaluationSections = function (componentId) {
     'method': 'GET',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/sections/view'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1078,7 +1175,12 @@ componentservice.deleteEvaluationSection = function (componentId, sectionCode) {
     'method': 'DELETE',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/sections/' + encodeURIComponent(sectionCode)
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1093,7 +1195,12 @@ componentservice.deleteAllEvaluationSection = function (componentId) {
     'method': 'DELETE',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/sections'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1109,7 +1216,12 @@ componentservice.saveAllEvaluationSections = function (options) {
     'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/sections/all',
     data: options.sections
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1128,7 +1240,12 @@ componentservice.getComponentTags = function (componentId) {
     'method': 'GET',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/tags'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1144,7 +1261,12 @@ componentservice.getComponentAllTags = function () {
     'method': 'GET',
     'url': 'api/v1/resource/components/tagviews'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1166,7 +1288,12 @@ componentservice.getComponentAllReviews = function (queryParamFilter) {
     'method': 'GET',
     'url': 'api/v1/resource/components/reviewviews?' + queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1186,7 +1313,12 @@ componentservice.getComponentAllQuestions = function (queryParamFilter) {
     'method': 'GET',
     'url': 'api/v1/resource/components/questionviews?' + queryParamFilter.toQuery()
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1202,7 +1334,12 @@ componentservice.inactivateQuestionResponse = function (options) {
     'method': 'DELETE',
     'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/questions/'  + encodeURIComponent(options.questionId) + '/responses/' + encodeURIComponent(options.responseId) 
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1218,7 +1355,12 @@ componentservice.activateQuestionResponse = function (options) {
     'method': 'PUT',
     'url': 'api/v1/resource/components/' + encodeURIComponent(options.componentId) + '/questions/'  + encodeURIComponent(options.questionId) + '/responses/' + encodeURIComponent(options.responseId)  + '/activate'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject('There was an error');
@@ -1234,7 +1376,12 @@ componentservice.getCount = function () {
     'method': 'GET',
     'url': 'api/v1/service/search/stats'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
-    deferred.resolve(data);
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
   }).error(function (data, status, headers, config) { /*jshint unused:false*/
     showServerError(data, 'body');
     deferred.reject(false);

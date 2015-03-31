@@ -31,7 +31,7 @@ app.filter('componentFilter', function()  {
       //we return true if it passes all of these filters
       return _.every(filters, function(filter) {
         var collection = filter.codes;
-        var key = filter.type;
+        var key = filter.attributeType;
 
         
 

@@ -80,6 +80,9 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
 
       if (scope.clickCallback === undefined) {
         scope.clickCallback =  function(id, article) {
+          if (scope.blankTarget){
+            return;
+          }
           var root = '';
           var name = '';
           var args = '';
@@ -101,6 +104,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           }
           popupWin = utils.openWindow(root, name, args, popupWin);
         };
+      } else if (scope.blankTarget) {
+        scope.clickCallback = function(){
+          return;
+        }
       }
 
       scope.goToCompare = function() {
