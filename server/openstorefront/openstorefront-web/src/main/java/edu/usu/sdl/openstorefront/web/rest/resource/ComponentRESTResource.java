@@ -63,7 +63,6 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
@@ -110,7 +109,6 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import jersey.repackaged.com.google.common.collect.Lists;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * ComponentRESTResource Resource
@@ -196,7 +194,7 @@ public class ComponentRESTResource
 		}
 
 		ComponentAdminWrapper componentAdminWrapper = service.getComponentService().getFilteredComponents(filterQueryParams, null);
-		
+
 		return sendSingleEntityResponse(componentAdminWrapper);
 	}
 
@@ -731,7 +729,10 @@ public class ComponentRESTResource
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		return Response.created(URI.create("v1/resource/components/" + attribute.getComponentAttributePk().getComponentId() + "/attributes/" + attribute.getComponentAttributePk().getAttributeType() + "/" + attribute.getComponentAttributePk().getAttributeCode())).entity(attribute).build();
+		return Response.created(URI.create("v1/resource/components/"
+				+ attribute.getComponentAttributePk().getComponentId() + "/attributes/"
+				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeType()) + "/"
+				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeCode()))).entity(attribute).build();
 	}
 	// </editor-fold>
 
@@ -1183,7 +1184,9 @@ public class ComponentRESTResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + section.getComponentId() + "/sections/" + section.getComponentEvaluationSectionPk().getEvaluationSection())).entity(section).build();
+			return Response.created(URI.create("v1/resource/components/"
+					+ section.getComponentId() + "/sections/"
+					+ StringProcessor.urlEncode(section.getComponentEvaluationSectionPk().getEvaluationSection()))).entity(section).build();
 		} else {
 			return Response.ok(section).build();
 		}

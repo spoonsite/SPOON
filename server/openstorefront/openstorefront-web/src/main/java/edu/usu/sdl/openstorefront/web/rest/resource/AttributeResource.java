@@ -639,7 +639,8 @@ public class AttributeResource
 		}
 		if (post) {
 			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
-			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).entity(attributeTypeCreated).build();
+			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
+					+ StringProcessor.urlEncode(attributeType.getAttributeType()))).entity(attributeTypeCreated).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -837,9 +838,9 @@ public class AttributeResource
 		if (post) {
 			AttributeCode attributeCodeCreated = service.getPersistenceService().findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
-					+ attributeCode.getAttributeCodePk().getAttributeType()
+					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeType())
 					+ "/attributecodes/"
-					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
+					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeCode()))).entity(attributeCodeCreated).build();
 		} else {
 			return Response.ok(attributeCode).build();
 		}
@@ -1120,7 +1121,9 @@ public class AttributeResource
 		if (validationResult.valid()) {
 			service.getAttributeService().saveAttributeXrefMap(attributeXref);
 
-			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/" + attributeXref.getType().getAttributeType() + "/detail")).build();
+			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/"
+					+ StringProcessor.urlEncode(attributeXref.getType().getAttributeType())
+					+ "/detail")).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
