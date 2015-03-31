@@ -91,10 +91,12 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
           }, function(){
             // console.log('There was an error getting the status');
           })
-        }, 5000); //
+        }, 10000); //
       } //
 
-      scope.getTasks();
+      $timeout(function(){
+        scope.getTasks();
+      }, 30000);
       scope.$on('$REFRESHTASKS', function(event, data){
         $timeout(function(){
           scope.getTasks();
