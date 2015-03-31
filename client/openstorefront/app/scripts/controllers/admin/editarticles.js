@@ -102,7 +102,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       if (conf) {
         if (article.activeStatus === 'A') {
           $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
-          Business.articleservice.activateCode(article.attributeType, article.attributeCode).then(function(){
+          Business.articleservice.deactivateCode(article.attributeType, article.attributeCode).then(function(){
             $timeout(function(){
               $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
               $scope.getArticles(true);
@@ -114,7 +114,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
             }, 1000);
           })
         } else {
-          Business.articleservice.deactivateCode(article.attributeType, article.attributeCode).then(function(){
+          Business.articleservice.activateCode(article.attributeType, article.attributeCode).then(function(){
             $timeout(function(){
               $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
               $scope.getArticles(true);
