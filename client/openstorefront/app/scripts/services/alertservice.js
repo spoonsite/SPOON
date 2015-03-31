@@ -40,7 +40,7 @@ app.factory('alertservice', ['$http', '$q', 'localCache', function($http, $q, lo
       if (alert.alertId) {
         $http({
           'method': 'PUT',
-          'url': 'api/v1/resource/alerts/' + alert.alertId,
+          'url': 'api/v1/resource/alerts/' + encodeURIComponent(alert.alertId),
           data: alert
         }).success(function (data, status, headers, config) { /*jshint unused:false*/
           removeError();
@@ -78,7 +78,7 @@ app.factory('alertservice', ['$http', '$q', 'localCache', function($http, $q, lo
 
       $http({
         'method': 'POST',
-        'url': 'api/v1/resource/alerts/' + id + '/activate'
+        'url': 'api/v1/resource/alerts/' + encodeURIComponent(id) + '/activate'
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    
@@ -93,7 +93,7 @@ app.factory('alertservice', ['$http', '$q', 'localCache', function($http, $q, lo
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/alerts/' + id
+        'url': 'api/v1/resource/alerts/' + encodeURIComponent(id)
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    
@@ -108,7 +108,7 @@ app.factory('alertservice', ['$http', '$q', 'localCache', function($http, $q, lo
 
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/alerts/' + id + '/force'
+        'url': 'api/v1/resource/alerts/' + encodeURIComponent(id) + '/force'
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/

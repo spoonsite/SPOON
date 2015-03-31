@@ -72,9 +72,9 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   */
   var loadLookupTable = function(entityName, successFunc, errorFunc, view) {
     if (view) {
-      $http.get('api/v1/resource/lookuptypes/' + entityName + '/view').success(successFunc).error(errorFunc);
+      $http.get('api/v1/resource/lookuptypes/' + encodeURIComponent(entityName) + '/view').success(successFunc).error(errorFunc);
     } else {
-      $http.get('api/v1/resource/lookuptypes/' + entityName).success(successFunc).error(errorFunc);
+      $http.get('api/v1/resource/lookuptypes/' + encodeURIComponent(entityName)).success(successFunc).error(errorFunc);
     }
   };
 
@@ -349,7 +349,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   var getLookupCodes = function(entity, filterstatus) {
     var deferred = $q.defer();
     
-      var url = 'api/v1/resource/lookuptypes/' + entity;
+      var url = 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity);
       if (filterstatus){
         url += "?status=" + filterstatus;
       } 
@@ -369,7 +369,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   var saveLookupCode = function(edit, entity, code, data) {
     var deferred = $q.defer();
     var method = edit ? 'PUT' : 'POST'; 
-    var url = edit ? 'api/v1/resource/lookuptypes/' + entity + '/' + code : 'api/v1/resource/lookuptypes/' + entity;       
+    var url = edit ? 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity) + '/' + encodeURIComponent(code) : 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity);       
     
       $http({
         'method': method,
@@ -389,7 +389,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/lookuptypes/' + entity + '/' + code
+        'url': 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity) + '/' + encodeURIComponent(code)
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);       
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
@@ -404,7 +404,7 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     
       $http({
         'method': 'POST',
-        'url': 'api/v1/resource/lookuptypes/' + entity + '/' + code + '/activate'        
+        'url': 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity) + '/' + encodeURIComponent(code) + '/activate'        
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);       
       }).error(function(data, status, headers, config) { /*jshint unused:false*/

@@ -54,7 +54,7 @@ app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, loca
 
     $http({
       'method': 'GET',
-      'url': 'api/v1/service/jobs/' + jobName
+      'url': 'api/v1/service/jobs/' + encodeURIComponent(jobName)
     }).success(function (data, status, headers, config) { /*jshint unused:false*/
       deferred.resolve(data);
     }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -99,7 +99,7 @@ app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, loca
 
     $http({
       'method': 'POST',
-      'url': 'api/v1/service/jobs/' + jobName + '/pause'
+      'url': 'api/v1/service/jobs/' + encodeURIComponent(jobName) + '/pause'
     }).success(function (data, status, headers, config) { /*jshint unused:false*/
       deferred.resolve(data);
     }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -114,7 +114,7 @@ app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, loca
 
     $http({
       'method': 'POST',
-      'url': 'api/v1/service/jobs/' + jobName + '/resume'
+      'url': 'api/v1/service/jobs/' + encodeURIComponent(jobName) + '/resume'
     }).success(function (data, status, headers, config) { /*jshint unused:false*/
       deferred.resolve(data);
     }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -129,7 +129,7 @@ app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, loca
 
     $http({
       'method': 'POST',
-      'url': 'api/v1/service/jobs/' + jobName + '/' + groupName + '/runnow'
+      'url': 'api/v1/service/jobs/' + encodeURIComponent(jobName) + '/' + encodeURIComponent(groupName) + '/runnow'
     }).success(function (data, status, headers, config) { /*jshint unused:false*/
       deferred.resolve(data);
     }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -161,7 +161,7 @@ app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, loca
 
     $http({
       'method': 'POST',
-      'url': 'api/v1/service/jobs/tasks/' + taskId + '/cancel' 
+      'url': 'api/v1/service/jobs/tasks/' + encodeURIComponent(taskId) + '/cancel' 
     }).success(function (data, status, headers, config) { /*jshint unused:false*/
       deferred.resolve(data);
     }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -176,7 +176,7 @@ app.factory('jobservice', ['$http', '$q', 'localCache', function($http, $q, loca
 
     $http({
       'method': 'DELETE',
-      'url': 'api/v1/service/jobs/tasks/' + taskId 
+      'url': 'api/v1/service/jobs/tasks/' + encodeURIComponent(taskId) 
     }).success(function (data, status, headers, config) { /*jshint unused:false*/
       deferred.resolve(data);
     }).error(function (data, status, headers, config) { /*jshint unused:false*/

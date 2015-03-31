@@ -53,7 +53,7 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
     
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/errortickets/' + ticketId + "/ticket" 
+        'url': 'api/v1/resource/errortickets/' + encodeURIComponent(ticketId) + "/ticket" 
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);       
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
@@ -68,7 +68,7 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'POST',
-        'url': 'api/v1/service/notification/recent-changes?lastRunDts=' + lastRunDts +"&emailAddress=" + emailAddress
+        'url': 'api/v1/service/notification/recent-changes?lastRunDts=' + encodeURIComponent(lastRunDts) +"&emailAddress=" + encodeURIComponent(emailAddress)
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -188,7 +188,7 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
     
       $http({
         'method': 'PUT',
-        'url': 'api/v1/service/application/logger/' + loggerName + '/level',
+        'url': 'api/v1/service/application/logger/' + encodeURIComponent(loggerName) + '/level',
         data: level
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);       
@@ -219,7 +219,7 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
     
       $http({
         'method': 'PUT',
-        'url': 'api/v1/resource/applicationproperties/' + key,
+        'url': 'api/v1/resource/applicationproperties/' + encodeURIComponent(key),
         data: value
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);       
