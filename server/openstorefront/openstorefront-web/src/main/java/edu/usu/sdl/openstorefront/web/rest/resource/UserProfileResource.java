@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -185,7 +186,9 @@ public class UserProfileResource
 			validationResult.getRuleResults().add(result);
 			return Response.ok(validationResult.toRestError()).build();
 		} else if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/userprofiles/" + (service.getUserService().saveUserProfile(inputProfile)).getUsername())).entity(inputProfile).build();
+			UserProfile userProfileSaved = service.getUserService().saveUserProfile(inputProfile);
+			String username = StringProcessor.urlEncode(userProfileSaved.getUsername());
+			return Response.created(URI.create("v1/resource/userprofiles/" + username)).entity(inputProfile).build();
 		}
 		return Response.ok(validationResult.toRestError()).build();
 	}
@@ -349,7 +352,10 @@ public class UserProfileResource
 			watch.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
 				watch = service.getUserService().saveWatch(watch);
-				return Response.created(URI.create("v1/resource/userprofiles/" + watch.getUsername() + "/watches/" + watch.getUserWatchId())).entity(watch).build();
+				String username = StringProcessor.urlEncode(watch.getUsername());
+				return Response.created(URI.create("v1/resource/userprofiles/"
+						+ username
+						+ "/watches/" + watch.getUserWatchId())).entity(watch).build();
 			}
 			return Response.ok(service.getUserService().saveWatch(watch)).build();
 		} else {
@@ -484,7 +490,11 @@ public class UserProfileResource
 			tracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
 				tracking = service.getUserService().saveUserTracking(tracking);
-				return Response.created(URI.create("v1/resource/userprofiles/" + tracking.getCreateUser() + "/tracking/" + tracking.getTrackingId())).entity(tracking).build();
+				String username = StringProcessor.urlEncode(tracking.getCreateUser());
+				return Response.created(URI.create("v1/resource/userprofiles/"
+						+ username
+						+ "/tracking/"
+						+ tracking.getTrackingId())).entity(tracking).build();
 			} else {
 				return Response.ok(service.getUserService().saveUserTracking(tracking)).build();
 			}
