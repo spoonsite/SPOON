@@ -14,39 +14,39 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <div>
-	<loader trigger="formLoader"></loader>
-	<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>Edit Application Property</h2>
-	<hr>
-	<div style="padding: 20px;">
-		<label class="col-sm-3 control-label">Key</label>
-		<input  type="text" 
-				id="propertyKey"
-				name="key"
-				placeholder="Key"
-				ng-disabled="true"
-				class="form-control" 
-				ng-model="propetyForm.key"           
-				required 
-				ng-focus />
-		<br>	
-		<label class="col-sm-3 control-label">Value*</label>					  
-		<input  type="text" 
-				id="propertyKey"
-				name="value"
-				placeholder="value"				
-				class="form-control" 
-				ng-model="propetyForm.value"		
-				ng-maxlength=255		 
-				ng-focus />			                				  
-		<br>			  
-		<p>Note: Value format is property dependant.  This especially true of dates which should be in this format (yyyy-MM-dd'T'HH:mm:ss.SSS'Z).</p>
+  <loader trigger="formLoader"></loader>
+  <h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>Edit Application Property</h2>
+  <hr>
+  <div style="padding: 20px;">
+    <label class="col-sm-3 control-label">Key</label>
+    <input  type="text"
+    id="propertyKey"
+    name="key"
+    placeholder="Key"
+    ng-disabled="true"
+    class="form-control"
+    ng-model="propetyForm.key"
+    required
+    ng-focus />
+    <br>
+    <label class="col-sm-3 control-label">Value*</label>
+    <input  type="text"
+    id="propertyKey"
+    name="value"
+    placeholder="value"
+    class="form-control"
+    ng-model="propetyForm.value"
+    ng-maxlength=255
+    ng-focus />
+    <br>
+    <p>Note: Value format is property dependant.  This especially true of dates which should be in this format (yyyy-MM-dd'T'HH:mm:ss.SSS'Z).</p>
 
-	</div>	
-	<hr>	
-	<br>
-	<br>
-	<div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
-		<button type="submit" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;Save Changes</button>	
-		<a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancel()"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
-	</div>
+  </div>
+  <hr>
+  <br>
+  <br>
+  <div style="position: absolute; right: 0px; bottom: 15px; padding-right: 20px; ">
+    <button type="submit" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;Save Changes</button>
+    <a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancel()"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
+  </div>
 </div>
