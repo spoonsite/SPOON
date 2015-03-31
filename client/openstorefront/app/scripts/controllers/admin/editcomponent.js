@@ -723,6 +723,7 @@ $scope.saveResource = function () {
     });
   } else {      
     $scope.resourceUploader.uploadAll();
+    document.resourceUIForm.uploadFile.value = null;
   }
 };   
 
@@ -846,6 +847,7 @@ $scope.saveMedia = function () {
     });
   } else {      
     $scope.mediaUploader.uploadAll();
+    document.mediaUIForm.uploadFile.value = null;
   }
 };   
 

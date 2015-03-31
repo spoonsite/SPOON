@@ -75,6 +75,11 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
     $scope.flags = {};
     $scope.flags.showUpload = false;
     
+    $scope.importFile = function(){      
+      $scope.uploader.uploadAll();
+      document.getElementById('uploadFile').value = null;
+    };
+    
     $scope.uploader = new FileUploader({
       url: 'Upload.action?UploadLookup&entityName=' + lookupEntity.code,
       alias: 'uploadFile',
