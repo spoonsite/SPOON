@@ -84,17 +84,18 @@ public class UserDataAlertMessageGenerator
 					.collect(Collectors.toList());
 
 			if (!tags.isEmpty()) {
-				message.append("Tags Added: ").append(tags.size()).append("<hr>");
+				message.append("<b>Tags</b> added: ").append(tags.size()).append("<hr>");
+				message.append("<ul>");
 			}
 			for (ComponentTag tag : tags) {
-				message.append("   '").append(tag.getText())
+				message.append("   <li>'").append(tag.getText())
 						.append("' was added on  ")
 						.append(serviceProxy.getComponentService().getComponentName(tag.getComponentId()))
 						.append(" by ").append(tag.getUpdateUser())
-						.append("<br>");
+						.append("</li>");
 			}
 			if (!tags.isEmpty()) {
-				message.append("<br>");
+				message.append("</ul><br>");
 			}
 		}
 
@@ -117,15 +118,17 @@ public class UserDataAlertMessageGenerator
 					.collect(Collectors.toList());
 
 			if (!reviews.isEmpty()) {
-				message.append("User Reviews modified: ").append(reviews.size()).append("<hr>");
+				message.append("User <b>Reviews</b> modified: ").append(reviews.size()).append("<hr>");
+				message.append("<ul>");
 			}
 			for (ComponentReview review : reviews) {
-				message.append("  '").append(review.getTitle())
+				message.append(" <li>'").append(review.getTitle())
 						.append("' modified by ").append(review.getUpdateUser())
-						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(review.getComponentId())).append("<br>");
+						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(review.getComponentId()))
+						.append("</li>");
 			}
 			if (!reviews.isEmpty()) {
-				message.append("<br>");
+				message.append("</ul><br>");
 			}
 		}
 
@@ -148,15 +151,17 @@ public class UserDataAlertMessageGenerator
 					.collect(Collectors.toList());
 
 			if (!questions.isEmpty()) {
-				message.append("User Questions modified: ").append(questions.size()).append("<hr>");
+				message.append("User <b>Questions</b> modified: ").append(questions.size()).append("<hr>");
+				message.append("<ul>");
 			}
 			for (ComponentQuestion question : questions) {
-				message.append("  '").append(StringProcessor.eclipseString(question.getQuestion(), MAX_SENSTIVE_DATA_LENGTH))
+				message.append("  <li>'").append(StringProcessor.eclipseString(question.getQuestion(), MAX_SENSTIVE_DATA_LENGTH))
 						.append("' modified by ").append(question.getUpdateUser())
-						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId())).append("<br>");
+						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId()))
+						.append("</li>");
 			}
 			if (!questions.isEmpty()) {
-				message.append("<br>");
+				message.append("</ul><br>");
 			}
 
 			ComponentQuestionResponse componentQuestionResponseExample = new ComponentQuestionResponse();
@@ -177,15 +182,17 @@ public class UserDataAlertMessageGenerator
 					.collect(Collectors.toList());
 
 			if (!questionReponses.isEmpty()) {
-				message.append("User Question response modified: ").append(questionReponses.size()).append("<hr>");
+				message.append("User <b>Question Responses</b> modified: ").append(questionReponses.size()).append("<hr>");
+				message.append("<ul>");
 			}
 			for (ComponentQuestionResponse question : questionReponses) {
-				message.append("  '").append(StringProcessor.eclipseString(question.getResponse(), MAX_SENSTIVE_DATA_LENGTH))
+				message.append("  <li>'").append(StringProcessor.eclipseString(question.getResponse(), MAX_SENSTIVE_DATA_LENGTH))
 						.append("' modified by ").append(question.getUpdateUser())
-						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId())).append("<br>");
+						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId()))
+						.append("</li>");
 			}
 			if (!questionReponses.isEmpty()) {
-				message.append("<br>");
+				message.append("</ul><br>");
 			}
 		}
 
