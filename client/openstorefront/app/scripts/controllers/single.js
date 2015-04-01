@@ -161,7 +161,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     },
     // This is the failure function that handles a returned error
     function(error) {
-      console.error('ERROR: ', error);
+      console.warn('WARN: ', error);
       var id = null;
       if (!isEmpty($location.search()))
       {
