@@ -17,5 +17,17 @@
 'use strict';
 
 app.controller('AdminTrackingCtrl',['$scope', function ($scope) {
-  //stuff here...
+  
+  $scope.user = {};
+  $scope.user.features = {'dates': true, 'max': true};
+  $scope.user.control = {};
+  
+  $scope.component = {};
+  $scope.component.features = {'dates': true, 'max': true};
+  $scope.component.control = {};
+  
+  $scope.article = {};
+  $scope.article.features = {'dates': true, 'max': true};
+  $scope.article.control = {};  
+  
 }]);
