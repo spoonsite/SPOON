@@ -100,7 +100,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       var message = "Warning: You are about to change the active status of an Attribute Code. This will activate or deactivate the code and all related metadata. Continue?";
       var conf = confirm(message);
       if (conf) {
-        if (article.activeStatus === 'A') {
+        if (article.attributeCodeActiveStatus === 'A') {
           $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
           Business.articleservice.deactivateCode(article.attributeType, article.attributeCode).then(function(){
             $timeout(function(){
