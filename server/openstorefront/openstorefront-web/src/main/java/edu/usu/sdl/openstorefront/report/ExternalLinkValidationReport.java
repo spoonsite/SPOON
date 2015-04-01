@@ -301,7 +301,7 @@ public class ExternalLinkValidationReport
 					}
 				} catch (Exception e) {
 					linkCheckModel.setStatus("URL is bad");
-					linkCheckModel.setCheckResults("Check link to make sure it's properly formated");
+					linkCheckModel.setCheckResults("Check link to make sure it's properly formatted");
 				}
 			}
 			log.log(Level.FINEST, MessageFormat.format("Finish checking link: {0} Check Time: {1} ms", modelToCheck.getLink(), System.currentTimeMillis() - startTime));
