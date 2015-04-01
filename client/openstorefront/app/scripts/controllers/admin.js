@@ -357,10 +357,8 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     
   }());
   $timeout(function(){ //
-    if ($location.search()) {
-      var search = $location.search();
-      console.log('search', search);
-      
+    var search = $location.search();
+    if (!angular.equals({}, search)) {
       if (search.tool) {
         var branch = _.find($scope.data, {'label': search.tool})
         if (!branch) {
@@ -375,7 +373,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
         }
       }
     } else {
-      var branch = _.find($scope.data, {'label': 'Articles'})
+      var branch = _.find($scope.data, {'label': 'Components'})
       if (branch){
         $scope.editor(branch, $scope.myTree, $scope.systemTree);
       }
