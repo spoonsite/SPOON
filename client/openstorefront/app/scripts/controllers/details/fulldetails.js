@@ -433,13 +433,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ***************************************************************/
   $scope.$on('$descModal', function(event) { /*jshint unused: false*/
     // re-initialize the modal content here if we must
-    if ($scope.modal.nav !== undefined && $scope.modal.nav !== null) {
+    if ($scope.modal && $scope.modal.nav) {
 
       if ($rootScope.current) {
         $scope.modal.nav.current = $rootScope.current;
       } else {
         $scope.modal.nav.current = 'Write a Review';
       }
+    } else if ($scope.modal){
+      $scope.modal.nav = {};
+      $scope.modal.nav.current = $rootScope.current;
     }
   });
 

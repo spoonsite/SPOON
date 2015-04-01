@@ -15,7 +15,7 @@
       <div class="form-group form-group-sm col-sm-12" ng-class="(componentId && componentId !== -1)? ' has-success has-feedback ': componentId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
         <label style="padding-left:0px; padding-right:0px;" class="control-label" for="componentSearch">Search For Component:&nbsp;</label>
         <div class="" style="padding: 0;">
-          <input type="text" class="form-control searchBar" id="componentSearch" ng-model="component" ng-options="key as key.name for key in typeahead" placeholder="Search For Component" bs-typeahead>
+          <input type="text" class="form-control searchBar" id="componentSearch" ng-model="component" ng-options="key as key.description for key in getTypeahead($viewValue)" placeholder="Search For Component" bs-typeahead>
           <span ng-class="(componentId && componentId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': componentId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
         </div>
       </div>
