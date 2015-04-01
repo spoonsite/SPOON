@@ -63,14 +63,14 @@ app.directive('question', ['business', '$timeout', function (Business, $timeout)
           errorObjt.add(scope.id+'question', 'A reqsponse is required.');
           error = true;
         } else if (scope.post.question.length > 1024){
-          errorObjt.add(cope.id+'question', 'Your question has exceeded the accepted input length');
+          errorObjt.add(scope.id+'question', 'Your question has exceeded the accepted input length');
           error = true;
         }        
         if (!scope.post.organization){
           errorObjt.add(scope.id+'org', 'An organization name is required.');
           error = true;
         } else if (scope.post.organization.length > 120){
-          errorObjt.add(cope.id+'org', 'Your organization has exceeded the accepted input length');
+          errorObjt.add(scope.id+'org', 'Your organization has exceeded the accepted input length');
           error = true;
         }
 
@@ -96,6 +96,7 @@ app.directive('question', ['business', '$timeout', function (Business, $timeout)
             Business.componentservice.saveQuestion(scope.componentId, request, scope.questionId).then(function(result){
               if (result) {
                 scope.$emit('$TRIGGEREVENT', '$detailsUpdated', scope.componentId);
+                scope.post.question = '';
               }
             });
           }

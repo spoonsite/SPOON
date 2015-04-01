@@ -18,6 +18,6 @@
   </ul>
   <div style="margin-left:315px;" id="scheduleDiv">
     <h4 style="margin-top:0px; padding: 5px; padding-left:0px;">{{ngModel.level.typeDescription}}&nbsp;&mdash;&nbsp;{{ngModel.level.codeDescription}}&nbsp;<small ng-if="ngModel.level.code !=='NA' && ngModel.level">({{ngModel.intent.codeDescription}})</small></h4>
-    <div>{{ngModel.level.codeLongDescription}}</div><span style="font-size: 11px; color: #858585;">Updated&mdash;{{getDate(ngModel.level.updateDts)}}</span>
+    <div dynamichtml="ngModel.level.codeLongDescription"></div><span style="font-size: 11px; color: #858585;">Updated&mdash;{{getDate(ngModel.level.updateDts)}}</span>
   </div>
 </div>
