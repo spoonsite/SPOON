@@ -391,7 +391,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
                 Business.configurationservice.getStoreFields().then(function(storeFields){
                   $scope.storeFields = storeFields? storeFields: [];
                   $timeout(function(){
-                    var found = _.find($scope.storeFields, {'attributeType': mappingModel.attributeType});
+                    var found = _.find($scope.storeFields.data, {'attributeType': mappingModel.attributeType});
                     if (found) {
                       Business.configurationservice.getJiraFields(project, issueType).then(function(jiraFields){
                         $scope.jiraFields = jiraFields? jiraFields: [];
