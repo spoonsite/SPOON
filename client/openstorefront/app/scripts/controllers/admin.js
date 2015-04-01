@@ -18,7 +18,7 @@
 
 /*global getCkConfig*/
 
-app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
+app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', function ($scope, Business, $location, $timeout) {
 
   //this object is used to contain the tree functions
   $scope.myTree = {};
@@ -63,6 +63,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * admin clicks on
   ***************************************************************/
   $scope.editor = function(branch, tree, otherTree) {
+    $location.search('tool', branch.label);
     $scope.incLoc = branch.location;
     $scope.toolTitle = branch.toolTitle;
     $scope.detailedDesc = branch.detailedDesc;
@@ -70,8 +71,10 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       $scope.type = null;
       $scope.code = null;
     }
-    tree.selectBranch(branch);
-    otherTree.selectBranch(branch);
+    if (tree && otherTree) {
+      tree.selectBranch(branch);
+      otherTree.selectBranch(branch);
+    }
   };
 
 
@@ -297,7 +300,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
       'detailedDesc': "A user profile represents a user in the system and contains the user's information.",
       'key': 'USER_PROFILE' 
     });
-   
+
 
     $scope.systemTools.push({
       'label': 'Alerts', 
@@ -351,6 +354,32 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     // $scope.data.push(lookupTables);
 
     // $scope.data.push({'label': 'Manage Branding', 'location': 'views/admin/editbranding.html', 'toolTitle': 'Manage Branding', 'key': 'branding' });
+    
   }());
+  $timeout(function(){ //
+    if ($location.search()) {
+      var search = $location.search();
+      console.log('search', search);
+      
+      if (search.tool) {
+        var branch = _.find($scope.data, {'label': search.tool})
+        if (!branch) {
+          branch = _.find($scope.systemTools, {'label': search.tool});
+          if (branch) {
+            console.log('branch', branch);
+            $scope.editor(branch, $scope.myTree, $scope.systemTree);
+          }
+        } else {
+          console.log('branch', branch);
+          $scope.editor(branch, $scope.myTree, $scope.systemTree);
+        }
+      }
+    } else {
+      var branch = _.find($scope.data, {'label': 'Articles'})
+      if (branch){
+        $scope.editor(branch, $scope.myTree, $scope.systemTree);
+      }
+    }
+  }, 300)
 
 }]);

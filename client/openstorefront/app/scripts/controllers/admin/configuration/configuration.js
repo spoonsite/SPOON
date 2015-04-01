@@ -57,17 +57,15 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }
   ]
 
-  Business.componentservice.getComponentList().then(function(result) {
-    Business.typeahead(result, null).then(function(value){
-      if (value) {
-        $scope.typeahead = value;
-      } else {
-        $scope.typeahead = null;
-      }
-    }, function() {
-    });
-  }, function() {
-  });
+  $scope.getTypeahead = function(val){
+    var deferred = $q.defer();
+    Business.typeahead(val).then(function(result){
+      deferred.resolve(result);
+    }, function(){
+      deferred.resolve([]);
+    })
+    return deferred.promise;
+  }
 
   $scope.getGlobalConfig = function(){
     Business.configurationservice.getGlobalConfig().then(function(result) {

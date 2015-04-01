@@ -73,7 +73,8 @@ var app = angular
   })
   .when('/admin', {
     templateUrl: 'views/admin.html',
-    controller: 'AdminCtrl'
+    controller: 'AdminCtrl',
+    reloadOnSearch: false
   })
   .when('/landing', {
     templateUrl: 'views/landing.html',
@@ -262,6 +263,7 @@ var app = angular
         if (current && current.loadedTemplateUrl === 'views/results.html') {
           resetAnimGlobals();
         }
+
         // setTimeout(function () {
         //   $('.searchBar:input[type=\'text\']').on('click', function () {
         //     $(this).select();
@@ -281,7 +283,12 @@ var app = angular
       * This funciton resets the search query when we don't want to be showing it
       ***************************************************************/
       $rootScope.$on('$locationChangeStart', function (event, next, current) {
-        if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing' && $location.path() !== '/compare' && $location.path() !== '/print')) {
+        if (!$location.path() || ($location.path() !== '/results' 
+          && $location.path() !== '/single' 
+          && $location.path() !== '/landing' 
+          && $location.path() !== '/compare' 
+          && $location.path() !== '/admin' 
+          && $location.path() !== '/print')) {
           $location.search({});
         }
       });
