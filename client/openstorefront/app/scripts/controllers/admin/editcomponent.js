@@ -99,17 +99,25 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };
     
     $scope.toggleStatus = function(component){
-      $scope.$emit('$TRIGGERLOAD', 'componentLoader');
-      if (component.component.activeStatus === 'A') {
-        Business.componentservice.inactivateComponent(component.component.componentId).then(function (results) {
-          $scope.refreshComponents();
-          $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
-        });        
-      } else {
-        Business.componentservice.activateComponent(component.component.componentId).then(function (results) {
-          $scope.refreshComponents();
-          $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
-        });        
+      var mode = 'INACTIVATE';
+      if (component.component.activeStatus !== 'A') {
+        mode = 'ACTIVATE';
+      }
+
+      var response = window.confirm("Are you sure you want  " + mode + " " + component.component.name + "?");
+      if (response) {
+        $scope.$emit('$TRIGGERLOAD', 'componentLoader');
+        if (component.component.activeStatus === 'A') {
+          Business.componentservice.inactivateComponent(component.component.componentId).then(function (results) {
+            $scope.refreshComponents();
+            $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+          });
+        } else {
+          Business.componentservice.activateComponent(component.component.componentId).then(function (results) {
+            $scope.refreshComponents();
+            $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+          });
+        }
       }
     };
     
@@ -118,7 +126,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };    
     
     $scope.deleteComponent = function(component){
-      var response = window.confirm("Are you sure you want DELETE  "+ component.name + "?");
+      var response = window.confirm("Are you sure you want DELETE "+ component.name + "?");
       if (response) {
         $scope.$emit('$TRIGGERLOAD', 'componentLoader');
         Business.componentservice.deleteComponent(component.componentId).then(function (result) {          

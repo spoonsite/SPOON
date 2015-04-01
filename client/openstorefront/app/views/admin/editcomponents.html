@@ -67,9 +67,8 @@ limitations under the License.
         <td align="center">{{component.component.approvalState}}</td>
         <td>{{component.integrationManagement}}</td>
         <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
-          <button class="btn btn-default btn-sm" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>
-          <button class="btn btn-warning btn-sm" ng-click="toggleStatus(component)"  title="Activate/Inactivate" ng-class="component.component.activeStatus === 'I' ? 'inverted':'' "><i class="fa fa-power-off"></i></button>          
-          <button class="btn btn-info btn-sm" ng-click="exportComponent(component.component.componentId)"  title="Export"><i class="fa fa-sign-out"></i></button>
+          <button class="btn btn-default btn-sm" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>	
+          <button class="btn btn-warning btn-sm" ng-click="toggleStatus(component)"  title="Activate/Inactivate" ng-class="component.component.activeStatus === 'I' ? 'inverted':'' "><i class="fa fa-power-off"></i></button>                    
           <button class="btn btn-danger btn-sm" ng-click="deleteComponent(component.component)"  title="Delete"><i class="fa fa-trash"></i></button>
         </td>
       </tr>         
