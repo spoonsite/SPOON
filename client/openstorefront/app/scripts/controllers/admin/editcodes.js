@@ -18,9 +18,10 @@
 
 app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 'type', 'size', 'business', '$timeout', '$filter', function ($scope, $uiModalInstance, $uiModal, type, size, Business, $timeout, $filter) {
   $scope.type = angular.copy(type);
+  $scope.triggerShow = 0;
   $scope.backup = angular.copy(type);
   $scope.size = size;
-  $scope.predicate = 'sortOrder';
+  $scope.predicate = 'code';
   $scope.check = {};
   $scope.reverse = false;
   $scope.current = 0;

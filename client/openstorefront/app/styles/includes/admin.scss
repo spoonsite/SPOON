@@ -70,6 +70,23 @@
   background-color: #eee;
 }
 
+.table-striped.doubled > thead > tr td, .table-striped.doubled > thead > tr th,
+.table-striped.doubled > thead > tr td, .table-striped.doubled > thead > tr th {
+  background-color: #eee;
+}
+.table-striped.doubled > tbody > tr:nth-child(4n + 2) td, .table-striped.doubled > tbody > tr:nth-child(4n + 2) th,
+.table-striped.doubled > tbody > tr:nth-child(4n + 1) td, .table-striped.doubled > tbody > tr:nth-child(4n + 1) th {
+  background-color: white;
+}
+.table-striped.doubled > tbody > tr:nth-child(4n + 4) td, .table-striped.doubled > tbody > tr:nth-child(4n + 4) th,
+.table-striped.doubled > tbody > tr:nth-child(4n + 3) td, .table-striped.doubled > tbody > tr:nth-child(4n + 3) th {
+  background-color: #eee;
+}
+.table-striped.doubled > tbody > tr:nth-child(4n + 4) td, .table-striped.doubled > tbody > tr:nth-child(4n + 4) th,
+.table-striped.doubled > tbody > tr:nth-child(4n + 2) td, .table-striped.doubled > tbody > tr:nth-child(4n + 2) th{
+  border-bottom: 1px solid #333;
+}
+
 tr.inactive{
   color: rgb(150, 150, 150);
   background: rgb(229, 229, 229);
