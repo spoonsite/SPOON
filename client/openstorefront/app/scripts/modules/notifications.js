@@ -24,9 +24,13 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
 
       scope.history = [];
       scope.interval = null;
-      scope.getTasks = function(){
-        clearInterval(scope.interval);
-        scope.interval = setInterval(function(){
+      scope.getTasks = function(data){
+        var time = data || 100;
+        if (isNaN(time)) {
+          time = 100;
+        }
+        clearTimeout(scope.interval);
+        scope.interval = setTimeout(function(){
           Factory.get('api/v1/service/jobs/tasks/status').then(function(result){
             if (result) {
 
@@ -91,16 +95,34 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
           }, function(){
             // console.log('There was an error getting the status');
           })
-        }, 10000); //
+          scope.getTasks(10000); //
+        }, time); //
       } //
 
-      $timeout(function(){
-        scope.getTasks();
-      }, 30000);
+      var refreshTimer;
+      scope.refresh = function(data, override){
+        
+        var time = data || 100;
+        if (isNaN(time)) {
+          time = 100;
+        }        
+        if (isNaN(override)) {
+          override = null;
+        }
+        clearTimeout(refreshTimer);
+        refreshTimer = setTimeout(function(){
+          scope.getTasks(override);
+          if(!scope.$$phase) {
+            scope.$apply();
+          }
+        }, time);
+      }
+      scope.refresh(30000, 100);
       scope.$on('$REFRESHTASKS', function(event, data){
-        $timeout(function(){
-          scope.getTasks();
-        }, 2000);
+        scope.refresh(data, 100);
+        if(!scope.$$phase) {
+          scope.$apply();
+        }
       })
 
       scope.getSize = function () {
@@ -110,7 +132,9 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
       var closeAlertTrigger = function(alert){
         // console.log('closing alert', alert);
         scope.closeAlert(alert);
-        scope.$apply();
+        if(!scope.$$phase) {
+          scope.$apply();
+        }
       }
 
       scope.$on('$NOTIFICATIONADDED', function (event, alert) {
@@ -281,6 +305,7 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
     
     var found = _.find(data.tasks, {'taskId': task.taskId});
     if (!found) {
+      
       data.tasks.push(angular.copy(task));
       task.msg = message;
       task.type = type;
@@ -295,6 +320,7 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
       index = _.indexOf(data.tasks, index);
       data.tasks.splice(index, 1);
       if (type && message) {
+        
         task = angular.copy(task);
         task.msg = message;
         task.type = type;
@@ -329,8 +355,10 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
       'method': 'DELETE',
       'url': url + taskId 
     }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      $rootScope.$emit('$N-EVENT', '$REFRESHTASKS', 100);
       deferred.resolve(data);
     }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      $rootScope.$emit('$N-EVENT', '$REFRESHTASKS', 100);
       deferred.reject('There was an error');
     });
 
@@ -340,7 +368,7 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
   return notifications;
 }])
 .controller('notificationsModalCtrl', ['$scope', '$uiModalInstance', 'size', 'notificationsFactory', '$timeout', function ($scope, $uiModalInstance, size, Factory, $timeout) {
-  $scope.data = Factory.get();
+  $scope.data = angular.copy(Factory.get());
 
   $scope.predicate = 'expireDts';
   $scope.reverse = false;
@@ -355,16 +383,28 @@ angular.module('notifications', ['ui.bootstrap','mgcrea.ngStrap'])
   };
 
   $scope.refresh = function(){
-    Factory.get('api/v1/service/jobs/tasks/status').then(function(){
-      $scope.data = Factory.get();
+    Factory.get('api/v1/service/jobs/tasks/status').then(function(data){
+      $scope.data = data? angular.copy(data.tasks):[];
+      $scope.$emit('$N-EVENT', '$REFRESHTASKS', 100);
+      if(!$scope.$$phase) {
+        $scope.$apply();
+      }
+    }, function(){
+      //something broke the refresh...
     });
   }
+
+  $scope.$on('$NOTIFICATIONREMOVED', function(event, task){
+    $scope.refresh();
+  })
 
   $scope.deleteTask = function(task){    
     var response = window.confirm("Are you sure you want DELETE " + task.taskName + "? (This may take a few seconds to apply)");
     if (response) {
       Factory.deleteTask('api/v1/service/jobs/tasks/', task.taskId).then(function (results) {
-        $scope.refresh();
+        $timeout(function(){
+          $scope.refresh();
+        }, 300);
       });
     }
   }; 
