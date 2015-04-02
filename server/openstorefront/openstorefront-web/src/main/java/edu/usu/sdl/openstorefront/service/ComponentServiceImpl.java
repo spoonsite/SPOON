@@ -1575,59 +1575,81 @@ public class ComponentServiceImpl
 							throw new OpenStorefrontRuntimeException("Unable to get field value from: " + jiraField.getValue(), ErrorTypeCode.INTEGRATION);
 						}
 					} else {
-						jiraValue = jiraField.getValue().toString();
+						if (jiraField.getValue() != null) {
+							jiraValue = jiraField.getValue().toString();
+						}
 					}
-
 				} else {
-					throw new OpenStorefrontRuntimeException("Unable to find Jira Field: " + xrefAttributeType.getFieldName(), ErrorTypeCode.INTEGRATION);
+					throw new OpenStorefrontRuntimeException("Unable to find Jira Field: " + xrefAttributeType.getFieldName(), "Update mapping to match jira.", ErrorTypeCode.INTEGRATION);
 				}
 			}
-			String ourAttributeCode = xrefAttributeMaps.get(xrefAttributeType.getAttributeType()).get(jiraValue);
 
-			if (ourAttributeCode != null) {
-				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-				componentAttributePk.setComponentId(integrationConfig.getComponentId());
-				componentAttributePk.setAttributeType(xrefAttributeType.getAttributeType());
-				componentAttributePk.setAttributeCode(ourAttributeCode);
-
-				if (StringUtils.isBlank(componentAttributePk.getComponentId())) {
-					throw new OpenStorefrontRuntimeException("Component Id is required", ErrorTypeCode.INTEGRATION);
-				}
-
-				AttributeCodePk attributeCodePk = new AttributeCodePk();
-				attributeCodePk.setAttributeType(componentAttributePk.getAttributeType());
-				attributeCodePk.setAttributeCode(componentAttributePk.getAttributeCode());
-
-				AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
-				if (attributeCode != null) {
-
-					ComponentAttribute existingAttribute = persistenceService.findById(ComponentAttribute.class, componentAttributePk);
-					if (existingAttribute == null) {
-
-						ComponentAttributePk deleteComponentAttributePKExample = new ComponentAttributePk();
-						deleteComponentAttributePKExample.setAttributeType(componentAttributePk.getAttributeType());
-						deleteComponentAttributePKExample.setComponentId(componentAttributePk.getComponentId());
+			if (StringUtils.isBlank(jiraValue)) {
+				AttributeType attributeType = persistenceService.findById(AttributeType.class, xrefAttributeType.getAttributeType());
+				if (attributeType != null) {
+					if (Convert.toBoolean(attributeType.getRequiredFlg()) == false) {
+						log.log(Level.FINEST, "Jira Value is Blank....remove any existing component attribute since Attribute type is not require.");
+						ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+						componentAttributePk.setComponentId(integrationConfig.getComponentId());
+						componentAttributePk.setAttributeType(xrefAttributeType.getAttributeType());
 						ComponentAttribute componentAttributeExample = new ComponentAttribute();
-						componentAttributeExample.setComponentAttributePk(deleteComponentAttributePKExample);
+						componentAttributeExample.setComponentAttributePk(componentAttributePk);
 						persistenceService.deleteByExample(componentAttributeExample);
-
-						ComponentAttribute componentAttribute = new ComponentAttribute();
-						componentAttribute.setComponentAttributePk(componentAttributePk);
-						componentAttribute.setComponentId(componentAttributePk.getComponentId());
-						componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-						componentAttribute.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
-						componentAttribute.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-						saveComponentAttribute(componentAttribute, false);
-						componentChanged = true;
 					} else {
-						log.log(Level.FINEST, "Attibute already exists in that state...skipping");
+						log.log(Level.WARNING, MessageFormat.format("Attribute Type is required and Integration is returned a empty value.  Keeping exisiting value on component: {0}  Attribute Type: {1}",
+								new Object[]{getComponentService().getComponentName(integrationConfig.getComponentId()), attributeType.getDescription()}));
 					}
 				} else {
-					throw new OpenStorefrontRuntimeException("Unable to find attribute code.  Attribute Type: " + componentAttributePk.getAttributeType() + " Code: " + componentAttributePk.getAttributeCode(),
-							"Check data (Attributes and Input)", ErrorTypeCode.INTEGRATION);
+					throw new OpenStorefrontRuntimeException("Unable to find Attribute", "Check Integration mapping.", ErrorTypeCode.INTEGRATION);
 				}
 			} else {
-				throw new OpenStorefrontRuntimeException("Unable to find Mapping for Jira Field value: " + jiraValue, ErrorTypeCode.INTEGRATION);
+				String ourAttributeCode = xrefAttributeMaps.get(xrefAttributeType.getAttributeType()).get(jiraValue);
+
+				if (ourAttributeCode != null) {
+					ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+					componentAttributePk.setComponentId(integrationConfig.getComponentId());
+					componentAttributePk.setAttributeType(xrefAttributeType.getAttributeType());
+					componentAttributePk.setAttributeCode(ourAttributeCode);
+
+					if (StringUtils.isBlank(componentAttributePk.getComponentId())) {
+						throw new OpenStorefrontRuntimeException("Component Id is required", ErrorTypeCode.INTEGRATION);
+					}
+
+					AttributeCodePk attributeCodePk = new AttributeCodePk();
+					attributeCodePk.setAttributeType(componentAttributePk.getAttributeType());
+					attributeCodePk.setAttributeCode(componentAttributePk.getAttributeCode());
+
+					AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+					if (attributeCode != null) {
+
+						ComponentAttribute existingAttribute = persistenceService.findById(ComponentAttribute.class, componentAttributePk);
+						if (existingAttribute == null) {
+
+							ComponentAttributePk deleteComponentAttributePKExample = new ComponentAttributePk();
+							deleteComponentAttributePKExample.setAttributeType(componentAttributePk.getAttributeType());
+							deleteComponentAttributePKExample.setComponentId(componentAttributePk.getComponentId());
+							ComponentAttribute componentAttributeExample = new ComponentAttribute();
+							componentAttributeExample.setComponentAttributePk(deleteComponentAttributePKExample);
+							persistenceService.deleteByExample(componentAttributeExample);
+
+							ComponentAttribute componentAttribute = new ComponentAttribute();
+							componentAttribute.setComponentAttributePk(componentAttributePk);
+							componentAttribute.setComponentId(componentAttributePk.getComponentId());
+							componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+							componentAttribute.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+							componentAttribute.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+							saveComponentAttribute(componentAttribute, false);
+							componentChanged = true;
+						} else {
+							log.log(Level.FINEST, "Attibute already exists in that state...skipping");
+						}
+					} else {
+						throw new OpenStorefrontRuntimeException("Unable to find attribute code.  Attribute Type: " + componentAttributePk.getAttributeType() + " Code: " + componentAttributePk.getAttributeCode(),
+								"Check Integration Mapping (Attributes and Input)", ErrorTypeCode.INTEGRATION);
+					}
+				} else {
+					throw new OpenStorefrontRuntimeException("Unable to find Mapping for Jira Field value: " + jiraValue, ErrorTypeCode.INTEGRATION);
+				}
 			}
 		}
 
