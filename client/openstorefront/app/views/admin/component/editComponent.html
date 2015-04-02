@@ -47,7 +47,8 @@ limitations under the License.
         </div>      
         <div class="form-group required" show-errors >
           <span style="width: 100%;"><label class="col-sm-2 control-label required">Description</label></span>
-          <textarea ckeditor="editorOptions" id="description" class="col-sm-10" style="height: 100px;" ng-model="componentForm.description" ng-watch="editorContentWatch"></textarea>        
+		 <textarea ckeditor="editorOptions" id="description" name="description" required  class="col-sm-10" style="height: 100px;" ng-model="componentForm.description" ng-watch="editorContentWatch"></textarea>        
+		  <p style="text-align:center" ng-show="componentUIForm.description.$error.required && !componentUIForm.description.$focused" class="help-block">Description is required.</p>
         </div>
         <div class="form-group" show-errors >
           <label class="col-sm-2 control-label">Parent Component</label>
