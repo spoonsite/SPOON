@@ -279,6 +279,7 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
   // console.log('===CODE===', code);
   
   $scope.editorContent = '';
+  $scope.editorOptions = getCkBasicConfig(true);
   if ($scope.code && $scope.code.description) {
     $scope.editorContent = angular.copy($scope.code.description);
   } 

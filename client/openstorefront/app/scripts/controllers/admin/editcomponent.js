@@ -228,7 +228,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.editMode = editMode;
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
     $scope.componentForm = component.component !== undefined ? angular.copy(component.component) : {};
-    $scope.editorOptions = getCkBasicConfig();
+    $scope.editorOptions = getCkBasicConfig(true);
 
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},

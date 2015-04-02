@@ -41,6 +41,11 @@
 @import "fonts/fontello.scss";
 @import "fonts/icomoon.scss";
 
+
+.help-block{
+  text-align: center;
+}
+
 .slimBottoms{
   margin-bottom:10px;
 }
@@ -54,6 +59,14 @@
   content: ' *';
   display:inline;
   position: absolute;
+  top: 5px;
+  right: 7px;
+}
+
+span.required:after {
+  color: #e32;
+  content: ' *';
+  display:inline;
   top: 5px;
   right: 7px;
 }

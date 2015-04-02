@@ -26,6 +26,34 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
 
   resetUpdateNotify();
 
+  $scope.setupTagList = $scope.setupTagList || function() {
+    Business.getTagsList(true).then(function(result) {
+      if (result) {
+        $scope.tagsList       = result;
+        $scope.tagsList.sort();
+      } else {
+        $scope.tagsList       = null;
+      }
+    });
+  }
+  $scope.setupTagList();
+
+  $scope.checkTagsList = $scope.checkTagsList || function(query, list, source) {
+    var deferred = $q.defer();
+    var subList = null;
+    if (query === ' ') {
+      subList = _.reject(source, function(item) {
+        return !!(_.where(list, {'text': item}).length);
+      });
+    } else {
+      subList = _.filter(source, function(item) {
+        return item.toLowerCase().indexOf(query.toLowerCase()) > -1;
+      });
+    }
+    deferred.resolve(subList);
+    return deferred.promise;
+  };
+
   Business.userservice.getWatches().then(function(result) {
     if (result) {
       $scope.watches = result;
@@ -253,7 +281,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       // console.log('Error Result', result);
 
     });
-    $scope.applyFilters();
+    if ($scope.applyFilters){
+      $scope.applyFilters();
+    }
   };
   
   /***************************************************************
@@ -267,9 +297,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
         $scope.$emit('$TRIGGEREVENT', '$CHANGESEARCHRESULTTAGS', id, tags);
         $scope.tempTags = [];
-        $scope.applyFilters();
+        if ($scope.applyFilters){
+          $scope.applyFilters();
+        }
       }, function(result){
-        $scope.applyFilters();
+        if ($scope.applyFilters){
+          $scope.applyFilters();
+        }
         $scope.tempTags = [];
       });
     } else {
@@ -293,10 +327,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         }
         $scope.tempTags = [];
 
-        $scope.applyFilters();
+        if ($scope.applyFilters){
+          $scope.applyFilters();
+        }
       }, function(result){
         $scope.tempTags = [];
-        $scope.applyFilters();
+        if ($scope.applyFilters){
+          $scope.applyFilters();
+        }
       });
     } else {
       $scope.tempTags = [];
@@ -716,27 +754,27 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   }, true);
 
-  $scope.evaluationAttributes = {};
-  $scope.evaluationAttributes.exist = false;
-  $scope.evaluationDetails = function (attributes) {
-    if (attributes) {
-      _.forEach(attributes, function (item) {
-        if (item.type === 'DI2ELEVEL') {
-          $scope.evaluationAttributes.exist = true;
-          $scope.evaluationAttributes.level = item;
-        }
-        if (item.type === 'DI2ESTATE') {
-          $scope.evaluationAttributes.exist = true;
-          $scope.evaluationAttributes.state = item;
-        }
-        if (item.type === 'DI2EINTENT') {
-          $scope.evaluationAttributes.exist = true;
-          $scope.evaluationAttributes.intent = item;
-        }
-      });
-    }
-  };
-  
+$scope.evaluationAttributes = {};
+$scope.evaluationAttributes.exist = false;
+$scope.evaluationDetails = function (attributes) {
+  if (attributes) {
+    _.forEach(attributes, function (item) {
+      if (item.type === 'DI2ELEVEL') {
+        $scope.evaluationAttributes.exist = true;
+        $scope.evaluationAttributes.level = item;
+      }
+      if (item.type === 'DI2ESTATE') {
+        $scope.evaluationAttributes.exist = true;
+        $scope.evaluationAttributes.state = item;
+      }
+      if (item.type === 'DI2EINTENT') {
+        $scope.evaluationAttributes.exist = true;
+        $scope.evaluationAttributes.intent = item;
+      }
+    });
+  }
+};
+
 
 
 }]);

@@ -244,7 +244,7 @@ var getCkConfig = function() {
   return config;
 };
 
-var getCkBasicConfig = function() {
+var getCkBasicConfig = function(basic) {
   var config = {};
   // Define changes to default configuration here.
   // For the complete reference:
@@ -271,46 +271,80 @@ var getCkBasicConfig = function() {
 
 
   config.toolbar = 'Full';
+  if (!basic) {
+    config.toolbar_Full =
+    [
+      ////////////////////////////////////////////////////////////////////////////
+      // THIS IS THE FULL SET
+      // { name: 'document', items : [ 'Source','-','Save','NewPage','DocProps','Preview','Print','-','Templates' ] },
+      // { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+      // { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
+      // { name: 'forms', items : [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+      // 'HiddenField' ] },
+      // '/',
+      // { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+      // { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv',
+      // '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
+      // { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+      // { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
+      // '/',
+      // { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
+      // { name: 'colors', items : [ 'TextColor','BGColor' ] },
+      // { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About' ] }
+      ////////////////////////////////////////////////////////////////////////////
 
-  config.toolbar_Full =
-  [
-    ////////////////////////////////////////////////////////////////////////////
-    // THIS IS THE FULL SET
-    // { name: 'document', items : [ 'Source','-','Save','NewPage','DocProps','Preview','Print','-','Templates' ] },
-    // { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-    // { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
-    // { name: 'forms', items : [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
-    // 'HiddenField' ] },
-    // '/',
-    // { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-    // { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv',
-    // '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
-    // { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
-    // { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
-    // '/',
-    // { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-    // { name: 'colors', items : [ 'TextColor','BGColor' ] },
-    // { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About' ] }
-    ////////////////////////////////////////////////////////////////////////////
+      // { name: 'font', items: ['Format', 'Font', 'FontSize', 'Bold', 'Italic', 'Underline', '-', 'TextColor', 'BGColor' ]},
+      // { name: 'styling', items: ['NumberedList', 'BulletedList', '-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ]},
+      // { name: 'inserts', items: ['Image','Table','HorizontalRule','SpecialChar', '-', 'Link','Unlink',] },
+      // { name: 'maximize', items: ['Maximize']}
 
-    // { name: 'font', items: ['Format', 'Font', 'FontSize', 'Bold', 'Italic', 'Underline', '-', 'TextColor', 'BGColor' ]},
-    // { name: 'styling', items: ['NumberedList', 'BulletedList', '-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ]},
-    // { name: 'inserts', items: ['Image','Table','HorizontalRule','SpecialChar', '-', 'Link','Unlink',] },
-    // { name: 'maximize', items: ['Maximize']}
+      { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+      { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
+      { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+      '/',
+      { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv', '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
+      { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+      { name: 'insert', items : [ 'Placeholder','Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak' ] },
+      '/',
+      { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
+      { name: 'colors', items : [ 'TextColor','BGColor' ] },
+      { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','Source'  ] }
+    //
+    ];
+  } else {
+    config.toolbar_Full =
+    [
+      ////////////////////////////////////////////////////////////////////////////
+      // THIS IS THE FULL SET
+      // { name: 'document', items : [ 'Source','-','Save','NewPage','DocProps','Preview','Print','-','Templates' ] },
+      // { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+      // { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
+      // { name: 'forms', items : [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+      // 'HiddenField' ] },
+      // '/',
+      // { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+      // { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv',
+      // '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
+      // { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+      // { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ] },
+      // '/',
+      // { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
+      // { name: 'colors', items : [ 'TextColor','BGColor' ] },
+      // { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About' ] }
+      ////////////////////////////////////////////////////////////////////////////
 
-    { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-    { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
-    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-    '/',
-    { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv', '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
-    { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
-    { name: 'insert', items : [ 'Placeholder','Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak' ] },
-    '/',
-    { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-    { name: 'colors', items : [ 'TextColor','BGColor' ] },
-    { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','Source'  ] }
-  //
-  ];
+      // { name: 'font', items: ['Format', 'Font', 'FontSize', 'Bold', 'Italic', 'Underline', '-', 'TextColor', 'BGColor' ]},
+      // { name: 'styling', items: ['NumberedList', 'BulletedList', '-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ]},
+      // { name: 'inserts', items: ['Image','Table','HorizontalRule','SpecialChar', '-', 'Link','Unlink',] },
+      // { name: 'maximize', items: ['Maximize']}
+
+      { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+      { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Blockquote','CreateDiv'] },
+      { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+      { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','Source'  ] }
+    //
+    ];
+  }
   // Remove some buttons, provided by the standard plugins, which we don't
   // need to have in the Standard(s) toolbar.
   // config.removeButtons = "Styles,Source,Subscript,Superscript,Strike Through";
