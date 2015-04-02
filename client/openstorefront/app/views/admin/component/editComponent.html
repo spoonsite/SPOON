@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<h2>&nbsp&nbsp<i class="fa fa-edit"></i>&nbsp;{{editModeText}}<button type="submit" class="btn btn-primary pull-right" style="margin-right: 15px;" ng-click="close()" ><i class="fa fa-close"></i>&nbsp;Cancel</button></h2>
+<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>&nbsp;{{editModeText}}<button type="submit" class="btn btn-primary pull-right" style="margin-right: 15px;" ng-click="close()" ><i class="fa fa-close"></i>&nbsp;Cancel</button></h2>
 <hr>
 <div  id="componentWindowDiv"  style="padding-left: 15px; padding-right: 15px;">
   <loader trigger="generalFormLoader"></loader>
@@ -48,8 +48,9 @@ limitations under the License.
         <div class="form-group required" show-errors >
           <label class="col-sm-2 control-label required">Description</label>
           <div class="col-sm-10">
-            <textarea ckeditor="editorOptions" id="description" style="height: 100px;" ng-model="componentForm.description" ng-watch="editorContentWatch"></textarea>        
+            <textarea ckeditor="editorOptions" id="description" name="description" required  class="col-sm-10" style="height: 100px;" ng-model="componentForm.description" ng-watch="editorContentWatch"></textarea>        
           </div>
+          <p style="text-align:center" ng-show="componentUIForm.description.$error.required && !componentUIForm.description.$focused" class="help-block">Description is required.</p>
         </div>
         <div class="form-group" show-errors >
           <label class="col-sm-2 control-label">Parent Component</label>

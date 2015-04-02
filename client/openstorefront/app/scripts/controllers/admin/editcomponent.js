@@ -511,6 +511,26 @@ $scope.saveComponent = function(){
     attributes: []
   };
 
+  var missingRequiredAttributes = false;
+  _.forEach($scope.requiredAttributes, function(attribute) {
+        
+    var found = false;   
+    _.forOwn($scope.generalForm.requiredAttribute, function (value, key) {
+      if (attribute.attributeType === key) {
+        found = true;
+      }
+    });      
+    if (found === false) {
+      missingRequiredAttributes = true;
+    }    
+  });  
+
+  if (missingRequiredAttributes) {
+    $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+    triggerAlert('Missing Required Attributes.   Select all required attributes before saving.', 'saveGeneralComponent', 'componentWindowDiv', 3000);
+    return;
+  }  
+  
   _.forOwn($scope.generalForm.requiredAttribute, function (value, key) {
     requiredForComponent.attributes.push({
       componentAttributePk: {

@@ -33,7 +33,7 @@ public class BasicHTMLSanitizer
 		if (fieldData == null) {
 			return fieldData;
 		} else {
-			String safe = Jsoup.clean(fieldData.toString(), Whitelist.basic());
+			String safe = Jsoup.clean(fieldData.toString(), Whitelist.basic().addTags("div"));
 			return safe;
 		}
 	}
