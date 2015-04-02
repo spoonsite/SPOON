@@ -87,18 +87,6 @@
   border-bottom: 1px solid #333;
 }
 
-tr.inactive{
-  color: rgb(150, 150, 150);
-  background: rgb(229, 229, 229);
-}
-tr.inactive td{
-  color: rgb(150, 150, 150);
-  background: rgb(229, 229, 229);
-}
-td button.inverted{
-  background-color: dimgray;
-  color: white;
-}
 
 #adminUserProfile .table-bordered, #adminUserProfile .table-bordered>tbody>tr>td, #adminUserProfile .table-bordered>tbody>tr>th, #adminUserProfile .table-bordered>tfoot>tr>td, #adminUserProfile .table-bordered>tfoot>tr>th, #adminUserProfile .table-bordered>thead>tr>td, #adminUserProfile .table-bordered>thead>tr>th {
   border: 1px solid darkgray;
@@ -109,9 +97,12 @@ html, body,
   height: 100%;
 }
 
-@mixin sticky-table-row-variant($state, $background, $border, $textColor) {
+@mixin admin-table-row-variant($state, $background, $border, $textColor) {
   // Exact selectors below required to override `.table-striped` and prevent
   // inheritance to nested tables.
+  .table-striped.doubled > thead > tr,
+  .table-striped.doubled > tbody > tr,
+  .table-striped.doubled > tfoot > tr,
   .stickytable.table-striped.table > thead > tr,
   .stickytable.table-striped.table > tbody > tr,
   .stickytable.table-striped.table > tfoot > tr {
@@ -126,6 +117,7 @@ html, body,
 
   // Hover states for `.table-hover`
   // Note: this is not available for cells or rows within `thead` or `tfoot`.
+  .table-striped.doubled > tbody > tr,
   .stickytable.table-striped.table-hover > tbody > tr {
     > td.#{$state}:hover,
     > th.#{$state}:hover,
@@ -137,8 +129,6 @@ html, body,
 }
 
 @mixin ul-row-variant($state, $background, $border, $textColor) {
-  // Exact selectors below required to override `.table-striped` and prevent
-  // inheritance to nested tables.
   ul {
     > li.#{$state},
     &.#{$state} > li{
@@ -147,8 +137,6 @@ html, body,
     }
   }
 
-  // Hover states for `.table-hover`
-  // Note: this is not available for cells or rows within `thead` or `tfoot`.
   ul {
     > li.#{$state}:hover,
     &.#{$state}:hover > li{
@@ -158,11 +146,11 @@ html, body,
 }
 
 // Generate the contextual variants
-@include sticky-table-row-variant('success', $state-success-bg, $state-success-border, $state-success-text);
-@include sticky-table-row-variant('danger', $state-danger-bg, $state-danger-border, $state-danger-text);
-@include sticky-table-row-variant('warning', $state-warning-bg, $state-warning-border, $state-warning-text);
-@include sticky-table-row-variant('info', $state-info-bg, $state-info-border, $state-info-text);
-@include sticky-table-row-variant('inverse', $state-inverse-bg, $state-inverse-border, $state-inverse-text);
+@include admin-table-row-variant('success', $state-success-bg, $state-success-border, $state-success-text);
+@include admin-table-row-variant('danger', $state-danger-bg, $state-danger-border, $state-danger-text);
+@include admin-table-row-variant('warning', $state-warning-bg, $state-warning-border, $state-warning-text);
+@include admin-table-row-variant('info', $state-info-bg, $state-info-border, $state-info-text);
+@include admin-table-row-variant('inverse', $state-inverse-bg, $state-inverse-border, $state-inverse-text);
 
 @include ul-row-variant('success', $state-success-bg, $state-success-border, $state-success-text);
 @include ul-row-variant('danger', $state-danger-bg, $state-danger-border, $state-danger-text);
@@ -220,4 +208,17 @@ html, body,
 // inverse
 .has-inverse {
   @include form-control-validation-inverse($state-inverse-text, $state-inverse-bg, $state-inverse-bg);
+}
+
+tr.inactive{
+  color: rgb(150, 150, 150);
+  background: rgb(229, 229, 229);
+}
+tr.inactive td{
+  color: rgb(150, 150, 150);
+  background: rgb(229, 229, 229);
+}
+td button.inverted{
+  background-color: dimgray;
+  color: white;
 }
