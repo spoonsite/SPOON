@@ -521,6 +521,12 @@ public class ComponentServiceImpl
 	@Override
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
 	{
+		Objects.requireNonNull(attribute, "Requires Component Attrubute");
+		Objects.requireNonNull(attribute.getComponentAttributePk(), "Requires Component Attrubute PK");
+		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeType(), "Requires Component Attrubute PK Attribute Type");
+		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeCode(), "Requires Component Attrubute PK Attribute Code");
+		Objects.requireNonNull(attribute.getComponentAttributePk().getComponentId(), "Requires Component Attrubute PK Component Id");
+
 		AttributeType type = persistenceService.findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 
 		AttributeCodePk pk = new AttributeCodePk();
@@ -529,22 +535,20 @@ public class ComponentServiceImpl
 		AttributeCode code = persistenceService.findById(AttributeCode.class, pk);
 
 		if (type != null && code != null) {
+			if (type.getAllowMultipleFlg() == false) {
+				ComponentAttribute example = new ComponentAttribute();
+				example.setComponentAttributePk(new ComponentAttributePk());
+				example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+				example.getComponentAttributePk().setComponentId(attribute.getComponentAttributePk().getComponentId());
+				persistenceService.deleteByExample(example);
+			}
+
 			ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
 			if (oldAttribute != null) {
 				oldAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 				oldAttribute.populateBaseUpdateFields();
 				persistenceService.persist(oldAttribute);
 			} else {
-				if (type.getAllowMultipleFlg() == false) {
-					ComponentAttribute example = new ComponentAttribute();
-					example.setComponentAttributePk(new ComponentAttributePk());
-					example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
-
-					ComponentAttribute test = persistenceService.queryOneByExample(ComponentAttribute.class, new QueryByExample(example));
-					if (test != null) {
-						throw new OpenStorefrontRuntimeException("Attribute Type doesn't allow multiple codes.  Type: " + type.getAttributeType(), "Check data passed in.");
-					}
-				}
 				attribute.populateBaseCreateFields();
 				persistenceService.persist(attribute);
 			}
@@ -1595,6 +1599,8 @@ public class ComponentServiceImpl
 						ComponentAttribute componentAttributeExample = new ComponentAttribute();
 						componentAttributeExample.setComponentAttributePk(componentAttributePk);
 						persistenceService.deleteByExample(componentAttributeExample);
+
+						componentChanged = true;
 					} else {
 						log.log(Level.WARNING, MessageFormat.format("Attribute Type is required and Integration is returned a empty value.  Keeping exisiting value on component: {0}  Attribute Type: {1}",
 								new Object[]{getComponentService().getComponentName(integrationConfig.getComponentId()), attributeType.getDescription()}));
@@ -1623,14 +1629,7 @@ public class ComponentServiceImpl
 					if (attributeCode != null) {
 
 						ComponentAttribute existingAttribute = persistenceService.findById(ComponentAttribute.class, componentAttributePk);
-						if (existingAttribute == null) {
-
-							ComponentAttributePk deleteComponentAttributePKExample = new ComponentAttributePk();
-							deleteComponentAttributePKExample.setAttributeType(componentAttributePk.getAttributeType());
-							deleteComponentAttributePKExample.setComponentId(componentAttributePk.getComponentId());
-							ComponentAttribute componentAttributeExample = new ComponentAttribute();
-							componentAttributeExample.setComponentAttributePk(deleteComponentAttributePKExample);
-							persistenceService.deleteByExample(componentAttributeExample);
+						if (existingAttribute == null || ComponentAttribute.INACTIVE_STATUS.equals(existingAttribute.getActiveStatus())) {
 
 							ComponentAttribute componentAttribute = new ComponentAttribute();
 							componentAttribute.setComponentAttributePk(componentAttributePk);
