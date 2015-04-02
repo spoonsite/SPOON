@@ -67,6 +67,12 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         "title": "Additional filters"
       };
 
+      attrs.$observe('url', function(value){
+        if (value) {
+          scope.url = value;
+          scope.query.url = scope.url || '';
+        }
+      });
 
       Business.lookupservice.getLookupCodes('TrackEventCode').then(function(result){
         scope.eventCodes = result? result: [];
