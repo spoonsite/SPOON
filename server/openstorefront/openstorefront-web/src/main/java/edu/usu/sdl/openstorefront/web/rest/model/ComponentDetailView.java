@@ -114,7 +114,7 @@ public class ComponentDetailView
 	@DataType(ComponentExternalDependencyView.class)
 	private List<ComponentExternalDependencyView> dependencies = new ArrayList<>();
 
-	private Integer componentViews = 0;
+	private long componentViews = 0;
 
 	public ComponentDetailView()
 	{
@@ -136,9 +136,9 @@ public class ComponentDetailView
 		parentComponent.setComponentId(parentComponent.getComponentId());
 		parentComponent.setName(parentComponent.getName());
 		parentComponent.setUpdateDts(parentComponent.getUpdateDts());
-		lastActivityDts = component.getLastActivityDts();	
+		lastActivityDts = component.getLastActivityDts();
 	}
-	
+
 	public String getComponentId()
 	{
 		return componentId;
@@ -419,12 +419,12 @@ public class ComponentDetailView
 		this.lastActivityDts = lastActivityDts;
 	}
 
-	public Integer getComponentViews()
+	public long getComponentViews()
 	{
 		return componentViews;
 	}
 
-	public void setComponentViews(Integer componentViews)
+	public void setComponentViews(long componentViews)
 	{
 		this.componentViews = componentViews;
 	}

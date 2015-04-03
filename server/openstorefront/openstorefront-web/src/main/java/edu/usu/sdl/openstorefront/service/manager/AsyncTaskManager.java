@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskManagerStatus;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
@@ -96,6 +97,31 @@ public class AsyncTaskManager
 	public static boolean cancelTask(String taskId, boolean interrupt)
 	{
 		return taskPool.cancelTask(taskId, interrupt);
+	}
+
+	/**
+	 * Remove Completed Task
+	 *
+	 * @param taskId
+	 * @throws OpenStorefrontRuntimeException failure on removing incomplete
+	 * task
+	 */
+	public static void deleteTask(String taskId)
+	{
+		taskPool.removeTask(taskId);
+	}
+
+	public static TaskFuture getTaskById(String taskId)
+	{
+		TaskFuture taskFuture = null;
+
+		for (TaskFuture taskFutureLocal : taskPool.getTasks()) {
+			if (taskFutureLocal.getTaskId().equals(taskId)) {
+				taskFuture = taskFutureLocal;
+				break;
+			}
+		}
+		return taskFuture;
 	}
 
 	@Override

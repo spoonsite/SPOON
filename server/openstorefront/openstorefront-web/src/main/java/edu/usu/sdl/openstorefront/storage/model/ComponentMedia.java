@@ -15,12 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -44,9 +45,11 @@ public class ComponentMedia
 	private String componentMediaId;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Stored name filename")
 	private String fileName;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Name of the file uploaded")
 	private String originalName;
 
 	@NotNull
@@ -61,6 +64,7 @@ public class ComponentMedia
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@ConsumeField
 	@Sanitize(LinkSanitizer.class)
+	@APIDescription("External Link")
 	private String link;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -75,7 +79,7 @@ public class ComponentMedia
 	@Override
 	public int customCompareTo(BaseComponent o)
 	{
-		int value = ServiceUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());
+		int value = ReflectionUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());
 		return value;
 	}
 

@@ -22,6 +22,7 @@ limitations under the License.
     </head>
     <body>
 		<h1>API Reference</h1>
+		<hr>
 		This document describes the API interface for the open storefront project.<br><br>
 		<b>Base Path:</b> /api<br>
 		<b>Supported Content Type: </b>JSON <br><br>

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -22,14 +23,18 @@ import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import java.util.Objects;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
  * @author jlaw
  */
+@APIDescription("Attribute code are used to link metadata and create articles on topics")
 public class AttributeCode
 		extends BaseEntity
 {
@@ -38,6 +43,11 @@ public class AttributeCode
 	@NotNull
 	@ConsumeField
 	private AttributeCodePk attributeCodePk;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String architectureCode;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -50,13 +60,19 @@ public class AttributeCode
 	@ConsumeField
 	private String description;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String articleFilename;
+	@OneToOne(orphanRemoval = true)
+	@ConsumeField
+	private Article article;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@Sanitize(LinkSanitizer.class)
 	@ConsumeField
 	private String detailUrl;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
+	@Sanitize(LinkSanitizer.class)
+	@ConsumeField
+	private String badgeUrl;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
@@ -65,6 +81,9 @@ public class AttributeCode
 
 	@ConsumeField
 	private Integer sortOrder;
+
+	@ConsumeField
+	private String highlightStyle;
 
 	public static final String DI2ELEVEL_NA = "NA";
 	public static final String DI2ELEVEL_LEVEL0 = "LEVEL0";
@@ -76,6 +95,20 @@ public class AttributeCode
 	{
 	}
 
+	/**
+	 * Gets the correct architecture code
+	 *
+	 * @return code
+	 */
+	public String adjustedArchitectureCode()
+	{
+		if (StringUtils.isNotBlank(getArchitectureCode())) {
+			return getArchitectureCode();
+		} else {
+			return getAttributeCodePk().getAttributeCode();
+		}
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -83,7 +116,9 @@ public class AttributeCode
 		hash = 79 * hash + Objects.hashCode(this.attributeCodePk);
 		hash = 79 * hash + Objects.hashCode(this.label);
 		hash = 79 * hash + Objects.hashCode(this.description);
-		hash = 79 * hash + Objects.hashCode(this.articleFilename);
+		hash = 79 * hash + Objects.hashCode(this.architectureCode);
+		hash = 79 * hash + Objects.hashCode(this.badgeUrl);
+		hash = 79 * hash + Objects.hashCode(this.article);
 		hash = 79 * hash + Objects.hashCode(this.detailUrl);
 		hash = 79 * hash + Objects.hashCode(this.groupCode);
 		hash = 79 * hash + Objects.hashCode(this.sortOrder);
@@ -109,7 +144,13 @@ public class AttributeCode
 		if (!Objects.equals(this.description, other.description)) {
 			return false;
 		}
-		if (!Objects.equals(this.articleFilename, other.articleFilename)) {
+		if (!Objects.equals(this.article, other.article)) {
+			return false;
+		}
+		if (!Objects.equals(this.architectureCode, other.architectureCode)) {
+			return false;
+		}
+		if (!Objects.equals(this.badgeUrl, other.badgeUrl)) {
 			return false;
 		}
 		if (!Objects.equals(this.detailUrl, other.detailUrl)) {
@@ -122,6 +163,18 @@ public class AttributeCode
 			return false;
 		}
 		return true;
+	}
+
+	public void copyFromView(AttributeCodeView code, AttributeCodePk attributeCodePk)
+	{
+		setAttributeCodePk(attributeCodePk);
+		setDescription(code.getDescription());
+		setDetailUrl(code.getDetailUrl());
+		setArchitectureCode(code.getArchitectureCode());
+		setBadgeUrl(code.getBadgeUrl());
+		setGroupCode(code.getGroupCode());
+		setLabel(code.getLabel());
+		setSortOrder(code.getSortOrder());
 	}
 
 	public String getDescription()
@@ -164,16 +217,6 @@ public class AttributeCode
 		this.attributeCodePk = attributeCodePk;
 	}
 
-	public String getArticleFilename()
-	{
-		return articleFilename;
-	}
-
-	public void setArticleFilename(String articleFilename)
-	{
-		this.articleFilename = articleFilename;
-	}
-
 	public Integer getSortOrder()
 	{
 		return sortOrder;
@@ -192,6 +235,46 @@ public class AttributeCode
 	public void setGroupCode(String groupCode)
 	{
 		this.groupCode = groupCode;
+	}
+
+	public Article getArticle()
+	{
+		return article;
+	}
+
+	public void setArticle(Article article)
+	{
+		this.article = article;
+	}
+
+	public String getArchitectureCode()
+	{
+		return architectureCode;
+	}
+
+	public void setArchitectureCode(String architectureCode)
+	{
+		this.architectureCode = architectureCode;
+	}
+
+	public String getBadgeUrl()
+	{
+		return badgeUrl;
+	}
+
+	public void setBadgeUrl(String badgeUrl)
+	{
+		this.badgeUrl = badgeUrl;
+	}
+
+	public String getHighlightStyle()
+	{
+		return highlightStyle;
+	}
+
+	public void setHighlightStyle(String highlightStyle)
+	{
+		this.highlightStyle = highlightStyle;
 	}
 
 }

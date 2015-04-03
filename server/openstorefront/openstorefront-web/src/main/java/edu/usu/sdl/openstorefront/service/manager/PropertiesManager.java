@@ -21,7 +21,10 @@ import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -37,6 +40,8 @@ public class PropertiesManager
 
 	private static final Logger log = Logger.getLogger(PropertiesManager.class.getName());
 
+	public static final String PW_PROPERTY = ".pw";
+
 	public static final String KEY_USE_REST_PROXY = "service.rest.proxy";
 	public static final String KEY_DB_CONNECT_MIN = "db.connectionpool.min";
 	public static final String KEY_DB_CONNECT_MAX = "db.connectionpool.max";
@@ -44,6 +49,7 @@ public class PropertiesManager
 	public static final String KEY_DB_AT = "db.pw";
 	public static final String KEY_MAX_ERROR_TICKETS = "errorticket.max";
 	public static final String KEY_SOLR_URL = "solr.server.url";
+	public static final String KEY_MAX_AGE_TRACKING_RECORDS = "trackingrecords.max.age.days";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
@@ -81,9 +87,17 @@ public class PropertiesManager
 
 	public static final String KEY_APPLICATION_TITLE = "app.title";
 	public static final String KEY_MAX_TASK_POOL_SIZE = "task.pool.size";
+	public static final String KEY_MAX_TASK_COMPLETE_EXPIRE = "task.complete.expireminutes";
+	public static final String KEY_MAX_TASK_ERROR_EXPIRE = "task.error.expireminutes";
 
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
+
+	public static String getApplicationVersion()
+	{
+		String key = "app.version";
+		return getValue(key);
+	}
 
 	public static String getValue(String key)
 	{
@@ -112,6 +126,15 @@ public class PropertiesManager
 		saveProperties();
 	}
 
+	public static Map<String, String> getAllProperties()
+	{
+		Map<String, String> propertyMap = new HashMap<>();
+		for (String key : getProperties().stringPropertyNames()) {
+			propertyMap.put(key, getProperties().getProperty(key));
+		}
+		return propertyMap;
+	}
+
 	private static Properties getProperties()
 	{
 		if (properties == null) {
@@ -131,6 +154,14 @@ public class PropertiesManager
 			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
 				properties = new Properties();
 				properties.load(bin);
+			} catch (IOException e) {
+				throw new OpenStorefrontRuntimeException(e);
+			}
+
+			try (InputStream in = FileSystemManager.getApplicatioResourceFile("/filter/version.properties")) {
+				Properties versionProperties = new Properties();
+				versionProperties.load(in);
+				properties.putAll(versionProperties);
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException(e);
 			}

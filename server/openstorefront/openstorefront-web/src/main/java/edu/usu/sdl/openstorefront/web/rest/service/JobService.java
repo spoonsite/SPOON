@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.JobSchedulerStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.List;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -214,6 +215,17 @@ public class JobService
 		} else {
 			return Response.status(Response.Status.NOT_MODIFIED).build();
 		}
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete tasks a completed task.")
+	@Path("/tasks/{taskId}")
+	public void deteteTask(
+			@PathParam("taskId")
+			@RequiredParam String taskId)
+	{
+		AsyncTaskManager.deleteTask(taskId);
 	}
 
 }

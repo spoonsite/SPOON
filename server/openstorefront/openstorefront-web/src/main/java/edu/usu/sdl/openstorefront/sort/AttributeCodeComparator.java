@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.sort;
 
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Comparator;
  * @param <T>
  */
 public class AttributeCodeComparator<T extends AttributeCode>
-		implements Comparator<T>
+		implements Comparator<T>, Serializable
 {
 
 	@Override

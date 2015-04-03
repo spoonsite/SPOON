@@ -53,7 +53,7 @@ describe('search_Filters_Text', function() {
         textSearch(theText3, numFound3);
   }, 30000);
 
-  var theText4 = 'widgets';  var numFound4 = 8;
+  var theText4 = 'widgets';  var numFound4 = 9;
   it('Filter by text- ' + theText4 + ' returned ' + numFound4 + ' expected results plus ' + theText4 +
       ' was in the search results', function () {
         textSearch(theText4, numFound4);

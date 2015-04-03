@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class UserTrackingWrapper
 		extends ListWrapper
 {
 
+	@DataType(UserTracking.class)
 	private List<UserTracking> userTracking = new ArrayList<>();
 
 	public UserTrackingWrapper()

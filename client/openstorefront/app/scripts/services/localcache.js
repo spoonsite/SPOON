@@ -51,7 +51,11 @@ app.factory('localCache', function() {
         throw new Error('Key must be a string');
       }
       if ((typeof type !== 'undefined') && (type === 'object')) {
-        return JSON.parse(cache.getItem(key));
+        try{
+          return JSON.parse(cache.getItem(key));
+        }catch(e){
+          data = undefined;
+        }
       }
       if ((typeof type !== 'undefined') && (type === 'date')) {
         return new Date(cache.getItem(key));

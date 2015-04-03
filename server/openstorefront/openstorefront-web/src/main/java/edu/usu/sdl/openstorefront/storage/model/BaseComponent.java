@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -39,10 +39,10 @@ public abstract class BaseComponent<T>
 	{
 		int value = super.compareTo(o);
 		if (value == 0) {
-			value = ServiceUtil.compareObjects(getComponentId(), ((BaseComponent) o).getComponentId());
+			value = ReflectionUtil.compareObjects(getComponentId(), ((BaseComponent) o).getComponentId());
 		}
 		if (value == 0) {
-			value = ServiceUtil.compareConsumeFields(this, o);
+			value = ReflectionUtil.compareConsumeFields(this, o);
 		}
 		if (value == 0) {
 			value = customCompareTo(o);

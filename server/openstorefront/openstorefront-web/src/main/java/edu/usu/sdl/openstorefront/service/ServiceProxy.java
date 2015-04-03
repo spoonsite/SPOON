@@ -15,12 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.service.api.AlertService;
 import edu.usu.sdl.openstorefront.service.api.AsyncService;
 import edu.usu.sdl.openstorefront.service.api.AttributeService;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentService;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.LookupService;
+import edu.usu.sdl.openstorefront.service.api.ReportService;
 import edu.usu.sdl.openstorefront.service.api.SearchService;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.api.UserService;
@@ -30,7 +32,7 @@ import java.util.Objects;
 
 /**
  * Entry point to the service layer; Expecting one Service Proxy per thread. Not
- * thread Safe;
+ * thread Safe...there needs to be a new db connection per thread.
  *
  * @author dshurtleff
  */
@@ -38,18 +40,25 @@ public class ServiceProxy
 {
 
 	protected PersistenceService persistenceService = new PersistenceService();
-	protected LookupService lookupService;
-	protected AttributeService attributeService;
-	protected AttributeServicePrivate attributeServicePrivate;
-	protected ComponentService componentService;
-	protected ComponentServicePrivate componentServicePrivate;
-	protected SearchService searchService;
-	protected UserService userService;
-	protected UserServicePrivate userServicePrivate;
-	protected SystemService systemService;
+	private LookupService lookupService;
+	private AttributeService attributeService;
+	private AttributeServicePrivate attributeServicePrivate;
+	private ComponentService componentService;
+	private ComponentServicePrivate componentServicePrivate;
+	private SearchService searchService;
+	private UserService userService;
+	private UserServicePrivate userServicePrivate;
+	private SystemService systemService;
+	private AlertService alertService;
+	private ReportService reportService;
 
 	public ServiceProxy()
 	{
+	}
+
+	public ServiceProxy(PersistenceService persistenceService)
+	{
+		this.persistenceService = persistenceService;
 	}
 
 	public static ServiceProxy getProxy()
@@ -124,6 +133,22 @@ public class ServiceProxy
 			systemService = DynamicProxy.newInstance(new SystemServiceImpl());
 		}
 		return systemService;
+	}
+
+	public AlertService getAlertService()
+	{
+		if (alertService == null) {
+			alertService = DynamicProxy.newInstance(new AlertServiceImpl());
+		}
+		return alertService;
+	}
+
+	public ReportService getReportService()
+	{
+		if (reportService == null) {
+			reportService = DynamicProxy.newInstance(new ReportServiceImpl());
+		}
+		return reportService;
 	}
 
 	public AttributeServicePrivate getAttributeServicePrivate()

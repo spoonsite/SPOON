@@ -19,7 +19,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.usu.sdl.openstorefront.service.io.AttributeImport;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
@@ -290,13 +289,13 @@ public class DataConvertUseCase
 			updateUser = StringUtils.isNotBlank(oldAsset.getEditedBy().getUsername()) ? oldAsset.getEditedBy().getUsername() : OpenStorefrontConstant.SYSTEM_ADMIN_USER;
 
 			if ("Approved".equalsIgnoreCase(oldAsset.getApprovalStatus())) {
-				componentDetail.setApprovalState(Component.APPROVAL_STATE_APPROVED);
+				componentDetail.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.A.name());
 				if (componentDetail.getApprovedDts() == null) {
 					componentDetail.setApprovedDts(TimeUtil.currentDate());
 					componentDetail.setApprovedUser(createUser);
 				}
 			} else {
-				componentDetail.setApprovalState(Component.APPROVAL_STATE_PENDING);
+				componentDetail.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.P.name());
 			}
 
 			componentDetail.setCreateUser(createUser);
@@ -696,7 +695,7 @@ public class DataConvertUseCase
 			for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 				for (AttributeCodeView attributeCodeView : attributeTypeView.getCodes()) {
 					data = new ArrayList<>();
-					data.add(attributeTypeView.getType());
+					data.add(attributeTypeView.getAttributeType());
 					data.add(attributeTypeView.getDescription());
 					data.add(Boolean.toString(attributeTypeView.getArchitectureFlg()));
 					data.add(Boolean.toString(attributeTypeView.getVisibleFlg()));
@@ -705,7 +704,7 @@ public class DataConvertUseCase
 					data.add(attributeCodeView.getCode());
 					data.add(attributeCodeView.getLabel());
 					data.add(attributeCodeView.getDescription());
-					data.add(attributeCodeView.getFullTextLink());
+					data.add(attributeCodeView.getDetailUrl());
 					out.writeNext(data.toArray(new String[0]));
 				}
 			}

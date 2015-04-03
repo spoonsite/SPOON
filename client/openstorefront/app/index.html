@@ -78,6 +78,7 @@ limitations under the License.
 
   <!--[if lt IE 9]>
   <script src="bower_components/es5-shim/es5-shim.js"></script>
+  <script src="bower_components/es5-shim/es5-sham.js"></script>
   <script src="bower_components/json3/lib/json3.min.js"></script>
   <![endif]-->
 
@@ -95,6 +96,7 @@ limitations under the License.
   <script src="bower_components/angular-mocks/angular-mocks.js"></script>
   <script src="bower_components/angular-touch/angular-touch.js"></script>
   <script src="bower_components/angular-animate/angular-animate.js"></script>
+  <script src="bower_components/angular-file-upload/angular-file-upload.js"></script>
   <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
   <script src="bower_components/moment/moment.js"></script>
   <script src="bower_components/angular-moment/angular-moment.js"></script>
@@ -120,115 +122,137 @@ limitations under the License.
   <script src="bower_components/angulartics/src/angulartics-woopra.js"></script>
   <script src="bower_components/angulartics/src/angulartics-marketo.js"></script>
   <script src="bower_components/ng-idle/angular-idle.js"></script>
+  <script src="bower_components/angular-filter/dist/angular-filter.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
   <!-- <script src="bower_components/sass-bootstrap/dist/js/bootstrap.js"></script> -->
 
   <!-- THINGS IN THIS SECTION WILL NOT BE MINIFIED -->
   <!-- Grab our Common js -->
-  <script type="text/javascript" src="bower_components/ckeditor/ckeditor.js"></script>
   <script type="text/javascript" src="scripts/common/ng-ckeditor.js"></script>  
+  <script type="text/javascript" src="scripts/common/ckeditor/ckeditor.js"></script>  
   <script type="text/javascript" src="scripts/common/angular-lightbox.js"></script>
   <script type="text/javascript" src="scripts/common/jquery-cron.js"></script>
   <script type="text/javascript" src="scripts/common/angular-multi-select.js"></script>
   <script type="text/javascript" src="scripts/common/cronGen.js"></script>
+  <script type="text/javascript" src="scripts/common/dropzone.js"></script>
 
-<!-- THINGS IN THIS SECTION WILL NOT BE MINIFIED -->
+  <!-- THINGS IN THIS SECTION WILL NOT BE MINIFIED -->
 
-<!-- build:js({.tmp,app}) scripts/scripts.js -->
-<!-- Grab our app -->
-<script type="text/javascript" src="scripts/app.js"></script>
+  <!-- build:js({.tmp,app}) scripts/scripts.js -->
+  <!-- Grab our app -->
+  <script type="text/javascript" src="scripts/modules/notifications.js"></script>
+  <script type="text/javascript" src="scripts/app.js"></script>
 
-<!-- Grab our factories -->
-<script type="text/javascript" src="scripts/services/localcache.js"></script>
-<script type="text/javascript" src="scripts/services/componentservice.js"></script>
-<script type="text/javascript" src="scripts/services/userservice.js"></script>
-<script type="text/javascript" src="scripts/services/lookupservice.js"></script>
-<script type="text/javascript" src="scripts/services/business.js"></script>
-<script type="text/javascript" src="scripts/services/auth.js"></script>
-<script type="text/javascript" src="scripts/services/highlights.js"></script>
-<script type="text/javascript" src="scripts/services/articleservice.js"></script>
-<script type="text/javascript" src="scripts/services/configuration.js"></script>
-<script type="text/javascript" src="scripts/services/jobservice.js"></script>
-<script type="text/javascript" src="scripts/services/systemservice.js"></script>
+  <!-- Grab our factories -->
+  <script type="text/javascript" src="scripts/services/localcache.js"></script>
+  <script type="text/javascript" src="scripts/services/componentservice.js"></script>
+  <script type="text/javascript" src="scripts/services/userservice.js"></script>
+  <script type="text/javascript" src="scripts/services/lookupservice.js"></script>
+  <script type="text/javascript" src="scripts/services/business.js"></script>
+  <script type="text/javascript" src="scripts/services/auth.js"></script>
+  <script type="text/javascript" src="scripts/services/highlights.js"></script>
+  <script type="text/javascript" src="scripts/services/articleservice.js"></script>
+  <script type="text/javascript" src="scripts/services/configuration.js"></script>
+  <script type="text/javascript" src="scripts/services/jobservice.js"></script>
+  <script type="text/javascript" src="scripts/services/systemservice.js"></script>
+  <script type="text/javascript" src="scripts/services/trackingservice.js"></script>
+  <script type="text/javascript" src="scripts/services/mediaservice.js"></script>
+  <script type="text/javascript" src="scripts/services/errorinterceptor.js"></script>
+  <script type="text/javascript" src="scripts/services/reportservice.js"></script>
+  <script type="text/javascript" src="scripts/services/alertservice.js"></script>  
 
-<!-- Grab our Directives -->
-<script type="text/javascript" src="scripts/directives/raty.js"></script>
-<script type="text/javascript" src="scripts/directives/modal.js"></script>
-<script type="text/javascript" src="scripts/directives/enterevent.js"></script>
-<script type="text/javascript" src="scripts/directives/componentlist.js"></script>
-<script type="text/javascript" src="scripts/directives/abn_tree_directive.js"></script>
-<script type="text/javascript" src="scripts/directives/broadcastresults.js"></script>
-<script type="text/javascript" src="scripts/directives/popover_directive.js"></script>
-<script type="text/javascript" src="scripts/directives/loader.js"></script>
-<script type="text/javascript" src="scripts/directives/dynamichtml.js"></script>
-<script type="text/javascript" src="scripts/directives/selectall.js"></script>
-<script type="text/javascript" src="scripts/directives/svcv4archdiagram.js"></script>
-<script type="text/javascript" src="scripts/directives/showerrors.js"></script>
-<script type="text/javascript" src="scripts/directives/ngfocus.js"></script>
-<script type="text/javascript" src="scripts/directives/questions_reviews/question.js"></script>
-<script type="text/javascript" src="scripts/directives/questions_reviews/response.js"></script>
-<script type="text/javascript" src="scripts/directives/cron.js"></script>
-<script type="text/javascript" src="scripts/directives/schedule.js"></script>
-<script type="text/javascript" src="scripts/directives/print.js"></script>
-<script type="text/javascript" src="scripts/directives/compare/compareview.js"></script>
-<script type="text/javascript" src="scripts/directives/admin/message.js"></script>
+  <!-- Grab our Directives -->
+  <script type="text/javascript" src="scripts/directives/raty.js"></script>
+  <script type="text/javascript" src="scripts/directives/modal.js"></script>
+  <script type="text/javascript" src="scripts/directives/enterevent.js"></script>
+  <script type="text/javascript" src="scripts/directives/component/componentlist.js"></script>
+  <script type="text/javascript" src="scripts/directives/component/architecture.js"></script>
+  <script type="text/javascript" src="scripts/directives/abn_tree_directive.js"></script>
+  <script type="text/javascript" src="scripts/directives/broadcastresults.js"></script>
+  <script type="text/javascript" src="scripts/directives/popover_directive.js"></script>
+  <script type="text/javascript" src="scripts/directives/loader.js"></script>
+  <script type="text/javascript" src="scripts/directives/dynamichtml.js"></script>
+  <script type="text/javascript" src="scripts/directives/selectall.js"></script>
+  <script type="text/javascript" src="scripts/directives/svcv4archdiagram.js"></script>
+  <script type="text/javascript" src="scripts/directives/showerrors.js"></script>
+  <script type="text/javascript" src="scripts/directives/ngfocus.js"></script>
+  <script type="text/javascript" src="scripts/directives/questions_reviews/question.js"></script>
+  <script type="text/javascript" src="scripts/directives/questions_reviews/response.js"></script>
+  <script type="text/javascript" src="scripts/directives/cron.js"></script>
+  <script type="text/javascript" src="scripts/directives/schedule.js"></script>
+  <script type="text/javascript" src="scripts/directives/print.js"></script>
+  <script type="text/javascript" src="scripts/directives/compare/compareview.js"></script>
+  <script type="text/javascript" src="scripts/directives/admin/message.js"></script>
+  <script type="text/javascript" src="scripts/directives/dropzone/dropzone.js"></script>
+  <script type="text/javascript" src="scripts/directives/services/filterquery.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/panel.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/stickydiv.js"></script>
 
-<!-- Grab our Controller -->
-<script type="text/javascript" src="scripts/controllers/main.js"></script>
-<script type="text/javascript" src="scripts/controllers/nav.js"></script>
-<script type="text/javascript" src="scripts/controllers/results.js"></script>
-<script type="text/javascript" src="scripts/controllers/resultsModal.js"></script>
-<script type="text/javascript" src="scripts/controllers/userprofile.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin.js"></script>
-<script type="text/javascript" src="scripts/controllers/landing.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/editattributes.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/editcodes.js"></script>
-<script type="text/javascript" src="scripts/controllers/single.js"></script>
-<script type="text/javascript" src="scripts/controllers/details/fulldetails.js"></script>
-<script type="text/javascript" src="scripts/controllers/login.js"></script>
-<script type="text/javascript" src="scripts/controllers/compare.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/editcomponent.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/configuration/configuration.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/configuration/savecompconf.js"></script>
-<script type="text/javascript" src="scripts/controllers/details/review.js"></script>
-<script type="text/javascript" src="scripts/controllers/base.js"></script>
-<script type="text/javascript" src="scripts/controllers/print.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/jobs.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/system.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/userMessage.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin/userProfile.js"></script>
+  <!-- Grab our Controller -->
+  <script type="text/javascript" src="scripts/controllers/main.js"></script>
+  <script type="text/javascript" src="scripts/controllers/nav.js"></script>
+  <script type="text/javascript" src="scripts/controllers/results.js"></script>
+  <script type="text/javascript" src="scripts/controllers/resultsModal.js"></script>
+  <script type="text/javascript" src="scripts/controllers/userprofile.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin.js"></script>
+  <script type="text/javascript" src="scripts/controllers/landing.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/editattributes.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/editcodes.js"></script>
+  <script type="text/javascript" src="scripts/controllers/single.js"></script>
+  <script type="text/javascript" src="scripts/controllers/details/fulldetails.js"></script>
+  <script type="text/javascript" src="scripts/controllers/login.js"></script>
+  <script type="text/javascript" src="scripts/controllers/compare.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/editcomponent.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/configuration/configuration.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/configuration/savecompconf.js"></script>
+  <script type="text/javascript" src="scripts/controllers/details/review.js"></script>
+  <script type="text/javascript" src="scripts/controllers/base.js"></script>
+  <script type="text/javascript" src="scripts/controllers/print.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/jobs.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/system.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/userMessage.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/userProfile.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/editarticles.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/edithighlights.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/manageLookups.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/questions.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/reviews.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/tags.js"></script>  
+  <script type="text/javascript" src="scripts/controllers/admin/tracking.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/media.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/alerts.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/reports.js"></script>  
 
-
-
-<!-- Grab our Filters -->
-<script type="text/javascript" src="scripts/filters/componentfilter.js"></script>
-<script type="text/javascript" src="scripts/filters/partition.js"></script>
-<script type="text/javascript" src="scripts/filters/tagfilter.js"></script>
-<script type="text/javascript" src="scripts/filters/ratingfilter.js"></script>
-
-
-<!-- Grab our page-specific stuff -->
-<script type="text/javascript" src="scripts/page_specific/main.js"></script>
-<script type="text/javascript" src="scripts/page_specific/results.js"></script>
-
-
-<!-- Grab our common js -->
-<script type="text/javascript" src="scripts/common/animations.js"></script>
-<script type="text/javascript" src="scripts/common/common.js"></script>
-<script type="text/javascript" src="scripts/common/ckeditor_config.js"></script>
-<script type="text/javascript" src="scripts/common/sessionpolyfill.js"></script>
-<script type="text/javascript" src="scripts/common/raty.js"></script>
-<script type="text/javascript" src="scripts/common/modified-angular-strap.min.js"></script>
-<script type="text/javascript" src="scripts/common/modified-angular-strap.tpl.min.js"></script>
-<script type="text/javascript" src="scripts/common/ui-bootstrap-tpls.js"></script>
-<script type="text/javascript" src="scripts/common/search.js"></script>
-<!-- endbuild -->
+  <!-- Grab our Filters -->
+  <script type="text/javascript" src="scripts/filters/componentfilter.js"></script>
+  <script type="text/javascript" src="scripts/filters/partition.js"></script>
+  <script type="text/javascript" src="scripts/filters/tagfilter.js"></script>
+  <script type="text/javascript" src="scripts/filters/ratingfilter.js"></script>
 
 
-<!-- This is the profile modal -->
-<div modal controller-name="UserProfileCtrl" modalId='profileModal' modalclasses="fullWidthModal">
-</div>
+  <!-- Grab our page-specific stuff -->
+  <script type="text/javascript" src="scripts/page_specific/main.js"></script>
+  <script type="text/javascript" src="scripts/page_specific/results.js"></script>
+
+
+  <!-- Grab our common js -->
+  <script type="text/javascript" src="scripts/common/animations.js"></script>
+  <script type="text/javascript" src="scripts/common/common.js"></script>
+  <script type="text/javascript" src="scripts/common/helpers.js"></script>
+  <script type="text/javascript" src="scripts/common/ckeditor_config.js"></script>
+  <script type="text/javascript" src="scripts/common/sessionpolyfill.js"></script>
+  <script type="text/javascript" src="scripts/common/raty.js"></script>
+  <script type="text/javascript" src="scripts/common/modified-angular-strap.min.js"></script>
+  <script type="text/javascript" src="scripts/common/modified-angular-strap.tpl.min.js"></script>
+  <script type="text/javascript" src="scripts/common/ui-bootstrap-tpls.js"></script>
+  <script type="text/javascript" src="scripts/common/search.js"></script>
+  <script type="text/javascript" src="scripts/common/sticky-tables.js"></script>
+  <!-- endbuild -->
+
+  <!-- This is the profile modal -->
+  <div modal controller-name="UserProfileCtrl" modalId='profileModal' modalclasses="fullWidthModal">
+  </div>
 
 
 </body>

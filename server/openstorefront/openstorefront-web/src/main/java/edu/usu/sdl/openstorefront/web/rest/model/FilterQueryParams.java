@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -25,6 +26,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -70,6 +72,18 @@ public class FilterQueryParams
 	@Sanitize(TextSanitizer.class)
 	private String status;
 
+	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss, Unix Epoch Millisecond, yyyy-MM-dd, MM/dd/yyyy")
+	@QueryParam("start")
+	private DateParam startDts;
+
+	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss simple date format")
+	@QueryParam("end")
+	private DateParam endDts;
+
+	@QueryParam("allResults")
+	@DefaultValue("false")
+	private Boolean all;
+
 	public FilterQueryParams()
 	{
 	}
@@ -86,6 +100,7 @@ public class FilterQueryParams
 		filterQueryParams.setMax(Integer.MAX_VALUE);
 		filterQueryParams.setOffset(0);
 		filterQueryParams.setStatus(BaseEntity.ACTIVE_STATUS);
+		filterQueryParams.setAll(false);
 		filterQueryParams.setSortField("description");
 		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_DESCENDING);
 		return filterQueryParams;
@@ -169,6 +184,52 @@ public class FilterQueryParams
 	public void setStatus(String status)
 	{
 		this.status = status;
+	}
+
+	public Boolean getAll()
+	{
+		return all;
+	}
+
+	public void setAll(Boolean all)
+	{
+		this.all = all;
+	}
+
+	public Date getStart()
+	{
+		if (startDts != null) {
+			return startDts.getDate();
+		}
+		return null;
+	}
+
+	public Date getEnd()
+	{
+		if (endDts != null) {
+			return endDts.getDate();
+		}
+		return null;
+	}
+
+	public DateParam getStartDts()
+	{
+		return startDts;
+	}
+
+	public void setStartDts(DateParam startDts)
+	{
+		this.startDts = startDts;
+	}
+
+	public DateParam getEndDts()
+	{
+		return endDts;
+	}
+
+	public void setEndDts(DateParam endDts)
+	{
+		this.endDts = endDts;
 	}
 
 }

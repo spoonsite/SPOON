@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.doc.APIResourceModel;
 import edu.usu.sdl.openstorefront.doc.JaxrsProcessor;
+import edu.usu.sdl.openstorefront.sort.ApiResourceComparator;
+import edu.usu.sdl.openstorefront.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.util.ResolverUtil;
 import net.sourceforge.stripes.validation.Validate;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,48 +39,113 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 public class APIAction
-	extends BaseAction
+		extends BaseAction
 {
+
 	private static final Logger log = Logger.getLogger(APIAction.class.getName());
-	
-	@Validate(required = true, on="API")
+
+	@Validate(required = true, on = "API")
 	private String resourceClass;
-	
-	@Validate(required = true, on="Page")
+
+	@Validate(required = true, on = "Page")
 	private String page;
-			
+
 	private APIResourceModel resourceModel;
-	
-	private String classPath = "resource";	
+
+	private String classPath = "resource";
 	private String classPathDescription = "Resource";
-	
+
+	private List<APIResourceModel> allResources = new ArrayList<>();
+
+	private List<LookupModel> resourceClasses = new ArrayList<>();
+	private List<LookupModel> serviceClasses = new ArrayList<>();
+
+	@DefaultHandler
+	public Resolution mainPage()
+	{
+		ResolverUtil resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(BaseResource.class), "edu.usu.sdl.openstorefront.web.rest.resource");
+
+		List<Class> classList = new ArrayList<>();
+		classList.addAll(resolverUtil.getClasses());
+		for (Class apiResourceClass : classList) {
+			if (BaseResource.class.getName().equals(apiResourceClass.getName()) == false) {
+				LookupModel lookupModel = new LookupModel();
+				lookupModel.setCode(apiResourceClass.getSimpleName());
+				lookupModel.setDescription(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(apiResourceClass.getSimpleName())).replace("Resource", "").replace("REST", ""));
+				resourceClasses.add(lookupModel);
+			}
+		}
+
+		resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(BaseResource.class), "edu.usu.sdl.openstorefront.web.rest.service");
+
+		classList = new ArrayList<>();
+		classList.addAll(resolverUtil.getClasses());
+		for (Class apiResourceClass : classList) {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(apiResourceClass.getSimpleName());
+			lookupModel.setDescription(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(apiResourceClass.getSimpleName())).replace("Service", ""));
+			serviceClasses.add(lookupModel);
+		}
+		resourceClasses.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupModel.DESCRIPTION_FIELD));
+		serviceClasses.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupModel.DESCRIPTION_FIELD));
+
+		return new ForwardResolution("/WEB-INF/securepages/api/main.jsp");
+	}
+
 	@HandlesEvent("API")
 	public Resolution apiDetails()
-	{		
-		try
-		{			
+	{
+		try {
 			classPathDescription = StringUtils.capitalize(classPath);
 			Class resource = Class.forName("edu.usu.sdl.openstorefront.web.rest." + classPath + "." + resourceClass);
-			 resourceModel = JaxrsProcessor.processRestClass(resource);			
-		} catch (ClassNotFoundException ex)
-		{			
+			resourceModel = JaxrsProcessor.processRestClass(resource);
+		} catch (ClassNotFoundException ex) {
 			return new ErrorResolution(404, "resource not found");
 		}
 		return new ForwardResolution("/WEB-INF/securepages/api/apidetails.jsp");
 	}
 
 	@HandlesEvent("Page")
-	public Resolution apiPage()			
+	public Resolution apiPage()
 	{
 		page = page.replace("../", "");
-		if (page.equalsIgnoreCase("apidetails.jsp"))
-		{
+		if (page.equalsIgnoreCase("apidetails.jsp")) {
 			page = "404";
 		}
 		return new ForwardResolution("/WEB-INF/securepages/api/" + page + ".jsp");
 	}
-	
-	
+
+	@HandlesEvent("PrintView")
+	public Resolution printView()
+	{
+		ResolverUtil resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(BaseResource.class), "edu.usu.sdl.openstorefront.web.rest.resource");
+
+		List<Class> classList = new ArrayList<>();
+		classList.addAll(resolverUtil.getClasses());
+		for (Class apiResourceClass : classList) {
+			if (BaseResource.class.getName().equals(apiResourceClass.getName()) == false) {
+				APIResourceModel result = JaxrsProcessor.processRestClass(apiResourceClass);
+				allResources.add(result);
+			}
+		}
+
+		resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(BaseResource.class), "edu.usu.sdl.openstorefront.web.rest.service");
+
+		classList = new ArrayList<>();
+		classList.addAll(resolverUtil.getClasses());
+		for (Class apiResourceClass : classList) {
+			APIResourceModel result = JaxrsProcessor.processRestClass(apiResourceClass);
+			allResources.add(result);
+		}
+		allResources.sort(new ApiResourceComparator<>());
+
+		return new ForwardResolution("/WEB-INF/securepages/api/printapi.jsp");
+	}
+
 	public String getResourceClass()
 	{
 		return resourceClass;
@@ -122,5 +195,35 @@ public class APIAction
 	{
 		this.classPathDescription = classPathDescription;
 	}
-	
+
+	public List<APIResourceModel> getAllResources()
+	{
+		return allResources;
+	}
+
+	public void setAllResources(List<APIResourceModel> allResources)
+	{
+		this.allResources = allResources;
+	}
+
+	public List<LookupModel> getResourceClasses()
+	{
+		return resourceClasses;
+	}
+
+	public void setResourceClasses(List<LookupModel> resourceClasses)
+	{
+		this.resourceClasses = resourceClasses;
+	}
+
+	public List<LookupModel> getServiceClasses()
+	{
+		return serviceClasses;
+	}
+
+	public void setServiceClasses(List<LookupModel> serviceClasses)
+	{
+		this.serviceClasses = serviceClasses;
+	}
+
 }

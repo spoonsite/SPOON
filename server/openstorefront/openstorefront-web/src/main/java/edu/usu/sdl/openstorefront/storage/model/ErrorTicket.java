@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.PK;
 import javax.validation.constraints.NotNull;
@@ -30,12 +31,18 @@ public class ErrorTicket
 	@PK
 	@NotNull
 	private String errorTicketId;
+
+	@APIDescription("What was called")
 	private String calledAction;
+
+	@APIDescription("What was data in the call")
 	private String input;
 
 	@NotNull
 	private String ticketFile;
 	private String clientIp;
+	private String message;
+	private String potentialResolution;
 
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = ErrorTypeCode.class)
@@ -103,6 +110,26 @@ public class ErrorTicket
 	public void setErrorTypeCode(String errorTypeCode)
 	{
 		this.errorTypeCode = errorTypeCode;
+	}
+
+	public String getMessage()
+	{
+		return message;
+	}
+
+	public void setMessage(String message)
+	{
+		this.message = message;
+	}
+
+	public String getPotentialResolution()
+	{
+		return potentialResolution;
+	}
+
+	public void setPotentialResolution(String potentialResolution)
+	{
+		this.potentialResolution = potentialResolution;
 	}
 
 }

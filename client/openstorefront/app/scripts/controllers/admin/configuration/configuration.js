@@ -44,32 +44,28 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   $scope.component = {};
   $scope.component.compId;
   $scope.integrationConfs = null;
+  $scope.loading = 0;
+  $scope.type = 'jira';
   $scope.show = {
     'selectCompConf': true,
     'showCodeSelection': true
   };
-
-  $scope.loading = 0;
-
   $scope.types = [
   {
     'label': 'Jira Configuration',
     'code': 'jira'
   }
   ]
-  $scope.type = 'jira';
 
-  Business.componentservice.getComponentList().then(function(result) {
-    Business.typeahead(result, null).then(function(value){
-      if (value) {
-        $scope.typeahead = value;
-      } else {
-        $scope.typeahead = null;
-      }
-    }, function() {
-    });
-  }, function() {
-  });
+  $scope.getTypeahead = function(val){
+    var deferred = $q.defer();
+    Business.typeahead(val).then(function(result){
+      deferred.resolve(result);
+    }, function(){
+      deferred.resolve([]);
+    })
+    return deferred.promise;
+  }
 
   $scope.getGlobalConfig = function(){
     Business.configurationservice.getGlobalConfig().then(function(result) {
@@ -110,7 +106,6 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       });
     }
   };
-
 
   $scope.getMappingTypes = function(){
     Business.configurationservice.getMappingTypes().then(function(result){
@@ -271,7 +266,6 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     return deferred.promise
   }
 
-
   $scope.setupModal = function(config) {
 
     if (config) {
@@ -303,8 +297,6 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       })
     }
   }
-
-
 
   $scope.saveMappingConf = function(){
     if ($scope.storeCodes.length && $scope.watch.jiraField) {
@@ -397,7 +389,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
                 Business.configurationservice.getStoreFields().then(function(storeFields){
                   $scope.storeFields = storeFields? storeFields: [];
                   $timeout(function(){
-                    var found = _.find($scope.storeFields, {'attributeType': mappingModel.attributeType});
+                    var found = _.find($scope.storeFields.data, {'attributeType': mappingModel.attributeType});
                     if (found) {
                       Business.configurationservice.getJiraFields(project, issueType).then(function(jiraFields){
                         $scope.jiraFields = jiraFields? jiraFields: [];
@@ -565,20 +557,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
 
   $scope.calcStatus = function(val)
   {
-    switch(val){
-      case 'C':
-      return 'Complete'
-      break;
-      case 'E':
-      return 'Error'
-      break;
-      case 'W':
-      return 'Working'
-      break;
-      default:
-      return 'Error'
-      break;
-    }
+    return utils.calcStatus(val);
   }
 
 

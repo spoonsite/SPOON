@@ -1,5 +1,66 @@
 <!-- List the attributes in a table and provide the information to edit -->
-<div style="margin-top: 65px;" ng-controller="AdminEditattributesCtrl">
-  <div class="gridStyle" ng-grid="gridOptions">
+<div ng-controller="AdminEditattributesCtrl">
+	<loader trigger="adminAttributes"></loader>
+  <stickydiv fixed-offset-top=".top" fixed-offset-left="" element-id="editAttributesToolbar">
+    <div style="padding: 0px 15px;">
+      <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
+        <div style="display:inline-block;" class="">
+          <button type="button" title="Add Type" class="btn btn-default" ng-click="editType(false)"><i class="fa fa-plus"></i>&nbsp;Add New Type</button> 
+          <button type="button" title="Export All Active Codes" class="btn btn-default" ng-click="export()"><i class="fa fa-sign-out"></i>&nbsp;Export</button>    
+          <button type="button" title="Import" class="btn btn-default" ng-click="flags.showUpload = !flags.showUpload"><i class="fa fa-sign-in"></i>&nbsp;Import</button>  
+        </div>
+      </div>
+      <filterquery data="data.allTypes" url="api/v1/resource/attributes/attributetypes" sort-by="description" sort-order="ASC" type="default" set-features="pagination.features" control="pagination.control"></filterquery>
+      <div style="clear:both">
+      </div>
+      <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 15px;" >  
+        <div class="form-group">
+          <label>Attribute File Import</label>
+          <input type="file" nv-file-select uploader="attributeUploader" id="attributeUploadFile" name="uploadFile" width="100" />
+          <p class="help-block">CSV Attributes</p>      
+        </div>
+        <button ng-click="confirmAttributeUpload(true)" class="btn btn-primary">Upload</button>   
+        <br><br>
+        <div class="form-group">
+          <label>Svcv-4 Import</label>
+          <input type="file" nv-file-select uploader="svcv4uploader" id="svcv4UploadFile" name="uploadFile" width="100" />
+          <p class="help-block">CSV (svcv-4_export.csv)</p>     
+        </div>
+        <button ng-click="confirmAttributeUpload(false)" class="btn btn-primary">Upload</button>        
+      </div>
+    </div>
+  </stickydiv>
+
+  <div style=" padding-left:15px; padding-right:15px;">
+    <table class="table table-bordered table-striped admin-table stickytable">
+      <thead>
+        <tr>
+          <th><a href="" ng-click="setPredicate('description');">Description&nbsp;<span ng-show="predicate === 'description'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th><a href="" ng-click="setPredicate('attributeType');">Type code&nbsp;<span ng-show="predicate === 'attributeType'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th><a  data-toggle="tooltip" data-placement="top" title="Shows to up under visible list of filters (Filter By Attribute)" href="" ng-click="setPredicate('visibleFlg');">Visible&nbsp;<span ng-show="predicate === 'visibleFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th><a  data-toggle="tooltip" data-placement="top" title="Is a required attribute upon adding a new component" href="" ng-click="setPredicate('requiredFlg');">Required&nbsp;<span ng-show="predicate === 'requiredFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th><a  data-toggle="tooltip" data-placement="top" title="Shows up on summary page" href="" ng-click="setPredicate('importantFlg');">Important&nbsp;<span ng-show="predicate === 'importantFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th><a  data-toggle="tooltip" data-placement="top" title="This attribute is an architecture" href="" ng-click="setPredicate('architectureFlg');">Architecture&nbsp;<span ng-show="predicate === 'architectureFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th><a  data-toggle="tooltip" data-placement="top" title="Allows multiple codes of this type per component" href="" ng-click="setPredicate('allowMultipleFlg');">Allow Multiple&nbsp;<span ng-show="predicate === 'allowMultipleFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
+          <th style="padding: 8px 3px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="filter in data.allTypes.data">
+          <td>{{filter.description}}</td>
+          <td>{{filter.attributeType}}</td>
+          <td ng-class="filter.visibleFlg? 'success':'danger'">{{filter.visibleFlg}}</td>
+          <td ng-class="filter.requiredFlg? 'success':'danger'">{{filter.requiredFlg}}</td>
+          <td ng-class="filter.importantFlg? 'success':'danger'">{{filter.importantFlg}}</td>
+          <td ng-class="filter.architectureFlg? 'success':'danger'">{{filter.architectureFlg}}</td>
+          <td ng-class="filter.allowMultipleFlg? 'success':'danger'">{{filter.allowMultipleFlg}}</td>
+          <td style="padding:0px 3px !important; vertical-align: middle;">
+            <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editType(filter)" ng-disabled="filter.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button>
+            <button type="button" title="Activate/Deactivate Attribute" class="btn btn-warning btn-sm" ng-click="changeActivity(filter)" ng-class="filter.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
+            <button type="button" title="Delete Attribute" class="btn btn-danger btn-sm" ng-click="deleteFilter(filter)" ng-disabled="deactivateButtons"><i class="fa fa-trash"></i></button>
+          </td>
+        </tbody>
+      </tr>
+    </table>
   </div>
 </div>

@@ -17,8 +17,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.io.Serializable;
 import java.util.Date;
@@ -38,9 +38,10 @@ public abstract class BaseEntity<T>
 
 	public static final String ACTIVE_STATUS = "A";
 	public static final String INACTIVE_STATUS = "I";
+	public static final String PENDING_STATUS = "P";
 
 	@NotNull
-	@ValidValueType({"A", "I"})
+	@ValidValueType({"A", "I", "P"})
 	private String activeStatus;
 
 	@NotNull
@@ -60,6 +61,8 @@ public abstract class BaseEntity<T>
 	@Version
 	private String storageVersion;
 
+	private Boolean adminModified;
+
 	public BaseEntity()
 	{
 	}
@@ -69,7 +72,7 @@ public abstract class BaseEntity<T>
 	{
 		if (o != null) {
 			if (o instanceof BaseEntity) {
-				return ServiceUtil.compareObjects(getActiveStatus(), ((BaseEntity) o).getActiveStatus());
+				return ReflectionUtil.compareObjects(getActiveStatus(), ((BaseEntity) o).getActiveStatus());
 			} else {
 				return -1;
 			}
@@ -84,6 +87,7 @@ public abstract class BaseEntity<T>
 		if (StringUtils.isBlank(getUpdateUser())) {
 			setUpdateUser(SecurityUtil.getCurrentUserName());
 		}
+		setAdminModified(SecurityUtil.isAdminUser());
 	}
 
 	public void populateBaseCreateFields()
@@ -100,6 +104,7 @@ public abstract class BaseEntity<T>
 		if (StringUtils.isBlank(getUpdateUser())) {
 			setUpdateUser(SecurityUtil.getCurrentUserName());
 		}
+		setAdminModified(SecurityUtil.isAdminUser());
 	}
 
 	public String getActiveStatus()
@@ -160,6 +165,16 @@ public abstract class BaseEntity<T>
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+
+	public Boolean getAdminModified()
+	{
+		return adminModified;
+	}
+
+	public void setAdminModified(Boolean adminModified)
+	{
+		this.adminModified = adminModified;
 	}
 
 }

@@ -16,22 +16,39 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import static edu.usu.sdl.openstorefront.storage.model.LookupEntity.newLookup;
+import edu.usu.sdl.openstorefront.util.SystemTable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author dshurtleff
  */
-@APIDescription("Job Run Status")
+@SystemTable
+@APIDescription("Run Status")
 public class RunStatus
 		extends LookupEntity
 {
 
-	public static final String COMPLETE = "C";
+	public static final String PENDING = "P";
 	public static final String WORKING = "W";
+	public static final String COMPLETE = "C";
 	public static final String ERROR = "E";
 
 	public RunStatus()
 	{
+	}
+
+	@Override
+	protected Map<String, LookupEntity> systemCodeMap()
+	{
+		Map<String, LookupEntity> codeMap = new HashMap<>();
+		codeMap.put(PENDING, newLookup(RunStatus.class, PENDING, "Pending"));
+		codeMap.put(COMPLETE, newLookup(RunStatus.class, COMPLETE, "Complete"));
+		codeMap.put(WORKING, newLookup(RunStatus.class, WORKING, "Working"));
+		codeMap.put(ERROR, newLookup(RunStatus.class, ERROR, "Error"));
+		return codeMap;
 	}
 
 }

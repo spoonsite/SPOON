@@ -20,10 +20,15 @@ import edu.usu.sdl.openstorefront.service.api.AttributeService;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.service.transfermodel.AttributeXrefModel;
+import edu.usu.sdl.openstorefront.service.transfermodel.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.sort.ArchitectureComparator;
+import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -35,18 +40,25 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingCompleteWrapper;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeWrapper;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -60,7 +72,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
+import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -86,23 +100,58 @@ public class AttributeServiceImpl
 	}
 
 	@Override
+	public List<AttributeCode> getAllAttributeCodes(String activeStatus)
+	{
+		List<AttributeCode> attributeCodes;
+		Element element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
+		if (element != null) {
+			attributeCodes = (List<AttributeCode>) element.getObjectValue();
+		} else {
+			attributeCodes = persistenceService.queryByExample(AttributeCode.class, new AttributeCode());
+			element = new Element(OSFCacheManager.ALLCODE_KEY, attributeCodes);
+			OSFCacheManager.getAttributeCodeAllCache().put(element);
+		}
+		if (StringUtils.isNotBlank(activeStatus)) {
+			attributeCodes = attributeCodes.stream().filter(code -> code.getActiveStatus().equals(activeStatus)).collect(Collectors.toList());
+		}
+		return attributeCodes;
+	}
+
+	@Override
 	public List<AttributeCode> findCodesForType(String type)
 	{
-		Element element = OSFCacheManager.getAttributeCache().get(type);
-		if (element != null) {
-			return (List<AttributeCode>) element.getObjectValue();
-		} else {
+		return findCodesForType(type, false);
+	}
 
+	@Override
+	public List<AttributeCode> findCodesForType(String type, boolean all)
+	{
+		List<AttributeCode> attributeCodes;
+		if (all) {
 			AttributeCode attributeCodeExample = new AttributeCode();
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(type);
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
-			attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
-			element = new Element(type, attributeCodes);
-			OSFCacheManager.getAttributeCache().put(element);
-			return attributeCodes;
+			attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+		} else {
+			Element element;
+			element = OSFCacheManager.getAttributeCache().get(type);
+			if (element != null) {
+				attributeCodes = (List<AttributeCode>) element.getObjectValue();
+			} else {
+
+				AttributeCode attributeCodeExample = new AttributeCode();
+				AttributeCodePk attributeCodePk = new AttributeCodePk();
+				attributeCodePk.setAttributeType(type);
+				attributeCodeExample.setAttributeCodePk(attributeCodePk);
+				attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+
+				attributeCodes = persistenceService.queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+				element = new Element(type, attributeCodes);
+				OSFCacheManager.getAttributeCache().put(element);
+			}
 		}
+		return attributeCodes;
 	}
 
 	@Override
@@ -116,14 +165,14 @@ public class AttributeServiceImpl
 	{
 		getAttributeServicePrivate().performSaveAttributeType(attributeType);
 
-		if (!updateIndexes) {
+		if (updateIndexes) {
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 			componentAttributePk.setAttributeType(attributeType.getAttributeType());
 			ComponentAttribute componentAttribute = new ComponentAttribute();
 			componentAttribute.setComponentAttributePk(componentAttributePk);
 			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, componentAttribute);
 
-			List<Article> articles = new ArrayList<>();
+			List<ArticleView> articles = new ArrayList<>();
 
 			AttributeCode attributeCodeExample = new AttributeCode();
 			AttributeCodePk codePk = new AttributeCodePk();
@@ -131,9 +180,9 @@ public class AttributeServiceImpl
 			attributeCodeExample.setAttributeCodePk(codePk);
 			List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, attributeCodeExample);
 			for (AttributeCode attributeCode : attributeCodes) {
-				if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
-					String articleContext = getArticle(attributeCode.getAttributeCodePk());
-					articles.add(Article.toViewHtml(attributeCode, articleContext));
+				if (attributeCode.getArticle() != null) {
+					ArticleView article = getArticle(attributeCode.getAttributeCodePk());
+					articles.add(article);
 				}
 			}
 
@@ -154,7 +203,7 @@ public class AttributeServiceImpl
 			existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeType.getUpdateUser());
-			existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
+			existing.setAllowMultipleFlg(attributeType.getAllowMultipleFlg());
 			existing.setArchitectureFlg(attributeType.getArchitectureFlg());
 			existing.setDescription(attributeType.getDescription());
 			existing.setImportantFlg(attributeType.getImportantFlg());
@@ -162,11 +211,17 @@ public class AttributeServiceImpl
 			existing.setVisibleFlg(attributeType.getVisibleFlg());
 			persistenceService.persist(existing);
 		} else {
-			attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
-			attributeType.setUpdateDts(TimeUtil.currentDate());
-			attributeType.setCreateDts(TimeUtil.currentDate());
+			attributeType.populateBaseCreateFields();
 			persistenceService.persist(attributeType);
 		}
+		cleanCaches(attributeType.getAttributeType());
+	}
+
+	private void cleanCaches(String attributeType)
+	{
+		OSFCacheManager.getAttributeCache().remove(attributeType);
+		OSFCacheManager.getAttributeTypeCache().remove(attributeType);
+		OSFCacheManager.getAttributeCodeAllCache().removeAll();
 	}
 
 	@Override
@@ -189,10 +244,10 @@ public class AttributeServiceImpl
 
 			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(example));
 
-			List<Article> articles = new ArrayList<>();
-			if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
-				String articleContext = getArticle(attributeCode.getAttributeCodePk());
-				articles.add(Article.toViewHtml(attributeCode, articleContext));
+			List<ArticleView> articles = new ArrayList<>();
+			if (attributeCode.getArticle() != null) {
+				ArticleView article = getArticle(attributeCode.getAttributeCodePk());
+				articles.add(article);
 			}
 
 			List<Component> components = new ArrayList<>();
@@ -212,25 +267,26 @@ public class AttributeServiceImpl
 			existing.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 			existing.setUpdateDts(TimeUtil.currentDate());
 			existing.setUpdateUser(attributeCode.getUpdateUser());
-			existing.setArticleFilename(attributeCode.getArticleFilename());
 			existing.setDescription(attributeCode.getDescription());
 			existing.setDetailUrl(attributeCode.getDetailUrl());
 			existing.setLabel(attributeCode.getLabel());
+			existing.setArchitectureCode(attributeCode.getArchitectureCode());
+			existing.setBadgeUrl(attributeCode.getBadgeUrl());
 			existing.setGroupCode(attributeCode.getGroupCode());
 			existing.setSortOrder(attributeCode.getSortOrder());
+			existing.setHighlightStyle(attributeCode.getHighlightStyle());
 			persistenceService.persist(existing);
 		} else {
-			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-			attributeCode.setUpdateDts(TimeUtil.currentDate());
-			attributeCode.setCreateDts(TimeUtil.currentDate());
+			attributeCode.populateBaseCreateFields();
 			persistenceService.persist(attributeCode);
 		}
+		cleanCaches(attributeCode.getAttributeCodePk().getAttributeType());
 	}
 
 	@Override
-	public String getArticle(AttributeCodePk attributeCodePk)
+	public ArticleView getArticle(AttributeCodePk attributeCodePk)
 	{
-		String article = null;
+		ArticleView article = null;
 
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
@@ -238,11 +294,11 @@ public class AttributeServiceImpl
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
-			if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
+			if (attributeCode.getArticle() != null) {
 				File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
 				try {
-					byte data[] = Files.readAllBytes(Paths.get(articleDir.getPath() + "/" + attributeCode.getArticleFilename()));
-					article = new String(data);
+					byte data[] = Files.readAllBytes(Paths.get(articleDir.getPath() + "/" + attributeCode.getArticle().getArticleFilename()));
+					article = ArticleView.toViewHtml(attributeCode, new String(data));
 				} catch (IOException e) {
 					throw new OpenStorefrontRuntimeException("Unable to find article for type: " + attributeCodePk.getAttributeType() + " code: " + attributeCodePk.getAttributeCode(), "Contact system admin to confirm file exists and is not corrupt.", e);
 				}
@@ -252,40 +308,75 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public void saveArticle(AttributeCodePk attributeCodePk, String article)
+	public void saveArticle(AttributeCode attributeCode, String articleContents)
 	{
-		getAttributeServicePrivate().performSaveArticle(attributeCodePk, article);
-		AttributeCode code = new AttributeCode();
-		code.setAttributeCodePk(attributeCodePk);
-
-		getSearchService().addIndex(Article.toViewHtml(code, article));
-
+		getAttributeServicePrivate().performSaveArticle(attributeCode, articleContents);
+		getSearchService().addIndex(ArticleView.toViewHtml(attributeCode, articleContents));
 	}
 
 	@Override
-	public void performSaveArticle(AttributeCodePk attributeCodePk, String article)
+	public void saveArticle(ArticleView article)
 	{
+		getAttributeServicePrivate().performSaveArticle(article);
+		getSearchService().addIndex(article);
+	}
+
+	@Override
+	public void performSaveArticle(ArticleView article)
+	{
+		AttributeCodePk pk = new AttributeCodePk();
+		AttributeCode code = new AttributeCode();
+		Article temp = new Article();
+
+		pk.setAttributeCode(article.getAttributeCode());
+		pk.setAttributeType(article.getAttributeType());
+
+		temp.setDescription(article.getDescription());
+		temp.setTitle(article.getTitle());
+
+		code.setArticle(temp);
+		code.setAttributeCodePk(pk);
+
+		performSaveArticle(code, article.getHtml());
+	}
+
+	@Override
+	public void performSaveArticle(AttributeCode attributeCode, String articleContents)
+	{
+		Objects.requireNonNull(attributeCode, "AttributeCode is required.");
+		Objects.requireNonNull(attributeCode.getArticle(), "Article is required.");
+		AttributeCodePk attributeCodePk = attributeCode.getAttributeCodePk();
+
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
-		Objects.requireNonNull(article, "Article is required.");
 
-		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
-		if (attributeCode != null) {
+		AttributeCode attributeCodeExisting = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
+		if (attributeCodeExisting != null) {
 			HTMLSanitizer sanitizer = new HTMLSanitizer();
-			article = sanitizer.santize(article).toString();
+			articleContents = sanitizer.santize(articleContents).toString();
 
 			//save the article
-			String filename = attributeCodePk.toKey() + ".htm";
+			String filename = attributeCodeExisting.getAttributeCodePk().toKey() + ".htm";
 			File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
 			try {
-				Files.write(Paths.get(articleDir.getPath() + "/" + filename), article.getBytes());
+				Files.write(Paths.get(articleDir.getPath() + "/" + filename), articleContents.getBytes());
 
 				//save attribute
-				attributeCode.setArticleFilename(filename);
-				attributeCode.setUpdateDts(TimeUtil.currentDate());
-				attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
-				persistenceService.persist(attributeCode);
+				if (attributeCodeExisting.getArticle() != null) {
+					attributeCodeExisting.getArticle().setArticleFilename(filename);
+					attributeCodeExisting.getArticle().setTitle(attributeCode.getArticle().getTitle());
+					attributeCodeExisting.getArticle().setDescription(attributeCode.getArticle().getDescription());
+					attributeCodeExisting.getArticle().populateBaseUpdateFields();
+					persistenceService.saveNonPkEntity(attributeCodeExisting.getArticle());
+				} else {
+					attributeCodeExisting.setArticle(attributeCode.getArticle());
+					attributeCodeExisting.getArticle().setArticleFilename(filename);
+					attributeCodeExisting.getArticle().populateBaseCreateFields();
+					persistenceService.persist(attributeCodeExisting);
+				}
+				cleanCaches(attributeCodeExisting.getAttributeCodePk().getAttributeType());
+
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException("Unable to save article.", "Contact system admin.  Check permissions on the directory and make sure device has enough space.");
 			}
@@ -310,13 +401,16 @@ public class AttributeServiceImpl
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
 			attributeCode.setDetailUrl(null);
-			if (attributeCode.getArticleFilename() != null) {
+			if (attributeCode.getArticle() != null) {
 				File articleDir = FileSystemManager.getDir(FileSystemManager.ARTICLE_DIR);
-				File ariticleFile = new File(articleDir.getPath() + "/" + attributeCode.getArticleFilename());
+				File ariticleFile = new File(articleDir.getPath() + "/" + attributeCode.getArticle().getArticleFilename());
 				if (ariticleFile.exists()) {
-					ariticleFile.delete();
+					if (ariticleFile.delete() == false) {
+						log.log(Level.WARNING, "Unable to remove file");
+					}
 				}
-				attributeCode.setArticleFilename(null);
+				persistenceService.delete(attributeCode.getArticle());
+				attributeCode.setArticle(null);
 			}
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveAttributeCode(attributeCode, false);
@@ -335,9 +429,27 @@ public class AttributeServiceImpl
 			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeType);
 
-			OSFCacheManager.getAttributeTypeCache().remove(type);
-			OSFCacheManager.getAttributeCache().remove(type);
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(type, null));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.INACTIVE);
+
+			//Stay in the same transaction
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
+			cleanCaches(type);
 		}
+	}
+
+	private List<ComponentAttribute> getComponentAttributes(String type, String code)
+	{
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+		componentAttributePk.setAttributeType(type);
+		componentAttributePk.setAttributeCode(code);
+		componentAttributeExample.setComponentAttributePk(componentAttributePk);
+		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
+		queryByExample.setReturnNonProxied(false);
+		return persistenceService.queryByExample(ComponentAttribute.class, queryByExample);
 	}
 
 	@Override
@@ -352,7 +464,92 @@ public class AttributeServiceImpl
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(attributeCode);
 
-			OSFCacheManager.getAttributeCache().remove(attributeCodePk.getAttributeType());
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(attributeCodePk.getAttributeType(), attributeCodePk.getAttributeCode()));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.INACTIVE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
+			cleanCaches(attributeCodePk.getAttributeType());
+		}
+	}
+
+	@Override
+	public void cascadeDeleteAttributeType(String type)
+	{
+		Objects.requireNonNull(type, "Attribute type is required.");
+
+		AttributeType attributeType = persistenceService.findById(AttributeType.class, type);
+		if (attributeType != null) {
+			AttributeCode attributeCodeExample = new AttributeCode();
+			AttributeCodePk attributeCodePk = new AttributeCodePk();
+			attributeCodePk.setAttributeType(type);
+			attributeCodeExample.setAttributeCodePk(attributeCodePk);
+			persistenceService.deleteByExample(attributeCodeExample);
+
+			ArticleTracking articleTrackingExample = new ArticleTracking();
+			articleTrackingExample.setAttributeType(type);
+			persistenceService.deleteByExample(articleTrackingExample);
+
+			deleteAttributeXrefType(type);
+
+			persistenceService.delete(attributeType);
+
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(type, null));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.DELETE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
+			cleanCaches(type);
+		}
+	}
+
+	@Override
+	public void cascadeDeleteAttributeCode(AttributeCodePk attributeCodePk)
+	{
+		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
+
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+
+			ArticleTracking articleTrackingExample = new ArticleTracking();
+			articleTrackingExample.setAttributeType(attributeCodePk.getAttributeType());
+			articleTrackingExample.setAttributeCode(attributeCodePk.getAttributeCode());
+			persistenceService.deleteByExample(articleTrackingExample);
+
+			AttributeXRefMap example = new AttributeXRefMap();
+			example.setAttributeType(attributeCodePk.getAttributeType());
+			example.setLocalCode(attributeCodePk.getAttributeCode());
+			persistenceService.deleteByExample(example);
+
+			persistenceService.delete(attributeCode);
+
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(attributeCodePk.getAttributeType(), attributeCodePk.getAttributeCode()));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.DELETE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
+			cleanCaches(attributeCodePk.getAttributeType());
+		}
+	}
+
+	@Override
+	public void activateAttributeCode(AttributeCodePk attributeCodePk)
+	{
+		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
+
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+			attributeCode.setUpdateDts(TimeUtil.currentDate());
+			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(attributeCode);
+
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(attributeCodePk.getAttributeType(), attributeCodePk.getAttributeCode()));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.ACTIVATE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
+			cleanCaches(attributeCodePk.getAttributeType());
 		}
 	}
 
@@ -373,12 +570,12 @@ public class AttributeServiceImpl
 				validationModel.setConsumeFieldsOnly(true);
 				ValidationResult validationResult = ValidationUtil.validate(validationModel);
 				if (validationResult.valid()) {
-					attributeType.setAttributeType(attributeType.getAttributeType().replace(ServiceUtil.COMPOSITE_KEY_SEPERATOR, ServiceUtil.COMPOSITE_KEY_REPLACER));
+					attributeType.setAttributeType(attributeType.getAttributeType().replace(ReflectionUtil.COMPOSITE_KEY_SEPERATOR, ReflectionUtil.COMPOSITE_KEY_REPLACER));
 
 					AttributeType existing = existingAttributeMap.get(attributeType.getAttributeType());
 					if (existing != null) {
 						existing.setDescription(attributeType.getDescription());
-						existing.setAllowMutlipleFlg(attributeType.getAllowMutlipleFlg());
+						existing.setAllowMultipleFlg(attributeType.getAllowMultipleFlg());
 						existing.setArchitectureFlg(attributeType.getArchitectureFlg());
 						existing.setImportantFlg(attributeType.getImportantFlg());
 						existing.setRequiredFlg(attributeType.getRequiredFlg());
@@ -386,12 +583,12 @@ public class AttributeServiceImpl
 						existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						saveAttributeType(existing, true);
+						saveAttributeType(existing, false);
 					} else {
 						attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						attributeType.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						attributeType.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-						saveAttributeType(attributeType, true);
+						saveAttributeType(attributeType, false);
 					}
 
 					List<AttributeCode> existingAttributeCodes = findCodesForType(attributeType.getAttributeType());
@@ -408,26 +605,29 @@ public class AttributeServiceImpl
 							validationModelCode.setConsumeFieldsOnly(true);
 							ValidationResult validationResultCode = ValidationUtil.validate(validationModelCode);
 							if (validationResultCode.valid()) {
-								attributeCode.getAttributeCodePk().setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode().replace(ServiceUtil.COMPOSITE_KEY_SEPERATOR, ServiceUtil.COMPOSITE_KEY_REPLACER));
+								attributeCode.getAttributeCodePk().setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode().replace(ReflectionUtil.COMPOSITE_KEY_SEPERATOR, ReflectionUtil.COMPOSITE_KEY_REPLACER));
 
 								AttributeCode existingCode = existingCodeMap.get(attributeCode.getAttributeCodePk().toKey());
 								if (existingCode != null) {
-									if (ServiceUtil.isObjectsDifferent(existingCode, attributeCode, true)) {
+									if (ReflectionUtil.isObjectsDifferent(existingCode, attributeCode, true)) {
 										existingCode.setDescription(attributeCode.getDescription());
 										existingCode.setDetailUrl(attributeCode.getDetailUrl());
 										existingCode.setLabel(attributeCode.getLabel());
+										existingCode.setArchitectureCode(attributeCode.getArchitectureCode());
+										existingCode.setBadgeUrl(attributeCode.getBadgeUrl());
 										existingCode.setGroupCode(attributeCode.getGroupCode());
 										existingCode.setSortOrder(attributeCode.getSortOrder());
+										existingCode.setHighlightStyle(attributeCode.getHighlightStyle());
 										existingCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 										existingCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 										existingCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-										saveAttributeCode(existingCode, true);
+										saveAttributeCode(existingCode, false);
 									}
 								} else {
 									attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 									attributeCode.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 									attributeCode.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-									saveAttributeCode(attributeCode, true);
+									saveAttributeCode(attributeCode, false);
 								}
 								newCodeSet.add(attributeCode.getAttributeCodePk().toKey());
 							} else {
@@ -455,6 +655,7 @@ public class AttributeServiceImpl
 		//Clear cache
 		OSFCacheManager.getAttributeTypeCache().removeAll();
 		OSFCacheManager.getAttributeCache().removeAll();
+		OSFCacheManager.getAttributeCodeAllCache().removeAll();
 
 		getSearchService().saveAll();
 	}
@@ -470,6 +671,7 @@ public class AttributeServiceImpl
 				break;
 			}
 		}
+
 		return attributeCode;
 	}
 
@@ -507,18 +709,26 @@ public class AttributeServiceImpl
 	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults, String activeStatus)
 	{
 		String query;
+
+		String activeStatusQuery = "";
+		if (StringUtils.isNotBlank(activeStatus)) {
+			activeStatusQuery = "activeStatus = :activeStatusParam and ";
+		}
+
 		if (maxResults != null) {
-			query = "select from AttributeCode where activeStatus = :activeStatusParam "
-					+ " and articleFilename is not null "
-					+ " order by updateDts DESC LIMIT " + maxResults;
+			query = "select from AttributeCode where  " + activeStatusQuery
+					+ " article is not null "
+					+ " order by article.createDts DESC LIMIT " + maxResults;
 		} else {
-			query = "select from AttributeCode where activeStatus = :activeStatusParam "
-					+ " and articleFilename is not null "
-					+ " order by updateDts DESC";
+			query = "select from AttributeCode where  " + activeStatusQuery
+					+ " article is not null "
+					+ " order by article.createDts DESC";
 		}
 
 		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("activeStatusParam", activeStatus);
+		if (StringUtils.isNotBlank(activeStatus)) {
+			parameters.put("activeStatusParam", activeStatus);
+		}
 
 		return persistenceService.query(query, parameters);
 	}
@@ -537,11 +747,11 @@ public class AttributeServiceImpl
 				String rootCode = "0";
 				List<AttributeCode> attributeCodes = findCodesForType(attributeType);
 				for (AttributeCode attributeCode : attributeCodes) {
-					if (rootCode.equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
-						architecture.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+					if (rootCode.equals(attributeCode.adjustedArchitectureCode())) {
+						architecture.setAttributeCode(attributeCode.adjustedArchitectureCode());
 						architecture.setDescription(attributeCode.getDescription());
 					} else {
-						String codeTokens[] = attributeCode.getAttributeCodePk().getAttributeCode().split(Pattern.quote("."));
+						String codeTokens[] = attributeCode.adjustedArchitectureCode().split(Pattern.quote("."));
 						Architecture rootArchtecture = architecture;
 						StringBuilder codeKey = new StringBuilder();
 						for (int i = 0; i < codeTokens.length - 1; i++) {
@@ -568,7 +778,7 @@ public class AttributeServiceImpl
 						//now find the correct postion and add/update
 						boolean found = false;
 						for (Architecture child : rootArchtecture.getChildren()) {
-							if (child.getAttributeCode().equals(attributeCode.getAttributeCodePk().getAttributeCode())) {
+							if (child.getAttributeCode().equals(attributeCode.adjustedArchitectureCode())) {
 								child.setName(attributeCode.getLabel());
 								child.setDescription(attributeCode.getDescription());
 								found = true;
@@ -576,7 +786,10 @@ public class AttributeServiceImpl
 						}
 						if (!found) {
 							Architecture newChild = new Architecture();
-							newChild.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+							newChild.setAttributeCode(attributeCode.adjustedArchitectureCode());
+							newChild.setOriginalAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+							newChild.setArchitectureCode(attributeCode.getArchitectureCode());
+							newChild.setSortOrder(attributeCode.getSortOrder());
 							newChild.setAttributeType(attributeType);
 							newChild.setName(attributeCode.getLabel());
 							newChild.setDescription(attributeCode.getDescription());
@@ -625,71 +838,82 @@ public class AttributeServiceImpl
 		List<ComponentSearchView> list = new ArrayList<>();
 		List<AttributeCode> codes = findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
-			list.add(ComponentSearchView.toView(Article.toView(code)));
+			list.add(ComponentSearchView.toView(ArticleView.toView(code)));
 		});
 		return list;
 	}
 
 	@Override
-	public List<Article> getArticlesForCodeLike(AttributeCodePk attributeCodePk)
+	public List<ArticleView> getArticlesForCodeLike(AttributeCodePk attributeCodePk)
 	{
-		List<Article> articles = new ArrayList<>();
+		List<ArticleView> articles = new ArrayList<>();
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode == null) {
+			AttributeCode attributeCodeExample = new AttributeCode();
+			AttributeCodePk attributeCodePkExample = new AttributeCodePk();
+			attributeCodePkExample.setAttributeType(attributeCodePk.getAttributeType());
+			attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
+			attributeCodeExample.setArchitectureCode(attributeCodePk.getAttributeCode());
+
+			attributeCode = persistenceService.queryOneByExample(AttributeCode.class, attributeCodeExample);
+		}
+
 		AttributeCode attributeCodeExample = new AttributeCode();
 		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
-
 		attributeCodePkExample.setAttributeType(attributeCodePk.getAttributeType());
 		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 
 		AttributeCode attributeCodeLikeExample = new AttributeCode();
-		AttributeCodePk attributeCodePkLikeExample = new AttributeCodePk();
+		if (attributeCode != null && StringUtils.isNotBlank(attributeCode.getArchitectureCode())) {
+			attributeCodeLikeExample.setArchitectureCode(attributeCode.getArchitectureCode() + "%");
+		} else {
+			AttributeCodePk attributeCodePkLikeExample = new AttributeCodePk();
 
-		// get attribute codes by using LIKE sql construct 'value%'
-		attributeCodePkLikeExample.setAttributeCode(attributeCodePk.getAttributeCode() + "%");
-		attributeCodeLikeExample.setAttributeCodePk(attributeCodePkLikeExample);
+			// get attribute codes by using LIKE sql construct 'value%'
+			attributeCodePkLikeExample.setAttributeCode(attributeCodePk.getAttributeCode() + "%");
+			attributeCodeLikeExample.setAttributeCodePk(attributeCodePkLikeExample);
+		}
 
 		QueryByExample queryByExample = new QueryByExample(attributeCodeExample);
-
 		queryByExample.setLikeExample(attributeCodeLikeExample);
-
 		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
 
 		for (AttributeCode code : attributeCodes) {
-			if (code.getArticleFilename() != null) {
-				articles.add(Article.toView(code));
+			if (code.getArticle() != null) {
+				articles.add(ArticleView.toView(code));
 			}
 		}
 		return articles;
 	}
 
 	@Override
-	public List<Article> getArticles()
+	public List<ArticleView> getArticles()
 	{
-		List<Article> list = new ArrayList<>();
+		List<ArticleView> list = new ArrayList<>();
 		List<AttributeCode> codes = findRecentlyAddedArticles(null);
 		codes.stream().forEach((code) -> {
-			String content = getArticle(code.getAttributeCodePk());
-			list.add(Article.toViewHtml(code, content));
+			ArticleView article = getArticle(code.getAttributeCodePk());
+			list.add(article);
 		});
 		return list;
 	}
 
 	@Override
-	public Article getArticleView(AttributeCodePk attributeCodePk)
+	public ArticleView getArticleView(AttributeCodePk attributeCodePk)
 	{
-		Article article = null;
+		ArticleView article = null;
 
 		Objects.requireNonNull(attributeCodePk, "AttributeCodePk is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeType(), "Type is required.");
 		Objects.requireNonNull(attributeCodePk.getAttributeCode(), "Code is required.");
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
-		if (attributeCode.getArticleFilename() != null) {
-			String content = getArticle(attributeCodePk);
-			article = Article.toViewHtml(attributeCode, content);
+		if (attributeCode.getArticle() != null) {
+			article = getArticle(attributeCodePk);
 		}
 		return article;
 	}
@@ -796,6 +1020,215 @@ public class AttributeServiceImpl
 		if (attributeXRefType != null) {
 			persistenceService.delete(attributeXRefType);
 		}
+	}
+
+	@Override
+	public void activateAttributeType(String type)
+	{
+		AttributeType attributeType = persistenceService.findById(AttributeType.class, type);
+
+		if (attributeType != null) {
+			attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
+			attributeType.setUpdateDts(TimeUtil.currentDate());
+			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
+			persistenceService.persist(attributeType);
+
+			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
+			bulkComponentAttributeChange.setAttributes(getComponentAttributes(type, null));
+			bulkComponentAttributeChange.setOpertionType(BulkComponentAttributeChange.OpertionType.ACTIVATE);
+			(new ComponentServiceImpl(persistenceService)).bulkComponentAttributeChange(bulkComponentAttributeChange);
+
+			cleanCaches(type);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to save sort order.  Attribute Type: " + type, "Check data");
+		}
+	}
+
+	@Override
+	public void saveAttributeCodeSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder)
+	{
+		Objects.requireNonNull(attributeCodePk, "Attribute Code PK is required");
+		AttributeCode code = persistenceService.findById(AttributeCode.class, attributeCodePk);
+		if (code != null) {
+			code.setSortOrder(sortOrder);
+			persistenceService.persist(code);
+
+			cleanCaches(attributeCodePk.getAttributeType());
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to save sort order.  Attribute code: " + attributeCodePk.toString(), "Check data");
+		}
+	}
+
+	@Override
+	public List<AttributeCode> getArticles(Boolean all)
+	{
+		List<AttributeCode> attributeCodes;
+		if (all) {
+			attributeCodes = findRecentlyAddedArticles(null, null);
+		} else {
+			attributeCodes = findRecentlyAddedArticles(null, AttributeCode.ACTIVE_STATUS);
+		}
+		return attributeCodes;
+	}
+
+	@Override
+	public ArticleTrackingResult getAttributeTracking(FilterQueryParams filter, AttributeCodePk attributeCodePk)
+	{
+		ArticleTrackingResult result = new ArticleTrackingResult();
+
+		ArticleTracking articleTrackingExample = new ArticleTracking();
+		articleTrackingExample.setActiveStatus(filter.getStatus());
+		if (attributeCodePk != null) {
+			articleTrackingExample.setAttributeCode(attributeCodePk.getAttributeCode());
+			articleTrackingExample.setAttributeType(attributeCodePk.getAttributeType());
+		}
+
+		ArticleTracking articleTrackingStartExample = new ArticleTracking();
+		articleTrackingStartExample.setEventDts(filter.getStart());
+
+		ArticleTracking articleTrackingEndExample = new ArticleTracking();
+		articleTrackingEndExample.setEventDts(filter.getEnd());
+
+		QueryByExample queryByExample = new QueryByExample(articleTrackingExample);
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(articleTrackingStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(articleTrackingEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		queryByExample.setMaxResults(filter.getMax());
+		queryByExample.setFirstResult(filter.getOffset());
+		queryByExample.setSortDirection(filter.getSortOrder());
+
+		ArticleTracking articleTrackingTrackingOrderExample = new ArticleTracking();
+		Field sortField = ReflectionUtil.getField(articleTrackingTrackingOrderExample, filter.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), articleTrackingTrackingOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(articleTrackingTrackingOrderExample);
+		}
+
+		List<ArticleTracking> articleTrackings = persistenceService.queryByExample(ArticleTracking.class, queryByExample);
+
+		List<AttributeCode> codes = getArticles(Boolean.TRUE);
+		Map<AttributeCodePk, Article> codeMap = new HashMap<>();
+		codes.stream().forEach((code) -> {
+			codeMap.put(code.getAttributeCodePk(), code.getArticle());
+		});
+		for (ArticleTracking item : articleTrackings) {
+			ArticleTrackingCompleteWrapper wrapper = new ArticleTrackingCompleteWrapper();
+
+			AttributeCodePk newPk = new AttributeCodePk();
+			newPk.setAttributeCode(item.getAttributeCode());
+			newPk.setAttributeType(item.getAttributeType());
+
+			wrapper.setData(item);
+			wrapper.setArticle(codeMap.get(newPk));
+			result.getResult().add(wrapper);
+		}
+
+		if (filter.getSortField().equals(ArticleTrackingCompleteWrapper.FIELD_TITLE)) {
+			if (filter.getSortOrder().equals(OpenStorefrontConstant.SORT_DESCENDING)) {
+				result.getResult().sort((ArticleTrackingCompleteWrapper p1, ArticleTrackingCompleteWrapper p2) -> p1.getArticle().getTitle().compareToIgnoreCase(p2.getArticle().getTitle()));
+			} else {
+				result.getResult().sort((ArticleTrackingCompleteWrapper p1, ArticleTrackingCompleteWrapper p2) -> p2.getArticle().getTitle().compareToIgnoreCase(p1.getArticle().getTitle()));
+			}
+		}
+		queryByExample.setQueryType(QueryType.COUNT);
+		result.setCount(persistenceService.countByExample(queryByExample));
+
+		return result;
+	}
+
+	@Override
+	public void importArticles(List<ArticleView> articles)
+	{
+		articles.forEach(this::saveArticle);
+	}
+
+	@Override
+	public AttributeTypeWrapper getFilteredTypes(FilterQueryParams filter)
+	{
+		AttributeTypeWrapper result = new AttributeTypeWrapper();
+
+		AttributeType attributeExample = new AttributeType();
+		attributeExample.setActiveStatus(filter.getStatus());
+
+		QueryByExample queryByExample = new QueryByExample(attributeExample);
+
+		queryByExample.setMaxResults(filter.getMax());
+		queryByExample.setFirstResult(filter.getOffset());
+		queryByExample.setSortDirection(filter.getSortOrder());
+
+		AttributeType attributeOrderExample = new AttributeType();
+		Field sortField = ReflectionUtil.getField(attributeOrderExample, filter.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), attributeOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(attributeOrderExample);
+		}
+
+		List<AttributeType> attributes = persistenceService.queryByExample(AttributeType.class, queryByExample);
+
+		result.setData(attributes);
+
+		queryByExample.setQueryType(QueryType.COUNT);
+		result.setTotalNumber(persistenceService.countByExample(queryByExample));
+		return result;
+	}
+
+	private String reverseSortOrder(String order)
+	{
+		if (order.equals("ASC")) {
+			return "DESC";
+		} else {
+			return "ASC";
+		}
+	}
+
+	@Override
+	public AttributeCodeWrapper getFilteredCodes(FilterQueryParams filter, String type)
+	{
+		AttributeCodeWrapper result = new AttributeCodeWrapper();
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeType(type);
+		AttributeCode attributeExample = new AttributeCode();
+		attributeExample.setAttributeCodePk(pk);
+		attributeExample.setActiveStatus(filter.getStatus());
+
+		QueryByExample queryByExample = new QueryByExample(attributeExample);
+
+		queryByExample.setMaxResults(filter.getMax());
+		queryByExample.setFirstResult(filter.getOffset());
+		queryByExample.setSortDirection(filter.getSortOrder());
+
+		AttributeCode attributeOrderExample = new AttributeCode();
+		if (filter.getSortField().equals("code")) {
+			AttributeCodePk newPk = new AttributeCodePk();
+			newPk.setAttributeCode(QueryByExample.STRING_FLAG);
+			attributeOrderExample.setAttributeCodePk(newPk);
+			queryByExample.setOrderBy(attributeOrderExample);
+		} else {
+
+			Field sortField = ReflectionUtil.getField(attributeOrderExample, filter.getSortField());
+			if (sortField != null) {
+				BeanUtil.setPropertyValue(sortField.getName(), attributeOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+				queryByExample.setOrderBy(attributeOrderExample);
+			}
+		}
+
+		List<AttributeCode> attributes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+		List<AttributeCodeView> views = AttributeCodeView.toViews(attributes);
+
+		result.setData(views);
+
+		queryByExample.setQueryType(QueryType.COUNT);
+		result.setTotalNumber(persistenceService.countByExample(queryByExample));
+		return result;
 	}
 
 }

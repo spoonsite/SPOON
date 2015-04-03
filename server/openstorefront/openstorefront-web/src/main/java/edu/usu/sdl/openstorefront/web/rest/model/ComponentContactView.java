@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
@@ -26,13 +25,19 @@ import java.util.Date;
  * @author dshurtleff
  */
 public class ComponentContactView
-{	
+{
+
+	private String contactId;
 	private String positionDescription;
+	private String contactType;
 	private String name;
+	private String firstName;
+	private String lastName;
 	private String email;
 	private String phone;
 	private String organization;
 	private Date updateDts;
+	private String activeStatus;
 
 	public ComponentContactView()
 	{
@@ -43,19 +48,23 @@ public class ComponentContactView
 		ComponentContactView view = new ComponentContactView();
 		view.setEmail(contact.getEmail());
 		view.setPositionDescription(TranslateUtil.translate(ContactType.class, contact.getContactType()));
+		view.setContactType(contact.getContactType());
 		view.setOrganization(contact.getOrganization());
 		view.setPhone(contact.getPhone());
 		view.setUpdateDts(contact.getUpdateDts());
-		if (contact.getLastName() == null || "".equals(contact.getLastName()))
-		{
+		view.setFirstName(contact.getFirstName());
+		view.setLastName(contact.getLastName());
+		view.setActiveStatus(contact.getActiveStatus());
+		view.setContactId(contact.getContactId());
+
+		if (contact.getLastName() == null || "".equals(contact.getLastName())) {
 			view.setName(contact.getFirstName());
-		}
-		else 
-		{
-			view.setName(contact.getFirstName()+ " " + contact.getLastName());
+		} else {
+			view.setName(contact.getFirstName() + " " + contact.getLastName());
 		}
 		return view;
 	}
+
 	public String getPositionDescription()
 	{
 		return positionDescription;
@@ -120,6 +129,56 @@ public class ComponentContactView
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getFirstName()
+	{
+		return firstName;
+	}
+
+	public void setFirstName(String firstName)
+	{
+		this.firstName = firstName;
+	}
+
+	public String getLastName()
+	{
+		return lastName;
+	}
+
+	public void setLastName(String lastName)
+	{
+		this.lastName = lastName;
+	}
+
+	public String getContactType()
+	{
+		return contactType;
+	}
+
+	public void setContactType(String contactType)
+	{
+		this.contactType = contactType;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getContactId()
+	{
+		return contactId;
+	}
+
+	public void setContactId(String contactId)
+	{
+		this.contactId = contactId;
 	}
 
 }

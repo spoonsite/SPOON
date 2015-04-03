@@ -18,13 +18,13 @@ limitations under the License.
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="css/apidocLookup.css" rel="stylesheet" type="text/css"/>
-        <script src="script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
-        <script src="script/reference.js" type="text/javascript"></script>
+        <link href="apidoc/css/apidocLookup.css" rel="stylesheet" type="text/css"/>
+        <script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+        <script src="apidoc/script/reference.js" type="text/javascript"></script>
     </head>
     <body>
         <h2>Lookup Table Reference</h2>	
-        <div class='wrapper'>
+        <div class='wrapper' >
             <table id="tableOfContents"></table>
             <div id="content"></div>
         </div>

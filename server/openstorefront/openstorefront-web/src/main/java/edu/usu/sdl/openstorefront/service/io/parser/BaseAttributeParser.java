@@ -45,6 +45,12 @@ public abstract class BaseAttributeParser
 		return attributeMap;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
+	public abstract String getHEADER();
+	
 	protected abstract void internalParse(CSVReader reader) throws IOException;
 
 }

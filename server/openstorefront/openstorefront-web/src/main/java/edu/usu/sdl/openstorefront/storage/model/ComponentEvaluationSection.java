@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.PK;
+import java.math.BigDecimal;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -37,7 +39,17 @@ public class ComponentEvaluationSection
 	@Min(1)
 	@Max(5)
 	@ConsumeField
+	@APIDescription("Evaluation score (Depricated)")
 	private Integer score;
+
+	@Min(1)
+	@Max(5)
+	@ConsumeField
+	@APIDescription("Evaluation score")
+	private BigDecimal actualScore;
+
+	@ConsumeField
+	private Boolean notAvailable;
 
 	public ComponentEvaluationSection()
 	{
@@ -61,6 +73,26 @@ public class ComponentEvaluationSection
 	public void setScore(Integer score)
 	{
 		this.score = score;
+	}
+
+	public Boolean getNotAvailable()
+	{
+		return notAvailable;
+	}
+
+	public void setNotAvailable(Boolean notAvailable)
+	{
+		this.notAvailable = notAvailable;
+	}
+
+	public BigDecimal getActualScore()
+	{
+		return actualScore;
+	}
+
+	public void setActualScore(BigDecimal actualScore)
+	{
+		this.actualScore = actualScore;
 	}
 
 }

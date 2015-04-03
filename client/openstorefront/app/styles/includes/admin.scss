@@ -1,0 +1,224 @@
+/* 
+* Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the 'License');
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an 'AS IS' BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/***************************************************************
+* This css is used for the styles found in the admin tools page
+***************************************************************/
+@import "_variables.scss";
+@import "_mixins.scss";
+.adminTools {
+  position:fixed;
+  z-index: 1;
+  background: white;
+  width: 250px !important;
+  display: inline-block;
+  border-right: 1px solid lightgray;
+  overflow: hidden;
+  height: 100%;
+  margin-bottom:-3px;
+  padding-left: 5px;
+  margin-left: -5px;
+}
+
+.toolsContent {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  padding-left: 245px;
+}
+
+.treeNav .nav-pills > li {
+  clear: both;
+}
+
+#editLandingPages #cke_editor1 {
+  width: 100%;
+  margin-left: -276px;
+  padding-left: 275px;
+}
+
+.admin-table th{
+  padding: 8px 5px !important;
+}
+.admin-table td{
+  padding: 5px !important;
+}
+.admin-table thead{
+  background-color: #fff;
+}
+
+.stickytable.table-striped > tbody > tr:nth-child(odd) td, .stickytable.table-striped > tbody > tr:nth-child(odd) th {
+  background-color: white;
+}
+.stickytable.table-striped > tbody > tr:nth-child(even) td, .stickytable.table-striped > tbody > tr:nth-child(even) th {
+  background-color: #eee;
+}
+.stickytable.table-striped > thead > tr td, .stickytable.table-striped > thead > tr th {
+  background-color: #eee;
+}
+
+.table-striped.doubled > thead > tr td, .table-striped.doubled > thead > tr th,
+.table-striped.doubled > thead > tr td, .table-striped.doubled > thead > tr th {
+  background-color: #eee;
+}
+.table-striped.doubled > tbody > tr:nth-child(4n + 2) td, .table-striped.doubled > tbody > tr:nth-child(4n + 2) th,
+.table-striped.doubled > tbody > tr:nth-child(4n + 1) td, .table-striped.doubled > tbody > tr:nth-child(4n + 1) th {
+  background-color: white;
+}
+.table-striped.doubled > tbody > tr:nth-child(4n + 4) td, .table-striped.doubled > tbody > tr:nth-child(4n + 4) th,
+.table-striped.doubled > tbody > tr:nth-child(4n + 3) td, .table-striped.doubled > tbody > tr:nth-child(4n + 3) th {
+  background-color: #eee;
+}
+.table-striped.doubled > tbody > tr:nth-child(4n + 4) td, .table-striped.doubled > tbody > tr:nth-child(4n + 4) th,
+.table-striped.doubled > tbody > tr:nth-child(4n + 2) td, .table-striped.doubled > tbody > tr:nth-child(4n + 2) th{
+  border-bottom: 1px solid #333;
+}
+
+
+#adminUserProfile .table-bordered, #adminUserProfile .table-bordered>tbody>tr>td, #adminUserProfile .table-bordered>tbody>tr>th, #adminUserProfile .table-bordered>tfoot>tr>td, #adminUserProfile .table-bordered>tfoot>tr>th, #adminUserProfile .table-bordered>thead>tr>td, #adminUserProfile .table-bordered>thead>tr>th {
+  border: 1px solid darkgray;
+}
+
+html, body,
+.fullHeight {
+  height: 100%;
+}
+
+@mixin admin-table-row-variant($state, $background, $border, $textColor) {
+  // Exact selectors below required to override `.table-striped` and prevent
+  // inheritance to nested tables.
+  .table-striped.doubled > thead > tr,
+  .table-striped.doubled > tbody > tr,
+  .table-striped.doubled > tfoot > tr,
+  .stickytable.table-striped.table > thead > tr,
+  .stickytable.table-striped.table > tbody > tr,
+  .stickytable.table-striped.table > tfoot > tr {
+    > td.#{$state},
+    > th.#{$state},
+    &.#{$state} > td,
+    &.#{$state} > th {
+      color: $textColor;
+      background-color: $background;
+    }
+  }
+
+  // Hover states for `.table-hover`
+  // Note: this is not available for cells or rows within `thead` or `tfoot`.
+  .table-striped.doubled > tbody > tr,
+  .stickytable.table-striped.table-hover > tbody > tr {
+    > td.#{$state}:hover,
+    > th.#{$state}:hover,
+    &.#{$state}:hover > td,
+    &.#{$state}:hover > th {
+      background-color: darken($background, 5%);
+    }
+  }
+}
+
+@mixin ul-row-variant($state, $background, $border, $textColor) {
+  ul {
+    > li.#{$state},
+    &.#{$state} > li{
+      color: $textColor;
+      background-color: $background;
+    }
+  }
+
+  ul {
+    > li.#{$state}:hover,
+    &.#{$state}:hover > li{
+      background-color: darken($background, 5%);
+    }
+  }
+}
+
+// Generate the contextual variants
+@include admin-table-row-variant('success', $state-success-bg, $state-success-border, $state-success-text);
+@include admin-table-row-variant('danger', $state-danger-bg, $state-danger-border, $state-danger-text);
+@include admin-table-row-variant('warning', $state-warning-bg, $state-warning-border, $state-warning-text);
+@include admin-table-row-variant('info', $state-info-bg, $state-info-border, $state-info-text);
+@include admin-table-row-variant('inverse', $state-inverse-bg, $state-inverse-border, $state-inverse-text);
+
+@include ul-row-variant('success', $state-success-bg, $state-success-border, $state-success-text);
+@include ul-row-variant('danger', $state-danger-bg, $state-danger-border, $state-danger-text);
+@include ul-row-variant('warning', $state-warning-bg, $state-warning-border, $state-warning-text);
+@include ul-row-variant('info', $state-info-bg, $state-info-border, $state-info-text);
+@include ul-row-variant('inverse', $state-inverse-bg, $state-inverse-border, $state-inverse-text);
+
+
+@mixin form-control-validation-inverse($text-color: #555, $border-color: #ccc, $background-color: #f5f5f5) {
+  // Color the label and help text
+  .help-block,
+  .control-label,
+  .radio,
+  .checkbox,
+  .radio-inline,
+  .checkbox-inline  {
+    background-color: $background-color; 
+    color: $text-color;
+  }
+  // Set the border and box shadow on specific inputs to match
+  .form-control {
+    border-color: $border-color;
+    @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075)); // Redeclare so transitions work
+    &:focus {
+      border-color: lighten($border-color, 10%);
+      $shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten($border-color, 20%);
+      @include box-shadow($shadow);
+    }
+  }
+  // Set validation states also for addons
+  .input-group-addon {
+    color: $text-color;
+    border-color: $border-color;
+    background-color: $background-color;
+  }
+}
+
+
+// Warning
+.has-warning {
+  @include form-control-validation($state-warning-text, $state-warning-text, $state-warning-bg);
+}
+// Error
+.has-danger {
+  @include form-control-validation($state-danger-text, $state-danger-text, $state-danger-bg);
+}
+// Success
+.has-success {
+  @include form-control-validation($state-success-text, $state-success-text, $state-success-bg);
+}
+// info
+.has-info {
+  @include form-control-validation($state-info-text, $state-info-text, $state-info-bg);
+}
+// inverse
+.has-inverse {
+  @include form-control-validation-inverse($state-inverse-text, $state-inverse-bg, $state-inverse-bg);
+}
+
+tr.inactive{
+  color: rgb(150, 150, 150);
+  background: rgb(229, 229, 229);
+}
+tr.inactive td{
+  color: rgb(150, 150, 150);
+  background: rgb(229, 229, 229);
+}
+td button.inverted{
+  background-color: dimgray;
+  color: white;
+}

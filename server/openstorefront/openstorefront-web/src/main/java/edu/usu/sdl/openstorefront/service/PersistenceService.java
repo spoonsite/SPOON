@@ -15,9 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.id.OClusterPositionFactory;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
@@ -27,9 +25,12 @@ import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.query.ComplexFieldStack;
 import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.PK;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -38,6 +39,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,12 +137,38 @@ public class PersistenceService
 		return active;
 	}
 
+	public boolean isAttached(BaseEntity baseEntity)
+	{
+		boolean attached = false;
+		OObjectDatabaseTx database = getConnection();
+		try {
+			attached = database.isManaged(baseEntity);
+		} finally {
+			closeConnection(database);
+		}
+		return attached;
+	}
+
+	public <T extends BaseEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
+	{
+		T found = findById(entity, id);
+		if (found != null) {
+			found.setUpdateUser(SecurityUtil.getCurrentUserName());
+			found.populateBaseUpdateFields();
+			found.setActiveStatus(activeStatus);
+			persist(found);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find entity to set status on.", "Check Input: " + entity.getSimpleName() + " id: " + id);
+		}
+		return found;
+	}
+
 	/**
 	 * This only works on managed objects
 	 *
 	 * @param <T>
 	 * @param entityClass
-	 * @param primaryKey
+	 * @param primaryKey (DB RID not our Entity PK)
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -154,13 +182,6 @@ public class PersistenceService
 				rid = (ORecordId) primaryKey;
 			} else if (primaryKey instanceof String) {
 				rid = new ORecordId((String) primaryKey);
-			} else if (primaryKey instanceof Number) {
-				// COMPOSE THE RID
-				OClass cls = database.getMetadata().getSchema().getClass(entityClass);
-				if (cls == null) {
-					throw new IllegalArgumentException("Class '" + entityClass + "' is not configured in the database");
-				}
-				rid = new ORecordId(cls.getDefaultClusterId(), OClusterPositionFactory.INSTANCE.valueOf(((Number) primaryKey).longValue()));
 			} else {
 				throw new IllegalArgumentException("PrimaryKey '" + primaryKey + "' type (" + primaryKey.getClass() + ") is not supported");
 			}
@@ -256,7 +277,7 @@ public class PersistenceService
 			for (Field field : entityClass.getDeclaredFields()) {
 				PK idAnnotation = field.getAnnotation(PK.class);
 				if (idAnnotation != null) {
-					if (ServiceUtil.isComplexClass(field.getType())) {
+					if (ReflectionUtil.isComplexClass(field.getType())) {
 						//PK class should only be one level deep
 						for (Field pkField : field.getType().getDeclaredFields()) {
 							try {
@@ -294,21 +315,42 @@ public class PersistenceService
 		return count;
 	}
 
-	public <T> int deleteByExample(T example)
+	public <T> int deleteByExample(BaseEntity example)
+	{
+		return deleteByExample(new QueryByExample(example));
+	}
+
+	public <T> int deleteByExample(QueryByExample queryByExample)
 	{
 		int deleteCount = 0;
 		StringBuilder queryString = new StringBuilder();
 
-		queryString.append("delete from ").append(example.getClass().getSimpleName());
+		queryString.append("delete from ").append(queryByExample.getExample().getClass().getSimpleName());
 
-		String whereClause = generateWhereClause(example);
+		Map<String, Object> mappedParams = new HashMap<>();
+		String whereClause = generateWhereClause(queryByExample.getExample());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
+			mappedParams.putAll(mapParameters(queryByExample.getExample()));
 		}
+
+		queryByExample.getExtraWhereCauses().forEach(item -> {
+			SpecialOperatorModel special = (SpecialOperatorModel) item;
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			if (StringUtils.isNotBlank(extraWhere)) {
+				if (queryString.indexOf(" where ") != -1) {
+					queryString.append(" AND ");
+				} else {
+					queryString.append(" where ");
+				}
+				queryString.append(extraWhere);
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+			}
+		});
 
 		OObjectDatabaseTx db = getConnection();
 		try {
-			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(example));
+			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(mappedParams);
 		} finally {
 			closeConnection(db);
 		}
@@ -358,10 +400,32 @@ public class PersistenceService
 		return updateCount;
 	}
 
+	public <T> int runDbCommand(String query, Map<String, Object> queryParams)
+	{
+		int updateCount = 0;
+		OObjectDatabaseTx db = getConnection();
+		try {
+			updateCount = db.command(new OCommandSQL(query)).execute(queryParams);
+		} finally {
+			closeConnection(db);
+		}
+		return updateCount;
+	}
+
+	public long countByExample(BaseEntity example)
+	{
+		QueryByExample queryByExample = new QueryByExample(example);
+		queryByExample.setQueryType(QueryType.COUNT);
+		return countByExample(new QueryByExample(example));
+	}
+
 	public long countByExample(QueryByExample queryByExample)
 	{
 		long count = 0;
 		StringBuilder queryString = new StringBuilder();
+		if (QueryType.SELECT.equals(queryByExample.getQueryType())) {
+			queryByExample.setQueryType(QueryType.COUNT);
+		}
 		switch (queryByExample.getQueryType()) {
 			case COUNT:
 				queryString.append("select count(*) ");
@@ -374,14 +438,30 @@ public class PersistenceService
 		}
 		queryString.append("from ").append(queryByExample.getExample().getClass().getSimpleName());
 
+		Map<String, Object> mappedParams = new HashMap<>();
 		String whereClause = generateWhereClause(queryByExample.getExample());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
+			mappedParams.putAll(mapParameters(queryByExample.getExample()));
 		}
+
+		queryByExample.getExtraWhereCauses().forEach(item -> {
+			SpecialOperatorModel special = (SpecialOperatorModel) item;
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			if (StringUtils.isNotBlank(extraWhere)) {
+				if (queryString.indexOf(" where ") != -1) {
+					queryString.append(" AND ");
+				} else {
+					queryString.append(" where ");
+				}
+				queryString.append(extraWhere);
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+			}
+		});
 
 		OObjectDatabaseTx db = getConnection();
 		try {
-			List<ODocument> documents = db.command(new OCommandSQL(queryString.toString())).execute(mapParameters(queryByExample.getExample()));
+			List<ODocument> documents = db.command(new OCommandSQL(queryString.toString())).execute(mappedParams);
 			if (documents.isEmpty() == false) {
 				count = documents.get(0).field("count");
 			}
@@ -389,6 +469,18 @@ public class PersistenceService
 			closeConnection(db);
 		}
 		return count;
+	}
+
+	public List<ODocument> dbCommandQuery(String query, Map<String, Object> params)
+	{
+		List<ODocument> documents = new ArrayList<>();
+		OObjectDatabaseTx db = getConnection();
+		try {
+			documents = db.command(new OCommandSQL(query)).execute(params);
+		} finally {
+			closeConnection(db);
+		}
+		return documents;
 	}
 
 	/**
@@ -437,6 +529,19 @@ public class PersistenceService
 				mappedParams.putAll(mapParameters(queryByExample.getLikeExample()));
 			}
 		}
+		queryByExample.getExtraWhereCauses().forEach(item -> {
+			SpecialOperatorModel special = (SpecialOperatorModel) item;
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			if (StringUtils.isNotBlank(extraWhere)) {
+				if (queryString.indexOf(" where ") != -1) {
+					queryString.append(" AND ");
+				} else {
+					queryString.append(" where ");
+				}
+				queryString.append(extraWhere);
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+			}
+		});
 
 		if (queryByExample.getGroupBy() != null) {
 			String names = generateExampleNames(queryByExample.getGroupBy());
@@ -450,10 +555,10 @@ public class PersistenceService
 				queryString.append(" order by ").append(names).append(" ").append(queryByExample.getSortDirection());
 			}
 		}
-		if (queryByExample.getFirstResult() != null) {
+		if (queryByExample.getFirstResult() != null && queryByExample.getFirstResult() > 0) {
 			queryString.append(" SKIP ").append(queryByExample.getFirstResult());
 		}
-		if (queryByExample.getMaxResults() != null) {
+		if (queryByExample.getMaxResults() != null && queryByExample.getMaxResults() > 0) {
 			queryString.append(" LIMIT ").append(queryByExample.getMaxResults());
 		}
 		if (queryByExample.getTimeout() != null) {
@@ -487,7 +592,7 @@ public class PersistenceService
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+						if (ReflectionUtil.isComplexClass(returnObj.getClass())) {
 							complexFieldStack.getFieldStack().push(field.toString());
 							if (addAnd) {
 								where.append(generateStatementOption.getCondition());
@@ -541,7 +646,7 @@ public class PersistenceService
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
-						if (ServiceUtil.isComplexClass(returnObj.getClass())) {
+						if (ReflectionUtil.isComplexClass(returnObj.getClass())) {
 							complexFieldStack.getFieldStack().push(field.toString());
 							if (addAnd) {
 								where.append(",");
@@ -581,7 +686,7 @@ public class PersistenceService
 	{
 		Map<String, Object> parameterMap = new HashMap<>();
 		try {
-			List<Field> fields = ServiceUtil.getAllFields(example.getClass());
+			List<Field> fields = ReflectionUtil.getAllFields(example.getClass());
 			for (Field field : fields) {
 
 				if ("class".equalsIgnoreCase(field.getName()) == false) {
@@ -589,7 +694,7 @@ public class PersistenceService
 					//Note: this may not work for proxy object....they may need to be call through a get method
 					Object value = field.get(example);
 					if (value != null) {
-						if (ServiceUtil.isComplexClass(value.getClass())) {
+						if (ReflectionUtil.isComplexClass(value.getClass())) {
 							complexFieldStack.getFieldStack().push(field.getName());
 							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption));
 							complexFieldStack.getFieldStack().pop();
@@ -657,6 +762,20 @@ public class PersistenceService
 		OObjectDatabaseTx db = getConnection();
 		List<T> results = new ArrayList<>();
 		try {
+			if (log.isLoggable(Level.FINEST)) {
+				log.log(Level.FINEST, query);
+			}
+			//look for empty collection
+			if (parameterMap != null) {
+				for (Object value : parameterMap.values()) {
+					if (value != null && value instanceof Collection) {
+						if (((Collection) value).isEmpty()) {
+							throw new OpenStorefrontRuntimeException("Unable to complete query with a empty collection.", "Check query and parameter map");
+						}
+					}
+				}
+			}
+
 			results = db.query(new OSQLSynchQuery<>(query), parameterMap);
 			if (unwrap) {
 				results = unwrapProxy(db, dataClass, results);
@@ -672,10 +791,10 @@ public class PersistenceService
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {
-			String pkValue = ServiceUtil.getPKFieldValue(entity);
+			String pkValue = ReflectionUtil.getPKFieldValue(entity);
 			if (pkValue == null) {
-				if (ServiceUtil.isPKFieldGenerated(entity)) {
-					ServiceUtil.updatePKFieldValue(entity, generateId());
+				if (ReflectionUtil.isPKFieldGenerated(entity)) {
+					ReflectionUtil.updatePKFieldValue(entity, generateId());
 				}
 			}
 			ValidationModel validationModel = new ValidationModel(entity);
@@ -692,6 +811,27 @@ public class PersistenceService
 			closeConnection(db);
 		}
 
+		return t;
+	}
+
+	public <T extends BaseEntity> T saveNonPkEntity(T entity)
+	{
+		OObjectDatabaseTx db = getConnection();
+		T t = null;
+		try {
+			ValidationModel validationModel = new ValidationModel(entity);
+			validationModel.setSantize(false);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				t = db.save(entity);
+			} else {
+				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
+			}
+		} catch (Exception e) {
+			throw new OpenStorefrontRuntimeException("Unable to save record: " + StringProcessor.printObject(entity), e);
+		} finally {
+			closeConnection(db);
+		}
 		return t;
 	}
 

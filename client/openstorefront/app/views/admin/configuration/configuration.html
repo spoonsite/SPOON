@@ -43,7 +43,7 @@
   <div class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;  padding:0px;">
     <label for="compid" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select a component:&nbsp;</label>
     <div class="" style="padding: 0;">
-      <input type="text" class="form-control searchBar" id="compid" ng-model="component.compId" ng-options="key.componentId as key.name for key in typeahead" placeholder="Search by Component Name" bs-typeahead>
+      <input type="text" class="form-control searchBar" id="compid" ng-model="component.compId" ng-options="key.code as key.description for key in getTypeahead($viewValue)" placeholder="Search by Component Name" bs-typeahead>
     </div>
   </div>
 </div>

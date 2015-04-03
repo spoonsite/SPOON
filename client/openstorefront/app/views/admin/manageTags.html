@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<style>
+.required:after {
+ content:" *"; 
+ color:red;
+}
+.formPanel{
+  border: 1px darkslategrey solid;
+  padding: 10px;
+}
+.formPanel-header{
+  padding: 5px;
+  height: 25px;
+  font-size: 16px;
+  font-weight: bold;
+}
+</style>
+
+<div ng-controller="AdminTagsCtrl" style="padding-left: 15px; padding-right: 15px;">
+
+  <loader trigger="tagsLoader"></loader>
+
+  <panel class-list="edges" open-state="true" title="Add Tag">
+
+    <div  collapse="tagForm.collapse">
+      <form class="form-horizontal" name='tagUIForm' id='tagUIForm' role="form"  ng-submit="saveTag()" style="padding-left: 10px; padding-right: 10px;">
+        <div class="form-group" show-errors >
+          <label class="col-sm-2 control-label required" style="padding-top: 25px;">Component</label><br>
+          <div class="col-sm-10">
+            <select type="text" class="form-control" name="component" id="component" required style="width:100%" ng-model="tagForm.componentId" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="comp.code as comp.description for comp in components" placeholder="Select Component"></select>
+            <p ng-show="tagUIForm.component.$error.required && !tagUIForm.component.$focused" class="help-block">Component is required.</p>
+          </div>
+        </div>
+        <div class="form-group"  >
+          <label class="col-sm-2 control-label required">Tag</label>
+          <div class="col-sm-10">
+            <input  type="text"
+            name="text"
+            id="text"
+            class="form-control"
+            ng-model="tagForm.text"
+            ng-minlength=1
+            ng-maxlength=250
+            required
+            ng-focus />
+            <p ng-show="tagUIForm.text.$error.minlength && !tagUIForm.text.$focused" class="help-block">Tag must be longer than 1 character in length.</p>
+            <p ng-show="tagUIForm.text.$error.required && !tagUIForm.text.$focused" class="help-block">Tag is required.</p>
+          </div>
+        </div>
+        <div class="form-group" >
+          <label class="col-sm-2 control-label"></label>
+          <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary" ng-disabled="tagUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </panel>
+  <div>
+    <br>
+    <button class="btn btn-default" ng-click="loadTags()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+  </div>
+  <table class="table table-striped table-bordered  admin-table">
+    <tr>
+      <th><a href="" ng-click="setPredicate('componentName', 'tag');">Component<span ng-show="predicate['tag'] === 'componentName'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th><a href="" ng-click="setPredicate('text', 'tag');">Tag<span ng-show="predicate['tag'] === 'text'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th><a href="" ng-click="setPredicate('createUser', 'tag');">Create User<span ng-show="predicate['tag'] === 'createUser'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th><a href="" ng-click="setPredicate('createDts', 'tag');">Create Date<span ng-show="predicate['tag'] === 'createDts'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th>Action</th>
+    </tr>
+    <tr ng-repeat="tag in tags | orderBy:predicate['tag']:reverse['tag']" >
+      <td>{{tag.componentName}}</td>
+      <td>{{tag.text}}</td>
+      <td>{{tag.createUser}}</td>
+      <td>{{tag.createDts | date:'MM/dd/yyyy h:mm a'}}</td>
+      <td style="padding:0px 3px !important; width: 200px;">&nbsp;
+        <button class="btn btn-danger btn-sm" ng-click="removeTag(tag);"  title="Remove"><i class="fa fa-trash"></i></button>
+      </td>
+    </tr>
+  </table>
+
+</div>

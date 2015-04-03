@@ -47,8 +47,14 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
         if (temp.value){
           delete temp.value;
         }
+        var badgeProp = {
+          checkedLabel: 'Badges',
+          checked: true,
+          data: ''
+        };
+        temp['badges']=badgeProp;
+        scope.checked['badges'] = scope.checked['badges']? scope.checked['badges']: badgeProp;
         // details.checkedLabel = camelToSentence();
-        console.log('scope.checked', scope.checked);
         
         return temp;
       }
@@ -61,14 +67,7 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
       }
 
       scope.getDate = function(date) {
-        if (date) {
-          var d = new Date(date);
-          var currDate = d.getDate();
-          var currMonth = d.getMonth();
-          var currYear = d.getFullYear();
-          return ((currMonth + 1) + '/' + currDate + '/' + currYear);
-        }
-        return null;
+        return utils.getDate(date);
       };
 
       scope.print = function() {
@@ -100,7 +99,11 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
       }
 
       scope.getTimes = function(n){
-        return new Array(parseInt(n));
+        if (n) {
+          return new Array(parseInt(n));
+        } else {
+          return new Array(0);
+        }
       };
 
       scope.$watch('dataleft', function(){
@@ -148,9 +151,10 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
       scope.resetHeights = function() {
         if (scope.detailsright && scope.detailsleft) {
           $timeout(function(){
-            element.find('*').css('height', 'auto');
+           // element.find('*').css('height', 'auto');
             resetHeight('linersleft', 'linersright');
             resetHeight('tagsleft', 'tagsright');
+            resetHeight('badgeleft', 'badgeright');
             resetHeight('detailsleft', 'detailsright');
             resetHeight('factorsleft', 'factorsright');
             resetHeight('resourcesleft', 'resourcesright');

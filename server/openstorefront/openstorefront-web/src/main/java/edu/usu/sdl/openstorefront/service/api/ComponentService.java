@@ -17,7 +17,9 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.transfermodel.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
@@ -37,12 +39,18 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingCompleteWrapper;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
+import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Services that handle all component classes
@@ -86,6 +94,16 @@ public interface ComponentService
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk);
 
 	/**
+	 * Activates a base component
+	 *
+	 * @param <T>
+	 * @param subComponentClass
+	 * @param pk
+	 * @return
+	 */
+	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk);
+
+	/**
 	 * Deletes a base component
 	 *
 	 * @param <T>
@@ -119,7 +137,16 @@ public interface ComponentService
 	public Component activateComponent(String componentId);
 
 	/**
-	 * Return the whole list of components. (the short view)
+	 * High-speed component name lookup
+	 *
+	 * @param componentId
+	 * @return Name or null if not found
+	 */
+	public String getComponentName(String componentId);
+
+	/**
+	 * Return the whole list of components. (the short view) Just Active and
+	 * Approved components
 	 *
 	 * @return
 	 */
@@ -160,17 +187,27 @@ public interface ComponentService
 	public List<ComponentAttribute> getAttributesByComponentId(String componentId);
 
 	/**
+	 * Gets all unique tags
 	 *
 	 * @return
 	 */
 	public List<ComponentTag> getTagCloud();
 
 	/**
+	 * Saves a component Attribute
 	 *
 	 * @param attribute
 	 */
 	public void saveComponentAttribute(ComponentAttribute attribute);
 
+	/**
+	 *
+	 * @param filter
+	 * @param componentId
+	 * @return
+	 */
+	public ComponentTrackingResult getComponentTracking(FilterQueryParams filter, String componentId);
+	
 	/**
 	 *
 	 * @param attribute
@@ -201,11 +238,20 @@ public interface ComponentService
 	public void saveComponentEvaluationSection(ComponentEvaluationSection section);
 
 	/**
+	 * Save all sections and then updates component WARNING: All sections should
+	 * be for the same component.
+	 *
+	 * @param sections
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentEvaluationSection(List<ComponentEvaluationSection> sections);
+
+	/**
 	 *
 	 * @param media
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentMedia(ComponentMedia media);
+	public ComponentMedia saveComponentMedia(ComponentMedia media);
 
 	/**
 	 *
@@ -233,7 +279,7 @@ public interface ComponentService
 	 * @param resource
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentResource(ComponentResource resource);
+	public ComponentResource saveComponentResource(ComponentResource resource);
 
 	/**
 	 *
@@ -287,15 +333,22 @@ public interface ComponentService
 
 	/**
 	 * This save the full component; this meant for use in the importer. It will
-	 * generate id and fill in missing file where possible. This is complete
-	 * sync. Meaning it will remove all subcomponents and then add the one's in
-	 * the model so the DB matches.
+	 * generate id and fill in missing data where possible. This will try to
+	 * sync the component adding and updating where applicable
 	 *
 	 * @param componentAll
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentAll saveFullComponent(ComponentAll componentAll);
+
+	/**
+	 * This will handle syncing all the component of the list.
+	 *
+	 * @param components
+	 * @param options
+	 */
+	public void importComponents(List<ComponentAll> components, ComponentUploadOption options);
 
 	/**
 	 * Deletes the component and all related entities
@@ -416,4 +469,29 @@ public interface ComponentService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteComponentIntegrationConfig(String integrationConfigId);
 
+	/**
+	 * Handle bulk changing of component Attributes...even across components
+	 * Passed in Attribute should be Live ("proxy") entities.
+	 *
+	 * @param bulkComponentAttributeChange
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange);
+	
+	/**
+	 * 
+	 * @param filter
+	 * @param componentId
+	 * @return 
+	 */
+	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId);
+
+	/**
+	 * 
+	 * @param search
+	 * @return 
+	 */
+	public Set<LookupModel> getTypeahead(String search);
+
+	
 }

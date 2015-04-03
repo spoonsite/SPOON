@@ -15,8 +15,8 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice',
-    function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice',
+  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -59,7 +59,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   var get = function(key) {
     return localCache.get(key, 'object');
-  }
+  };
 
   var updateCache = function(name, value) {
     save(name, value);
@@ -74,6 +74,11 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.configurationservice = configurationservice;
   business.jobservice = jobservice;
   business.systemservice = systemservice;
+  business.mediaservice = mediaservice;
+  business.trackingservice = trackingservice;
+  business.alertservice = alertservice;
+  business.reportservice = reportservice;
+
 
   business.updateCache = function(name, value) {
     var deferred = $q.defer();
@@ -82,19 +87,30 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     return deferred.promise;
   };
 
-  business.getFilters = function() {
+  business.getFilters = function(override, getAll) {
     var deferred = $q.defer();
-    var filters = checkExpire('filters', minute * 1440);
-    if (filters) {
+    var filters;
+    if (getAll) {
+      filters = checkExpire('All-filters', minute * 1440);
+    } else {
+      filters = checkExpire('filters', minute * 1440);
+    }
+    if (filters && !override) {
       deferred.resolve(filters);
     } else {
+      var params = {'all': !!getAll};  
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/attributes'
+        'url': 'api/v1/resource/attributes',
+        'params': params
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
-          save('filters', data);
+          if (getAll) {
+            save('All-filters', data);
+          } else {
+            save('filters', data);
+          }
           deferred.resolve(data);
         } else {
           removeError();
@@ -197,33 +213,30 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   };
 
   // This function builds the typeahead options.
-  business.typeahead = function(collection, pluckItem) {
+  business.typeahead = function(search) {
     var deferred = $q.defer();
     // lets refresh the typeahead every 15 min until we actually get this
     // working with a http request upon user interaction.
-    var result = checkExpire('typeahead', minute * 15);
-    if (result) {
-      deferred.resolve(result);
-    } else{
-      if (!collection) {
-        deferred.reject('We broke it!');
-      } else {
-        if (pluckItem !== undefined && pluckItem !== null) {
-          collection = _.pluck(collection, pluckItem);
-          if (collection && isNotRequestError(collection)) {
-            removeError();
-            save('typeahead', collection);
-            deferred.resolve(collection);
-          } else {
-            removeError();
-            triggerError(collection);
-            deferred.reject('We need a new target in order to refresh the data');
-          }
-        } else if (isNotRequestError(collection)) {
-          save('typeahead', collection);
-          deferred.resolve(collection);
+    if (!search) {
+      deferred.reject('There was no search');
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/components/typeahead',
+        'params': {'search': search}
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject('There was an error grabbing the typeahead');
         }
-      }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error grabbing the typeahead');
+      });
     }
     return deferred.promise;
   };
@@ -266,6 +279,32 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       return null;
     }
   }
+  business.get = function(query, override) {
+    var deferred = $q.defer();
+    if (query) { 
+      var url = query.url + '?' + query.filterObj.toQuery();
+      $http({
+        'method': 'GET',
+        'url': url,
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject(false);
+    }
+    return deferred.promise;
+  }
+
 
 
 

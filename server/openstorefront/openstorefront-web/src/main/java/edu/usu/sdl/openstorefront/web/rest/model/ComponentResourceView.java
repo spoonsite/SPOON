@@ -30,13 +30,19 @@ import java.util.List;
 public class ComponentResourceView
 {
 
+	private String resourceId;
 	private String resourceType;
 	private String resourceTypeDesc;
 	private String description;
 	private String link;
+	private String localResourceName;
+	private String originalFileName;
+	private String mimeType;
 	private String actualLink;
 	private Boolean restricted;
 	private Date updateDts;
+	private String activeStatus;
+	private String originalLink;
 
 	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
 	private static final String ACTUAL_RESOURCE_URL = "Resource.action?Redirect&resourceId=";
@@ -57,13 +63,19 @@ public class ComponentResourceView
 	public static ComponentResourceView toView(ComponentResource componentResource)
 	{
 		ComponentResourceView componentResourceView = new ComponentResourceView();
+		componentResourceView.setResourceId(componentResource.getResourceId());
+		componentResourceView.setLocalResourceName(componentResource.getFileName());
+		componentResourceView.setMimeType(componentResource.getMimeType());
 		componentResourceView.setDescription(componentResource.getDescription());
 		componentResourceView.setResourceType(componentResource.getResourceType());
 		componentResourceView.setResourceTypeDesc(TranslateUtil.translate(ResourceType.class, componentResource.getResourceType()));
 		componentResourceView.setRestricted(componentResource.getRestricted());
 		componentResourceView.setUpdateDts(componentResource.getUpdateDts());
+		componentResourceView.setActiveStatus(componentResource.getActiveStatus());
+		componentResourceView.setOriginalFileName(componentResource.getOriginalName());
 		String link = componentResource.getLink();
 		link = StringProcessor.stripHtml(link);
+		componentResourceView.setOriginalLink(link);
 		if (componentResource.getFileName() != null) {
 			link = LOCAL_RESOURCE_URL + componentResource.getResourceId();
 		}
@@ -141,6 +153,66 @@ public class ComponentResourceView
 	public void setActualLink(String actualLink)
 	{
 		this.actualLink = actualLink;
+	}
+
+	public String getResourceId()
+	{
+		return resourceId;
+	}
+
+	public void setResourceId(String resourceId)
+	{
+		this.resourceId = resourceId;
+	}
+
+	public String getLocalResourceName()
+	{
+		return localResourceName;
+	}
+
+	public void setLocalResourceName(String localResourceName)
+	{
+		this.localResourceName = localResourceName;
+	}
+
+	public String getMimeType()
+	{
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType)
+	{
+		this.mimeType = mimeType;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getOriginalLink()
+	{
+		return originalLink;
+	}
+
+	public void setOriginalLink(String originalLink)
+	{
+		this.originalLink = originalLink;
+	}
+
+	public String getOriginalFileName()
+	{
+		return originalFileName;
+	}
+
+	public void setOriginalFileName(String originalFileName)
+	{
+		this.originalFileName = originalFileName;
 	}
 
 }

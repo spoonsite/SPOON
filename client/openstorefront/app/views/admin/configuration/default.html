@@ -1,4 +1,4 @@
-<div ng-controller="AdminConfigurationCtrl">
+<div ng-controller="AdminConfigurationCtrl" style="padding-left: 15px; padding-right: 15px;">
   <tabset>
     <tab heading="Global Configuration">
       <form class="form-horizontal" ng-submit="saveGlobalConf()" role="form">
@@ -67,11 +67,11 @@
               </div>
               <div ng-show="jira.jiraIssue" class="col-md-12" style="padding:0px;">
                 <h4 style="margin-top:25px; margin-bottom: 0px;  padding-left: 15px; padding-right: 15px;">Map an Attribute to the custom field in Jira</h4>
-                <div style="display: inline-block; width: 100%;">
-                  <div ng-show="storeFields.length && fields.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
+                <div style="display: inline-block; width: 100%;">			
+                  <div ng-show="storeFields.data.length && fields.length" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
                     <label style="padding-left:0px; padding-right:0px;" class="control-label" for="storeFieldSelect">Select an Attribute Type:&nbsp;</label>
                     <div class="" style="padding: 0;">
-                      <select ng-model="watch.storeField" class="form-control" style="min-width: 350px;" id="storeFieldSelect" ng-options="option as option.description for option in storeFields"></select>
+                      <select ng-model="watch.storeField" class="form-control" style="min-width: 350px;" id="storeFieldSelect" ng-options="option as option.description for option in storeFields.data"></select>
                     </div>
                   </div>
                   <div ng-show="watch.storeField" class="form-group form-group-md col-md-6" style="margin:0px; min-height: 50px;">
@@ -83,7 +83,7 @@
                 </div>
               </div>
               <div ng-show="jira.jiraIssue" class="col-md-12" style="padding:0px;">
-                <h4 style="margin-top:25px; margin-bottom: 0px; padding-left: 15px; padding-right: 15px;">Select Jira Codes to associate with the storefront attribute code</h4>
+                <h4 style="margin-top:25px; margin-bottom: 0px; padding-left: 15px; padding-right: 15px;">Select Jira Codes to associate with the clearinghouse attribute code</h4>
                 <div ng-show="storeCodes.length && watch.jiraField" style="padding: 0px; margin-right: 15px; margin-left: 15px; position: relative; z-index: 1" class="col-md-8">
                   <strong style="height:20px;">Clearinghouse Codes</strong>
                   <div style="height: 280px; overflow:auto; border: 1px solid darkgray; background: dimgray; ">

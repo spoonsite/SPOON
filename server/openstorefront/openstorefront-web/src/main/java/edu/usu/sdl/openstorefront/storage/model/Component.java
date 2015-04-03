@@ -15,11 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.ComponentApprovalStatus;
 import edu.usu.sdl.openstorefront.util.PK;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -52,44 +54,50 @@ public class Component
 	private String description;
 
 	@ConsumeField
+	@APIDescription("Id to a internal component that parent to this component")
 	private String parentComponentId;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
 	@ConsumeField
+	@APIDescription("External system id")
 	private String guid;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
+	@APIDescription("Component organization")
 	private String organization;
 
 	@ConsumeField
+	@APIDescription("The component's release date")
 	private Date releaseDate;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
+	@APIDescription("Version of the component")
 	private String version;
 
 	@NotNull
 	@ValidValueType(
 			{
-				Component.APPROVAL_STATE_APPROVED, Component.APPROVAL_STATE_PENDING
+				ComponentApprovalStatus.APPROVED, ComponentApprovalStatus.PENDING
 			})
 	@ConsumeField
+	@APIDescription("Status of an approval")
 	private String approvalState;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	@APIDescription("Who approved the component")
 	private String approvedUser;
+
+	@APIDescription("When the component was approved for the site")
 	private Date approvedDts;
 
 	@NotNull
+	@APIDescription("Updated when any of the component's related data has changed.  Used for  watches.")
 	private Date lastActivityDts;
-
-	public static final String APPROVAL_STATE_APPROVED = "A";
-	public static final String APPROVAL_STATE_PENDING = "P";
 
 	public Component()
 	{
@@ -101,13 +109,13 @@ public class Component
 		int value = super.compareTo(o);
 
 		if (value == 0) {
-			value = ServiceUtil.compareConsumeFields(this, o);
+			value = ReflectionUtil.compareConsumeFields(this, o);
 		}
 		if (value == 0) {
-			value = ServiceUtil.compareObjects(this.getApprovedUser(), o.getApprovedUser());
+			value = ReflectionUtil.compareObjects(this.getApprovedUser(), o.getApprovedUser());
 		}
 		if (value == 0) {
-			value = ServiceUtil.compareObjects(this.getApprovedDts(), o.getApprovedDts());
+			value = ReflectionUtil.compareObjects(this.getApprovedDts(), o.getApprovedDts());
 		}
 
 		return value;

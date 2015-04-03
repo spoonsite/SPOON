@@ -21,15 +21,18 @@ import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.security.UserProfileRequireHandler;
+import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -37,24 +40,25 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.UserProfileView;
+import edu.usu.sdl.openstorefront.web.rest.model.UserProfileWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.UserWatchView;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.sourceforge.stripes.util.bean.BeanUtil;
 
 /**
  * User Profile Resource
@@ -73,12 +77,53 @@ public class UserProfileResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
-	public List<UserProfileView> userProfiles(
-			@QueryParam("all")
-			@APIDescription("Setting force to true attempts to interrupt the job otherwise it's a more graceful shutdown.")
-			@DefaultValue("false") boolean all)
+	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams)
 	{
-		return UserProfileView.toViewList(service.getUserService().getAllProfiles(all));
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setActiveStatus(filterQueryParams.getStatus());
+
+		UserProfile userProfileStartExample = new UserProfile();
+		userProfileStartExample.setCreateDts(filterQueryParams.getStart());
+
+		UserProfile userProfileEndExample = new UserProfile();
+		userProfileEndExample.setCreateDts(filterQueryParams.getEnd());
+
+		QueryByExample queryByExample = new QueryByExample(userProfileExample);
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(userProfileStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(userProfileEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		queryByExample.setMaxResults(filterQueryParams.getMax());
+		queryByExample.setFirstResult(filterQueryParams.getOffset());
+		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
+
+		UserProfile userProfileSortExample = new UserProfile();
+		Field sortField = ReflectionUtil.getField(userProfileSortExample, filterQueryParams.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), userProfileSortExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(userProfileSortExample);
+		}
+
+		List<UserProfile> userProfiles = service.getPersistenceService().queryByExample(UserProfile.class, queryByExample);
+
+		UserProfileWrapper userProfileWrapper = new UserProfileWrapper();
+		userProfileWrapper.getData().addAll(UserProfileView.toViewList(userProfiles));
+		userProfileWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+
+		return sendSingleEntityResponse(userProfileWrapper);
 	}
 
 	@GET
@@ -141,7 +186,9 @@ public class UserProfileResource
 			validationResult.getRuleResults().add(result);
 			return Response.ok(validationResult.toRestError()).build();
 		} else if (validationResult.valid()) {
-			return Response.created(URI.create("v1/resource/userprofiles/" + (service.getUserService().saveUserProfile(inputProfile)).getUsername())).entity(inputProfile).build();
+			UserProfile userProfileSaved = service.getUserService().saveUserProfile(inputProfile);
+			String username = StringProcessor.urlEncode(userProfileSaved.getUsername());
+			return Response.created(URI.create("v1/resource/userprofiles/" + username)).entity(inputProfile).build();
 		}
 		return Response.ok(validationResult.toRestError()).build();
 	}
@@ -305,7 +352,10 @@ public class UserProfileResource
 			watch.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
 				watch = service.getUserService().saveWatch(watch);
-				return Response.created(URI.create("v1/resource/userprofiles/" + watch.getUsername() + "/watches/" + watch.getUserWatchId())).entity(watch).build();
+				String username = StringProcessor.urlEncode(watch.getUsername());
+				return Response.created(URI.create("v1/resource/userprofiles/"
+						+ username
+						+ "/watches/" + watch.getUserWatchId())).entity(watch).build();
 			}
 			return Response.ok(service.getUserService().saveWatch(watch)).build();
 		} else {
@@ -369,7 +419,7 @@ public class UserProfileResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking/{trackingId}")
-	public Response getComponentTracking(
+	public Response getUserTracking(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@PathParam("trackingId")
@@ -388,7 +438,7 @@ public class UserProfileResource
 	@APIDescription("Remove a tracking entry from the specified user")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tracking/{trackingId}")
-	public void deleteComponentTracking(
+	public void deleteUserTracking(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@PathParam("id")
@@ -403,7 +453,7 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
-	public Response addComponentTracking(
+	public Response addUserTracking(
 			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@RequiredParam UserTracking tracking)
@@ -418,14 +468,14 @@ public class UserProfileResource
 	@APIDescription("Update a tracking entry for the specified user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
-	public Response updateComponentTracking(
+	public Response updateUserTracking(
 			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("trackingId")
 			@RequiredParam String trackingId,
 			@RequiredParam UserTracking tracking)
 	{
-		tracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
+		tracking.setActiveStatus(UserTracking.ACTIVE_STATUS);
 		tracking.setTrackingId(trackingId);
 		tracking.setCreateUser(userId);
 		return saveTracking(tracking, false);
@@ -440,7 +490,11 @@ public class UserProfileResource
 			tracking.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (post) {
 				tracking = service.getUserService().saveUserTracking(tracking);
-				return Response.created(URI.create("v1/resource/userprofiles/" + tracking.getCreateUser() + "/tracking/" + tracking.getTrackingId())).entity(tracking).build();
+				String username = StringProcessor.urlEncode(tracking.getCreateUser());
+				return Response.created(URI.create("v1/resource/userprofiles/"
+						+ username
+						+ "/tracking/"
+						+ tracking.getTrackingId())).entity(tracking).build();
 			} else {
 				return Response.ok(service.getUserService().saveUserTracking(tracking)).build();
 			}

@@ -1,0 +1,42 @@
+<div style="clear:both"></div>
+<div ng-class="full? 'full':''" class="architectureSearch" style="margin-top: 10px;" >
+  <div class="input-group">
+    <input style="border-bottom-left-radius: 0;" class="form-control" type="text" ng-model="search" on-enter="log()" placeholder="Section Quick Search">
+    <span class="input-group-btn">
+      <!-- <button class="btn btn-default" ng-click="log()">Apply Quick Search&nbsp;<i class="fa fa-search"></i></button> -->
+      <button style="border-bottom-right-radius: 0;" class="btn btn-primary" ng-click="full=!full"><i class="fa fa-external-link-square"></i></button>
+    </span>
+  </div>
+  <div class="archBody">
+    <div class="archList treeNav">
+      <span ng-show="!search">
+        <button style="width:50%" class="btn btn-default" ng-click="expandAll()">Expand All&nbsp;<i class="fa fa-expand"></i></button>
+        <button style="width:50%; margin-left:-5px;" class="btn btn-default" ng-click="collapseAll()">Collapse All&nbsp;<i class="fa fa-compress"></i></button>
+        <abn-tree tree-data="tree.data" tree-control="myTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" on-select="selected(branch)" expand-level="1"></abn-tree>
+      </span>
+      <span ng-show="search">
+        <button style="width:100%" class="btn btn-default" ng-click="search = ''">Remove Quick Search&nbsp;<i class="fa fa-trash"></i></button>
+        <ul style="list-style:none; margin-left:0px;">
+          <li class="imitateLink" style="padding:5px; padding-left:10px;" ng-repeat="item in tree.data | architecturequicksearch: search" ng-click="selected(item)">
+            {{item.label}}
+          </li>
+        </ul>
+      </span>
+    </div>
+    <div ng-show="!branch" class="rightSide">
+      <div style="line-height:50px; font-size:50px; margin-top:50px;">
+        <i class="fa fa-arrow-left"></i>&nbsp;<span style="font-size:25px; position:relative; top:-8px;">Select an alignment</span>
+      </div>
+    </div>
+    <div ng-show="branch" class="rightSide1">
+      <h2>Description<span ng-show="branch">:&nbsp;{{branch.label}}</span></h2>
+      <div dynamichtml="branch.detailedDesc"></div>
+    </div>
+    <div ng-show="branch" class="rightSide2">
+      <h2>Results</h2>
+      <div>
+        <component-list click-callback="updateDetails" class-list="" list="list" data="data" cols="3" search="doSearchKey" type="{{branch.attributeType}}" code="{{branch.attributeCode}}" blank-target="true"></component-list>
+      </div>
+    </div>
+  </div>
+</div>

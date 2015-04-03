@@ -53,7 +53,7 @@ limitations under the License.
             <tr ng-class="filters.length > 0? 'panel-heading': ''">
               <th ng-class="filters.length > 0? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" data-container="body" title="{{filter.description}}">
                 <span style="overflow: hidden; width: 100%; height: 35px; display: inline-block; margin-bottom: -7px; ">
-                  <span ng-class="filter.hasChecked? '': 'empty'" class="btn btn-link spread collapsed" data-toggle="collapse" href="#collapse{{$index}}" >
+                  <span ng-class="filter.hasChecked? '': 'empty'" class="btn btn-link spread collapsed" data-toggle="collapse" href="#collapse{{$index}}" ng-click="filter[$index].showNow = !filter[$index].showNow">
                     <!-- <span class="btn btn-link" ng-class="$first? '':'collapsed'" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;"> -->
                     <span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i>
                     </span>
@@ -66,7 +66,7 @@ limitations under the License.
             </tr>
             <tbody ng-class="filters.length > 2? 'panel-collapse collapse':''" id="collapse{{$index}}">
               <!-- <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}"> -->
-              <tr  class="filtersTr" data-ng-repeat="type in filter.codes" >
+              <tr  class="filtersTr" data-ng-repeat="type in filter.codes" ng-if="filter[$parent.$index].showNow">
                 <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
                   <div class="checkbox filterCheckbox">
                     <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{filter.description}}_{{type.code}}" ng-change="checkFilters(); sendEvent('Filter Checked', filter.description+'-'+type.code, type.checked)"/>
@@ -80,12 +80,12 @@ limitations under the License.
         <br>
         <button data-toggle="collapse" href="#moreFilters" ng-click="moreFilters = !!!moreFilters" class="btn btn-primary" style="width: 100%;"><span ng-show="!!!moreFilters">More Filters</span><span ng-show="!!moreFilters">Less Filters</span></button>
         <div id="moreFilters" class="panel-collapse collapse">
-          <div ng-class="$last? 'lastFilter': ''"   ng-if="!filter.visibleFlg" class="panel panel-default" class="filterTableDiv"  ng-repeat="filter in filters">
+          <div ng-class="$last? 'lastFilter': ''"   ng-if="!filter.visibleFlg && moreFilters" class="panel panel-default" class="filterTableDiv"  ng-repeat="filter in filters">
             <table class="table">
               <tr ng-class="filters.length > 0? 'panel-heading': ''">
                 <th ng-class="filters.length > 0? 'panel-title':''" class="filtersTd filtersTh" data-trigger="hover" data-toggle="tooltip" data-placement="top" data-container="body" title="{{filter.description}}">
                   <span style="overflow: hidden; width: 100%; height: 35px; display: inline-block; margin-bottom: -7px; ">
-                    <span ng-class="filter.hasChecked? '': 'empty'" class="btn btn-link spread collapsed" data-toggle="collapse" href="#collapse{{$index}}" >
+                    <span ng-class="filter.hasChecked? '': 'empty'" class="btn btn-link spread collapsed" data-toggle="collapse" href="#collapse{{$index}}"  ng-click="filter[$index].showNow = !filter[$index].showNow">
                       <!-- <span class="btn btn-link" ng-class="$first? '':'collapsed'" data-toggle="collapse" href="#collapse{{$index}}" style="width: 130px; padding-left: 0px; float:left;"> -->
                       <span class="overflow-pair-right">&nbsp;<i class="fa fa-caret-down"></i>
                       </span>
@@ -96,9 +96,9 @@ limitations under the License.
                   </span>
                 </th>
               </tr>
-              <tbody ng-class="filters.length > 2? 'panel-collapse collapse':''" id="collapse{{$index}}">
+              <tbody ng-class="filters.length > 2? 'panel-collapse collapse':''" id="collapse{{$index}}" >
                 <!-- <tbody ng-class="filters.length > 2? $first? 'panel-collapse collapse in': 'panel-collapse collapse':''" id="collapse{{$index}}"> -->
-                <tr  class="filtersTr" data-ng-repeat="type in filter.codes" >
+                <tr  class="filtersTr" data-ng-repeat="type in filter.codes" ng-if="filter[$parent.$index].showNow">
                   <td ng-class="filters.length > 2? 'panel-body': ''" class="filtersTd">
                     <div class="checkbox filterCheckbox">
                       <input type="checkbox" ng-checked="type.checked" ng-model="type.checked" id="{{filter.description}}_{{type.code}}" ng-change="checkFilters(); sendEvent('Filter Checked', filter.description+'-'+type.code, type.checked)"/>

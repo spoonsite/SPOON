@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+
+import java.util.ArrayList;
+import java.util.List;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -28,9 +30,13 @@ public class AttributeCodeView
 	private String code;
 	private String label;
 	private String description;
-	private String fullTextLink;
+	private String detailUrl;
+	private String badgeUrl;
+	private String architectureCode;
 	private String groupCode;
 	private Integer sortOrder;
+	private String activeStatus;
+	private String highlightStyle;
 
 	public AttributeCodeView()
 	{
@@ -44,14 +50,26 @@ public class AttributeCodeView
 		attributeCodeView.setDescription(attributeCode.getDescription());
 		attributeCodeView.setGroupCode(attributeCode.getGroupCode());
 		attributeCodeView.setSortOrder(attributeCode.getSortOrder());
-
-		if (StringUtils.isNotBlank(attributeCode.getArticleFilename())) {
-			attributeCodeView.setFullTextLink("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
+		attributeCodeView.setHighlightStyle(attributeCode.getHighlightStyle());
+		attributeCodeView.setBadgeUrl(attributeCode.getBadgeUrl());
+		attributeCodeView.setArchitectureCode(attributeCode.getArchitectureCode());
+		attributeCodeView.setActiveStatus(attributeCode.getActiveStatus());
+		if (attributeCode.getArticle() != null) {
+			attributeCodeView.setDetailUrl("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
 		} else {
-			attributeCodeView.setFullTextLink(attributeCode.getDetailUrl());
+			attributeCodeView.setDetailUrl(attributeCode.getDetailUrl());
 		}
 
 		return attributeCodeView;
+	}
+	
+	public static List<AttributeCodeView> toViews(List<AttributeCode> codes)
+	{
+		List<AttributeCodeView> views = new ArrayList<>();
+		for(AttributeCode code: codes) {
+			views.add(AttributeCodeView.toView(code));
+		}
+		return views;
 	}
 
 	public String getCode()
@@ -84,14 +102,14 @@ public class AttributeCodeView
 		this.label = label;
 	}
 
-	public String getFullTextLink()
+	public String getDetailUrl()
 	{
-		return fullTextLink;
+		return detailUrl;
 	}
 
-	public void setFullTextLink(String fullTextLink)
+	public void setDetailUrl(String detailUrl)
 	{
-		this.fullTextLink = fullTextLink;
+		this.detailUrl = detailUrl;
 	}
 
 	public Integer getSortOrder()
@@ -112,6 +130,46 @@ public class AttributeCodeView
 	public void setGroupCode(String groupCode)
 	{
 		this.groupCode = groupCode;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getBadgeUrl()
+	{
+		return badgeUrl;
+	}
+
+	public void setBadgeUrl(String badgeUrl)
+	{
+		this.badgeUrl = badgeUrl;
+	}
+
+	public String getArchitectureCode()
+	{
+		return architectureCode;
+	}
+
+	public void setArchitectureCode(String architectureCode)
+	{
+		this.architectureCode = architectureCode;
+	}
+
+	public String getHighlightStyle()
+	{
+		return highlightStyle;
+	}
+
+	public void setHighlightStyle(String highlightStyle)
+	{
+		this.highlightStyle = highlightStyle;
 	}
 
 }

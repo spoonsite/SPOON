@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -27,6 +28,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("Allows for grouping the metadata into categories")
 public class AttributeType
 		extends BaseEntity
 {
@@ -45,23 +47,28 @@ public class AttributeType
 
 	@NotNull
 	@ConsumeField
+	@APIDescription("True to show in filters")
 	private Boolean visibleFlg;
 
 	@NotNull
 	@ConsumeField
+	@APIDescription("A component is required to have this attribute")
 	private Boolean requiredFlg;
 
 	@NotNull
 	@ConsumeField
+	@APIDescription("This attribute type represents an architechture and has special handling")
 	private Boolean architectureFlg;
 
 	@NotNull
 	@ConsumeField
+	@APIDescription("This attribute type represents an architechture and has special handling")
 	private Boolean importantFlg;
 
 	@NotNull
 	@ConsumeField
-	private Boolean allowMutlipleFlg;
+	@APIDescription("Allow multiple value codes per component")
+	private Boolean allowMultipleFlg;
 
 	public static final String DI2E_SVCV4 = "DI2E-SVCV4-A";
 	public static final String TYPE = "TYPE";
@@ -155,14 +162,14 @@ public class AttributeType
 		this.importantFlg = importantFlg;
 	}
 
-	public Boolean getAllowMutlipleFlg()
+	public Boolean getAllowMultipleFlg()
 	{
-		return allowMutlipleFlg;
+		return allowMultipleFlg;
 	}
 
-	public void setAllowMutlipleFlg(Boolean allowMutlipleFlg)
+	public void setAllowMultipleFlg(Boolean allowMultipleFlg)
 	{
-		this.allowMutlipleFlg = allowMutlipleFlg;
+		this.allowMultipleFlg = allowMultipleFlg;
 	}
 
 }

@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 
 /**
  * Used to jump into a transaction when needed.
@@ -30,7 +31,10 @@ public interface AttributeServicePrivate
 {
 
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void performSaveArticle(AttributeCodePk attributeCodePk, String article);
+	public void performSaveArticle(AttributeCode attributeCode, String articleContents);
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void performSaveArticle(ArticleView article);
 
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void performSaveAttributeType(AttributeType attributeType);

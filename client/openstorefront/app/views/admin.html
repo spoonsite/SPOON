@@ -1,36 +1,43 @@
 <div style="height: 100%">
-  <div class="adminTools">
-    <div class="col-sm-12">
-      <h3>Admin tools</h3>
-      <hr/>
-    </div>
-    <div >
-      <div class="treeNav">
-        <abn-tree tree-data="data" tree-control="myTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" on-select="editor(branch)" expand-level="1" initial-selection = "Configuration Management"></abn-tree>
-		<hr>	
-		<span style="padding-left: 10px;"><i class="fa fa-file-code-o"></i><a href="apidoc" target="_blank">&nbsp;API Document</a></span>
-      </div>
-    </div>
-  </div>
-  <div class="toolsContent">
-    <div class="col-sm-12">
-      <div class="tools-LandingTitle">
-        <h3>
-          {{toolTitle}}
-          &nbsp;<div ng-if="checkParent()" style="display: inline-block;">
-            <small><button class="btn btn-primary" style="margin-bottom: 10px" ng-click="goToParent()">Go back to Parent Tool</button></small>
-          </div>
-        </h3>
+	<div class="adminTools" style="overflow-y: auto;padding-bottom: 60px; border-right: 1px #FF811A solid;">
+		<div >
+			<div class="treeNav">
+				<div style="margin-bottom: 10px;"></div>
+				<accordion close-others="oneAtATime">
+					<accordion-group heading="Data Management" is-open="menuPanel.data.open">
+						<accordion-heading>
+							Data Management <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': menuPanel.data.open, 'glyphicon-chevron-right': !menuPanel.data.open}"></i>							
+						</accordion-heading>						
+						<abn-tree tree-data="data" tree-control="myTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" on-select="editor(branch, myTree, systemTree )" expand-level="1"></abn-tree>
+					</accordion-group>
+					<accordion-group heading="Application Management" is-open="menuPanel.system.open" >
+						<accordion-heading>
+							Application Management <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': menuPanel.system.open, 'glyphicon-chevron-right': !menuPanel.system.open}"></i>							
+						</accordion-heading>
+						<abn-tree tree-data="systemTools" tree-control="systemTree" icon-leaf="fa fa-pencil-square-o" icon-expand="fa fa-plus" icon-collapse="fa fa-minus" on-select="editor(branch, systemTree, myTree)" expand-level="1"></abn-tree>				
+						<hr>
+						<span style="padding-left: 12px;"><i class="fa fa-file-code-o"></i><a href="API.action" target="_blank">&nbsp;API Document</a></span>
+					</accordion-group>					
+				</accordion>
+			</div>
+		</div>
+	</div>
+	<div class="toolsContent">
+		<div class="col-sm-12" style="float:none;">
+			<div class="tools-LandingTitle">
+				<h3>
+					{{toolTitle}}
 
-      </div>
-      <hr>
-    </div>
-    <div ng-include="incLoc">
-    </div>
-  </div>
+					&nbsp;<div ng-if="checkParent()" style="display: inline-block;">
+						<small><button class="btn btn-primary" style="margin-bottom: 10px" ng-click="goToParent()">Go back to Parent Tool</button></small>
+					</div>
+				</h3>
+
+			</div>
+			{{detailedDesc}}	  
+			<hr>
+		</div>
+		<div ng-include="incLoc" style="width:100%;">
+		</div>
+	</div>
 </div>
-
-
-<!-- build:css({.tmp,app}) styles/admin.css -->
-<link rel="stylesheet" href="styles/admin.css">
-<!-- endbuild -->

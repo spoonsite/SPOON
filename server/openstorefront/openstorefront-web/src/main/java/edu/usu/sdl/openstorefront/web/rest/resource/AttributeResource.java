@@ -15,17 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
+import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
@@ -35,36 +40,46 @@ import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingWrapper;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -83,12 +98,71 @@ public class AttributeResource
 	@APIDescription("Gets all active attributes and codes for the attributes in view based model.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeTypeView.class)
-	public List<AttributeTypeView> getAttributeView()
+	public List<AttributeTypeView> getAttributeView(
+			@QueryParam("all")
+			@APIDescription("Setting all to true will pull both active and inactive records")
+			@DefaultValue("false") boolean all)
+	{
+		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
+
+		AttributeType attributeTypeExample = new AttributeType();
+		if (!all) {
+			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		}
+		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, attributeTypeExample);
+
+		String codeStatus = null;
+		if (all) {
+			codeStatus = AttributeCode.ACTIVE_STATUS;
+		}
+		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(codeStatus);
+
+		Map<String, List<AttributeCode>> codeMap = new HashMap<>();
+		for (AttributeCode code : attributeCodesAll) {
+			if (codeMap.containsKey(code.getAttributeCodePk().getAttributeType())) {
+				codeMap.get(code.getAttributeCodePk().getAttributeType()).add(code);
+			} else {
+				List<AttributeCode> codes = new ArrayList<>();
+				codes.add(code);
+				codeMap.put(code.getAttributeCodePk().getAttributeType(), codes);
+			}
+		}
+
+		for (AttributeType attributeType : attributeTypes) {
+			AttributeTypeView attributeTypeView = AttributeTypeView.toView(attributeType);
+			List<AttributeCode> attributeCodes = codeMap.get(attributeType.getAttributeType());
+			if (attributeCodes == null) {
+				attributeCodes = new ArrayList<>();
+			}
+			attributeCodes.stream().forEach(code -> {
+				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
+			});
+			attributeTypeViews.add(attributeTypeView);
+		}
+		attributeTypeViews.sort(new AttributeTypeViewComparator<>());
+		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
+			if (attributeTypeView.getArchitectureFlg()) {
+				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
+			} else {
+				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
+			}
+		}
+
+		return attributeTypeViews;
+	}
+
+	@GET
+	@APIDescription("Exports attributes in csv formt. POST to Upload.action?UploadAttributes and then the file to import attributes (Requires Admin)")
+	@RequireAdmin
+	@Produces("text/csv")
+	@Path("export")
+	public Response exportAttributes()
 	{
 		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
 
 		AttributeType attributeTypeExample = new AttributeType();
 		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
 		for (AttributeType attributeType : attributeTypes) {
 			AttributeTypeView attributeTypeView = AttributeTypeView.toView(attributeType);
@@ -106,8 +180,55 @@ public class AttributeResource
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
 		}
+		StringBuilder data = new StringBuilder();
+		data.append("Attribute Type").append(",");
+		data.append("Description").append(",");
+		data.append("Architecture Flag").append(",");
+		data.append("Visible Flag").append(",");
+		data.append("Important Flag").append(",");
+		data.append("Required Flag").append(",");
+		data.append("Code").append(",");
+		data.append("Code Label").append(",");
+		data.append("Code Description").append(",");
+		data.append("External Link").append(",");
+		data.append("Group").append(",");
+		data.append("Sort Order").append(",");
+		data.append("Architecture Code").append(",");
+		data.append("Badge Url").append(",");
+		data.append("Highlight Style").append(",");
+		data.append("Allow Multiple Codes").append("\n");
 
-		return attributeTypeViews;
+		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
+			data.append(attributeTypeView.export());
+		}
+
+		Response.ResponseBuilder response = Response.ok(data.toString());
+		response.header("Content-Disposition", "attachment; filename=\"allattributes.csv\"");
+		return response.build();
+	}
+
+	@GET
+	@APIDescription("Gets all articles")
+	@RequireAdmin
+	@Produces({MediaType.WILDCARD})
+	@DataType(ArticleView.class)
+	@Path("/articles/export")
+	public Response getComponentExport()
+	{
+		List<ArticleView> articles = service.getAttributeService().getArticles();
+		if (articles != null) {
+			String componentJson;
+			try {
+				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(articles);
+			} catch (JsonProcessingException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to export articles.", ex);
+			}
+			Response.ResponseBuilder response = Response.ok(componentJson);
+			response.header("Content-Disposition", "attachment; filename=\"allArticlesExport.json\"");
+			return response.build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 	}
 
 	@GET
@@ -143,13 +264,7 @@ public class AttributeResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		AttributeType attributeTypeExample = new AttributeType();
-		attributeTypeExample.setActiveStatus(filterQueryParams.getStatus());
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
-		attributeTypes = filterQueryParams.filter(attributeTypes);
-		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(attributeTypes)
-		{
-		};
+		AttributeTypeWrapper entity = service.getAttributeService().getFilteredTypes(filterQueryParams);
 		return sendSingleEntityResponse(entity);
 	}
 
@@ -160,13 +275,40 @@ public class AttributeResource
 	@Path("/attributetypes/{type}")
 	public Response getAttributeTypeById(
 			@PathParam("type")
-			@RequiredParam String type)
+			@RequiredParam String type,
+			@QueryParam("view")
+			@APIDescription("Setting forces the attribute to return the view model.")
+			@DefaultValue("false") boolean view,
+			@QueryParam("all")
+			@APIDescription("Setting forces the attribute to return the view model.")
+			@DefaultValue("false") boolean all)
 	{
-		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
-		if (attributeType == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
+		if (!view) {
+			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+			if (attributeType == null) {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			} else {
+				return Response.ok(attributeType).build();
+			}
 		} else {
-			return Response.ok(attributeType).build();
+			AttributeTypeView attributeTypeView = new AttributeTypeView();
+			AttributeType typeObj = service.getPersistenceService().findById(AttributeType.class, type);
+			if (typeObj != null) {
+				attributeTypeView = AttributeTypeView.toView(typeObj);
+			} else {
+				typeObj = new AttributeType();
+				typeObj.setAttributeType(AttributeType.TYPE);
+			}
+			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(typeObj.getAttributeType(), all);
+			for (AttributeCode code : attributeCodes) {
+				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
+			}
+			if (attributeTypeView.getArchitectureFlg()) {
+				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
+			} else {
+				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
+			}
+			return Response.ok(attributeTypeView).build();
 		}
 	}
 
@@ -207,6 +349,45 @@ public class AttributeResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
+		List<AttributeCode> attributeCodes = getAttributeCodesFunc(type, filterQueryParams);
+
+		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeCode.class)
+	@Path("/attributetypes/{type}/attributecodeviews")
+	public Response getAttributeCodeViews(
+			@PathParam("type")
+			@RequiredParam String type,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		AttributeCodeWrapper views = service.getAttributeService().getFilteredCodes(filterQueryParams, type);
+
+		GenericEntity<AttributeCodeWrapper> entity = new GenericEntity<AttributeCodeWrapper>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	/**
+	 *
+	 * @param type
+	 * @param filterQueryParams
+	 * @return
+	 */
+	private List<AttributeCode> getAttributeCodesFunc(String type, FilterQueryParams filterQueryParams)
+	{
 		AttributeCode attributeCodeExample = new AttributeCode();
 		attributeCodeExample.setActiveStatus(filterQueryParams.getStatus());
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
@@ -216,11 +397,7 @@ public class AttributeResource
 		List<AttributeCode> attributeCodes = service.getPersistenceService().queryByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
 		attributeCodes = filterQueryParams.filter(attributeCodes);
 		attributeCodes.sort(new AttributeCodeComparator<>());
-
-		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
-		{
-		};
-		return sendSingleEntityResponse(entity);
+		return attributeCodes;
 	}
 
 	@GET
@@ -241,7 +418,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets all active attributes and codes for the attributes in view based model.")
+	@APIDescription("Gets an attribute code.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/attributetypes/{type}/attributecodes/{code}")
@@ -254,9 +431,23 @@ public class AttributeResource
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code);
 		attributeCodePk.setAttributeType(type);
-		AttributeCode attributeCode = service.getPersistenceService().detach(service.getPersistenceService().findById(AttributeCode.class, attributeCodePk));
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 
 		return sendSingleEntityResponse(attributeCode);
+	}
+
+	@GET
+	@APIDescription("Gets all codes that have an article.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeCode.class)
+	@Path("/attributetypes/articlecodes")
+	public List<ArticleView> getAllCodesWithArticles(
+			@QueryParam("all")
+			@APIDescription("Get's all the articles (Active and Inactive)")
+			@DefaultValue("false") boolean all)
+	{
+		List<ArticleView> codes = ArticleView.toViewList(service.getAttributeService().getArticles(all));
+		return codes;
 	}
 
 	@GET
@@ -274,37 +465,118 @@ public class AttributeResource
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code);
 		attributeCodePk.setAttributeType(type);
-		String articleData = service.getAttributeService().getArticle(attributeCodePk);
-		if (StringUtils.isNotBlank(articleData)) {
+		ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
+		if (articleView != null) {
 			ArticleTracking articleTracking = new ArticleTracking();
 			articleTracking.setAttributeCode(code);
 			articleTracking.setAttributeType(type);
-			articleTracking.setClientIp(request.getRemoteAddr());
+			articleTracking.setClientIp(SecurityUtil.getClientIp(request));
 			articleTracking.setEventDts(TimeUtil.currentDate());
 			articleTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
 			service.getAttributeService().addArticleTrackEvent(articleTracking);
-			return Response.ok(articleData).build();
+			return Response.ok(articleView.getHtml()).build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@GET
+	@APIDescription("Gets article if it existing for the given type and code.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ArticleView.class)
+	@Path("/attributetypes/{type}/attributecodes/{code}/article/detail")
+	public Response getAttributeArticleView(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		type = type.toUpperCase();
+		code = code.toUpperCase();
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode(code);
+		attributeCodePk.setAttributeType(type);
+		ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
+		if (articleView != null) {
+			ArticleTracking articleTracking = new ArticleTracking();
+			articleTracking.setAttributeCode(code);
+			articleTracking.setAttributeType(type);
+			articleTracking.setClientIp(SecurityUtil.getClientIp(request));
+			articleTracking.setEventDts(TimeUtil.currentDate());
+			articleTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
+			service.getAttributeService().addArticleTrackEvent(articleTracking);
+		}
+		return sendSingleEntityResponse(articleView);
+	}
+
+	@GET
+	@APIDescription("Gets article tracking records for a given article")
+	@DataType(UserTrackingWrapper.class)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}/attributecodes/{code}/article/tracking")
+	public Response getAttributeArticleTracking(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode(code.toUpperCase());
+		attributeCodePk.setAttributeType(type.toUpperCase());
+
+		AttributeCode attributeCodeExample = new AttributeCode();
+		attributeCodeExample.setAttributeCodePk(attributeCodePk);
+		AttributeCode attributeCode = service.getPersistenceService().queryOneByExample(AttributeCode.class, attributeCodeExample);
+		if (attributeCode != null) {
+
+			ArticleTrackingResult articleTrackingResult = service.getAttributeService().getAttributeTracking(filterQueryParams, attributeCodePk);
+			return sendSingleEntityResponse(articleTrackingResult);
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 	}
 
 	@PUT
 	@RequireAdmin
 	@APIDescription("Updates article")
-	@Consumes({MediaType.TEXT_HTML})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}/article")
 	public Response updateEntityValue(
 			@PathParam("type")
 			@RequiredParam String type,
 			@PathParam("code")
 			@RequiredParam String code,
-			String article)
+			ArticleView articleView)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeCode(code.toUpperCase());
 		attributeCodePk.setAttributeType(type.toUpperCase());
-		service.getAttributeService().saveArticle(attributeCodePk, article);
-		return Response.ok().build();
+
+		AttributeCode attributeCodeExample = new AttributeCode();
+		attributeCodeExample.setAttributeCodePk(attributeCodePk);
+		AttributeCode attributeCode = service.getPersistenceService().queryOneByExample(AttributeCode.class, attributeCodeExample);
+		if (attributeCode != null) {
+			ValidationModel validationModel = new ValidationModel(articleView);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				Article article = new Article();
+				article.setTitle(articleView.getTitle());
+				article.setDescription(articleView.getDescription());
+				attributeCode.setArticle(article);
+				service.getAttributeService().saveArticle(attributeCode, articleView.getHtml());
+				return Response.ok(attributeCode).build();
+			} else {
+				return Response.ok(validationResult.toRestError()).build();
+			}
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 	}
 
 	@DELETE
@@ -367,7 +639,8 @@ public class AttributeResource
 		}
 		if (post) {
 			AttributeType attributeTypeCreated = service.getPersistenceService().findById(AttributeType.class, attributeType.getAttributeType());
-			return Response.created(URI.create("v1/resource/attributes/attributetypes/" + attributeType.getAttributeType())).entity(attributeTypeCreated).build();
+			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
+					+ StringProcessor.urlEncode(attributeType.getAttributeType()))).entity(attributeTypeCreated).build();
 		} else {
 			return Response.ok().build();
 		}
@@ -375,13 +648,140 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@APIDescription("Remove a type (In-activates).  Note: this inactives all attribute type associations. Runs in a background task.")
 	@Path("/attributetypes/{type}")
 	public void deleteAttributeType(
 			@PathParam("type")
 			@RequiredParam String type)
 	{
-		service.getAttributeService().removeAttributeType(type.toUpperCase());
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Inactivating Attribute Type");
+			taskRequest.setDetails("Attribute Type: " + type);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Status", attributeType.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+						service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeType(type);
+		}
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete a type and all attribute type associations. (codes, component attributes).  Runs in a background task.")
+	@Path("/attributetypes/{type}/force")
+	public void hardDeleteAttributeType(
+			@PathParam("type")
+			@RequiredParam String type)
+	{
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Deleting Attribute Type");
+			taskRequest.setDetails("Attribute Type: " + type);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Status", attributeType.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+						service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(type);
+		}
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Activate a type.  Note: this activates all attribute type associations. Runs in a background task.")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}")
+	public void activateType(
+			@PathParam("type")
+			@RequiredParam String type)
+	{
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Activating Attribute Type");
+			taskRequest.setDetails("Attribute Type: " + type);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Status", attributeType.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+						service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeType(type);
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Updates a attribute code")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}/sortorder")
+	public Response updateAttributeCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			AttributeTypeView attributeType)
+	{
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(type);
+
+		for (AttributeCodeView code : attributeType.getCodes()) {
+			attributeCodePk.setAttributeCode(code.getCode());
+			service.getAttributeService().saveAttributeCodeSortOrder(attributeCodePk, code.getSortOrder());
+		}
+
+		return Response.ok(attributeType).build();
 	}
 
 	@POST
@@ -414,10 +814,9 @@ public class AttributeResource
 		attributeCodePk.setAttributeCode(code);
 		attributeCodePk.setAttributeType(type);
 		attributeCode.setAttributeCodePk(attributeCodePk);
-
 		AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 		if (existing != null) {
-			return handleAttributePostPutCode(attributeCode, true);
+			return handleAttributePostPutCode(attributeCode, false);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing code.", "Make sure type exists before call PUT");
 		}
@@ -439,17 +838,17 @@ public class AttributeResource
 		if (post) {
 			AttributeCode attributeCodeCreated = service.getPersistenceService().findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
-					+ attributeCode.getAttributeCodePk().getAttributeType()
+					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeType())
 					+ "/attributecodes/"
-					+ attributeCode.getAttributeCodePk().getAttributeCode())).entity(attributeCodeCreated).build();
+					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeCode()))).entity(attributeCodeCreated).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(attributeCode).build();
 		}
 	}
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type (In-activates).  Note: this doesn't remove all attribute type associations.")
+	@APIDescription("Remove a Code (In-activates) and inactivates all attribute type associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
 			@PathParam("type")
@@ -458,9 +857,147 @@ public class AttributeResource
 			@RequiredParam String code)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code.toUpperCase());
-		attributeCodePk.setAttributeType(type.toUpperCase());
-		service.getAttributeService().removeAttributeCode(attributeCodePk);
+		attributeCodePk.setAttributeCode(code);
+		attributeCodePk.setAttributeType(type);
+
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, attributeCodePk, AttributeCode.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Inactivating Attribute Code");
+			taskRequest.setDetails("Type: " + type + " Code: " + code);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Code", code);
+			taskRequest.getTaskData().put("Status", attributeCode.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+
+						AttributeCodePk extisingAttributeCodePk = new AttributeCodePk();
+						extisingAttributeCodePk.setAttributeCode((String) taskFuture.getTaskData().get("Code"));
+						extisingAttributeCodePk.setAttributeType((String) taskFuture.getTaskData().get("Type"));
+
+						service.getPersistenceService().setStatusOnEntity(AttributeCode.class, extisingAttributeCodePk, (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeCode(attributeCodePk);
+		}
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete a Code and all attribute code associations. Runs in background.")
+	@Path("/attributetypes/{type}/attributecodes/{code}/force")
+	public void hardDeleteAttributeCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode(code);
+		attributeCodePk.setAttributeType(type);
+
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, attributeCodePk, AttributeCode.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Deleting Attribute Code");
+			taskRequest.setDetails("Type: " + type + " Code: " + code);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Code", code);
+			taskRequest.getTaskData().put("Status", attributeCode.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+
+						AttributeCodePk extisingAttributeCodePk = new AttributeCodePk();
+						extisingAttributeCodePk.setAttributeCode((String) taskFuture.getTaskData().get("Code"));
+						extisingAttributeCodePk.setAttributeType((String) taskFuture.getTaskData().get("Type"));
+
+						service.getPersistenceService().setStatusOnEntity(AttributeCode.class, extisingAttributeCodePk, (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeCode(attributeCodePk);
+		}
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Activate a Code (activates) and all assicated data.  Runs in background.")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}/attributecodes/{code}")
+	public void activateCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode(code);
+		attributeCodePk.setAttributeType(type);
+
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+		if (attributeCode != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeCode.class, attributeCodePk, AttributeCode.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setName("Activating Attribute Code");
+			taskRequest.setDetails("Type: " + type + " Code: " + code);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Code", code);
+			taskRequest.getTaskData().put("Status", attributeCode.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+
+						AttributeCodePk extisingAttributeCodePk = new AttributeCodePk();
+						extisingAttributeCodePk.setAttributeCode((String) taskFuture.getTaskData().get("Code"));
+						extisingAttributeCodePk.setAttributeType((String) taskFuture.getTaskData().get("Type"));
+
+						service.getPersistenceService().setStatusOnEntity(AttributeCode.class, extisingAttributeCodePk, (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeCode(attributeCodePk);
+		}
 	}
 
 	@GET
@@ -584,7 +1121,9 @@ public class AttributeResource
 		if (validationResult.valid()) {
 			service.getAttributeService().saveAttributeXrefMap(attributeXref);
 
-			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/" + attributeXref.getType().getAttributeType() + "/detail")).build();
+			return Response.created(URI.create("v1/resource/attributes/attributexreftypes/"
+					+ StringProcessor.urlEncode(attributeXref.getType().getAttributeType())
+					+ "/detail")).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}

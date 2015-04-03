@@ -19,25 +19,33 @@
 app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiModal', function ($scope, Business, $timeout, $uiModal) {
   $scope.predicate = 'activeStatus';
   $scope.deactivateButtons = false;
+  
+  $scope.userProfiles = {};
+  $scope.pagination = {};
+  $scope.pagination.control;
+  $scope.pagination.features = {'dates': false, 'max': true};  
+  
   $scope.getUsers = function(override) {
-    Business.userservice.getAllUserProfiles(true, override).then(function(result){
-      console.log('result', result);
+    $scope.$emit('$TRIGGERLOAD', 'adminUserProfile');
+    if ($scope.pagination.control && $scope.pagination.control.refresh) {
+      $scope.pagination.control.refresh().then(function(){
+        $scope.$emit('$TRIGGERUNLOAD', 'adminUserProfile');
+      });
+    } else {
+      $scope.$emit('$TRIGGERUNLOAD', 'adminUserProfile');
+    }
+  }; 
 
-      $scope.userProfiles = result? result: []
-    }, function() {
-      $scope.userProfiles = [];
-    })
-  }
-  $scope.getUsers(false);
+  
   Business.lookupservice.getUserTypeCodes().then(function(result){
-    $scope.userTypes = result? result: []
+    $scope.userTypes = result? result: [];
   }, function() {
     $scope.userTypes = [];
-  })
+  });
 
   $scope.$on('$RESETUSER', function(){
     $scope.getUsers(true);
-  })
+  });
 
   $scope.setPredicate = function(predicate){
     if ($scope.predicate === predicate){
@@ -45,26 +53,29 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
     } else {
       $scope.predicate = predicate;
       $scope.reverse = false;
-    }
-  }
+    }    
+    $scope.pagination.control.changeSortOrder(predicate);          
+  };
+  
+  var stickThatTable = function(){
+    var offset = $('.top').outerHeight() + $('#userProfileToolbar').outerHeight();
+    $(".stickytable").stickyTableHeaders({
+      fixedOffset: offset + 30
+    });
+  };
+
+  $(window).resize(stickThatTable);
+  $timeout(stickThatTable, 100); 
 
   $scope.getDate = function(date){
-    if (date)
-    {
-      var d = new Date(date);
-      var currDate = d.getDate();
-      var currMonth = d.getMonth();
-      var currYear = d.getFullYear();
-      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
-    }
-    return null;
+    return utils.getDate(date);
   };
 
   $scope.editUserProfile = function(profile){
     var modalInstance = $uiModal.open({
       templateUrl: 'views/userprofiletab.html',
       controller: 'adminEditUserProfileCtrl',
-      size: 'sm',
+      size: 'lg',
       resolve: {
         profile: function () {
           return profile;
@@ -74,11 +85,11 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
 
     modalInstance.result.then(function (result) {
       //do something
+      triggerAlert('Your edits were saved', 'editUserProfile', 'body', 6000);
     }, function () {
       // cancled or failed
     });
   }
-
 
   $scope.changeActivity = function(user){
     var cont = confirm("You are about to change the active status of a user (Enabled or disabled). Continue?");
@@ -126,14 +137,12 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
       return 'End User';
     }
   }
-
-
 }]);
 
 app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profile', 'business', function ($scope, $uiModalInstance, profile, Business) {
-  $scope.userProfileForm = profile;
+  $scope.userProfileForm = angular.copy(profile);
   $scope.userProfileForm.mySwitch = true;
-  $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+  $scope.EMAIL_REGEXP = utils.EMAIL_REGEXP;
   Business.lookupservice.getUserTypeCodes().then(function(result){
     if (result) {
       $scope.userTypeCodes = result;
@@ -143,7 +152,6 @@ app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profil
     }
   });
   $scope.saveUserProfile = function(){
-    console.log('$scope.userProfileForm', $scope.userProfileForm);
     $scope.userProfileForm.mySwitch = false;
     $scope.ok();
   }
@@ -161,49 +169,44 @@ app.controller('adminEditUserProfileCtrl',['$scope', '$uiModalInstance', 'profil
     $scope.userProfileForm.userTypeCode = $scope.userProfileForm.userRole.code;
 
     var error = false;
-    var errorObjt = {};
-    errorObjt.errors = {};
-    errorObjt.errors.entry = [];
+    var errorObjt = angular.copy(utils.errorObj);
 
     if (!$scope.userProfileForm.firstName){
-      errorObjt.errors.entry.push({'key':'firstName', 'value':'A first name is required.'});
+      errorObjt.add('firstName','A first name is required.');
     } else if ($scope.userProfileForm.firstName.length > 80){
-      errorObjt.errors.entry.push({'key':'firstName', 'value':'Your first name has exceeded the accepted input length'});
+      errorObjt.add('firstName','Your first name has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.lastName){
-      errorObjt.errors.entry.push({'key':'lastName', 'value':'A last name is required.'});
+      errorObjt.add('lastName','A last name is required.');
     } else if ($scope.userProfileForm.lastName.length > 80){
-      errorObjt.errors.entry.push({'key':'lastName', 'value':'Your last name has exceeded the accepted input length'});
+      errorObjt.add('lastName','Your last name has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.email){
-      errorObjt.errors.entry.push({'key':'email', 'value':'A valid email is required.'});
+      errorObjt.add('email','A valid email is required.');
     } else if ($scope.userProfileForm.email.length > 80){
-      errorObjt.errors.entry.push({'key':'email', 'value':'Your email has exceeded the accepted input length'});
+      errorObjt.add('email','Your email has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.organization){
-      errorObjt.errors.entry.push({'key':'organization', 'value':'An organization is required.'});
+      errorObjt.add('organization','An organization is required.');
     } else if ($scope.userProfileForm.organization.length > 120){
-      errorObjt.errors.entry.push({'key':'organization', 'value':'Your organization has exceeded the accepted input length'});
+      errorObjt.add('organization','Your organization has exceeded the accepted input length');
     }
     if (!$scope.userProfileForm.userTypeCode){
-      errorObjt.errors.entry.push({'key':'userRole', 'value':'A valid user type code is required.'});
+      errorObjt.add('userRole','A valid user type code is required.');
     }
 
-
     if (error) {
-      errorObjt.success = false;
       triggerError(errorObjt);
       return false;
     }
 
     Business.userservice.saveThisProfile($scope.userProfileForm).then(function(result){
-      console.log('success', result);
+      profile = $scope.userProfileForm;
       $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
-      $scope.$emit('$triggerEvent', '$RESETUSER');
+      $scope.$emit('$TRIGGEREVENT', '$RESETUSER');
       $uiModalInstance.close('success');
     }, function(){
       // triggerAlert();
-      console.log('There was an error');
       
       $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
     })

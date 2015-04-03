@@ -32,12 +32,14 @@ import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -56,10 +58,16 @@ public class HighlightResource
 	@APIDescription("Gets all active highlights")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Highlight.class)
-	public List<Highlight> getHighlights()
+	public List<Highlight> getHighlights(
+			@QueryParam("all")
+			@APIDescription("Setting force to true pulls inactivated highlights as well.")
+			@DefaultValue("false") boolean all
+	)
 	{
 		Highlight highlightExample = new Highlight();
-		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
+		if (!all) {
+			highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
+		}
 		List<Highlight> highlights = service.getPersistenceService().queryByExample(Highlight.class, new QueryByExample(highlightExample));
 		Collections.sort(highlights, new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, Highlight.FIELD_TITLE));
 		return highlights;
@@ -132,13 +140,36 @@ public class HighlightResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a highlight")
-	@Path("/{id}")
-	public void deleteHighlight(
+	@APIDescription("Deactivates a highlight")
+	@Path("/{id}/deactivate")
+	public void deactivateHighlight(
 			@PathParam("id")
 			@RequiredParam String id)
 	{
 		service.getSystemService().removeHighlight(id);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Deletes a highlight")
+	@Path("/{id}/delete")
+	public void deleteHighlight(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		service.getSystemService().deleteHighlight(id);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activates a highlight")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/activate")
+	public void activateHighlight(
+			@PathParam("id")
+			@RequiredParam String id)
+	{
+		service.getSystemService().activateHighlight(id);
 	}
 
 }

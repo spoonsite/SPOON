@@ -19,12 +19,15 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ErrorTicketWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import java.lang.reflect.Field;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -33,6 +36,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.sourceforge.stripes.util.bean.BeanUtil;
 
 /**
  *
@@ -59,17 +63,40 @@ public class ErrorTicketResource
 		ErrorTicket errorTicketExample = new ErrorTicket();
 		errorTicketExample.setActiveStatus(filterQueryParams.getStatus());
 
+		ErrorTicket errorTicketStartExample = new ErrorTicket();
+		errorTicketStartExample.setUpdateDts(filterQueryParams.getStart());
+
+		ErrorTicket errorTicketEndExample = new ErrorTicket();
+		errorTicketEndExample.setUpdateDts(filterQueryParams.getEnd());
+
 		QueryByExample<ErrorTicket> queryByExample = new QueryByExample(errorTicketExample);
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(errorTicketStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(errorTicketEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
 		queryByExample.setMaxResults(filterQueryParams.getMax());
 		queryByExample.setFirstResult(filterQueryParams.getOffset());
 
-		ErrorTicket errorTicketOrderExample = new ErrorTicket();
-		errorTicketOrderExample.setCreateDts(QueryByExample.DATE_FLAG);
-		queryByExample.setOrderBy(errorTicketOrderExample);
-		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
+		queryByExample.setFirstResult(filterQueryParams.getOffset());
+		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
+
+		ErrorTicket errorTicketSortExample = new ErrorTicket();
+		Field sortField = ReflectionUtil.getField(errorTicketSortExample, filterQueryParams.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), errorTicketSortExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(errorTicketSortExample);
+		}
 
 		List<ErrorTicket> errorTickets = service.getPersistenceService().queryByExample(ErrorTicket.class, queryByExample);
-		long total = service.getPersistenceService().countClass(ErrorTicket.class);
+		long total = service.getPersistenceService().countByExample(queryByExample);
 		return sendSingleEntityResponse(new ErrorTicketWrapper(errorTickets, total));
 	}
 

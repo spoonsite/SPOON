@@ -19,12 +19,18 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
+import edu.usu.sdl.openstorefront.service.transfermodel.AlertContext;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
+import edu.usu.sdl.openstorefront.storage.model.AlertType;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.AsyncTask;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
+import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -32,11 +38,14 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
@@ -61,8 +70,7 @@ public class SystemServiceImpl
 	@Override
 	public ApplicationProperty getProperty(String key)
 	{
-		ApplicationProperty applicationProperty = null;
-		applicationProperty = persistenceService.findById(ApplicationProperty.class, key);
+		ApplicationProperty applicationProperty = persistenceService.findById(ApplicationProperty.class, key);
 		return applicationProperty;
 	}
 
@@ -145,6 +153,27 @@ public class SystemServiceImpl
 	}
 
 	@Override
+	public void deleteHighlight(String hightlightId)
+	{
+		Highlight highlight = persistenceService.findById(Highlight.class, hightlightId);
+		if (highlight != null) {
+			persistenceService.delete(highlight);
+		}
+	}
+
+	@Override
+	public void activateHighlight(String hightlightId)
+	{
+		Highlight highlight = persistenceService.findById(Highlight.class, hightlightId);
+		if (highlight != null) {
+			highlight.setActiveStatus(Highlight.ACTIVE_STATUS);
+			highlight.setUpdateUser(SecurityUtil.getCurrentUserName());
+			highlight.setUpdateDts(TimeUtil.currentDate());
+			persistenceService.persist(highlight);
+		}
+	}
+
+	@Override
 	public void syncHighlights(List<Highlight> highlights)
 	{
 		int removeCount = persistenceService.deleteByExample(new Highlight());
@@ -188,6 +217,8 @@ public class SystemServiceImpl
 			ticket.append("TicketNumber: ").append(ticketNumber).append("\n");
 			ticket.append("Client IP: ").append(errorInfo.getClientIp()).append("\n");
 			ticket.append("User: ").append(SecurityUtil.getCurrentUserName()).append("\n");
+			ticket.append("Message: ").append(systemErrorModel.getMessage()).append("\n");
+			ticket.append("Potential Resolution: ").append(StringProcessor.blankIfNull(systemErrorModel.getPotentialResolution())).append("\n");
 			ticket.append("Request: ").append(errorInfo.getRequestUrl()).append("\n");
 			ticket.append("Request Method: ").append(errorInfo.getRequestMethod()).append("\n");
 			ticket.append("Input Data: \n").append(errorInfo.getInputData()).append("\n\n");
@@ -203,6 +234,8 @@ public class SystemServiceImpl
 			errorTicket.setErrorTicketId(ticketNumber);
 			errorTicket.setTicketFile(ticketNumber);
 			errorTicket.setClientIp(errorInfo.getClientIp());
+			errorTicket.setMessage(systemErrorModel.getMessage());
+			errorTicket.setPotentialResolution(systemErrorModel.getPotentialResolution());
 			if (StringUtils.isNotBlank(errorInfo.getRequestUrl())) {
 				errorTicket.setCalledAction(errorInfo.getRequestUrl() + " Method: " + errorInfo.getRequestMethod());
 			}
@@ -217,7 +250,12 @@ public class SystemServiceImpl
 
 			//save file
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
-			Files.write(path, ticket.toString().getBytes());
+			Files.write(path, ticket.toString().getBytes(Charset.defaultCharset()));
+
+			AlertContext alertContext = new AlertContext();
+			alertContext.setAlertType(AlertType.SYSTEM_ERROR);
+			alertContext.setDataTrigger(errorTicket);
+			getAlertService().checkAlert(alertContext);
 
 		} catch (Throwable t) {
 			//NOTE: this is a critial path.  if an error is thrown and not catch it would result in a info link or potential loop.
@@ -286,6 +324,72 @@ public class SystemServiceImpl
 	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel)
 	{
 		saveProperty(ApplicationProperty.GLOBAL_INTEGRATION_REFRESH, globalIntegrationModel.getJiraRefreshRate());
+	}
+
+	@Override
+	public void saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput)
+	{
+		Objects.requireNonNull(generalMedia);
+		Objects.requireNonNull(fileInput);
+
+		generalMedia.setFileName(generalMedia.getName());
+		try (InputStream in = fileInput) {
+			Files.copy(in, generalMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+			generalMedia.populateBaseCreateFields();
+			persistenceService.persist(generalMedia);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+	}
+
+	@Override
+	public void removeGeneralMedia(String mediaName)
+	{
+		GeneralMedia generalMedia = persistenceService.findById(GeneralMedia.class, mediaName);
+		if (generalMedia != null) {
+			Path path = generalMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					path.toFile().delete();
+				}
+			}
+			persistenceService.delete(generalMedia);
+		}
+	}
+
+	@Override
+	public void saveAsyncTask(TaskFuture taskFuture)
+	{
+		AsyncTask existingTask = persistenceService.findById(AsyncTask.class, taskFuture.getTaskId());
+		if (existingTask != null) {
+			persistenceService.delete(existingTask);
+		}
+
+		AsyncTask asyncTask = new AsyncTask();
+		asyncTask.setTaskId(taskFuture.getTaskId());
+		asyncTask.setAllowMultiple(taskFuture.isAllowMultiple());
+		asyncTask.setCompletedDts(taskFuture.getCompletedDts());
+		asyncTask.setError(taskFuture.getError());
+		asyncTask.setStatus(taskFuture.getStatus());
+		asyncTask.setSubmitedDts(taskFuture.getSubmitedDts());
+		asyncTask.setTaskName(taskFuture.getTaskName());
+		asyncTask.setDetails(taskFuture.getDetails());
+
+		asyncTask.setCreateUser(taskFuture.getCreateUser());
+		asyncTask.setUpdateUser(taskFuture.getCreateUser());
+		asyncTask.populateBaseCreateFields();
+
+		persistenceService.persist(asyncTask);
+
+	}
+
+	@Override
+	public void removeAsyncTask(String taskId)
+	{
+		AsyncTask task = persistenceService.findById(AsyncTask.class, taskId);
+		if (task != null) {
+			persistenceService.delete(task);
+		}
 	}
 
 }

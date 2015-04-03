@@ -61,15 +61,20 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
 
   var highlights = {};
 
-  highlights.getHighlights = function() {
+  highlights.getHighlights = function(all, override) {
     var deferred = $q.defer();
     var highlights = checkExpire('highlights', minute * 1440);
-    if (highlights) {
+    if (highlights && !override) {
       deferred.resolve(highlights);
     } else {
+      var params = {}
+      if (all){
+        params.all = true;
+      }
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/highlights'
+        'url': 'api/v1/resource/highlights',
+        'params': params
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
@@ -84,6 +89,35 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
         showServerError(data, 'body');
         deferred.reject('There was an error');
       });
+    }
+    return deferred.promise;
+  }
+
+  highlights.saveHighlight = function(highlight) {
+    var deferred = $q.defer();
+    if (highlight) {
+
+      var method = highlight.highlightId? 'PUT': 'POST';
+      var url = highlight.highlightId? 'api/v1/resource/highlights/' + encodeURIComponent(highlight.highlightId) : 'api/v1/resource/highlights';
+      $http({
+        'method': method,
+        'url': url,
+        'data': highlight
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    } else {
+      deferred.reject(false);
     }
     return deferred.promise;
   }
@@ -112,6 +146,84 @@ app.factory('highlightservice', [ 'localCache', '$http', '$q',function ( localCa
         deferred.reject('There was an error');
       });
     }
+    return deferred.promise;
+  }
+
+  highlights.activateHighlight = function(id) {
+    var deferred = $q.defer();
+    if (id) {
+      $http({
+        method: 'PUT',
+        url: 'api/v1/resource/highlights/' + encodeURIComponent(id) + '/activate'
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }
+
+  highlights.deactivateHighlight = function(id) {
+    var deferred = $q.defer();
+    if (id) {
+      $http({
+        method: 'DELETE',
+        url: 'api/v1/resource/highlights/' + encodeURIComponent(id) + '/deactivate'
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
+    return deferred.promise;
+  }
+
+  highlights.deleteHighlight = function(id) {
+    var deferred = $q.defer();
+    if (id) {
+      $http({
+        method: 'DELETE',
+        url: 'api/v1/resource/highlights/' + encodeURIComponent(id) + '/delete'
+      }).success(function(data, status, headers, config){        
+        if (isNotRequestError(data)){
+          removeError();
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }).error(function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject(data);
+      });
+    } else {
+      deferred.reject('There was no type...');
+    }
+
     return deferred.promise;
   }
 

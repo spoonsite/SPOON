@@ -15,9 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.service.query;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Query by Example model
@@ -46,9 +50,30 @@ public class QueryByExample<T extends BaseEntity>
 	private String sortDirection = OpenStorefrontConstant.SORT_ASCENDING;
 	private T groupBy;
 	private T likeExample;
+	private List<SpecialOperatorModel<T>> extraWhereCauses = new ArrayList<>();
 
 	public QueryByExample()
 	{
+	}
+
+	public static Object getFlagForType(Class fieldType)
+	{
+		Object trigger = null;
+
+		if (fieldType.getName().equals(Boolean.class.getName())) {
+			trigger = Boolean.TRUE;
+		} else if (fieldType.getName().equals(Integer.class.getName())) {
+			trigger = 1;
+		} else if (fieldType.getName().equals(BigDecimal.class.getName())) {
+			trigger = BigDecimal.ONE;
+		} else {
+			try {
+				trigger = fieldType.newInstance();
+			} catch (InstantiationException | IllegalAccessException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to create a query trigger.", ex);
+			}
+		}
+		return trigger;
 	}
 
 	public QueryByExample(T example)
@@ -190,6 +215,16 @@ public class QueryByExample<T extends BaseEntity>
 	public void setLikeExample(T likeExample)
 	{
 		this.likeExample = likeExample;
+	}
+
+	public List<SpecialOperatorModel<T>> getExtraWhereCauses()
+	{
+		return extraWhereCauses;
+	}
+
+	public void setExtraWhereCauses(List<SpecialOperatorModel<T>> extraWhereCauses)
+	{
+		this.extraWhereCauses = extraWhereCauses;
 	}
 
 }

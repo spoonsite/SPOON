@@ -20,8 +20,13 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewConPk;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ExperienceTimeType;
 import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +75,7 @@ public class ComponentReviewView
 	private boolean recommend;
 	private String componentId;
 	private String reviewId;
+	private String activeStatus;
 
 	@NotNull
 	@ConsumeField
@@ -93,29 +99,46 @@ public class ComponentReviewView
 		ServiceProxy service = new ServiceProxy();
 		ComponentReviewView view = new ComponentReviewView();
 		view.setUsername(review.getCreateUser());
-		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, review.getUserTypeCode());
-		if (typeCode == null) {
-			view.setUserTypeCode(null);
-		} else {
-			view.setUserTypeCode(typeCode.getDescription());
-		}
+		view.setUserTypeCode(TranslateUtil.translate(UserTypeCode.class, review.getUserTypeCode()));
 		view.setComment(review.getComment());
 		view.setRating(review.getRating());
 		view.setTitle(review.getTitle());
 		view.setComponentId(review.getComponentId());
 		view.setReviewId(review.getComponentReviewId());
-		view.setName(service.getPersistenceService().findById(Component.class, review.getComponentId()).getName());
-		ExperienceTimeType timeCode = service.getLookupService().getLookupEnity(ExperienceTimeType.class, review.getUserTimeCode());
-		if (timeCode == null) {
-			view.setUserTimeCode(null);
-		} else {
-			view.setUserTimeCode(timeCode.getDescription());
-		}
+		view.setName(service.getComponentService().getComponentName(review.getComponentId()));
+		view.setUserTimeCode(TranslateUtil.translate(ExperienceTimeType.class, review.getUserTimeCode()));
+
+		ComponentReviewPro reviewProExample = new ComponentReviewPro();
+		reviewProExample.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+		ComponentReviewProPk reviewProPk = new ComponentReviewProPk();
+		reviewProPk.setComponentReviewId(review.getComponentReviewId());
+		reviewProExample.setComponentReviewProPk(reviewProPk);
+		List<ComponentReviewPro> componentReviewPros = service.getPersistenceService().queryByExample(ComponentReviewPro.class, reviewProExample);
+		view.setPros(ComponentReviewProCon.toViewListPro(componentReviewPros));
+
+		ComponentReviewCon reviewConExample = new ComponentReviewCon();
+		reviewConExample.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
+		ComponentReviewConPk reviewConPk = new ComponentReviewConPk();
+		reviewConPk.setComponentReviewId(review.getComponentReviewId());
+		reviewConExample.setComponentReviewConPk(reviewConPk);
+		List<ComponentReviewCon> componentReviewCons = service.getPersistenceService().queryByExample(ComponentReviewCon.class, reviewConExample);
+		view.setCons(ComponentReviewProCon.toViewListCon(componentReviewCons));
+
+		view.setActiveStatus(review.getActiveStatus());
 		view.setLastUsed(review.getLastUsed());
 		view.setUpdateDate(review.getUpdateDts());
 		view.setOrganization(review.getOrganization());
 		view.setRecommend(review.getRecommend());
 		return view;
+	}
+
+	public static List<ComponentReviewView> toViewList(List<ComponentReview> reviews)
+	{
+		List<ComponentReviewView> componentReviewViews = new ArrayList<>();
+		reviews.forEach(review -> {
+			componentReviewViews.add(toView(review));
+		});
+		return componentReviewViews;
 	}
 
 	public List<ComponentReviewProCon> getPros()
@@ -276,6 +299,16 @@ public class ComponentReviewView
 	public void setReviewId(String reviewId)
 	{
 		this.reviewId = reviewId;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 
 }

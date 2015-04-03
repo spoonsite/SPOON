@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.io.Serializable;
 import javax.persistence.Version;
 
@@ -45,7 +45,7 @@ public abstract class BasePK<T>
 			return -1;
 		} else {
 			if (o instanceof BasePK) {
-				return ServiceUtil.compareObjects(this.pkValue(), ((BasePK) o).pkValue());
+				return ReflectionUtil.compareObjects(this.pkValue(), ((BasePK) o).pkValue());
 			} else {
 				return -1;
 			}

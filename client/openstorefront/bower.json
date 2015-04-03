@@ -14,10 +14,10 @@
     "angular-mocks": "1.2.23",
     "angular-touch": "1.2.23",
     "angular-motion": "0.3.2",
+    "angular-file-upload": "1.1.5",
     "fontawesome": "4.2.0",
     "ng-tags-input": "2.1.1",
     "typicons": "2.0.4",
-    "ckeditor": "4.4.2",
     "moment": "2.8.3",
     "angular-moment": "0.8.1",
     "ng-grid": "2.0.11",
@@ -25,7 +25,8 @@
     "lodash": "2.4.1",
     "angular-carousel": "0.2.5",
     "angulartics": "0.16.5",
-    "ng-idle": "0.3.5"
+    "ng-idle": "0.3.5",
+    "angular-filter": "~0.5.2"
   },
   "devDependencies": {
     "angular-scenario": "1.2.23"

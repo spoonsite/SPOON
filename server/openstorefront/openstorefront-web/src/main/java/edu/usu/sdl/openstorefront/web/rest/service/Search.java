@@ -20,20 +20,24 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.QueryType;
+import edu.usu.sdl.openstorefront.sort.ComponentSearchViewComparator;
 import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.ListingStats;
 import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -60,17 +64,6 @@ public class Search
 		extends BaseResource
 {
 
-	public class CustomComparator
-			implements Comparator<ComponentSearchView>
-	{
-
-		@Override
-		public int compare(ComponentSearchView o1, ComponentSearchView o2)
-		{
-			return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-		}
-	}
-
 	@GET
 	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -84,9 +77,9 @@ public class Search
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		List<ComponentSearchView> result = service.getSearchService().getSearchItems(query, filterQueryParams);
-		Collections.sort(result, new CustomComparator());
-		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result)
+		List<ComponentSearchView> results = service.getSearchService().getSearchItems(query, filterQueryParams);
+		results.sort(new ComponentSearchViewComparator());
+		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(results)
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -112,7 +105,7 @@ public class Search
 		TaskRequest taskRequest = new TaskRequest();
 		taskRequest.setAllowMultiple(false);
 		taskRequest.setName("Resetting Indexer");
-
+		taskRequest.setDetails("Reindexing components and articles");
 		service.getAyncProxy(service.getSearchService(), taskRequest).resetIndexer();
 		return Response.ok().build();
 	}
@@ -139,9 +132,9 @@ public class Search
 		pk.setAttributeCode(code);
 		pk.setAttributeType(type);
 
-		List<ComponentSearchView> result = service.getSearchService().architectureSearch(pk, filterQueryParams);
-		Collections.sort(result, new CustomComparator());
-		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result)
+		List<ComponentSearchView> results = service.getSearchService().architectureSearch(pk, filterQueryParams);
+		results.sort(new ComponentSearchViewComparator());
+		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(results)
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -150,17 +143,13 @@ public class Search
 	@GET
 	@APIDescription("Used to retrieve all possible search results.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Component.class)
+	@DataType(ComponentSearchView.class)
 	@Path("/all")
 	public List<ComponentSearchView> getAllForSearch()
 	{
-		List<ComponentSearchView> result = service.getSearchService().getAll();
-		if (result != null) {
-			Collections.sort(result, new CustomComparator());
-			return result;
-		} else {
-			return null;
-		}
+		List<ComponentSearchView> results = service.getSearchService().getAll();
+		Collections.sort(results, new ComponentSearchViewComparator());
+		return results;
 	}
 
 	@GET
@@ -192,8 +181,10 @@ public class Search
 			recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.ARTICLE);
 			recentlyAddedView.setArticleAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 			recentlyAddedView.setArticleAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-			recentlyAddedView.setDescription(attributeCode.getDescription());
-			recentlyAddedView.setName(attributeCode.getLabel());
+
+			ArticleView articleView = ArticleView.toView(attributeCode);
+			recentlyAddedView.setDescription(articleView.getDescription());
+			recentlyAddedView.setName(articleView.getTitle());
 			recentlyAddedView.setAddedDts(attributeCode.getUpdateDts());
 			recentlyAddedViews.add(recentlyAddedView);
 		}
@@ -204,6 +195,26 @@ public class Search
 		}
 
 		return recentlyAddedViews;
+	}
+
+	@GET
+	@APIDescription("Get Listing Stats")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/stats")
+	public Response getListingStats()
+	{
+		ListingStats listingStats = new ListingStats();
+
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
+		long numberOfActiveComponents = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, componentExample));
+		listingStats.setNumberOfComponents(numberOfActiveComponents);
+
+		List<AttributeCode> articles = service.getAttributeService().findRecentlyAddedArticles(Integer.MAX_VALUE);
+		listingStats.setNumberOfArticles(articles.size());
+
+		return Response.ok(listingStats).build();
 	}
 
 }

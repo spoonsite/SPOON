@@ -27,6 +27,8 @@ import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
+import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
+import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import java.text.MessageFormat;
@@ -88,8 +90,10 @@ public class JobManager
 		addImportJob(new ComponentImporter(), FileSystemManager.IMPORT_COMPONENT_DIR);
 
 		addCleanUpErrorsJob();
+		addTrackingCleanUpJob();
 		addNotificationJob();
 		addRecentChangeNotifyJob();
+		addScheduledReportJob();
 		addComponentIntegrationJobs();
 	}
 
@@ -187,6 +191,26 @@ public class JobManager
 		}
 	}
 
+	private static void addScheduledReportJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Scheduled Job");
+
+		JobDetail job = JobBuilder.newJob(ScheduledReportJob.class)
+				.withIdentity("ScheduledReportJob", JOB_GROUP_SYSTEM)
+				.withDescription("Run scheduled reports")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("ScheduledReportJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInMinutes(1)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
 	private static void addCleanUpErrorsJob() throws SchedulerException
 	{
 		log.log(Level.INFO, "Adding Error Clean up Job");
@@ -201,6 +225,26 @@ public class JobManager
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInMinutes(5)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addTrackingCleanUpJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Tracking Cleanup Job");
+
+		JobDetail job = JobBuilder.newJob(TrackingCleanupJob.class)
+				.withIdentity("TrackingCleanupJob", JOB_GROUP_SYSTEM)
+				.withDescription("Removes old tracking records")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("TrackingCleanupJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInHours(24)
 						.repeatForever())
 				.build();
 
@@ -263,13 +307,13 @@ public class JobManager
 		scheduler.getContext().put(directoryScanListener.getClass().getName(), directoryScanListener);
 		Trigger trigger = newTrigger()
 				.withIdentity(jobName + "Trigger", JOB_GROUP_SYSTEM)
-				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInSeconds(30)
 						.repeatForever())
 				.build();
 
 		scheduler.scheduleJob(job, trigger);
+		scheduler.pauseTrigger(trigger.getKey());
 	}
 
 	public static void runJobNow(String jobName, String groupName)

@@ -72,9 +72,9 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
   */
   var loadLookupTable = function(entityName, successFunc, errorFunc, view) {
     if (view) {
-      $http.get('api/v1/resource/lookuptypes/' + entityName + '/view').success(successFunc).error(errorFunc);
+      $http.get('api/v1/resource/lookuptypes/' + encodeURIComponent(entityName) + '/view').success(successFunc).error(errorFunc);
     } else {
-      $http.get('api/v1/resource/lookuptypes/' + entityName).success(successFunc).error(errorFunc);
+      $http.get('api/v1/resource/lookuptypes/' + encodeURIComponent(entityName)).success(successFunc).error(errorFunc);
     }
   };
 
@@ -126,6 +126,37 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
         if (data && isNotRequestError(data)) {
           removeError();
           save('ContactType', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject(false);
+        }
+      }, function(data, status, headers, config){
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      }, false);
+    }
+
+    return deferred.promise;
+  };
+
+  var getHighlightCodes = function() {
+    var deferred = $q.defer();
+
+    if (refreshData.highlightType) {
+      localCache.clear('HighlightType');
+      refreshData.highlightType = false;
+    }
+
+    var highlightType = checkExpire('HighlightType', minute * 1440);
+    if (highlightType) {
+      deferred.resolve(highlightType);
+    } else {
+      loadLookupTable('HighlightType', function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          save('HighlightType', data);
           deferred.resolve(data);
         } else {
           removeError();
@@ -299,17 +330,107 @@ app.factory('lookupservice', ['$http', '$q', 'localCache', function($http, $q, l
     }
     return deferred.promise;
   };
+  
+  var getLookups = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/lookuptypes?systemTables=false' 
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var getLookupCodes = function(entity, filterstatus) {
+    var deferred = $q.defer();
+    
+      var url = 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity);
+      if (filterstatus){
+        url += "?status=" + filterstatus;
+      } 
+
+      $http({
+        'method': 'GET',
+        'url': url
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+  
+  var saveLookupCode = function(edit, entity, code, data) {
+    var deferred = $q.defer();
+    var method = edit ? 'PUT' : 'POST'; 
+    var url = edit ? 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity) + '/' + encodeURIComponent(code) : 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity);       
+    
+      $http({
+        'method': method,
+        'url': url,
+        data: data
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
+  
+  var deactivateLookupCode = function(entity, code) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity) + '/' + encodeURIComponent(code)
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };
+  
+  var activateLookupCode = function(entity, code) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/lookuptypes/' + encodeURIComponent(entity) + '/' + encodeURIComponent(code) + '/activate'        
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
+  
 
   //Public API
   return {
     getSvcv4: getSvcv4,
     getEvaluationSections: getEvaluationSections,
     getContactTypeCodes: getContactTypeCodes,
+    getHighlightCodes:getHighlightCodes,
     getUserTypeCodes: getUserTypeCodes,
     getEvalLevels: getEvalLevels,
     getExpertise: getExpertise,
     getReviewConList: getReviewConList,
-    getReviewProList: getReviewProList
+    getReviewProList: getReviewProList,
+    getLookups: getLookups,
+    getLookupCodes: getLookupCodes,
+    saveLookupCode: saveLookupCode,
+    deactivateLookupCode: deactivateLookupCode,
+    activateLookupCode: activateLookupCode
   };
 
 }]);

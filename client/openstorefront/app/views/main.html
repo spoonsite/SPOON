@@ -16,7 +16,7 @@ limitations under the License.
 <div id="mainContent">
 
 
-  <div class="search2 ">
+  <div class="search2">
     <div class="text-center bannerText">
       <h4>
         <blockquote>
@@ -35,7 +35,7 @@ limitations under the License.
         <label class="imitateLink" ng-click="focusOnSearch()" for="search-header">
           <img src="images/logo/logo-words.svg" alt="" style="height: 150px; width:100%">
           <br>
-          <small>Browse through over 70 DI2E components
+          <small ng-cloak>Browse through <span ng-show="componentCount" >{{componentCount.numberOfComponents}}</span> DI2E components
           </small>
           <br>
           <!-- <i class="fa fa-caret-down"></i> -->
@@ -51,7 +51,7 @@ limitations under the License.
         <div  ng-show="!svcv4Mode">
           <div class="pull-right searchAllButton" style="margin-left: 10px;">
             <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;  margin-left:10px;" class="btn btn-primary pull-right">SvcV-4</button>
-            <button ng-click="goToSearch('search', 'All', true)" style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Show All Listings
+            <button ng-click="searchKey = 'all'; goToSearch('search', 'all', true)" style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Show All Listings
             </button>
           </div>
           <form ng-submit="goToSearch('search', searchKey)">
@@ -59,20 +59,22 @@ limitations under the License.
               <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
             </div>
             <div class="navSearchBar">
-              <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key.name as key.name for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
+              <input type="text" class="form-control searchBar" ng-model="searchKey" ng-options="key as key.description for key in typeahead" placeholder="Search" bs-typeahead autofocus id="mainSearchBar">
             </div>
           </form>
         </div>
         <div ng-show="svcv4Mode">
           <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Search</button>
-          <svcv4-diagram ng-controller="Svc4ArchDiagramController"></svcv4-diagram>  
+          <!-- <svcv4-diagram ng-controller="Svc4ArchDiagramController"></svcv4-diagram>   -->
+          <architecture></architecture>
         </div>
       </div>
     </div>
   </div>
 
   <div class="nifty2col color_background_white">
-    <div class="col-sm-6 first" style="padding-bottom: 30px;">
+
+    <div class="col-sm-6 first" style="padding-bottom: 30px;" ng-cloak>
       <div>
         <h1>Highlights</h1> 
         <hr>
@@ -85,7 +87,7 @@ limitations under the License.
                 <a href="{{highlight.link}}">
                   <span class="listing_short_title_text">{{highlight.title}}</span>     
                 </a>
-                <div style="font-size: 12px; color: #555555;">{{highlight.description}}
+                <div style="font-size: 12px; color: #555555;" dynamichtml="highlight.description">
                 </div>    
               </li>
             </ul>
@@ -96,7 +98,7 @@ limitations under the License.
         </div>
       </div>
     </div>
-    <div class="col-sm-6 second">
+    <div class="col-sm-6 second" ng-cloak>
       <div><h1>Most Recently Added</h1> <hr></div>
       <div class="content">
         <div class="row">

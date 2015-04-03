@@ -34,26 +34,29 @@ import java.util.logging.Logger;
  * @author dshurtleff
  */
 public class FileSystemManager
+		implements Initializable
 {
 
 	private static final Logger log = Logger.getLogger(FileSystemManager.class.getName());
 
-	public static final String MAIN_DIR = "/var/openstorefront";
-	public static final String MAIN_PERM_DIR = "/var/openstorefront/perm";
-	public static final String MAIN_TEMP_DIR = "/var/openstorefront/temp";
+	public static final String MAIN_DIR = System.getProperty("application.datadir", "/var/openstorefront");
+	public static final String MAIN_PERM_DIR = MAIN_DIR + "/perm";
+	public static final String MAIN_TEMP_DIR = MAIN_DIR + "/temp";
 	public static final String SYSTEM_TEMP_DIR = System.getProperty("java.io.tmpdir");
-	public static final String CONFIG_DIR = "/var/openstorefront/config";
-	public static final String IMPORT_DIR = "/var/openstorefront/import";
-	public static final String IMPORT_LOOKUP_DIR = "/var/openstorefront/import/lookup";
-	public static final String IMPORT_ATTRIBUTE_DIR = "/var/openstorefront/import/attribute";
-	public static final String IMPORT_ARTICLE_DIR = "/var/openstorefront/import/article";
-	public static final String IMPORT_HIGHLIGHT_DIR = "/var/openstorefront/import/highlights";
-	public static final String IMPORT_COMPONENT_DIR = "/var/openstorefront/import/component";
+	public static final String CONFIG_DIR = MAIN_DIR + "/config";
+	public static final String IMPORT_DIR = MAIN_DIR + "/import";
+	public static final String IMPORT_LOOKUP_DIR = MAIN_DIR + "/import/lookup";
+	public static final String IMPORT_ATTRIBUTE_DIR = MAIN_DIR + "/import/attribute";
+	public static final String IMPORT_ARTICLE_DIR = MAIN_DIR + "/import/article";
+	public static final String IMPORT_HIGHLIGHT_DIR = MAIN_DIR + "/import/highlights";
+	public static final String IMPORT_COMPONENT_DIR = MAIN_DIR + "/import/component";
 	public static final String ARTICLE_DIR = MAIN_PERM_DIR + "/article";
 	public static final String MEDIA_DIR = MAIN_PERM_DIR + "/media";
+	public static final String GENERAL_MEDIA_DIR = MAIN_PERM_DIR + "/generalmedia";
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
-	public static final String DB_DIR = "/var/openstorefront/db";
+	public static final String REPORT_DIR = MAIN_PERM_DIR + "/report";
+	public static final String DB_DIR = MAIN_DIR + "/db";
 
 	private static final int BUFFER_SIZE = 8192;
 
@@ -123,6 +126,25 @@ public class FileSystemManager
 	}
 
 	/**
+	 * Gets a resource from the application war
+	 *
+	 * @param resource
+	 * @return inputstream to resource (It's up to the caller to close the
+	 * stream)
+	 */
+	public static InputStream getApplicatioResourceFile(String resource)
+	{
+		InputStream in = null;
+		URL resourceUrl = new FileSystemManager().getClass().getResource(resource);
+		if (resourceUrl != null) {
+			in = new FileSystemManager().getClass().getResourceAsStream(resource);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find internal resource file: " + resource, "This likely a programming issue or an issue with the environment.");
+		}
+		return in;
+	}
+
+	/**
 	 * copy from input to output Note: it doesn't close either stream
 	 *
 	 * @param source
@@ -141,6 +163,31 @@ public class FileSystemManager
 			nread += n;
 		}
 		return nread;
+	}
+
+	public static void init()
+	{
+		//setup Dirs
+		FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
+		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
+		FileSystemManager.getDir(FileSystemManager.REPORT_DIR);
+	}
+
+	public static void cleanup()
+	{
+		//Nothing to do for now
+	}
+
+	@Override
+	public void initialize()
+	{
+		FileSystemManager.init();
+	}
+
+	@Override
+	public void shutdown()
+	{
+		FileSystemManager.cleanup();
 	}
 
 }

@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.storage.model.UserTracking;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
+import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingResult;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +112,13 @@ public interface UserService
 	 * @return
 	 */
 	public UserWatch getWatch(String watchId);
+
+	/**
+	 * @param filter
+	 * @param userId
+	 * @return
+	 */
+	public UserTrackingResult getUserTracking(FilterQueryParams filter, String userId);
 
 	/**
 	 *
@@ -242,14 +250,6 @@ public interface UserService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void queueUserMessage(UserMessage userMessage);
-
-	/**
-	 * Finds the messages based on filter
-	 *
-	 * @param filter
-	 * @return
-	 */
-	public List<UserMessage> findUserMessages(FilterQueryParams filter);
 
 	/**
 	 * This will inactivate a user message

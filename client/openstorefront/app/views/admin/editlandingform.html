@@ -1,0 +1,46 @@
+<div id="articleEditModal">
+  <div>
+    <div class="" style="width: 100%; padding:15px;">
+      <button type="submit" title="Cancel Article Edits" class="btn btn-primary pull-right" style="display:inline-block" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+      <h3 style="margin:0px; display:inline-block;">Article/Landing Page for {{type.type}}&mdash;{{code.code}}</h3>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+  <hr style="margin:5px 0px;">
+  <form ng-submit="ok();" id="editLandingPages" style="overflow:hidden; margin: 0px;">
+    <div class="form-group required" style="margin-bottom:0px;">
+      <label class="col-md-2" style="text-align:right;" for="attrirubteType">Type</label>
+      <div class="col-md-10">
+        <select class="form-control" title="Select a type" id="attributeType" ng-model="type.type" ng-options="attr.attributeType as attr.description for attr in attributes">
+        </select>
+      </div>
+    </div>
+    <div class="form-group required" style="margin-bottom:0px;">
+      <label class="col-md-2" style="text-align:right;" for="attrirubteCode">Code</label>
+      <div class="col-md-10">
+        <select type="text" ng-disabled="!type" class="form-control" title="Select a code" id="attributeCode" ng-model="code.code" ng-options="code.code as code.label for code in codes"></select>
+      </div>
+    </div>
+    <div class="form-group required" style="margin-bottom:0px;">
+      <label class="col-md-2" style="text-align:right;" for="title">Title</label>
+      <div class="col-md-10">
+        <input type="text" class="form-control" id="title" placeholder="Title" ng-model="article.title">
+      </div>
+    </div>
+    <div class="form-group required">
+      <label class="col-md-2" style="text-align:right;" for="description">Description</label>
+      <div class="col-md-10">
+        <textarea id="description" class="form-control" rows="5" ng-model="article.description"></textarea>
+      </div>
+    </div>
+    <div style="clear:both; margin-bottom:5px;"></div>
+    <div ng-if="showEditor">
+      <textarea ckeditor="editorOptions" ng-model="editor.editorContent"></textarea>
+    </div>
+    <div style="text-align: center; padding:5px;">
+      <button type="submit" style="display:inline-block;" title="Save Changes" class="btn btn-primary" ng-disabled="!article.title || !article.description || !editor.editorContent"><i class="fa fa-save"></i>&nbsp;Save</button>
+      <button type="button" style="display:inline-block;" title="Preview Changes" class="btn btn-primary" ng-click="preview()" ng-disabled="!article.title || !article.description || !editor.editorContent"><i class="fa fa-eye"></i>&nbsp;Preview</button>
+      <button type="button" style="display:inline-block;" title="Cancel Changes" class="btn btn-danger" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+    </div>
+  </form>
+</div>

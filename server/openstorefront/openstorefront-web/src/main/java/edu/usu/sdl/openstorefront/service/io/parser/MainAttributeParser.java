@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -50,8 +51,18 @@ public class MainAttributeParser
 	private static final int EXTERNAL_LINK = 9;
 	private static final int GROUP = 10;
 	private static final int SORT_ORDER = 11;
+	private static final int ARCHITECTURE_CODE = 12;
+	private static final int BADGE_URL = 13;
+	private static final int HIGHLIGHT_STYLE = 14;
+	private static final int ALLOW_MULTIPLE = 15;
 
 	private static final String HEADER = "Attribute Type";
+
+	@Override
+	public String getHEADER()
+	{
+		return HEADER;
+	}
 
 	@Override
 	protected void internalParse(CSVReader reader) throws IOException
@@ -60,14 +71,14 @@ public class MainAttributeParser
 		String data[] = reader.readNext();
 		while (data != null) {
 			if (data.length > EXTERNAL_LINK
-					&& HEADER.equals(data[TYPE].trim()) == false) {
+					&& getHEADER().equals(data[TYPE].trim()) == false) {
 
 				AttributeType attributeType = new AttributeType();
 				attributeType.setAttributeType(data[TYPE].trim().toUpperCase());
 				attributeType.setDescription(data[DESC].trim());
 
 				//Default to true....Later an admin would need to determine which ones should only allow one.
-				attributeType.setAllowMutlipleFlg(Boolean.TRUE);
+				attributeType.setAllowMultipleFlg(Boolean.TRUE);
 				attributeType.setArchitectureFlg(Convert.toBoolean(data[ARCH_FLG]));
 				attributeType.setVisibleFlg(Convert.toBoolean(data[VISIBLE]));
 				attributeType.setImportantFlg(Convert.toBoolean(data[IMPORTANT]));
@@ -90,6 +101,25 @@ public class MainAttributeParser
 					attributeCode.setSortOrder(Convert.toInteger(data[SORT_ORDER].trim()));
 				}
 
+				if (data.length > ARCHITECTURE_CODE) {
+					attributeCode.setArchitectureCode(data[ARCHITECTURE_CODE].trim());
+				}
+
+				if (data.length > BADGE_URL) {
+					attributeCode.setBadgeUrl(data[BADGE_URL].trim());
+				}
+
+				if (data.length > HIGHLIGHT_STYLE) {
+					attributeCode.setHighlightStyle(data[HIGHLIGHT_STYLE].trim());
+				}
+
+				if (data.length > ALLOW_MULTIPLE) {
+					String allowMultiple = data[ALLOW_MULTIPLE].trim();
+					if (StringUtils.isNotBlank(allowMultiple)) {
+						attributeType.setAllowMultipleFlg(Convert.toBoolean(allowMultiple));
+					}
+				}
+
 				if (attributeMap.containsKey(attributeType)) {
 					attributeMap.get(attributeType).add(attributeCode);
 				} else {
@@ -99,7 +129,7 @@ public class MainAttributeParser
 				}
 
 			} else {
-				if (data.length > TYPE && HEADER.equals(data[TYPE]) == false) {
+				if (data.length > TYPE && getHEADER().equals(data[TYPE]) == false) {
 					log.log(Level.WARNING, MessageFormat.format("Line: {0} is missing fields. (Skipping)  data length: {1}", new Object[]{lineNumber, data.length}));
 				}
 			}

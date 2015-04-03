@@ -209,7 +209,7 @@ app.directive('abnTree', ['$timeout', function($timeout) {
             return branch.children;
           }
         });
-        addBranchToList = function(level, branch, visible) {
+        addBranchToList = function(level, branch, visible) {          
           var child, childVisible, treeIcon, _i, _len, _ref, _results;
           if (branch.expanded === null) {
             branch.expanded = false;

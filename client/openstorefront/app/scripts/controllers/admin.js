@@ -18,18 +18,26 @@
 
 /*global getCkConfig*/
 
-app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
+app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', function ($scope, Business, $location, $timeout) {
 
   //this object is used to contain the tree functions
   $scope.myTree = {};
+  $scope.systemTree = {};
 
   $scope.collection = null;
   $scope.collectionSelection = null;
   $scope.data = [];
+  $scope.systemTools = [];
   $scope.incLoc = '';
   $scope.saveContent = '';
   $scope.editedTopic = 'Types';
-  $scope.toolTitle = 'Admin Tools';
+  $scope.toolTitle = 'Admin Tools'
+  $scope.menuPanel = {};
+  $scope.menuPanel.data = {};
+  $scope.menuPanel.data.open = true;
+  $scope.menuPanel.system = {};
+  $scope.menuPanel.system.open = true;
+  $scope.oneAtATime = false;
 
   Business.getFilters().then(function(result) {
     if (result) {
@@ -39,28 +47,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     }
   });
 
-  /***************************************************************
-  * If we don't have a landing page, we're going to set up one for now so that
-  * there will always be one in the editor when we look, unless we click on a button
-  * that says 'add landing page'
-  ***************************************************************/
-  if (!$scope.landingRoute) {
-    Business.landingPage('IDAM', 'views/temp/landingpage.html', true).then(function (result) { /*jshint unused:false*/
-      $scope.landingRoute = result.value;
-    });
-  }
-  
-
-  /***************************************************************
-  * This function watches the landingRoute so that when that changes, we load
-  * the new content into the editor that we want to be able to look at.
-  ***************************************************************/
-  $scope.$watch('landingRoute', function() {
-    $.get($scope.landingRoute).then(function(responseData) {
-      $scope.editorContent = $scope.parseForEditor(responseData);
-      $scope.$apply();
-    });
-  });
 
 
   /***************************************************************
@@ -76,10 +62,19 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * This function changes the content in the admin tool section to the tool the
   * admin clicks on
   ***************************************************************/
-  $scope.editor = function(branch) {
+  $scope.editor = function(branch, tree, otherTree) {
+    $location.search('tool', branch.label);
     $scope.incLoc = branch.location;
     $scope.toolTitle = branch.toolTitle;
-    $scope.myTree.selectBranch(branch);
+    $scope.detailedDesc = branch.detailedDesc;
+    if (branch.toolTitle !== 'Manage Articles') {
+      $scope.type = null;
+      $scope.code = null;
+    }
+    if (tree && otherTree) {
+      tree.selectBranch(branch);
+      otherTree.selectBranch(branch);
+    }
   };
 
 
@@ -113,10 +108,11 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * This function takes a key, finds the branch with that key, and then
   * sends us there 
   ***************************************************************/
-  $scope.editLanding = function(route) {
+  $scope.editLanding = function(type, code) {
     var branch = checkCollection($scope.data, 0, 'landing');
-    $scope.landingRoute = route;
-    $scope.editor(branch);
+    $scope.type = type;
+    $scope.code = code;
+    $scope.editor(branch, $scope.myTree);
   };
 
   /***************************************************************
@@ -143,15 +139,15 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   * tags for a list of components
   ***************************************************************/
   $scope.parseComponentInsert = function (content) {
-    if (content !== null && content !== undefined && content !== '') {
-      var data = content;
-      // console.log('data', data);
-      var splitData = data.split('### Component List ###');
-      // console.log('sp', splitData);
-      data = splitData.join('\n<component-list click-callback="updateDetails" class-list="" data="data" cols="3" search="doSearchKey" ></component-list>\n');
-      // console.log('data', data);
-      return data;
-    }
+    // if (content !== null && content !== undefined && content !== '') {
+    //   var data = content;
+    //   // console.log('data', data);
+    //   var splitData = data.split('### Component List ###');
+    //   // console.log('sp', splitData);
+    //   data = splitData.join('\n<component-list click-callback="updateDetails" class-list="" data="data" cols="3" search="doSearchKey" ></component-list>\n');
+    //   // console.log('data', data);
+    //   return data;
+    // }
     return content;
   };
 
@@ -163,7 +159,7 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     if (content !== null && content !== undefined && content !== '') {
       var parser = new DOMParser();
       var doc = parser.parseFromString(content, 'text/html');
-      $(doc).find('component-list').replaceWith('### Component List ###');
+      // $(doc).find('component-list').replaceWith('### Component List ###');
       return $(doc).find('body').html();
     }
     return content;
@@ -178,9 +174,6 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   };
 
 
-  // setup editor options
-  $scope.editorOptions = getCkConfig();
-
   /***************************************************************
   * This function sets up the menu on the left for the admin tools.
   * It isn't completely dynamic right now because the tools are pretty static.
@@ -188,18 +181,19 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
   ***************************************************************/
   (function() {
     var attributes = {};
-    attributes.label = 'Manage Attributes';
+    attributes.label = 'Attributes';
     attributes.location='views/admin/editattributes.html';
     attributes.children = [];
     attributes.toolTitle = 'Manage Attributes';
+    attributes.detailedDesc = "Attributes are used to categorize components and other listings.  They can be searched on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code respresents a specific value.  The data is linked by the type and code which allows for a simple change of the description.";
     attributes.key = 'attributes';
     attributes.parentKey = null;
-    attributes.data = $scope.filters;
-    attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
-    attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
+    attributes.data = $scope.filters;   
+    // attributes.children.push({'label':'Manage Codes', 'location':'views/admin/editcodes.html', 'toolTitle': 'Manage Attribute Codes', 'key': 'codes', 'parentKey': 'attributes'});
+    // attributes.children.push({'label':'Manage Landing Pages', 'location':'views/admin/editlanding.html', 'toolTitle': 'Manage Attribute Landing Pages', 'key': 'landing', 'parentKey': 'attributes'});
 
     var lookupTables = {
-      label: 'Manage Lookups',
+      label: 'Lookups',
       location:  'views/admin/manageLookups.html',
       children:  [
         //
@@ -225,19 +219,165 @@ app.controller('AdminCtrl', ['$scope', 'business', function ($scope, Business) {
     };
 
 
-    $scope.data.push({'label': 'Integration Management', 'location':'views/admin/configuration/default.html', 'toolTitle': 'Integration Management', 'key': 'integration' });
+    $scope.data.push({
+      'label': 'Articles', 
+      'location':'views/admin/editlanding.html', 
+      'toolTitle': 'Manage Articles',
+      'detailedDesc': "Articles, also called topic landing pages, are detail pages of topics of interest with optional related listings.  Articles are assigned to an Attribute Code which allows for searching and filter by topic. ",
+      'key': 'landing'
+    });
+
+    $scope.data.push(attributes);
     
-    $scope.data.push({'label': 'User Profiles', 'location':'views/admin/manageUserProfiles.html', 'toolTitle': 'User Profile Management', 'key': 'USER_PROFILE' });
-    $scope.data.push({'label': 'User Messages', 'location':'views/admin/manageUserMessages.html', 'toolTitle': 'User Message Management', 'key': 'USER_MESSAGE' });
-    $scope.data.push({'label': 'Jobs', 'location':'views/admin/manageJobs.html', 'toolTitle': 'Job Management', 'key': 'JOBS' });
-    $scope.data.push({'label': 'System', 'location':'views/admin/manageSystem.html', 'toolTitle': 'System Management', 'key': 'SYSTEM' });
+    $scope.data.push({
+      'label': 'Components', 
+      'location':'views/admin/editcomponents.html', 
+      'toolTitle': 'Manage Components', 
+      'detailedDesc': "Components represent the main listing item in the application.  This tool allows for manipulating all data related to a component.",
+      'key': 'components' 
+    });
+
+    $scope.data.push({
+      'label': 'Highlights', 
+      'location':'views/admin/edithighlights.html', 
+      'toolTitle': 'Manage Highlights', 
+      'detailedDesc': "Allows for the configuration of highlights that show up on the front page",
+      'key': 'highlights' 
+    });
+
+    $scope.data.push({
+      'label': 'Integration Management', 
+      'location':'views/admin/configuration/default.html', 
+      'toolTitle': 'Integration Management', 
+      'detailedDesc': "Allows for the configuration of data integration with external systems such as JIRA",
+      'key': 'integration' 
+    });
+    
+    $scope.data.push({
+      'label': 'Lookups', 
+      'location': 'views/admin/manageLookups.html', 
+      'toolTitle': 'Manage Lookups', 
+      'detailedDesc': 'Lookups are  tables of valid values that are used to classify data in  a consistent way.',
+      'key': 'lookups' 
+    });    
+    
+    $scope.data.push({
+      'label': 'Media', 
+      'location':'views/admin/manageMedia.html', 
+      'toolTitle': 'Manage General Media', 
+      'detailedDesc': "Media that can be used for articles and badges",
+      'key': 'media' 
+    });    
+    
+    $scope.data.push({
+      'label': 'Questions', 
+      'location':'views/admin/manageQuestions.html', 
+      'toolTitle': 'Manage Question', 
+      'detailedDesc': "User questions and answers about a component.",
+      'key': 'questions' 
+    });   
+    
+    $scope.data.push({
+      'label': 'Reviews', 
+      'location':'views/admin/manageReviews.html', 
+      'toolTitle': 'Manage User Reivews', 
+      'detailedDesc': "User reviews and ratings about a component.",
+      'key': 'reviews' 
+    });    
+
+    $scope.data.push({
+      'label': 'Tags', 
+      'location':'views/admin/manageTags.html', 
+      'toolTitle': 'Manage Tags', 
+      'detailedDesc': "Tags are user-definable labels that are associated to a component.",
+      'key': 'tags' 
+    });
+
+    $scope.data.push({
+      'label': 'User Profiles', 
+      'location':'views/admin/manageUserProfiles.html', 
+      'toolTitle': 'User Profile Management',
+      'detailedDesc': "A user profile represents a user in the system and contains the user's information.",
+      'key': 'USER_PROFILE' 
+    });
+
+
+    $scope.systemTools.push({
+      'label': 'Alerts', 
+      'location':'views/admin/manageAlerts.html', 
+      'toolTitle': 'Manage Alerts',
+      'detailedDesc': "Alerts are triggers set up to watch the data, that an administrator can subscribe to.",
+      'key': 'alerts'
+    });    
+
+    $scope.systemTools.push({
+      'label': 'Jobs', 
+      'location':'views/admin/manageJobs.html',      
+      'toolTitle': 'Job Management', 
+      'detailedDesc': 'Allows for controling and viewing scheduled jobs and background tasks',
+      'key': 'JOBS' 
+    });
+
+    $scope.systemTools.push({
+      'label': 'Reports', 
+      'location':'views/admin/manageReports.html', 
+      'toolTitle': 'Manage Reports',
+      'detailedDesc': "System generated hard reports.",
+      'key': 'reports'
+    });  
+
+    $scope.systemTools.push({
+      'label': 'System', 'location':'views/admin/manageSystem.html', 
+      'toolTitle': 'System Management', 
+      'detailedDesc': 'Allows for viewing system status and managing system properties',
+      'key': 'SYSTEM'
+    });
+
+    $scope.systemTools.push({
+      'label': 'Tracking', 
+      'location':'views/admin/tracking.html', 
+      'toolTitle': 'Manage Tracking', 
+      'detailedDesc': "Track system, user, and component data.",
+      'key': 'tracking' 
+    });
+
+    $scope.systemTools.push({
+      'label': 'User Messages', 
+      'location':'views/admin/manageUserMessages.html', 
+      'toolTitle': 'User Message Management', 
+      'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. ',
+      'key': 'USER_MESSAGE' 
+    });    
     
     // $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });
-    // $scope.data.push(attributes);
+
     // $scope.data.push(lookupTables);
 
-    // $scope.data.push({'label': 'Manage Components', 'location':'views/admin/editcomponents.html', 'toolTitle': 'Manage Components', 'key': 'components' });
     // $scope.data.push({'label': 'Manage Branding', 'location': 'views/admin/editbranding.html', 'toolTitle': 'Manage Branding', 'key': 'branding' });
+    
   }());
+  $timeout(function(){ //
+    var search = $location.search();
+    if (!angular.equals({}, search)) {
+      if (search.tool) {
+        var branch = _.find($scope.data, {'label': search.tool})
+        if (!branch) {
+          branch = _.find($scope.systemTools, {'label': search.tool});
+          if (branch) {
+            console.log('branch', branch);
+            $scope.editor(branch, $scope.myTree, $scope.systemTree);
+          }
+        } else {
+          console.log('branch', branch);
+          $scope.editor(branch, $scope.myTree, $scope.systemTree);
+        }
+      }
+    } else {
+      var branch = _.find($scope.data, {'label': 'Components'})
+      if (branch){
+        $scope.editor(branch, $scope.myTree, $scope.systemTree);
+      }
+    }
+  }, 300)
 
 }]);

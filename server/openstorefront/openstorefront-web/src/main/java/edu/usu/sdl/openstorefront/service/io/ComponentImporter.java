@@ -51,13 +51,18 @@ public class ComponentImporter
 			ComponentAll componentAll = objectMapper.readValue(file, new TypeReference<ComponentAll>()
 			{
 			});
-			componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
-			serviceProxy.getSearchService().addIndex(componentAll.getComponent());
+			if (componentAll != null) {
+				componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
+				serviceProxy.getSearchService().addIndex(componentAll.getComponent());
 
-			objectMapper.writeValue(file, componentAll);
-			//set it to the past so we don't keep picking it up.
-			file.setLastModified(file.lastModified() - 10000);
-
+				objectMapper.writeValue(file, componentAll);
+				//set it to the past so we don't keep picking it up.
+				if (file.setLastModified(file.lastModified() - 10000) == false) {
+					log.log(Level.WARNING, "Unable to update component last modify time");
+				}
+			} else {
+				log.log(Level.SEVERE, "Unable to process component file.  File should conform to JSON format for a component type.");
+			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Unable to process component file.  File should conform to JSON format for a component type.", e);
 		}

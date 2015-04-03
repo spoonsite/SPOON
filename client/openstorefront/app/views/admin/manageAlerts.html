@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<div  ng-controller="AdminAlertCtrl" style="padding-left: 20px; padding-right: 20px;">
+	
+	<loader trigger="alertLoader"></loader>
+	<div>	
+		<br>	
+		Filter Status:
+		<select type="text" class="form-control"  ng-change="refreshAlerts()" style="width:110px;display: inline" ng-model="alertFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
+		<button class="btn btn-default" ng-click="refreshAlerts()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+		<button class="btn btn-default pull-right" ng-click="addAlert()"><i class="fa fa-plus"></i>&nbsp;Add</button>
+	</div>	
+	<table class="table table-striped table-bordered admin-table">
+		
+			<tr>
+				<th><a href="" ng-click="setPredicate('name', 'alert');">Name <span ng-show="predicate['alert'] === 'name'"><i ng-show="!reverse['alert'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['alert']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th><a href="" ng-click="setPredicate('alertTypeDesciption', 'alert');">Type <span ng-show="predicate['alert'] === 'alertTypeDesciption'"><i ng-show="!reverse['alert'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['alert']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th>Email Addresses</th>	
+				<th>Options</th>
+				<th>Action</th>
+			</tr>
+			<tr ng-repeat="alert in alerts | orderBy:predicate['name']:reverse['name']" >
+				<td>{{alert.name}}</td>
+				<td>{{alert.alertTypeDesciption}}</td>
+				<td>
+					<ul ng-repeat="email in alert.emailAddresses">
+						<li>
+							{{email.email}}
+						</li>
+					</ul>
+				</td>				
+				<td ng-show="alert.systemErrorAlertOption && alert.alertType === 'SYSERROR'">
+					<ul>
+						<li ng-show="alert.systemErrorAlertOption.alertOnSystem">
+							System Errors
+						</li>
+						<li ng-show="alert.systemErrorAlertOption.alertOnREST">
+							API Errors
+						</li>
+						<li ng-show="alert.systemErrorAlertOption.alertOnIntegration">
+							Integration Errors
+						</li>
+						<li ng-show="alert.systemErrorAlertOption.alertOnReport">
+							Report Errors
+						</li>					
+					</ul>
+				</td>	
+				<td ng-show="alert.userDataAlertOption && alert.alertType === 'USERD'">
+					<ul>
+						<li ng-show="alert.userDataAlertOption.alertOnTags">
+							Tags
+						</li>
+						<li ng-show="alert.userDataAlertOption.alertOnReviews">
+							Reviews
+						</li>
+						<li ng-show="alert.userDataAlertOption.alertOnQuestions">
+							Question/Responses
+						</li>				
+					</ul>
+				</td>	
+				<td ng-show="!alert.userDataAlertOption && !alert.systemErrorAlertOption">
+				</td>								
+				<td style="padding:0px 3px !important; width: 200px;">&nbsp;					
+					<button class="btn btn-default btn-sm" ng-click="editAlert(alert);"  title="Edit Alert"><i class="fa fa-edit"></i></button>
+					<button class="btn btn-warning btn-sm" ng-click="toggleStatus(alert);"  title="Activate/Inactivate"><i class="fa fa-power-off"></i></button>
+					<button class="btn btn-danger btn-sm" ng-click="deleteAlert(alert);"  title="Delete"><i class="fa fa-trash"></i></button>
+				</td>
+			</tr>
+
+	</table>	
+</div>	

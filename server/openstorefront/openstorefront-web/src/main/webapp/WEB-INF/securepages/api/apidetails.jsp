@@ -20,8 +20,8 @@ limitations under the License.
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="css/apidoc.css" rel="stylesheet" type="text/css"/>
-	<script src="script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<link href="apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
+	<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
         <title>API Details</title>
     </head>
     <body>
@@ -38,7 +38,7 @@ limitations under the License.
 		<h2>Paths</h2>
 		<ul>
 		<c:forEach var="item" items="${actionBean.resourceModel.methods}">
-			<li><span class="${item.restMethod}" style="line-height: 28px;">${item.restMethod}</span> - <a href="javascript:void();" onclick="scrollToAnchor('${item.id}');" >${actionBean.resourceModel.resourcePath}${item.methodPath}</a></li>
+			<li><span class="${item.restMethod}" style="line-height: 28px;">${item.restMethod}</span> - <a href="javascript:" onclick="scrollToAnchor('${item.id}');" >${actionBean.resourceModel.resourcePath}${item.methodPath}</a></li>
 		</c:forEach>
 		</ul>	
 	</c:if>
@@ -135,7 +135,8 @@ limitations under the License.
 								</c:if>
 							</div>
 							<div id="cinfo-${item.id}" class="returnInfo-contents">								
-								<c:if test="${item.consumeObject.valueObject != null}">
+								<c:if test="${item.consumeObject.valueObject != null}">	
+									<h5>${item.consumeObject.valueDescription}</h5>
 									<pre>
 ${item.consumeObject.valueObject}									
 									</pre>								
@@ -144,7 +145,8 @@ ${item.consumeObject.valueObject}
 											<th style='text-align: left;'>Field Name</th>
 											<th style='text-align: center;'>Required</th>
 											<th style='text-align: left;'>Type</th>
-											<th style='text-align: left;'>Notes</th>
+											<th style='text-align: left;'>Validation</th>
+											<th style='text-align: left;'>Description</th>
 										</tr>
 										<c:forEach var="field" items="${item.consumeObject.valueFields}">
 										<tr>
@@ -159,13 +161,17 @@ ${item.consumeObject.valueObject}
 											</td>
 											<td>
 												${field.validation}
-											</td>										
+											</td>
+											<td>
+												${field.description}
+											</td>												
 										</tr>
 										</c:forEach>
 									</table>								
 								</c:if>
 								<c:if test="${item.consumeObject.typeObject != null}">
 									<h3>Data Type Details</h3>
+									<h5>${item.consumeObject.typeDescription}</h5>
 									<pre>
 ${item.consumeObject.typeObject}									
 									</pre>								
@@ -174,7 +180,8 @@ ${item.consumeObject.typeObject}
 											<th style='text-align: left;'>Field Name</th>
 											<th style='text-align: center;'>Required</th>
 											<th style='text-align: left;'>Type</th>
-											<th style='text-align: left;'>Notes</th>
+											<th style='text-align: left;'>Validation</th>
+											<th style='text-align: left;'>Description</th>
 										</tr>
 										<c:forEach var="field" items="${item.consumeObject.typeFields}">
 										<tr>
@@ -189,7 +196,10 @@ ${item.consumeObject.typeObject}
 											</td>
 											<td>
 												${field.validation}
-											</td>										
+											</td>
+											<td>
+												${field.description}
+											</td>												
 										</tr>
 										</c:forEach>
 									</table>								
@@ -198,6 +208,7 @@ ${item.consumeObject.typeObject}
 									<h3>Complex Type(s) Details</h3>
 									<c:forEach var="complexType" items="${item.consumeObject.allComplexTypes}">
 										<h4>${complexType.name}</h4>
+										<h5>${complexType.description}</h5>
 										<pre>
 ${complexType.object}									
 										</pre>								
@@ -206,7 +217,8 @@ ${complexType.object}
 												<th style='text-align: left;'>Field Name</th>
 												<th style='text-align: center;'>Required</th>
 												<th style='text-align: left;'>Type</th>
-												<th style='text-align: left;'>Notes</th>
+												<th style='text-align: left;'>Validation</th>
+												<th style='text-align: left;'>Description</th>
 											</tr>
 											<c:forEach var="field" items="${complexType.fields}">
 											<tr>
@@ -221,7 +233,10 @@ ${complexType.object}
 												</td>
 												<td>
 													${field.validation}
-												</td>										
+												</td>
+												<td>
+													${field.description}
+												</td>												
 											</tr>
 											</c:forEach>
 										</table>
@@ -250,6 +265,7 @@ ${complexType.object}
 													
 							<div id="rinfo-${item.id}" class="returnInfo-contents">								
 								<c:if test="${item.responseObject.valueObject != null}">
+									<h5>${item.responseObject.valueDescription}</h5>
 									<pre>
 ${item.responseObject.valueObject}									
 									</pre>								
@@ -258,7 +274,8 @@ ${item.responseObject.valueObject}
 											<th style='text-align: left;'>Field Name</th>
 											<th style='text-align: center;'>Required</th>
 											<th style='text-align: left;'>Type</th>
-											<th style='text-align: left;'>Notes</th>
+											<th style='text-align: left;'>Validation</th>
+											<th style='text-align: left;'>Description</th>
 										</tr>
 										<c:forEach var="field" items="${item.responseObject.valueFields}">
 										<tr>
@@ -273,13 +290,17 @@ ${item.responseObject.valueObject}
 											</td>
 											<td>
 												${field.validation}
-											</td>										
+											</td>
+											<td>
+												${field.description}
+											</td>											
 										</tr>
 										</c:forEach>
 									</table>								
 								</c:if>
 								<c:if test="${item.responseObject.typeObject != null}">
 									<h3>Data Type Details</h3>
+									<h5>${item.responseObject.typeDescription}</h5>
 									<pre>
 ${item.responseObject.typeObject}									
 									</pre>								
@@ -288,7 +309,8 @@ ${item.responseObject.typeObject}
 											<th style='text-align: left;'>Field Name</th>
 											<th style='text-align: center;'>Required</th>
 											<th style='text-align: left;'>Type</th>
-											<th style='text-align: left;'>Notes</th>
+											<th style='text-align: left;'>Validation</th>
+											<th style='text-align: left;'>Description</th>
 										</tr>
 										<c:forEach var="field" items="${item.responseObject.typeFields}">
 										<tr>
@@ -303,7 +325,10 @@ ${item.responseObject.typeObject}
 											</td>
 											<td>
 												${field.validation}
-											</td>										
+											</td>
+											<td>
+												${field.description}
+											</td>											
 										</tr>
 										</c:forEach>
 									</table>								
@@ -312,6 +337,7 @@ ${item.responseObject.typeObject}
 									<h3>Complex Type(s) Details</h3>
 									<c:forEach var="complexType" items="${item.responseObject.allComplexTypes}">
 										<h4>${complexType.name}</h4>
+										<h5>${complexType.description}</h5>
 										<pre>
 ${complexType.object}									
 										</pre>								
@@ -320,7 +346,8 @@ ${complexType.object}
 												<th style='text-align: left;'>Field Name</th>
 												<th style='text-align: center;'>Required</th>
 												<th style='text-align: left;'>Type</th>
-												<th style='text-align: left;'>Notes</th>
+												<th style='text-align: left;'>Validation</th>
+												<th style='text-align: left;'>Description</th>
 											</tr>
 											<c:forEach var="field" items="${complexType.fields}">
 											<tr>
@@ -335,7 +362,10 @@ ${complexType.object}
 												</td>
 												<td>
 													${field.validation}
-												</td>										
+												</td>
+												<td>
+													${field.description}
+												</td>												
 											</tr>
 											</c:forEach>
 										</table>

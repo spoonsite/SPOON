@@ -158,7 +158,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       if (value) {
         deferred.resolve(value);
       } else {
-        var url = 'api/v1/service/jira/projects/'+project.code;
+        var url = 'api/v1/service/jira/projects/'+encodeURIComponent(project.code);
         $http({
           'method': 'GET',
           'url': url
@@ -187,7 +187,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       if (value) {
         deferred.resolve(value);
       } else {
-        var url = 'api/v1/service/jira/projects/'+project.code+'/'+issueType.name+'/fields';
+        var url = 'api/v1/service/jira/projects/'+encodeURIComponent(project.code)+'/'+encodeURIComponent(issueType.name)+'/fields';
         $http({
           'method': 'GET',
           'url': url
@@ -241,7 +241,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       if (value) {
         deferred.resolve(value);
       } else {
-        var url = 'api/v1/resource/attributes/attributetypes/'+attribute.attributeType+'/attributecodes';
+        var url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(attribute.attributeType)+'/attributecodes';
         $http({
           'method': 'GET',
           'url': url
@@ -315,7 +315,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.deleteMapping = function(attributeType) {
     var deferred = $q.defer();
     if (attributeType || typeof attributeType !== 'string') {
-      var url = 'api/v1/resource/attributes/attributexreftypes/'+attributeType;
+      var url = 'api/v1/resource/attributes/attributexreftypes/'+encodeURIComponent(attributeType);
       $http({
         'method': 'DELETE',
         'url': url,
@@ -343,7 +343,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.checkTicket = function(ticketId) {
     var deferred = $q.defer();
     if (ticketId) {
-      var url = 'api/v1/service/jira/getTicket/'+ticketId;
+      var url = 'api/v1/service/jira/getTicket/'+encodeURIComponent(ticketId);
       $http({
         'method': 'GET',
         'url': url,
@@ -365,7 +365,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.saveIntegrationConf = function(compId, conf) {
     var deferred = $q.defer();
     if (compId && conf) {
-      var url = 'api/v1/resource/components/'+compId+'/integration/configs';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(compId)+'/integration/configs';
       $http({
         'method': 'POST',
         'url': url,
@@ -388,7 +388,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.getIntegrationConf = function(compId) {
     var deferred = $q.defer();
     if (compId) {
-      var url = 'api/v1/resource/components/'+compId+'/integration/configs';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(compId)+'/integration/configs';
       $http({
         'method': 'GET',
         'url': url,
@@ -428,7 +428,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.runJob = function(componentId) {
     var deferred = $q.defer();
     if (componentId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/run';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/run';
       $http({
         'method': 'POST',
         'url': url,
@@ -449,7 +449,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.deactivateJob = function(componentId) {
     var deferred = $q.defer();
     if (componentId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/inactivate';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/inactivate';
       $http({
         'method': 'PUT',
         'url': url,
@@ -471,7 +471,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.activateJob = function(componentId) {
     var deferred = $q.defer();
     if (componentId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/activate';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/activate';
       $http({
         'method': 'PUT',
         'url': url,
@@ -493,7 +493,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.deleteJob = function(componentId) {
     var deferred = $q.defer();
     if (componentId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration';
       $http({
         'method': 'DELETE',
         'url': url,
@@ -515,7 +515,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.deactivateConfig = function(componentId, configId) {
     var deferred = $q.defer();
     if (componentId && configId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/configs/'+configId+'/inactivate';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/configs/'+encodeURIComponent(configId)+'/inactivate';
       $http({
         'method': 'PUT',
         'url': url,
@@ -537,7 +537,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.activateConfig = function(componentId, configId) {
     var deferred = $q.defer();
     if (componentId && configId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/configs/'+configId+'/activate';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/configs/'+encodeURIComponent(configId)+'/activate';
       $http({
         'method': 'PUT',
         'url': url,
@@ -559,7 +559,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.deleteConfig = function(componentId, configId) {
     var deferred = $q.defer();
     if (componentId && configId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/configs/'+configId;
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/configs/'+encodeURIComponent(configId);
       $http({
         'method': 'DELETE',
         'url': url,
@@ -581,7 +581,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.runConfig = function(componentId, configId) {
     var deferred = $q.defer();
     if (componentId && configId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/configs/'+configId+'/run';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/configs/'+encodeURIComponent(configId)+'/run';
       $http({
         'method': 'POST',
         'url': url,
@@ -647,7 +647,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.saveCompRefresh = function(componentId, cron) {
     var deferred = $q.defer();
     if (componentId && cron) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/cron';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/cron';
       $http({
         'method': 'POST',
         'url': url,
@@ -671,7 +671,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.removeCompRefresh = function(componentId) {
     var deferred = $q.defer();
     if (componentId) {
-      var url = 'api/v1/resource/components/'+componentId+'/integration/cron';
+      var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/cron';
       $http({
         'method': 'DELETE',
         'url': url,

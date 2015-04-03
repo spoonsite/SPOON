@@ -38,10 +38,12 @@
 		<filter-name>ShiroFilter</filter-name>
 		<filter-class>edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter</filter-class>
 	</filter>	
+	<!--
 	<context-param>
 		<param-name>shiroConfigLocations</param-name>
 		<param-value>file:/var/openstorefront/config/shiro.ini</param-value>
 	</context-param>
+	-->
 	
 	<filter-mapping>
 		<filter-name>ShiroFilter</filter-name>
@@ -73,6 +75,10 @@
 		<init-param>
 			<param-name>Extension.Packages</param-name>
 			<param-value>edu.usu.sdl.openstorefront.web.extension</param-value>
+		</init-param>
+		<init-param>
+			<param-name>MultipartWrapper.Class</param-name>
+			<param-value>net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper</param-value>
 		</init-param>
 		<init-param>
 			<param-name>FileUpload.MaximumPostSize</param-name>

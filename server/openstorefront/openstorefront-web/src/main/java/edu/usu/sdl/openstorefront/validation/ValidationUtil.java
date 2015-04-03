@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Logger;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -43,6 +45,7 @@ public class ValidationUtil
 			new MaxValueRule(),
 			new MinValueRule(),
 			new PatternRule(),
+			new UniqueRule(),
 			new RequiredRule(),
 			new SizeRule(),
 			new ValidValueRule()
@@ -111,16 +114,27 @@ public class ValidationUtil
 					}
 
 					if (process) {
-						if (ServiceUtil.isComplexClass(fieldClass)) {
+						if (ReflectionUtil.isComplexClass(fieldClass)) {
 							//composition class
-							try {
-								Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
-								Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
-								ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, returnObj), fieldClass, field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
-							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-								throw new OpenStorefrontRuntimeException(ex);
+							if (Logger.class.getName().equals(fieldClass.getName()) == false
+									&& fieldClass.isEnum() == false) {
+								try {
+									Method method = validateModel.getDataObject().getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
+									Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
+									boolean check = true;
+									if (returnObj == null) {
+										NotNull notNull = (NotNull) fieldClass.getAnnotation(NotNull.class);
+										if (notNull == null) {
+											check = false;
+										}
+									}
+									if (check) {
+										ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, returnObj), fieldClass, field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
+									}
+								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+									throw new OpenStorefrontRuntimeException(ex);
+								}
 							}
-
 						} else if (fieldClass.getSimpleName().equalsIgnoreCase(List.class.getSimpleName())
 								|| fieldClass.getSimpleName().equalsIgnoreCase(Map.class.getSimpleName())
 								|| fieldClass.getSimpleName().equalsIgnoreCase(Collection.class.getSimpleName())
@@ -146,7 +160,15 @@ public class ValidationUtil
 											ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
 										}
 									} else {
-										throw new OpenStorefrontRuntimeException("Field value is null. If this a collection it should be set to an empty collection.");
+										NotNull notNull = field.getAnnotation(NotNull.class);
+										if (notNull != null) {
+											RuleResult ruleResult = new RuleResult();
+											ruleResult.setMessage("Collection is required");
+											ruleResult.setEntityClassName(validateModel.getDataObject().getClass().getSimpleName());
+											ruleResult.setFieldName(field.getName());
+											ruleResult.setValidationRule("Requires value");
+											ruleResults.add(ruleResult);
+										}
 									}
 								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 									throw new OpenStorefrontRuntimeException(ex);

@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Business) {
+app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope, Business, $q) {
   $scope.$emit('$TRIGGERLOAD', 'editLoad');
   $scope.component;
   $scope.issue;
@@ -32,6 +32,15 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
   $scope.integrationConfs;
 
 
+  $scope.getTypeahead = function(val){
+    var deferred = $q.defer();
+    Business.typeahead(val).then(function(result){
+      deferred.resolve(result);
+    }, function(){
+      deferred.resolve([]);
+    })
+    return deferred.promise;
+  }
 
   $scope.checkTicket = function(ticketId) {
     // console.log('we are checking a ticket');
@@ -99,8 +108,8 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
 
     $scope.$watch('component', function(value) {
       if (value && typeof value === 'object') {
-        if (value.componentId){
-          $scope.componentId = value.componentId;
+        if (value.code){
+          $scope.componentId = value.code;
         } else {
           $scope.componentId = -1;
         }
@@ -150,37 +159,20 @@ app.controller('SavecompconfCtrl',['$scope','business',  function ($scope, Busin
     }
   }, true);
 
-  Business.componentservice.getComponentList().then(function(result) {
-    Business.typeahead(result, null).then(function(value){
-      if (value) {
-        // console.log('value', value);
-        $scope.typeahead = value;
-      } else {
-        $scope.typeahead = null;
-      }
-      Business.configurationservice.getMappingTypes(true).then(function(result){
-        // console.log('result', result);
-        _.each(result, function(item){
-          item.description = item.projectType + ' - ' + item.issueType;
-        });
-        $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
-        $scope.noProjects = false;
-        $scope.projects = result? result: [];
-        $scope.ready();
-      }, function() {
-        $scope.noProjects = true;
-        $scope.projects = [];
-        $scope.ready();
-      });
-    }, function() {
-      $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
-      $scope.ready();
+  Business.configurationservice.getMappingTypes(true).then(function(result){
+    // console.log('result', result);
+    _.each(result, function(item){
+      item.description = item.projectType + ' - ' + item.issueType;
     });
-  }, function() {
     $scope.$emit('$TRIGGERUNLOAD', 'editLoad');
+    $scope.noProjects = false;
+    $scope.projects = result? result: [];
+    $scope.ready();
+  }, function() {
+    $scope.noProjects = true;
+    $scope.projects = [];
     $scope.ready();
   });
-
 
 }]);
 

@@ -17,11 +17,14 @@ package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
+import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -84,6 +87,22 @@ public interface SystemService
 	public void removeHighlight(String hightlightId);
 
 	/**
+	 * Delete Hightlight
+	 *
+	 * @param hightlightId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteHighlight(String hightlightId);
+
+	/**
+	 * Activate Hightlight
+	 *
+	 * @param hightlightId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void activateHighlight(String hightlightId);
+
+	/**
 	 * Delete all old and save new highlights This assume to be called by the
 	 * importer and is meant to sync the DB with the file
 	 *
@@ -127,5 +146,40 @@ public interface SystemService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel);
+
+	/**
+	 * Saves a general media file
+	 *
+	 * @param generalMedia
+	 * @param fileInput (optional on update)
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput);
+
+	/**
+	 * Delete the general media
+	 *
+	 * @param mediaName
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeGeneralMedia(String mediaName);
+
+	/**
+	 * Saves a task so it can be persisted across bounces This is meant for use
+	 * with completed tasks. Note: this will override existing task of the same
+	 * id
+	 *
+	 * @param taskFuture
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveAsyncTask(TaskFuture taskFuture);
+
+	/**
+	 * Removes a persist task
+	 *
+	 * @param taskId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeAsyncTask(String taskId);
 
 }

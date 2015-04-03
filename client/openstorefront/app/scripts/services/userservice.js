@@ -147,7 +147,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     if (userId) {
       $http({
         'method': 'DELETE',
-        'url': 'api/v1/resource/userprofiles/'+userId,
+        'url': 'api/v1/resource/userprofiles/'+encodeURIComponent(userId),
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && isNotRequestError(data)) {
           removeError();
@@ -176,9 +176,8 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     if (userId) {
       $http({
         'method': 'PUT',
-        'url': 'api/v1/resource/userprofiles/'+userId+'/reactivate',
+        'url': 'api/v1/resource/userprofiles/'+encodeURIComponent(userId)+'/reactivate',
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        console.log('reactivate data', data);
         
         if (data && isNotRequestError(data)) {
           removeError();
@@ -188,7 +187,6 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           deferred.reject(false);
         }
       }, function(data, status, headers, config){
-        console.log('reactivate error data', data);
         
         deferred.reject('There was an error');
       });
@@ -259,7 +257,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     if (userId) {
       $http({
         'method': 'POST',
-        'url': 'api/v1/resource/userprofiles/'+ userId + '/test-email',
+        'url': 'api/v1/resource/userprofiles/'+ encodeURIComponent(userId) + '/test-email',
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         // console.log('data', data);
         if (data && data !== 'false' && isNotRequestError(data)) {
@@ -286,7 +284,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   * @returns {undefined}
   */
   var loadProfile = function(username, successFunc, errorFunc) {
-    $http.get('api/v1/resource/userprofiles/'+username).success(successFunc).error(errorFunc);
+    $http.get('api/v1/resource/userprofiles/'+encodeURIComponent(username)).success(successFunc).error(errorFunc);
   };
 
   var saveCurrentUserProfile = function(userProfile) { /*jshint unused:false*/
@@ -308,7 +306,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     if (true) {
       $http({
         'method': 'PUT',
-        'url': 'api/v1/resource/userprofiles/'+ username,
+        'url': 'api/v1/resource/userprofiles/'+ encodeURIComponent(username),
         'data': userProfile
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         // console.log('data', data);
@@ -340,7 +338,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       if (watches && !override) {
         deferred.resolve(watches);
       } else {
-        var url = 'api/v1/resource/userprofiles/'+userId+'/watches';
+        var url = 'api/v1/resource/userprofiles/'+encodeURIComponent(userId)+'/watches';
         $http({
           'method': 'GET',
           'url': url
@@ -399,10 +397,10 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       var url;
       var methodString;
       if (!watchId) {
-        url = 'api/v1/resource/userprofiles/'+userId+'/watches';
+        url = 'api/v1/resource/userprofiles/'+encodeURIComponent(userId)+'/watches';
         methodString = 'POST';
       } else {
-        url = 'api/v1/resource/userprofiles/'+userId+'/watches/'+watchId;
+        url = 'api/v1/resource/userprofiles/'+encodeURIComponent(userId)+'/watches/'+encodeURIComponent(watchId);
         methodString = 'PUT';
       }
       $http({
@@ -432,7 +430,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   var removeWatch = function(userId, watchId) {
     var deferred = $q.defer();
     if (userId && watchId) {
-      var url = 'api/v1/resource/userprofiles/'+userId+'/watches/'+watchId;
+      var url = 'api/v1/resource/userprofiles/'+encodeURIComponent(userId)+'/watches/'+encodeURIComponent(watchId);
       $http({
         'method': 'DELETE',
         'url': url
@@ -466,7 +464,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     } else {
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/components/reviews/'+username
+        'url': 'api/v1/resource/components/reviews/'+encodeURIComponent(username)
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
@@ -542,7 +540,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     
     $http({
       'method': 'DELETE',
-      'url': 'api/v1/resource/usermessages/' + id
+      'url': 'api/v1/resource/usermessages/' + encodeURIComponent(id)
     }).success(function(data, status, headers, config) { /*jshint unused:false*/
       deferred.resolve(data);
     }).error(function(data, status, headers, config) { /*jshint unused:false*/
@@ -562,7 +560,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     } else {
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/userprofiles/' + username
+        'url': 'api/v1/resource/userprofiles/' + encodeURIComponent(username)
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();

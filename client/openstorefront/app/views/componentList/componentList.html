@@ -16,13 +16,28 @@
       <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
       <table class="table table-striped" id="resultsTable">
         <tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;">
-          <td style="white-space: inherit;" id="{{getComponentScroll(item)}}">
+          <td ng-show="showitem(item)" style="white-space: inherit;" id="{{getComponentScroll(item)}}">
             <div class="container-fluid">
               <div class="row" style="margin-left: 0px; margin-right: 0px">
                 <div class="results-content">
-                  <div class="results-content-title">
-                    <div ng-click="clickCallback(item.componentId, item)" id="{{item.componentId}}">
+                  <div class="results-content-title" ng-click="clickCallback(item.componentId, item)">
+                    <div ng-show="blankTarget" style="display:inline-block">
+                      <a ng-if="item.listingType === 'Article'" href="#/landing?type={{item.articleAttributeType}}&code={{item.articleAttributeCode}}" target="_blank">
+                        <div class="results-content-title-content" >{{item.name}}
+                          <span style="font-size:13px;">&nbsp;(Article)</span>
+                        </div>
+                      </a>
+                      <a ng-if="item.listingType !== 'Article'" href="#/single?id={{item.componentId}}" target="_blank">
+                        <div class="results-content-title-content" >{{item.name}}
+                        </div>
+                      </a>
+                    </div>
+                    <div ng-show="!blankTarget" id="{{item.componentId}}" style="display:inline-block">
                       <div class="results-content-title-content" >{{item.name}}
+                        <br ng-show="item.attributes.length">
+                        <div ng-repeat="attribute in item.attributes" style="display:inline-block;">
+                          <img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style="padding-left: 5px; margin-top:-5px; width: 40px; height: auto;">
+                        </div>
                         <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
                       </div>
                     </div>
@@ -48,3 +63,5 @@
     </div>
   </div>
 </div>
+
+<!-- <img src="images/logo/logo-stamp.svg" alt="" style="height: 44px; margin: 3px 31px"> -->

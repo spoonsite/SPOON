@@ -19,16 +19,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author dshurtleff
  */
 public class LookupModel
-	implements Serializable
+		implements Serializable
 {
+
+	public static final String CODE_FIELD = "code";
+	public static final String DESCRIPTION_FIELD = "description";
+
 	private String code;
 	private String description;
 
@@ -40,17 +42,14 @@ public class LookupModel
 	public String toString()
 	{
 		String result = "Code: " + code + "Description: " + description;
-		try
-		{
+		try {
 			result = StringProcessor.defaultObjectMapper().writeValueAsString(this);
-		}
-		catch (JsonProcessingException ex)
-		{
+		} catch (JsonProcessingException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		return result;
 	}
-	
+
 	public String getCode()
 	{
 		return code;

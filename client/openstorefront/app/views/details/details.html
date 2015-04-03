@@ -32,24 +32,66 @@
     </div>
   </div>
 </div> -->
-<div ng-if="details.details.evaluationAttribute" class="row">
+<!-- <div ng-if="evaluationAttributes.exist" class="row">
   <div class="col-md-12">
     <div class="section-headers addBorders"><h4>DI2E Evaluation Level</h4></div>
-    <div schedule ng-model="details.details.evaluationAttribute"></div>
+  <table class="table table-bordered table-hover" >
+    <tr ng-if="evaluationAttributes.level">
+      <th style="vertical-align: middle">
+        {{evaluationAttributes.level.typeDescription}}
+      </th>
+      <td class="{{evaluationAttributes.level.highlightStyle}}" >
+        <h4>{{evaluationAttributes.level.codeDescription}}</h4>
+        <span dynamichtml="evaluationAttributes.level.codeLongDescription"></span>
+      </td>     
+    </tr>
+    <tr ng-if="evaluationAttributes.state">
+      <th style="vertical-align: middle">
+        {{evaluationAttributes.state.typeDescription}}
+      </th>
+      <td  class="{{evaluationAttributes.state.highlightStyle}}" >
+        <h4>{{evaluationAttributes.state.codeDescription}}</h4>
+        <span dynamichtml="evaluationAttributes.state.codeLongDescription"></span>
+      </td>     
+    </tr>
+    <tr ng-if="evaluationAttributes.intent">
+      <th style="vertical-align: middle">
+        {{evaluationAttributes.intent.typeDescription}}
+      </th>
+      <td  class="{{evaluationAttributes.intent.highlightStyle}}" >
+        <h4>{{evaluationAttributes.intent.codeDescription}}</h4>
+        <span dynamichtml="evaluationAttributes.intent.codeLongDescription"></span>
+      </td>     
+    </tr>   
+  </table>  
+  </div>
+</div> -->
+
+<div ng-if="evaluationAttributes.exist" class="row">
+  <div class="col-md-12">
+    <div class="section-headers addBorders"><h4>DI2E Evaluation Level</h4></div>
+    <div schedule ng-model="evaluationAttributes"></div>
   </div>
 </div>
+
 <!-- angular lightbox gallery -->
+
+
+
 
 <div class="row">
   <div class="col-md-12">
     <table ng-if="details.details.dependencies[0] !== undefined" class="table table-bordered table-hover">
       <tbody>
         <tr>
-          <th class="valign" colspan="2"><h4>External Dependencies</h4></th>
+          <th class="valign" colspan="1"><h4>External Dependencies</h4></th>
         </tr>             
         <tr id="dependencies{{$index}}Update" data-ng-repeat="row in details.details.dependencies">
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('dependencies'+$index)? 'updatedForUser': ''" class="text-left-bold">{{row.dependency}}</td>
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" class="text-left">{{row.comment}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('dependencies'+$index)? 'updatedForUser': ''" class="text-left-bold">
+			  <p style="font-size: 15px;">{{row.dependencyName}}  {{row.version}}</p>
+			  <p ng-show="row.dependancyReferenceLink"><a href="{{row.dependancyReferenceLink}}" target="_blank" ng-click="sendEvent('External-Link', details.details.name, row.link + ' -- ' + row.resourceTypeDesc)">{{row.dependancyReferenceLink}}</a></p>
+			  <p ng-show="row.comment">{{row.comment}}</p>
+		  </td>
         </tr>
       </tbody>
     </table>  
@@ -130,10 +172,10 @@
         <tr>
           <th class="valign" colspan="16"><h4>Component Vitals</h4></th>
         </tr>             
-        <tr id="attributes{{$index}}Update" ng-repeat="row in details.details.attributes">
+        <tr class="row.highlightStyle" id="attributes{{$index}}Update" ng-repeat="row in details.details.attributes">
           <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('attributes'+$index)? 'updatedForUser': ''" colspan="5" class="text-left-bold">{{row.typeDescription}}</td>
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.codeLongDescription" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.codeLongDescription" colspan="11" class="text-left">{{row.codeDescription}}</td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.codeLongDescription" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" class="{{row.highlightStyle}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>
+          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.codeLongDescription" colspan="11" class="text-left {{row.highlightStyle}}">{{row.codeDescription}}</td>
         </tr>
         <tr ng-repeat="row in details.details.metadata">
           <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="5" class="text-left-bold">{{row.label}}</td>

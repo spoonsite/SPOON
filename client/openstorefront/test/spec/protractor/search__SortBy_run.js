@@ -38,7 +38,7 @@ describe('search__SortBy', function() {
         expect(ztoa.getText()).toBe('Vega is a 3D map widget with support for high-resolution imagery in various formats including WMS, WFS, and ArcGIS. Vega also supports 3-dimensional terrain, and time-based data and has tools for drawing shapes and points and importing/exporting data.');
     }, 20000);
 
-    it('Last Update newest returns CALVIN the first search result', function() {
+    it('Last Update newest returns CLAVIN the first search result', function() {
 
         // 18 Aug added Sort By:  Rating (high-low); Rating (low-high)
         element(by.model('orderProp')).sendKeys(protractor.Key.DOWN);
@@ -52,7 +52,7 @@ describe('search__SortBy', function() {
         // VERIFY it is sorted correctly
         expect(element.all(by.repeater('item in data')).count()).toBeGreaterThan(0);
         var newest = element(by.binding('item.description'));
-        expect(newest.getText()).toBe('CLAVIN (Cartographic Location And Vicinity Indexer) is an open source software package for document geotagging and geoparsing that employs context-based geographic entity resolution. It extracts location names from unstructured text and resolves them against a gazetteer to produce data-rich geographic ...');
+        expect(newest.getText()).toBe('All uses; no restrictions');
     }, 20000);
 
     it('Last Update oldest returns EMP as the first search result', function() {

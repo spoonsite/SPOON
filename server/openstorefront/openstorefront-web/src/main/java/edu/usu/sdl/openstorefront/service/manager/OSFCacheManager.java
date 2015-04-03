@@ -31,11 +31,15 @@ public class OSFCacheManager
 
 	private static final Logger log = Logger.getLogger(OSFCacheManager.class.getName());
 
+	public static final String ALLCODE_KEY = "ALLCODES";
+
 	private static Cache lookupCache;
 	private static Cache attributeCache;
 	private static Cache attributeTypeCache;
+	private static Cache attributeCodeAllCache;
 	private static Cache userAgentCache;
 	private static Cache componentCache;
+	private static Cache componentLookupCache;
 
 	public static void init()
 	{
@@ -56,6 +60,10 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			attributeTypeCache = singletonManager.getCache("attributeTypeCache");
 
+			memoryOnlyCache = new Cache("attributeCodeAllCache", 1, false, true, 7200, 7200);
+			singletonManager.addCache(memoryOnlyCache);
+			attributeCodeAllCache = singletonManager.getCache("attributeCodeAllCache");
+
 			memoryOnlyCache = new Cache("userAgentCache", 100, false, false, 7200, 7200);
 			singletonManager.addCache(memoryOnlyCache);
 			userAgentCache = singletonManager.getCache("userAgentCache");
@@ -63,6 +71,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("componentCache", 200, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentCache = singletonManager.getCache("componentCache");
+
+			memoryOnlyCache = new Cache("componentLookupCache", 10000, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			componentLookupCache = singletonManager.getCache("componentLookupCache");
 
 		} finally {
 			lock.unlock();
@@ -98,6 +110,21 @@ public class OSFCacheManager
 	public static Cache getComponentCache()
 	{
 		return componentCache;
+	}
+
+	public static Cache getComponentLookupCache()
+	{
+		return componentLookupCache;
+	}
+
+	public static Cache getAttributeCodeAllCache()
+	{
+		return attributeCodeAllCache;
+	}
+
+	public static void setAttributeCodeAllCache(Cache aAttributeCodeAllCache)
+	{
+		attributeCodeAllCache = aAttributeCodeAllCache;
 	}
 
 	@Override

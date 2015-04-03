@@ -16,10 +16,12 @@
 package edu.usu.sdl.openstorefront.web.test.attribute;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.List;
 
@@ -50,11 +52,14 @@ public class ArticleTest
 		});
 
 		results.append("Save Article").append("<br>");
-		service.getAttributeService().saveArticle(attributeCode.getAttributeCodePk(), "This is an article.");
+		attributeCode.setArticle(new Article());
+		attributeCode.getArticle().setTitle("Test Title");
+		attributeCode.getArticle().setDescription("Test Description");
+		service.getAttributeService().saveArticle(attributeCode, "This is an article.");
 
 		results.append("Get Article").append("<br>");
-		String content = service.getAttributeService().getArticle(attributeCode.getAttributeCodePk());
-		if ("This is an article.".equals(content) == false) {
+		ArticleView articleView = service.getAttributeService().getArticle(attributeCode.getAttributeCodePk());
+		if ("This is an article.".equals(articleView.getHtml()) == false) {
 			failureReason.append("Article content doesn't match");
 		}
 
@@ -71,7 +76,7 @@ public class ArticleTest
 		AttributeType attributeType = new AttributeType();
 		attributeType.setAttributeType("TEST-CASE-TMP");
 		attributeType.setDescription("This is a temp test attribute");
-		attributeType.setAllowMutlipleFlg(true);
+		attributeType.setAllowMultipleFlg(true);
 		attributeType.setArchitectureFlg(false);
 		attributeType.setImportantFlg(true);
 		attributeType.setRequiredFlg(false);
@@ -89,6 +94,7 @@ public class ArticleTest
 		attributeCode.setLabel("A");
 		attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
+		serviceProxy.getAttributeService().saveAttributeCode(attributeCode, false);
 		return attributeCode;
 	}
 

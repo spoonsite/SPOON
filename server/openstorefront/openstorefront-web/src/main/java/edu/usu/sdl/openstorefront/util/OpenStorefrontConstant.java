@@ -59,6 +59,7 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_DETAILED_DESCRIPTION = 4096;
 	public static final int FIELD_SIZE_ADMIN_MESSAGE = 32000;
 	public static final int FIELD_SIZE_TAG = 60;
+	public static final int FIELD_SIZE_ARTICLE_SIZE = 10485760;
 
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
@@ -95,6 +96,7 @@ public class OpenStorefrontConstant
 		mimeXref.put("application/docx", ".docx");
 		mimeXref.put("application/xls", ".xls");
 		mimeXref.put("application/xlsx", ".xlsx");
+		mimeXref.put("application/vnd.ms-excel", ".csv");
 		mimeXref.put("application/pdf", ".pdf");
 		mimeXref.put("application/zip", ".zip");
 		mimeXref.put("application/gzip", ".gzip");
@@ -141,6 +143,29 @@ public class OpenStorefrontConstant
 		DONE,
 		CANCELLED,
 		FAILED
+
+	}
+
+	public static enum ComponentApprovalStatus
+	{
+
+		A("Approved"),
+		P("Pending");
+
+		public static final String APPROVED = "A";
+		public static final String PENDING = "P";
+
+		private String description;
+
+		private ComponentApprovalStatus(String description)
+		{
+			this.description = description;
+		}
+
+		public String getDescription()
+		{
+			return description;
+		}
 
 	}
 

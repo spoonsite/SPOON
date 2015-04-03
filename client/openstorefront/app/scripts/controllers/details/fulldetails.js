@@ -18,21 +18,41 @@
 
 app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
 
-  $scope.sendEvent                     = $rootScope.sendEvent;
-  $scope.user                          = {};
-  $scope.editQuestion                  = [];
-  $scope.currentTab                    = null;
-  $scope.sendAdminMessage              = $rootScope.openAdminMessage;
+  $scope.sendEvent          = $rootScope.sendEvent;
+  $scope.user               = {};
+  $scope.editQuestion       = [];
+  $scope.currentTab         = null;
+  $scope.sendAdminMessage   = $rootScope.openAdminMessage;
+
   resetUpdateNotify();
 
-  
-
-  $scope.setComponentId = function(id) {
-    var deferred = $q.defer();
-    $rootScope.refId = id;
-    deferred.resolve();
-    return deferred.promise;
+  $scope.setupTagList = $scope.setupTagList || function() {
+    Business.getTagsList(true).then(function(result) {
+      if (result) {
+        $scope.tagsList       = result;
+        $scope.tagsList.sort();
+      } else {
+        $scope.tagsList       = null;
+      }
+    });
   }
+  $scope.setupTagList();
+
+  $scope.checkTagsList = $scope.checkTagsList || function(query, list, source) {
+    var deferred = $q.defer();
+    var subList = null;
+    if (query === ' ') {
+      subList = _.reject(source, function(item) {
+        return !!(_.where(list, {'text': item}).length);
+      });
+    } else {
+      subList = _.filter(source, function(item) {
+        return item.toLowerCase().indexOf(query.toLowerCase()) > -1;
+      });
+    }
+    deferred.resolve(subList);
+    return deferred.promise;
+  };
 
   Business.userservice.getWatches().then(function(result) {
     if (result) {
@@ -60,6 +80,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     // console.log('section', result);
     
   })
+
+  $scope.setComponentId = function(id) {
+    var deferred = $q.defer();
+    $rootScope.refId = id;
+    deferred.resolve();
+    return deferred.promise;
+  }
 
   $scope.resetWatches = function(hard) {
     if ($scope.user.info) {
@@ -96,11 +123,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.$on('$updatedWatches', function(event){/*jshint unused:false*/
     $scope.resetWatches(true);
   });
-
-  var mNames = new Array('January', 'February', 'March',
-    'April', 'May', 'June', 'July', 'August', 'September',
-    'October', 'November', 'December');
-
 
   if ($scope.modal) {
     $scope.$watch('modal.modalBody', function() {
@@ -259,7 +281,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       // console.log('Error Result', result);
 
     });
-    $scope.applyFilters();
+    if ($scope.applyFilters){
+      $scope.applyFilters();
+    }
   };
   
   /***************************************************************
@@ -273,9 +297,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
         $scope.$emit('$TRIGGEREVENT', '$CHANGESEARCHRESULTTAGS', id, tags);
         $scope.tempTags = [];
-        $scope.applyFilters();
+        if ($scope.applyFilters){
+          $scope.applyFilters();
+        }
       }, function(result){
-        $scope.applyFilters();
+        if ($scope.applyFilters){
+          $scope.applyFilters();
+        }
         $scope.tempTags = [];
       });
     } else {
@@ -299,10 +327,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         }
         $scope.tempTags = [];
 
-        $scope.applyFilters();
+        if ($scope.applyFilters){
+          $scope.applyFilters();
+        }
       }, function(result){
         $scope.tempTags = [];
-        $scope.applyFilters();
+        if ($scope.applyFilters){
+          $scope.applyFilters();
+        }
       });
     } else {
       $scope.tempTags = [];
@@ -341,40 +373,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ***************************************************************/
   $scope.grabEvaluationMessage = function(statusCode, actual, estimated){
     var result = '';
-    switch(statusCode){
-      case 'C':
-      if (actual && actual !== 'null') {
-        result = 'COMPLETED ' + actual;
-      } else {
-        result = 'COMPLETED';
-      }
-      break;
-      case 'H':
-      result = 'HALTED ' + actual;
-      if (actual && actual !== 'null') {
-        result = 'HALTED ' + actual;
-      } else {
-        result = 'HALTED';
-      }
-      break;
-      case 'P':
-      if (estimated && estimated !== 'null') {
-        // result = 'IN PROGRESS (estimated complete ' + estimated + ')';
-        result = 'IN PROGRESS';
-      } else {
-        result = 'IN PROGRESS';
-      }
-      break;
-      default:
-      if (estimated && estimated !== 'null') {
-        // result = 'NOT STARTED (estimated complete ' + estimated + ')';
-        result = 'NOT STARTED';
-      } else {
-        result = 'NOT STARTED';
-      }
-      break;
-    }
-    return result;
+    return utils.calcEvalStatus(statusCode, actual, estimated);
   };
 
   /***************************************************************
@@ -418,16 +417,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   /***************************************************************
   * This function converts a timestamp to a displayable date
   ***************************************************************/
-  $scope.getDate = function(date){
-    if (date)
-    {
-      var d = new Date(date);
-      var currDate = d.getDate();
-      var currMonth = d.getMonth();
-      var currYear = d.getFullYear();
-      return ((currMonth + 1) + '/' + currDate + '/' + currYear);
-    }
-    return null;
+  $scope.getDate = function(date, monthYear){
+    return utils.getDate(date, monthYear);
   };
 
   /***************************************************************
@@ -462,7 +453,17 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   };
 
   $scope.getTimes = function(n){
-    return new Array(parseInt(n));
+    var floated = parseFloat(n);
+    if (!isNaN(floated)) {
+      var num = Math.round(floated);
+      if (!isNaN(num)){
+        return new Array(num);
+      } else {
+        return new Array(0);
+      }
+    } else {
+      return new Array(0);
+    }
   };
 
   /***************************************************************
@@ -470,13 +471,16 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ***************************************************************/
   $scope.$on('$descModal', function(event) { /*jshint unused: false*/
     // re-initialize the modal content here if we must
-    if ($scope.modal.nav !== undefined && $scope.modal.nav !== null) {
+    if ($scope.modal && $scope.modal.nav) {
 
       if ($rootScope.current) {
         $scope.modal.nav.current = $rootScope.current;
       } else {
         $scope.modal.nav.current = 'Write a Review';
       }
+    } else if ($scope.modal){
+      $scope.modal.nav = {};
+      $scope.modal.nav.current = $rootScope.current;
     }
   });
 
@@ -524,8 +528,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     });
     // reset the update list
     updateList = [];
-
-
     $scope.summaryUpdated = [];
     $scope.detailsUpdated = [];
     $scope.reviewsUpdated = [];
@@ -704,6 +706,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     }
   });
 
+  $scope.init = function() {
+    $('.component-details [data-toggle=\'tooltip\']').tooltip();
+  }
 
   var onlyOnce = null;
 
@@ -727,7 +732,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         // setup the update list.
         if (onlyOnce !== $scope.details.details.componentId) {
           $timeout(function() {
-            $('.component-details [data-toggle=\'tooltip\']').tooltip();
+            $scope.init();
           }, 300);
           setupUpdateFlags();
           onlyOnce = $scope.details.details.componentId;
@@ -743,10 +748,33 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           
           $scope.currentTab = $scope.detailResultsTabs[0].id;
           $scope.selectedTab = $scope.detailResultsTabs[0];
-
+          $scope.evaluationDetails($scope.details.details.attributes);
         }
       }
     }
   }, true);
+
+$scope.evaluationAttributes = {};
+$scope.evaluationAttributes.exist = false;
+$scope.evaluationDetails = function (attributes) {
+  if (attributes) {
+    _.forEach(attributes, function (item) {
+      if (item.type === 'DI2ELEVEL') {
+        $scope.evaluationAttributes.exist = true;
+        $scope.evaluationAttributes.level = item;
+      }
+      if (item.type === 'DI2ESTATE') {
+        $scope.evaluationAttributes.exist = true;
+        $scope.evaluationAttributes.state = item;
+      }
+      if (item.type === 'DI2EINTENT') {
+        $scope.evaluationAttributes.exist = true;
+        $scope.evaluationAttributes.intent = item;
+      }
+    });
+  }
+};
+
+
 
 }]);

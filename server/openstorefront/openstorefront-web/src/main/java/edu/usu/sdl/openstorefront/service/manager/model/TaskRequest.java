@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.service.manager.model;
 
 import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -27,9 +29,11 @@ public class TaskRequest
 {
 
 	private String name;
+	private String details;
 	private boolean allowMultiple;
 	private Callable task;
 	private AsyncTaskCallback callback;
+	private Map<String, Object> taskData = new HashMap<>();
 
 	public TaskRequest()
 	{
@@ -40,6 +44,12 @@ public class TaskRequest
 		return name;
 	}
 
+	/**
+	 * The name should be concrete (not Dynamic) in order for the Allow multiple
+	 * to be enforced. Put Dynamic content in the details
+	 *
+	 * @param name
+	 */
 	public void setName(String name)
 	{
 		this.name = name;
@@ -73,6 +83,26 @@ public class TaskRequest
 	public void setCallback(AsyncTaskCallback callback)
 	{
 		this.callback = callback;
+	}
+
+	public Map<String, Object> getTaskData()
+	{
+		return taskData;
+	}
+
+	public void setTaskData(Map<String, Object> taskData)
+	{
+		this.taskData = taskData;
+	}
+
+	public String getDetails()
+	{
+		return details;
+	}
+
+	public void setDetails(String details)
+	{
+		this.details = details;
 	}
 
 }

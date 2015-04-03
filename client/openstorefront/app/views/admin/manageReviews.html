@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<div ng-controller="AdminReviewsCtrl" style="padding-left: 20px; padding-right: 20px;">
+	
+	<loader trigger="reviewFormLoader"></loader>
+	<div>	
+		<br>
+		Filter Status:
+		<select type="text" class="form-control"  ng-change="loadReviews()" style="width:110px;display: inline" ng-model="reviewFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
+		<button class="btn btn-default" ng-click="loadReviews()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>				
+	</div>	
+	<table class="table table-bordered table-striped admin-table">
+		<tr>
+			<th><a href="" ng-click="setPredicate('name', 'review');">Component<span ng-show="predicate['review'] === 'name'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+			<th><a href="" ng-click="setPredicate('title', 'review');">Title<span ng-show="predicate['review'] === 'title'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+			<th><a href="" ng-click="setPredicate('rating', 'review');">Rating<span ng-show="predicate['review'] === 'rating'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+			<th><a href="" ng-click="setPredicate('comment', 'review');">Comment<span ng-show="predicate['review'] === 'comment'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+			<th>Pros</th>
+			<th>Cons</th>
+			<th><a href="" ng-click="setPredicate('username', 'review');">User<span ng-show="predicate['review'] === 'username'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+			<th><a href="" ng-click="setPredicate('updateDate', 'review');">Update Date<span ng-show="predicate['review'] === 'updateDate'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+			<th>Action</th>
+		</tr>
+		<tr ng-repeat="review in reviews | orderBy:predicate['review']:reverse['review']" >
+			<td>{{review.name}}</td>
+			<td>{{review.title}}</td>
+			<td>{{review.rating}}</td>
+			<td>{{review.comment | limitTo: 500}}</td>
+			<td>
+				<ul>
+					<li ng-repeat="pro in review.pros">
+						{{pro.text}}
+					</li>
+				</ul>
+			</td>
+			<td>
+				<ul>
+					<li ng-repeat="con in review.cons">
+						{{con.text}}
+					</li>
+				</ul>
+			</td>	
+			<td>{{review.username}}</td>
+			<td>{{review.updateDate | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+			<td style="padding:0px 3px !important; width: 200px;">&nbsp;						
+				<button class="btn  btn-warning btn-sm" ng-click="toggleReviewStatus(review);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+			</td>
+		</tr>	
+	</table>
+	
+	
+</div>

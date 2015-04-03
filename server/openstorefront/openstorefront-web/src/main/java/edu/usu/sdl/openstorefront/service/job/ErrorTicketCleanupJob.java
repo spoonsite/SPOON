@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import org.quartz.JobExecutionContext;
 
 /**
@@ -30,8 +29,7 @@ public class ErrorTicketCleanupJob
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getSystemService().cleanupOldErrors();
+		service.getSystemService().cleanupOldErrors();
 	}
 
 }

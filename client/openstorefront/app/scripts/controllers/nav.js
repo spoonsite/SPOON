@@ -32,22 +32,6 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   $scope.beforeLogin  = null;
   $scope.typeahead    = null;
 
-  /***************************************************************
-  * Set up typeahead, and then watch for selection made
-  ***************************************************************/
-  Business.componentservice.getComponentList().then(function(result) {
-    // console.log('result', result);
-    
-    Business.typeahead(result, null).then(function(value){
-      if (value) {
-        $scope.typeahead = value;
-      } else {
-        $scope.typeahead = null;
-      }
-    });
-  });
-
-
   //////////////////////////////////////////////////////////////////////////////
   // Event Watches
   //////////////////////////////////////////////////////////////////////////////
@@ -106,7 +90,11 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   * Catch the enter/select event here
   ***************************************************************/
   $scope.$on('$typeahead.select', function(event, value, index) {
+    if (typeof value === 'object') {
+      value = '"' + value.description + '"';
+    }
     $scope.searchKey = value;
+    $rootScope.searchKey = value;
     if (value !== undefined) {
       $scope.goToSearch();
       $scope.$apply();
@@ -116,6 +104,23 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
     }
   });
   
+
+
+  $scope.getTypeahead = function(){
+    Business.typeahead($scope.searchKey).then(function(result){
+      $scope.typeahead = result || [];
+    }, function(){
+      $scope.typeahead = [];
+    })
+  }
+
+  $scope.$watch('searchKey', function(newValue, oldValue){
+    if ($scope.searchKey) {
+      $rootScope.searchKey = $scope.searchKey;
+      $scope.getTypeahead();
+    }
+  })
+
   /***************************************************************
   * Catch the navigation location change event here
   ***************************************************************/
@@ -150,7 +155,6 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   * search key saved in the localCache
   ***************************************************************/
   $scope.goToLogin = function(){ /*jshint unused:false*/
-
     $location.search({});
     $location.path('/login');
   };
@@ -193,10 +197,6 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   $rootScope.$watch('searchKey', function() {
     $scope.searchKey = $rootScope.searchKey;
   });
-  $scope.$watch('searchKey', function() {
-    $rootScope.searchKey = $scope.searchKey;
-  });
-
 
   // We have to manually connect the list item to the dropdown toggle because the
   // routing and nav load somehow delays it which makes the dropdown not work
@@ -211,7 +211,6 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   /***************************************************************
   * Automatically login the user for the demo... DELETE THIS LATER
   ***************************************************************/
-
   $scope.$emit('$TRIGGEREVENT','$beforeLogin', $location.path(), $location.search());
 
 }]);

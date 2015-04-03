@@ -80,17 +80,17 @@ public class ResourceAction
 			@Override
 			protected void stream(HttpServletResponse response) throws Exception
 			{
-				Path path = componentResource.pathToResource();
+				Path path = getComponentResource().pathToResource();
 				if (path != null && path.toFile().exists()) {
 					Files.copy(path, response.getOutputStream());
 				} else {
-					Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
-					String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{componentResource.pathToResource(), resourceId, component.getName(), component.getComponentId()});
+					Component component = service.getPersistenceService().findById(Component.class, getComponentResource().getComponentId());
+					String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{getComponentResource().pathToResource(), resourceId, component.getName(), component.getComponentId()});
 					throw new OpenStorefrontRuntimeException(message);
 				}
 			}
 
-		};
+		}.setFilename(componentResource.getOriginalName());
 	}
 
 	@HandlesEvent("UploadResource")
@@ -114,14 +114,22 @@ public class ResourceAction
 						service.getComponentService().saveResourceFile(componentResource, file.getInputStream());
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to able to save resource.", "Contact System Admin. Check disk space and permissions.", ex);
+					} finally {
+						try {
+							file.delete();
+						} catch (IOException ex) {
+							log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+						}
 					}
 				} else {
 					errors.put("file", validationResult.toHtmlString());
 				}
+			} else {
+				errors.put("componentResource", "Missing component resource information");
 			}
 			return streamUploadResponse(errors);
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denyed");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
 	@HandlesEvent("Redirect")
@@ -141,6 +149,8 @@ public class ResourceAction
 		} else {
 			componentTracking.setResourceLink(link);
 		}
+		componentTracking.setResourceType(componentResource.getResourceType());
+		componentTracking.setRestrictedResouce(componentResource.getRestricted());
 		componentTracking.setTrackEventTypeCode(TrackEventCode.EXTERNAL_LINK_CLICK);
 		componentTracking.setEventDts(TimeUtil.currentDate());
 		service.getComponentService().saveComponentTracking(componentTracking);
@@ -160,6 +170,26 @@ public class ResourceAction
 	public void setResourceId(String resourceId)
 	{
 		this.resourceId = resourceId;
+	}
+
+	public ComponentResource getComponentResource()
+	{
+		return componentResource;
+	}
+
+	public void setComponentResource(ComponentResource componentResource)
+	{
+		this.componentResource = componentResource;
+	}
+
+	public FileBean getFile()
+	{
+		return file;
+	}
+
+	public void setFile(FileBean file)
+	{
+		this.file = file;
 	}
 
 }

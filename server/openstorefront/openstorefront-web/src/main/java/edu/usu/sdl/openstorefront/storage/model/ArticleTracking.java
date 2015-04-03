@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
@@ -24,10 +25,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * Tracks article events
- *
  * @author dshurtleff
  */
+@APIDescription("Tracks article events")
 public class ArticleTracking
 		extends BaseEntity
 {
@@ -53,6 +53,7 @@ public class ArticleTracking
 	private Date eventDts;
 
 	@NotNull
+	@APIDescription("The viewing client ip")
 	private String clientIp;
 
 	public ArticleTracking()

@@ -14,10 +14,11 @@
         </tr>
         <tr data-ng-repeat="row in details.details.evaluation.evaluationSections | partition:2">
           <td data-ng-repeat="col in row" class="valign" style="padding: 0px;">
-            <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" ng-class="col.score > 0? '':'shadeME'">
-              <i ng-if="col.score > 0" ng-repeat="t in getTimes(col.score) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
+            <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" data-toggle="tooltip" data-placement="bottom" data-title="{{col.actualScore}}" data-trigger="hover">
+              <i ng-if="!col.notAvailable && col.actualScore > 0" ng-repeat="t in getTimes(col.actualScore) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
               </i>
-              <span ng-if="col.score <= 0">&nbsp;</span>
+              <span ng-if="!col.notAvailable && col.actualScore <= 0">&nbsp;</span>
+	    <span ng-if="col.notAvailable" ><b>N/A</b></span>
             </div>
             <div  ng-class="getIsUpdated('evaluationSections')? 'updatedForUser': ''" class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>{{getEvalDescription(col)}}" >
               <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
@@ -57,8 +58,8 @@
         </tr> 
         <tr id="attributes{{$index}}Update" ng-repeat="row in details.details.attributes">
           <td ng-class="getIsUpdated('attributes'+$index)? 'updatedForUser': ''" ng-if="row.importantFlg === true" colspan="5" class="text-left-bold"><span ng-class="getIsUpdated('row.codeDescription')? 'updatedForUser': ''">{{row.typeDescription}}</span></td>
-          <td ng-if="row.codeLongDescription && row.importantFlg === true" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" ><span class="imitateLink">{{row.codeDescription}}</span></td>
-          <td ng-if="!row.codeLongDescription && row.importantFlg === true" colspan="11" class="text-left">{{row.codeDescription}}</td>
+          <td ng-if="row.codeLongDescription && row.importantFlg === true" colspan="11" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{row.codeDescription}}</b>" data-container="body" data-content="{{row.codeLongDescription}}" class="{{row.highlightStyle}}"><span class="imitateLink">{{row.codeDescription}}</span></td>
+          <td ng-if="!row.codeLongDescription && row.importantFlg === true" colspan="11" class="text-left {{row.highlightStyle}}">{{row.codeDescription}}</td>
         </tr>
       </tbody>
     </table>

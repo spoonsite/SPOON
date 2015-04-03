@@ -53,7 +53,7 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
     
       $http({
         'method': 'GET',
-        'url': 'api/v1/resource/errortickets/' + ticketId + "/ticket" 
+        'url': 'api/v1/resource/errortickets/' + encodeURIComponent(ticketId) + "/ticket" 
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);       
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
@@ -68,7 +68,7 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
 
       $http({
         'method': 'POST',
-        'url': 'api/v1/service/notification/recent-changes?lastRunDts=' + lastRunDts +"&emailAddress=" + emailAddress
+        'url': 'api/v1/service/notification/recent-changes?lastRunDts=' + encodeURIComponent(lastRunDts) +"&emailAddress=" + encodeURIComponent(emailAddress)
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/
@@ -91,6 +91,143 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
       });
     
     return deferred.promise;
+  };  
+  
+  var getAppVersion = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'System.action?AppVersion'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };
+  
+  var getAppStatus = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/application/status'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var getConfigProperties = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/application/configproperties'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var getLogLevels = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/application/loglevels'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };
+  
+  var getLoggers = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/application/loggers'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };    
+  
+  var getThreads = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/application/threads'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+    
+  var updateLogLevel = function(loggerName, level) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/service/application/logger/' + encodeURIComponent(loggerName) + '/level',
+        data: level
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };
+  
+  var getAppProperties = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/applicationproperties'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  }; 
+  
+  var updateAppProperty = function(key, value) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/resource/applicationproperties/' + encodeURIComponent(key),
+        data: value
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
   };   
     
   return {
@@ -98,7 +235,17 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
       resetIndexer: resetIndexer,
       getErrorTicketInfo: getErrorTicketInfo,
       sendRecentChangesEmail: sendRecentChangesEmail,
-      getRecentChangeStatus: getRecentChangeStatus
+      getRecentChangeStatus: getRecentChangeStatus,
+      getAppVersion: getAppVersion,
+      getAppStatus: getAppStatus,
+      getConfigProperties: getConfigProperties,
+      getLogLevels: getLogLevels,
+      getThreads: getThreads,
+      updateLogLevel: updateLogLevel,
+      getAppProperties: getAppProperties,
+      updateAppProperty: updateAppProperty,
+      getLoggers: getLoggers
+      
   };
     
 }]);

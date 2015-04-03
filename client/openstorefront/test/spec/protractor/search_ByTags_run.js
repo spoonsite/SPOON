@@ -44,10 +44,11 @@ describe('Search by TAGS', function() {
         // Clear the Search
         element(by.id('globalSearch')).clear();
         element(by.id('globalSearch')).sendKeys(protractor.Key.ENTER);
-        expect(element.all(by.repeater('item in data')).count()).toEqual(58);
+        expect(element.all(by.repeater('item in data')).count()).toEqual(64);
 
         element.all(by.css('.input.ng-pristine.ng-valid')).get(0).clear();
-        element.all(by.css('.input.ng-pristine.ng-valid')).get(0).sendKeys('iAddedThis', protractor.Key.DOWN, protractor.Key.ENTER);
+        element.all(by.css('.input.ng-pristine.ng-valid')).get(0).sendKeys('iAddedThis');
+        element.all(by.css('.input.ng-valid.ng-dirty')).get(0).sendKeys(protractor.Key.DOWN, protractor.Key.ENTER);
         browser.driver.sleep(4000);
 
         // Verify one (iSpatial) result

@@ -15,7 +15,8 @@
 
 'use strict';
 
-var pageTitle = 'DI2E Storefront';
+// Will change for v1.3 to ClearingHouse?
+var pageTitle = 'DI2E Clearinghouse';
 
 describe('title__Page Title', function() {
   it('has a title of- ' + pageTitle, function() {

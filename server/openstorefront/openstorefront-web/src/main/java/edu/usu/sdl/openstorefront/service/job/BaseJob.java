@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quartz.Job;
@@ -26,21 +28,24 @@ import org.quartz.JobExecutionException;
  * @author dshurtleff
  */
 public abstract class BaseJob
-		implements Job
+    implements Job
 {
 
-	private static final Logger log = Logger.getLogger(BaseJob.class.getName());
+    private static final Logger log = Logger.getLogger(BaseJob.class.getName());
 
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException
-	{
-		try {
-			executeInternaljob(context);
-		} catch (Exception e) {
-			//According the quartz best practise the job shouldn't throw an error.
-			log.log(Level.SEVERE, "Job failed unexpectly to run", e);
-		}
-	}
+    protected ServiceProxy service = new ServiceProxy();
 
-	protected abstract void executeInternaljob(JobExecutionContext context);
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException
+    {
+        try {
+            log.log(Level.FINEST, MessageFormat.format("Running job: ", new Object[]{context.getJobDetail().getKey().getName()}));
+            executeInternaljob(context);
+        } catch (Exception e) {
+            //According the quartz best practise the job shouldn't throw an error.
+            log.log(Level.SEVERE, "Job failed unexpectly to run", e);
+        }
+    }
+
+    protected abstract void executeInternaljob(JobExecutionContext context);
 }

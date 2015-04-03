@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.init;
 
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import java.io.File;
 import javax.servlet.ServletContextEvent;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 
@@ -31,7 +32,8 @@ public class ShiroLoader
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
-		FileSystemManager.getConfig("shiro.ini");
+		File configFile = FileSystemManager.getConfig("shiro.ini");
+		sce.getServletContext().setInitParameter(CONFIG_LOCATIONS_PARAM, configFile.toURI().toString());
 		super.contextInitialized(sce);
 	}
 }

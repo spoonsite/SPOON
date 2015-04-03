@@ -14,15 +14,9 @@
  */
 
 // GLOBAL Variable for the tests
-//theSite = 'http://di2e.github.io/openstorefront/index.html';
-//openAM = false; other = false;
-
-//theSite = 'http://store-prod.usu.di2e.net:8080/openstorefront/index.html';
-//openAM = true; other = false;
-
-// CURRENT PRODUCTION
-//theSite = 'https://storefront1.di2e.net/openstorefront/index.html';
-//openAM = true; other = false;
+// CURRENT PRODUCTION  ***** DO NOT RUN WITHOUT PERMISSION FROM DI2E AND COORDINATION *****
+//theSite = 'https://storefront.di2e.net/openstorefront/index.html';
+//openAM = false; other = true;
 
 // TESTING SITE
 theSite = 'http://store-accept.usu.di2e.net/openstorefront/index.html';
@@ -40,12 +34,12 @@ if (openAM) {
     browser.driver.sleep(1000);
 }
 
-// Other Non-OpenAM site, but still need to login (manually)
+// Other Non-OpenAM site)
 if (other) {
-    console.log('**********  Please manually log in, you have ~30 seconds.  **********');
-    console.log(theSite);
-    console.log('UN:admin,  PW:secret');
-    console.log('*********************************************************************');
-    browser.driver.sleep(28000);
+    browser.ignoreSynchronization = true;
+    browser.get(theSite, 3500);
+    element.all(by.css('.form-control')).get(0).sendKeys('admin');
+    element.all(by.css('.form-control')).get(1).sendKeys('secret', protractor.Key.ENTER);
+    browser.driver.sleep(2000);
 }
 

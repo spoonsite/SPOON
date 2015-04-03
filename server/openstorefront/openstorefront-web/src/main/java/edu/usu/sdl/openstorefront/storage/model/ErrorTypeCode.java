@@ -16,11 +16,15 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.util.SystemTable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author dshurtleff
  */
+@SystemTable
 @APIDescription("Type of Error")
 public class ErrorTypeCode
 		extends LookupEntity
@@ -28,12 +32,22 @@ public class ErrorTypeCode
 
 	public static final String SYSTEM = "SYS";
 	public static final String REST_API = "API";
-	public static final String USER_ERROR = "USER";
-	public static final String AUTO_SYSTEM = "AUTO";
-	public static final String IMPORT = "IMP";
+	public static final String INTEGRATION = "INT";
+	public static final String REPORT = "RPT";
 
 	public ErrorTypeCode()
 	{
+	}
+
+	@Override
+	protected Map<String, LookupEntity> systemCodeMap()
+	{
+		Map<String, LookupEntity> codeMap = new HashMap<>();
+		codeMap.put(SYSTEM, newLookup(ErrorTypeCode.class, SYSTEM, "System"));
+		codeMap.put(REST_API, newLookup(ErrorTypeCode.class, REST_API, "REST Api"));
+		codeMap.put(INTEGRATION, newLookup(ErrorTypeCode.class, INTEGRATION, "Intergation"));
+		codeMap.put(REPORT, newLookup(ErrorTypeCode.class, REPORT, "Report"));
+		return codeMap;
 	}
 
 }

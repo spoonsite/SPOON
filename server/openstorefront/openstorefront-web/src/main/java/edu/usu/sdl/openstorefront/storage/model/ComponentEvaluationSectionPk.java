@@ -15,9 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
-import edu.usu.sdl.openstorefront.util.ServiceUtil;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
@@ -36,6 +37,7 @@ public class ComponentEvaluationSectionPk
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = EvaluationSection.class)
+	@APIDescription("Evaluation section code")
 	private String evaluationSection;
 
 	public ComponentEvaluationSectionPk()
@@ -64,7 +66,7 @@ public class ComponentEvaluationSectionPk
 	@Override
 	public String pkValue()
 	{
-		return getComponentId() + ServiceUtil.COMPOSITE_KEY_SEPERATOR + getEvaluationSection();
+		return getComponentId() + ReflectionUtil.COMPOSITE_KEY_SEPERATOR + getEvaluationSection();
 	}
 
 	@Override

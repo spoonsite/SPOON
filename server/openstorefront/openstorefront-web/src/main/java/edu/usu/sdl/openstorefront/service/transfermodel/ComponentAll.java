@@ -16,6 +16,10 @@
 package edu.usu.sdl.openstorefront.service.transfermodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
@@ -25,8 +29,11 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is full composite Model of the component
@@ -35,6 +42,7 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ComponentAll
+		implements ExportImport
 {
 
 	private Component component;
@@ -51,6 +59,46 @@ public class ComponentAll
 
 	public ComponentAll()
 	{
+	}
+
+	@Override
+	public String export()
+	{
+		String componentJson = null;
+		try {
+			componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(this);
+		} catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export component.", ex);
+		}
+		return componentJson;
+	}
+
+	@Override
+	public void importData(String[] data)
+	{
+		Objects.requireNonNull(data, "Input data cannot be null");
+		try {
+			ComponentAll componentAll = StringProcessor.defaultObjectMapper().readValue(data[0], new TypeReference<ComponentAll>()
+			{
+			});
+			if (componentAll != null) {
+				this.component = componentAll.getComponent();
+				this.attributes = componentAll.getAttributes();
+				this.contacts = componentAll.getContacts();
+				this.evaluationSections = componentAll.getEvaluationSections();
+				this.externalDependencies = componentAll.getExternalDependencies();
+				this.media = componentAll.getMedia();
+				this.metadata = componentAll.getMetadata();
+				this.questions = componentAll.getQuestions();
+				this.resources = componentAll.getResources();
+				this.reviews = componentAll.getReviews();
+				this.tags = componentAll.getTags();
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to import component.", "Make sure the data is in the correct format");
+			}
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to import component. Data could not be real", ex);
+		}
 	}
 
 	public Component getComponent()

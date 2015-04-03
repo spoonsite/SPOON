@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -64,7 +65,6 @@ public class ComponentSearchView
 	{
 	}
 
-
 	public static ComponentSearchView toView(Component component)
 	{
 		ServiceProxy service = new ServiceProxy();
@@ -80,7 +80,7 @@ public class ComponentSearchView
 
 	public static ComponentSearchView toView(Component component, List<ComponentAttribute> attributes, List<ComponentReview> reviews, List<ComponentTag> tags)
 	{
-
+		ServiceProxy service = new ServiceProxy();
 		ComponentSearchView view = new ComponentSearchView();
 		view.setListingType(OpenStorefrontConstant.ListingType.COMPONENT.getDescription());
 		view.setComponentId(component.getComponentId());
@@ -88,7 +88,7 @@ public class ComponentSearchView
 		view.setDescription(component.getDescription());
 		view.setParentComponentId(component.getParentComponentId());
 		view.setGuid(component.getGuid());
-		view.setApprovalState(component.getActiveStatus());
+		view.setApprovalState(component.getApprovalState());
 		view.setApprovedDts(component.getApprovedDts());
 		view.setApprovedUser(component.getApprovedUser());
 		view.setLastActivityDts(component.getLastActivityDts());
@@ -98,6 +98,7 @@ public class ComponentSearchView
 
 		List<SearchResultAttribute> addMes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
+			
 			addMes.add(SearchResultAttribute.toView(attribute));
 		}
 		view.setAttributes(addMes);
@@ -122,7 +123,7 @@ public class ComponentSearchView
 		return view;
 	}
 
-	public static ComponentSearchView toView(Article article)
+	public static ComponentSearchView toView(ArticleView article)
 	{
 		ComponentSearchView view = new ComponentSearchView();
 		view.setListingType(OpenStorefrontConstant.ListingType.ARTICLE.getDescription());
@@ -130,10 +131,9 @@ public class ComponentSearchView
 		view.setAverageRating(0);
 		view.setArticleAttributeType(article.getAttributeType());
 		view.setArticleAttributeCode(article.getAttributeCode());
-		view.setDescription(article.getAttributeCodeDescription());
-		view.setName(article.getAttributeCodeLabel());
+		view.setDescription(article.getDescription());
+		view.setName(article.getTitle());
 		view.setLastActivityDts(article.getUpdateDts());
-		view.setOrganization(article.getOrganization());
 		List<ComponentAttribute> attributes = new ArrayList<>();
 		ComponentAttribute attribute = new ComponentAttribute();
 		ComponentAttributePk pk = new ComponentAttributePk();

@@ -10,7 +10,7 @@
       <div class="navbar-header">
 
         <!-- Nav buttons when collapsed menu is up -->
-        <div >
+        <div ng-cloak>
           <button ng-show="user.isLoggedIn" type="button" class="navbar-toggle navButton" data-toggle="collapse" id="openUserMenu" data-target="#bs-example-navbar-collapse-2" style="height:34px;">
             <span class="sr-only">User Panel</span>
             <span ng-if="!user.info">User Menu</span>
@@ -32,7 +32,7 @@
           </button>        
         </div>
         <!-- / Nav buttons when collapsed menu is up -->
-        <div>
+        <div ng-cloak>
           <!-- fa fa-home -->
           <a class="navbar-brand" href="javascript: void(0)" ng-click="sendHome();">
             <div style="height: 50px; width: 180px; text-align:center; display:inline-block;">
@@ -47,19 +47,19 @@
               <div style="width: 250px; text-align: left; border-radius: 0px 8px 8px 0px; background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 81%, rgba(255,255,255,0) 100%); background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(81%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: -o-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=1 );" data-toggle="tooltip" data-placement="bottom" data-title="Go Back To Home Page" data-trigger="hover">
                 <!-- <div style="width: 250px; text-align: left; background: white; border-radius: 0px 8px 8px 0px; border: 1px solid #343f54;" data-toggle="tooltip" data-placement="bottom" data-title="Go Back To Home Page" data-trigger="hover"> -->
                 <!-- <img src="images/logo/logo-only-words.svg" alt="" style="height: 44px; margin: 3px 31px;"> -->
-                <img src="images/logo/logo-only-words.svg" alt="" style="height: 49px; margin: 3px 15px 0px 15px">
+                <img ng-cloak src="images/logo/logo-only-words.svg" alt="" style="height: 49px; margin: 3px 15px 0px 15px">
               </div>
             </div>             
           </a>
         </div> 
       </div>
       <!-- /Nav header -->
-
       <!-- .userNav-collapse -->
       <div  ng-show="user.isLoggedIn" class="collapse navbar-collapse pull-right userNavDropdown" style="padding-right: 30px;">
         <ul class="nav navbar-nav navbar-right">
           <li id="dropTheMenu" class="dropdown">
-            <a ng-show="user.isLoggedIn" href="" class="dropdown-toggle" data-toggle="dropdown" style="display:block; height: 50px;"><span ng-if="!user.info">User Menu</span>
+            <notifications ng-if="user.info.admin" style="  display: inline-block; margin-left: -40px; padding-right: 10px; vertical-align: text-bottom;"></notifications>
+            <a ng-show="user.isLoggedIn" href="" class="dropdown-toggle" data-toggle="dropdown" style="display: inline-block; height: 50px;"><span ng-if="!user.info">User Menu</span>
               <span style="display:inline-block">
                 <span ng-if="(user.info.firstName && user.info.firstName!== '') || (user.info.lastName && user.info.lastName!== '')" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; text-align: right; max-width: 130px; ">
                   <span ng-if="(user.info.firstName && user.info.firstName!== '')">{{user.info.firstName}}&nbsp;</span>
@@ -91,7 +91,7 @@
             <button type="submit" class="btn btn-warning pull-right"><i class="fa fa-search"></i></button>
           </div>
           <div class="navSearchBar">
-            <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" ng-options="key.name as key.name for key in typeahead" placeholder="New Search" bs-typeahead>
+            <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" ng-options="key as key.description for key in typeahead" placeholder="New Search" bs-typeahead>
           </div>
         </form>
       </div>

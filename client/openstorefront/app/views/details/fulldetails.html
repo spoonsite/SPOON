@@ -11,136 +11,142 @@
     <div class="container component-title">
       <div class="col-sm-12">
         <div style="display:inline-block; width: 100%">
-          <h1><div style="font-weight: 100; margin: 0px; padding: 0px; display: inline-block; float: left; margin-top: 10px;">{{details.details.name}}
-            <span ng-if="details.details.organization !== null" style="font-weight: bold; margin-top: -20px; padding-left:0px; display:block;">
-              <br>
-              Organization: {{details.details.organization}}
-            </span>
-            <span ng-if="details.details.version !== null" style="font-weight: bold; margin-top: -40px; padding-left:0px; display:block;">
-              <br>
-              Version: {{details.details.version}}
-            </span>
-          </div>
-          <div class="pull-right" id="detailsToolButtons">
-            <button ng-init="tagsOn = false" class='btn btn-info detailsTitleButton' id="data-collapse-tags" ng-click="toggleTags('#tagsUpdate');"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover" style="position:relative;">
-              <i class="fa fa-tags imitateLink"></i>
-              <i ng-show="!tagsOn"class="fa fa-toggle-off" style="position: absolute; left: 19px; font-size: xx-small; top: 37px;"></i>
-              <i ng-show="tagsOn"class="fa fa-toggle-on" style="position: absolute; left: 19px; font-size: xx-small; top: 37px; color: #ff4800;"></i>
-            </button>
-            <button class='btn btn-info detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
-            </button>
-            <button class='btn btn-info detailsTitleButton' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
-            </button>
-            <button class='btn btn-info detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
-            </button>
-            <button class='btn btn-info detailsTitleButton' id="printLink" ng-click="goToPrint('/print', {'type':'component', 'id': details.details.componentId})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Print View" data-trigger="hover">
-              <i class="fa fa-print imitateLink"></i>
-            </button>
-            <button ng-show="!single" class='btn btn-info detailsTitleButton' id="permenantLink" ng-click="goToFullPage(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
-              <i class="fa fa-copy imitateLink"></i>
-            </button>
-            <button ng-show="single" class='btn btn-info detailsTitleButton' id="permenantLink" ng-click="goTo('/', {})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Home Page" data-trigger="hover">
-              <i class="ic ic-home2 imitateLink"></i>
-            </button>
-          </div>
-        </h1>
-      </div>
-      <!-- injected evaluations start -->
+          <h1>
+            <div style="font-weight: 100; margin: 0px; padding: 0px; display: inline-block; float: left; margin-top: 10px;">{{details.details.name}}
+              <span ng-if="details.details.organization !== null" style="font-weight: bold; margin-top: -20px; padding-left:0px; display:block;">
+                <br>
+                Organization: {{details.details.organization}}
+              </span>
+              <span ng-if="details.details.version !== null" style="font-weight: bold; margin-top: -40px; padding-left:0px; display:block;">
+                <br>
+                Version: {{details.details.version}}
+              </span>
+              <div>
+                <div ng-repeat="attribute in details.details.attributes" style="display:inline-block;">
+                  <img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge"  data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style="margin-top:-10px; width: auto; height: 40px;">
+                </div>
+              </div>
+            </div>
+            <div class="pull-right" id="detailsToolButtons">
+              <button ng-init="tagsOn = false" class='btn btn-info detailsTitleButton' id="data-collapse-tags" ng-click="toggleTags('#tagsUpdate');"  data-toggle="tooltip" data-placement="bottom" data-title="View/Edit Tags" data-trigger="hover" style="position:relative;">
+                <i class="fa fa-tags imitateLink"></i>
+                <i ng-show="!tagsOn"class="fa fa-toggle-off" style="position: absolute; left: 19px; font-size: xx-small; top: 37px;"></i>
+                <i ng-show="tagsOn"class="fa fa-toggle-on" style="position: absolute; left: 19px; font-size: xx-small; top: 37px; color: #FF811A;"></i>
+              </button>
+              <button class='btn btn-info detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
+              </button>
+              <button class='btn btn-info detailsTitleButton' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
+              </button>
+              <button class='btn btn-info detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
+              </button>
+              <button class='btn btn-info detailsTitleButton' id="printLink" ng-click="goToPrint('/print', {'type':'component', 'id': details.details.componentId})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Print View" data-trigger="hover">
+                <i class="fa fa-print imitateLink"></i>
+              </button>
+              <button ng-show="!single" class='btn btn-info detailsTitleButton' id="permenantLink" ng-click="goToFullPage(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Go to Full Page" data-trigger="hover">
+                <i class="fa fa-copy imitateLink"></i>
+              </button>
+              <button ng-show="single" class='btn btn-info detailsTitleButton' id="permenantLink" ng-click="goTo('/', {})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Home Page" data-trigger="hover">
+                <i class="ic ic-home2 imitateLink"></i>
+              </button>
+            </div>
+          </h1>
+        </div>
+        <!-- injected evaluations start -->
 
-      <!-- injected evaluations start -->
-      <div style="padding: 0px 10px;" id="tagsUpdate" class="panel-collapse collapse">
-        <div class="bootstrap">
-          <div class="tags" style="width: 100%; border: 0px; box-shadow: none; display:block;">
-            <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
-              <li class="tag-item ng-scope" ng-repeat="tag in details.details.tags" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px 'Helvetica Neue',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
-                <span ng-bind="tag.text"></span>
-                <a ng-if="(user && tag.createUser && user.info.username === tag.createUser) || !tag.createUser || user.info.admin" class="remove-button" ng-click="removeTag(details.details.componentId, tag, details.details.tags)" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">×</a>
-              </li>
+        <!-- injected evaluations start -->
+        <div style="padding: 0px 10px;" id="tagsUpdate" class="panel-collapse collapse">
+          <div class="bootstrap">
+            <div class="tags" style="width: 100%; border: 0px; box-shadow: none; display:block;">
+              <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
+                <li class="tag-item ng-scope" ng-repeat="tag in details.details.tags" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px 'Helvetica Neue',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                  <span ng-bind="tag.text"></span>
+                  <a ng-if="(user && tag.createUser && user.info.username === tag.createUser) || !tag.createUser || user.info.admin" class="remove-button" ng-click="removeTag(details.details.componentId, tag, details.details.tags)" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">×</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <tags-input class="bootstrap" min-length="1" ng-model="tempTags" replace-spaces-with-dashes="false" on-tag-added="addTag(details.details.componentId, $tag, details.details.tags);"><auto-complete min-length="1" source="checkTagsList($query, details.details.tags, tagsList)"></auto-complete></tags-input>
+        </div>
+      </div>
+    </div>
+    <!-- END TITLE SECTION -->
+
+
+    <!-- Tabbing for Results Page -->
+    <div class="col-md-12" style="background:white; margin-top: -11px;" id="detailsTabs">
+      <tabset justified="true" type="">  <!-- pills -->
+        <tab ng-repeat="tab in detailResultsTabs" ng-click="sendPageView(details.details.name+'-'+tab.title); changeTab(tab)" heading="{{tab.title}}" class="{{tab.class}}" id="{{tab.id}}">
+          <div ng-include="tab.relpath"></div>
+          <br>
+        </tab>
+      </tabset>
+    </div>
+
+
+  </div>
+
+  <!-- Modal legend for evaluation levels progress bar colors -->
+  <div class="modal fade" id="basicModal2" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></button>
+          <h4 class="modal-title" id="di2eEvaluationScheduleDetails">DI2E Evaluation Schedule Details</h4>
+        </div>
+        <div class="modal-body">
+          <div class="col-sm-12"> 
+            <p><b>Progress bar color scheme and date indicators</b>
+              <br>The progress bar color scheme indicates current activity within any phase of the Evaluation Schedule. Also, there are
+              ending date indicators ( <b>mm/dd</b> ) below at the right edge of each bar, to indicate the completion date (either actual or estimated).
+            </p>
+          </div>  
+          <div class="col-md-12" style="padding:0;">
+            <div class="col-md-3" style="background-color:#E6E8EB;border:1px solid navy; height:50px; text-align:center; vertical-align:middle">Completed</div>
+
+            <div class="col-md-3" style="background-color:#ffffff;border-right:1px dashed #5cb85c;border-top:1px dashed #5cb85c;border-bottom:1px dashed #5cb85c; height:50px;text-align:center; color:#4E9C4E">In Progress</div>
+
+            <div class="col-md-3" style="background-color:#FF811A;border-right:1px solid navy;border-top:1px solid navy;border-bottom:1px solid navy; height:50px;text-align:center; color:white">Halted</div>
+
+            <div class="col-md-3" style="background-color:#ffffff ;border-right:1px solid gray;border-top:1px solid gray;border-bottom:1px solid gray; height:50px;text-align:center; color:#808080 ">Not Started</div>
+          </div>
+          <br><br><br>
+          <p class="">
+            <br><br><b>Level 0 – Available for Reuse/Not Evaluated</b>
+            <br>
+            <ul>
+              <li>Asset is added to the Clearinghouse Site for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
+              <li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li>
+              <li>Asset has completed the Component Prep and Analysis phase.</li>
             </ul>
-          </div>
-        </div>
-        <tags-input class="bootstrap" min-length="1" ng-model="tempTags" replace-spaces-with-dashes="false" on-tag-added="addTag(details.details.componentId, $tag, details.details.tags);"><auto-complete min-length="1" source="checkTagsList($query, details.details.tags, tagsList)"></auto-complete></tags-input>
-      </div>
-    </div>
-  </div>
-  <!-- END TITLE SECTION -->
-
-
-  <!-- Tabbing for Results Page -->
-  <div class="col-md-12" style="background:white; margin-top: -11px;" id="detailsTabs">
-    <tabset justified="true" type="">  <!-- pills -->
-      <tab ng-repeat="tab in detailResultsTabs" ng-click="sendPageView(details.details.name+'-'+tab.title); changeTab(tab)" heading="{{tab.title}}" class="{{tab.class}}" id="{{tab.id}}">
-        <div ng-include="tab.relpath"></div>
-        <br>
-      </tab>
-    </tabset>
-  </div>
-
-
-</div>
-
-<!-- Modal legend for evaluation levels progress bar colors -->
-<div class="modal fade" id="basicModal2" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></button>
-        <h4 class="modal-title" id="di2eEvaluationScheduleDetails">DI2E Evaluation Schedule Details</h4>
-      </div>
-      <div class="modal-body">
-        <div class="col-sm-12"> 
-          <p><b>Progress bar color scheme and date indicators</b>
-            <br>The progress bar color scheme indicates current activity within any phase of the Evaluation Schedule. Also, there are
-            ending date indicators ( <b>mm/dd</b> ) below at the right edge of each bar, to indicate the completion date (either actual or estimated).
+            <br><b>Level 1 – Initial Reuse Analysis</b>
+            <br>
+            <ul>
+              <li>Inspection portion of DI2E Framework Evaluation Checklist complete.  </li>
+              <li>These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided.
+              </li>
+              <li>This level does not represent the pass or fail, the Consumer must read the Evaluation Report. </li>
+            </ul>
+            <br><b>Level 2 – Integration and Test</b>
+            <br>
+            <ul>
+              <li>Integration and Test portion of the DI2E Framework Evaluation Checklist complete.</li>
+              <li>These questions focus on the interoperability and ease of reuse, and will normally include an I&amp;T plan.</li>
+              <li>This level does not indicate a pass or fail of the conformance test.</li>
+              <li>Consumer will read the Test Report linked in the Clearinghouse Site entry for program functionality.</li>
+            </ul>
+            <br><b>Level 3 – DI2E Framework Reference Implementation</b>
+            <br>
+            <ul>
+              <li>Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.</li>
+            </ul>
+            <br><b>NA – No Evaluation Planned</b>
+            <br>
+            <ul>
+              <li>Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Clearinghouse Site (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.).</li>
+              <li>N/A indicates no evaluation is expected.</li>
+            </ul>
           </p>
-        </div>  
-        <div class="col-md-12" style="padding:0;">
-          <div class="col-md-3" style="background-color:#E6E8EB;border:1px solid navy; height:50px; text-align:center; vertical-align:middle">Completed</div>
-
-          <div class="col-md-3" style="background-color:#ffffff;border-right:1px dashed #5cb85c;border-top:1px dashed #5cb85c;border-bottom:1px dashed #5cb85c; height:50px;text-align:center; color:#4E9C4E">In Progress</div>
-
-          <div class="col-md-3" style="background-color:#FF811A;border-right:1px solid navy;border-top:1px solid navy;border-bottom:1px solid navy; height:50px;text-align:center; color:white">Halted</div>
-
-          <div class="col-md-3" style="background-color:#ffffff ;border-right:1px solid gray;border-top:1px solid gray;border-bottom:1px solid gray; height:50px;text-align:center; color:#808080 ">Not Started</div>
         </div>
-        <br><br><br>
-        <p class="">
-          <br><br><b>Level 0 – Available for Reuse/Not Evaluated</b>
-          <br>
-          <ul>
-            <li>Asset is added to the Clearinghouse Site for reuse or consumption. Asset has not been evaluated for Enterprise readiness or Conformance. </li>
-            <li>Asset will enter DI2E Clearinghouse Process to be assessed for potential reuse.</li>
-            <li>Asset has completed the Component Prep and Analysis phase.</li>
-          </ul>
-          <br><b>Level 1 – Initial Reuse Analysis</b>
-          <br>
-          <ul>
-            <li>Inspection portion of DI2E Framework Evaluation Checklist complete.  </li>
-            <li>These questions focus mainly on the reuse potential (Visible, Accessible, and Understandable) by analysis of the information provided.
-            </li>
-            <li>This level does not represent the pass or fail, the Consumer must read the Evaluation Report. </li>
-          </ul>
-          <br><b>Level 2 – Integration and Test</b>
-          <br>
-          <ul>
-            <li>Integration and Test portion of the DI2E Framework Evaluation Checklist complete.</li>
-            <li>These questions focus on the interoperability and ease of reuse, and will normally include an I&amp;T plan.</li>
-            <li>This level does not indicate a pass or fail of the conformance test.</li>
-            <li>Consumer will read the Test Report linked in the Clearinghouse Site entry for program functionality.</li>
-          </ul>
-          <br><b>Level 3 – DI2E Framework Reference Implementation</b>
-          <br>
-          <ul>
-            <li>Asset has been determined to be reusable and interoperable, appropriately documented, and conformant to applicable DI2E Framework specifications and standards and is integrated into the DI2E Reference Ecosystem.</li>
-          </ul>
-          <br><b>NA – No Evaluation Planned</b>
-          <br>
-          <ul>
-            <li>Planned Evaluation does not apply to DI2E Priorities, Focus Areas, Reference Architecture, Clearinghouse Site (e.g. Guidebooks, reusable Contract Language, Lessons Learned, etc.).</li>
-            <li>N/A indicates no evaluation is expected.</li>
-          </ul>
-        </p>
       </div>
     </div>
   </div>
-</div>

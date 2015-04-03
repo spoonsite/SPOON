@@ -16,11 +16,16 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
+import static edu.usu.sdl.openstorefront.storage.model.LookupEntity.newLookup;
+import edu.usu.sdl.openstorefront.util.SystemTable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author dshurtleff
  */
+@SystemTable
 @APIDescription("Tracking Event Types")
 public class TrackEventCode
 		extends LookupEntity
@@ -33,6 +38,17 @@ public class TrackEventCode
 
 	public TrackEventCode()
 	{
+	}
+
+	@Override
+	protected Map<String, LookupEntity> systemCodeMap()
+	{
+		Map<String, LookupEntity> codeMap = new HashMap<>();
+		codeMap.put(LOGIN, newLookup(TrackEventCode.class, LOGIN, "Login"));
+		codeMap.put(VIEW, newLookup(TrackEventCode.class, VIEW, "View"));
+		codeMap.put(EXTERNAL_LINK_CLICK, newLookup(TrackEventCode.class, EXTERNAL_LINK_CLICK, "External Link Click"));
+		codeMap.put(COMPONENT_SYNC, newLookup(TrackEventCode.class, COMPONENT_SYNC, "Component Sync"));
+		return codeMap;
 	}
 
 }

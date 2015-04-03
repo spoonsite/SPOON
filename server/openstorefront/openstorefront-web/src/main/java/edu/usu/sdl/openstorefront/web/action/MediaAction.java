@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
+import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -63,6 +64,14 @@ public class MediaAction
 	@Validate(required = true, on = "UploadMedia")
 	private FileBean file;
 
+	@Validate(required = true, on = "GeneralMedia")
+	private String name;
+
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "name", on = "UploadGeneralMedia")
+	})
+	private GeneralMedia generalMedia;
+
 	@HandlesEvent("LoadMedia")
 	public Resolution sendMedia()
 	{
@@ -91,7 +100,7 @@ public class MediaAction
 				}
 			}
 
-		};
+		}.setFilename(componentMedia.getOriginalName());
 	}
 
 	@HandlesEvent("UploadMedia")
@@ -115,14 +124,105 @@ public class MediaAction
 						service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+					} finally {
+						try {
+							file.delete();
+						} catch (IOException ex) {
+							log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+						}
 					}
 				} else {
 					errors.put("file", validationResult.toHtmlString());
 				}
+			} else {
+				errors.put("componentMedia", "Missing component media information");
 			}
 			return streamUploadResponse(errors);
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denyed");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
+	@HandlesEvent("GeneralMedia")
+	public Resolution generalMedia()
+	{
+		GeneralMedia generalMediaExample = new GeneralMedia();
+		generalMediaExample.setName(name);
+		generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		if (generalMedia == null) {
+			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is not found.", name));
+			return new StreamingResolution("image/png")
+			{
+
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream("/image/close-red.png")) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+
+			}.setFilename("MediaNotFound.png");
+		}
+
+		return new StreamingResolution(generalMedia.getMimeType())
+		{
+
+			@Override
+			protected void stream(HttpServletResponse response) throws Exception
+			{
+				Path path = generalMedia.pathToMedia();
+				if (path != null && path.toFile().exists()) {
+					Files.copy(path, response.getOutputStream());
+				} else {
+
+					log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
+
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream("/image/close-red.png")) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+			}
+
+		}.setFilename(generalMedia.getOriginalFileName());
+	}
+
+	@HandlesEvent("UploadGeneralMedia")
+	public Resolution uploadGeneralMedia()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			if (generalMedia != null) {
+				generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+				generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+				generalMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+				generalMedia.setOriginalFileName(file.getFileName());
+				generalMedia.setMimeType(file.getContentType());
+
+				ValidationModel validationModel = new ValidationModel(generalMedia);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid()) {
+					try {
+						service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+					} catch (IOException ex) {
+						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+					} finally {
+						try {
+							file.delete();
+						} catch (IOException ex) {
+							log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+						}
+					}
+				} else {
+					errors.put("file", validationResult.toHtmlString());
+				}
+			} else {
+				errors.put("generalMedia", "Missing general media information");
+			}
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
 	public String getMediaId()
@@ -153,6 +253,26 @@ public class MediaAction
 	public void setFile(FileBean file)
 	{
 		this.file = file;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public GeneralMedia getGeneralMedia()
+	{
+		return generalMedia;
+	}
+
+	public void setGeneralMedia(GeneralMedia generalMedia)
+	{
+		this.generalMedia = generalMedia;
 	}
 
 }

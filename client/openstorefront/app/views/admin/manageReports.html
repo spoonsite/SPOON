@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<style>
+	.runstatus-E {
+		font-weight: bold;
+		background-color: lightcoral !important;
+	}
+	.runstatus-W {
+		font-weight: bold;
+		background-color: lightgreen !important;
+	}
+</style>
+<div  ng-controller="AdminReportCtrl" style="padding-left: 20px; padding-right: 20px;">
+	
+	<loader trigger="reportLoader"></loader>
+	<div>			
+		<button class="btn btn-default pull-right" ng-click="newReport()"><i class="fa fa-plus"></i>&nbsp;New Report</button>
+	</div>	
+	<tabset>
+		<tab heading="History">
+			<br>
+      <filterquery data="reports" url="api/v1/resource/reports" sort-by="createDts" type="default" set-features="pagination.features" control="pagination.control" show-export="false"></filterquery>
+			<table class="table table-striped table-bordered admin-table">
+				<tr>
+					<th><a href="" ng-click="setPredicate('reportType', 'report');">Report <span ng-show="predicate['report'] === 'reportType'"><i ng-show="!reverse['report'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['report']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('reportFormat', 'report');">Format <span ng-show="predicate['report'] === 'reportFormat'"><i ng-show="!reverse['report'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['report']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th style="text-align: center;"><a href="" ng-click="setPredicate('runStatus', 'report');">Status <span ng-show="predicate['report'] === 'runStatus'"><i ng-show="!reverse['report'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['report']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('createDts', 'report');">Create Date <span ng-show="predicate['report'] === 'createDts'"><i ng-show="!reverse['report'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['report']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('createUser', 'report');">Create User <span ng-show="predicate['report'] === 'createUser'"><i ng-show="!reverse['report'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['report']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('scheduled', 'report');">Scheduled <span ng-show="predicate['report'] === 'scheduled'"><i ng-show="!reverse['report'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['report']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th>Options</th>
+					<th>Action</th>
+				</tr>
+				<tr ng-repeat="report in reports.data" >
+					<td><a href="" ng-click="download(report);">{{report.reportTypeDescription}}</a></td>
+					<td>{{report.reportFormatDescription}}</td>					
+					<td align="center" class="runstatus-{{report.runStatus}}">{{report.runStatusDescription}}</td>
+					<td>{{report.createDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
+					<td>{{report.createUser}}</td>
+					<td>{{report.scheduled}}</td>
+					<td>
+						<ul>
+							<li ng-show="report.reportOption.startDts">
+								Start Date: {{report.reportOption.startDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}
+							</li>
+							<li ng-show="report.reportOption.endDts">
+								End Date: {{report.reportOption.endDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}
+							</li>							
+							<li ng-show="report.reportOption.previousDays">
+								Pervious Days: {{report.reportOption.previousDays}}
+							</li>
+							<li ng-show="report.reportOption.maxWaitSeconds">
+								Max Wait Time (seconds): {{report.reportOption.maxWaitSeconds}}
+							</li>								
+						</ul>
+					</td>	
+					<td style="padding:0px 3px !important; width: 200px;">&nbsp;					
+						<button class="btn btn-danger btn-sm" ng-click="deleteReport(report);"  title="Delete"><i class="fa fa-trash"></i></button>
+					</td>
+				</tr>
+			</table>				
+		</tab>
+		<tab heading="Scheduled" select="sheduleMode(true);" deselect="sheduleMode(false);">
+			<div>	
+				<br>	
+				Filter Status:
+				<select type="text" class="form-control"  ng-change="refreshScheduledReports()" style="width:110px;display: inline" ng-model="reportScheduledFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
+				<button class="btn btn-default" ng-click="refreshScheduledReports()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+			</div>	
+			<table class="table table-striped table-bordered admin-table">
+
+				<tr>
+					<th><a href="" ng-click="setPredicate('reportTypeDescription', 'scheduledReport');">Report <span ng-show="predicate['scheduledReport'] === 'reportTypeDescription'"><i ng-show="!reverse['scheduledReport'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['scheduledReport']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('reportFormatDescription', 'scheduledReport');">Format <span ng-show="predicate['scheduledReport'] === 'reportFormatDescription'"><i ng-show="!reverse['scheduledReport'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['scheduledReport']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('scheduleIntervalDays', 'scheduledReport');">Scheduled Interval <span ng-show="predicate['scheduledReport'] === 'scheduleIntervalDays'"><i ng-show="!reverse['scheduledReport'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['scheduledReport']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('lastRanDts', 'scheduledReport');">Last Run Date <span ng-show="predicate['scheduledReport'] === 'lastRanDts'"><i ng-show="!reverse['scheduledReport'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['scheduledReport']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th>Email Addresses</th>
+					<th>Options</th>
+					<th>Action</th>
+				</tr>
+				<tr ng-repeat="report in scheduledReports | orderBy:predicate['scheduledReport']:reverse['scheduledReport']" >
+					<td>{{report.reportTypeDescription}}</td>
+					<td>{{report.reportFormatDescription}}</td>
+					<td>{{translateTimePeriod(report.scheduleIntervalDays)}}</td>
+					<td>{{report.lastRanDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>					
+					<td>
+						<ul ng-repeat="email in report.emailAddresses">
+							<li>
+								{{email.email}}
+							</li>
+						</ul>
+					</td>				
+					<td>
+						<ul>
+							<li ng-show="report.reportOption.startDts">
+								Start Date: {{report.reportOption.startDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}
+							</li>
+							<li ng-show="report.reportOption.endDts">
+								End Date: {{report.reportOption.endDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}
+							</li>							
+							<li ng-show="report.reportOption.previousDays">
+								Pervious Days: {{report.reportOption.previousDays}}
+							</li>				
+						</ul>
+					</td>				
+
+					<td style="padding:0px 3px !important; width: 200px;" valign="center">&nbsp;					
+						<button class="btn btn-default btn-sm" ng-click="editScheduledReport(report);"  title="Edit"><i class="fa fa-edit"></i></button>
+						<button class="btn btn-warning btn-sm" ng-click="toggleScheduledStatus(report);"  title="Activate/Inactivate"><i class="fa fa-power-off"></i></button>
+						<button class="btn btn-danger btn-sm" ng-click="deleteScheduledReport(report)"  title="Delete"><i class="fa fa-trash"></i></button>
+					</td>
+				</tr>
+
+			</table>			
+		</tab>		
+	</tabset>
+
+	
+	
+	
+</div>		

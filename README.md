@@ -17,7 +17,7 @@ Developing Open-Storefront (Client)
 If you want your pull requests (or patches) to be merged into master, you will need to comply with the current schaffolding scheme set up with the tools this document will detail. Please respect these guidelines.
 
 If you are reading this document with a normal text editor, please take a look
-at the more readable [formatted version](https://github.com/dshurt/Open-Storefront/blob/master/README.md).
+at the more readable [formatted version](https://github.com/di2e/openstorefront/blob/master/README.md).
 
 If you discover pitfalls, tips and tricks, or other details not described in this document,
 please update it using the [markdown syntax](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet).
@@ -34,7 +34,7 @@ Table of content
 Quick start
 ===========
 
-If you don't want to contribute to this project and you know git, Yoeman, Bower, and Grunt, these build instructions should suffice:
+If you want to contribute to this project and you know git, Yoeman, Bower, and Grunt, these build instructions should suffice:
 
 * To build `Open-Storefront`:
 
@@ -49,6 +49,7 @@ If you don't want to contribute to this project and you know git, Yoeman, Bower,
   * yoeman & generator-angular (yoeman vanilla angular generator)
   * bower
   * grunt
+  * ruby (with sass and compass)
 
 * Versions currently used:
   * git version 1.9.4
@@ -124,7 +125,7 @@ For more info on forking, read [Github's help on forking](http://help.github.com
         $ cd Open-Storefront-Project
 
         # Then clone the repository you want to clone.
-        $ git clone https://github.com/dshurt/Open-Storefront.git
+        $ git clone https://github.com/di2e/openstorefront.git
         $ cd Open-Storefront
         $ ls
 
@@ -184,6 +185,31 @@ Once yeoman has finished installing, we then need to install the AngularJS scaff
 You can now start scaffolding your apps with Yeoman, managing dependencies with Bower, and building & running your application with Grunt!
 Grunt and Bower have also been installed globally, so you should be able to use them in other projects from now on.
 
+Notes for redhat/centos users:
+-------------------------
+
+Additional packages and gems…
+
+npm install -g grunt-cli (was prompted by npm to install)
+npm install grunt-contrib-compass --save-dev
+npm install grunt-bower-install --save-dev
+npm install grunt-wiredep --save-dev
+
+yum install ruby
+yum install ruby-devel
+
+gem install sass
+gem install compass
+
+npm install karma --save-dev  
+npm install karma-coverage --save-dev
+npm install karma-jasmine --save-dev
+npm install karam-chrome-launcher --save-dev
+
+yum install google-chrome-stable
+
+yum install maven
+
 
 Building with Grunt
 ===================
@@ -213,6 +239,10 @@ Running the build
 
         $ grunt build --appPath=/openstorefront  
         
+        or use
+        
+        $ grunt buildprod 
+        
     "appPath" is only needed when changing the root context.          
     The first build will take a long time, because a lot of dependencies will be downloaded (and cached locally).
 
@@ -239,11 +269,12 @@ JDK 8
 ESA/SOLR  
 Open AM* (Configurable)  
 
-The application is a JEE webapp.  So any JEE 6 compliant server should work with just server configuration setup.
-JAX-RS is heavily used for REST API. 
+The application is a JEE webapp.  So any JEE 6 (web-profile) compliant server should work with some server configuration.  Our current deployment target is Tomcat 7.
+
 
 Key Libraries used
 ------------------
+JAX-RS is heavily used for REST API. (Jersey with Moxy for data binding) 
 Stripes -Action based web framework  
 Jackson -JSON Handling/binding  
 Apache Shiro -Security  
@@ -251,8 +282,7 @@ Orient DB -No SQL/Hybrid database
 
 Building with Maven
 -------------------
-
-mvn install  
+run "mvn install" from $PROJECT_HOME/server/openstorefront   
 
 (Skip tests)  
 Mav -Dmaven.test.skip=true or -DskipTests=true install  
@@ -260,7 +290,7 @@ Mav -Dmaven.test.skip=true or -DskipTests=true install
 
 Deploying
 ---------
-Copy the war artifacts to the standalone deploy directory in wildfly. Some IDEs can handle this for you.
+Copy the war artifact to the webapp directory for tomcat. Some IDEs can handle this for you.  See application server documentation for other deployment mechanisms.
 
 
 Building a Production Release 
@@ -276,8 +306,14 @@ Running
 =======
 
 Run in Tomcat 7
-Note: it requires ESA (Solr) for Searching.
+Note: Searching requires an external ESA/(Solr) instance setup.
 
+
+Setting up SOLR
+===============
+ESA uses SOLR 4.3.1 so that is the version that the application is setup to use. 
+
+TODO 
 
 
 FAQ

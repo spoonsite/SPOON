@@ -28,14 +28,16 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.web.rest.model.Article;
+import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.model.SolrComponentModel;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,7 +73,8 @@ public class SearchServiceImpl
 	{
 		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
-		list.addAll(service.getComponentService().getComponents());
+		List<ComponentSearchView> components = service.getComponentService().getComponents();
+		list.addAll(components);
 		list.addAll(service.getAttributeService().getArticlesSearchView());
 		return list;
 	}
@@ -155,7 +158,7 @@ public class SearchServiceImpl
 
 		for (String componentId : componentIds) {
 			if (goodComponentIdSet.contains(componentId) == false) {
-				log.log(Level.FINE, "Removing bad index: " + componentId);
+				log.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", componentId));
 				deleteById(componentId);
 			}
 		}
@@ -176,7 +179,7 @@ public class SearchServiceImpl
 				if (view != null) {
 					views.add(view);
 				} else {
-					log.log(Level.FINE, "Removing bad index: " + result.getId());
+					log.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", result.getId()));
 					deleteById(result.getId());
 				}
 			}
@@ -225,11 +228,11 @@ public class SearchServiceImpl
 
 			if (code != null && type != null) {
 				attributeList = attributeList + code.getLabel() + ",";
-				if (!code.getDescription().equals("")) {
+				if (StringUtils.isNotBlank(code.getDescription())) {
 					attributeList = attributeList + code.getDescription() + ",";
 				}
-				if (!type.getDescription().equals("")) {
-					attributeList = attributeList + code.getDescription() + ",";
+				if (StringUtils.isNotBlank(type.getDescription())) {
+					attributeList = attributeList + type.getDescription() + ",";
 				}
 			}
 		}
@@ -247,7 +250,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void addIndex(Article article)
+	public void addIndex(ArticleView article)
 	{
 		Objects.requireNonNull(article.getHtml(), "Html content is required for an article");
 
@@ -265,12 +268,12 @@ public class SearchServiceImpl
 		solrDocModel.setIsComponent(Boolean.FALSE);
 
 		solrDocModel.setId(pk.toKey());
-		solrDocModel.setNameString(type.getDescription() + " " + code.getLabel() + " Article");
-		solrDocModel.setName(type.getDescription() + " " + code.getLabel() + " Article");
-		solrDocModel.setDescription(type.getDescription() + " " + code.getLabel() + " Article" + code.getDescription());
+		solrDocModel.setNameString(article.getTitle());
+		solrDocModel.setName(article.getTitle());
+		solrDocModel.setDescription(article.getDescription());
 		solrDocModel.setUpdateDts(article.getUpdateDts());
 
-		String attributeList = type.getAttributeType() + "," + type.getDescription() + "," + code.getLabel() + "," + code.getDescription();
+		String attributeList = type.getAttributeType() + "," + StringProcessor.blankIfNull(type.getDescription()) + "," + code.getLabel() + "," + StringProcessor.blankIfNull(code.getDescription());
 		solrDocModel.setTags("");
 		solrDocModel.setAttributes(attributeList);
 
@@ -290,34 +293,65 @@ public class SearchServiceImpl
 	@Override
 	public List<ComponentSearchView> architectureSearch(AttributeCodePk pk, FilterQueryParams filter)
 	{
-		List<Article> articles = this.getAttributeService().getArticlesForCodeLike(pk);
+		List<ArticleView> articles = this.getAttributeService().getArticlesForCodeLike(pk);
 		Map<String, Component> componentMap = new HashMap<>();
 		List<Component> components = new ArrayList<>();
 
-		ComponentAttribute componentAttributeExample = new ComponentAttribute();
-		ComponentAttributePk componentAttributePkExample = new ComponentAttributePk();
-		componentAttributePkExample.setAttributeType(pk.getAttributeType());
-		componentAttributeExample.setComponentAttributePk(componentAttributePkExample);
+		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, pk);
+		if (attributeCode == null) {
+			AttributeCode attributeCodeExample = new AttributeCode();
+			AttributeCodePk attributeCodePkExample = new AttributeCodePk();
+			attributeCodePkExample.setAttributeType(pk.getAttributeType());
+			attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
+			attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
 
-		ComponentAttribute componentAttributeLikeExample = new ComponentAttribute();
-		ComponentAttributePk componentAttributePkLikeExample = new ComponentAttributePk();
-		componentAttributePkLikeExample.setAttributeCode(pk.getAttributeCode() + "%");
-		componentAttributeLikeExample.setComponentAttributePk(componentAttributePkLikeExample);
+			attributeCode = persistenceService.queryOneByExample(AttributeCode.class, attributeCodeExample);
+		}
 
-		QueryByExample queryByExample = new QueryByExample(componentAttributeExample);
-		queryByExample.setLikeExample(componentAttributeLikeExample);
+		AttributeCode attributeExample = new AttributeCode();
+		AttributeCodePk attributePkExample = new AttributeCodePk();
+		attributePkExample.setAttributeType(pk.getAttributeType());
+		attributeExample.setAttributeCodePk(attributePkExample);
 
-		List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(ComponentAttribute.class, queryByExample);
-		for (ComponentAttribute componentAttribute : componentAttributes) {
-			Component temp = persistenceService.findById(Component.class, componentAttribute.getComponentAttributePk().getComponentId());
-			componentMap.put(temp.getComponentId(), temp);
+		AttributeCode attributeCodeLikeExample = new AttributeCode();
+		if (attributeCode != null && StringUtils.isNotBlank(attributeCode.getArchitectureCode())) {
+			attributeCodeLikeExample.setArchitectureCode(attributeCode.getArchitectureCode() + "%");
+		} else {
+			AttributeCodePk attributePkLikeExample = new AttributeCodePk();
+			attributePkLikeExample.setAttributeCode(pk.getAttributeCode() + "%");
+			attributeCodeLikeExample.setAttributeCodePk(attributePkLikeExample);
+		}
+
+		QueryByExample queryByExample = new QueryByExample(attributeExample);
+		queryByExample.setLikeExample(attributeCodeLikeExample);
+
+		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
+		List<String> ids = new ArrayList();
+		attributeCodes.forEach(code -> {
+			ids.add(code.getAttributeCodePk().getAttributeCode());
+		});
+
+		if (ids.isEmpty() == false) {
+			String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
+
+			Map<String, Object> params = new HashMap<>();
+			params.put("attributeType", pk.getAttributeType());
+			params.put("attributeCodeIdListParam", ids);
+			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
+
+			for (ComponentAttribute componentAttribute : componentAttributes) {
+				Component temp = persistenceService.findById(Component.class, componentAttribute.getComponentAttributePk().getComponentId());
+				if (OpenStorefrontConstant.ComponentApprovalStatus.APPROVED.equals(temp.getApprovalState())) {
+					componentMap.put(temp.getComponentId(), temp);
+				}
+			}
 		}
 
 		// eliminate duplicate componentID on search results
 		components.addAll(componentMap.values());
 
 		List<ComponentSearchView> views = new ArrayList<>();
-		for (Article article : articles) {
+		for (ArticleView article : articles) {
 			views.add(ComponentSearchView.toView(article));
 		}
 		for (Component component : components) {
@@ -335,7 +369,7 @@ public class SearchServiceImpl
 			solrService.deleteById(id);
 			solrService.commit();
 		} catch (IOException | SolrServerException ex) {
-			throw new OpenStorefrontRuntimeException("Failed Deleting Index", "Make sure Search is active and can be reached", ex);
+			throw new OpenStorefrontRuntimeException("Failed Deleting Index", "Make sure Search server is active and can be reached", ex);
 		}
 	}
 
@@ -347,7 +381,7 @@ public class SearchServiceImpl
 			// CAUTION: deletes everything!
 			solrService.deleteByQuery(SolrManager.SOLR_ALL_QUERY);
 		} catch (SolrServerException | IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to clear all indexes", "Make sure Search is active and can be reached", ex);
+			throw new OpenStorefrontRuntimeException("Unable to clear all indexes", "Make sure Search server is active and can be reached", ex);
 		}
 	}
 
@@ -357,7 +391,7 @@ public class SearchServiceImpl
 		Component temp = new Component();
 		temp.setActiveStatus(Component.ACTIVE_STATUS);
 		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(temp));
-		List<Article> articles = getAttributeService().getArticles();
+		List<ArticleView> articles = getAttributeService().getArticles();
 
 		components.stream().forEach((component) -> {
 			addIndex(component);
@@ -368,7 +402,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void indexArticlesAndComponents(List<Article> articles, List<Component> components)
+	public void indexArticlesAndComponents(List<ArticleView> articles, List<Component> components)
 	{
 		components.stream().forEach((component) -> {
 			addIndex(component);

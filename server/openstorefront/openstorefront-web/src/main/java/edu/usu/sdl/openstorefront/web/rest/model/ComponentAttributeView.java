@@ -15,11 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.util.Convert;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,12 +48,16 @@ public class ComponentAttributeView
 	private Date updateDts;
 	private Integer sortOrder;
 	private String groupCode;
+	private boolean orphan;
+	private String activeStatus;
+	private String badgeUrl;
+	private String highlightStyle;
 
 	public ComponentAttributeView()
 	{
 	}
 
-	public static ComponentAttributeView toView(Article article)
+	public static ComponentAttributeView toView(ArticleView article)
 	{
 		ComponentAttributeView view = new ComponentAttributeView();
 		ServiceProxy service = new ServiceProxy();
@@ -63,13 +69,14 @@ public class ComponentAttributeView
 		view.setExternalLink(code.getDetailUrl());
 		view.setCodeDescription(code.getLabel());
 		view.setCodeLongDescription(code.getDescription());
+		view.setBadgeUrl(code.getBadgeUrl());
 		view.setTypeDescription(type.getDescription());
 		view.setTypeLongDescription(type.getDescription());
 		view.setType(type.getAttributeType());
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
 		view.setImportantFlg(type.getImportantFlg());
 		view.setRequiredFlg(type.getRequiredFlg());
-		view.setAllowMultipleFlg(type.getAllowMutlipleFlg());
+		view.setAllowMultipleFlg(type.getAllowMultipleFlg());
 		view.setArchitectureFlg(type.getArchitectureFlg());
 		view.setVisibleFlg(type.getVisibleFlg());
 		view.setUpdateDts(article.getUpdateDts());
@@ -88,7 +95,15 @@ public class ComponentAttributeView
 		pk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 		pk.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 		AttributeCode code = service.getAttributeService().findCodeForType(pk);
+		if (code == null) {
+			view.setOrphan(true);
+			code = service.getPersistenceService().findById(AttributeCode.class, pk);
+		}
 		AttributeType type = service.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+		if (type == null) {
+			view.setOrphan(true);
+			type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
+		}
 
 		view.setExternalLink(code.getDetailUrl());
 		view.setCodeDescription(code.getLabel());
@@ -97,14 +112,17 @@ public class ComponentAttributeView
 		view.setTypeLongDescription(type.getDescription());
 		view.setType(type.getAttributeType());
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
-		view.setImportantFlg(type.getImportantFlg());
-		view.setRequiredFlg(type.getRequiredFlg());
-		view.setAllowMultipleFlg(type.getAllowMutlipleFlg());
-		view.setArchitectureFlg(type.getArchitectureFlg());
-		view.setVisibleFlg(type.getVisibleFlg());
+		view.setBadgeUrl(code.getBadgeUrl());
+		view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
+		view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
+		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
+		view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
+		view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
 		view.setUpdateDts(attribute.getUpdateDts());
 		view.setSortOrder(code.getSortOrder());
 		view.setGroupCode(code.getGroupCode());
+		view.setHighlightStyle(code.getHighlightStyle());
+		view.setActiveStatus(attribute.getActiveStatus());
 
 		return view;
 	}
@@ -116,6 +134,53 @@ public class ComponentAttributeView
 			views.add(ComponentAttributeView.toView(attribute));
 		});
 		return views;
+	}
+
+	public static ComponentAttributeView toView(AttributeCode attribute)
+	{
+		ServiceProxy service = new ServiceProxy();
+		ComponentAttributeView view = new ComponentAttributeView();
+		AttributeCodePk pk = attribute.getAttributeCodePk();
+		AttributeCode code = service.getAttributeService().findCodeForType(pk);
+		AttributeType type = service.getAttributeService().findType(attribute.getAttributeCodePk().getAttributeType());
+
+		if (code != null && type != null) {
+			view.setExternalLink(code.getDetailUrl());
+			view.setCodeDescription(code.getLabel());
+			view.setCodeLongDescription(code.getDescription());
+			view.setTypeDescription(type.getDescription());
+			view.setTypeLongDescription(type.getDescription());
+			view.setType(type.getAttributeType());
+			view.setCode(code.getAttributeCodePk().getAttributeCode());
+			view.setBadgeUrl(code.getBadgeUrl());
+			view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
+			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
+			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
+			view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
+			view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
+			view.setUpdateDts(attribute.getUpdateDts());
+			view.setSortOrder(code.getSortOrder());
+			view.setGroupCode(code.getGroupCode());
+			view.setActiveStatus(attribute.getActiveStatus());
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find code and/or type.");
+		}
+		return view;
+	}
+
+	public static List<ComponentAttributeView> attributeCodeListToViewList(List<AttributeCode> attributes)
+	{
+		if (attributes != null && attributes.size() > 0) {
+
+			List<ComponentAttributeView> views = new ArrayList<>();
+			attributes.stream().forEach((attribute) -> {
+				views.add(ComponentAttributeView.toView(attribute));
+			});
+			return views;
+		} else {
+			return new ArrayList<>();
+		}
+
 	}
 
 	public String getCodeDescription()
@@ -332,6 +397,46 @@ public class ComponentAttributeView
 	public void setGroupCode(String groupCode)
 	{
 		this.groupCode = groupCode;
+	}
+
+	public boolean getOrphan()
+	{
+		return orphan;
+	}
+
+	public void setOrphan(boolean orphan)
+	{
+		this.orphan = orphan;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getBadgeUrl()
+	{
+		return badgeUrl;
+	}
+
+	public void setBadgeUrl(String badgeUrl)
+	{
+		this.badgeUrl = badgeUrl;
+	}
+
+	public String getHighlightStyle()
+	{
+		return highlightStyle;
+	}
+
+	public void setHighlightStyle(String highlightStyle)
+	{
+		this.highlightStyle = highlightStyle;
 	}
 
 }

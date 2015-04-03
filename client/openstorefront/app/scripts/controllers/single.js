@@ -37,6 +37,8 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     } else {
       $scope.data.data = null;
     }
+  }, function(){
+    $scope.data.data = null;
   });
   Business.getProsConsList().then(function(result){
     if (result) {
@@ -44,6 +46,8 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     } else {
       $scope.prosConsList = null;
     }
+  }, function(){
+    $scope.prosConsList = null;
   });
   Business.userservice.getWatches().then(function(result){
     if (result) {
@@ -51,6 +55,8 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     } else {
       $scope.watches = null;
     }
+  }, function(){
+    $scope.watches = null;
   });
 
 
@@ -155,7 +161,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     },
     // This is the failure function that handles a returned error
     function(error) {
-      console.error('ERROR: ', error);
+      console.warn('WARN: ', error);
       var id = null;
       if (!isEmpty($location.search()))
       {

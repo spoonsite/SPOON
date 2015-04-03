@@ -16,6 +16,8 @@
                   Would have to request privileges from the di2e help desk.
    28 Oct 2014:  Put this back in as Admin Tools are available on store-accept.
    07 Nov 2014:  Admin Tools updated with v1.1 of Storefront.  Deleting old tests, adding new ones.
+   21 Dec 2014:  Admin Tools received a MAJOR upgrade and additions for v1.2 of the Storefront.  Still need
+                  to write automation to test User Profiles, User Messages, Jobs, and System tabs.
 */
 describe('adminTools', function() {
     it('Admin Tools Menu is available from the drop-down under username', function () {
@@ -30,7 +32,7 @@ describe('adminTools', function() {
         expect(element.all(by.css('.adminTools')).count()).toEqual(1);
     });
 
-
+/*
     it('TODO-  Change a few values under Global Configuration then change back', function() {
 
         // Hourly Tab *
@@ -66,4 +68,5 @@ describe('TODO-  adminTools_Jira Configuration Tab', function() {
     it('TODO-  Delete the mapping', function() {
 
     });
+*/
 });

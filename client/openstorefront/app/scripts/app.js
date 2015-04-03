@@ -34,14 +34,17 @@ var app = angular
     'mgcrea.ngStrap',
     'ngTagsInput',
     'ngAnimate',
-    'ngCkeditor',
+    'ngCkeditor',    
     'ngGrid',
     'ngMockE2E',
     'bootstrapLightbox',
     'angular-carousel',
     'angulartics.google.analytics',
+    'angularFileUpload',
     'ngIdle',    
-    'multi-select'
+    'multi-select',
+    'angular.filter',
+    'notifications'
   // end of dependency injections
   ]
 // end of the module creation
@@ -49,7 +52,7 @@ var app = angular
 .filter('moment', function () {
   return function (input, momentFn) {
     var args = Array.prototype.slice.call(arguments, 2),
-        momentObj = moment(input);
+    momentObj = moment(input);
     return momentObj[momentFn].apply(momentObj, args);
   };
 })
@@ -70,7 +73,8 @@ var app = angular
   })
   .when('/admin', {
     templateUrl: 'views/admin.html',
-    controller: 'AdminCtrl'
+    controller: 'AdminCtrl',
+    reloadOnSearch: false
   })
   .when('/landing', {
     templateUrl: 'views/landing.html',
@@ -101,21 +105,12 @@ var app = angular
   $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
   $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
 
-  // /**
-  // * Global error handling
-  // */
-  // $httpProvider.interceptors.push(function($q) {
-  //   return {
-  //     'responseError': function(response) {
-  //       //Handle the error (Mainly unexpected other may need different handling)
-  //       //TODO: Add handling
-  //       // if (canRecover(rejection)) {
-  //         return response || $q.when(response);
-  //       // }
-  //       // return $q.reject(rejection);
-  //       }
-  //   };
-  // });
+
+  // add the errorhandling interceptor
+  $httpProvider.interceptors.push('httpStatusCodeInterceptorFactory');
+  
+ //Activate your interceptor 
+// $httpProvider.responseInterceptors.push(httpStatusCodeInterceptorFactory);
 
   // Here we adjust the tags module
   tagsInputConfigProvider
@@ -268,6 +263,7 @@ var app = angular
         if (current && current.loadedTemplateUrl === 'views/results.html') {
           resetAnimGlobals();
         }
+
         // setTimeout(function () {
         //   $('.searchBar:input[type=\'text\']').on('click', function () {
         //     $(this).select();
@@ -287,7 +283,12 @@ var app = angular
       * This funciton resets the search query when we don't want to be showing it
       ***************************************************************/
       $rootScope.$on('$locationChangeStart', function (event, next, current) {
-        if (!$location.path() || ($location.path() !== '/results' && $location.path() !== '/single' && $location.path() !== '/landing' && $location.path() !== '/compare' && $location.path() !== '/print')) {
+        if (!$location.path() || ($location.path() !== '/results' 
+          && $location.path() !== '/single' 
+          && $location.path() !== '/landing' 
+          && $location.path() !== '/compare' 
+          && $location.path() !== '/admin' 
+          && $location.path() !== '/print')) {
           $location.search({});
         }
       });
@@ -296,12 +297,6 @@ var app = angular
       * This function is what is called when the view has finally been loaded
       ***************************************************************/
       $rootScope.$on('$viewContentLoaded', function() {
-        Business.componentservice.getComponentDetails().then(function(result) {
-          Business.typeahead(result, null).then(function(value){
-            $rootScope.typeahead = value;
-          });
-        });
-        
         $timeout(function() {
           $('[data-toggle=\'tooltip\']').tooltip();
         }, 300);
@@ -401,6 +396,8 @@ var app = angular
         $location.path(path);
       };
 
+
+      var popupWin;
       /***************************************************************
       * This function sends the route to whatever path and search are passed in.
       ***************************************************************/
@@ -410,7 +407,7 @@ var app = angular
         $location.search(search);
         url = url + path + '?' + $.param($location.search());
         $location.search(oldSearch);
-        window.open(url, 'Component_Print_' + search.id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
+        popupWin = utils.openWindow(url, 'Component_Print_' + search.id, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', popupWin);
       };
 
       /***************************************************************
@@ -476,10 +473,10 @@ var app = angular
      /***************************************************************
              * This function removes all tooltip from the display 
              ***************************************************************/
-     $rootScope.removeAllTooltips = function () {
-       $('.popover').remove();
-     };
-      
+             $rootScope.removeAllTooltips = function () {
+               $('.popover').remove();
+             };
+
 
       /***************************************************************
       * This is a local function used in the httpBackend functions
@@ -506,10 +503,12 @@ var app = angular
       //////////////////////////////////////////////////////////////////////////////
       //Mock Back End  (use passThrough to route to server)
       $httpBackend.whenGET(/views.*/).passThrough();
+      $httpBackend.whenGET(/Article.*/).passThrough();
+      $httpBackend.whenPOST(/Article.*/).passThrough();
       $httpBackend.whenGET('System.action?UserAgent').passThrough();
-      
+      $httpBackend.whenGET('System.action?AppVersion').passThrough();
 
-      // LET THEM ALL THROUGH
+      // LET THEM ALL THROUGH      
       $httpBackend.whenGET(/api\/v1\/*/).passThrough();
       $httpBackend.whenPUT(/api\/v1\/*/).passThrough();
       $httpBackend.whenDELETE(/api\/v1\/*/).passThrough();

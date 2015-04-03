@@ -31,9 +31,15 @@ public class GenerateStatementOption
 	public static final String OPERATION_LIKE = "LIKE";
 	public static final String OPERATION_NOT_NULL = " IS NOT NULL";
 	public static final String OPERATION_NULL = " IS NULL";
+	public static final String OPERATION_LESS_THAN_EQUAL = "<=";
+	public static final String OPERATION_LESS_THAN = "<";
+	public static final String OPERATION_GREATER_THAN_EQUAL = " >=";
+	public static final String OPERATION_GREATER_THAN = ">";
+	public static final String OPERATION_IN = " IN";
 
 	public static final String PARAMETER_SUFFIX_DEFAULT = "Param";
 	public static final String PARAMETER_SUFFIX_SET = "SetParam";
+	public static final String PARAMETER_SUFFIX_END_RANGE = "EndRangeParam";
 
 	private String operation = OPERATION_EQUALS;
 	private String condition = CONDITION_AND;

@@ -64,13 +64,11 @@ public class RequiredForComponent
 			requiredTypeSet.add(attributeType.getAttributeType());
 		}
 
-		List<String> matchedAttributes = new ArrayList<>();
+		Set<String> matchedAttributes = new HashSet<>();
 		for (ComponentAttribute attribute : attributes) {
 			String type = attribute.getComponentAttributePk().getAttributeType();
 			if (requiredTypeSet.contains(type)) {
-				if (matchedAttributes.add(type)) {
-					matchedAttributes.add(type);
-				}
+				matchedAttributes.add(type);
 			}
 		}
 		if (matchedAttributes.size() < requiredTypeSet.size()) {

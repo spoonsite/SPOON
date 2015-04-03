@@ -15,11 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -30,6 +36,7 @@ import javax.validation.constraints.Size;
  */
 public class UserTracking
 		extends BaseEntity
+		implements ExportImport
 {
 
 	@PK(generated = true)
@@ -66,6 +73,14 @@ public class UserTracking
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	private String deviceType;
+
+	@ConsumeField
+	@Sanitize(TextSanitizer.class)
+	private String organization;
+
+	@ConsumeField
+	@Sanitize(TextSanitizer.class)
+	private String userTypeCode;
 
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
@@ -186,6 +201,67 @@ public class UserTracking
 	public void setDeviceType(String deviceType)
 	{
 		this.deviceType = deviceType;
+	}
+
+	/**
+	 * @return the organization
+	 */
+	public String getOrganization()
+	{
+		return organization;
+	}
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
+
+	/**
+	 * @return the userTypeCode
+	 */
+	public String getUserTypeCode()
+	{
+		return userTypeCode;
+	}
+
+	/**
+	 * @param userTypeCode the userTypeCode to set
+	 */
+	public void setUserTypeCode(String userTypeCode)
+	{
+		this.userTypeCode = userTypeCode;
+	}
+
+	@Override
+	public String export()
+	{
+		StringWriter stringWriter = new StringWriter();
+		CSVWriter writer = new CSVWriter(stringWriter);
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+		writer.writeNext(new String[]{getCreateUser(),
+			getOrganization(),
+			TranslateUtil.translate(UserTypeCode.class, getUserTypeCode()),
+			df.format(getCreateDts()),
+			TranslateUtil.translate(TrackEventCode.class, getTrackEventTypeCode()),
+			getClientIp(),
+			getBrowser(),
+			getBrowserVersion(),
+			getOsPlatform(),
+			getUserAgent(),
+			getDeviceType(),
+			getTrackingId()
+		});
+		return stringWriter.toString();
+	}
+
+	@Override
+	public void importData(String[] data)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }

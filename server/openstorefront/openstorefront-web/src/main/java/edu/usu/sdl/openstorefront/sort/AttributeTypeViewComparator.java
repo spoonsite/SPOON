@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.sort;
 
 import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -24,13 +25,13 @@ import java.util.Comparator;
  * @param <T>
  */
 public class AttributeTypeViewComparator<T extends AttributeTypeView>
-		implements Comparator<T>
+		implements Comparator<T>, Serializable
 {
 
 	@Override
 	public int compare(T o1, T o2)
 	{
-		return o1.getType().compareTo(o2.getType());
+		return o1.getAttributeType().compareTo(o2.getAttributeType());
 	}
 
 }

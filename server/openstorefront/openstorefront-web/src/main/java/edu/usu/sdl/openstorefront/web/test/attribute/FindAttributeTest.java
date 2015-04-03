@@ -51,7 +51,7 @@ public class FindAttributeTest
 		AttributeType attributeType = new AttributeType();
 		attributeType.setAttributeType("TEST-CASE-TMP");
 		attributeType.setDescription("This is a temp test attribute");
-		attributeType.setAllowMutlipleFlg(true);
+		attributeType.setAllowMultipleFlg(true);
 		attributeType.setArchitectureFlg(false);
 		attributeType.setImportantFlg(true);
 		attributeType.setRequiredFlg(false);
@@ -79,8 +79,7 @@ public class FindAttributeTest
 		});
 
 		results.append("<br>Remove attribute").append("<br>");
-		service.getAttributeService().removeAttributeCode(attributeCodePk);
-		service.getAttributeService().removeAttributeType(attributeType.getAttributeType());
+		service.getAttributeService().cascadeDeleteAttributeType(attributeType.getAttributeType());
 	}
 
 }
