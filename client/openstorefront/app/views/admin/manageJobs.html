@@ -22,7 +22,7 @@
 						<th ><a href="" ng-click="setPredicate('status', 'job');">Status <span ng-show="predicate['job'] === 'status'"><i ng-show="!reverse['job']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['job']" class="fa fa-sort-alpha-desc"></i></span></a></th>						
 						<th><a href="" ng-click="setPredicate('perviousFiredTime', 'job');">Pervious Fire Time <span ng-show="predicate['job'] === 'perviousFiredTime'"><i ng-show="!reverse['job']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['job']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('nextFiredTime', 'job');">Next Fire time <span ng-show="predicate['job'] === 'nextFiredTime'"><i ng-show="!reverse['job']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['job']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                                                <th>Job Data</th>						
+						<th>Job Data</th>						
 						<th>Action</th>
 					</tr>
 					<tr ng-repeat="job in jobs | orderBy:predicate['job']:reverse['job']" >
@@ -32,7 +32,7 @@
 						<td ng-class="job.status === 'NORMAL' ? 'success' :  job.status === 'PAUSED' ?  'warning' : job.status === 'BLOCKING' ?  'danger' : '' ">{{job.status}}</td>
 						<td>{{job.perviousFiredTime | date:'MM/dd/yyyy h:mm:ss a'}}</td>
 						<td>{{job.nextFiredTime | date:'MM/dd/yyyy h:mm:ss a'}}</td>
-                                                <td>{{job.jobData}}</td>						
+						<td>{{job.jobData}}</td>						
 						<td style="padding:0px 3px !important; width: 200px;" nowrap>&nbsp;
 							<button class="btn btn-default btn-sm" ng-click="removeAllTooltips(); pauseResumeJob(true, job.jobName)" ng-disabled="job.status !== 'NORMAL' && job.status !== 'BLOCKING' " popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Pause"><i class="fa fa-pause"></i></button>
 							<button class="btn btn-success btn-sm" ng-click="removeAllTooltips(); pauseResumeJob(false, job.jobName)" ng-disabled="job.status !== 'PAUSED' " popover data-trigger="hover" data-placement="top" data-html="true"  data-original-title="" data-container="body" data-content="Resume"><i class="fa fa-play"></i></button>

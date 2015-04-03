@@ -99,7 +99,6 @@ app.controller('AdminJobsCtrl', ['$scope', 'business', function ($scope, Busines
   
   $scope.runJobNow = function(jobname, groupname){
     Business.jobservice.runJobNow(jobname, groupname).then(function (results) {
-      triggerAlert('Started Job Succuessfully', 'jobalert', 'body', 3000);  
       $scope.refreshJobs($scope.showIntegrationJobs);
     });
   };

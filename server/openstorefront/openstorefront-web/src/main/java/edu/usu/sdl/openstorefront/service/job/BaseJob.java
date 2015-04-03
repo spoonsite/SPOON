@@ -38,7 +38,6 @@ public abstract class BaseJob
 	public void execute(JobExecutionContext context) throws JobExecutionException
 	{
 		try {
-                        log.log(Level.FINEST, "Running job: " + context.getJobDetail().getKey().getName());
 			executeInternaljob(context);
 		} catch (Exception e) {
 			//According the quartz best practise the job shouldn't throw an error.
