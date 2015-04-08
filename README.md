@@ -313,8 +313,14 @@ Setting up SOLR
 ===============
 ESA uses SOLR 4.3.1 so that is the version that the application is setup to use. 
 
-TODO 
+(Download Version 4.3.1 from http://archive.apache.org/dist/lucene/solr/)
 
+	1. unpackage
+	2. Replace (solr install dir)/example/solr/collection1/conf/schema.xml with the scheme.xml include in this project doc folder.
+	3. configure openstorefront to point to solr
+		a. /var/openstorefront/config/openstorefront.properties 
+		edit solr.server.url to  solr.server.url=http://localhost:8983/solr/collection1
+	4. Start Solr from (solr install dir)/example - java -jar start.jar 
 
 FAQ
 ===
