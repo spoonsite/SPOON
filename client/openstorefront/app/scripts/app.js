@@ -57,7 +57,7 @@ var app = angular
   };
 })
 // Here we configure the route provider
-.config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', '$httpProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider, $httpProvider) {
+.config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', '$httpProvider', '$locationProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider, $httpProvider, $locationProvider) {
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
@@ -95,6 +95,11 @@ var app = angular
   .otherwise({
     redirectTo: '/'
   });
+  
+  $locationProvider
+  .html5Mode(true)
+  .hashPrefix('!');
+  
 
   //disable IE ajax request caching
   //initialize get if not there

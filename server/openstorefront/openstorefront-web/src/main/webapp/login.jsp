@@ -146,7 +146,7 @@
 		  </form>
 		</div>
 	  </div>
-	</div>	
+    	</div>	
 		<script type="text/javascript">
 			var QueryString = function () {				
 				  var query_string = {};
@@ -171,8 +171,10 @@
 				if (QueryString.gotoPage != undefined)
 				{
 					document.getElementById('gotoPageId').value = QueryString.gotoPage;
+				} else {
+					document.getElementById('gotoPageId').value = "${REFERENCED_URL}";
 				}
-		</script>
+		</script>		
 	</body>
 </html>
 

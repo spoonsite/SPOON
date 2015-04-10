@@ -38,6 +38,24 @@ public class SecurityUtil
 	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
 
 	/**
+	 * Is the current request logged in
+	 *
+	 * @return
+	 */
+	public static boolean isLoggedIn()
+	{
+		boolean loggedIn = false;
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			loggedIn = currentUser.isAuthenticated();
+		} catch (Exception e) {
+			//ignore
+			loggedIn = false;
+		}
+		return loggedIn;
+	}
+
+	/**
 	 * Gets the current user logged in.
 	 *
 	 * @return the username
