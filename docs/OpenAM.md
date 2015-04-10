@@ -1,7 +1,7 @@
 # OpenAM
 
 ### Note: When the OpenAm policy agent is install on tomcat the application server will not start unless the OpenAM server is available.  This is a known issue with the Open AM Policy agent. 
-(see OPENAM-211: J2EE agents are unable to work, if the container was started prior to OpenAM)
+(see https://bugster.forgerock.org/jira/browse/OPENAM-211: J2EE agents are unable to work, if the container was started prior to OpenAM)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -75,7 +75,7 @@ http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/getting-s
 2. Log into OpenAM using `amadmin`
 3. Click on `Access Control > Top Level Realm > Agents > J2EE`
 4. Create a new J2EE agent by click on the `New...` button under Agent
-5. Craete the agent with the following parameters
+5. Create the agent with the following parameters
   - Name: `myagent`
   - Password: `password`
   - Configuration: `Centralized`
