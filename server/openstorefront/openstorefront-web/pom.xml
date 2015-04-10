@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>openstorefront</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>1.3</version>
+		<version>1.4</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-web</artifactId>
-	<version>1.3</version>
+	<version>1.4</version>
 	<packaging>war</packaging>
 
 	<name>openstorefront-web</name>
@@ -99,13 +99,12 @@
 			</exclusions>
 		</dependency>							
 		
-		<!--
+		
 		<dependency>
 			<groupId>org.tuckey</groupId>
 			<artifactId>urlrewritefilter</artifactId>
-			<version>4.0.3</version>
-		</dependency>		
-		-->
+			<version>4.0.4</version>
+		</dependency>				
 		<dependency>
 			<groupId>com.samaxes.filter</groupId>
 			<artifactId>cachefilter</artifactId>

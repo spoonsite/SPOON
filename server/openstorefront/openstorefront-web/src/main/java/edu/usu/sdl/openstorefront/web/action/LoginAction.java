@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
+import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -79,7 +80,7 @@ public class LoginAction
 		}
 
 		org.apache.shiro.mgt.SecurityManager securityManager = SecurityUtils.getSecurityManager();
-		gotoPage = (String) getContext().getRequest().getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE);
+		gotoPage = (String) getContext().getRequest().getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_FILTER_URL_ATTRIBUTE);
 		if (securityManager instanceof DefaultWebSecurityManager) {
 			DefaultWebSecurityManager webSecurityManager = (DefaultWebSecurityManager) securityManager;
 			Resolution resolution = null;
@@ -118,7 +119,8 @@ public class LoginAction
 				return resolution;
 			}
 		}
-		return new RedirectResolution("/login.jsp?gotoPage=" + gotoPage);
+		getContext().getRequest().getSession().setAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE, gotoPage);
+		return new ForwardResolution("/login.jsp").addParameter("gotoPage", gotoPage);
 	}
 
 	private Resolution handleLoginRedirect()
@@ -133,6 +135,16 @@ public class LoginAction
 		} else {
 			return new RedirectResolution(startPage);
 		}
+		//This for using shiro Direct redirect to be used with authc = org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter
+//		return new OnwardResolution(LoginAction.class)
+//		{
+//
+//			@Override
+//			public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception
+//			{
+//				WebUtils.redirectToSavedRequest(request, response, startPage);
+//			}
+//		};
 	}
 
 	@HandlesEvent("CheckHeaders")
