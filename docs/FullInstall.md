@@ -27,6 +27,16 @@ Pre-install: setup ESA or a Solr instance and make sure it's running
 Open AM (Optional)
 ESA or Solr (Base solr will require some changes to the schema.xml to make sure all field are available)
 
+####To Use Solr 
+(Download Version 4.3.1 from http://archive.apache.org/dist/lucene/solr/)
+
+	1. unpackage
+	2. Replace (solr install dir)/example/solr/collection1/conf/schema.xml with the scheme.xml include in this project document folder.
+	3. configure openstorefront to point to solr
+		a. /var/openstorefront/config/openstorefront.properties 
+		edit solr.server.url to  solr.server.url=http://localhost:8983/solr/collection1
+	4. Start Solr from (solr install dir)/example - java -jar start.jar 
+
 ##System Setup
 *Unless otherwise noted run as sudo
 *nano is a text edit another editor may be used.  

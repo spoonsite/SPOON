@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.ActionBean;
@@ -59,6 +60,22 @@ public abstract class BaseAction
 	public String getApplicationVersion()
 	{
 		return PropertiesManager.getApplicationVersion();
+	}
+
+	protected String getCookieValue(String key)
+	{
+		String value = null;
+
+		Cookie cookies[] = getContext().getRequest().getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals(key)) {
+					value = cookie.getValue();
+				}
+			}
+		}
+
+		return value;
 	}
 
 	protected void mapFields(Map<String, Object> fields, Object data, String propertyRoot)

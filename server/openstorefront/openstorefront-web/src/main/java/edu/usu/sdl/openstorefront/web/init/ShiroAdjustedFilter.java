@@ -22,7 +22,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.web.servlet.ShiroFilter;
 
 /**
@@ -34,6 +34,7 @@ public class ShiroAdjustedFilter
 {
 
 	public static final String REFERENCED_URL_ATTRIBUTE = "REFERENCED_URL";
+	public static final String REFERENCED_FILTER_URL_ATTRIBUTE = "REFERENCED_FILTER_URL";
 
 	@Override
 	protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws ServletException, IOException
@@ -54,7 +55,7 @@ public class ShiroAdjustedFilter
 				if (StringUtils.isNotBlank(queryString)) {
 					url = url + "?" + queryString;
 				}
-				httpServletRequest.getSession().setAttribute(REFERENCED_URL_ATTRIBUTE, url);
+				httpServletRequest.getSession().setAttribute(REFERENCED_FILTER_URL_ATTRIBUTE, url);
 			}
 		}
 		super.doFilterInternal(servletRequest, servletResponse, chain);
