@@ -1,6 +1,7 @@
 # OpenAM
 
-### Note: When the OpenAm policy agent is install on tomcat the application server will not start unless the OpenAM server is available.
+### Note: When the OpenAm policy agent is install on tomcat the application server will not start unless the OpenAM server is available.  This is a known issue with the Open AM Policy agent. 
+(see OPENAM-211: J2EE agents are unable to work, if the container was started prior to OpenAM)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
