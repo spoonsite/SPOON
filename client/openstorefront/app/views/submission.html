@@ -1,0 +1,478 @@
+<style>
+body {
+  position: relative;
+}
+</style>
+<div class="container bs-docs-container" ng-controller="SubmissionCtrl">
+
+  <div class="row">
+    <div class="col-md-2 hidden-sm hidden-xs faded-border" >
+      <div>
+        <div class="bs-sidebar hidden-print affix" role="complementary" data-offset-top="-100" bs-affix  id="scrollSpy">
+          <ul class="nav bs-sidenav">
+            <li data-target="#top" class="active" ng-class="getStarted()? 'complete':''">
+              <a target="_self" href="#top" ng-click="scrollTo('top', 'top');">Getting started</a>
+            </li>
+            <hr style="margin: 2px 0;">
+            <li data-target="#vitals" ng-class="{'complete': vitalsCheck(), 'disabled': !getStarted()}">
+              <a target="_self" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event):'';">Vitals</a>
+            </li>
+            <hr style="margin: 2px 0;">
+            <li data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && detailsForm.$dirty}">
+              <a target="_self" href="#details" ng-click="vitalsCheck()? scrollTo('details', 'details', '', $event): scrollTo('vitals', 'vitals', '', $event);">Details</a>
+              <ul class="nav">
+                <li data-target="#metadata" ng-class="{'disabled': !vitalsCheck()}">
+                  <a target="_self" href="#metadata" ng-click="vitalsCheck()? scrollTo('metadata', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Main Details</a>
+                </li>
+                <li data-target="#contacts" ng-class="{'disabled': !vitalsCheck()}">
+                  <a target="_self" href="#contacts" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Contacts</a>
+                </li>
+                <li data-target="#media" ng-class="{'disabled': !vitalsCheck()}">
+                  <a target="_self" href="#media" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Media</a>
+                </li>
+                <li data-target="#resources" ng-class="{'disabled': !vitalsCheck()}">
+                  <a target="_self" href="#resources" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Resources</a>
+                </li>
+                <li data-target="#dependencies" ng-class="{'disabled': !vitalsCheck()}">
+                  <a target="_self" href="#dependencies" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Dependencies</a>
+                </li>
+              </ul>
+            </li>
+            <!-- <li data-target="#moreDetails" ng-class="{'disabled': !vitalsCheck()}">
+              <a target="_self" href="#moreDetails" ng-click="vitalsCheck()? scrollTo('moreDetails', 'details', '', $event): scrollTo('vitals', 'vitals', '', $event);">Extra Details</a>
+            </li> -->
+            <hr style="margin: 2px 0;">
+            <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck()}">
+              <a target="_self" href="#reviewAndSubmit" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): scrollTo('vitals', 'vitals', '', $event);">Revew/Submit</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-10 formArea" >
+
+      <!-- GETTING STARTED SECTION -->
+      <div ng-show="current === 'top'">
+        <div class="row">
+          <div class="col-md-12 hidden-sm hidden-xs">
+            <div id="top" style="padding:0px 0px 25px 0px;">
+              <h1>Clearinghouse Component Submission Form.</h1>
+              <br>
+              <br>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div style="padding:0px 15px;">
+            <form class="form-horizontal">
+              <h2>1. Please enter your contact information.</h2>
+              <div class="form-group required">
+                <label class="col-sm-2 control-label" for="inputName">Name</label>
+                <div class="col-sm-10">
+                  <input type="text" id="inputName" class="form-control" placeholder="Name" required ng-model="name" autofocus="">
+                </div>
+              </div>
+              <div class="form-group required">
+                <label class="col-sm-2 control-label" for="inputEmail">Email address</label>
+                <div class="col-sm-10">
+                  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required ng-model="email">
+                </div>
+              </div>
+              <div class="form-group required">
+                <label class="col-sm-2 control-label" for="inputOrganization">Organization</label>
+                <div class="col-sm-10">
+                  <input type="text" id="inputOrganization" class="form-control" placeholder="Organization" required ng-model="organization">
+                </div>
+              </div>
+              <div class="col-sm-10 col-sm-offset-2" style="padding: 0px 5px;">
+                <button class="btn btn-default" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event):'';">Continue to Step 2</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 hidden-sm hidden-xs">
+            <div id="top" style="padding:35px 0px 25px 0px;">
+              <br>
+              <br>
+              <h4><i class="fa fa-warning"></i>&nbsp;This form will not add a component to the Clearhingouse Website, but will submit it for review under the DI2E Evaluation process. DI2E Administrators will then dertermine if it will later be added to the Clearinghouse Website.</h4>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END GETTING STARTED SECTION -->
+
+      <!-- VITAL INFORMATION SECTION -->
+      <div ng-show="current === 'vitals'">
+        <h1 id="vitals">2. Required Component Information:</h1>
+        <form class="form-signin">
+          <div class="required">
+            <label style="position:relative; padding-right:15px; padding-top:7px;" for="name">Name</label>
+            <input type="text" id="name" class="form-control" placeholder="Component Name" required ng-model="vitals.name" autofocus>
+            <label style="position:relative; padding-right:15px; padding-top:7px;" for="description">Description</label>
+            <textarea type="text" id="description" class="form-control" placeholder="Component Description" required ng-model="vitals.description" style="min-width: 100%; min-height:150px;"></textarea>
+            <label style="position:relative; padding-right:15px; padding-top:7px;" for="organization">Organization</label>
+            <input type="text" id="organization" class="form-control" placeholder="Organization" required ng-model="vitals.organization">
+          </div>
+          <div style="padding-top:15px;">
+            <label for="requiredAttributes">Required Attributes</label>
+            <table id="requiredAttributes" class="table table-striped table-bordered">
+              <tbody>
+                <tr>
+                  <th>Attribute Type</th>
+                  <th>Attribute Code</th>         
+                </tr>
+                <!-- repeat on each attribute -->
+                <tr class="ng-scope">
+                  <td><span class="required ng-binding">Component Type</span></td>
+                  <td>
+                    <select type="text" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="type" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code"><option value="0">Application</option><option value="1">Development Tools</option><option value="2">Documentation</option><option value="3">Environment</option><option value="4">Other</option><option value="5">Service Endpoint</option><option value="6">Software</option><option value="7">Standards, Specifications, and APIs</option><option value="8" selected="selected">Widget</option></select>
+                  </td>          
+                </tr>       
+              </tbody>
+            </table>
+          </div>
+          <div style="padding-bottom:15px;">
+            <button class="btn btn-default" ng-click="vitalsCheck()? scrollTo('details', 'details', '', $event): scrollTo('vitals', 'vitals', '', $event);">Continue to Step 3</button>
+          </div>
+        </form>
+      </div>
+      <!-- END VITAL INFORMATION SECTION -->
+
+      <!-- EXTRA INFORMATION SECTION -->
+      <div ng-show="current === 'details'">
+        <h1 id="details">3. Extra Component Details:</h1>
+        <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): scrollTo('vitals', 'vitals', '', $event); $details={}; detailsForm.$setPristine()">Skip Section</button></small>
+        <hr>
+        <form name="detailsForm">
+          <!-- 
+          <input type="text" id="inputTest" name="inputTest" placeholder='test' class="form-control" ng-model="details.inputTest">
+          <p>$pristine = {{detailsForm.$pristine}}</p>
+          <p>$dirty = {{detailsForm.$dirty}}</p> -->
+
+          <!-- META DATA -->
+          <h2 id="metadata">Main Details</h2>
+          <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Skip</button></small>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <hr>
+          <!-- END META DATA -->
+
+          <!-- CONTACTS -->
+          <h2 id="contacts">Contacts</h2>
+          <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Skip</button></small>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <hr>
+          <!-- END CONTACTS -->
+
+          <!-- MEDIA -->
+          <h2 id="media">Media:</h2>
+          <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Skip</button></small>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <hr>
+          <!-- END MEDIA -->
+          
+          <!-- EXTERNAL RESOURCES -->
+          <h2 id="resources">External Resources:</h2>
+          <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Skip</button></small>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>          
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <hr>
+          <!-- END EXTERNAL RESOURCES -->
+          
+          <!-- DEPENDENCIES -->
+          <h2 id="dependencies">Dependencies:</h2>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <!-- END DEPENDENCIES -->
+
+          <div style="padding-bottom:15px;">
+            <button class="btn btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): scrollTo('vitals', 'vitals', '', $event);">Review and Submit</button>
+          </div>
+        </form>
+      </div>
+      <!-- END EXTRA DETAILS SECTION -->
+
+      <!-- REVIEW AND SUBMIT SECTION -->
+      <div ng-show="current === 'submit'">
+        <h1 id="reviewAndSubmit">Review and submit the component:</h1>
+        <br>
+        <div class="col-md-12">
+          <h2>Quick View</h2>
+        </div>
+        <div class="col-md-12" style="padding:20px; border-radius:10px; border: 1px solid dimgray; background: #FFF">
+          <h3>This is where you would see a quick view of the component information so far.</h3>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+      </div>
+      <!-- REVIEW AND SUBMIT SECTION -->
+    </div>
+  </div>
+</div>

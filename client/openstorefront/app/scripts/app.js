@@ -97,8 +97,7 @@ var app = angular
   });
   
   $locationProvider
-  .html5Mode(true)
-  .hashPrefix('!');
+  .html5Mode(true);
   
 
   //disable IE ajax request caching
