@@ -51,9 +51,6 @@ var app = angular
 // Here we configure the route provider
 .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
-  $locationProvider
-  .html5Mode(true);
-
 
 //   //disable IE ajax request caching
 //   //initialize get if not there
