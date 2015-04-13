@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskManagerStatus;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.util.Convert;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -85,6 +87,18 @@ public class AsyncTaskManager
 			}
 		}
 		return taskFuture;
+	}
+
+	public static List<TaskFuture> getTasksByName(String name)
+	{
+		List<TaskFuture> taskFutures = new ArrayList<>();
+
+		for (TaskFuture taskFutureLocal : taskPool.getTasks()) {
+			if (taskFutureLocal.getTaskName().equals(name)) {
+				taskFutures.add(taskFutureLocal);
+			}
+		}
+		return taskFutures;
 	}
 
 	/**

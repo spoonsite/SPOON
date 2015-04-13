@@ -49,7 +49,7 @@ public class ShiroAdjustedFilter
 				return;
 			}
 
-			if (url.endsWith("Login.action") == false) {
+			if (url.endsWith("Login.action") == false && url.contains("/api/") == false) {
 				String queryString = httpServletRequest.getQueryString();
 
 				if (StringUtils.isNotBlank(queryString)) {

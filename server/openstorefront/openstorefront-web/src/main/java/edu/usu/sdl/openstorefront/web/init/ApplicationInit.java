@@ -75,6 +75,7 @@ public class ApplicationInit
 	public void contextDestroyed(ServletContextEvent sce)
 	{
 		//Shutdown in reverse order to make sure the dependancies are good.
+		shutdownManager(new ReportManager());
 		shutdownManager(new AsyncTaskManager());
 		shutdownManager(new UserAgentManager());
 		shutdownManager(new JobManager());
@@ -84,7 +85,6 @@ public class ApplicationInit
 		shutdownManager(new SolrManager());
 		shutdownManager(new DBManager());
 		shutdownManager(new FileSystemManager());
-		shutdownManager(new ReportManager());
 	}
 
 	private void shutdownManager(Initializable initializable)
