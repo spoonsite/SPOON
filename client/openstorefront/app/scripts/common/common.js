@@ -172,9 +172,9 @@ var triggerAlert = function(text, uid, id, delay, append) {
     }
     $('#alert_holder_'+uid).remove();
     if (append) {
-      $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+      $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">&times;</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
     } else {
-      $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;"  id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+      $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;"  id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">&times;</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
     }
     
     // this will hide the alert on any action outside the alert box.
