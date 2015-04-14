@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
@@ -85,9 +86,16 @@ import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.web.rest.model.TagView;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,11 +112,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import jersey.repackaged.com.google.common.collect.Lists;
+import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileWriter;
+import net.java.truevfs.access.TPath;
+import net.java.truevfs.access.TVFS;
+import net.java.truevfs.kernel.spec.FsSyncException;
 
 /**
  * ComponentRESTResource Resource
@@ -261,16 +276,7 @@ public class ComponentRESTResource
 		if (componentAll != null) {
 			List<ComponentAll> fullComponents = new ArrayList<>();
 			fullComponents.add(componentAll);
-
-			String componentJson;
-			try {
-				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
-			} catch (JsonProcessingException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to export component.", ex);
-			}
-			Response.ResponseBuilder response = Response.ok(componentJson);
-			response.header("Content-Disposition", "attachment; filename=\"" + componentAll.getComponent().getName() + ".json\"");
-			return response.build();
+			return exportComponents(fullComponents);
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
@@ -286,20 +292,73 @@ public class ComponentRESTResource
 			@FormParam("id")
 			@RequiredParam List<String> ids)
 	{
-		if (ids.isEmpty() == false) {
-			List<ComponentAll> fullComponents = new ArrayList<>();
-			for (String componentId : ids) {
-				ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
-				fullComponents.add(componentAll);
-			}
+		List<ComponentAll> fullComponents = new ArrayList<>();
+		for (String componentId : ids) {
+			ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
+			fullComponents.add(componentAll);
+		}
+		return exportComponents(fullComponents);
+	}
 
-			String componentJson;
+	private Response exportComponents(List<ComponentAll> fullComponents)
+	{
+		if (fullComponents.isEmpty() == false) {
 			try {
-				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
-				Response.ResponseBuilder response = Response.ok(componentJson);
-				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.json\"");
+				String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
+				String archiveName = FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/exportComponent-" + System.currentTimeMillis() + ".zip";
+				File entry = new TFile(archiveName + "/components.json");
+				try (Writer writer = new TFileWriter(entry)) {
+					writer.write(componentJson);
+				} catch (IOException io) {
+					throw new OpenStorefrontRuntimeException("Unable to export components.", io);
+				}
+
+				Set<String> fileNameMediaSet = new HashSet<>();
+				Set<String> fileNameResourceSet = new HashSet<>();
+				for (ComponentAll componentAll : fullComponents) {
+					//media
+					for (ComponentMedia componentMedia : componentAll.getMedia()) {
+						java.nio.file.Path mediaPath = componentMedia.pathToMedia();
+						if (mediaPath != null) {
+							String name = mediaPath.getFileName().toString();
+							if (fileNameMediaSet.contains(name) == false) {
+								java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
+								Files.copy(mediaPath, archiveMediaPath);
+								fileNameMediaSet.add(name);
+							}
+						}
+					}
+
+					//localreources
+					for (ComponentResource componentResource : componentAll.getResources()) {
+						java.nio.file.Path resourcePath = componentResource.pathToResource();
+						if (resourcePath != null) {
+							String name = resourcePath.getFileName().toString();
+							if (fileNameResourceSet.contains(name) == false) {
+								java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
+								Files.copy(resourcePath, archiveResourcePath);
+								fileNameResourceSet.add(name);
+							}
+						}
+					}
+				}
+				TVFS.umount();
+
+				Response.ResponseBuilder response = Response.ok(new StreamingOutput()
+				{
+
+					@Override
+					public void write(OutputStream output) throws IOException, WebApplicationException
+					{
+						Files.copy(Paths.get(archiveName), output);
+					}
+
+				});
+				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
 				return response.build();
-			} catch (JsonProcessingException ex) {
+			} catch (JsonProcessingException | FsSyncException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
+			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
 			}
 		} else {

@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
@@ -32,9 +33,12 @@ import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +50,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileInputStream;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -209,16 +215,75 @@ public class UploadAction
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
 			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			try {
-				List<ComponentAll> components = StringProcessor.defaultObjectMapper().readValue(uploadFile.getInputStream(), new TypeReference<List<ComponentAll>>()
-				{
-				});
 
-				TaskRequest taskRequest = new TaskRequest();
-				taskRequest.setAllowMultiple(false);
-				taskRequest.setName("Uploading Component(s)");
-				taskRequest.setDetails("Component(s) Processing: " + components.size() + " from Filename: " + uploadFile.getFileName());
-				service.getAyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
+			try {
+				Set<String> allowTextTypes = new HashSet<>();
+				Set<String> allowZipTypes = new HashSet<>();
+				allowTextTypes.add("text/json");
+				allowTextTypes.add("text");
+				allowTextTypes.add("application/json");
+				allowZipTypes.add("application/zip");
+				allowZipTypes.add("application/x-zip-compressed");
+
+				//This comes from the client
+				String bestGuessContentType = uploadFile.getContentType();
+				if (allowTextTypes.contains(bestGuessContentType) == false
+						&& allowZipTypes.contains(bestGuessContentType) == false) {
+
+					//check extentsion (this comes from the server config...based on the file extension)
+					bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
+					if (allowTextTypes.contains(bestGuessContentType) == false
+							&& allowZipTypes.contains(bestGuessContentType) == false) {
+						errors.put("uploadFile", "Format not supported.  Requires json text file or zip file");
+					}
+				}
+
+				if (errors.isEmpty()) {
+					List<ComponentAll> components = new ArrayList<>();
+					if (allowTextTypes.contains(bestGuessContentType)) {
+						try (InputStream in = uploadFile.getInputStream()) {
+							components = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ComponentAll>>()
+							{
+							});
+						} catch (IOException ex) {
+							throw ex;
+						}
+					} else {
+						//zip handling
+						File tempFile = new File(FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/" + System.currentTimeMillis() + "-Temp.zip");
+						uploadFile.save(tempFile);
+						TFile archive = new TFile(tempFile.getPath());
+						for (TFile file : archive.listFiles()) {
+							if (file.isFile()) {
+								try (InputStream in = new TFileInputStream(file)) {
+									components = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ComponentAll>>()
+									{
+									});
+								} catch (IOException ex) {
+									throw ex;
+								}
+							} else if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
+								for (TFile mediaFile : file.listFiles()) {
+									Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+								}
+							} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
+								for (TFile resourceFile : file.listFiles()) {
+									Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+								}
+							}
+						}
+						//cleanup temp zip
+						if (tempFile.delete() == false) {
+							log.log(Level.WARNING, MessageFormat.format("Unable to remove temp upload file.  It can be safely removed from: {0}", tempFile.getPath()));
+						}
+					}
+
+					TaskRequest taskRequest = new TaskRequest();
+					taskRequest.setAllowMultiple(false);
+					taskRequest.setName("Uploading Component(s)");
+					taskRequest.setDetails("Component(s) Processing: " + components.size() + " from Filename: " + uploadFile.getFileName());
+					service.getAyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
+				}
 			} catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
@@ -240,8 +305,8 @@ public class UploadAction
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
 			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			try {
-				List<ArticleView> articles = StringProcessor.defaultObjectMapper().readValue(uploadFile.getInputStream(), new TypeReference<List<ArticleView>>()
+			try (InputStream in = uploadFile.getInputStream()) {
+				List<ArticleView> articles = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ArticleView>>()
 				{
 				});
 				Boolean flag = false;
