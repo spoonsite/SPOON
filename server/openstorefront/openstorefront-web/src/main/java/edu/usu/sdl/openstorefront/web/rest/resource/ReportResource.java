@@ -216,8 +216,9 @@ public class ReportResource
 
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(true);
-			taskRequest.setName("Generating Report");
+			taskRequest.setName(TaskRequest.TASKNAME_REPORT);
 			taskRequest.setDetails("Report: " + report.getReportType() + " Report id: " + report.getReportId() + " for user: " + SecurityUtil.getCurrentUserName());
+			taskRequest.getTaskData().put(TaskRequest.DATAKEY_REPORT_ID, report.getReportId());
 			service.getAyncProxy(service.getReportService(), taskRequest).generateReport(report);
 
 		} else {
