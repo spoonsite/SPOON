@@ -60,7 +60,7 @@
               <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                 <li class="tag-item ng-scope" ng-repeat="tag in details.details.tags" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px 'Helvetica Neue',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
                   <span ng-bind="tag.text"></span>
-                  <a ng-if="(user && tag.createUser && user.info.username === tag.createUser) || !tag.createUser || user.info.admin" class="remove-button" ng-click="removeTag(details.details.componentId, tag, details.details.tags)" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">×</a>
+                  <a ng-if="(user && tag.createUser && user.info.username === tag.createUser) || !tag.createUser || user.info.admin" class="remove-button" ng-click="removeTag(details.details.componentId, tag, details.details.tags)" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
                 </li>
               </ul>
             </div>
@@ -70,6 +70,102 @@
       </div>
     </div>
     <!-- END TITLE SECTION -->
+
+
+
+    <div class="leftCol hideTheExtra" style="background:white; margin-top:-10px; padding:0px 15px 0px 40px;">
+      <div ng-if="details.details.evaluation.startDate !== null" class="rightCol">
+        <table class="table table-bordered table-hover" style="table-layout: fixed;"  id="evaluationSectionsUpdate">
+          <tbody ng-if="details.details.evaluation && details.details.evaluation.evaluationSections && details.details.evaluation.evaluationSections.length">
+            <!-- Currently this table only shows if there is a start date -->
+            <tr>
+              <th ng-if="details.details.evaluation.evaluationSections.length" class="valign" colspan="2"><h4>Reusability Factors (5=best)</h4></th>
+              <th ng-if="!details.details.evaluation.evaluationSections.length" class="valign" colspan="2"><h4>Component Evaluation Information</h4></th>
+            </tr>
+            <tr ng-if="details.details.evaluation.endDate">
+              <th class="valign" style="vertical-align:middle"><h5>Evaluation Date</h5></th>
+              <th class="valign"><h5>{{getDate(details.details.evaluation.endDate)}}</h5></th>
+            </tr>
+            <tr data-ng-repeat="row in details.details.evaluation.evaluationSections | partition:2">
+              <td data-ng-repeat="col in row" class="valign" style="padding: 0px;">
+                <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px; border-left: 1px solid lightgray; margin-left: -1px; width:77px; float: right;" data-toggle="tooltip" data-placement="bottom" data-title="{{col.actualScore}}" data-trigger="hover">
+                  <i ng-if="!col.notAvailable && col.actualScore > 0" ng-repeat="t in getTimes(col.actualScore) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
+                  </i>
+                  <span ng-if="!col.notAvailable && col.actualScore <= 0">&nbsp;</span>
+                  <span ng-if="col.notAvailable" ><b>N/A</b></span>
+                </div>
+                <div  ng-class="getIsUpdated('evaluationSections')? 'updatedForUser': ''" class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>{{getEvalDescription(col)}}" >
+                  <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="updatedStuff">
+        <div class="section-headers"><h4>Component Description</h4></div>
+        <p class="results-content-description" ng-class="getIsUpdated('description')? 'updatedForUser': ''" style="margin-left: 0px;" ng-bind-html="details.details.description">
+        </p>
+        <br>
+      </div>
+      <div ng-if="details.details.componentMedia[0]" class="leftCol hideTheExtra" id="mediaUpdate">
+        <div class="section-headers"><h4>Screenshots / Media</h4></div>
+        <br>
+        <div class="containers" ng-class="getIsUpdated('media')? 'updatedForUser': ''" >
+          <ul style="list-style-type: none;">
+            <li ng-repeat="image in getImages(details.details.componentMedia) | limitTo:3" style="display:inline; padding:5px 10px 10px 0;" style="display:inline">
+              <a ng-click="openLightboxModal($index, details.details.componentMedia)" style="text-decoration:none; cursor:pointer; width: 100px; height: 100px; overflow: hidden;">
+                <img ng-src="{{image.link}}" class="img-thumbnail" alt="description" title="description goes here" style="width: 100px; height: auto;">
+              </a>
+            </li>
+            <li ng-if="images.length > 3" style="display:inline">
+              <button class="btn btn-default" ng-click="openLightboxModal(3, details.details.componentMedia)">View More</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div ng-if="evaluationAttributes.exist" class="row">
+        <div class="col-md-12">
+          <div class="section-headers addBorders"><h4>DI2E Evaluation Level</h4></div>
+          <table class="table table-bordered table-hover" >
+            <tr ng-if="evaluationAttributes.level">
+              <th colspan="2" style="vertical-align: middle  text-overflow: ellipsis; overflow: hidden;">
+                {{evaluationAttributes.level.typeDescription}}
+              </th>
+              <td colspan="8" class="{{evaluationAttributes.level.highlightStyle}}" >
+                <h4>{{evaluationAttributes.level.codeDescription}}</h4>
+                <span dynamichtml="evaluationAttributes.level.codeLongDescription"></span>
+              </td>     
+            </tr>
+            <tr ng-if="evaluationAttributes.state">
+              <th colspan="2" style="vertical-align: middle  text-overflow: ellipsis; overflow: hidden;">
+                {{evaluationAttributes.state.typeDescription}}
+              </th>
+              <td  colspan="8" class="{{evaluationAttributes.state.highlightStyle}}" >
+                <h4>{{evaluationAttributes.state.codeDescription}}</h4>
+                <span dynamichtml="evaluationAttributes.state.codeLongDescription"></span>
+              </td>     
+            </tr>
+            <tr ng-if="evaluationAttributes.intent">
+              <th colspan="2" style="vertical-align: middle  text-overflow: ellipsis; overflow: hidden;">
+                {{evaluationAttributes.intent.typeDescription}}
+              </th>
+              <td  colspan="8" class="{{evaluationAttributes.intent.highlightStyle}}" >
+                <h4>{{evaluationAttributes.intent.codeDescription}}</h4>
+                <span dynamichtml="evaluationAttributes.intent.codeLongDescription"></span>
+              </td>     
+            </tr>   
+          </table>  
+        </div>
+      </div>
+
+
+
+
+    </div>
+
+
 
 
     <!-- Tabbing for Results Page -->

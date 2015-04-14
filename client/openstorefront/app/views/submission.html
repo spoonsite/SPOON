@@ -1,13 +1,27 @@
 <style>
 body {
   position: relative;
+  background:#ddd;
 }
 </style>
-<div class="container bs-docs-container" ng-controller="SubmissionCtrl">
+<!--[if gte IE 9]>
+  <style type="text/css">
+    .gradient {
+       filter: none;
+    }
+  </style>
+  <![endif]-->
+  <div class="container bs-docs-container" ng-controller="SubmissionCtrl" >
 
-  <div class="row">
-    <div class="col-md-2 hidden-sm hidden-xs faded-border" >
-      <div>
+    <div style="width: inherit;">
+<!--     <div class="row banner">
+      <img src="images/logo/logo-words.svg" alt="" style="padding: 7px; width: auto; height:inherit;">
+    </div> -->
+  </div>
+
+  <div class="row" style="position:relative;">
+    <div class="col-md-2 hidden-sm hidden-xs faded-border" style="position:relative;">
+      <div style="position:relative;">
         <div class="bs-sidebar hidden-print affix" role="complementary" data-offset-top="-100" bs-affix  id="scrollSpy">
           <ul class="nav bs-sidenav">
             <li data-target="#top" class="active" ng-class="getStarted()? 'complete':''">
@@ -18,32 +32,32 @@ body {
               <a target="_self" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event):'';">Vitals</a>
             </li>
             <hr style="margin: 2px 0;">
-            <li data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && detailsForm.$dirty}">
-              <a target="_self" href="#details" ng-click="vitalsCheck()? scrollTo('details', 'details', '', $event): scrollTo('vitals', 'vitals', '', $event);">Details</a>
+            <li data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
+              <a target="_self" href="#details" ng-click="vitalsCheck()? scrollTo('details', 'details', '', $event): ''">Details</a>
               <ul class="nav">
                 <li data-target="#metadata" ng-class="{'disabled': !vitalsCheck()}">
-                  <a target="_self" href="#metadata" ng-click="vitalsCheck()? scrollTo('metadata', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Main Details</a>
+                  <a target="_self" href="#metadata" ng-click="vitalsCheck()? scrollTo('metadata', 'details', 'details', $event): ''">Main Details</a>
                 </li>
                 <li data-target="#contacts" ng-class="{'disabled': !vitalsCheck()}">
-                  <a target="_self" href="#contacts" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Contacts</a>
+                  <a target="_self" href="#contacts" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): ''">Contacts</a>
                 </li>
                 <li data-target="#media" ng-class="{'disabled': !vitalsCheck()}">
-                  <a target="_self" href="#media" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Media</a>
+                  <a target="_self" href="#media" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): ''">Media</a>
                 </li>
                 <li data-target="#resources" ng-class="{'disabled': !vitalsCheck()}">
-                  <a target="_self" href="#resources" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Resources</a>
+                  <a target="_self" href="#resources" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): ''">Resources</a>
                 </li>
                 <li data-target="#dependencies" ng-class="{'disabled': !vitalsCheck()}">
-                  <a target="_self" href="#dependencies" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Dependencies</a>
+                  <a target="_self" href="#dependencies" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''">Dependencies</a>
                 </li>
               </ul>
             </li>
             <!-- <li data-target="#moreDetails" ng-class="{'disabled': !vitalsCheck()}">
-              <a target="_self" href="#moreDetails" ng-click="vitalsCheck()? scrollTo('moreDetails', 'details', '', $event): scrollTo('vitals', 'vitals', '', $event);">Extra Details</a>
+              <a target="_self" href="#moreDetails" ng-click="vitalsCheck()? scrollTo('moreDetails', 'details', '', $event): ''">Extra Details</a>
             </li> -->
             <hr style="margin: 2px 0;">
             <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck()}">
-              <a target="_self" href="#reviewAndSubmit" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): scrollTo('vitals', 'vitals', '', $event);">Revew/Submit</a>
+              <a target="_self" href="#reviewAndSubmit" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): ''">Revew/Submit</a>
             </li>
           </ul>
         </div>
@@ -115,11 +129,11 @@ body {
         <form class="form-signin">
           <div class="required">
             <label style="position:relative; padding-right:15px; padding-top:7px;" for="name">Name</label>
-            <input type="text" id="name" class="form-control" placeholder="Component Name" required ng-model="vitals.name" autofocus>
+            <input type="text" id="name" class="form-control" placeholder="Component Name" required ng-model="component.name" autofocus>
             <label style="position:relative; padding-right:15px; padding-top:7px;" for="description">Description</label>
-            <textarea type="text" id="description" class="form-control" placeholder="Component Description" required ng-model="vitals.description" style="min-width: 100%; min-height:150px;"></textarea>
+            <textarea type="text" id="description" class="form-control" placeholder="Component Description" required ng-model="component.description" style="min-width: 100%; min-height:150px;"></textarea>
             <label style="position:relative; padding-right:15px; padding-top:7px;" for="organization">Organization</label>
-            <input type="text" id="organization" class="form-control" placeholder="Organization" required ng-model="vitals.organization">
+            <input type="text" id="organization" class="form-control" placeholder="Organization" required ng-model="component.organization">
           </div>
           <div style="padding-top:15px;">
             <label for="requiredAttributes">Required Attributes</label>
@@ -130,17 +144,17 @@ body {
                   <th>Attribute Code</th>         
                 </tr>
                 <!-- repeat on each attribute -->
-                <tr class="ng-scope">
-                  <td><span class="required ng-binding">Component Type</span></td>
+                <tr class="ng-scope" ng-repeat="attribute in requiredAttributes">
+                  <td><span class="required ng-binding">{{attribute.description}}</span></td>
                   <td>
-                    <select type="text" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="type" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code"><option value="0">Application</option><option value="1">Development Tools</option><option value="2">Documentation</option><option value="3">Environment</option><option value="4">Other</option><option value="5">Service Endpoint</option><option value="6">Software</option><option value="7">Standards, Specifications, and APIs</option><option value="8" selected="selected">Widget</option></select>
+                    <select type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[$index]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
                   </td>          
                 </tr>       
               </tbody>
             </table>
           </div>
           <div style="padding-bottom:15px;">
-            <button class="btn btn-default" ng-click="vitalsCheck()? scrollTo('details', 'details', '', $event): scrollTo('vitals', 'vitals', '', $event);">Continue to Step 3</button>
+            <button class="btn btn-default" ng-disabled="!vitalsCheck()" ng-click="vitalsCheck()? scrollTo('details', 'details', '', $event): ''">Continue to Step 3</button>
           </div>
         </form>
       </div>
@@ -148,8 +162,7 @@ body {
 
       <!-- EXTRA INFORMATION SECTION -->
       <div ng-show="current === 'details'">
-        <h1 id="details">3. Extra Component Details:</h1>
-        <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): scrollTo('vitals', 'vitals', '', $event); $details={}; detailsForm.$setPristine()">Skip Section</button></small>
+        <h1 id="details">3. Extra Component Details:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): ''; detailsDone = true">Skip Section</button></small></h1>
         <hr>
         <form name="detailsForm">
           <!-- 
@@ -158,52 +171,161 @@ body {
           <p>$dirty = {{detailsForm.$dirty}}</p> -->
 
           <!-- META DATA -->
-          <h2 id="metadata">Main Details</h2>
-          <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Skip</button></small>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
+          <h2 id="metadata">Main Details<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): ''">Skip</button></small></h2>
+          <panel title="Select Applicable Attributes" class-list="edges">
+            <table id="attributes" class="table table-striped table-bordered">
+              <tbody>
+                <tr>
+                  <th>Attribute Type</th>
+                  <th>Attribute Code</th>         
+                </tr>
+                <!-- repeat on each attribute -->
+                <tr class="ng-scope" ng-repeat="attribute in attributes">
+                  <td><span class="ng-binding">{{attribute.description}}&nbsp;
+                    <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.description}} information" data-trigger="hover" ng-click="openInfo(attribute)"></i>
+                  </span></td>
+                  <td>
+                    <multiselect ng-if="attribute.allowMultipleFlg" on-change="vitalsCheck()" selected="component.attributes[requiredAttributes.length + $index]" options="code as code.label for code in list" list="attribute.codes | makeattribute:attribute"></multiselect>
+                    <select class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[requiredAttributes.length + $index]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                    <div class="tags" ng-if="!attribute.allowMultipleFlg && component.attributes[requiredAttributes.length + $index]">
+                      <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
+                        <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                          <span ng-bind="component.attributes[requiredAttributes.length + $index].label"></span>
+                          <a class="remove-button" ng-click="component.attributes[requiredAttributes.length + $index] = ''" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>          
+                </tr>       
+              </tbody>
+            </table>
+          </panel>
+          <panel class-list="edges" open-state="true" title="Add/Edit Metadata">
+            <div class="form-group"  >
+              <label class="col-sm-2 control-label">Label</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="metadataLabel"
+                name="label"
+                class="form-control"
+                ng-model="component.metadata[metadataLength].label"
+                ng-minlength=1
+                ng-maxlength=250 
+                on-enter="addMetadata()"/>
+              </div>
+              <p ng-show="detailsForm.label.$error.minlength && !detailsForm.label.$focused" class="help-block">Label must be longer than 1 character in length.</p>
+            </div>  
+            <div class="form-group"  >
+              <label class="col-sm-2 control-label">Value</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                name="value"
+                class="form-control"
+                ng-model="component.metadata[metadataLength].value"
+                ng-minlength=1
+                ng-maxlength=250 
+                on-enter="addMetadata()"/>
+              </div>
+              <p ng-show="detailsForm.value.$error.minlength && !detailsForm.value.$focused" class="help-block">Value must be longer than 1 character in length.</p>
+            </div>
+            <button class="btn btn-primary" type="button" ng-click="addMetadata()"><i class="fa fa-save"></i>&nbsp;Add</button>
+            <div class="tags">
+              <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
+                <li ng-if="tag.label && tag.value" class="tag-item" ng-repeat="tag in component.metadata" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                  <span>{{tag.label}}&nbsp;&mdash;&nbsp;{{tag.value}}</span>
+                  <a class="remove-button" ng-click="removeMetadata($index);" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
+                </li>
+              </ul>
+            </div>
+          </panel>
+          <panel class-list="edges" open-state="true" title="Add Tag">
+            <div class="form-group"  >
+              <label class="col-sm-2 control-label">Tag</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="tagLabel"
+                name="text"
+                class="form-control"
+                ng-model="component.tags[tagsLength].text"
+                ng-minlength=1
+                ng-maxlength=250 
+                on-enter="addTag()"/>
+              </div>
+              <p ng-show="detailsForm.text.$error.minlength && !detailsForm.text.$focused" class="help-block">Tag must be longer than 1 character in length.</p>
+            </div>        
+            <button type="button" class="btn btn-primary" ng-click="addTag()" ng-disabled="detailsForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button> 
+            <div class="tags">
+              <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
+                <li ng-if="tag.text" class="tag-item" ng-repeat="tag in component.tags" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                  <span>{{tag.text}}</span>
+                  <a class="remove-button" ng-click="removeTag($index);" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
+                </li>
+              </ul>
+            </div>          
+          </panel>  
+          <panel class-list="edges" open-state="true" title="Add Preemptive Answers">
+            User questions and answers<br><br>
+            <loader trigger="questionFormLoader"></loader>
+            <div> 
+              <br>
+              Filter Status:
+              <select type="text" class="form-control"  ng-change="loadQuestions()" style="width:110px;display: inline" ng-model="questionFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>     
+              <button class="btn btn-default" ng-click="loadQuestions()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>        
+            </div>  
+            <table class="table table-striped table-bordered admin-table">
+              <tr>
+                <th><a href="" ng-click="setPredicate('question', 'question');">Question<span ng-show="predicate['question'] === 'question'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>         
+                <th><a href="" ng-click="setPredicate('username', 'question');">Username<span ng-show="predicate['question'] === 'username'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                <th><a href="" ng-click="setPredicate('userType', 'question');">User Type<span ng-show="predicate['question'] === 'userType'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                <th><a href="" ng-click="setPredicate('organization', 'question');">Organization<span ng-show="predicate['question'] === 'organization'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                <th><a href="" ng-click="setPredicate('updateDts', 'question');">Update Date<span ng-show="predicate['question'] === 'updateDts'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                <th>Action</th>
+              </tr>
+              <tr ng-repeat-start="question in questions | orderBy:predicate['question']:reverse['question']">
+                <td>{{question.question}}</td>
+                <td>{{question.username}}</td>
+                <td>{{question.userType}}</td>
+                <td>{{question.organization}}</td>
+                <td>{{question.questionUpdateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>                               
+                <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;
+                  <button class="btn btn-default btn-sm" ng-click="showQuestionResponses(question);"  title="ShowResponse">{{questionDetailsShow[question.questionId].showResponsesText}} Responses</button>  
+                  <button class="btn btn-warning btn-sm" ng-click="toggleQuestionStatus(question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>           
+                </td>
+              </tr>
+              <tr ng-show="questionDetailsShow[question.questionId].flag" ng-repeat-end>          
+                <td colspan="6" style="padding: 10px">            
+                  <table class="table table-striped table-bordered admin-table">
+                    <tr>
+                      <th><a href="" ng-click="setPredicate('response', 'questionResponse');">Response<span ng-show="predicate['questionResponse'] === 'response'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>         
+                      <th><a href="" ng-click="setPredicate('username', 'questionResponse');">Username<span ng-show="predicate['questionResponse'] === 'username'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                      <th><a href="" ng-click="setPredicate('userType', 'questionResponse');">User Type<span ng-show="predicate['questionResponse'] === 'userType'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                      <th><a href="" ng-click="setPredicate('organization', 'questionResponse');">Organization<span ng-show="predicate['questionResponse'] === 'organization'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                      <th><a href="" ng-click="setPredicate('updateDts', 'questionResponse');">Update Date<span ng-show="predicate['questionResponse'] === 'updateDts'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                      <th><a href="" ng-click="setPredicate('activeStatus', 'questionResponse');">Active Status<span ng-show="predicate['questionResponse'] === 'activeStatus'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+                      <th>Action</th>
+                    </tr>
+                    <tr ng-repeat="response in question.responses | orderBy:predicate['questionResponse']:reverse['questionResponse']">
+                      <td>{{response.response}}</td>
+                      <td>{{response.username}}</td>
+                      <td>{{response.userType}}</td>
+                      <td>{{response.organization}}</td>
+                      <td>{{response.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
+                      <td align="center">{{response.activeStatus}}</td>
+                      <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;                  
+                        <button class="btn btn-warning btn-sm" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>           
+                      </td>
+                    </tr>             
+                  </table>            
+                </td>
+              </tr>
+            </table>      
+          </panel>
           <hr>
           <!-- END META DATA -->
 
           <!-- CONTACTS -->
-          <h2 id="contacts">Contacts</h2>
-          <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Skip</button></small>
+          <h2 id="contacts">Contacts<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): ''">Skip</button></small></h2>
+          
           <br>
           <br>
           <br>
@@ -248,8 +370,8 @@ body {
           <!-- END CONTACTS -->
 
           <!-- MEDIA -->
-          <h2 id="media">Media:</h2>
-          <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Skip</button></small>
+          <h2 id="media">Media:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): ''">Skip</button></small></h2>
+          
           <br>
           <br>
           <br>
@@ -291,8 +413,8 @@ body {
           <!-- END MEDIA -->
           
           <!-- EXTERNAL RESOURCES -->
-          <h2 id="resources">External Resources:</h2>
-          <small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): scrollTo('vitals', 'vitals', '', $event);">Skip</button></small>
+          <h2 id="resources">External Resources:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''">Skip</button></small></h2>
+          
           <br>
           <br>
           <br>
@@ -378,7 +500,7 @@ body {
           <!-- END DEPENDENCIES -->
 
           <div style="padding-bottom:15px;">
-            <button class="btn btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): scrollTo('vitals', 'vitals', '', $event);">Review and Submit</button>
+            <button class="btn btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): ''; detailsDone = true">Review and Submit</button>
           </div>
         </form>
       </div>
