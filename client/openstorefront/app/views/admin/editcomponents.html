@@ -23,6 +23,13 @@ limitations under the License.
         <button class="btn btn-default" ng-click="addComponent()" title="Add Component"><i class="fa fa-plus"></i>&nbsp;Add</button>
         <button class="btn btn-default" ng-click="exportAll()" ng-disabled="selectedComponents.length === 0" title="Export Selected Components"><i class="fa fa-sign-out"></i>&nbsp;Export</button>
         <button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Components"><i class="fa fa-sign-in"></i>&nbsp;Import</button>      
+		&nbsp;Show: &nbsp;
+		<span class="btn-group">
+			<label class="btn btn-default" ng-model="pagination.control.approvalState" ng-change="refreshComponents()" btn-radio="'ALL'">All</label>
+			<label class="btn btn-default" ng-model="pagination.control.approvalState" ng-change="refreshComponents()" btn-radio="'A'">Approved</label>
+			<label class="btn btn-default" ng-model="pagination.control.approvalState" ng-change="refreshComponents()" btn-radio="'P'">Pending</label>
+			<label class="btn btn-default" ng-model="pagination.control.approvalState" ng-change="refreshComponents()" btn-radio="'N'">Not Submitted</label>				
+		</span>		
       </span>
       <filterquery data="allComponentsWatch.data" url="api/v1/resource/components/filterable" sort-by="name" sort-order="ASC" type="default" set-features="pagination.features" control="pagination.control"></filterquery>
       <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 20px;" > 
@@ -52,7 +59,8 @@ limitations under the License.
         <th>Description</th>
         <th><a href="" ng-click="setPredicate('lastActivityDts', 'components');" title="Last time the component of any component date was updated">Last Activity Date <span ng-show="predicate['components']  === 'lastActivityDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th><a href="" ng-click="setPredicate('approvedDts', 'components');">Approval Date<span ng-show="predicate['components']  === 'approvedDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-        <th><a href="" ng-click="setPredicate('approvalState', 'components');">Approval State<span ng-show="predicate['components']  === 'approvalState'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th align="center"><a href="" ng-click="setPredicate('approvalState', 'components');">Approval State<span ng-show="predicate['components']  === 'approvalState'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th><a href="" ng-click="setPredicate('submittedDts', 'components');">Submitted Date<span ng-show="predicate['components']  === 'submittedDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th><a href="" ng-click="setPredicate('integrationManagement', 'components');"  title="Shows if the component's data is being patially managed by an external system ">Integration Management<span ng-show="predicate['components']  === 'integrationManagement'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
         <th style="min-width: 170px;">Action</th>
       </tr>	
@@ -62,12 +70,14 @@ limitations under the License.
         <td><input type="checkbox" ng-click="selectComponent(component);" ng-model="component.selected"  /></td>
         <td>{{component.component.name}}</td>
         <td>{{component.component.description | limitTo: 100}}</td>
-        <td>{{component.component.lastActivityDts}}</td>
-        <td>{{component.component.approvedDts}}</td>
-        <td align="center">{{component.component.approvalState}}</td>
+        <td>{{component.component.lastActivityDts | date:'MM/dd/yyyy h:mm a'}}</td>
+        <td>{{component.component.approvedDts | date:'MM/dd/yyyy h:mm a'}}</td>
+        <td align="center">{{component.component.approvalState}}<br>{{component.component.submittedDts | date:'MM/dd/yyyy h:mm a'}}</td>
+        <td>{{component.component.submittedDts | date:'MM/dd/yyyy h:mm a'}}</td>		
         <td>{{component.integrationManagement}}</td>
-        <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
-          <button class="btn btn-default btn-sm" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>	
+        <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;	 	
+          <button class="btn btn-default btn-sm" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>
+	  <button class="btn btn-info btn-sm" ng-click="preview(component);"  title="Preview Component"><i class="fa fa-binoculars"></i></button>
           <button class="btn btn-warning btn-sm" ng-click="toggleStatus(component)"  title="Activate/Inactivate" ng-class="component.component.activeStatus === 'I' ? 'inverted':'' "><i class="fa fa-power-off"></i></button>                    
           <button class="btn btn-danger btn-sm" ng-click="deleteComponent(component.component)"  title="Delete"><i class="fa fa-trash"></i></button>
         </td>

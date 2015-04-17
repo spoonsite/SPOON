@@ -12,7 +12,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     {code: 'A', desc: 'Active'},
     {code: 'I', desc: 'Inactive'}
     ];
-    $scope.queryFilter = angular.copy(utils.queryFilter);    
+    $scope.queryFilter = angular.copy(utils.queryFilter);
     $scope.queryFilter.max = 500;
     $scope.queryFilter.sortField = 'name'; 
     $scope.components = [];
@@ -25,8 +25,9 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.selectedComponents = [];
     $scope.selectAllComps = {};
     $scope.selectAllComps.flag = false;
-    $scope.pagination = {};
+    $scope.pagination = {};    
     $scope.pagination.control = {};
+    $scope.pagination.control.approvalState='ALL';
     $scope.pagination.features = {'dates': false, 'max': false};
 
     $scope.$watch('allComponentsWatch', function(){
@@ -125,6 +126,10 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       window.location.href = "api/v1/resource/components/" + componentId + "/export";
     };    
     
+    $scope.preview = function(component) {
+      utils.openWindow('single?id='+ component.component.componentId, 'Component Preview');
+    };
+        
     $scope.deleteComponent = function(component){
       var response = window.confirm("Are you sure you want DELETE "+ component.name + "?");
       if (response) {
