@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
-import static edu.usu.sdl.openstorefront.storage.model.LookupEntity.newLookup;
 import edu.usu.sdl.openstorefront.util.SystemTable;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,18 +25,16 @@ import java.util.Map;
  * @author dshurtleff
  */
 @SystemTable
-@APIDescription("Valid types of User Messages")
-public class UserMessageType
+@APIDescription("Component Approval Status")
+public class ApprovalStatus
 		extends LookupEntity
 {
 
-	public static final String COMPONENT_WATCH = "CWATCH";
-	public static final String USER_DATA_ALERT = "USERDATA";
-	public static final String SYSTEM_ERROR_ALERT = "SYSERROR";
-	public static final String COMPONENT_SUBMISSION_ALERT = "CMPSUB";
-	public static final String APPROVAL_NOTIFICATION = "APPNOT";
+	public static final String APPROVED = "A";
+	public static final String PENDING = "P";
+	public static final String NOT_SUBMITTED = "N";
 
-	public UserMessageType()
+	public ApprovalStatus()
 	{
 	}
 
@@ -45,11 +42,9 @@ public class UserMessageType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(COMPONENT_WATCH, newLookup(UserMessageType.class, COMPONENT_WATCH, "Component Watch"));
-		codeMap.put(USER_DATA_ALERT, newLookup(UserMessageType.class, USER_DATA_ALERT, "User Data Alert"));
-		codeMap.put(SYSTEM_ERROR_ALERT, newLookup(UserMessageType.class, SYSTEM_ERROR_ALERT, "System Error Alert"));
-		codeMap.put(COMPONENT_SUBMISSION_ALERT, newLookup(UserMessageType.class, COMPONENT_SUBMISSION_ALERT, "Component Submission Alert"));
-		codeMap.put(APPROVAL_NOTIFICATION, newLookup(UserMessageType.class, APPROVAL_NOTIFICATION, "Component Approval Notification"));
+		codeMap.put(PENDING, newLookup(ApprovalStatus.class, PENDING, "Pending"));
+		codeMap.put(APPROVED, newLookup(ApprovalStatus.class, APPROVED, "Approved"));
+		codeMap.put(NOT_SUBMITTED, newLookup(ApprovalStatus.class, NOT_SUBMITTED, "Not Submitted"));
 		return codeMap;
 	}
 

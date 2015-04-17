@@ -33,6 +33,7 @@ public class AlertType
 
 	public static final String USER_DATA = "USERD";
 	public static final String SYSTEM_ERROR = "SYSERROR";
+	public static final String COMPONENT_SUBMISSION = "CMPSUB";
 
 	public AlertType()
 	{
@@ -44,6 +45,7 @@ public class AlertType
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(USER_DATA, newLookup(AlertType.class, USER_DATA, "User Data"));
 		codeMap.put(SYSTEM_ERROR, newLookup(AlertType.class, SYSTEM_ERROR, "System Error"));
+		codeMap.put(COMPONENT_SUBMISSION, newLookup(AlertType.class, COMPONENT_SUBMISSION, "Component Submission"));
 		return codeMap;
 	}
 

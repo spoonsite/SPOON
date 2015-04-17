@@ -23,7 +23,9 @@ import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
+import edu.usu.sdl.openstorefront.service.message.ApprovalMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.BaseMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.ComponentSubmissionMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.ComponentWatchMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
 import edu.usu.sdl.openstorefront.service.message.RecentChangeMessage;
@@ -37,6 +39,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.storage.model.Alert;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
@@ -700,12 +703,24 @@ public class UserServiceImpl
 			}
 
 			BaseMessageGenerator generator = null;
-			if (UserMessageType.COMPONENT_WATCH.equals(userMessage.getUserMessageType())) {
-				generator = new ComponentWatchMessageGenerator(messageContext);
-			} else if (UserMessageType.USER_DATA_ALERT.equals(userMessage.getUserMessageType())) {
-				generator = new UserDataAlertMessageGenerator(messageContext);
-			} else if (UserMessageType.SYSTEM_ERROR_ALERT.equals(userMessage.getUserMessageType())) {
-				generator = new SystemErrorAlertMessageGenerator(messageContext);
+			if (null != userMessage.getUserMessageType()) {
+				switch (userMessage.getUserMessageType()) {
+					case UserMessageType.COMPONENT_WATCH:
+						generator = new ComponentWatchMessageGenerator(messageContext);
+						break;
+					case UserMessageType.USER_DATA_ALERT:
+						generator = new UserDataAlertMessageGenerator(messageContext);
+						break;
+					case UserMessageType.SYSTEM_ERROR_ALERT:
+						generator = new SystemErrorAlertMessageGenerator(messageContext);
+						break;
+					case UserMessageType.COMPONENT_SUBMISSION_ALERT:
+						generator = new ComponentSubmissionMessageGenerator(messageContext);
+						break;
+					case UserMessageType.APPROVAL_NOTIFICATION:
+						generator = new ApprovalMessageGenerator(messageContext);
+						break;
+				}
 			}
 
 			if (generator == null) {
@@ -757,7 +772,7 @@ public class UserServiceImpl
 		queryParams.put("activeStatusParam", Component.ACTIVE_STATUS);
 		List<Component> components = persistenceService.query(componentQuery, queryParams);
 		for (Component component : components) {
-			if (OpenStorefrontConstant.ComponentApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+			if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 				if (component.getApprovedDts() != null
 						&& component.getApprovedDts().after(lastRunDts)) {
 					recentChangeMessage.getComponentsAdded().add(component);

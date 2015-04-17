@@ -60,7 +60,7 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			attributeTypeCache = singletonManager.getCache("attributeTypeCache");
 
-			memoryOnlyCache = new Cache("attributeCodeAllCache", 1, false, true, 7200, 7200);
+			memoryOnlyCache = new Cache("attributeCodeAllCache", 1, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeCodeAllCache = singletonManager.getCache("attributeCodeAllCache");
 

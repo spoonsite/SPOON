@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.sort.ComponentSearchViewComparator;
 import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
@@ -207,7 +208,7 @@ public class Search
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		long numberOfActiveComponents = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, componentExample));
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 

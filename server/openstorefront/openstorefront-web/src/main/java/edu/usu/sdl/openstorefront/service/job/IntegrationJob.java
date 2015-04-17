@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.job;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 
 /**
@@ -24,6 +25,7 @@ import org.quartz.JobExecutionContext;
  *
  * @author dshurtleff
  */
+@DisallowConcurrentExecution
 public class IntegrationJob
 		extends BaseJob
 {

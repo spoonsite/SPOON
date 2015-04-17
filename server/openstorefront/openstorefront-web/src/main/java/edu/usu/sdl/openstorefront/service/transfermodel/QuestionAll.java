@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.transfermodel;
 
+import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class QuestionAll
 {
 
 	private ComponentQuestion question;
+
+	@DataType(ComponentQuestionResponse.class)
 	private List<ComponentQuestionResponse> responds = new ArrayList<>();
 
 	public QuestionAll()
