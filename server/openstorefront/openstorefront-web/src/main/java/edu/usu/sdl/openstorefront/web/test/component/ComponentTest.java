@@ -17,12 +17,12 @@ package edu.usu.sdl.openstorefront.web.test.component;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.List;
@@ -59,7 +59,7 @@ public class ComponentTest
 		component.setName("Test Component");
 		component.setDescription("Test Description");
 		component.setOrganization("Test");
-		component.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.P.name());
+		component.setApprovalState(ApprovalStatus.PENDING);
 		component.setGuid("5555555");
 		component.setLastActivityDts(TimeUtil.currentDate());
 		component.setActiveStatus(Component.ACTIVE_STATUS);

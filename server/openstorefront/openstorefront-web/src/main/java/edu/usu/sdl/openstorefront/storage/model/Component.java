@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.ComponentApprovalStatus;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -80,10 +79,7 @@ public class Component
 	private String version;
 
 	@NotNull
-	@ValidValueType(
-			{
-				ComponentApprovalStatus.APPROVED, ComponentApprovalStatus.PENDING
-			})
+	@ValidValueType(value = {}, lookupClass = ApprovalStatus.class)
 	@ConsumeField
 	@APIDescription("Status of an approval")
 	private String approvalState;
@@ -96,8 +92,16 @@ public class Component
 	private Date approvedDts;
 
 	@NotNull
-	@APIDescription("Updated when any of the component's related data has changed.  Used for  watches.")
+	@APIDescription("Updated when any of the component's related data has changed.  Used for watches.")
 	private Date lastActivityDts;
+
+	@APIDescription("Indicates a user submission and when it was submitted")
+	private Date submittedDts;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
+	@APIDescription("Email to notify of approval.")
+	private String notifyOfApprovalEmail;
 
 	public Component()
 	{
@@ -239,6 +243,26 @@ public class Component
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
+	}
+
+	public Date getSubmittedDts()
+	{
+		return submittedDts;
+	}
+
+	public void setSubmittedDts(Date submittedDts)
+	{
+		this.submittedDts = submittedDts;
+	}
+
+	public String getNotifyOfApprovalEmail()
+	{
+		return notifyOfApprovalEmail;
+	}
+
+	public void setNotifyOfApprovalEmail(String notifyOfApprovalEmail)
+	{
+		this.notifyOfApprovalEmail = notifyOfApprovalEmail;
 	}
 
 }

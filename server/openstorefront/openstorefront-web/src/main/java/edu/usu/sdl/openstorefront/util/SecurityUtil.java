@@ -44,7 +44,7 @@ public class SecurityUtil
 	 */
 	public static boolean isLoggedIn()
 	{
-		boolean loggedIn = false;
+		boolean loggedIn;
 		try {
 			Subject currentUser = SecurityUtils.getSubject();
 			loggedIn = currentUser.isAuthenticated();
@@ -53,6 +53,23 @@ public class SecurityUtil
 			loggedIn = false;
 		}
 		return loggedIn;
+	}
+
+	/**
+	 * Check for Guest or Anonymous user
+	 *
+	 * @return true if guest
+	 */
+	public static boolean isGuest()
+	{
+		boolean guest;
+		try {
+			guest = !SecurityUtils.getSubject().isRemembered();
+		} catch (Exception e) {
+			//ignore
+			guest = true;
+		}
+		return guest;
 	}
 
 	/**

@@ -52,6 +52,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import net.java.truevfs.access.TFile;
 import net.java.truevfs.access.TFileInputStream;
+import net.java.truevfs.access.TVFS;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -272,6 +273,7 @@ public class UploadAction
 								}
 							}
 						}
+
 						//cleanup temp zip
 						if (tempFile.delete() == false) {
 							log.log(Level.WARNING, MessageFormat.format("Unable to remove temp upload file.  It can be safely removed from: {0}", tempFile.getPath()));
@@ -288,6 +290,12 @@ public class UploadAction
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
 			} finally {
+				try {
+					TVFS.umount();
+				} catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to unmount tvfs");
+				}
+
 				try {
 					uploadFile.delete();
 				} catch (IOException ex) {

@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.sort.SortUtil;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
@@ -53,6 +54,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
@@ -161,7 +163,7 @@ public class ComponentRESTResource
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
 		components.forEach(component -> {
 			LookupModel lookupModel = new LookupModel();
@@ -184,14 +186,13 @@ public class ComponentRESTResource
 	public List<LookupModel> getComponentApprovalStatus()
 	{
 		List<LookupModel> lookupModels = new ArrayList<>();
-
-		for (OpenStorefrontConstant.ComponentApprovalStatus approvalStatus : OpenStorefrontConstant.ComponentApprovalStatus.values()) {
+		List<ApprovalStatus> lookups = service.getLookupService().findLookup(ApprovalStatus.class, ApprovalStatus.ACTIVE_STATUS);
+		for (LookupEntity lookupEntity : lookups) {
 			LookupModel lookupModel = new LookupModel();
-			lookupModel.setCode(approvalStatus.name());
-			lookupModel.setDescription(approvalStatus.getDescription());
+			lookupModel.setCode(lookupEntity.getCode());
+			lookupModel.setDescription(lookupEntity.getDescription());
 			lookupModels.add(lookupModel);
 		}
-
 		return lookupModels;
 	}
 
