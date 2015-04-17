@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
@@ -495,14 +496,16 @@ public interface ComponentService
 	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange);
 
 	/**
+	 * Get components according to filter
 	 *
 	 * @param filter
 	 * @param componentId
 	 * @return
 	 */
-	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId);
+	public ComponentAdminWrapper getFilteredComponents(ComponentFilterParams filter, String componentId);
 
 	/**
+	 * Component name search
 	 *
 	 * @param search
 	 * @return

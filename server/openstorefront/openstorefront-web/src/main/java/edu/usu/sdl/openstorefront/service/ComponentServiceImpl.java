@@ -92,6 +92,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
@@ -2152,13 +2153,14 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId)
+	public ComponentAdminWrapper getFilteredComponents(ComponentFilterParams filter, String componentId)
 	{
 		ComponentAdminWrapper result = new ComponentAdminWrapper();
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(filter.getStatus());
 		componentExample.setComponentId(componentId);
+		componentExample.setApprovalState(filter.getApprovalState());
 
 //		Component componentStartExample = new Component();
 //		componentStartExample.setEventDts(filter.getStart());
