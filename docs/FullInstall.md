@@ -1,4 +1,4 @@
-#High Level instruction for a fresh install
+#High level instructions for a fresh install
 Pre-install: setup ESA or a Solr instance and make sure it's running
 
 	1. Setup VM 

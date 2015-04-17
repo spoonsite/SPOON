@@ -738,10 +738,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           onlyOnce = $scope.details.details.componentId;
           $scope.detailResultsTabs = [
             //
-            { title:'SUMMARY', id:'summaryTab', content:'1', relpath:'views/details/summary.html', class:$scope.summaryUpdated.length > 0? 'updatedTab' : ''},
-            { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/details.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
-            { title:'REVIEWS', id:'reviewsTab', content:'3', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
-            { title:'Q&A', id:'qaTab', content:'4', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
+            // { title:'SUMMARY', id:'summaryTab', content:'1', relpath:'views/details/summary.html', class:$scope.summaryUpdated.length > 0? 'updatedTab' : ''},
+            { title:'DETAILS', id:'detailsTab', content:'1', relpath:'views/details/details.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
+            { title:'REVIEWS', id:'reviewsTab', content:'2', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
+            { title:'Q&A', id:'qaTab', content:'3', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
             // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
           //
           ];
