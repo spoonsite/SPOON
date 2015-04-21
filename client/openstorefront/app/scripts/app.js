@@ -44,7 +44,11 @@ var app = angular
     'ngIdle',    
     'multi-select',
     'angular.filter',
-    'notifications'
+    'notifications',
+    "com.2fdevs.videogular",
+    "com.2fdevs.videogular.plugins.controls",
+    "com.2fdevs.videogular.plugins.overlayplay",
+    "com.2fdevs.videogular.plugins.poster",
   // end of dependency injections
   ]
 // end of the module creation
@@ -247,7 +251,6 @@ var app = angular
       $rootScope.$on('$triggerEvent', function(event, newEvent, infoArray){
         $rootScope.$broadcast(newEvent, infoArray);
       });
-
 
       //////////////////////////////////////////////////////////////////////////////
       // Event Handlers

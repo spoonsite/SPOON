@@ -377,6 +377,7 @@ module.exports = function (grunt) {
           'bower_components/bootstrap/dist/fonts/*',
           'bower_components/bootstrap/dist/css/bootstrap.css',
           'bower_components/angular-mocks/angular-mocks.js',
+          'bower_components/videogular-themes-default/videogular.css',
           'scripts/common/angular-lightbox.js',
           'scripts/common/ng-ckeditor.js',
           'styles/*.css',

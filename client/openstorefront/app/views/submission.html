@@ -141,15 +141,15 @@ body {
               <tbody>
                 <tr>
                   <th>Attribute Type</th>
-                  <th>Attribute Code</th>         
+                  <th>Attribute Code</th>
                 </tr>
                 <!-- repeat on each attribute -->
                 <tr class="ng-scope" ng-repeat="attribute in requiredAttributes">
                   <td><span class="required ng-binding">{{attribute.description}}</span></td>
                   <td>
                     <select type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[$index]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
-                  </td>          
-                </tr>       
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -165,7 +165,7 @@ body {
         <h1 id="details">3. Extra Component Details:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): ''; detailsDone = true">Skip Section</button></small></h1>
         <hr>
         <form name="detailsForm">
-          <!-- 
+          <!--
           <input type="text" id="inputTest" name="inputTest" placeholder='test' class="form-control" ng-model="details.inputTest">
           <p>$pristine = {{detailsForm.$pristine}}</p>
           <p>$dirty = {{detailsForm.$dirty}}</p> -->
@@ -177,7 +177,7 @@ body {
               <tbody>
                 <tr>
                   <th>Attribute Type</th>
-                  <th>Attribute Code</th>         
+                  <th>Attribute Code</th>
                 </tr>
                 <!-- repeat on each attribute -->
                 <tr class="ng-scope" ng-repeat="attribute in attributes">
@@ -195,12 +195,12 @@ body {
                         </li>
                       </ul>
                     </div>
-                  </td>          
-                </tr>       
+                  </td>
+                </tr>
               </tbody>
             </table>
           </panel>
-          <panel class-list="edges" open-state="true" title="Add/Edit Metadata">
+          <panel class-list="edges" open-state="true" title="Add Metadata">
             <div class="form-group"  >
               <label class="col-sm-2 control-label">Label</label>
               <div class="col-sm-10">
@@ -210,11 +210,11 @@ body {
                 class="form-control"
                 ng-model="component.metadata[metadataLength].label"
                 ng-minlength=1
-                ng-maxlength=250 
+                ng-maxlength=250
                 on-enter="addMetadata()"/>
               </div>
               <p ng-show="detailsForm.label.$error.minlength && !detailsForm.label.$focused" class="help-block">Label must be longer than 1 character in length.</p>
-            </div>  
+            </div>
             <div class="form-group"  >
               <label class="col-sm-2 control-label">Value</label>
               <div class="col-sm-10">
@@ -223,7 +223,7 @@ body {
                 class="form-control"
                 ng-model="component.metadata[metadataLength].value"
                 ng-minlength=1
-                ng-maxlength=250 
+                ng-maxlength=250
                 on-enter="addMetadata()"/>
               </div>
               <p ng-show="detailsForm.value.$error.minlength && !detailsForm.value.$focused" class="help-block">Value must be longer than 1 character in length.</p>
@@ -231,7 +231,7 @@ body {
             <button class="btn btn-primary" type="button" ng-click="addMetadata()"><i class="fa fa-save"></i>&nbsp;Add</button>
             <div class="tags">
               <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
-                <li ng-if="tag.label && tag.value" class="tag-item" ng-repeat="tag in component.metadata" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                <li ng-if="tag.label && tag.value" class="tag-item" ng-repeat="tag in component.metadata | limitTo:metadataLength" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
                   <span>{{tag.label}}&nbsp;&mdash;&nbsp;{{tag.value}}</span>
                   <a class="remove-button" ng-click="removeMetadata($index);" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
                 </li>
@@ -248,255 +248,208 @@ body {
                 class="form-control"
                 ng-model="component.tags[tagsLength].text"
                 ng-minlength=1
-                ng-maxlength=250 
+                ng-maxlength=250
                 on-enter="addTag()"/>
               </div>
               <p ng-show="detailsForm.text.$error.minlength && !detailsForm.text.$focused" class="help-block">Tag must be longer than 1 character in length.</p>
-            </div>        
-            <button type="button" class="btn btn-primary" ng-click="addTag()" ng-disabled="detailsForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button> 
+            </div>
+            <button type="button" class="btn btn-primary" ng-click="addTag()" ng-disabled="detailsForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button>
             <div class="tags">
               <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
-                <li ng-if="tag.text" class="tag-item" ng-repeat="tag in component.tags" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                <li ng-if="tag.text" class="tag-item" ng-repeat="tag in component.tags | limitTo:tagsLength" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
                   <span>{{tag.text}}</span>
                   <a class="remove-button" ng-click="removeTag($index);" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
                 </li>
               </ul>
-            </div>          
-          </panel>  
+            </div>
+          </panel>
           <panel class-list="edges" open-state="true" title="Add Preemptive Answers">
             User questions and answers<br><br>
             <loader trigger="questionFormLoader"></loader>
-            <div> 
+            <div>
               <br>
               Filter Status:
-              <select type="text" class="form-control"  ng-change="loadQuestions()" style="width:110px;display: inline" ng-model="questionFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>     
-              <button class="btn btn-default" ng-click="loadQuestions()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>        
-            </div>  
-            <table class="table table-striped table-bordered admin-table">
-              <tr>
-                <th><a href="" ng-click="setPredicate('question', 'question');">Question<span ng-show="predicate['question'] === 'question'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>         
-                <th><a href="" ng-click="setPredicate('username', 'question');">Username<span ng-show="predicate['question'] === 'username'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                <th><a href="" ng-click="setPredicate('userType', 'question');">User Type<span ng-show="predicate['question'] === 'userType'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                <th><a href="" ng-click="setPredicate('organization', 'question');">Organization<span ng-show="predicate['question'] === 'organization'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                <th><a href="" ng-click="setPredicate('updateDts', 'question');">Update Date<span ng-show="predicate['question'] === 'updateDts'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                <th>Action</th>
-              </tr>
-              <tr ng-repeat-start="question in questions | orderBy:predicate['question']:reverse['question']">
-                <td>{{question.question}}</td>
-                <td>{{question.username}}</td>
-                <td>{{question.userType}}</td>
-                <td>{{question.organization}}</td>
-                <td>{{question.questionUpdateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>                               
-                <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;
-                  <button class="btn btn-default btn-sm" ng-click="showQuestionResponses(question);"  title="ShowResponse">{{questionDetailsShow[question.questionId].showResponsesText}} Responses</button>  
-                  <button class="btn btn-warning btn-sm" ng-click="toggleQuestionStatus(question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>           
-                </td>
-              </tr>
-              <tr ng-show="questionDetailsShow[question.questionId].flag" ng-repeat-end>          
-                <td colspan="6" style="padding: 10px">            
-                  <table class="table table-striped table-bordered admin-table">
-                    <tr>
-                      <th><a href="" ng-click="setPredicate('response', 'questionResponse');">Response<span ng-show="predicate['questionResponse'] === 'response'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>         
-                      <th><a href="" ng-click="setPredicate('username', 'questionResponse');">Username<span ng-show="predicate['questionResponse'] === 'username'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                      <th><a href="" ng-click="setPredicate('userType', 'questionResponse');">User Type<span ng-show="predicate['questionResponse'] === 'userType'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                      <th><a href="" ng-click="setPredicate('organization', 'questionResponse');">Organization<span ng-show="predicate['questionResponse'] === 'organization'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                      <th><a href="" ng-click="setPredicate('updateDts', 'questionResponse');">Update Date<span ng-show="predicate['questionResponse'] === 'updateDts'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                      <th><a href="" ng-click="setPredicate('activeStatus', 'questionResponse');">Active Status<span ng-show="predicate['questionResponse'] === 'activeStatus'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-                      <th>Action</th>
-                    </tr>
-                    <tr ng-repeat="response in question.responses | orderBy:predicate['questionResponse']:reverse['questionResponse']">
-                      <td>{{response.response}}</td>
-                      <td>{{response.username}}</td>
-                      <td>{{response.userType}}</td>
-                      <td>{{response.organization}}</td>
-                      <td>{{response.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
-                      <td align="center">{{response.activeStatus}}</td>
-                      <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;                  
-                        <button class="btn btn-warning btn-sm" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>           
-                      </td>
-                    </tr>             
-                  </table>            
-                </td>
-              </tr>
-            </table>      
+              <select type="text" class="form-control"  ng-change="loadQuestions()" style="width:110px;display: inline" ng-model="questionFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
+              <button class="btn btn-default" ng-click="loadQuestions()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+            </div>
           </panel>
           <hr>
           <!-- END META DATA -->
 
           <!-- CONTACTS -->
           <h2 id="contacts">Contacts<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): ''">Skip</button></small></h2>
-          
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
+          <panel class-list="edges" open-state="true" title="Add Contact">
+            <div class="form-group " show-errors >
+              <label class="col-sm-2 control-label ">Contact Type</label>
+              <div class="col-sm-10">
+                <select type="text" name="contactType" id="contactType" class="form-control"   ng-model="contactForm.contactType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in contactTypes" placeholder="Select Type"></select>
+              </div>
+            </div>
+            <div class="form-group "  >
+              <label class="col-sm-2 control-label ">First Name</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="firstName"
+                name="firstName"
+                class="form-control"
+                ng-model="contactForm.firstName"
+                ng-minlength=1
+                ng-maxlength=200
+                ng-focus />
+              </div>
+              <p ng-show="contactUIForm.firstName.$error.minlength && !contactUIForm.firstName.$focused" class="help-block">First Name must be longer than 1 character in length.</p>
+            </div>
+            <div class="form-group "  >
+              <label class="col-sm-2 control-label ">Last Name</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="lastName"
+                name="lastName"
+                class="form-control"
+                ng-model="contactForm.lastName"
+                ng-minlength=1
+                ng-maxlength=200
+                ng-focus />
+              </div>
+              <p ng-show="contactUIForm.lastName.$error.minlength && !contactUIForm.lastName.$focused" class="help-block">Last Name must be longer than 1 character in length.</p>
+            </div>
+            <div class="form-group "  >
+              <label class="col-sm-2 control-label ">Organization</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="organization"
+                name="organization"
+                class="form-control"
+                ng-model="contactForm.organization"
+                ng-minlength=1
+                ng-maxlength=200
+                ng-focus />
+              </div>
+              <p ng-show="contactUIForm.organization.$error.minlength && !contactUIForm.organization.$focused" class="help-block">Organization must be longer than 1 character in length.</p>
+            </div>
+            <div class="form-group"  >
+              <label class="col-sm-2 control-label">Email</label>
+              <div class="col-sm-10">
+                <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-control"
+                ng-model="contactForm.email"
+                ng-maxlength=200
+                maxlength=200
+                ng-focus />
+              </div>
+            </div>
+            <div class="form-group"  >
+              <label class="col-sm-2 control-label">Phone</label>
+              <div class="col-sm-10">
+                <input  type="tel"
+                id="phone"
+                name="phone"
+                class="form-control"
+                ng-model="contactForm.phone"
+                ng-maxlength=200
+                placeholder="xxx-xxx-xxxx"
+                ng-focus />
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" ng-click="addContact()" ng-disabled="detailsForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button>
+            <table style="margin-top:10px;" ng-show="component.contacts.length" class="table table-striped table-bordered admin-table">
+              <tr>
+                <th>Contact Type</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Organization</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Action</th>
+              </tr>
+              <tr ng-repeat="contact in component.contacts" >
+                <td>{{getContactType(contact.contactType)}}</td>
+                <td>{{contact.firstName}}</td>
+                <td>{{contact.lastName}}</td>
+                <td>{{contact.organization}}</td>
+                <td>{{contact.email}}</td>
+                <td>{{contact.phone}}</td>
+                <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
+                  <button class="btn btn-danger btn-sm" ng-click="removeContact($index);" title="Delete"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </table>
+          </panel>
           <hr>
           <!-- END CONTACTS -->
 
           <!-- MEDIA -->
           <h2 id="media">Media:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): ''">Skip</button></small></h2>
-          
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
+          <panel class-list="edges" open-state="true" title="Add Media">
+            <div class="form-group required" show-errors >
+              Only images are currently supported (.png, .jpg, .gif, .bmp, .svg)<br>      
+              <label class="col-sm-2 control-label required">Media Type</label><br>
+              <div class="col-sm-10">
+                <select type="text" class="form-control" name="mediaTypeCode" required  ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"></select>
+              </div>
+              <p ng-show="mediaUIForm.mediaTypeCode.$error.required && !mediaUIForm.mediaTypeCode.$focused" class="help-block">Media Type is required.</p>              
+            </div>  
+            <div class="form-group"  >
+              <label class="col-sm-2  control-label">Caption</label>        
+              <div class="col-sm-10">
+                <input  type="text"                 
+                id="caption"                          
+                name="caption"                          
+                class="form-control" 
+                ng-model="mediaForm.caption" 
+                ng-minlength=0
+                ng-maxlength=250                
+                ng-focus />
+              </div>
+            </div>  
+            <div class="form-group"  >
+              <label class="col-sm-2  control-label">Upload Media</label>   
+              <div class="col-sm-10">
+                <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="mediaForm.link" ng-disabled="isFull"/>
+              </div>
+              <p class="help-block" ng-show="mediaForm.fileName">Current Local Media: {{mediaForm.originalFileName}} ({{mediaForm.fileName}})</p>               
+            </div>        
+            <div class="form-group"  >
+              <label class="col-sm-2  control-label">Link</label>       
+              <div class="col-sm-10">
+                <input  type="text"                 
+                id="link"                         
+                name="link"                         
+                class="form-control" 
+                placeholder="http:///www.example.com/image.png"
+                ng-model="mediaForm.link"               
+                ng-minlength=0
+                ng-maxlength=250                
+                ng-focus />
+              </div>
+            </div>  
+            <!-- onchange="angular.element(this).scope().addMedia()" -->
+            <button type="button" class="btn btn-primary" ng-click="resetMediaInput()" ng-disabled="detailsForm.$invalid" ng-disabled="isFull"><i class="fa fa-save"></i>&nbsp;Add Another File</button>
+            <div id="srcList">
+              <div ng-repeat="item in queue" dynamichtml="item">
+              </div>
+            </div>
+            {{srcList}}
+          </panel>
           <hr>
           <!-- END MEDIA -->
-          
+
           <!-- EXTERNAL RESOURCES -->
-          <h2 id="resources">External Resources:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''">Skip</button></small></h2>
-          
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>          
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
+          <h2 id="resources">Resources:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''">Skip</button></small></h2>
+          <panel class-list="edges" open-state="true" title="Add Resources">
+
+          </panel>
           <hr>
           <!-- END EXTERNAL RESOURCES -->
-          
+
           <!-- DEPENDENCIES -->
           <h2 id="dependencies">Dependencies:</h2>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
+          <panel class-list="edges" open-state="true" title="Add Dependencies">
+
+          </panel>
           <!-- END DEPENDENCIES -->
 
           <div style="padding-bottom:15px;">
@@ -516,85 +469,32 @@ body {
         <div class="col-md-12" style="padding:20px; border-radius:10px; border: 1px solid dimgray; background: #FFF">
           <h3>This is where you would see a quick view of the component information so far.</h3>
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-      </div>
-      <!-- REVIEW AND SUBMIT SECTION -->
+
+        <videogular>
+          <vg-media vg-src="config.sources" vg-tracks="config.tracks"></vg-media>
+
+          <vg-controls vg-autohide="true" vg-autohide-time="2000">
+          <vg-play-pause-button></vg-play-pause-button>
+          <vg-time-display>{{ currentTime | date:'mm:ss' }} </vg-time-display>
+          <vg-scrub-bar><vg-scrub-bar-current-time></vg-scrub-bar-current-time> </vg-scrub-bar>
+          <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+          <vg-volume> <vg-mute-button></vg-mute-button><vg-volume-bar></vg-volume-bar></vg-volume>
+          <vg-fullscreen-button></vg-fullscreen-button>
+        </vg-controls>
+
+        <!-- <vg-overlay-play></vg-overlay-play> -->
+        <!-- <vg-poster vg-url='config.plugins.poster'></vg-poster> -->
+      </videogular>
+
+<!--         <videogular>
+          <vg-media vg-src="config.sources" vg-tracks="config.tracks" vg-type="video" vg-native-controls="true"> </vg-media>
+        </videogular>
+      -->
+      <pre>
+        {{getComponent()}}
+      </pre>
     </div>
+    <!-- REVIEW AND SUBMIT SECTION -->
   </div>
+</div>
 </div>

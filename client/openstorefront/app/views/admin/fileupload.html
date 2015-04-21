@@ -34,7 +34,7 @@ limitations under the License.
     </div>  
     <div class="form-group"  >
       <label class=" control-label required">Upload File</label>   
-      <input type="file" nv-file-select uploader="mediaUploader" required name="uploadFile" id="uploadFile" width="100"  /> 
+      <input type="file" nv-file-select  onchange="utils.handleFileQueue(angular.element(this).scope().mediaUploader, this)" uploader="mediaUploader" required name="uploadFile" id="uploadFile" width="100"  /> 
       <p ng-show="mediaUIForm.uploadFile.$error.required && !mediaUIForm.uploadFile.$focused" class="help-block">File is required.</p>  
     </div>  
     <hr>
