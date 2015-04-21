@@ -145,6 +145,10 @@ public class AlertServiceImpl
 						}
 					}
 					break;
+				case AlertType.COMPONENT_SUBMISSION:
+					userMessageType = UserMessageType.COMPONENT_SUBMISSION_ALERT;
+					createUserMessage = true;
+					break;
 			}
 
 			if (createUserMessage) {

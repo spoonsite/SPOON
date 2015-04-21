@@ -41,9 +41,9 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingCompleteWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
@@ -207,7 +207,7 @@ public interface ComponentService
 	 * @return
 	 */
 	public ComponentTrackingResult getComponentTracking(FilterQueryParams filter, String componentId);
-	
+
 	/**
 	 *
 	 * @param attribute
@@ -341,6 +341,23 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentAll saveFullComponent(ComponentAll componentAll);
+
+	/**
+	 * @see saveFullComponent(ComponentAll componentAll);
+	 * @param componentAll
+	 * @param options (save options)
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options);
+
+	/**
+	 * Submits a component for Approval
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void submitComponentSubmission(String componentId);
 
 	/**
 	 * This will handle syncing all the component of the list.
@@ -477,21 +494,22 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange);
-	
-	/**
-	 * 
-	 * @param filter
-	 * @param componentId
-	 * @return 
-	 */
-	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId);
 
 	/**
-	 * 
+	 * Get components according to filter
+	 *
+	 * @param filter
+	 * @param componentId
+	 * @return
+	 */
+	public ComponentAdminWrapper getFilteredComponents(ComponentFilterParams filter, String componentId);
+
+	/**
+	 * Component name search
+	 *
 	 * @param search
-	 * @return 
+	 * @return
 	 */
 	public Set<LookupModel> getTypeahead(String search);
 
-	
 }

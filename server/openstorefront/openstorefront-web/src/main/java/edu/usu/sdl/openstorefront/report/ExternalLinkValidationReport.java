@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.LinkCheckModel;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.Report;
@@ -91,7 +92,7 @@ public class ExternalLinkValidationReport
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
 
 		Map<String, Component> componentMap = new HashMap<>();

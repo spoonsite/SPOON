@@ -85,6 +85,9 @@ public class ComponentDetailView
 	@NotNull
 	private String approvedUser;
 
+	private Date submittedDts;
+	private String notifyOfApprovalEmail;
+
 	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
 
 	@DataType(ComponentQuestionView.class)
@@ -133,6 +136,8 @@ public class ComponentDetailView
 		activeStatus = component.getActiveStatus();
 		releaseDate = component.getReleaseDate();
 		organization = component.getOrganization();
+		submittedDts = component.getSubmittedDts();
+		notifyOfApprovalEmail = component.getNotifyOfApprovalEmail();
 		parentComponent.setComponentId(parentComponent.getComponentId());
 		parentComponent.setName(parentComponent.getName());
 		parentComponent.setUpdateDts(parentComponent.getUpdateDts());
@@ -429,36 +434,44 @@ public class ComponentDetailView
 		this.componentViews = componentViews;
 	}
 
-	/**
-	 * @return the lastViewedDts
-	 */
 	public Date getLastViewedDts()
 	{
 		return lastViewedDts;
 	}
 
-	/**
-	 * @param lastViewedDts the lastViewedDts to set
-	 */
 	public void setLastViewedDts(Date lastViewedDts)
 	{
 		this.lastViewedDts = lastViewedDts;
 	}
 
-	/**
-	 * @return the today
-	 */
 	public Date getToday()
 	{
 		return today;
 	}
 
-	/**
-	 * @param today the today to set
-	 */
 	public void setToday(Date today)
 	{
 		this.today = today;
+	}
+
+	public Date getSubmittedDts()
+	{
+		return submittedDts;
+	}
+
+	public void setSubmittedDts(Date submittedDts)
+	{
+		this.submittedDts = submittedDts;
+	}
+
+	public String getNotifyOfApprovalEmail()
+	{
+		return notifyOfApprovalEmail;
+	}
+
+	public void setNotifyOfApprovalEmail(String notifyOfApprovalEmail)
+	{
+		this.notifyOfApprovalEmail = notifyOfApprovalEmail;
 	}
 
 }

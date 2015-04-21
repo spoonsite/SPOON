@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import net.java.truevfs.access.TVFS;
 
 /**
  * Use to init the application and shut it down properly
@@ -74,6 +75,13 @@ public class ApplicationInit
 	@Override
 	public void contextDestroyed(ServletContextEvent sce)
 	{
+		try {
+			log.log(Level.INFO, "Unmount Truevfs");
+			TVFS.umount();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, MessageFormat.format("Failed to unmount: {0}", e.getMessage()));
+		}
+
 		//Shutdown in reverse order to make sure the dependancies are good.
 		shutdownManager(new ReportManager());
 		shutdownManager(new AsyncTaskManager());

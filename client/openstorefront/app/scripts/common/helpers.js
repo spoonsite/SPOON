@@ -225,7 +225,7 @@
     sortField: null,
     sortOrder: null,
     offset: null,
-    all: false,
+    all: false,    
     toQuery: function () {
       return utils.toParamString(this);
     }

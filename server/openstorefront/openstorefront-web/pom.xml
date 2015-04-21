@@ -348,6 +348,33 @@
 			<artifactId>org.eclipse.persistence.antlr</artifactId>
 			<version>2.5.2</version>
 		</dependency>
+		<dependency>
+				<groupId>net.java.truevfs</groupId>
+				<artifactId>truevfs-profile-default</artifactId>
+				<version>0.10.8</version>
+				<exclusions>					
+					<exclusion>
+						<groupId>net.java.truevfs</groupId>
+						<artifactId>truevfs-access-swing</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.java.truevfs</groupId>
+						<artifactId>truevfs-driver-odf</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.java.truevfs</groupId>
+						<artifactId>truecommons-key-console</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.java.truevfs</groupId>
+						<artifactId>truecommons-key-default</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.java.truevfs</groupId>
+						<artifactId>truecommons-key-swing</artifactId>
+					</exclusion>
+				</exclusions>
+		</dependency>	
 	</dependencies>
 	
 	<build>

@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.sort.SortUtil;
 import edu.usu.sdl.openstorefront.storage.model.AlertType;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -72,6 +73,8 @@ import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.RunStatus;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
+import edu.usu.sdl.openstorefront.storage.model.UserMessage;
+import edu.usu.sdl.openstorefront.storage.model.UserMessageType;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.LockSwitch;
@@ -89,6 +92,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
@@ -357,7 +361,7 @@ public class ComponentServiceImpl
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(componentExample));
 
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
@@ -1027,12 +1031,13 @@ public class ComponentServiceImpl
 
 		ValidationResult validationResult = component.checkForComplete();
 		if (validationResult.valid()) {
+			boolean approved = false;
 			if (oldComponent != null) {
 
 				if (component.getComponent().compareTo(oldComponent) != 0) {
 					oldComponent.setName(component.getComponent().getName());
-					if (OpenStorefrontConstant.ComponentApprovalStatus.P.name().equals(oldComponent.getApprovalState())
-							&& OpenStorefrontConstant.ComponentApprovalStatus.A.name().equals(component.getComponent().getApprovalState())) {
+					if ((ApprovalStatus.PENDING.equals(oldComponent.getApprovalState()) || ApprovalStatus.NOT_SUBMITTED.equals(oldComponent.getApprovalState()))
+							&& ApprovalStatus.APPROVED.equals(component.getComponent().getApprovalState())) {
 						oldComponent.setApprovalState(component.getComponent().getApprovalState());
 
 						if (StringUtils.isBlank(component.getComponent().getApprovedUser())) {
@@ -1043,8 +1048,9 @@ public class ComponentServiceImpl
 						}
 						oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
 						oldComponent.setApprovedDts(component.getComponent().getApprovedDts());
-					} else if (OpenStorefrontConstant.ComponentApprovalStatus.A.name().equals(oldComponent.getApprovalState())
-							&& OpenStorefrontConstant.ComponentApprovalStatus.P.name().equals(component.getComponent().getApprovalState())) {
+						approved = true;
+					} else if (ApprovalStatus.APPROVED.equals(oldComponent.getApprovalState())
+							&& (ApprovalStatus.PENDING.equals(component.getComponent().getApprovalState())) || ApprovalStatus.NOT_SUBMITTED.equals(component.getComponent().getApprovalState())) {
 						oldComponent.setApprovalState(component.getComponent().getApprovalState());
 						oldComponent.setApprovedUser(null);
 						oldComponent.setApprovedDts(null);
@@ -1059,6 +1065,8 @@ public class ComponentServiceImpl
 					oldComponent.setParentComponentId(component.getComponent().getParentComponentId());
 					oldComponent.setReleaseDate(component.getComponent().getReleaseDate());
 					oldComponent.setVersion(component.getComponent().getVersion());
+					oldComponent.setNotifyOfApprovalEmail(component.getComponent().getNotifyOfApprovalEmail());
+					oldComponent.setSubmittedDts(component.getComponent().getSubmittedDts());
 					oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
 					oldComponent.setUpdateDts(TimeUtil.currentDate());
 					oldComponent.setUpdateUser(component.getComponent().getUpdateUser());
@@ -1081,13 +1089,14 @@ public class ComponentServiceImpl
 				component.getComponent().setUpdateDts(TimeUtil.currentDate());
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
 
-				if (OpenStorefrontConstant.ComponentApprovalStatus.A.name().equals(component.getComponent().getApprovalState())) {
+				if (ApprovalStatus.APPROVED.equals(component.getComponent().getApprovalState())) {
 					if (StringUtils.isBlank(component.getComponent().getApprovedUser())) {
 						component.getComponent().setApprovedUser(SecurityUtil.getCurrentUserName());
 					}
 					if (component.getComponent().getApprovedDts() == null) {
 						component.getComponent().setApprovedDts(TimeUtil.currentDate());
 					}
+					approved = true;
 				}
 
 				persistenceService.persist(component.getComponent());
@@ -1101,6 +1110,18 @@ public class ComponentServiceImpl
 					saveComponentAttribute(attribute, false);
 				});
 				component.setAttributeChanged(true);
+			}
+
+			if (approved) {
+				if (StringUtils.isNotBlank(component.getComponent().getNotifyOfApprovalEmail())) {
+					UserMessage userMessage = new UserMessage();
+					userMessage.setEmailAddress(component.getComponent().getNotifyOfApprovalEmail());
+					userMessage.setComponentId(component.getComponent().getComponentId());
+					userMessage.setUserMessageType(UserMessageType.APPROVAL_NOTIFICATION);
+					userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+					userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+					getUserService().queueUserMessage(userMessage);
+				}
 			}
 		} else {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
@@ -1137,6 +1158,7 @@ public class ComponentServiceImpl
 		return saveFullComponent(componentAll, new ComponentUploadOption());
 	}
 
+	@Override
 	public ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options)
 	{
 		LockSwitch lockSwitch = new LockSwitch();
@@ -1152,17 +1174,13 @@ public class ComponentServiceImpl
 		}
 
 		if (StringUtils.isBlank(component.getApprovalState())) {
-			component.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.A.name());
+			component.setApprovalState(ApprovalStatus.APPROVED);
 			component.setApprovedUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 			component.setApprovedDts(TimeUtil.currentDate());
 		}
 
 		if (component.getLastActivityDts() != null) {
 			component.setLastActivityDts(TimeUtil.currentDate());
-		}
-
-		if (StringUtils.isBlank(component.getGuid())) {
-			component.setGuid(persistenceService.generateId());
 		}
 
 		//Check Attributes
@@ -1200,7 +1218,7 @@ public class ComponentServiceImpl
 			}
 		}
 
-		if (options.getUploadQuestions()) {
+		if (options.getUploadReviews()) {
 			for (ReviewAll reviewAll : componentAll.getReviews()) {
 				List<ComponentReview> reviews = new ArrayList<>(1);
 				reviews.add(reviewAll.getComponentReview());
@@ -1455,7 +1473,7 @@ public class ComponentServiceImpl
 
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
-		parameters.put("approvedStateParam", OpenStorefrontConstant.ComponentApprovalStatus.A.name());
+		parameters.put("approvedStateParam", ApprovalStatus.APPROVED);
 
 		return persistenceService.query(query, parameters);
 	}
@@ -1668,7 +1686,7 @@ public class ComponentServiceImpl
 			componentQuery.append("select from Component where activeStatus='")
 					.append(Component.ACTIVE_STATUS)
 					.append("'and approvalState='")
-					.append(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED)
+					.append(ApprovalStatus.APPROVED)
 					.append("' and componentId IN :componentIdsParams");
 
 			Map<String, Object> paramMap = new HashMap<>();
@@ -1978,65 +1996,70 @@ public class ComponentServiceImpl
 	@Override
 	public ComponentAll getFullComponent(String componentId)
 	{
-		ComponentAll componentAll;
-		Element element = OSFCacheManager.getComponentCache().get(componentId);
-		if (element != null) {
-			componentAll = (ComponentAll) element.getObjectValue();
-		} else {
-			componentAll = new ComponentAll();
+		ComponentAll componentAll = null;
+		if (StringUtils.isNotBlank(componentId)) {
+			Element element = OSFCacheManager.getComponentCache().get(componentId);
+			if (element != null) {
+				componentAll = (ComponentAll) element.getObjectValue();
+			} else {
+				componentAll = new ComponentAll();
 
-			Component componentExample = new Component();
-			componentExample.setComponentId(componentId);
-			componentAll.setComponent(persistenceService.queryOneByExample(Component.class, componentExample));
-			componentAll.setAttributes(getAttributesByComponentId(componentId));
-			componentAll.setContacts(getBaseComponent(ComponentContact.class, componentId));
-			componentAll.setEvaluationSections(getBaseComponent(ComponentEvaluationSection.class, componentId));
-			componentAll.setExternalDependencies(getBaseComponent(ComponentExternalDependency.class, componentId));
-			componentAll.setMedia(getBaseComponent(ComponentMedia.class, componentId));
-			componentAll.setMetadata(getBaseComponent(ComponentMetadata.class, componentId));
-			componentAll.setResources(getBaseComponent(ComponentResource.class, componentId));
-			componentAll.setResources(SortUtil.sortComponentResource(componentAll.getResources()));
+				Component componentExample = new Component();
+				componentExample.setComponentId(componentId);
+				componentAll.setComponent(persistenceService.queryOneByExample(Component.class, componentExample));
 
-			componentAll.setTags(getBaseComponent(ComponentTag.class, componentId));
+				if (componentAll.getComponent() != null) {
+					componentAll.setAttributes(getAttributesByComponentId(componentId));
+					componentAll.setContacts(getBaseComponent(ComponentContact.class, componentId));
+					componentAll.setEvaluationSections(getBaseComponent(ComponentEvaluationSection.class, componentId));
+					componentAll.setExternalDependencies(getBaseComponent(ComponentExternalDependency.class, componentId));
+					componentAll.setMedia(getBaseComponent(ComponentMedia.class, componentId));
+					componentAll.setMetadata(getBaseComponent(ComponentMetadata.class, componentId));
+					componentAll.setResources(getBaseComponent(ComponentResource.class, componentId));
+					componentAll.setResources(SortUtil.sortComponentResource(componentAll.getResources()));
 
-			List<QuestionAll> allQuestions = new ArrayList<>();
-			List<ComponentQuestion> questions = getBaseComponent(ComponentQuestion.class, componentId);
-			for (ComponentQuestion question : questions) {
-				QuestionAll questionAll = new QuestionAll();
-				questionAll.setQuestion(question);
+					componentAll.setTags(getBaseComponent(ComponentTag.class, componentId));
 
-				ComponentQuestionResponse questionResponseExample = new ComponentQuestionResponse();
-				questionResponseExample.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
-				questionResponseExample.setQuestionId(question.getQuestionId());
-				questionAll.setResponds(persistenceService.queryByExample(ComponentQuestionResponse.class, questionResponseExample));
-				allQuestions.add(questionAll);
+					List<QuestionAll> allQuestions = new ArrayList<>();
+					List<ComponentQuestion> questions = getBaseComponent(ComponentQuestion.class, componentId);
+					for (ComponentQuestion question : questions) {
+						QuestionAll questionAll = new QuestionAll();
+						questionAll.setQuestion(question);
+
+						ComponentQuestionResponse questionResponseExample = new ComponentQuestionResponse();
+						questionResponseExample.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
+						questionResponseExample.setQuestionId(question.getQuestionId());
+						questionAll.setResponds(persistenceService.queryByExample(ComponentQuestionResponse.class, questionResponseExample));
+						allQuestions.add(questionAll);
+					}
+					componentAll.setQuestions(allQuestions);
+
+					List<ReviewAll> allReviews = new ArrayList<>();
+					List<ComponentReview> componentReviews = getBaseComponent(ComponentReview.class, componentId);
+					for (ComponentReview componentReview : componentReviews) {
+						ReviewAll reviewAll = new ReviewAll();
+						reviewAll.setComponentReview(componentReview);
+
+						ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
+						ComponentReviewProPk componentReviewProExamplePk = new ComponentReviewProPk();
+						componentReviewProExamplePk.setComponentReviewId(componentReview.getComponentReviewId());
+						componentReviewProExample.setComponentReviewProPk(componentReviewProExamplePk);
+						reviewAll.setPros(persistenceService.queryByExample(ComponentReviewPro.class, componentReviewProExample));
+
+						ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
+						ComponentReviewConPk componentReviewConExamplePk = new ComponentReviewConPk();
+						componentReviewConExamplePk.setComponentReviewId(componentReview.getComponentReviewId());
+						componentReviewConExample.setComponentReviewConPk(componentReviewConExamplePk);
+						reviewAll.setCons(persistenceService.queryByExample(ComponentReviewCon.class, componentReviewConExample));
+
+						allReviews.add(reviewAll);
+					}
+					componentAll.setReviews(allReviews);
+
+					element = new Element(componentId, componentAll);
+					OSFCacheManager.getComponentCache().put(element);
+				}
 			}
-			componentAll.setQuestions(allQuestions);
-
-			List<ReviewAll> allReviews = new ArrayList<>();
-			List<ComponentReview> componentReviews = getBaseComponent(ComponentReview.class, componentId);
-			for (ComponentReview componentReview : componentReviews) {
-				ReviewAll reviewAll = new ReviewAll();
-				reviewAll.setComponentReview(componentReview);
-
-				ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
-				ComponentReviewProPk componentReviewProExamplePk = new ComponentReviewProPk();
-				componentReviewProExamplePk.setComponentReviewId(componentReview.getComponentReviewId());
-				componentReviewProExample.setComponentReviewProPk(componentReviewProExamplePk);
-				reviewAll.setPros(persistenceService.queryByExample(ComponentReviewPro.class, componentReviewProExample));
-
-				ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
-				ComponentReviewConPk componentReviewConExamplePk = new ComponentReviewConPk();
-				componentReviewConExamplePk.setComponentReviewId(componentReview.getComponentReviewId());
-				componentReviewConExample.setComponentReviewConPk(componentReviewConExamplePk);
-				reviewAll.setCons(persistenceService.queryByExample(ComponentReviewCon.class, componentReviewConExample));
-
-				allReviews.add(reviewAll);
-			}
-			componentAll.setReviews(allReviews);
-
-			element = new Element(componentId, componentAll);
-			OSFCacheManager.getComponentCache().put(element);
 		}
 
 		return componentAll;
@@ -2130,13 +2153,14 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId)
+	public ComponentAdminWrapper getFilteredComponents(ComponentFilterParams filter, String componentId)
 	{
 		ComponentAdminWrapper result = new ComponentAdminWrapper();
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(filter.getStatus());
 		componentExample.setComponentId(componentId);
+		componentExample.setApprovalState(filter.getApprovalState());
 
 //		Component componentStartExample = new Component();
 //		componentStartExample.setEventDts(filter.getStart());
@@ -2219,7 +2243,7 @@ public class ComponentServiceImpl
 		Set<LookupModel> results = new HashSet<>();
 
 		Map<String, Object> params = new HashMap<>();
-		search = search.toLowerCase() + "%";
+		search = "%" + search.toLowerCase() + "%";
 		params.put("search", search);
 		String query = "SELECT FROM " + Component.class.getSimpleName() + " WHERE name.toLowerCase() LIKE :search LIMIT 10";
 		List<Component> components = persistenceService.query(query, params);
@@ -2230,6 +2254,31 @@ public class ComponentServiceImpl
 			results.add(temp);
 		}
 		return results;
+	}
+
+	@Override
+	public void submitComponentSubmission(String componentId)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+
+				component.setApprovalState(ApprovalStatus.PENDING);
+				component.setSubmittedDts(TimeUtil.currentDate());
+				component.setUpdateUser(SecurityUtil.getCurrentUserName());
+				component.populateBaseUpdateFields();
+				persistenceService.persist(component);
+
+				AlertContext alertContext = new AlertContext();
+				alertContext.setAlertType(AlertType.COMPONENT_SUBMISSION);
+				alertContext.setDataTrigger(component);
+				getAlertService().checkAlert(alertContext);
+			} else {
+				throw new OpenStorefrontRuntimeException("Component: " + component.getName() + " is already Approved. Id: " + componentId);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find component to submit.", "Check data");
+		}
 	}
 
 }
