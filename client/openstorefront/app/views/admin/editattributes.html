@@ -16,14 +16,14 @@
       <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 15px;" >  
         <div class="form-group">
           <label>Attribute File Import</label>
-          <input type="file" nv-file-select uploader="attributeUploader" id="attributeUploadFile" name="uploadFile" width="100" />
+          <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().attributeUploader, this)" uploader="attributeUploader" id="attributeUploadFile" name="uploadFile" width="100" />
           <p class="help-block">CSV Attributes</p>      
         </div>
         <button ng-click="confirmAttributeUpload(true)" class="btn btn-primary">Upload</button>   
         <br><br>
         <div class="form-group">
           <label>Svcv-4 Import</label>
-          <input type="file" nv-file-select uploader="svcv4uploader" id="svcv4UploadFile" name="uploadFile" width="100" />
+          <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().svcv4uploader, this)" uploader="svcv4uploader" id="svcv4UploadFile" name="uploadFile" width="100" />
           <p class="help-block">CSV (svcv-4_export.csv)</p>     
         </div>
         <button ng-click="confirmAttributeUpload(false)" class="btn btn-primary">Upload</button>        

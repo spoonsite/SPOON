@@ -18,8 +18,31 @@
 
 /*global isEmpty*/
 
-app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$anchorScroll', 'FileUploader', '$templateCache', '$uiModal',
-  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $anchorScroll, FileUploader, $templateCache, $uiModal) { /*jshint unused: false*/
+app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$anchorScroll', 'FileUploader', '$templateCache', '$uiModal', '$sce',
+  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $anchorScroll, FileUploader, $templateCache, $uiModal, $sce) { /*jshint unused: false*/
+
+    $scope.config = {
+      sources: [
+      // {src: $sce.trustAsResourceUrl("http://familyhistorydatabase.org/tempfiles/Never Be Alone.mp3"), type: "audio/mp3"},
+      {src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.mp4"), type: "video/mp4"},
+      {src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.webm"), type: "video/webm"},
+      {src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.ogg"), type: "video/ogg"}
+      ],
+      tracks: [
+      {
+        src: "http://www.videogular.com/assets/subs/pale-blue-dot.vtt",
+        kind: "subtitles",
+        srclang: "en",
+        label: "English",
+        default: ""
+      }
+      ],
+      theme: "bower_components/bower_components/videogular-themes-default/videogular.css"
+      // plugins: {
+      //   poster: "http://www.videogular.com/assets/images/videogular.png"
+      // }
+    };
+
 
     $scope.test = 'This is a test';
 
@@ -39,6 +62,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.component.tags = [];
     $scope.tagsLength = 0;
     $scope.component.tags[$scope.tagsLength] = {};
+
+    $scope.contactForm = {};
+    $scope.component.contacts = [];
+
+    $scope.mediaForm = {};
+    $scope.isFull = false;
 
     $scope.details = {};
 
@@ -73,6 +102,10 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return true;
   }
 
+  $scope.getComponent = function(){
+    return JSON.stringify($scope.component, null, 4);
+  }
+
   $scope.removeMetadata = function(index){
     $scope.component.metadata.splice(index, 1);
     $scope.metadataLength--;
@@ -97,6 +130,23 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       $scope.component.tags[$scope.tagsLength] = {};
       $('#tagLabel').focus();
     }
+  }
+
+  $scope.removeContact = function(index){
+    $scope.component.contacts.splice(index, 1);
+  }
+  $scope.addContact = function(){
+    console.log('$scope.contactForm', $scope.contactForm);
+    
+    if ( $scope.contactForm ) {
+      $scope.component.contacts.push($scope.contactForm);
+      $scope.contactForm = {};
+      $('#contactType').focus();
+    }
+  }
+  $scope.getContactType = function(type){
+    var found = _.find($scope.contactTypes, {'code': type});
+    return found? found.description: type;
   }
 
   $scope.vitalsCheck = function(log){
@@ -184,48 +234,211 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     onSuccessItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
 
-        //check response for a fail ticket or a error model
-        if (response.success) {
-          triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000); 
-          $scope.cancelResourceEdit();
-          $scope.loadResources();
+      //check response for a fail ticket or a error model
+      if (response.success) {
+        triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000); 
+        $scope.cancelResourceEdit();
+        $scope.loadResources();
+      } else {
+        if (response.errors) {
+          var uploadError = response.errors.file;
+          var enityError = response.errors.componentResource;
+          var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
+          triggerAlert('Unable to upload resource. Message: <br> ' + errorMessage, 'saveResource', 'componentWindowDiv', 6000);
         } else {
-          if (response.errors) {
-            var uploadError = response.errors.file;
-            var enityError = response.errors.componentResource;
-            var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
-            triggerAlert('Unable to upload resource. Message: <br> ' + errorMessage, 'saveResource', 'componentWindowDiv', 6000);
-          } else {
-            triggerAlert('Unable to upload resource. ', 'saveResource', 'componentWindowDiv', 6000);
-          }
+          triggerAlert('Unable to upload resource. ', 'saveResource', 'componentWindowDiv', 6000);
         }
-      },
-      onErrorItem: function (item, response, status, headers) {
-        $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
-        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);      
-      }      
-    });     
-
-
-
-    $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'); //
-
-
-    $scope.scrollTo = function(id, current, parent, $event) {
-      var offset = 120;
-      if($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
       }
-      $('li a:focus').blur();
-      $scope.current = current;
-      $timeout(function(){
-        $('[data-spy="scroll"]').each(function () {
-          var $spy = $(this).scrollspy('refresh')
-        })
+    },
+    onErrorItem: function (item, response, status, headers) {
+      $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
+      triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);      
+    }      
+  });
 
-        $timeout(function(){
-          if ($location.hash() !== id) {
+$scope.srcList = [];
+$scope.queue = [];
+  $scope.addMedia = function (file) { //
+    // if ($scope.mediaForm.link || 
+    //   $scope.mediaUploader.queue.length === 0) {
+
+    //   if (!$scope.mediaForm.link) {          
+    //     $scope.mediaForm.originalName = $scope.mediaForm.originalFileName;  
+    //   } else {
+    //     $scope.mediaForm.mimeType = '';
+    //   }
+
+      // $scope.saveEntity({
+      //   alertId: 'saveMedia',
+      //   alertDiv: 'componentWindowDiv',
+      //   loader: 'mediaFormLoader',
+      //   entityName: 'media',
+      //   entity: $scope.mediaForm,
+      //   entityId: $scope.mediaForm.componentMediaId,
+      //   formName: 'mediaForm',
+      //   loadEntity: function () {
+      //     $scope.loadMedia();
+      //   }
+      // });
+    // } else {
+      console.log('$scope.mediaUploader', $scope.mediaUploader);
+      if (file._file){
+        $scope.readFile(file._file, function(result){
+          $scope.queue.push(result);
+          if(!$scope.$$phase) {
+            $scope.$apply();
+          }
+        });
+      }
+      // $scope.mediaUploader.uploadAll();
+    // }
+  };
+  $scope.resetMediaInput = function(){
+    $('#mediaUploadInput').val(null);
+  }
+
+  $scope.readFile = function(file, callback){
+    var reader;
+    if (file.type.match('image.*')) {
+      var reader = new FileReader();
+      alert('e.target.result');
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+          callback(
+           ['<img class="thumb" src="', e.target.result,
+           '" title="', escape(theFile.name), '" width="230"    height="270"/>'].join('')
+           )
+        };
+      })(file);
+    }else if (file.type.match('audio.*')){
+      var reader = new FileReader();
+
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+
+          callback(
+            ['<audio controls><source src="', e.target.result,'   "type="audio/ogg"><source src="', e.target.result,' "type="audio/mpeg"></audio>'].join('')
+            )
+        };
+      })(file);
+    }else if (file.type.match('video.*')){
+      var URL = window.URL || window.webkitURL;
+      var type = file.type;
+
+      var videoNode = document.createElement('video');
+
+      var canPlay = videoNode.canPlayType(type);
+
+      canPlay = (canPlay === '' ? 'no' : canPlay);
+
+      var message = 'Can play type "' + type + '": ' + canPlay;
+
+      var isError = canPlay === 'no';
+
+      console.log(message, isError);
+
+      if (isError) {
+        return;
+      }
+
+      var fileURL = URL.createObjectURL(file);
+      console.log('fileURL', fileURL);
+      
+      if (!URL) {
+        callback('<span>Your browser is not <a href="http://caniuse.com/bloburls">supported</a>!</span>')
+      }   
+      var srcs = [];
+      console.log('$sce.trustAsResourceUrl', $sce.trustAsResourceUrl(fileURL));
+      
+      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/mp4'});             
+      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/webm'});             
+      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/ogg'});             
+      callback(
+        ['<videogular> <vg-media vg-src=\''+JSON.stringify(srcs)+'\'></vg-media>  <vg-controls vg-autohide="true" vg-autohide-time="2000"> <vg-play-pause-button></vg-play-pause-button> <vg-time-display>{{ currentTime | date:\'mm:ss\' }} </vg-time-display> <vg-scrub-bar><vg-scrub-bar-current-time></vg-scrub-bar-current-time> </vg-scrub-bar> <vg-time-display>{{ timeLeft | date:\'mm:ss\' }}</vg-time-display> <vg-volume> <vg-mute-button></vg-mute-button><vg-volume-bar></vg-volume-bar></vg-volume> <vg-fullscreen-button></vg-fullscreen-button> </vg-controls> </videogular>'].join('')
+        )
+    }
+  }
+
+  $scope.mediaUploader = new FileUploader({ //
+    url: 'Media.action?UploadMedia',
+    alias: 'file',
+    queueLimit: 50,  
+    removeAfterUpload: true,
+    onAfterAddingFile: function(file){
+      if (this.queue.length >= this.queueLimit) {
+        $scope.isFull = true;
+      }
+      $scope.addMedia(file);
+    },
+    onBeforeUploadItem: function(item) {
+      $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
+
+      item.formData.push({
+        "componentMedia.componentId" : $scope.componentForm.componentId
+      });
+      item.formData.push({
+        "componentMedia.mediaTypeCode" : $scope.mediaForm.mediaTypeCode
+      });
+      if ($scope.mediaForm.caption) {
+        item.formData.push({
+          "componentMedia.caption": $scope.mediaForm.caption
+        });
+      }
+      if ($scope.mediaForm.componentMediaId) {
+        item.formData.push({
+          "componentMedia.componentMediaId": $scope.mediaForm.componentMediaId
+        });
+      }
+    },
+    onSuccessItem: function (item, response, status, headers) {
+      $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
+
+      //check response for a fail ticket or a error model
+      if (response.success) {
+        triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
+        $scope.cancelMediaEdit();
+        $scope.loadMedia();          
+      } else {
+        if (response.errors) {
+          var uploadError = response.errors.file;
+          var enityError = response.errors.componentMedia;
+          var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
+          triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'componentWindowDiv', 6000);
+        } else {
+          triggerAlert('Unable to upload media. ', 'saveMedia', 'componentWindowDiv', 6000);
+        }
+      }
+    },
+    onErrorItem: function (item, response, status, headers) {
+      $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
+      triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
+    }      
+  });     
+
+
+
+  $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'); //
+
+
+  $scope.scrollTo = function(id, current, parent, $event) {
+    var offset = 120;
+    if($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
+    $('li a:focus').blur();
+    $scope.current = current;
+    $timeout(function(){
+      $('[data-spy="scroll"]').each(function () {
+        var $spy = $(this).scrollspy('refresh')
+      })
+
+      $timeout(function(){
+        if ($location.hash() !== id) {
           // set the $location.hash to `newHash` and
           // $anchorScroll will automatically scroll to it
           $location.hash(id);

@@ -28,7 +28,7 @@ limitations under the License.
       <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 20px;" > 
         <div class="form-group">
           <label>File Input</label>
-          <input type="file" nv-file-select uploader="componentUploader" name="uploadFile" width="100" />
+          <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().componentUploader, this)" uploader="componentUploader" name="uploadFile" width="100" />
           <p class="help-block">JSON of full component model</p>  
           <input type="checkbox" ng-model="componentUploadOptions.uploadReviews" /> Upload Reviews<br>
           <input type="checkbox" ng-model="componentUploadOptions.uploadQuestions" /> Upload Questions<br>

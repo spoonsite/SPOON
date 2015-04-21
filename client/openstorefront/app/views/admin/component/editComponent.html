@@ -356,7 +356,7 @@ limitations under the License.
             <div class="form-group"  >
               <label class="col-sm-2 control-label">Upload Local Resource</label>
               <div class="col-sm-10">
-                <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" width="100" ng-disabled="resourceForm.originalLink" />
+                <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().resourceUploader, this)" uploader="resourceUploader" name="uploadFile" width="100" ng-disabled="resourceForm.originalLink" />
               </div>
               <p class="help-block" ng-show="resourceForm.localResourceName">Current Local Resource: {{resourceForm.originalFileName}} ({{resourceForm.localResourceName}})</p>               
             </div>  
@@ -427,7 +427,7 @@ limitations under the License.
           <div class="form-group"  >
             <label class="col-sm-2  control-label">Upload Media</label>		
             <div class="col-sm-10">
-              <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" width="100" ng-disabled="mediaForm.originalLink" />
+              <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().mediaUploader, this)" uploader="mediaUploader" name="uploadFile" width="100" ng-disabled="mediaForm.originalLink" />
             </div>
             <p class="help-block" ng-show="mediaForm.fileName">Current Local Media: {{mediaForm.originalFileName}} ({{mediaForm.fileName}})</p>								
           </div>				

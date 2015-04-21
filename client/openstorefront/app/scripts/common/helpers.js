@@ -6,6 +6,26 @@
 
   // BEGIN API
 
+
+  utils.handleFileQueue = function(uploader, elem){
+    console.log('uploader', uploader);
+    console.log('elem', elem);
+    
+    if (uploader.queueLimit === 1){
+      if (uploader.queue.length >= 1) {
+        console.log('replacing the queue', elem.files);
+        uploader.clearQueue();
+        setTimeout(function(){
+          uploader.addToQueue(elem.files);
+        },0)
+      } else {
+        console.log('just adding it to the queue', elem.files);
+        
+        uploader.addToQueue(elem.files);
+      }
+    }
+  }
+
   // function to convert letters for the job status into human readable form
   // (might think about moving this to the server so it doesn't require a code change)
   utils.calcStatus = function(val) {
