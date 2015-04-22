@@ -44,6 +44,25 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     };
 
 
+    $scope.getMimeTypeClass = function(type){
+      console.log('mime type = ', type);
+      
+      if (type.match('video.*')) {
+        return 'fa-file-video-o'
+      } else if (type.match('audio.*')){
+        return 'fa-file-audio-o'
+      } else if (type.match('application.*')){
+        return 'fa-file-code-o'
+      } else if (type.match('text.*')){
+        return 'fa-file-text-o'
+      } else if (type.match('image.*')){
+        return 'fa-file-image-o'
+      } else {
+        return 'fa-file-o'
+      }
+    }
+
+
     $scope.test = 'This is a test';
 
     $scope.name;
@@ -62,18 +81,25 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.component.tags = [];
     $scope.tagsLength = 0;
     $scope.component.tags[$scope.tagsLength] = {};
-
+    
+    
     $scope.contactForm = {};
     $scope.component.contacts = [];
 
+    $scope.component.media = [];
     $scope.mediaForm = {};
+    $scope.showMediaUpload = 'true';
     $scope.isFull = false;
+
+
+    $scope.component.resources = [];
+    $scope.resourceForm = {};
+    $scope.showResourceUpload = 'false';
+    $scope.isFullResource = false;
 
     $scope.details = {};
 
-    $scope.getStarted = function(){
-      return $scope.name && $scope.email && $scope.organization;
-    }
+    $scope.formMedia;
 
     $scope.checkAttributes = function(){
     // console.log('Compact list', _.compact($scope.component.attributes));
@@ -106,6 +132,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return JSON.stringify($scope.component, null, 4);
   }
 
+  // Metadata section
   $scope.removeMetadata = function(index){
     $scope.component.metadata.splice(index, 1);
     $scope.metadataLength--;
@@ -119,6 +146,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
   }
 
+  // tag section
   $scope.removeTag = function(index){
     $scope.component.tags.splice(index, 1);
     $scope.tagsLength--;
@@ -132,6 +160,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
   }
 
+  // contact section
   $scope.removeContact = function(index){
     $scope.component.contacts.splice(index, 1);
   }
@@ -149,7 +178,85 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return found? found.description: type;
   }
 
+
+  // Media section
+  $scope.oldMediaState = $scope.showMediaUpload;
+  $scope.toggleShowMedia = function(val){
+    if (val !== $scope.oldMediaState) {
+      $scope.oldMediaState = val;
+      $('#mediaUploadInput').val(null);
+      $scope.mediaForm.typeCode = null;
+      $scope.mediaForm.caption = null;
+      $scope.mediaForm.link = null;
+      $scope.lastMediaFile = '';
+    }
+  }
+
+
+  $scope.resetMediaInput = function(){
+    $('#mediaUploadInput').val(null);
+    $scope.mediaForm.typeCode = null;
+    $scope.mediaForm.caption = null;
+    $scope.lastMediaFile = '';
+  }
+
+  $scope.addLinkToMedia = function(){
+    $scope.component.media.push({
+      typeCode: $scope.mediaForm.typeCode,
+      caption: $scope.mediaForm.caption,
+      link: $scope.mediaForm.link
+    })
+    $('#mediaUploadInput').val(null);
+    $scope.mediaForm.typeCode = null;
+    $scope.mediaForm.link = null;
+    $scope.mediaForm.caption = null;
+    $scope.lastMediaFile = '';
+  }  
+
+
+  // Resource section
+  $scope.oldResourceState = $scope.showResourceUpload;
+  $scope.toggleShowResource = function(val){
+    if (val !== $scope.oldResourceState) {
+      $scope.oldResourceState = val;
+      $('#resourceUploadInput').val(null);
+      $scope.resourceForm.typeCode = null;
+      $scope.resourceForm.caption = null;
+      $scope.resourceForm.link = null;
+      $scope.lastResourceFile = '';
+    }
+  }
+
+
+  $scope.resetResourceInput = function(){
+    $('#resourceUploadInput').val(null);
+    $scope.resourceForm.typeCode = null;
+    $scope.resourceForm.caption = null;
+    $scope.lastResourceFile = '';
+  }
+
+  $scope.addLinkToResource = function(){
+    $scope.component.resources.push({
+      typeCode: $scope.resourceForm.typeCode,
+      caption: $scope.resourceForm.caption,
+      link: $scope.resourceForm.link
+    })
+    $('#resourceUploadInput').val(null);
+    $scope.resourceForm.typeCode = null;
+    $scope.resourceForm.link = null;
+    $scope.resourceForm.caption = null;
+    $scope.lastResourceFile = '';
+  }
+
+
+  // validation section
+  $scope.getStarted = function(){
+    return true;
+    return $scope.name && $scope.email && $scope.organization;
+  }
+
   $scope.vitalsCheck = function(log){
+    return true;
     return $scope.getStarted() && $scope.component && $scope.component.name && $scope.component.description && $scope.component.organization && $scope.checkAttributes();
   }
 
@@ -202,14 +309,210 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return foundType !== undefined ? foundType.codes : [];
   }; 
 
-  $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader');  
   $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader'); 
+  $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'); //
+  $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader');  
 
-  $scope.resourceUploader = new FileUploader({
+  
+
+  // Media Handling functions
+  $scope.srcList = []; //
+  $scope.queue = [];
+  $scope.resourceQueue = [];
+  $scope.addMedia = function (file, queue, form, loader) { //
+    // if ($scope.mediaForm.link || 
+    //   $scope.mediaUploader.queue.length === 0) {
+
+    //   if (!$scope.mediaForm.link) {          
+    //     $scope.mediaForm.originalName = $scope.mediaForm.originalFileName;  
+    //   } else {
+    //     $scope.mediaForm.mimeType = '';
+    //   }
+
+      // $scope.saveEntity({
+      //   alertId: 'saveMedia',
+      //   alertDiv: 'componentWindowDiv',
+      //   loader: 'mediaFormLoader',
+      //   entityName: 'media',
+      //   entity: $scope.mediaForm,
+      //   entityId: $scope.mediaForm.componentMediaId,
+      //   formName: 'mediaForm',
+      //   loadEntity: function () {
+      //     $scope.loadMedia();
+      //   }
+      // });
+    // } else {
+      file.typeCode = $scope[form].typeCode;
+      file.caption = $scope[form].caption;
+      file.mimeType = file._file? file._file.type: file.file.type;
+      if (file._file){
+        $scope.readFile(file._file, function(result){
+          queue.push({file: file, dom:result});
+          $scope.$apply();
+          $scope.$emit('$TRIGGERUNLOAD', loader);
+        });
+      } else {
+        queue.push({file: file, dom:'<span>No Link or Preview Available</span>'});
+        $scope.$apply();
+        $scope.$emit('$TRIGGERUNLOAD', loader);
+      }
+      // $scope.mediaUploader.uploadAll();
+    // }
+  };
+
+  $scope.readFile = function(file, callback){
+
+    var reader;
+    if (file.type.match('image.*')) {
+      console.log('file ===  image', file);
+      var reader = new FileReader();
+      // Closure to capture the file information.
+      reader.onload = (function(theFile, callback) {
+
+        return function(e) {
+          // Render thumbnail.
+          callback(
+           ['<img class="thumb" src="', e.target.result,
+           '" title="', escape(theFile.name), '" width="230"    height="270"/>'].join('')
+           )
+        };
+      })(file, callback);
+      reader.readAsDataURL(file);
+    }else if (file.type.match('audio.*')){
+      var reader = new FileReader();
+      // Closure to capture the file information.
+      reader.onload = (function(theFile, callback) {
+        return function(e) {
+          // Render thumbnail.
+
+          callback(
+            ['<audio controls><source src="', e.target.result,'   "type="audio/ogg"><source src="', e.target.result,' "type="audio/mpeg"></audio>'].join('')
+            )
+        };
+      })(file, callback);
+      reader.readAsDataURL(file);
+    }else if (file.type.match('video.*')){
+      var URL = window.URL || window.webkitURL;
+      var type = file.type;
+
+      var videoNode = document.createElement('video');
+
+      var canPlay = videoNode.canPlayType(type);
+
+      canPlay = (canPlay === '' ? 'no' : canPlay);
+
+      var message = 'Can play type "' + type + '": ' + canPlay;
+
+      var isError = canPlay === 'no';
+
+      console.log(message, isError);
+
+      if (isError) {
+        return;
+      }
+
+      var fileURL = URL.createObjectURL(file);
+      if (!URL) {
+        callback('<span>Your browser is not <a href="http://caniuse.com/bloburls">supported</a>!</span>')
+      }   
+      var srcs = [];
+      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/mp4'});             
+      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/webm'});             
+      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/ogg'});             
+      callback(
+        ['<videogular> <vg-media vg-src=\''+JSON.stringify(srcs)+'\' vg-preload="\'none\'" vg-native-controls="true"></vg-media></videogular>'].join('')
+        )
+    } else {
+      callback('<span>No Link or Preview Available</span>')
+    }
+  }
+
+  // media uploader
+  $scope.mediaUploader = new FileUploader({ //
+    url: 'Media.action?UploadMedia',
+    alias: 'file',
+    queueLimit: 50,  
+    removeAfterUpload: true,
+    onAfterAddingFile: function(file){
+      console.log('We loaded the loader!', file.file);
+      console.dir(file.file);
+      $scope.$emit('$TRIGGERLOAD', 'mediaPreviewLoader');
+      if (this.queue.length >= this.queueLimit) {
+        $scope.isFull = true;
+      }
+      if (file._file) {
+        $scope.lastMediaFile = file._file.name;
+      } else if (file.file) {
+        $scope.lastMediaFile = file.file.name;
+      }
+      $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaPreviewLoader');
+    },
+    onBeforeUploadItem: function(item) {
+      $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
+
+      item.formData.push({
+        "componentMedia.componentId" : $scope.componentForm.componentId
+      });
+      item.formData.push({
+        "componentMedia.typeCode" : $scope.mediaForm.typeCode
+      });
+      if ($scope.mediaForm.caption) {
+        item.formData.push({
+          "componentMedia.caption": $scope.mediaForm.caption
+        });
+      }
+      if ($scope.mediaForm.componentMediaId) {
+        item.formData.push({
+          "componentMedia.componentMediaId": $scope.mediaForm.componentMediaId
+        });
+      }
+    },
+    onSuccessItem: function (item, response, status, headers) {
+      $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
+
+      //check response for a fail ticket or a error model
+      if (response.success) {
+        triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
+        $scope.cancelMediaEdit();
+        $scope.loadMedia();          
+      } else {
+        if (response.errors) {
+          var uploadError = response.errors.file;
+          var enityError = response.errors.componentMedia;
+          var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
+          triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'componentWindowDiv', 6000);
+        } else {
+          triggerAlert('Unable to upload media. ', 'saveMedia', 'componentWindowDiv', 6000);
+        }
+      }
+    },
+    onErrorItem: function (item, response, status, headers) {
+      $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
+      triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
+    }      
+  });     
+
+
+  // Resource uploader
+  $scope.resourceUploader = new FileUploader({//
     url: 'Resource.action?UploadResource',
     alias: 'file',
-    queueLimit: 1,  
+    queueLimit: 50,  
     removeAfterUpload: true,
+    onAfterAddingFile: function(file){
+      console.log('We loaded the loader!', file.file);
+      console.dir(file.file);
+      $scope.$emit('$TRIGGERLOAD', 'resourcePreviewLoader');
+      if (this.queue.length >= this.queueLimit) {
+        $scope.isFull = true;
+      }
+      if (file._file) {
+        $scope.lastResourceFile = file._file.name;
+      } else if (file.file) {
+        $scope.lastResourceFile = file.file.name;
+      }
+      $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'resourcePreviewLoader');
+    },
     onBeforeUploadItem: function(item) {
       $scope.$emit('$TRIGGERLOAD', 'resourceFormLoader');
 
@@ -256,189 +559,21 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }      
   });
 
-$scope.srcList = [];
-$scope.queue = [];
-  $scope.addMedia = function (file) { //
-    // if ($scope.mediaForm.link || 
-    //   $scope.mediaUploader.queue.length === 0) {
-
-    //   if (!$scope.mediaForm.link) {          
-    //     $scope.mediaForm.originalName = $scope.mediaForm.originalFileName;  
-    //   } else {
-    //     $scope.mediaForm.mimeType = '';
-    //   }
-
-      // $scope.saveEntity({
-      //   alertId: 'saveMedia',
-      //   alertDiv: 'componentWindowDiv',
-      //   loader: 'mediaFormLoader',
-      //   entityName: 'media',
-      //   entity: $scope.mediaForm,
-      //   entityId: $scope.mediaForm.componentMediaId,
-      //   formName: 'mediaForm',
-      //   loadEntity: function () {
-      //     $scope.loadMedia();
-      //   }
-      // });
-    // } else {
-      console.log('$scope.mediaUploader', $scope.mediaUploader);
-      if (file._file){
-        $scope.readFile(file._file, function(result){
-          $scope.queue.push(result);
-          if(!$scope.$$phase) {
-            $scope.$apply();
-          }
-        });
-      }
-      // $scope.mediaUploader.uploadAll();
-    // }
-  };
-  $scope.resetMediaInput = function(){
-    $('#mediaUploadInput').val(null);
+$scope.scrollTo = function(id, current, parent, $event) {
+  var offset = 120;
+  if($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
   }
+  $('li a:focus').blur();
+  $scope.current = current;
+  $timeout(function(){
+    $('[data-spy="scroll"]').each(function () {
+      var $spy = $(this).scrollspy('refresh')
+    })
 
-  $scope.readFile = function(file, callback){
-    var reader;
-    if (file.type.match('image.*')) {
-      var reader = new FileReader();
-      alert('e.target.result');
-      // Closure to capture the file information.
-      reader.onload = (function(theFile) {
-        return function(e) {
-          // Render thumbnail.
-          callback(
-           ['<img class="thumb" src="', e.target.result,
-           '" title="', escape(theFile.name), '" width="230"    height="270"/>'].join('')
-           )
-        };
-      })(file);
-    }else if (file.type.match('audio.*')){
-      var reader = new FileReader();
-
-      // Closure to capture the file information.
-      reader.onload = (function(theFile) {
-        return function(e) {
-          // Render thumbnail.
-
-          callback(
-            ['<audio controls><source src="', e.target.result,'   "type="audio/ogg"><source src="', e.target.result,' "type="audio/mpeg"></audio>'].join('')
-            )
-        };
-      })(file);
-    }else if (file.type.match('video.*')){
-      var URL = window.URL || window.webkitURL;
-      var type = file.type;
-
-      var videoNode = document.createElement('video');
-
-      var canPlay = videoNode.canPlayType(type);
-
-      canPlay = (canPlay === '' ? 'no' : canPlay);
-
-      var message = 'Can play type "' + type + '": ' + canPlay;
-
-      var isError = canPlay === 'no';
-
-      console.log(message, isError);
-
-      if (isError) {
-        return;
-      }
-
-      var fileURL = URL.createObjectURL(file);
-      console.log('fileURL', fileURL);
-      
-      if (!URL) {
-        callback('<span>Your browser is not <a href="http://caniuse.com/bloburls">supported</a>!</span>')
-      }   
-      var srcs = [];
-      console.log('$sce.trustAsResourceUrl', $sce.trustAsResourceUrl(fileURL));
-      
-      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/mp4'});             
-      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/webm'});             
-      srcs.push({src: $sce.trustAsResourceUrl(fileURL).$$unwrapTrustedValue(), type: 'video/ogg'});             
-      callback(
-        ['<videogular> <vg-media vg-src=\''+JSON.stringify(srcs)+'\'></vg-media>  <vg-controls vg-autohide="true" vg-autohide-time="2000"> <vg-play-pause-button></vg-play-pause-button> <vg-time-display>{{ currentTime | date:\'mm:ss\' }} </vg-time-display> <vg-scrub-bar><vg-scrub-bar-current-time></vg-scrub-bar-current-time> </vg-scrub-bar> <vg-time-display>{{ timeLeft | date:\'mm:ss\' }}</vg-time-display> <vg-volume> <vg-mute-button></vg-mute-button><vg-volume-bar></vg-volume-bar></vg-volume> <vg-fullscreen-button></vg-fullscreen-button> </vg-controls> </videogular>'].join('')
-        )
-    }
-  }
-
-  $scope.mediaUploader = new FileUploader({ //
-    url: 'Media.action?UploadMedia',
-    alias: 'file',
-    queueLimit: 50,  
-    removeAfterUpload: true,
-    onAfterAddingFile: function(file){
-      if (this.queue.length >= this.queueLimit) {
-        $scope.isFull = true;
-      }
-      $scope.addMedia(file);
-    },
-    onBeforeUploadItem: function(item) {
-      $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
-
-      item.formData.push({
-        "componentMedia.componentId" : $scope.componentForm.componentId
-      });
-      item.formData.push({
-        "componentMedia.mediaTypeCode" : $scope.mediaForm.mediaTypeCode
-      });
-      if ($scope.mediaForm.caption) {
-        item.formData.push({
-          "componentMedia.caption": $scope.mediaForm.caption
-        });
-      }
-      if ($scope.mediaForm.componentMediaId) {
-        item.formData.push({
-          "componentMedia.componentMediaId": $scope.mediaForm.componentMediaId
-        });
-      }
-    },
-    onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
-
-      //check response for a fail ticket or a error model
-      if (response.success) {
-        triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
-        $scope.cancelMediaEdit();
-        $scope.loadMedia();          
-      } else {
-        if (response.errors) {
-          var uploadError = response.errors.file;
-          var enityError = response.errors.componentMedia;
-          var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
-          triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'componentWindowDiv', 6000);
-        } else {
-          triggerAlert('Unable to upload media. ', 'saveMedia', 'componentWindowDiv', 6000);
-        }
-      }
-    },
-    onErrorItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
-      triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
-    }      
-  });     
-
-
-
-  $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'); //
-
-
-  $scope.scrollTo = function(id, current, parent, $event) {
-    var offset = 120;
-    if($event) {
-      $event.preventDefault();
-      $event.stopPropagation();
-    }
-    $('li a:focus').blur();
-    $scope.current = current;
     $timeout(function(){
-      $('[data-spy="scroll"]').each(function () {
-        var $spy = $(this).scrollspy('refresh')
-      })
-
-      $timeout(function(){
-        if ($location.hash() !== id) {
+      if ($location.hash() !== id) {
           // set the $location.hash to `newHash` and
           // $anchorScroll will automatically scroll to it
           $location.hash(id);
@@ -459,8 +594,10 @@ $scope.queue = [];
         })
         $timeout(function(){
           $('li.active').removeClass('active');
-          $('[data-target="#'+parent+'"').addClass('active');
-          $('[data-target="#'+id+'"').addClass('active');
+          if (parent) {
+            $('[data-target="#'+parent+'"]').addClass('active');
+          }
+          $('[data-target="#'+id+'"]').addClass('active');
         },100)
       })
     }) //
