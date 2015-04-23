@@ -29,7 +29,7 @@ body {
             </li>
             <hr style="margin: 2px 0;">
             <li data-target="#vitals" ng-class="{'complete': vitalsCheck(), 'disabled': !getStarted()}">
-              <a target="_self" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event):'';">Vitals</a>
+              <a target="_self" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event):'';">Required Information</a>
             </li>
             <hr style="margin: 2px 0;">
             <li data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
@@ -41,14 +41,14 @@ body {
                 <li data-target="#contacts" ng-class="{'disabled': !vitalsCheck()}">
                   <a target="_self" href="#contacts" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): ''">Contacts</a>
                 </li>
-                <li data-target="#media" ng-class="{'disabled': !vitalsCheck()}">
-                  <a target="_self" href="#media" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): ''">Media</a>
+                <li data-target="#dependencies" ng-class="{'disabled': !vitalsCheck()}">
+                  <a target="_self" href="#dependencies" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''">Dependencies</a>
                 </li>
                 <li data-target="#resources" ng-class="{'disabled': !vitalsCheck()}">
                   <a target="_self" href="#resources" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): ''">Resources</a>
                 </li>
-                <li data-target="#dependencies" ng-class="{'disabled': !vitalsCheck()}">
-                  <a target="_self" href="#dependencies" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''">Dependencies</a>
+                <li data-target="#media" ng-class="{'disabled': !vitalsCheck()}">
+                  <a target="_self" href="#media" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): ''">Media</a>
                 </li>
               </ul>
             </li>
@@ -132,7 +132,7 @@ body {
         <form class="form-signin">
           <div class="required">
             <label style="position:relative; padding-right:15px; padding-top:7px;" for="name">Name</label>
-            <input type="text" id="name" class="form-control" placeholder="Component Name" required ng-model="component.name" autofocus>
+            <input type="text" id="name" class="form-control" placeholder="Component Name" required ng-model="component.componentName" autofocus>
             <label style="position:relative; padding-right:15px; padding-top:7px;" for="description">Description</label>
             <textarea type="text" id="description" class="form-control" placeholder="Component Description" required ng-model="component.description" style="min-width: 100%; min-height:150px;"></textarea>
             <label style="position:relative; padding-right:15px; padding-top:7px;" for="organization">Organization</label>
@@ -169,12 +169,39 @@ body {
         <hr>
         <form name="detailsForm">
           <!--
-          <input type="text" id="inputTest" name="inputTest" placeholder='test' class="form-control" ng-model="details.inputTest">
+          <input type="text" id="inputTest" name="inputTest" placeholder='test' class="form-control" ng-model="component.inputTest">
           <p>$pristine = {{detailsForm.$pristine}}</p>
           <p>$dirty = {{detailsForm.$dirty}}</p> -->
 
           <!-- META DATA -->
           <h2 id="metadata">Main Details<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): ''">Skip</button></small></h2>
+          <panel class-list="edges" open-state="true" title="Add Tag">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Tag</label>
+              <div class="col-sm-10">
+                <input type="text"
+                id="tagLabel"
+                name="text"
+                class="form-control"
+                ng-model="tagsForm.text"
+                ng-minlength=1
+                ng-maxlength=250
+                on-enter="addTag()"/>
+              </div>
+              <p ng-show="detailsForm.text.$error.minlength && !detailsForm.text.$focused" class="help-block">Tag must be longer than 1 character in length.</p>
+              <div style="clear:both;"></div>
+            </div>
+            <button type="button" class="btn btn-primary" ng-click="addTag()" ng-disabled="!tagsForm.text"><i class="fa fa-save"></i>&nbsp;Add</button>
+            <h3 style="margin-top: 20px;" ng-show="component.tags.length">Added Tags</h3>
+            <div class="tags">
+              <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
+                <li ng-if="tag.text" class="tag-item" ng-repeat="tag in component.tags" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                  <span>{{tag.text}}</span>
+                  <a class="remove-button" ng-click="removeTag($index);" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
+                </li>
+              </ul>
+            </div>
+          </panel>
           <panel title="Select Applicable Attributes" class-list="edges">
             <table id="attributes" class="table table-striped table-bordered">
               <tbody>
@@ -204,14 +231,14 @@ body {
             </table>
           </panel>
           <panel class-list="edges" open-state="true" title="Add Metadata">
-            <div class="form-group"  >
+            <div class="form-group">
               <label class="col-sm-2 control-label">Label</label>
               <div class="col-sm-10">
                 <input type="text"
                 id="metadataLabel"
                 name="label"
                 class="form-control"
-                ng-model="component.metadata[metadataLength].label"
+                ng-model="metadataForm.label"
                 ng-minlength=1
                 ng-maxlength=250
                 on-enter="addMetadata()"/>
@@ -219,13 +246,13 @@ body {
               <p ng-show="detailsForm.label.$error.minlength && !detailsForm.label.$focused" class="help-block">Label must be longer than 1 character in length.</p>
               <div style="clear:both;"></div>
             </div>
-            <div class="form-group"  >
+            <div class="form-group">
               <label class="col-sm-2 control-label">Value</label>
               <div class="col-sm-10">
                 <input type="text"
                 name="value"
                 class="form-control"
-                ng-model="component.metadata[metadataLength].value"
+                ng-model="metadataForm.value"
                 ng-minlength=1
                 ng-maxlength=250
                 on-enter="addMetadata()"/>
@@ -233,43 +260,19 @@ body {
               <p ng-show="detailsForm.value.$error.minlength && !detailsForm.value.$focused" class="help-block">Value must be longer than 1 character in length.</p>
               <div style="clear:both;"></div>
             </div>
-            <button class="btn btn-primary" type="button" ng-click="addMetadata()"><i class="fa fa-save"></i>&nbsp;Add</button>
+            <button class="btn btn-primary" type="button" ng-click="addMetadata()" ng-disabled="!metadataForm.label || !metadataForm.value"><i class="fa fa-save"></i>&nbsp;Add</button>
+            <h3 style="margin-top: 20px;" ng-show="component.metadata.length">Added Metadata</h3>
             <div class="tags">
               <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
-                <li ng-if="tag.label && tag.value" class="tag-item" ng-repeat="tag in component.metadata | limitTo:metadataLength" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                <li ng-if="tag.label && tag.value" class="tag-item" ng-repeat="tag in component.metadata" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
                   <span>{{tag.label}}&nbsp;&mdash;&nbsp;{{tag.value}}</span>
                   <a class="remove-button" ng-click="removeMetadata($index);" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
                 </li>
               </ul>
             </div>
           </panel>
-          <panel class-list="edges" open-state="true" title="Add Tag">
-            <div class="form-group"  >
-              <label class="col-sm-2 control-label">Tag</label>
-              <div class="col-sm-10">
-                <input type="text"
-                id="tagLabel"
-                name="text"
-                class="form-control"
-                ng-model="component.tags[tagsLength].text"
-                ng-minlength=1
-                ng-maxlength=250
-                on-enter="addTag()"/>
-              </div>
-              <p ng-show="detailsForm.text.$error.minlength && !detailsForm.text.$focused" class="help-block">Tag must be longer than 1 character in length.</p>
-              <div style="clear:both;"></div>
-            </div>
-            <button type="button" class="btn btn-primary" ng-click="addTag()" ng-disabled="detailsForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button>
-            <div class="tags">
-              <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
-                <li ng-if="tag.text" class="tag-item" ng-repeat="tag in component.tags | limitTo:tagsLength" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
-                  <span>{{tag.text}}</span>
-                  <a class="remove-button" ng-click="removeTag($index);" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
-                </li>
-              </ul>
-            </div>
-          </panel>
-          <panel class-list="edges" open-state="true" title="Add Preemptive Answers">
+          <!-- Handle the 'preemptive answers section' -->
+<!--           <panel class-list="edges" open-state="true" title="Add Preemptive Answers">
             User questions and answers<br><br>
             <loader trigger="questionFormLoader"></loader>
             <div>
@@ -278,7 +281,7 @@ body {
               <select type="text" class="form-control"  ng-change="loadQuestions()" style="width:110px;display: inline" ng-model="questionFilter.status" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.desc for status in statusFilterOptions"></select>
               <button class="btn btn-default" ng-click="loadQuestions()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
             </div>
-          </panel>
+          </panel> -->
           <hr>
           <!-- END META DATA -->
 
@@ -288,11 +291,11 @@ body {
             <div class="form-group " show-errors >
               <label class="col-sm-2 control-label ">Contact Type</label>
               <div class="col-sm-10">
-                <select type="text" name="contactType" id="contactType" class="form-control"   ng-model="contactForm.contactType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in contactTypes" placeholder="Select Type"></select>
+                <select type="text" name="contactType" id="contactType" class="form-control"   ng-model="contactForm.contactType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in contactTypes" placeholder="Select Type"></select>
               </div>
               <div style="clear:both;"></div>
             </div>
-            <div class="form-group "  >
+            <div class="form-group ">
               <label class="col-sm-2 control-label ">First Name</label>
               <div class="col-sm-10">
                 <input type="text"
@@ -307,7 +310,7 @@ body {
               <p ng-show="contactUIForm.firstName.$error.minlength && !contactUIForm.firstName.$focused" class="help-block">First Name must be longer than 1 character in length.</p>
               <div style="clear:both;"></div>
             </div>
-            <div class="form-group "  >
+            <div class="form-group ">
               <label class="col-sm-2 control-label ">Last Name</label>
               <div class="col-sm-10">
                 <input type="text"
@@ -322,7 +325,7 @@ body {
               <p ng-show="contactUIForm.lastName.$error.minlength && !contactUIForm.lastName.$focused" class="help-block">Last Name must be longer than 1 character in length.</p>
               <div style="clear:both;"></div>
             </div>
-            <div class="form-group "  >
+            <div class="form-group ">
               <label class="col-sm-2 control-label ">Organization</label>
               <div class="col-sm-10">
                 <input type="text"
@@ -337,7 +340,7 @@ body {
               <p ng-show="contactUIForm.organization.$error.minlength && !contactUIForm.organization.$focused" class="help-block">Organization must be longer than 1 character in length.</p>
               <div style="clear:both;"></div>
             </div>
-            <div class="form-group"  >
+            <div class="form-group">
               <label class="col-sm-2 control-label">Email</label>
               <div class="col-sm-10">
                 <input
@@ -352,7 +355,7 @@ body {
               </div>
               <div style="clear:both;"></div>
             </div>
-            <div class="form-group"  >
+            <div class="form-group">
               <label class="col-sm-2 control-label">Phone</label>
               <div class="col-sm-10">
                 <input type="tel"
@@ -367,8 +370,10 @@ body {
               <div style="clear:both;"></div>
             </div>
             <div class="col-sm-12">
-              <button type="button" class="btn btn-primary" ng-click="addContact()" ng-disabled="detailsForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button>
+              <button type="button" class="btn btn-primary" ng-click="addContact()" ng-disabled="detailsForm.$invalid || !contactForm.contactType || !contactForm.firstName || !contactForm.lastName || !contactForm.organization"><i class="fa fa-save"></i>&nbsp;Add</button>
             </div>
+            <div style="clear:both;"></div>
+            <h3 style="margin-top: 20px;" ng-show="component.contacts.length">Added Contacts</h3>
             <table style="margin-top:10px;" ng-show="component.contacts.length" class="table table-striped table-bordered admin-table">
               <tr>
                 <th>Contact Type</th>
@@ -380,7 +385,7 @@ body {
                 <th>Action</th>
               </tr>
               <tr ng-repeat="contact in component.contacts" >
-                <td>{{getContactType(contact.contactType)}}</td>
+                <td>{{contact.contactType.description}}</td>
                 <td>{{contact.firstName}}</td>
                 <td>{{contact.lastName}}</td>
                 <td>{{contact.organization}}</td>
@@ -395,141 +400,97 @@ body {
           <hr>
           <!-- END CONTACTS -->
 
-          <!-- MEDIA -->
-          <h2 id="media">Media:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): ''">Skip</button></small></h2>
-          <panel class-list="edges" open-state="true" title="Add Media" style="position:relative">
-            <loader trigger="mediaPreviewLoader"></loader>
-            Current max upload size < 100Mb
-            <div class="col-sm-12 ">
-              <div class="input-group">
-                <span class="input-group-addon">
-                  <input type="radio" ng-model="showMediaUpload" value="true" ng-click="toggleShowMedia(true)">
-                </span>
-                <label for="displayGrades" class="form-control select-hover">
-                  <div class="form-group"  >
-                    <label class="col-sm-2 control-label">Media Type</label>
-                    <div class="col-sm-10">
-                      <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"></select>
-                    </div>
-                    <div style="clear:both;"></div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label">Caption</label>   
-                    <div class="col-sm-10">
-                      <input 
-                      class="form-control"
-                      type="text"
-                      name="caption"
-                      ng-model="mediaForm.caption"
-                      ng-minlength=0
-                      ng-maxlength=250
-                      placeholder="Caption"
-                      ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"
-                      />
-                    </div>
-                    <div style="clear:both;"></div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label">Upload Media</label>   
-                    <div class="col-sm-10">
-                      <span class="btn btn-default btn-file" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.typeCode || !mediaForm.caption ||  isFull">
-                        Browse <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.typeCode || isFull"/> 
-                      </span> <span>{{lastMediaFile}}</span>
-                    </div>
-                    <p class="help-block" ng-show="mediaForm.fileName">Current Local Media: {{mediaForm.originalFileName}} ({{mediaForm.fileName}})</p>               
-                    <div style="clear:both;"></div>
-                  </div>
-                  <div class="col-sm-12">
-                    <button type="button" class="btn btn-primary" ng-click="resetMediaInput()" ng-disabled="!lastMediaFile || !mediaForm.typeCode || !mediaForm.caption || isFull"><i class="fa fa-save"></i>&nbsp;Add Another File</button>
-                  </div>        
-                </label>
+
+          <!-- DEPENDENCIES -->
+          <h2 id="dependencies">Dependencies:</h2>
+          <panel class-list="edges" open-state="true" title="Add Dependency">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Name</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="dependencyFormName"
+                name="name"
+                class="form-control"
+                ng-model="dependencyForm.dependencyName"
+                ng-minlength=1
+                ng-maxlength=250
+                ng-focus/>
               </div>
+              <p ng-show="dependencyUIForm.name.$error.minlength && !dependencyUIForm.name.$focused" class="help-block">Name must be longer than 1 character in length.</p>
+              <div style="clear:both;"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Version</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="dependencyFormVersion"
+                name="version"
+                class="form-control"
+                ng-model="dependencyForm.version"
+                ng-minlength=1
+                ng-maxlength=250
+                ng-focus/>
+              </div>
+              <p ng-show="dependencyUIForm.version.$error.minlength && !dependencyUIForm.version.$focused" class="help-block">Version must be longer than 1 character in length.</p>
+              <div style="clear:both;"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">External Link</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="dependencyReferenceLink"
+                name="dependencyReferenceLink"
+                class="form-control"
+                placeholder="http://www.example.com"
+                ng-model="dependencyForm.dependencyReferenceLink"
+                ng-minlength=0
+                ng-maxlength=250
+                ng-focus/>
+              </div>
+              <div style="clear:both;"></div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Comment</label>
+              <div class="col-sm-10">
+                <input  type="text"
+                id="comment"
+                name="comment"
+                class="form-control"
+                ng-model="dependencyForm.comment"
+                ng-minlength=0
+                ng-maxlength=250
+                ng-focus/>
+              </div>
+              <div style="clear:both;"></div>
             </div>
             <div class="col-sm-12">
-              <div class="input-group">
-                <span class="input-group-addon">
-                  <input type="radio" ng-model="showMediaUpload" value="false" ng-click="toggleShowMedia(false)">
-                </span>
-                <label for="displayGrades" class="form-control select-hover">
-                  <div class="form-group"  >
-                    <label class="col-sm-2 control-label">Media Type</label>
-                    <div class="col-sm-10">
-                      <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="showMediaUpload === 'true'"></select>
-                    </div>
-                    <div style="clear:both;"></div>
-                  </div>  
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label">Caption</label>   
-                    <div class="col-sm-10">
-                      <input 
-                      class="form-control"
-                      type="text"
-                      name="caption"
-                      ng-model="mediaForm.caption"
-                      ng-minlength=0
-                      ng-maxlength=250
-                      placeholder="Caption"
-                      ng-disabled="showMediaUpload === 'true'"
-                      />
-                    </div>
-                    <div style="clear:both;"></div>
-                  </div>
-                  <div class="form-group"  >
-                    <label class="col-sm-2 control-label">Link</label>       
-                    <div class="col-sm-10">
-                      <input type="text"
-                      id="link"
-                      name="link"
-                      class="form-control"
-                      placeholder="http:///www.example.com/image.png"
-                      ng-model="mediaForm.link"
-                      ng-disabled="showMediaUpload === 'true' || !mediaForm.typeCode"
-                      ng-minlength=0
-                      ng-maxlength=250
-                      />
-                    </div>
-                    <div style="clear:both;"></div>
-                  </div>  
-                  <div class="col-sm-12">
-                    <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="showMediaUpload === 'true' || !mediaForm.typeCode || !mediaForm.link"><i class="fa fa-save"></i>&nbsp;Add Another Link</button>
-                  </div>
-                </label>
-              </div>
+              <button type="button" class="btn btn-primary" ng-click="addDependency()" ng-disabled="!dependencyForm.dependencyName || !dependencyForm.version"><i class="fa fa-save"></i>&nbsp;Add</button>
             </div>
-            <!-- onchange="angular.element(this).scope().addMedia()" -->
-            <div id="srcList">
-              <div class="col-sm-12">
-                <h3 ng-show="queue.length || component.media.length">Media Upload Queue</h3>
-                <table class="table table-stripped table-bordered" ng-show="queue.length || component.media.length">
-                  <tr>
-                    <th>Type</th>
-                    <th>Caption</th>
-                    <th>Mime Type</th>
-                    <th>Preview/Link</th>
-                  </tr>
-                  <tr ng-repeat="item in queue">
-                    <td>{{item.file.typeCode.description}}</td>
-                    <td>{{item.file.caption}}</td>
-                    <td>{{item.file.mimeType}}</td>
-                    <td>
-                      <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
-                        <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr ng-repeat="item in component.media">
-                    <td>{{item.typeCode.description}}</td>
-                    <td>{{item.caption}}</td>
-                    <td>&mdash;</td>
-                    <td>{{item.link}}</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
+            <div style="clear:both;"></div>
+            <h3 style="margin-top: 20px;" ng-show="component.dependencies.length">Added Dependencies</h3>
+            <table style="margin-top:10px;" ng-show="component.dependencies.length" class="table table-striped table-bordered admin-table">
+              <tr>
+                <th>Name</th>
+                <th>Version</th>
+                <th>External Link</th>
+                <th>Comment</th>
+                <th>Action</th>
+              </tr>
+              <tr ng-repeat="dependency in component.dependencies" >
+                <td>{{dependency.dependencyName}}</td>
+                <td>{{dependency.version}}</td>
+                <td>{{dependency.dependencyReferenceLink}}</td>
+                <td>{{dependency.comment}}</td>
+                <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
+                  <button class="btn btn-danger btn-sm" ng-click="removeDependency($index);" title="Delete"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </table>
           </panel>
-          <hr>
-          <!-- END MEDIA -->
+          <!-- END DEPENDENCIES -->
 
+          <hr>
+          
           <!-- EXTERNAL RESOURCES -->
           <h2 id="resources">Resources:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''">Skip</button></small></h2>
           <panel class-list="edges" open-state="true" title="Add Resources" style="position:relative">
@@ -542,17 +503,17 @@ body {
                   <input type="radio" ng-model="showResourceUpload" value="false" ng-click="toggleShowResource(false)">
                 </span>
                 <label for="displayGrades" class="form-control select-hover">
-                  <div class="form-group"  >
+                  <div class="form-group">
                     <label class="col-sm-2 control-label">Resource Type</label>
                     <div class="col-sm-10">
                       <select type="text" class="form-control" name="typeCode"  ng-model="resourceForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="showResourceUpload === 'true'"></select>
                     </div>
                     <div style="clear:both;"></div>
-                  </div>  
+                  </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Caption</label>   
+                    <label class="col-sm-2 control-label">Caption</label>
                     <div class="col-sm-10">
-                      <input 
+                      <input
                       class="form-control"
                       type="text"
                       name="caption"
@@ -565,8 +526,8 @@ body {
                     </div>
                     <div style="clear:both;"></div>
                   </div>
-                  <div class="form-group"  >
-                    <label class="col-sm-2 control-label">Link</label>       
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">Link</label>
                     <div class="col-sm-10">
                       <input type="text"
                       id="link"
@@ -580,9 +541,9 @@ body {
                       />
                     </div>
                     <div style="clear:both;"></div>
-                  </div>  
+                  </div>
                   <div class="col-sm-12">
-                    <button type="button" class="btn btn-primary" ng-click="addLinkToResource()" ng-disabled="showResourceUpload === 'true' || !resourceForm.typeCode || !resourceForm.link"><i class="fa fa-save"></i>&nbsp;Add Another Link</button>
+                    <button type="button" class="btn btn-primary" ng-click="addLinkToResource()" ng-disabled="showResourceUpload === 'true' || !resourceForm.typeCode || !resourceForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
                   </div>
                 </label>
               </div>
@@ -593,7 +554,7 @@ body {
                   <input type="radio" ng-model="showResourceUpload" value="true" ng-click="toggleShowResource(true)">
                 </span>
                 <label for="displayGrades" class="form-control select-hover">
-                  <div class="form-group"  >
+                  <div class="form-group">
                     <label class="col-sm-2 control-label">Resource Type</label>
                     <div class="col-sm-10">
                       <select type="text" class="form-control" name="typeCode"  ng-model="resourceForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || isFullResource"></select>
@@ -601,9 +562,9 @@ body {
                     <div style="clear:both;"></div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Caption</label>   
+                    <label class="col-sm-2 control-label">Caption</label>
                     <div class="col-sm-10">
-                      <input 
+                      <input
                       class="form-control"
                       type="text"
                       name="caption"
@@ -616,18 +577,10 @@ body {
                     </div>
                     <div style="clear:both;"></div>
                   </div>
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label">Upload Resource</label>   
-                    <div class="col-sm-10">
-                      <span class="btn btn-default btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.caption ||  isFullResource">
-                        Browse <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || isFullResource"/> 
-                      </span> <span>{{lastResourceFile}}</span>
-                    </div>
-                    <p class="help-block" ng-show="resourceForm.fileName">Current Local Resource: {{resourceForm.originalFileName}} ({{resourceForm.fileName}})</p>               
-                    <div style="clear:both;"></div>
-                  </div>        
                   <div class="col-sm-12">
-                    <button type="button" class="btn btn-primary" ng-click="resetResourceInput()" ng-disabled="!lastResourceFile || !resourceForm.typeCode || !resourceForm.caption || isFullResource"><i class="fa fa-save"></i>&nbsp;Add Another File</button>
+                    <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.caption ||  isFullResource">
+                      <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || isFullResource"/>
+                    </span> <span>{{lastResourceFile}}</span>
                   </div>
                 </label>
               </div>
@@ -635,7 +588,7 @@ body {
             <!-- onchange="angular.element(this).scope().addMedia()" -->
             <div id="srcList">
               <div class="col-sm-12">
-              <h3 ng-show="resourceQueue.length || component.resources.length">Resource Upload Queue</h3>
+                <h3 style="margin-top: 20px;" ng-show="resourceQueue.length || component.resources.length">Resource Upload Queue</h3>
                 <table class="table table-stripped table-bordered" ng-show="resourceQueue.length || component.resources.length">
                   <tr>
                     <th>Type</th>
@@ -663,15 +616,136 @@ body {
               </div>
             </div>
           </panel>
-          <hr>
           <!-- END EXTERNAL RESOURCES -->
 
-          <!-- DEPENDENCIES -->
-          <h2 id="dependencies">Dependencies:</h2>
-          <panel class-list="edges" open-state="true" title="Add Dependencies">
+          <hr>
 
+          <!-- MEDIA -->
+          <h2 id="media">Media:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): ''">Skip</button></small></h2>
+          <panel class-list="edges" open-state="true" title="Add Media" style="position:relative">
+            <loader trigger="mediaPreviewLoader"></loader>
+            Current max upload size < 100Mb
+            <div class="col-sm-12 ">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="radio" ng-model="showMediaUpload" value="true" ng-click="toggleShowMedia(true)">
+                </span>
+                <label for="displayGrades" class="form-control select-hover">
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">Media Type</label>
+                    <div class="col-sm-10">
+                      <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"></select>
+                    </div>
+                    <div style="clear:both;"></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">Caption</label>
+                    <div class="col-sm-10">
+                      <input
+                      class="form-control"
+                      type="text"
+                      name="caption"
+                      ng-model="mediaForm.caption"
+                      ng-minlength=0
+                      ng-maxlength=250
+                      placeholder="Caption"
+                      ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"
+                      />
+                    </div>
+                    <div style="clear:both;"></div>
+                  </div>
+                  <div class="col-sm-12">
+                    <span class="btn btn-primary btn-file" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.typeCode || !mediaForm.caption ||  isFull">
+                      <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.typeCode || isFull"/>
+                    </span> <span>{{lastMediaFile}}</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="radio" ng-model="showMediaUpload" value="false" ng-click="toggleShowMedia(false)">
+                </span>
+                <label for="displayGrades" class="form-control select-hover">
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">Media Type</label>
+                    <div class="col-sm-10">
+                      <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="showMediaUpload === 'true'"></select>
+                    </div>
+                    <div style="clear:both;"></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">Caption</label>
+                    <div class="col-sm-10">
+                      <input
+                      class="form-control"
+                      type="text"
+                      name="caption"
+                      ng-model="mediaForm.caption"
+                      ng-minlength=0
+                      ng-maxlength=250
+                      placeholder="Caption"
+                      ng-disabled="showMediaUpload === 'true'"
+                      />
+                    </div>
+                    <div style="clear:both;"></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">Link</label>
+                    <div class="col-sm-10">
+                      <input type="text"
+                      id="link"
+                      name="link"
+                      class="form-control"
+                      placeholder="http:///www.example.com/image.png"
+                      ng-model="mediaForm.link"
+                      ng-disabled="showMediaUpload === 'true' || !mediaForm.typeCode"
+                      ng-minlength=0
+                      ng-maxlength=250
+                      />
+                    </div>
+                    <div style="clear:both;"></div>
+                  </div>
+                  <div class="col-sm-12">
+                    <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="showMediaUpload === 'true' || !mediaForm.typeCode || !mediaForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <!-- onchange="angular.element(this).scope().addMedia()" -->
+            <div id="srcList">
+              <div class="col-sm-12">
+                <h3 style="margin-top: 20px;" ng-show="queue.length || component.componentMedia.length">Media Upload Queue</h3>
+                <table class="table table-stripped table-bordered" ng-show="queue.length || component.componentMedia.length">
+                  <tr>
+                    <th>Type</th>
+                    <th>Caption</th>
+                    <th>Mime Type</th>
+                    <th>Preview/Link</th>
+                  </tr>
+                  <tr ng-repeat="item in queue">
+                    <td>{{item.file.typeCode.description}}</td>
+                    <td>{{item.file.caption}}</td>
+                    <td>{{item.file.mimeType}}</td>
+                    <td>
+                      <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
+                        <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr ng-repeat="item in component.componentMedia">
+                    <td>{{item.typeCode.description}}</td>
+                    <td>{{item.caption}}</td>
+                    <td>&mdash;</td>
+                    <td>{{item.link}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
           </panel>
-          <!-- END DEPENDENCIES -->
+          <!-- END MEDIA -->
+
 
           <div style="padding-bottom:15px;">
             <button class="btn btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): ''; detailsDone = true">Review and Submit</button>
@@ -684,14 +758,7 @@ body {
       <div ng-show="current === 'submit'">
         <h1 id="reviewAndSubmit">Review and submit the component:</h1>
         <br>
-        <div class="col-md-12">
-          <h2>Quick View</h2>
-        </div>
-        <div class="col-md-12" style="padding:20px; border-radius:10px; border: 1px solid dimgray; background: #FFF">
-          <h3>This is where you would see a quick view of the component information so far.</h3>
-        </div>
-
-        <videogular>
+<!--         <videogular>
           <vg-media vg-src="config.sources" vg-tracks="config.tracks"></vg-media>
 
           <vg-controls vg-autohide="true" vg-autohide-time="2000">
@@ -703,17 +770,167 @@ body {
           <vg-fullscreen-button></vg-fullscreen-button>
         </vg-controls>
 
-        <!-- <vg-overlay-play></vg-overlay-play> -->
-        <!-- <vg-poster vg-url='config.plugins.poster'></vg-poster> -->
-      </videogular>
+      </videogular> -->
+<!--       <videogular>
+        <vg-media vg-src="config.sources" vg-tracks="config.tracks" vg-type="video" vg-native-controls="true"> </vg-media>
+      </videogular> -->
 
-<!--         <videogular>
-          <vg-media vg-src="config.sources" vg-tracks="config.tracks" vg-type="video" vg-native-controls="true"> </vg-media>
-        </videogular>
-      -->
-      <pre>
-        {{getComponent()}}
-      </pre>
+      <form name="optIn">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{email}}</i>)
+          </label>
+        </div>
+      </form>
+
+      <h3>Component Preview</h3>
+      <div class="left liners">
+        <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
+          <a target="_self" class="btn btn-sm btn-default" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event):'';"><i class="fa fa-edit"></i>&nbsp;<small>Edit Required Information</small></a>
+        </div>
+        <div class="line" ><strong>Component:&nbsp;</strong> {{component.componentName}}</div>
+        <!-- <div class="line" ><strong>Version:&nbsp;</strong> {{component.version}}</div> -->
+        <div class="line" ><strong>Organization:&nbsp;</strong> {{component.organization}}</div>
+        <div class="line" ><strong>Description:&nbsp;</strong><span dynamichtml="component.description"></span></div>
+        <!-- <div class="line" ><strong>Last Activity Date:&nbsp;</strong> {{getDate(component.lastActivityDate)}}</div> -->
+        <!-- <div class="line" ><strong>Last View Date:&nbsp;</strong> {{getDate(component.lastViewedDate)}}</div> -->
+        <!-- <div class="line" ><strong>Views:&nbsp;</strong> {{component.componentViews}}</div> -->
+        <div class="line" ng-show="badgeFound"><strong>Badges:&nbsp;</strong></div>
+        <div ng-show="badgeFound">
+          <div ng-repeat="attribute in component.attributes" style="display:inline-block;">
+            <img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge"  data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style=" width: auto; height: 40px;">
+          </div>
+        </div>    
+      </div>
+      <div style="clear:both;"></div>
+
+      <hr>
+
+      <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
+        <a target="_self" class="btn btn-sm btn-default" href="#metadata" ng-click="vitalsCheck()? scrollTo('metadata', 'details', 'details', $event): ''"><i class="fa fa-edit"></i>&nbsp;<small><span ng-show="component.tags.length || (component.attributes.length - requiredAttributes.length > 0) || component.metadata.length">Edit</span><span ng-show="!(component.tags.length || (component.attributes.length - requiredAttributes.length > 0) || component.metadata.length)">Add More</span> Details</small></a>
+      </div>
+      <div ng-show="component.tags.length" class="left border" style="margin-top:20px;" ><strong>Tags:&nbsp;</strong> <span ng-repeat="tag in component.tags" style="border: 1px solid lightgray; border-radius: 4px; padding: 3px;">{{tag.text}}</span></div>
+      <div class="left" ng-show="component.metadata.length || component.attributes.length" ><strong>Component Vitals:&nbsp;</strong>
+        <table class="table table-striped table-bordered" style="table-layout:fixed">
+          <tr ng-repeat="attribute in getCompactAttributes() track by $index">
+            <td>
+              {{getAttributeTypeDesc(attribute.attributeType)}}
+            </td>
+            <td class="{{attribute.highlightStyle}}">
+              {{attribute.label}}
+            </td>
+          </tr>
+          <tr ng-repeat="metadata in component.metadata">
+            <td>
+              {{metadata.label}}
+            </td>
+            <td>
+              {{metadata.value}}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div style="clear:both;"></div>
+      
+      <hr>
+
+      <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
+        <a target="_self" class="btn btn-sm btn-default" href="#details" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event): ''"><i class="fa fa-edit"></i>&nbsp;<small><span ng-show="component.contacts.length">Edit</span><span ng-show="!(component.contacts.length)">Add</span> Contacts</small></a>
+      </div>
+      <div class="left" ng-show="component.contacts.length" ><strong>Points of Contact:&nbsp;</strong>
+        <div ng-repeat="contact in component.contacts">
+          <table class="table table-striped table-bordered" style="table-layout:fixed">
+            <tr>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Organization</th>
+              <th>Email</th>
+              <th>Phone</th>
+            </tr>
+            <tr>
+              <td>{{contact.contactType.description}}</td>
+              <td>{{contact.firstName}} {{contact.lastName}}</td>
+              <td>{{contact.organization}}</td>
+              <td>{{contact.email}}</td>
+              <td>{{contact.phone}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div style="clear:both;"></div>
+      
+      <hr>
+
+      <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
+        <a target="_self" class="btn btn-sm btn-default" href="#dependencies" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''"><i class="fa fa-edit"></i>&nbsp;<small><span ng-show="component.dependencies.length">Edit</span><span ng-show="!(component.dependencies.length)">Add</span> Dependencies</small></a>
+      </div>
+      <div class="left" ng-show="component.dependencies.length"><strong>Dependencies:&nbsp;</strong>
+        <table class="table table-striped table-bordered" style="table-layout:fixed">
+          <tr>
+            <th>Dependency</th>
+            <th>Version</th>           
+            <th>Link</th>
+            <th>Comment</th>
+          </tr>
+          <tr ng-repeat="dependency in component.dependencies">
+            <td>{{dependency.dependencyName}}</td>
+            <td>{{dependency.version}}</td>
+            <td>{{dependency.dependancyReferenceLink}}</td>
+            <td>{{dependency.comment}}</td>           
+          </tr>
+        </table>
+      </div>
+      <div style="clear:both;"></div>
+<!--       <div class="pageBreak" ><h4>Questions</h4>
+        <hr style="border-top: 1px solid #555; margin-top: 0px;">
+        <div ng-repeat="question in component.questions">
+          <strong>Q:</strong>{{question.question}} <span style="font-size: 11px;">&nbsp;&mdash;&nbsp;{{question.username}}&nbsp;({{question.organization}} - {{question.userType}})&nbsp;{{getDate(question.updateDts)}}</span>
+          <div ng-repeat="response in question.responses" style="margin-left: 20px;">
+            <strong>A:</strong>{{response.response}} <span style="font-size: 11px;">&nbsp;&mdash;&nbsp;{{response.username}}&nbsp;({{response.organization}} - {{response.userType}})&nbsp;{{getDate(response.updateDts)}}</span>
+          </div>
+        </div>
+      </div> -->
+      
+      <hr>
+
+      <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
+        <a target="_self" class="btn btn-sm btn-default" href="#resources" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): ''"><i class="fa fa-edit"></i>&nbsp;<small>Edit Resources</small></a>
+      </div>
+      <div class="pageBreak" >
+        <h4>Resources</h4>
+        <hr style="border-top: 1px solid #555; margin-top: 0px;">
+        <div ng-repeat="item in resourceQueue">
+          <div dynamichtml="item.dom"></div>
+        </div>
+        <div ng-repeat="image in component.resources">
+          <img ng-if="image.typeCode.code === 'IMAGE'" ng-src="{{image.link}}" alt="">
+        </div>
+      </div>
+      <div style="clear:both;"></div>
+      
+      <hr>
+
+      <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
+        <a target="_self" class="btn btn-sm btn-default" href="#media" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event): ''"><i class="fa fa-edit"></i>&nbsp;<small>Edit Media</small></a>
+      </div>
+      <div class="pageBreak" >
+        <h4>Media</h4>
+        <hr style="border-top: 1px solid #555; margin-top: 0px;">
+        <div ng-repeat="item in queue">
+          <div dynamichtml="item.dom"></div>
+        </div>
+        <div ng-repeat="image in component.componentMedia">
+          <img ng-if="image.typeCode.code === 'IMAGE'" ng-src="{{image.link}}" alt="">
+        </div>
+      </div>
+      <div style="clear:both;"></div>
+
+    <div class="col-sm-12" style="text-align: center; margin-bottom: 20px;">
+      <button style="display:inline-block" class="btn btn-primary btn-lg">Submit Component</button>
+    </div>
+
+
+
     </div>
     <!-- REVIEW AND SUBMIT SECTION -->
   </div>

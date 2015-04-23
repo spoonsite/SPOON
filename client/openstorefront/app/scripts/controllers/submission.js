@@ -45,8 +45,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
 
     $scope.getMimeTypeClass = function(type){
-      console.log('mime type = ', type);
-      
       if (type.match('video.*')) {
         return 'fa-file-video-o'
       } else if (type.match('audio.*')){
@@ -62,8 +60,33 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       }
     }
 
+    $scope.setBadgeFound = function(attribute){
+      if (attribute && attribute.badgeUrl) {
+        $scope.badgeFound = true;
+      }
+    }
+
+    $scope.getAttributeTypeDesc = function(type){
+      var found = _.find($scope.allAttributes, {'attributeType': type});
+      if (found) {
+        return found.description;
+      }
+      return '';
+    }
+
+    $scope.$watch('current', function(){
+      $scope.badgeFound = false;
+      if ($scope.current && $scope.current === 'submit') {
+        $scope.badgeFound = false;
+        _.each($scope.component.attributes, function(attribute){
+          $scope.setBadgeFound(attribute);
+        })
+      }
+    })
+
 
     $scope.test = 'This is a test';
+    $scope.badgeFound = false;
 
     $scope.name;
     $scope.email;
@@ -75,12 +98,10 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.component.attributes = [];
     
     $scope.component.metadata = [];
-    $scope.metadataLength = 0;
-    $scope.component.metadata[$scope.metadataLength] = {};
+    $scope.metadataForm = {};
     
     $scope.component.tags = [];
-    $scope.tagsLength = 0;
-    $scope.component.tags[$scope.tagsLength] = {};
+    $scope.tagsForm = {};
     
     
     $scope.contactForm = {};
@@ -97,76 +118,76 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.showResourceUpload = 'false';
     $scope.isFullResource = false;
 
+
+    $scope.dependencyForm = {};
+    $scope.component.dependencies = [];
+    
     $scope.details = {};
 
     $scope.formMedia;
 
     $scope.checkAttributes = function(){
-    // console.log('Compact list', _.compact($scope.component.attributes));
-    // we need to compact the attributes list because it may have unused indexes.
-    var list = angular.copy(_.compact($scope.component.attributes));
-    var requiredAttributes = _.filter(list, {requiredFlg: true});
-    if (requiredAttributes.length !== $scope.requiredAttributes.length) {
-      return false;
-    }
-
-    // This is how we'll weed out the attributes we need for the submission
-    /*
-    var realAttributes = _.compact($scope.component.attributes);
-    var attributes = [];
-    _.each(realAttributes, function(attr){
-      if (attr.constructor === Array){
-        _.each(attr, function(item){
-          attributes.push(item);
-        })
-      } else {
-        attributes.push(attr);
+      // console.log('Compact list', _.compact($scope.component.attributes));
+      // we need to compact the attributes list because it may have unused indexes.
+      var list = angular.copy(_.compact($scope.component.attributes));
+      var requiredAttributes = _.filter(list, {requiredFlg: true});
+      if (requiredAttributes.length !== $scope.requiredAttributes.length) {
+        return false;
       }
-    })
-    console.log('attributes', attributes);
-    */
-    return true;
-  }
-
-  $scope.getComponent = function(){
-    return JSON.stringify($scope.component, null, 4);
-  }
-
-  // Metadata section
-  $scope.removeMetadata = function(index){
-    $scope.component.metadata.splice(index, 1);
-    $scope.metadataLength--;
-    $scope.component.metadata[$scope.metadataLength] = {};
-  }
-  $scope.addMetadata = function(){
-    if ($scope.component.metadata[$scope.metadataLength].value && $scope.component.metadata[$scope.metadataLength].label) {
-      $scope.metadataLength++;
-      $scope.component.metadata[$scope.metadataLength] = {};
-      $('#metadataLabel').focus();
+      return true;
     }
-  }
 
-  // tag section
-  $scope.removeTag = function(index){
-    $scope.component.tags.splice(index, 1);
-    $scope.tagsLength--;
-    $scope.component.tags[$scope.tagsLength] = {};
-  }
-  $scope.addTag = function(){
-    if ( $scope.component.tags[$scope.tagsLength].text ) {
-      $scope.tagsLength++;
-      $scope.component.tags[$scope.tagsLength] = {};
-      $('#tagLabel').focus();
+    $scope.getCompactAttributes = function(){
+      // This is how we'll weed out the attributes we need for the submission
+      var realAttributes = _.compact($scope.component.attributes);
+      var attributes = [];
+      _.each(realAttributes, function(attr){
+        if (attr.constructor === Array){
+          _.each(attr, function(item){
+            attributes.push(item);
+          })
+        } else {
+          attributes.push(attr);
+        }
+      })
+
+      
+      return attributes;      
     }
-  }
+
+    $scope.getComponent = function(){
+      return JSON.stringify($scope.component, null, 4);
+    }
+
+    // Metadata section
+    $scope.removeMetadata = function(index){
+      $scope.component.metadata.splice(index, 1);
+    }
+    $scope.addMetadata = function(){
+      if ($scope.metadataForm.value && $scope.metadataForm.label) {
+        $scope.component.metadata.push($scope.metadataForm);
+        $scope.metadataForm = {};
+        $('#metadataLabel').focus();
+      }
+    }
+
+    // tag section
+    $scope.removeTag = function(index){
+      $scope.component.tags.splice(index, 1);
+    }
+    $scope.addTag = function(){
+      if ( $scope.tagsForm.text ) {
+        $scope.component.tags.push($scope.tagsForm);
+        $scope.tagsForm = {};
+        $('#tagLabel').focus();
+      }
+    }
 
   // contact section
   $scope.removeContact = function(index){
     $scope.component.contacts.splice(index, 1);
   }
   $scope.addContact = function(){
-    console.log('$scope.contactForm', $scope.contactForm);
-    
     if ( $scope.contactForm ) {
       $scope.component.contacts.push($scope.contactForm);
       $scope.contactForm = {};
@@ -248,16 +269,29 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.lastResourceFile = '';
   }
 
+  // contact section
+  $scope.removeDependency = function(index){
+    $scope.component.dependencies.splice(index, 1);
+  }
+  $scope.addDependency = function(){
+    console.log('$scope.dependencyForm', $scope.dependencyForm);
+    
+    if ( $scope.dependencyForm ) {
+      $scope.component.dependencies.push($scope.dependencyForm);
+      $scope.dependencyForm = {};
+      $('#dependencyFormName').focus();
+    }
+  }
 
   // validation section
   $scope.getStarted = function(){
-    return true;
+    // return true;
     return $scope.name && $scope.email && $scope.organization;
   }
 
   $scope.vitalsCheck = function(log){
-    return true;
-    return $scope.getStarted() && $scope.component && $scope.component.name && $scope.component.description && $scope.component.organization && $scope.checkAttributes();
+    // return true;
+    return $scope.getStarted() && $scope.component && $scope.component.componentName && $scope.component.description && $scope.component.organization && $scope.checkAttributes();
   }
 
   $scope.loadLookup = function(lookup, entity, loader){
@@ -446,6 +480,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         $scope.lastMediaFile = file.file.name;
       }
       $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaPreviewLoader');
+      $scope.resetMediaInput();
     },
     onBeforeUploadItem: function(item) {
       $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
@@ -512,6 +547,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         $scope.lastResourceFile = file.file.name;
       }
       $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'resourcePreviewLoader');
+      $scope.resetResourceInput();
     },
     onBeforeUploadItem: function(item) {
       $scope.$emit('$TRIGGERLOAD', 'resourceFormLoader');
@@ -661,20 +697,14 @@ $scope.scrollTo = function(id, current, parent, $event) {
     template: $templateCache.get('multiselect/select.tmp.html'),
     link: function(scope, elem, attrs) {
       scope.addToSelection = function(selection){
-        console.log('selection', selection);
-        
         scope.selected = scope.selected && scope.selected.constructor === Array? scope.selected: [];
         _.contains(scope.selected, selection) || !selection? '':scope.selected.push(selection);
         scope.onChange(true);
       }
       scope.removeItem = function(item){
-        console.log('item', item);
-        
         var index = _.find(scope.selected, {label: item.label});
-        console.log('index', index);
         if (index) {
           index = _.indexOf(scope.selected, index);
-          console.log('index', index);
           scope.selected.splice(index, 1);
         }
         if (scope.selected.length === 0){
