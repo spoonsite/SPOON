@@ -154,7 +154,6 @@ var app = angular
     '$templateCache',
 
   function ($rootScope, localCache, Business, $location, $route, $timeout, $q, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal, $templateCache) {/* jshint unused: false*/ //
-    console.log('This is a test');
     localCache.clearAll();
     $rootScope.current = 'top';
     $anchorScroll.yOffset = 100;   // always scroll by 50 extra pixels
