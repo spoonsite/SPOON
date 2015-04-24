@@ -27,13 +27,13 @@ limitations under the License.
 				left: 0px;
 				position: fixed;
 				top: 0px;
+				bottom: 0px;
 				margin-top: 45px;
 				padding-left: 10px;
 				border-right: 1px solid #dadfe5;
 				overflow: hidden;
 				overflow-y: auto;
-				width: 300px;
-				height: 10000px;
+				width: 300px;				
 				z-index: 25;	
 				background-color: white;
 			}
