@@ -672,7 +672,7 @@ limitations under the License.
       </div>			
 
       <h3>Available Evaluation Sections</h3>
-      <button style="display:inline-block;" class="btn btn-default" ng-click="setPredicate('sortOrder', 'eval');"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
+      <button style="display:inline-block;" ng-disabled="predicate['eval'] === 'sortOrder'" class="btn btn-default" ng-click="setPredicate('sortOrder', 'eval');"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
         <i class="fa fa-sort fa-stack-1x"></i>
         <i class="fa fa-ban fa-stack-2x text-danger"></i>
       </span>&nbsp;Clear Sort</button>
