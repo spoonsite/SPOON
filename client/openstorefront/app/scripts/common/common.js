@@ -205,7 +205,7 @@ var triggerAlert = function(text, uid, id, delay, append) {
 
 var getShortDescription = function(str){
   if (str) {
-
+    var seen = false;
     var html = $.parseHTML(str);
     var log = [];
     // Gather the parsed HTML's node names
@@ -227,8 +227,8 @@ var getShortDescription = function(str){
         if ((total+el.length) > count){
           var temp = $(el)[0].textContent.split(' ');
           var j = 0;
-          while(total < count){
-            total = total + temp[j].length + 1;
+          while(total < count && temp[j]){
+            total = total + temp[j].length;
             log.push(temp[j]+" ");
             j++;
           }
@@ -241,17 +241,23 @@ var getShortDescription = function(str){
         el.nodeName === 'SPAN' || el.nodeName === 'B' || el.nodeName === 'I' || 
         el.nodeName === 'U' || el.nodeName === 'SUP' || el.nodeName === 'SUB'|| 
         el.nodeName === 'S' || el.nodeName === 'BLOCKQUOTE'){
-        if ((total+$(el)[0].textContent.length) > count){
+        var temp = $.parseHTML(log.join(' '));
+        var tempTotal = 0;
+        _.each(temp, function(ele) {
+          tempTotal = tempTotal + $(ele)[0].textContent.length;
+        })
+
+        if ((tempTotal+$(el)[0].textContent.length) > count){
           var temp = $(el)[0].textContent.split(' ');
           var j = 0;
-          while(total < count){
-            total = total + temp[j].length + 1;
+          while(total < count && temp[j]){
             log.push(temp[j]+" ");
+            total = total + temp[j].length + 1;
             j++;
           }
           log.push('...');
         } else {
-          total = total + $(el)[0].textContent.length;
+          total = tempTotal + $(el)[0].textContent.length;
           log.push($(el)[0].outerHTML);
         }
       } else if (el.nodeName != 'BR'){
