@@ -7,6 +7,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
 
     $scope.predicate = [];
     $scope.predicate['components'] = 'name';
+    $scope.predicate['eval'] = 'sortOrder';
     $scope.reverse = [];
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},
@@ -1044,11 +1045,22 @@ $scope.loadEvaluationInfo = function(){
               if (!foundSection) {
                 $scope.sections.push({
                   name: record.description,
-                  evaluationSection: record.code                        
+                  evaluationSection: record.code,
+                  sortOrder: record.sortOrder
                 });                          
               }
             });
-            $scope.sections = _.sortBy($scope.sections, 'name');
+            var found = false;
+            _.each($scope.sections, function(section){
+              if (section.sortOrder) {
+                found = true;
+              }
+            })
+            if (found) {
+              $scope.sections = _.sortBy($scope.sections, 'sortOrder');
+            } else {
+              $scope.sections = _.sortBy($scope.sections, 'name');
+            }
             $scope.oldSections = _.sortBy($scope.oldSections, 'name');
           }
         });
