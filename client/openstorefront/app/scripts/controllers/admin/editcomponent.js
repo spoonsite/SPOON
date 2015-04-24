@@ -1026,7 +1026,9 @@ $scope.saveMetadata = function () {
 $scope.loadEvaluationInfo = function(){
   $scope.$emit('$TRIGGERLOAD', 'evaluationLoader');
 
-  Business.lookupservice.getLookupCodes('EvaluationSection', 'A').then(function (results) {      
+  Business.lookupservice.getLookupCodes('EvaluationSection', 'A').then(function (results) {  
+  console.log('EVALUATION SECTIONS', results);
+          
     if (results) {
       $scope.activeSections = results;
       if ($scope.componentForm.componentId) {

@@ -237,6 +237,23 @@ var getShortDescription = function(str){
           total = total + el.length;
           log.push($(el)[0].textContent);
         }
+      } else if (el.nodeName === 'P' || el.nodeName === 'DIV' || 
+        el.nodeName === 'SPAN' || el.nodeName === 'B' || el.nodeName === 'I' || 
+        el.nodeName === 'U' || el.nodeName === 'SUP' || el.nodeName === 'SUB'|| 
+        el.nodeName === 'S' || el.nodeName === 'BLOCKQUOTE'){
+        if ((total+$(el)[0].textContent.length) > count){
+          var temp = $(el)[0].textContent.split(' ');
+          var j = 0;
+          while(total < count){
+            total = total + temp[j].length + 1;
+            log.push(temp[j]+" ");
+            j++;
+          }
+          log.push('...');
+        } else {
+          total = total + $(el)[0].textContent.length;
+          log.push($(el)[0].outerHTML);
+        }
       } else if (el.nodeName != 'BR'){
         log.push($(el)[0].outerHTML);
       }
