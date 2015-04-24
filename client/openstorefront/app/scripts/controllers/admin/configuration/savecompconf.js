@@ -121,11 +121,20 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope,
     $scope.config = Business.getLocal('configId');
 
     $scope.$watch('config', function() {
-      if ($scope.config && $scope.typeahead) {
+      if ($scope.config) {
         // console.log('$scope.config', $scope.config);
-        
+                
         if ($scope.config.componentId) {
-          $scope.component = _.find($scope.typeahead, {'componentId': $scope.config.componentId});
+          Business.componentservice.getComponentDetails($scope.config.componentId).then(function(result){
+            if (result){
+              console.log('result', result.name);
+              
+              $scope.getTypeahead(result.name).then(function(results){
+                console.log('result', _.find(results, {'code': $scope.config.componentId}));
+                $scope.component = _.find(results, {'code': $scope.config.componentId});
+              })
+            }
+          })
         }
         if ($scope.config.issueNumber){
           $scope.issue = $scope.config.issueNumber;
