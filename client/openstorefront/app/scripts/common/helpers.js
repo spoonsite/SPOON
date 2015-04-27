@@ -210,6 +210,20 @@
       return utils.toParamString(this);
     }
   };
+  
+  utils.isNumberKey = function(evt, allowDecimal, value) {  
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (allowDecimal) {
+      if (charCode === 46 && value && value.indexOf('.') === -1) {
+        return true;
+      }
+    }
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+
+    return true;    
+  };
 
   utils.errorObj = {
     errors:{

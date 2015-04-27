@@ -76,7 +76,8 @@ limitations under the License.
         name="sortOrder"
         placeholder="Sort Order"				
         class="col-sm-3 form-control"
-        onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+        onkeypress='return utils.isNumberKey(event);'
+	onpaste="return false;"	
         ng-model="lookupCodeForm.sortOrder" 	
         maxlength="4"
         max="9999"

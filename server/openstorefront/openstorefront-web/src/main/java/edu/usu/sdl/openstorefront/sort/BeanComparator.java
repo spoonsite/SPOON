@@ -79,7 +79,7 @@ public class BeanComparator<T>
 							BigDecimal numValue2 = new BigDecimal(value2);
 							return numValue1.compareTo(numValue2);
 						} else {
-							return value1.compareTo(value2);
+							return value1.toLowerCase().compareTo(value2.toLowerCase());
 						}
 					}
 				} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {

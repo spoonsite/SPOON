@@ -2156,18 +2156,19 @@ public class ComponentServiceImpl
 //		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 //		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		queryByExample.setMaxResults(filter.getMax());
-		queryByExample.setFirstResult(filter.getOffset());
-		queryByExample.setSortDirection(filter.getSortOrder());
-
-		Component componentOrderExample = new Component();
-		Field sortField = ReflectionUtil.getField(componentOrderExample, filter.getSortField());
-		if (sortField != null) {
-			BeanUtil.setPropertyValue(sortField.getName(), componentOrderExample, QueryByExample.getFlagForType(sortField.getType()));
-			queryByExample.setOrderBy(componentOrderExample);
-		}
-
+//		queryByExample.setMaxResults(filter.getMax());
+//		queryByExample.setFirstResult(filter.getOffset());
+//		queryByExample.setSortDirection(filter.getSortOrder());
+//
+//		Component componentOrderExample = new Component();
+//		Field sortField = ReflectionUtil.getField(componentOrderExample, filter.getSortField());
+//		if (sortField != null) {
+//			BeanUtil.setPropertyValue(sortField.getName(), componentOrderExample, QueryByExample.getFlagForType(sortField.getType()));
+//			queryByExample.setOrderBy(componentOrderExample);
+//		}
 		List<Component> components = persistenceService.queryByExample(Component.class, queryByExample);
+		result.setTotalNumber(components.size());
+		components = filter.filter(components);
 		// figure out how to sort by integrationManagement
 //		if (filter.getSortField().equals(ComponentTrackingCompleteWrapper.FIELD_NAME)) {
 //			components.sort(new BeanComparator<>(filter.getSortOrder(), filter.getSortField()));
@@ -2210,8 +2211,8 @@ public class ComponentServiceImpl
 
 		result.setComponents(componentAdminViews);
 
-		queryByExample.setQueryType(QueryType.COUNT);
-		result.setTotalNumber(persistenceService.countByExample(queryByExample));
+		//queryByExample.setQueryType(QueryType.COUNT);
+		//result.setTotalNumber(persistenceService.countByExample(queryByExample));
 		return result;
 	}
 

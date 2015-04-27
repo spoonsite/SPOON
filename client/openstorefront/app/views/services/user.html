@@ -48,7 +48,7 @@
         <td>{{item.createUser}}</td>
         <td>{{item.organization}}</td>
         <td>{{getUserType(item.userTypeCode)}}</td>
-        <td>{{getDate(item.eventDts)}}</td>
+        <td>{{item.eventDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
         <td>{{getEventType(item.trackEventTypeCode)}}</td>
         <td>{{item.clientIp}}</td>
         <td>{{item.browser}}</td>

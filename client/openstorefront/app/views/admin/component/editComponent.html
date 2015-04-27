@@ -696,7 +696,8 @@ limitations under the License.
             ng-disabled="section.notAvailable"
             class="form-control"							
             ng-model="section.actualScore" 
-            onkeypress='return !((event.charCode != 46 || $(this).val().indexOf(".") != -1) && (event.charCode < 48 || event.charCode > 57))'
+	   onkeypress='return utils.isNumberKey(event, true, $(this).val())'
+	   onpaste="return false;"		          
             ng-blur="checkEvalScore(section);"
             max=5
             min=1
