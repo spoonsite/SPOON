@@ -29,8 +29,8 @@
       <tr>
         <th ng-click="changeSortOrder('name')" class="imitateLink">Name&nbsp;<span ng-show="query.filterObj.sortField === 'name' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'name' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('componentId')" class="imitateLink">Component ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
-        <!-- <th ng-click="changeSortOrder('componentResourceId')" class="imitateLink">Component Resource ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentResourceId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentResourceId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th> -->
-        <th ng-click="changeSortOrder('componentTrackingId')" class="imitateLink">Event Tracking ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentTrackingId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentTrackingId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
+	<th ng-click="changeSortOrder('resourceLink')" class="imitateLink">Resource Link (Type)&nbsp;<span ng-show="query.filterObj.sortField === 'resourceLink' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'resourceLink' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
+        <!-- <th ng-click="changeSortOrder('componentResourceId')" class="imitateLink">Component Resource ID&nbsp;<span ng-show="query.filterObj.sortField === 'componentResourceId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'componentResourceId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th> -->        
         <th ng-click="changeSortOrder('eventDts')" class="imitateLink">Date Of Event&nbsp;<span ng-show="query.filterObj.sortField === 'eventDts' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'eventDts' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('clientIp')" class="imitateLink">Client IP&nbsp;<span ng-show="query.filterObj.sortField === 'clientIp' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'clientIp' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
         <th ng-click="changeSortOrder('trackEventTypeCode')" class="imitateLink">Event Type&nbsp;<span ng-show="query.filterObj.sortField === 'trackEventTypeCode' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'trackEventTypeCode' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></th>
@@ -39,9 +39,9 @@
       <tr ng-repeat="item in data">
         <td>{{item.name}}</td>
         <td>{{item.data.componentId}}</td>
+		<td>{{item.data.resourceLink | limitTo: 100}} <span ng-show="item.data.resourceType" >({{item.data.resourceType}})</span></td>	
         <!-- <td>{{item.data.componentResourceId}}</td> -->
-        <td>{{item.data.componentTrackingId}}</td>
-        <td>{{getDate(item.data.eventDts)}}</td>
+        <td>{{item.data.eventDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
         <td>{{item.data.clientIp}}</td>
         <td>{{getEventType(item.data.trackEventTypeCode)}}</td>
         <td>{{item.data.createUser}}</td>

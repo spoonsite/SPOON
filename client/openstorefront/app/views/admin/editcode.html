@@ -24,8 +24,8 @@
       <p ng-show="myForm.code.$error.required && !myForm.code.$focused" class="help-block">Code is required.</p>
     </div>      
 
-    <div class="form-group required" >
-      <label class=" col-sm-2 control-label required">Description</label>
+    <div class="form-group" >
+      <label class=" col-sm-2 control-label">Description</label>
       <div class="col-sm-10">
         <textarea ckeditor="editorOptions" id="description" ng-model="code.description" ng-watch="editorContent"></textarea>
       </div>
@@ -58,7 +58,9 @@
         id="sortOrder"
         class="form-control"              
         ng-model="code.sortOrder" 
-        onkeypress='return !((event.charCode != 46 || $(this).val().indexOf(".") != -1) && (event.charCode < 48 || event.charCode > 57))'
+        onkeypress='return utils.isNumberKey(event);'
+	onpaste="return false;"
+	maxlength="5"
         max=5000
         min=1
         placeholder="Sort Order (#)"
