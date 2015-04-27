@@ -446,8 +446,41 @@
 					<doUpdate>true</doUpdate>
 				</configuration>
 			</plugin>
+                        <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>default-cli</id> 
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+																							
+								<copy  todir="../../../client/openstorefront/app/scripts">
+									<fileset dir="target/openstorefront/scripts" >
+										<include name="**/*" />
+									</fileset>
+								</copy>
+								<copy  todir="../../../client/openstorefront/app/views">
+									<fileset dir="target/openstorefront/views">
+										<include name="**/*" />
+									</fileset>
+								</copy>								
+														
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-			<plugin>
+        </plugins>
+    </build>
+
+</project>
+<!--			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.7</version>
@@ -471,12 +504,8 @@
 									</fileset>
 								</copy>								
 														
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
-</project>
+                                            </target>
+                                    </configuration>
+                            </execution>
+                    </executions>
+            </plugin>-->
