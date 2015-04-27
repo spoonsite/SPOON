@@ -510,16 +510,19 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }
   $scope.deactivateConfig = function(componentId, configId) {
     Business.configurationservice.deactivateConfig(componentId, configId).then(function(){
+        triggerAlert('Deactivation of configuration complete. Refresh page to see changes.', 'mappingFields', 'body', 8000);
       $scope.getIntegrationConf(componentId);
     });
   }
   $scope.activateConfig = function(componentId, configId) {
     Business.configurationservice.activateConfig(componentId, configId).then(function(){
+        triggerAlert('Activation of configuration complete. Refresh page to see changes.', 'mappingFields', 'body', 8000);
       $scope.getIntegrationConf(componentId);
     });
   }
   $scope.deleteConfig = function(componentId, configId) {
     Business.configurationservice.deleteConfig(componentId, configId).then(function(){
+        triggerAlert('Deletion of configuration complete. Refresh page to see changes.', 'mappingFields', 'body', 8000);
       $scope.getIntegrationConf(componentId);
     }, function(){
       $scope.getIntegrationConf(componentId);
@@ -527,6 +530,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }
   $scope.refreshJob = function(componentId) {
     Business.configurationservice.runJob(componentId).then(function(){
+        triggerAlert('Running job. Go to Jobs tool to see progress.', 'mappingFields', 'body', 8000);
       $timeout(function(){
         $scope.getAllJobs();
       }, 2000);
@@ -534,6 +538,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }
   $scope.refreshConfig = function(componentId, configId) {
     Business.configurationservice.runConfig(componentId, configId).then(function(){
+        triggerAlert('Running configuration. Go to Jobs tool to see progress.', 'mappingFields', 'body', 8000);
       $timeout(function(){
         $scope.getIntegrationConf(componentId);
       }, 2000);
@@ -541,6 +546,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   }
   $scope.runAllJobs = function() {
     Business.configurationservice.runAllJobs().then(function(){
+      triggerAlert('Running All Configuration Jobs. Go to Jobs tool to see progress.', 'mappingFields', 'body', 8000);
       $timeout(function(){
         $scope.getAllJobs();
         $scope.component.compId = '';
@@ -548,6 +554,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
       }, 2000);
     }, function(){
       $timeout(function(){
+        triggerAlert('There was an error running all Configuration Jobs. Go to Jobs tool to see status.', 'mappingFields', 'body', 8000);
         $scope.getAllJobs();
         $scope.component.compId = '';
         $scope.show.selectCompConf = true;
