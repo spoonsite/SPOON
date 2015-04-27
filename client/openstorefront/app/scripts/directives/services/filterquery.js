@@ -40,7 +40,8 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       allowAllOption: '@',
       data: '=',
       setFeatures: '=',
-      control: '='
+      control: '=',
+      all: '@'
     },
     link: function postLink(scope, element, attrs) {
       scope.defaultMax = 50;

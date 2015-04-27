@@ -138,7 +138,7 @@
       if (obj.hasOwnProperty(key)) {
         var val = obj[key];
         // if the value is a clean string and has a value, we know we want it.
-        if (val !== null && (typeof val === 'string' || typeof val === 'number')){
+        if (val !== null && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')){
           if (!queryParams.length) {
             queryParams += key + '=' + encodeURIComponent(val);
           } else{
