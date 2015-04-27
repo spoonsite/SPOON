@@ -80,7 +80,7 @@ public class FilterQueryParams
 	@QueryParam("end")
 	private DateParam endDts;
 
-	@QueryParam("allResults")
+	@QueryParam("all")
 	@DefaultValue("false")
 	private Boolean all;
 

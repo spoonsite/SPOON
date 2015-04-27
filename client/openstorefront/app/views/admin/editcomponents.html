@@ -53,6 +53,7 @@ limitations under the License.
         <th><a href="" ng-click="setPredicate('lastActivityDts', 'components');" title="Last time the component of any component date was updated">Last Activity Date <span ng-show="predicate['components']  === 'lastActivityDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th><a href="" ng-click="setPredicate('approvedDts', 'components');">Approval Date<span ng-show="predicate['components']  === 'approvedDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th><a href="" ng-click="setPredicate('approvalState', 'components');">Approval State<span ng-show="predicate['components']  === 'approvalState'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th><a href="" ng-click="setPredicate('activeStatus', 'components');">Active Status<span ng-show="predicate['components']  === 'activeStatus'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th><a href="" ng-click="setPredicate('integrationManagement', 'components');"  title="Shows if the component's data is being patially managed by an external system ">Integration Management<span ng-show="predicate['components']  === 'integrationManagement'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
         <th style="min-width: 170px;">Action</th>
       </tr>	
@@ -65,6 +66,7 @@ limitations under the License.
         <td>{{component.component.lastActivityDts | date:'MM/dd/yyyy h:mm:ss.sss a' }}</td>
         <td>{{component.component.approvedDts | date:'MM/dd/yyyy h:mm:ss.sss a' }}</td>
         <td align="center">{{component.component.approvalState}}</td>
+        <td align="center">{{component.component.activeStatus}}</td>
         <td>{{component.integrationManagement}}</td>
         <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
           <button class="btn btn-default btn-sm" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>

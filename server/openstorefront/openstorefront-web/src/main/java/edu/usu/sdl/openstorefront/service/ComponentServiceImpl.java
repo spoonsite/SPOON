@@ -2135,7 +2135,9 @@ public class ComponentServiceImpl
 		ComponentAdminWrapper result = new ComponentAdminWrapper();
 
 		Component componentExample = new Component();
-		componentExample.setActiveStatus(filter.getStatus());
+		if (!filter.getAll()){
+			componentExample.setActiveStatus(filter.getStatus());
+		}
 		componentExample.setComponentId(componentId);
 
 //		Component componentStartExample = new Component();
