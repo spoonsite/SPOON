@@ -809,7 +809,7 @@ body {
       <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
         <a target="_self" class="btn btn-sm btn-default" href="#metadata" ng-click="vitalsCheck()? scrollTo('metadata', 'details', 'details', $event): ''"><i class="fa fa-edit"></i>&nbsp;<small><span ng-show="component.tags.length || (component.attributes.length - requiredAttributes.length > 0) || component.metadata.length">Edit</span><span ng-show="!(component.tags.length || (component.attributes.length - requiredAttributes.length > 0) || component.metadata.length)">Add More</span> Details</small></a>
       </div>
-      <div ng-show="component.tags.length" class="left border" style="margin-top:20px;" ><strong>Tags:&nbsp;</strong> <span ng-repeat="tag in component.tags" style="border: 1px solid lightgray; border-radius: 4px; padding: 3px;">{{tag.text}}</span></div>
+      <div ng-show="component.tags.length" class="left border" style="margin-top:55px;" ><strong>Tags:&nbsp;</strong> <span ng-repeat="tag in component.tags" style="border: 1px solid lightgray; border-radius: 4px; padding: 3px;">{{tag.text}}</span></div>
       <div class="left" ng-show="component.metadata.length || component.attributes.length" ><strong>Component Vitals:&nbsp;</strong>
         <table class="table table-striped table-bordered" style="table-layout:fixed">
           <tr ng-repeat="attribute in getCompactAttributes() track by $index">
@@ -926,7 +926,7 @@ body {
       <div style="clear:both;"></div>
 
     <div class="col-sm-12" style="text-align: center; margin-bottom: 20px;">
-      <button style="display:inline-block" class="btn btn-primary btn-lg">Submit Component</button>
+      <button style="display:inline-block" class="btn btn-primary btn-lg" ng-click="submit()">Submit Component</button>
     </div>
 
 

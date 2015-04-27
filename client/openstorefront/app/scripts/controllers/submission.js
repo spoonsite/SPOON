@@ -74,6 +74,20 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       return '';
     }
 
+    $scope.submit = function(){
+      var component = angular.copy($scope.component);
+      component.attributes = $scope.getCompactAttributes(true);
+      component.component = {};
+      component.component.name = component.componentName;
+      component.component.description = component.description;
+      component.component.organization = component.organization;
+      if ($scope.optIn) {
+        component.component.notifyOfApprovalEmail = $scope.email;
+      }
+
+      console.log('$scope.component', component);
+    }
+
     $scope.$watch('current', function(){
       $scope.badgeFound = false;
       if ($scope.current && $scope.current === 'submit') {
@@ -96,14 +110,14 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     $scope.component = {};
     $scope.component.attributes = [];
-    
+
     $scope.component.metadata = [];
     $scope.metadataForm = {};
-    
+
     $scope.component.tags = [];
     $scope.tagsForm = {};
-    
-    
+
+
     $scope.contactForm = {};
     $scope.component.contacts = [];
 
@@ -121,7 +135,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     $scope.dependencyForm = {};
     $scope.component.dependencies = [];
-    
+
     $scope.details = {};
 
     $scope.formMedia;
@@ -137,16 +151,28 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       return true;
     }
 
-    $scope.getCompactAttributes = function(){
+    $scope.getCompactAttributes = function(attributePK){
       // This is how we'll weed out the attributes we need for the submission
       var realAttributes = _.compact($scope.component.attributes);
       var attributes = [];
       _.each(realAttributes, function(attr){
         if (attr.constructor === Array){
           _.each(attr, function(item){
+            if (attributePK) {
+              item.ComponentAttributePk = {
+                'attributeType': item.attributeType,
+                'attributeCode': item.code,
+              };
+            }
             attributes.push(item);
           })
         } else {
+          if (attributePK) {
+            attr.ComponentAttributePk = {
+              'attributeType': attr.attributeType,
+              'attributeCode': attr.code,
+            };
+          }
           attributes.push(attr);
         }
       })
