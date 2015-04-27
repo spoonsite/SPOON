@@ -51,11 +51,14 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     'showCodeSelection': true
   };
   $scope.types = [
-  {
-    'label': 'Jira Configuration',
-    'code': 'jira'
-  }
-  ]
+    {
+      'label': 'Jira Configuration',
+      'code': 'jira'
+    }
+  ];
+  $scope.predicate = [];
+  $scope.reverse = [];  
+  $scope.allJobs =[];
 
   $scope.getTypeahead = function(val){
     var deferred = $q.defer();
@@ -80,11 +83,20 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
   $scope.getAllJobs = function(){
     Business.configurationservice.getAllJobs().then(function(result){
       // console.log('result', result);
-      $scope.allJobs = result? result: [];
+      $scope.allJobs = result ? result: [];
     }, function(){
       $scope.allJobs = [];
     });
-  }
+  };
+  
+  $scope.setPredicate = function (predicate, table) {
+    if ($scope.predicate[table] === predicate) {
+      $scope.reverse[table] = !$scope.reverse[table];
+    } else {
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
+    }
+  };  
 
   $scope.getIntegrationConf = function(compId) {
     if (compId) {
