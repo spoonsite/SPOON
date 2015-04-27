@@ -125,6 +125,10 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       window.location.href = "api/v1/resource/components/" + componentId + "/export";
     };    
     
+    $scope.preview = function(component) {
+      utils.openWindow('#/single?id='+ component.component.componentId, 'Component Preview');
+    };    
+    
     $scope.deleteComponent = function(component){
       var response = window.confirm("Are you sure you want DELETE "+ component.name + "?");
       if (response) {
