@@ -69,6 +69,11 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
     }
   }, true);
 
+$scope.calcStatus = function(val)
+{
+  return utils.calcStatus(val);
+}
+
 $scope.getIntegrationConf = function(compId) {
   if (compId) {
       // console.log('Inside getIntegrationConf compId', compId);
@@ -81,7 +86,7 @@ $scope.getIntegrationConf = function(compId) {
             conf.component = _.find($scope.typeahead, {'componentId': conf.componentId});
           })
         } else {
-            $scope.config = {};
+          $scope.config = {};
         }
         $scope.show.selectCompConf = false;
       }, function(){
