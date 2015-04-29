@@ -77,8 +77,6 @@ $scope.getIntegrationConf = function(compId) {
         // console.log('result', result);
         
         $scope.integrationConfs = result? result: [];
-        console.log('result', result);
-        
         if ($scope.integrationConfs.length){
           _.each($scope.integrationConfs, function(conf){
             conf.component = _.find($scope.typeahead, {'componentId': conf.componentId});
@@ -134,14 +132,9 @@ $scope.getIntegrationConf = function(compId) {
 
 
   $scope.saveComponentConf = function(){
-    console.log('$scope.componentId', $scope.componentId);
-    console.log('$scope.issueId', $scope.issueId);
-    console.log('$scope.data.jiraProject', $scope.data.jiraProject);
-    
     if (!(!$scope.componentId || $scope.componentId === -1) && !(!$scope.issueId || $scope.issueId === -1) && $scope.data.jiraProject) {
 
       var conf = $scope.conf? $scope.conf: {};
-      console.log('conf', conf);
       
       if ($scope.integrationConfigId) {
         conf.integrationConfigId = $scope.integrationConfigId;
@@ -159,6 +152,8 @@ $scope.getIntegrationConf = function(compId) {
         // console.log('conf', conf);
         $scope.$emit('$TRIGGEREVENT', '$UPDATECONFFORID', $scope.componentId);
         triggerAlert('The configuration was saved', 'saveIntegrationConf','.modal-dialog', 5000);
+        $scope.data.jiraProject = null;
+        $scope.data.issue = null;
         $scope.getIntegrationConf($scope.componentId);
       }, function(result){
         triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
@@ -180,8 +175,6 @@ $scope.getIntegrationConf = function(compId) {
     }, true);
 
     $scope.$watch('component', function(value) {
-      console.log('$scope.component', $scope.component);
-      
       if (value && typeof value === 'object') {
         if (value.code){
           $scope.componentId = value.code;
@@ -207,8 +200,6 @@ $scope.getIntegrationConf = function(compId) {
 
 
     $scope.$watch('config', function() {
-      console.log('config', $scope.config);
-      
       if ($scope.config) {
         // console.log('$scope.config', $scope.config);
 
