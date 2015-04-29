@@ -35,7 +35,6 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
   $scope.data.jiraProject;
 
   $scope.$watch('componentId', function(value){
-    console.log('$scope.componentId', $scope.componentId);
     if (!$scope.componentId) {
     }
   })
@@ -184,9 +183,7 @@ $scope.getIntegrationConf = function(compId) {
       } else if ($scope.componentId !== undefined && $scope.componentId !== null) {
         Business.componentservice.getComponentDetails($scope.componentId).then(function(result){
           if (result){
-            console.log('result', result.name);
             $scope.getTypeahead(result.name).then(function(results){
-              console.log('result', _.find(results, {'code': $scope.componentId}));
               $scope.component = _.find(results, {'code': $scope.componentId});
             })
           } else {
@@ -206,10 +203,8 @@ $scope.getIntegrationConf = function(compId) {
         if ($scope.config.componentId) {
           Business.componentservice.getComponentDetails($scope.config.componentId).then(function(result){
             if (result){
-              console.log('result', result.name);
               
               $scope.getTypeahead(result.name).then(function(results){
-                console.log('result', _.find(results, {'code': $scope.config.componentId}));
                 $scope.component = _.find(results, {'code': $scope.config.componentId});
               })
             }
