@@ -2,12 +2,12 @@
   <tabset>
     <tab heading="Component Configuration">
       <div class="col-md-12" style=" margin-top:20px; margin-bottom: 20px;">
-        <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; margin-bottom: 10px; padding: 0px;">
+<!--         <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; margin-bottom: 10px; padding: 0px;">
           <label for="componentConfType" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select an integration type:&nbsp;</label>
           <select id="componentConfType" class="form-control" style="min-width:350px; width: auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
-        </div>
+        </div> -->
         <div class="col-md-12" style="padding: 0; min-height: 50px;">
-          <button class="btn btn-default" type="button" ng-click="setupModal();">Add New Configuration&nbsp;</button>
+          <button class="btn btn-default" type="button" ng-click="setupModal();"><i class="fa fa-plus"></i>&nbsp;Add New Configuration</button>
         </div>
         <div ng-include="'views/admin/configuration/jobs.html'"></div>
       </div>

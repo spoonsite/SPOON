@@ -430,4 +430,106 @@ var isNotRequestError = function(response){
 
 var notInCollection = function(collection, item){
   return _.contains(collection, item)? false: true;
-}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Check for duplicates log... replace the empty array with the expored components array
+/*(function(){
+  var components = []
+
+_.each(components, function(component){
+    var attributes = component.attributes;
+    var r = new Array();
+    o:for(var i = 0, n = attributes.length; i < n; i++)
+    {
+      for(var x = 0, y = r.length; x < y; x++)
+      {
+        if(r[x].componentAttributePk.attributeType==attributes[i].componentAttributePk.attributeType && (attributes[i].componentAttributePk.attributeType === 'DI2ELEVEL' || attributes[i].componentAttributePk.attributeType === 'DI2EINTENT' || attributes[i].componentAttributePk.attributeType === 'DI2ESTATE'))
+        {
+          console.log('this is a DUPE!', r[x].componentAttributePk.attributeType, '---', r[x].componentAttributePk.attributeCode,', ', attributes[i].componentAttributePk.attributeCode, '---', component.component.name);
+          continue o;
+        }
+      }
+      r[r.length] = attributes[i];
+    }
+    return r;
+  })
+
+})()*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

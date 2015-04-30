@@ -45,9 +45,7 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
         $scope.componentId = value.grabCompId.code;
         Business.componentservice.getComponentDetails($scope.componentId).then(function(result){
           if (result){
-            console.log('result', result.name);
             $scope.getTypeahead(result.name).then(function(results){
-              console.log('result', _.find(results, {'code': $scope.componentId}));
               $scope.component = _.find(results, {'code': $scope.componentId});
               $scope.getIntegrationConf($scope.componentId);
             })
@@ -148,7 +146,6 @@ $scope.getIntegrationConf = function(compId) {
       conf.issueType = $scope.data.jiraProject.issueType
       conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
       conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
-
       // console.log('conf', conf);
 
       Business.configurationservice.saveIntegrationConf($scope.componentId, conf).then(function(result){
@@ -159,6 +156,7 @@ $scope.getIntegrationConf = function(compId) {
         $scope.data.jiraProject = null;
         $scope.data.issue = null;
         $scope.getIntegrationConf($scope.componentId);
+        $scope.config = null;
       }, function(result){
         triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
         // console.log('Failed', result);
