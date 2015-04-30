@@ -112,7 +112,7 @@ public class AttributeResource
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, attributeTypeExample);
 
 		String codeStatus = null;
-		if (all) {
+		if (!all) {
 			codeStatus = AttributeCode.ACTIVE_STATUS;
 		}
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(codeStatus);

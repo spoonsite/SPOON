@@ -115,9 +115,15 @@ $scope.getIntegrationConf = function(compId) {
     $scope.checkTicketTimeout = setTimeout(function() {
       $scope.loading++;
       Business.configurationservice.checkTicket(ticketId).then(function(result){
-        $scope.ticketContents = result;
+        if (result.success && result.success === false) {
+          $scope.issueId = -1; 
+          $scope.ticketContents = null;
+        } else {
+          $scope.ticketContents = result;        
+        }
         $scope.loading--;
       }, function(){
+        $scope.issueId = -1;
         $scope.ticketContents = null;
         $scope.loading--;
       })

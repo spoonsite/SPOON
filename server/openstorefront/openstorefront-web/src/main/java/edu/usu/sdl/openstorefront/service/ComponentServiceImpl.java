@@ -67,6 +67,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
@@ -122,6 +123,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.ehcache.Element;
@@ -574,17 +576,14 @@ public class ComponentServiceImpl
 	{
 		Objects.requireNonNull(componentId, "Component Id is required");
 
-		Component component = persistenceService.findById(Component.class, componentId);
-		if (component != null) {
-			component.setLastActivityDts(TimeUtil.currentDate());
-			persistenceService.persist(component);
-			OSFCacheManager.getComponentCache().remove(componentId);
-			OSFCacheManager.getComponentLookupCache().remove(componentId);
-			getUserService().checkComponentWatches(component);
-			getSearchService().addIndex(persistenceService.findById(Component.class, componentId));
-		} else {
-			throw new OpenStorefrontRuntimeException("Component not found to update last Activity", "Check component Id: " + componentId);
-		}
+		ComponentUpdateQueue componentUpdateQueue = new ComponentUpdateQueue();
+		componentUpdateQueue.setComponentId(componentId);
+		componentUpdateQueue.setUpdateDts(TimeUtil.currentDate());
+		componentUpdateQueue.setNodeId(OpenStorefrontConstant.getNodeName());
+		componentUpdateQueue.setUpdateId(persistenceService.generateId());
+		componentUpdateQueue.populateBaseCreateFields();
+		persistenceService.persist(componentUpdateQueue);
+
 	}
 
 	@Override
@@ -1628,6 +1627,24 @@ public class ComponentServiceImpl
 					AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 					if (attributeCode != null) {
 
+						AttributeType attributeType = persistenceService.findById(AttributeType.class, attributeCode.getAttributeCodePk().getAttributeType());
+						if (Convert.toBoolean(attributeType.getAllowMultipleFlg()) == false) {
+							ComponentAttributePk componentAttributeExamplePk = new ComponentAttributePk();
+							componentAttributeExamplePk.setComponentId(integrationConfig.getComponentId());
+							componentAttributeExamplePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+							ComponentAttribute componentAttributeExample = new ComponentAttribute();
+							componentAttributeExample.setComponentAttributePk(componentAttributeExamplePk);
+
+							long typeCount = persistenceService.countByExample(componentAttributeExample);
+							if (typeCount > 1) {
+								ComponentAttribute example = new ComponentAttribute();
+								example.setComponentAttributePk(new ComponentAttributePk());
+								example.getComponentAttributePk().setAttributeType(componentAttributePk.getAttributeType());
+								example.getComponentAttributePk().setComponentId(componentAttributePk.getComponentId());
+								persistenceService.deleteByExample(example);
+							}
+						}
+
 						ComponentAttribute existingAttribute = persistenceService.findById(ComponentAttribute.class, componentAttributePk);
 						if (existingAttribute == null || ComponentAttribute.INACTIVE_STATUS.equals(existingAttribute.getActiveStatus())) {
 
@@ -2135,7 +2152,7 @@ public class ComponentServiceImpl
 		ComponentAdminWrapper result = new ComponentAdminWrapper();
 
 		Component componentExample = new Component();
-		if (!filter.getAll()){
+		if (!filter.getAll()) {
 			componentExample.setActiveStatus(filter.getStatus());
 		}
 		componentExample.setComponentId(componentId);
@@ -2233,6 +2250,60 @@ public class ComponentServiceImpl
 			results.add(temp);
 		}
 		return results;
+	}
+
+	@Override
+	public void processComponentUpdates()
+	{
+		ReentrantLock lock = new ReentrantLock();
+		lock.lock();
+		try {
+			ComponentUpdateQueue updateQueueExample = new ComponentUpdateQueue();
+			updateQueueExample.setNodeId(OpenStorefrontConstant.getNodeName());
+
+			List<ComponentUpdateQueue> componentUpdateQueues = persistenceService.queryByExample(ComponentUpdateQueue.class, updateQueueExample);
+			if (componentUpdateQueues.isEmpty() == false) {
+				//Get the latest entries
+				Map<String, ComponentUpdateQueue> componentMap = new HashMap<>();
+				for (ComponentUpdateQueue updateQueue : componentUpdateQueues) {
+					if (componentMap.containsKey(updateQueue.getUpdateId())) {
+						ComponentUpdateQueue existing = componentMap.get(updateQueue.getUpdateId());
+						if (existing.getUpdateDts().before(updateQueue.getUpdateDts())) {
+							componentMap.put(updateQueue.getUpdateId(), updateQueue);
+						}
+					} else {
+						componentMap.put(updateQueue.getUpdateId(), updateQueue);
+					}
+				}
+
+				for (ComponentUpdateQueue componentUpdate : componentMap.values()) {
+					String componentId = componentUpdate.getComponentId();
+
+					Component component = persistenceService.findById(Component.class, componentId);
+					if (component != null) {
+						component.setLastActivityDts(componentUpdate.getUpdateDts());
+						persistenceService.persist(component);
+						OSFCacheManager.getComponentCache().remove(componentId);
+						OSFCacheManager.getComponentLookupCache().remove(componentId);
+						getUserService().checkComponentWatches(component);
+						getSearchService().addIndex(persistenceService.findById(Component.class, componentId));
+					} else {
+						log.log(Level.FINE, "Component not found to update last Activity. Component may have been removed.", "Check component Id: " + componentId);
+					}
+				}
+
+				//remove processed records
+				for (ComponentUpdateQueue updateQueue : componentUpdateQueues) {
+					ComponentUpdateQueue componentUpdateQueue = persistenceService.findById(ComponentUpdateQueue.class, updateQueue.getUpdateId());
+					if (componentUpdateQueue != null) {
+						persistenceService.delete(componentUpdateQueue);
+					}
+				}
+			}
+		} finally {
+			lock.unlock();
+		}
+
 	}
 
 }

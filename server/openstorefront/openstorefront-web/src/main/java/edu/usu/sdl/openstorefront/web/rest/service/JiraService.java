@@ -31,13 +31,17 @@ import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import edu.usu.sdl.openstorefront.web.viewmodel.JiraStats;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
+import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -51,6 +55,8 @@ public class JiraService
 		extends BaseResource
 {
 
+	private static final Logger log = Logger.getLogger(JiraService.class.getName());
+
 	@GET
 	@RequireAdmin
 	@APIDescription("Get status on the jira resource manager")
@@ -62,6 +68,9 @@ public class JiraService
 		try (JiraClient jiraClient = JiraManager.getClient()) {
 			ServerInfo serverInfo = jiraClient.getServerInfo();
 			stats.popluateServerInfo(serverInfo);
+		} catch (Exception e) {
+			log.log(Level.FINER, "Jira Error", e);
+			stats.setServerTitle("Unable to connect to JIRA.  Check connection setting and network.");
 		}
 		stats.setMaxConnections(JiraManager.getMaxConnections());
 		stats.setRemainingConnections(JiraManager.getAvavilableConnections());
@@ -74,7 +83,7 @@ public class JiraService
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
 	@Path("/projects")
-	public List<LookupModel> getJiraProjects()
+	public Response getJiraProjects()
 	{
 		List<LookupModel> lookupModels = new ArrayList<>();
 		try (JiraClient jiraClient = JiraManager.getClient()) {
@@ -84,18 +93,28 @@ public class JiraService
 				lookupModel.setDescription(project.getName());
 				lookupModel.setCode(project.getKey());
 				lookupModels.add(lookupModel);
+
 			}
+			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		} catch (Exception e) {
+			log.log(Level.FINER, "Jira Error", e);
+			RestErrorModel restErrorModel = new RestErrorModel();
+			restErrorModel.setSuccess(false);
+			restErrorModel.getErrors().put("projects", "Unable  to connect to jira.");
+			return sendSingleEntityResponse(restErrorModel);
 		}
-		return lookupModels;
 	}
 
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets the possible issues from a specific project in Jira.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(String.class)
+	@DataType(JiraIssueModel.class)
 	@Path("/projects/{projectCode}")
-	public List<JiraIssueModel> getJiraIssueTypes(
+	public Response getJiraIssueTypes(
 			@PathParam("projectCode")
 			@RequiredParam String code
 	)
@@ -103,30 +122,44 @@ public class JiraService
 		List<JiraIssueModel> jiraIssueModels;
 		try (JiraClient jiraClient = JiraManager.getClient()) {
 			jiraIssueModels = jiraClient.getIssueTypesForProject(code);
+
+			GenericEntity<List<JiraIssueModel>> entity = new GenericEntity<List<JiraIssueModel>>(jiraIssueModels)
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		} catch (Exception e) {
+			log.log(Level.FINER, "Jira Error", e);
+			RestErrorModel restErrorModel = new RestErrorModel();
+			restErrorModel.setSuccess(false);
+			restErrorModel.getErrors().put("projectCode", "Unable to find issues types for project or issues trying to connect to jira.");
+			return sendSingleEntityResponse(restErrorModel);
 		}
-		return jiraIssueModels;
 	}
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets the possible issues from a specific project in Jira.")
+	@APIDescription("Gets the issue ticket summary")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(String.class)
-	@Path("/getTicket/{ticketId}")
-	public Response getJiraTicket(
+	@Path("/ticket/{ticketId}")
+	public Response getJiraTicketSummary(
 			@PathParam("ticketId")
 			@RequiredParam String ticketId
 	)
 	{
-		LookupModel response = new LookupModel();
-		response.setDescription(ticketId);
 		try (JiraClient jiraClient = JiraManager.getClient()) {
 			Issue issue = jiraClient.getTicket(ticketId);
 			if (issue != null) {
 				return Response.ok(issue.getSummary()).build();
 			} else {
-				return Response.ok(response).build();
+				return Response.status(Response.Status.NOT_FOUND).build();
 			}
+		} catch (Exception e) {
+			log.log(Level.FINER, "Jira Error", e);
+			RestErrorModel restErrorModel = new RestErrorModel();
+			restErrorModel.setSuccess(false);
+			restErrorModel.getErrors().put("ticketId", "Unable to get jira ticket information.");
+			return sendSingleEntityResponse(restErrorModel);
 		}
 	}
 
@@ -136,7 +169,7 @@ public class JiraService
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JiraFieldInfoModel.class)
 	@Path("/projects/{projectCode}/{issueType}/fields")
-	public List<JiraFieldInfoModel> getJiraIssueTypes(
+	public Response getJiraIssueTypes(
 			@PathParam("projectCode")
 			@RequiredParam String projectCode,
 			@PathParam("issueType")
@@ -171,8 +204,17 @@ public class JiraService
 			if (jiraIssueType != null) {
 				jiraFieldInfoModels.add(JiraFieldInfoModel.toView(jiraIssueType));
 			}
+			GenericEntity<List<JiraFieldInfoModel>> entity = new GenericEntity<List<JiraFieldInfoModel>>(jiraFieldInfoModels)
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		} catch (Exception e) {
+			log.log(Level.FINER, "Jira Error", e);
+			RestErrorModel restErrorModel = new RestErrorModel();
+			restErrorModel.setSuccess(false);
+			restErrorModel.getErrors().put("issuefIelds", "Unable to retrieve issue fields.  Check project code, issue type, and jira connection");
+			return sendSingleEntityResponse(restErrorModel);
 		}
-		return jiraFieldInfoModels;
 	}
 
 }

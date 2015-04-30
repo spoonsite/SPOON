@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.BaseJob;
+import edu.usu.sdl.openstorefront.service.job.ComponentUpdateJob;
 import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
@@ -94,6 +95,7 @@ public class JobManager
 		addNotificationJob();
 		addRecentChangeNotifyJob();
 		addScheduledReportJob();
+		addComponentUpdate();
 		addComponentIntegrationJobs();
 	}
 
@@ -189,6 +191,26 @@ public class JobManager
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable unschedule Job.", ex);
 		}
+	}
+
+	private static void addComponentUpdate() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding Component Update Job");
+
+		JobDetail job = JobBuilder.newJob(ComponentUpdateJob.class)
+				.withIdentity("ComponentUpdateJob", JOB_GROUP_SYSTEM)
+				.withDescription("Applies component updates index and watches.")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("ComponentUpdateJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInSeconds(5)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
 	}
 
 	private static void addScheduledReportJob() throws SchedulerException
