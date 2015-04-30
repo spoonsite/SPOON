@@ -16,9 +16,10 @@
 
 'use strict';
 
-app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'size', '$uiModalInstance', function ($scope, Business, $q, componentId, size, $uiModalInstance) {
+app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'size', 'enabled', '$uiModalInstance', function ($scope, Business, $q, componentId, size, enabled, $uiModalInstance) {
   $scope.$emit('$TRIGGERLOAD', 'editLoad');
   $scope.componentId = componentId || null;
+  $scope.enabled = enabled || null;
   $scope.noProjects = false;
   $scope.loading = 0;
   $scope.config = null;
