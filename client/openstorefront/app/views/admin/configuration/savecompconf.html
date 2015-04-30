@@ -32,10 +32,10 @@
           <td ng-show="conf.status !== 'E' || !conf.errorMessage">{{calcStatus(conf.status)}}</td>
           <td ng-show="conf.status === 'E' && conf.errorMessage" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Error message:" data-container="body" data-content="<p class='dd'>{{conf.errorMessage}}</p>">{{calcStatus(conf.status)}}</td>
           <td style="padding:0px;">
-            <button class="btn btn-primary" ng-click="refreshJob(conf.componentId, conf.integrationConfigId)"><i class="fa fa-refresh"></i>&nbsp;Run Configuration</button>
+            <button class="btn btn-primary" ng-click="refreshJob(conf.componentId, conf.integrationConfigId)" ng-disabled="enabled"><i class="fa fa-refresh"></i>&nbsp;Run Configuration</button>
             <button class="btn btn-default" ng-click="setConfig(conf)"><i class="fa fa-edit"></i>&nbsp;Edit</button>
             <button ng-show="conf.activeStatus === 'A'" class="btn btn-warning" ng-click="deactivateConfig(conf.componentId, conf.integrationConfigId)"><i class="fa fa-ban"></i>&nbsp;Deactivate</button>
-            <button ng-show="conf.activeStatus !== 'A'" class="btn btn-warning" ng-click="activateConfig(conf.componentId, conf.integrationConfigId)"><i class="glyphicon glyphicon-off"></i>&nbsp;Activate</button>
+            <button ng-show="conf.activeStatus !== 'A'" class="btn btn-warning inverted" ng-click="activateConfig(conf.componentId, conf.integrationConfigId)"><i class="glyphicon glyphicon-off"></i>&nbsp;Activate</button>
             <button class="btn btn-danger" ng-click="deleteConfig(conf.componentId, conf.integrationConfigId)"><i class="fa fa-trash-o"></i>&nbsp;Delete</button></td>
         </tr>
       </table>

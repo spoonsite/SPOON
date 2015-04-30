@@ -281,7 +281,7 @@ $scope.getConfigId = function(mapping) {
 }
 
 
-$scope.setupModal = function(componentId) {
+$scope.setupModal = function(componentId, enabled) {
   var deferred = $q.defer();
   var modalInstance = $uiModal.open({
     templateUrl: 'views/admin/configuration/savecompconf.html',
@@ -291,6 +291,9 @@ $scope.setupModal = function(componentId) {
     resolve: {
       componentId: function(){
         return componentId;
+      },
+      enabled: function() {
+        return enabled;
       },
       size: function() {
         return 'lg';
