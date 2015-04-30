@@ -43,7 +43,6 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingCompleteWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
@@ -207,7 +206,7 @@ public interface ComponentService
 	 * @return
 	 */
 	public ComponentTrackingResult getComponentTracking(FilterQueryParams filter, String componentId);
-	
+
 	/**
 	 *
 	 * @param attribute
@@ -477,21 +476,22 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange);
-	
+
 	/**
-	 * 
+	 * This allows for
+	 *
 	 * @param filter
 	 * @param componentId
-	 * @return 
+	 * @return
 	 */
 	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId);
 
 	/**
-	 * 
+	 * Used for getting the name
+	 *
 	 * @param search
-	 * @return 
+	 * @return
 	 */
 	public Set<LookupModel> getTypeahead(String search);
 
-	
 }

@@ -343,7 +343,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.checkTicket = function(ticketId) {
     var deferred = $q.defer();
     if (ticketId) {
-      var url = 'api/v1/service/jira/getTicket/'+encodeURIComponent(ticketId);
+      var url = 'api/v1/service/jira/ticket/'+encodeURIComponent(ticketId);
       $http({
         'method': 'GET',
         'url': url,
