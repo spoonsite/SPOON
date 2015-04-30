@@ -64,6 +64,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       scope.maxPerPage;
       scope.query.filterObj.sortField = scope.sortBy || 'eventDts';
       scope.query.filterObj.sortOrder = scope.sortOrder || 'DESC';
+      scope.oldField = scope.sortBy || 'eventDts';
       scope.popover = {
         "title": "Additional filters"
       };
@@ -200,7 +201,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       scope.setPageMax = function(maxPerPage){
         if (maxPerPage){
           scope.query.filterObj.max = maxPerPage;
-          scope.pagination.itemsPerPage = maxPerPage
+          scope.pagination.itemsPerPage = maxPerPage;
         } else {
           scope.query.filterObj.max = 20;
           scope.pagination.itemsPerPage = 20;

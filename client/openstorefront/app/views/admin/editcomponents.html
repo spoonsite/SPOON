@@ -24,7 +24,7 @@ limitations under the License.
         <button class="btn btn-default" ng-click="exportAll()" ng-disabled="selectedComponents.length === 0" title="Export Selected Components"><i class="fa fa-sign-out"></i>&nbsp;Export</button>
         <button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Components"><i class="fa fa-sign-in"></i>&nbsp;Import</button>      
       </span>
-      <filterquery data="allComponentsWatch.data" url="api/v1/resource/components/filterable" sort-by="name" type="default" max="300" set-features="pagination.features" control="pagination.control"></filterquery>
+      <filterquery data="allComponentsWatch.data" url="api/v1/resource/components/filterable" sort-by="name" sort-order="DESC" type="default" max="300" set-features="pagination.features" control="pagination.control"></filterquery>
       <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 20px;" > 
         <div class="form-group">
           <label>File Input</label>
@@ -50,7 +50,7 @@ limitations under the License.
         <th style="width: 25px;"><input type="checkbox" ng-click="selectAllComponents();" ng-model="selectAllComps.flag" /></th>
         <th><a href="" ng-click="setPredicate('name', 'components');">Name <span ng-show="predicate['components']  === 'name'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th>Description</th>
-        <th><a href="" ng-click="setPredicate('lastActivityDts', 'components');" title="Last time the component of any component date was updated">Last Activity Date <span ng-show="predicate['components']  === 'lastActivityDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th><a href="" ng-click="setPredicate('lastActivityDts', 'components');" title="Last time the component of any component date was updated">Last Activity Date <span ng-show="predicate['components']  === 'lastActivityDts'"><i ng-show="reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="!reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th><a href="" ng-click="setPredicate('approvedDts', 'components');">Approval Date<span ng-show="predicate['components']  === 'approvedDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th><a href="" ng-click="setPredicate('approvalState', 'components');">Approval State<span ng-show="predicate['components']  === 'approvalState'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
         <th><a href="" ng-click="setPredicate('activeStatus', 'components');">Active Status<span ng-show="predicate['components']  === 'activeStatus'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
