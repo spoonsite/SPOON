@@ -60,7 +60,7 @@ app.controller('AdminUserProfileCtrl', ['$scope', 'business', '$timeout', '$uiMo
   var stickThatTable = function(){
     var offset = $('.top').outerHeight() + $('#userProfileToolbar').outerHeight();
     $(".stickytable").stickyTableHeaders({
-      fixedOffset: offset + 30
+      fixedOffset: offset
     });
   };
 

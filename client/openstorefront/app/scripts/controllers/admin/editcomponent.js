@@ -7,12 +7,13 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
 
     $scope.predicate = [];
     $scope.predicate['components'] = 'name';
+    $scope.predicate['eval'] = 'sortOrder';
     $scope.reverse = [];
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},
     {code: 'I', desc: 'Inactive'}
     ];
-    $scope.queryFilter = angular.copy(utils.queryFilter);
+    $scope.queryFilter = angular.copy(utils.queryFilter);    
     $scope.queryFilter.max = 500;
     $scope.queryFilter.sortField = 'name'; 
     $scope.components = [];
@@ -25,9 +26,8 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.selectedComponents = [];
     $scope.selectAllComps = {};
     $scope.selectAllComps.flag = false;
-    $scope.pagination = {};    
+    $scope.pagination = {};
     $scope.pagination.control = {};
-    $scope.pagination.control.approvalState='ALL';
     $scope.pagination.features = {'dates': false, 'max': false};
 
     $scope.$watch('allComponentsWatch', function(){
@@ -127,9 +127,9 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };    
     
     $scope.preview = function(component) {
-      utils.openWindow('single?id='+ component.component.componentId, 'Component Preview');
-    };
-        
+      utils.openWindow('#/single?id='+ component.component.componentId, 'Component Preview');
+    };    
+    
     $scope.deleteComponent = function(component){
       var response = window.confirm("Are you sure you want DELETE "+ component.name + "?");
       if (response) {
@@ -218,12 +218,15 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     }*/
     // to resize manually -- $(window).trigger('resize.stickyTableHeaders');
 
-  $timeout(function(){  //
-    var offset = $('.top').outerHeight() + $('#editComponentToolbar').outerHeight();
-    $(".stickytable").stickyTableHeaders({
-      fixedOffset: offset
-    });
-  }, 100)
+    var stickThatTable = function(){
+      var offset = $('.top').outerHeight() + $('#editComponentToolbar').outerHeight();
+      $(".stickytable").stickyTableHeaders({
+        fixedOffset: offset
+      });
+    }
+
+    $(window).resize(stickThatTable);
+    $timeout(stickThatTable, 100);
 
 }]);
 
@@ -1026,9 +1029,7 @@ $scope.saveMetadata = function () {
 $scope.loadEvaluationInfo = function(){
   $scope.$emit('$TRIGGERLOAD', 'evaluationLoader');
 
-  Business.lookupservice.getLookupCodes('EvaluationSection', 'A').then(function (results) {  
-  console.log('EVALUATION SECTIONS', results);
-          
+  Business.lookupservice.getLookupCodes('EvaluationSection', 'A').then(function (results) {      
     if (results) {
       $scope.activeSections = results;
       if ($scope.componentForm.componentId) {
@@ -1051,11 +1052,22 @@ $scope.loadEvaluationInfo = function(){
               if (!foundSection) {
                 $scope.sections.push({
                   name: record.description,
-                  evaluationSection: record.code                        
+                  evaluationSection: record.code,
+                  sortOrder: record.sortOrder
                 });                          
               }
             });
-            $scope.sections = _.sortBy($scope.sections, 'name');
+            var found = false;
+            _.each($scope.sections, function(section){
+              if (section.sortOrder) {
+                found = true;
+              }
+            })
+            if (found) {
+              $scope.sections = _.sortBy($scope.sections, 'sortOrder');
+            } else {
+              $scope.sections = _.sortBy($scope.sections, 'name');
+            }
             $scope.oldSections = _.sortBy($scope.oldSections, 'name');
           }
         });

@@ -80,7 +80,7 @@ public class FilterQueryParams
 	@QueryParam("end")
 	private DateParam endDts;
 
-	@QueryParam("allResults")
+	@QueryParam("all")
 	@DefaultValue("false")
 	private Boolean all;
 
@@ -117,7 +117,10 @@ public class FilterQueryParams
 	public <T> List<T> filter(List<T> data)
 	{
 		List<T> results = new ArrayList<>();
-
+		//sort
+		if (StringUtils.isNotBlank(sortField)) {
+			Collections.sort(data, new BeanComparator<>(sortOrder, sortField));
+		}
 		//window
 		if (offset < data.size() && max > 0) {
 			int count = 0;
@@ -129,10 +132,7 @@ public class FilterQueryParams
 				}
 			}
 		}
-		//sort
-		if (StringUtils.isNotBlank(sortField)) {
-			Collections.sort(results, new BeanComparator<>(sortOrder, sortField));
-		}
+
 		return results;
 	}
 

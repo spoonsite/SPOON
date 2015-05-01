@@ -343,7 +343,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
   service.checkTicket = function(ticketId) {
     var deferred = $q.defer();
     if (ticketId) {
-      var url = 'api/v1/service/jira/getTicket/'+encodeURIComponent(ticketId);
+      var url = 'api/v1/service/jira/ticket/'+encodeURIComponent(ticketId);
       $http({
         'method': 'GET',
         'url': url,
@@ -431,8 +431,11 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       var url = 'api/v1/resource/components/'+encodeURIComponent(componentId)+'/integration/run';
       $http({
         'method': 'POST',
-        'url': url,
+        'url': url
       }).success(function(data, status, headers, config){
+        if (status === 200){
+          deferred.resolve(true);
+        }
         if (data && isNotRequestError(data) ) {
           deferred.resolve(data);
         } else {
@@ -586,6 +589,9 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
         'method': 'POST',
         'url': url,
       }).success(function(data, status, headers, config){
+        if (status === 200){
+          deferred.resolve(true);
+        }        
         if (data && isNotRequestError(data) ) {
           deferred.resolve(data);
         } else {
@@ -691,24 +697,27 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     return deferred.promise;
   }
 
-  service.runAllJobs = function() {
-    var deferred = $q.defer();
-    var url = 'api/v1/resource/components/integrations/run';
-    $http({
-      'method': 'POST',
-      'url': url,
-    }).success(function(data, status, headers, config){
-      if (data && isNotRequestError(data) ) {
-        // console.log('data', data);
-        deferred.resolve(data);
-      } else {
+    service.runAllJobs = function () {
+      var deferred = $q.defer();
+      var url = 'api/v1/resource/components/integrations/run';
+      $http({
+        'method': 'POST',
+        'url': url,
+      }).success(function (data, status, headers, config) {
+        if (status === 200) {
+          deferred.resolve(true);
+        }
+        if (data && isNotRequestError(data)) {
+          // console.log('data', data);
+          deferred.resolve(data);
+        } else {
+          deferred.reject(false);
+        }
+      }).error(function (data, status, headers, config) {
         deferred.reject(false);
-      }
-    }).error(function(data, status, headers, config){
-      deferred.reject(false);
-    });
-    return deferred.promise;
-  }
+      });
+      return deferred.promise;
+    };
 
 
   return service;

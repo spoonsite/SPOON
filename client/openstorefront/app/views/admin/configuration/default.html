@@ -1,28 +1,31 @@
 <div ng-controller="AdminConfigurationCtrl" style="padding-left: 15px; padding-right: 15px;">
   <tabset>
-    <tab heading="Global Configuration">
-      <form class="form-horizontal" ng-submit="saveGlobalConf()" role="form">
-        <div class="form-group form-group-md col-md-12" style="margin:0px;">
-          <div class="form-group form-group-md col-md-8" style="margin:0px; margin-top: 20px; padding:0px;">
-            <label style="padding-left:0px; padding-right:0px; text-align:left;" class="col-md-12 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
-            <div class="col-md-12" style="padding: 0;">
-              {{cron.global_cron_display}}
-              <cron ng-model="cron.global_cron" id="glbRefreshRate" callback="saveGlobalConf()"></cron>
-            </div>
-          </div>
+    <tab heading="Component Configuration">
+      <div class="col-md-12" style=" margin-top:20px; margin-bottom: 20px;">
+<!--         <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; margin-bottom: 10px; padding: 0px;">
+          <label for="componentConfType" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select an integration type:&nbsp;</label>
+          <select id="componentConfType" class="form-control" style="min-width:350px; width: auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
+        </div> -->
+        <div class="col-md-12" style="padding: 0; min-height: 50px;">
+          <button class="btn btn-default" type="button" ng-click="setupModal();"><i class="fa fa-plus"></i>&nbsp;Add New Configuration</button>
         </div>
-        <div class="form-group form-group-md col-md-12" style="margin:0px; margin-top: 10px; ">
-          <div class="" style="padding-left:0px; padding-right:0px;">
-            <button class="btn btn-default" type="button" ng-click="runAllJobs()">Run&nbsp;All&nbsp;Jobs&nbsp;<i class="fa fa-refresh"></i></button>
-          </div>
-<!--           <br>
-          <div class="">
-            <button class="btn btn-primary" type="submit">Save&nbsp;<i class="fa fa-save"></i></button>
-          </div> -->
-        </div>
-      </form>
+        <div ng-include="'views/admin/configuration/jobs.html'"></div>
+      </div>
     </tab>
     <tab heading="Jira Configuraiton">
+      <panel class-list="edges" open-state="false" title="Edit Global Refresh Rate Interval" class="ng-isolate-scope">
+        <form class="form-horizontal" ng-submit="saveGlobalConf()" role="form">
+          <div class="form-group form-group-md col-md-12" style="margin:0px;">
+            <div class="form-group form-group-md col-md-8" style="margin:0px; margin-top: 20px; padding:0px;">
+              <label style="padding-left:0px; padding-right:0px; text-align:left;" class="col-md-12 control-label" for="glbRefreshRate">Global Refresh Rate:&nbsp;</label>
+              <div class="col-md-12" style="padding: 0;">
+                {{cron.global_cron_display}}
+                <cron ng-model="cron.global_cron" id="glbRefreshRate" callback="saveGlobalConf()"></cron>
+              </div>
+            </div>
+          </div>
+        </form>
+      </panel>
       <div class="col-md-12" style="padding:0px;">
         <h3 style="padding-left: 15px; padding-right: 15px;">Edit Mappings</h3>
         <form class="form-horizontal" ng-submit="saveMappingConf()" role="form">
@@ -112,24 +115,6 @@
             </div>
           </div>
         </form>
-      </div>
-    </tab>
-    <tab heading="Component Configuration">
-      <div class="col-md-12" style=" margin-top:20px; margin-bottom: 20px;">
-        <div class="form-group form-group-md col-md-12" style="margin:0px; min-height: 50px; margin-bottom: 10px; padding: 0px;">
-          <label for="componentConfType" style="padding-left:0px; padding-right:0px;" class="control-label" style="text-align:right;">Select an integration type:&nbsp;</label>
-          <select id="componentConfType" class="form-control" style="min-width:350px; width: auto;" name="type" id="type" ng-model="type" ng-options="thing.code as thing.label for thing in types"></select>
-        </div>
-        <div class="col-md-12" style="padding: 0; min-height: 50px;">
-          <button class="btn btn-default" type="button" ng-click="setupModal({}); openModal('compConf');">Add New Configuration&nbsp;</button>
-        </div>
-        <tabset>
-          <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active">
-            <div ng-include="tab.loc">
-              
-            </div>
-          </tab>
-        </tabset>
       </div>
     </tab>
   </tabset>

@@ -16,20 +16,86 @@
 
 'use strict';
 
-app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope, Business, $q) {
+app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'size', 'enabled', '$uiModalInstance', function ($scope, Business, $q, componentId, size, enabled, $uiModalInstance) {
   $scope.$emit('$TRIGGERLOAD', 'editLoad');
-  $scope.component;
-  $scope.issue;
-  $scope.componentId;
-  $scope.jiraProject;
-  $scope.issueId;
-  $scope.config;
-  $scope.typeahead;
+  $scope.componentId = componentId || null;
+  $scope.enabled = enabled || null;
   $scope.noProjects = false;
+  $scope.loading = 0;
+  $scope.config = null;
+  $scope.component;
+  $scope.issueId;
+  $scope.typeahead;
   $scope.checkTicketTimeout;
   $scope.ticketContents;
-  $scope.loading = 0;
   $scope.integrationConfs;
+  $scope.show = {};
+  $scope.data = {};
+  $scope.data.grabCompId;
+  $scope.data.issue;
+  $scope.data.jiraProject;
+
+  $scope.$watch('componentId', function(value){
+    if (!$scope.componentId) {
+    }
+  })
+
+  $scope.$watch('data', function(value) {
+    if (value.grabCompId && typeof value.grabCompId === 'object') {
+      if (value.grabCompId.code){
+        $scope.componentId = value.grabCompId.code;
+        Business.componentservice.getComponentDetails($scope.componentId).then(function(result){
+          if (result){
+            $scope.getTypeahead(result.name).then(function(results){
+              $scope.component = _.find(results, {'code': $scope.componentId});
+              $scope.getIntegrationConf($scope.componentId);
+            })
+          }
+        })
+      }
+    }
+    if (value.issue){
+      value.issue = value.issue.replace(' ', '');
+      var id = value.issue.split('-');
+      if (id.length  === 2){
+        $scope.issueId = id[1];
+        $scope.checkTicket(value.issue);
+      } else {
+        $scope.issueId = -1;
+      }
+    } else if ($scope.issueId !== undefined && $scope.issueId !== null) {
+      $scope.issueId = -1;
+    }
+  }, true);
+
+$scope.calcStatus = function(val)
+{
+  return utils.calcStatus(val);
+}
+
+$scope.getIntegrationConf = function(compId) {
+  if (compId) {
+      // console.log('Inside getIntegrationConf compId', compId);
+      Business.configurationservice.getIntegrationConf(compId).then(function(result){
+        // console.log('result', result);
+        
+        $scope.integrationConfs = result? result: [];
+        if ($scope.integrationConfs.length){
+          _.each($scope.integrationConfs, function(conf){
+            conf.component = _.find($scope.typeahead, {'componentId': conf.componentId});
+          })
+        } else {
+          $scope.config = {};
+        }
+        $scope.show.selectCompConf = false;
+      }, function(){
+        triggerAlert('There were no configurations found for that component', 'integrationConfs', 'body', 5000);
+        $scope.integrationConfs = [];
+        $scope.show.selectCompConf = true;
+      });
+    }
+  };
+  $scope.getIntegrationConf($scope.componentId)
 
 
   $scope.getTypeahead = function(val){
@@ -43,18 +109,22 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope,
   }
 
   $scope.checkTicket = function(ticketId) {
-    // console.log('we are checking a ticket');
-    
+
     if ($scope.checkTicketTimeout) {
       clearTimeout($scope.checkTicketTimeout);
     }
     $scope.checkTicketTimeout = setTimeout(function() {
-      // console.log('We hit the timeout');
       $scope.loading++;
       Business.configurationservice.checkTicket(ticketId).then(function(result){
-        $scope.ticketContents = result;
+        if (result.success && result.success === false) {
+          $scope.issueId = -1; 
+          $scope.ticketContents = null;
+        } else {
+          $scope.ticketContents = result;        
+        }
         $scope.loading--;
       }, function(){
+        $scope.issueId = -1;
         $scope.ticketContents = null;
         $scope.loading--;
       })
@@ -71,17 +141,18 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope,
 
 
   $scope.saveComponentConf = function(){
-    if (!(!$scope.componentId || $scope.componentId === -1) && !(!$scope.issueId || $scope.issueId === -1) && $scope.jiraProject) {
+    if (!(!$scope.componentId || $scope.componentId === -1) && !(!$scope.issueId || $scope.issueId === -1) && $scope.data.jiraProject) {
 
       var conf = $scope.conf? $scope.conf: {};
+      
       if ($scope.integrationConfigId) {
         conf.integrationConfigId = $scope.integrationConfigId;
       }
-      conf.issueNumber = $scope.issue;
-      conf.projectType = $scope.jiraProject.projectType;
-      conf.issueType = $scope.jiraProject.issueType
+      conf.issueNumber = $scope.data.issue;
+      conf.projectType = $scope.data.jiraProject.projectType;
+      conf.issueType = $scope.data.jiraProject.issueType
       conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
-
+      conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
       // console.log('conf', conf);
 
       Business.configurationservice.saveIntegrationConf($scope.componentId, conf).then(function(result){
@@ -89,6 +160,10 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope,
         // console.log('conf', conf);
         $scope.$emit('$TRIGGEREVENT', '$UPDATECONFFORID', $scope.componentId);
         triggerAlert('The configuration was saved', 'saveIntegrationConf','.modal-dialog', 5000);
+        $scope.data.jiraProject = null;
+        $scope.data.issue = null;
+        $scope.getIntegrationConf($scope.componentId);
+        $scope.config = null;
       }, function(result){
         triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
         // console.log('Failed', result);
@@ -100,8 +175,10 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope,
     return false;
   }
 
+  $scope.setConfig = function(conf){
+    $scope.config = angular.copy(conf);
+  }
   $scope.ready = function() {
-
     $scope.$watch('componentCron', function(){
       // console.log('Title', $scope.componentCron);
     }, true);
@@ -114,21 +191,37 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope,
           $scope.componentId = -1;
         }
       } else if ($scope.componentId !== undefined && $scope.componentId !== null) {
-        $scope.componentId = -1;
+        Business.componentservice.getComponentDetails($scope.componentId).then(function(result){
+          if (result){
+            $scope.getTypeahead(result.name).then(function(results){
+              $scope.component = _.find(results, {'code': $scope.componentId});
+            })
+          } else {
+            $scope.componentId = -1;
+          }
+        }, function(){
+          $scope.componentId = -1;
+        })
       }
     }, true);
 
-    $scope.config = Business.getLocal('configId');
 
     $scope.$watch('config', function() {
-      if ($scope.config && $scope.typeahead) {
+      if ($scope.config) {
         // console.log('$scope.config', $scope.config);
-        
+
         if ($scope.config.componentId) {
-          $scope.component = _.find($scope.typeahead, {'componentId': $scope.config.componentId});
+          Business.componentservice.getComponentDetails($scope.config.componentId).then(function(result){
+            if (result){
+              
+              $scope.getTypeahead(result.name).then(function(results){
+                $scope.component = _.find(results, {'code': $scope.config.componentId});
+              })
+            }
+          })
         }
         if ($scope.config.issueNumber){
-          $scope.issue = $scope.config.issueNumber;
+          $scope.data.issue = $scope.config.issueNumber;
         }
         if ($scope.config.integrationType){
           $scope.integrationType = $scope.config.integrationType;
@@ -137,27 +230,43 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope,
           $scope.integrationConfigId = $scope.config.integrationConfigId;
         }
         if ($scope.config.projectType && $scope.config.issueType){
-          $scope.jiraProject = _.find($scope.projects, {'projectType': $scope.config.projectType, 'issueType': $scope.config.issueType});
+          $scope.data.jiraProject = _.find($scope.projects, {'projectType': $scope.config.projectType, 'issueType': $scope.config.issueType});
         }
         $scope.conf = $scope.config;
       }
     });
-  };
+  };//
 
-  $scope.$watch('issue', function(value) {
-    if (value) {
-      value = value.replace(' ', '');
-      var id = value.split('-');
-      if (id.length  === 2){
-        $scope.issueId = id[1];
-        $scope.checkTicket(value);
-      } else {
-        $scope.issueId = -1;
-      }
-    } else if ($scope.issueId !== undefined && $scope.issueId !== null) {
-      $scope.issueId = -1;
-    }
-  }, true);
+
+  $scope.deactivateConfig = function(componentId, configId) {
+    Business.configurationservice.deactivateConfig(componentId, configId).then(function(){
+      triggerAlert('Deactivation of configuration complete. Refresh page to see changes.', 'mappingFields', 'body', 8000);
+      $scope.getIntegrationConf(componentId);
+    });
+  }
+  $scope.activateConfig = function(componentId, configId) {
+    Business.configurationservice.activateConfig(componentId, configId).then(function(){
+      triggerAlert('Activation of configuration complete. Refresh page to see changes.', 'mappingFields', 'body', 8000);
+      $scope.getIntegrationConf(componentId);
+    });
+  }
+  $scope.deleteConfig = function(componentId, configId) {
+    Business.configurationservice.deleteConfig(componentId, configId).then(function(){
+      triggerAlert('Deletion of configuration complete. Refresh page to see changes.', 'mappingFields', 'body', 8000);
+      $scope.getIntegrationConf(componentId);
+    }, function(){
+      $scope.getIntegrationConf(componentId);
+    });
+  }
+  $scope.refreshJob = function(componentId) {
+    Business.configurationservice.runJob(componentId).then(function(){
+      triggerAlert('Running job. Go to Jobs tool to see progress.', 'mappingFields', 'body', 8000);
+      $timeout(function(){
+        $scope.getAllJobs();
+      }, 2000);
+    });
+  }
+
 
   Business.configurationservice.getMappingTypes(true).then(function(result){
     // console.log('result', result);
@@ -173,6 +282,15 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q',  function ($scope,
     $scope.projects = [];
     $scope.ready();
   });
+
+
+  $scope.ok = function () {
+    $uiModalInstance.close();
+  };
+
+  $scope.cancel = function () {
+    $uiModalInstance.dismiss();
+  };
 
 }]);
 

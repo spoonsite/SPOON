@@ -90,6 +90,8 @@ public class PropertiesManager
 	public static final String KEY_MAX_TASK_COMPLETE_EXPIRE = "task.complete.expireminutes";
 	public static final String KEY_MAX_TASK_ERROR_EXPIRE = "task.error.expireminutes";
 
+	public static final String KEY_NODE_NAME = "node.name";
+
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 

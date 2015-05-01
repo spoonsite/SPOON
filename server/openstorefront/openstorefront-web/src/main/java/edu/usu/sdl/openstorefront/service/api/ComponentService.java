@@ -506,6 +506,7 @@ public interface ComponentService
 
 	/**
 	 * Component name search
+	 * Used for getting the name through a typeahead
 	 *
 	 * @param search
 	 * @return

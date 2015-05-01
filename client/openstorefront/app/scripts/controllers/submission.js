@@ -134,7 +134,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
 
     $scope.dependencyForm = {};
-    $scope.component.dependencies = [];
+    $scope.component.externalDependencies = [];
 
     $scope.details = {};
 
@@ -297,13 +297,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
   // contact section
   $scope.removeDependency = function(index){
-    $scope.component.dependencies.splice(index, 1);
+    $scope.component.externalDependencies.splice(index, 1);
   }
   $scope.addDependency = function(){
     console.log('$scope.dependencyForm', $scope.dependencyForm);
     
     if ( $scope.dependencyForm ) {
-      $scope.component.dependencies.push($scope.dependencyForm);
+      $scope.component.externalDependencies.push($scope.dependencyForm);
       $scope.dependencyForm = {};
       $('#dependencyFormName').focus();
     }
