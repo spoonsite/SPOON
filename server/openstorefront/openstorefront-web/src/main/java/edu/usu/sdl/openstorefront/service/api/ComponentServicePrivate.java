@@ -52,4 +52,10 @@ public interface ComponentServicePrivate
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void mapComponentAttributes(Issue issue, ComponentIntegrationConfig integrationConfig);
 
+	/**
+	 * This will process the queue and apply component updates. It shouldn't be
+	 * ran concurrently. It will block other threads on the same jvm.
+	 */
+	public void processComponentUpdates();
+
 }

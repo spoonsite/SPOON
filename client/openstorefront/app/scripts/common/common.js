@@ -172,9 +172,9 @@ var triggerAlert = function(text, uid, id, delay, append) {
     }
     $('#alert_holder_'+uid).remove();
     if (append) {
-      $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">&times;</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+      $(id).append('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;" id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
     } else {
-      $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;"  id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">&times;</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
+      $(id).prepend('<div class="alert ng-scope centerAlert am-fade alert-customDI2E" style="z-index:99999999;"  id="alert_holder_'+uid+'"><button type="button" class="close" id="close_alert_'+uid+'" onclick="hideAlert(\''+uid+'\', 300)">×</button><span id="alert_holder_'+uid+'_span">'+text+'</span></div>');
     }
     
     // this will hide the alert on any action outside the alert box.
@@ -205,7 +205,7 @@ var triggerAlert = function(text, uid, id, delay, append) {
 
 var getShortDescription = function(str){
   if (str) {
-
+    var seen = false;
     var html = $.parseHTML(str);
     var log = [];
     // Gather the parsed HTML's node names
@@ -227,8 +227,8 @@ var getShortDescription = function(str){
         if ((total+el.length) > count){
           var temp = $(el)[0].textContent.split(' ');
           var j = 0;
-          while(total < count){
-            total = total + temp[j].length + 1;
+          while(total < count && temp[j]){
+            total = total + temp[j].length;
             log.push(temp[j]+" ");
             j++;
           }
@@ -241,17 +241,23 @@ var getShortDescription = function(str){
         el.nodeName === 'SPAN' || el.nodeName === 'B' || el.nodeName === 'I' || 
         el.nodeName === 'U' || el.nodeName === 'SUP' || el.nodeName === 'SUB'|| 
         el.nodeName === 'S' || el.nodeName === 'BLOCKQUOTE'){
-        if ((total+$(el)[0].textContent.length) > count){
+        var temp = $.parseHTML(log.join(' '));
+        var tempTotal = 0;
+        _.each(temp, function(ele) {
+          tempTotal = tempTotal + $(ele)[0].textContent.length;
+        })
+
+        if ((tempTotal+$(el)[0].textContent.length) > count){
           var temp = $(el)[0].textContent.split(' ');
           var j = 0;
-          while(total < count){
-            total = total + temp[j].length + 1;
+          while(total < count && temp[j]){
             log.push(temp[j]+" ");
+            total = total + temp[j].length + 1;
             j++;
           }
           log.push('...');
         } else {
-          total = total + $(el)[0].textContent.length;
+          total = tempTotal + $(el)[0].textContent.length;
           log.push($(el)[0].outerHTML);
         }
       } else if (el.nodeName != 'BR'){
@@ -424,4 +430,106 @@ var isNotRequestError = function(response){
 
 var notInCollection = function(collection, item){
   return _.contains(collection, item)? false: true;
-}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Check for duplicates log... replace the empty array with the expored components array
+/*(function(){
+  var components = []
+
+_.each(components, function(component){
+    var attributes = component.attributes;
+    var r = new Array();
+    o:for(var i = 0, n = attributes.length; i < n; i++)
+    {
+      for(var x = 0, y = r.length; x < y; x++)
+      {
+        if(r[x].componentAttributePk.attributeType==attributes[i].componentAttributePk.attributeType && (attributes[i].componentAttributePk.attributeType === 'DI2ELEVEL' || attributes[i].componentAttributePk.attributeType === 'DI2EINTENT' || attributes[i].componentAttributePk.attributeType === 'DI2ESTATE'))
+        {
+          console.log('this is a DUPE!', r[x].componentAttributePk.attributeType, '---', r[x].componentAttributePk.attributeCode,', ', attributes[i].componentAttributePk.attributeCode, '---', component.component.name);
+          continue o;
+        }
+      }
+      r[r.length] = attributes[i];
+    }
+    return r;
+  })
+
+})()*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

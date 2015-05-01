@@ -158,7 +158,7 @@
       if (obj.hasOwnProperty(key)) {
         var val = obj[key];
         // if the value is a clean string and has a value, we know we want it.
-        if (val !== null && (typeof val === 'string' || typeof val === 'number')){
+        if (val !== null && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')){
           if (!queryParams.length) {
             queryParams += key + '=' + encodeURIComponent(val);
           } else{
@@ -229,6 +229,20 @@
     toQuery: function () {
       return utils.toParamString(this);
     }
+  };
+  
+  utils.isNumberKey = function(evt, allowDecimal, value) {  
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (allowDecimal) {
+      if (charCode === 46 && value && value.indexOf('.') === -1) {
+        return true;
+      }
+    }
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+
+    return true;    
   };
 
   utils.errorObj = {

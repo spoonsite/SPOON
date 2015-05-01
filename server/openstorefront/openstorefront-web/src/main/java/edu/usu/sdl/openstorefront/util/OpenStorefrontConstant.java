@@ -15,8 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.util;
 
+import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Global Constants used in the Application
@@ -25,6 +30,8 @@ import java.util.Map;
  */
 public class OpenStorefrontConstant
 {
+
+	private static final Logger log = Logger.getLogger(OpenStorefrontConstant.class.getName());
 
 	public static final String SORT_ASCENDING = "ASC";
 	public static final String SORT_DESCENDING = "DESC";
@@ -146,4 +153,22 @@ public class OpenStorefrontConstant
 
 	}
 
+
+	/**
+	 * This just return the localhost information (It may not represent the
+	 * external id)
+	 *
+	 * @return
+	 */
+	public static String getNodeName()
+	{
+		String nodeName = PropertiesManager.getValue(PropertiesManager.KEY_NODE_NAME, "PrimaryNode");
+		try {
+			InetAddress inetAddress = InetAddress.getLocalHost();
+			nodeName = nodeName + "-" + inetAddress.toString();
+		} catch (UnknownHostException ex) {
+			log.log(Level.WARNING, "Unable to get information on localhost.  Node name may not be unique. This may not be an issue if there is only one node.");
+		}
+		return nodeName;
+	}
 }

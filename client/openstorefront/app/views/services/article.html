@@ -40,7 +40,7 @@
         <td>{{item.article.title}}</td>
         <td>{{item.data.attributeType}}</td>
         <td>{{item.data.attributeCode}}</td>
-        <td>{{getDate(item.data.eventDts)}}</td>
+        <td>{{item.data.eventDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
         <td>{{getEventType(item.data.trackEventTypeCode)}}</td>
         <td>{{getEventType(item.data.articleTrackingId)}}</td>
         <td>{{item.data.createUser}}</td>

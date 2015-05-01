@@ -698,6 +698,10 @@ limitations under the License.
       </div>			
 
       <h3>Available Evaluation Sections</h3>
+      <button style="display:inline-block;" ng-disabled="predicate['eval'] === 'sortOrder'" class="btn btn-default" ng-click="setPredicate('sortOrder', 'eval');"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
+        <i class="fa fa-sort fa-stack-1x"></i>
+        <i class="fa fa-ban fa-stack-2x text-danger"></i>
+      </span>&nbsp;Clear Sort</button>
       <table class="table table-striped table-bordered admin-table">
         <tr>
           <th><a href="" ng-click="setPredicate('name', 'eval');">Section Name <span ng-show="predicate['eval'] === 'name'"><i ng-show="!reverse['eval']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['eval']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
@@ -718,7 +722,8 @@ limitations under the License.
             ng-disabled="section.notAvailable"
             class="form-control"							
             ng-model="section.actualScore" 
-            onkeypress='return !((event.charCode != 46 || $(this).val().indexOf(".") != -1) && (event.charCode < 48 || event.charCode > 57))'
+	   onkeypress='return utils.isNumberKey(event, true, $(this).val())'
+	   onpaste="return false;"		          
             ng-blur="checkEvalScore(section);"
             max=5
             min=1
