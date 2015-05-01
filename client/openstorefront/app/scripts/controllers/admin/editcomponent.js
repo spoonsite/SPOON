@@ -7,6 +7,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
 
     $scope.predicate = [];
     $scope.predicate['components'] = 'name';
+    $scope.predicate['eval'] = 'sortOrder';
     $scope.reverse = [];
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},
@@ -125,6 +126,10 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       window.location.href = "api/v1/resource/components/" + componentId + "/export";
     };    
     
+    $scope.preview = function(component) {
+      utils.openWindow('#/single?id='+ component.component.componentId, 'Component Preview');
+    };    
+    
     $scope.deleteComponent = function(component){
       var response = window.confirm("Are you sure you want DELETE "+ component.name + "?");
       if (response) {
@@ -213,12 +218,15 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     }*/
     // to resize manually -- $(window).trigger('resize.stickyTableHeaders');
 
-  $timeout(function(){  //
-    var offset = $('.top').outerHeight() + $('#editComponentToolbar').outerHeight();
-    $(".stickytable").stickyTableHeaders({
-      fixedOffset: offset
-    });
-  }, 100)
+    var stickThatTable = function(){
+      var offset = $('.top').outerHeight() + $('#editComponentToolbar').outerHeight();
+      $(".stickytable").stickyTableHeaders({
+        fixedOffset: offset
+      });
+    }
+
+    $(window).resize(stickThatTable);
+    $timeout(stickThatTable, 100);
 
 }]);
 
@@ -1044,11 +1052,22 @@ $scope.loadEvaluationInfo = function(){
               if (!foundSection) {
                 $scope.sections.push({
                   name: record.description,
-                  evaluationSection: record.code                        
+                  evaluationSection: record.code,
+                  sortOrder: record.sortOrder
                 });                          
               }
             });
-            $scope.sections = _.sortBy($scope.sections, 'name');
+            var found = false;
+            _.each($scope.sections, function(section){
+              if (section.sortOrder) {
+                found = true;
+              }
+            })
+            if (found) {
+              $scope.sections = _.sortBy($scope.sections, 'sortOrder');
+            } else {
+              $scope.sections = _.sortBy($scope.sections, 'name');
+            }
             $scope.oldSections = _.sortBy($scope.oldSections, 'name');
           }
         });

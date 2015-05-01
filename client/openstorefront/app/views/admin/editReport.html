@@ -68,10 +68,12 @@ limitations under the License.
 						   id="maxWaitSeconds" 
 						   name="maxWaitSeconds" 
 						   ng-model="reportForm.reportOption.maxWaitSeconds" 
-						   onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						   onkeypress='return utils.isNumberKey(event);'
+						   onpaste="return false;"
+						   maxlength="3"
 						   ng-blur="checkWaitValue(reportUIForm.maxWaitSeconds, reportUIForm)"
 						   placeholder="Default: 5 seconds, min 1 and max 300"
-			                                    ng-maxlength=3
+						   ng-maxlength=3
 						   />						
 				</div>  
 			</div> 			
