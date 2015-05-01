@@ -170,7 +170,7 @@ public class ComponentSubmissionResource
 
 							componentAll.populateCreateUpdateFields(true);
 							componentAll.getComponent().setSubmittedDts(exstingComponent.getSubmittedDts());
-							componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
+//							componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
 
 							if (ApprovalStatus.PENDING.equals(exstingComponent.getApprovalState())
 									&& ApprovalStatus.NOT_SUBMITTED.equals(approveStatus)) {
@@ -193,8 +193,9 @@ public class ComponentSubmissionResource
 				return response;
 			} else {
 				componentAll.populateCreateUpdateFields(false);
-				componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
 				return Response.created(URI.create("v1/resource/componentsubmissions/" + componentAll.getComponent().getComponentId())).entity(componentAll).build();
+//				componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
+//				return Response.created(URI.create("v1/resource/componentsubmissions/" + componentAll.getComponent().getComponentId())).entity(componentAll).build();
 			}
 		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());

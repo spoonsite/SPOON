@@ -467,8 +467,8 @@ body {
               <button type="button" class="btn btn-primary" ng-click="addDependency()" ng-disabled="!dependencyForm.dependencyName || !dependencyForm.version"><i class="fa fa-save"></i>&nbsp;Add</button>
             </div>
             <div style="clear:both;"></div>
-            <h3 style="margin-top: 20px;" ng-show="component.dependencies.length">Added Dependencies</h3>
-            <table style="margin-top:10px;" ng-show="component.dependencies.length" class="table table-striped table-bordered admin-table">
+            <h3 style="margin-top: 20px;" ng-show="component.externalDependencies.length">Added Dependencies</h3>
+            <table style="margin-top:10px;" ng-show="component.externalDependencies.length" class="table table-striped table-bordered admin-table">
               <tr>
                 <th>Name</th>
                 <th>Version</th>
@@ -476,7 +476,7 @@ body {
                 <th>Comment</th>
                 <th>Action</th>
               </tr>
-              <tr ng-repeat="dependency in component.dependencies" >
+              <tr ng-repeat="dependency in component.externalDependencies" >
                 <td>{{dependency.dependencyName}}</td>
                 <td>{{dependency.version}}</td>
                 <td>{{dependency.dependencyReferenceLink}}</td>
@@ -862,9 +862,9 @@ body {
       <hr>
 
       <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
-        <a target="_self" class="btn btn-sm btn-default" href="#dependencies" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''"><i class="fa fa-edit"></i>&nbsp;<small><span ng-show="component.dependencies.length">Edit</span><span ng-show="!(component.dependencies.length)">Add</span> Dependencies</small></a>
+        <a target="_self" class="btn btn-sm btn-default" href="#dependencies" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''"><i class="fa fa-edit"></i>&nbsp;<small><span ng-show="component.externalDependencies.length">Edit</span><span ng-show="!(component.externalDependencies.length)">Add</span> Dependencies</small></a>
       </div>
-      <div class="left" ng-show="component.dependencies.length"><strong>Dependencies:&nbsp;</strong>
+      <div class="left" ng-show="component.externalDependencies.length"><strong>Dependencies:&nbsp;</strong>
         <table class="table table-striped table-bordered" style="table-layout:fixed">
           <tr>
             <th>Dependency</th>
@@ -872,7 +872,7 @@ body {
             <th>Link</th>
             <th>Comment</th>
           </tr>
-          <tr ng-repeat="dependency in component.dependencies">
+          <tr ng-repeat="dependency in component.externalDependencies">
             <td>{{dependency.dependencyName}}</td>
             <td>{{dependency.version}}</td>
             <td>{{dependency.dependancyReferenceLink}}</td>
