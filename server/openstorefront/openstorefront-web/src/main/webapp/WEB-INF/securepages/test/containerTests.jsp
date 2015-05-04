@@ -54,16 +54,16 @@ limitations under the License.
 		<div class="test-guide" >
 			<ul>
 				<li>
-					<a href="javascript:void();" onclick="runTest('');" >Run All Tests</a>
+					<a href="javascript:i=0;" onclick="runTest('');" >Run All Tests</a>
 					<hr>
 				</li>				
 			<c:forEach var="testSuite" items="${actionBean.testSuites}">
 				<li>
-					<a href="javascript:void();" onclick="runTest('&suite=${testSuite.name}');" >${testSuite.name}</a>
+					<a href="javascript:i=0;" onclick="runTest('&suite=${testSuite.name}');" >${testSuite.name}</a>
 					<ul>	
 					<c:forEach var="item" items="${testSuite.tests}">						
 						<li>
-							<a href="javascript:void();" onclick="runTest('&suite=${testSuite.name}&test=${item.description}');" >${item.description}</a>
+							<a href="javascript:i=0;" onclick="runTest('&suite=${testSuite.name}&test=${item.description}');" >${item.description}</a>
 						</li>	
 					</c:forEach>					
 					</ul>

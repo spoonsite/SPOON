@@ -56,6 +56,7 @@ public class FindAttributeTest
 		attributeType.setImportantFlg(true);
 		attributeType.setRequiredFlg(false);
 		attributeType.setVisibleFlg(true);
+		attributeType.setHideOnSubmission(false);
 		attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
 		service.getAttributeService().saveAttributeType(attributeType, false);

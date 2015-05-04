@@ -28,7 +28,8 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.selectAllComps.flag = false;
     $scope.pagination = {};
     $scope.pagination.control = {};
-    $scope.pagination.features = {'dates': false, 'max': false};
+    $scope.pagination.control.approvalState ='ALL';
+    $scope.pagination.features = {'dates': false, 'max': false};    
 
     $scope.$watch('allComponentsWatch', function(){
       if ($scope.allComponentsWatch.data){
@@ -127,7 +128,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };    
     
     $scope.preview = function(component) {
-      utils.openWindow('#/single?id='+ component.component.componentId, 'Component Preview');
+      utils.openWindow('single?id='+ component.component.componentId, 'Component Preview');
     };    
     
     $scope.deleteComponent = function(component){

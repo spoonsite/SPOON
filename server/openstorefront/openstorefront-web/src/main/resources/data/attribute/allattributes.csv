@@ -1,4 +1,4 @@
-"Attribute Type","Type Description","Architecture flag","Visible","Important","Required","Code","Code Label","Code Description","External Link","Group","Sort Order",Architecture Code,Badge Url,Highlight Style,Allow Multiple Codes
+"Attribute Type","Type Description","Architecture flag","Visible","Important","Required","Code","Code Label","Code Description","External Link","Group","Sort Order",Architecture Code,Badge Url,Highlight Style,Allow Multiple Codes,"Hide on Submission","Default Code"
 "ACCPROCESS","Accreditation Process","false","false","false","false","DOD8500","DoD 8500","",
 "ACCPROCESS","Accreditation Process","false","false","false","false","DCID6/3","DCID 6/3","",
 "ACCPROCESS","Accreditation Process","false","false","false","false","ICD 503","DoD 8500","",
