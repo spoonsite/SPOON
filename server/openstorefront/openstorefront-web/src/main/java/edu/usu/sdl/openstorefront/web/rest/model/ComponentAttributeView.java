@@ -45,6 +45,8 @@ public class ComponentAttributeView
 	private boolean allowMultipleFlg;
 	private boolean architectureFlg;
 	private boolean importantFlg;
+	private boolean hideOnSubmission;
+	private String defaultAttributeCode;
 	private Date updateDts;
 	private Integer sortOrder;
 	private String groupCode;
@@ -71,11 +73,14 @@ public class ComponentAttributeView
 		view.setCodeLongDescription(code.getDescription());
 		view.setBadgeUrl(code.getBadgeUrl());
 		view.setTypeDescription(type.getDescription());
-		view.setTypeLongDescription(type.getDescription());
+		view.setTypeLongDescription(type.getDetailedDescription());
 		view.setType(type.getAttributeType());
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
 		view.setImportantFlg(type.getImportantFlg());
 		view.setRequiredFlg(type.getRequiredFlg());
+		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
+		view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
+		view.setDefaultAttributeCode(type.getDefaultAttributeCode());
 		view.setAllowMultipleFlg(type.getAllowMultipleFlg());
 		view.setArchitectureFlg(type.getArchitectureFlg());
 		view.setVisibleFlg(type.getVisibleFlg());
@@ -109,13 +114,15 @@ public class ComponentAttributeView
 		view.setCodeDescription(code.getLabel());
 		view.setCodeLongDescription(code.getDescription());
 		view.setTypeDescription(type.getDescription());
-		view.setTypeLongDescription(type.getDescription());
+		view.setTypeLongDescription(type.getDetailedDescription());
 		view.setType(type.getAttributeType());
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
 		view.setBadgeUrl(code.getBadgeUrl());
 		view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
 		view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
 		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
+		view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
+		view.setDefaultAttributeCode(type.getDefaultAttributeCode());
 		view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
 		view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
 		view.setUpdateDts(attribute.getUpdateDts());
@@ -149,7 +156,7 @@ public class ComponentAttributeView
 			view.setCodeDescription(code.getLabel());
 			view.setCodeLongDescription(code.getDescription());
 			view.setTypeDescription(type.getDescription());
-			view.setTypeLongDescription(type.getDescription());
+			view.setTypeLongDescription(type.getDetailedDescription());
 			view.setType(type.getAttributeType());
 			view.setCode(code.getAttributeCodePk().getAttributeCode());
 			view.setBadgeUrl(code.getBadgeUrl());
@@ -157,6 +164,8 @@ public class ComponentAttributeView
 			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
 			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
 			view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
+			view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
+			view.setDefaultAttributeCode(type.getDefaultAttributeCode());
 			view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
 			view.setUpdateDts(attribute.getUpdateDts());
 			view.setSortOrder(code.getSortOrder());
@@ -223,177 +232,111 @@ public class ComponentAttributeView
 		this.importantFlg = importantFlg;
 	}
 
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
 	}
 
-	/**
-	 * @return the visibleFlg
-	 */
 	public boolean isVisibleFlg()
 	{
 		return visibleFlg;
 	}
 
-	/**
-	 * @param visibleFlg the visibleFlg to set
-	 */
 	public void setVisibleFlg(boolean visibleFlg)
 	{
 		this.visibleFlg = visibleFlg;
 	}
 
-	/**
-	 * @return the requiredFlg
-	 */
 	public boolean isRequiredFlg()
 	{
 		return requiredFlg;
 	}
 
-	/**
-	 * @param requiredFlg the requiredFlg to set
-	 */
 	public void setRequiredFlg(boolean requiredFlg)
 	{
 		this.requiredFlg = requiredFlg;
 	}
 
-	/**
-	 * @return the allowMultipleFlg
-	 */
 	public boolean isAllowMultipleFlg()
 	{
 		return allowMultipleFlg;
 	}
 
-	/**
-	 * @param allowMultipleFlg the allowMultipleFlg to set
-	 */
 	public void setAllowMultipleFlg(boolean allowMultipleFlg)
 	{
 		this.allowMultipleFlg = allowMultipleFlg;
 	}
 
-	/**
-	 * @return the architectureFlg
-	 */
 	public boolean isArchitectureFlg()
 	{
 		return architectureFlg;
 	}
 
-	/**
-	 * @param architectureFlg the architectureFlg to set
-	 */
 	public void setArchitectureFlg(boolean architectureFlg)
 	{
 		this.architectureFlg = architectureFlg;
 	}
 
-	/**
-	 * @return the typeLongDescription
-	 */
 	public String getTypeLongDescription()
 	{
 		return typeLongDescription;
 	}
 
-	/**
-	 * @param typeLongDescription the typeLongDescription to set
-	 */
 	public void setTypeLongDescription(String typeLongDescription)
 	{
 		this.typeLongDescription = typeLongDescription;
 	}
 
-	/**
-	 * @return the type
-	 */
 	public String getType()
 	{
 		return type;
 	}
 
-	/**
-	 * @param type the type to set
-	 */
 	public void setType(String type)
 	{
 		this.type = type;
 	}
 
-	/**
-	 * @return the code
-	 */
 	public String getCode()
 	{
 		return code;
 	}
 
-	/**
-	 * @param code the code to set
-	 */
 	public void setCode(String code)
 	{
 		this.code = code;
 	}
 
-	/**
-	 * @return the externalLink
-	 */
 	public String getExternalLink()
 	{
 		return externalLink;
 	}
 
-	/**
-	 * @param externalLink the externalLink to set
-	 */
 	public void setExternalLink(String externalLink)
 	{
 		this.externalLink = externalLink;
 	}
 
-	/**
-	 * @return the sortOrder
-	 */
 	public Integer getSortOrder()
 	{
 		return sortOrder;
 	}
 
-	/**
-	 * @param sortOrder the sortOrder to set
-	 */
 	public void setSortOrder(Integer sortOrder)
 	{
 		this.sortOrder = sortOrder;
 	}
 
-	/**
-	 * @return the groupCode
-	 */
 	public String getGroupCode()
 	{
 		return groupCode;
 	}
 
-	/**
-	 * @param groupCode the groupCode to set
-	 */
 	public void setGroupCode(String groupCode)
 	{
 		this.groupCode = groupCode;
@@ -437,6 +380,26 @@ public class ComponentAttributeView
 	public void setHighlightStyle(String highlightStyle)
 	{
 		this.highlightStyle = highlightStyle;
+	}
+
+	public boolean getHideOnSubmission()
+	{
+		return hideOnSubmission;
+	}
+
+	public void setHideOnSubmission(boolean hideOnSubmission)
+	{
+		this.hideOnSubmission = hideOnSubmission;
+	}
+
+	public String getDefaultAttributeCode()
+	{
+		return defaultAttributeCode;
+	}
+
+	public void setDefaultAttributeCode(String defaultAttributeCode)
+	{
+		this.defaultAttributeCode = defaultAttributeCode;
 	}
 
 }

@@ -55,6 +55,12 @@ public class AttributeTypeView
 	private boolean allowMultipleFlg;
 
 	@NotNull
+	private boolean hideOnSubmission;
+
+	private String defaultAttributeCode;
+	private String detailedDescription;
+
+	@NotNull
 	private String activeStatus;
 
 	@DataType(AttributeCodeView.class)
@@ -74,6 +80,9 @@ public class AttributeTypeView
 		attributeTypeView.setImportantFlg(Convert.toBoolean(attributeType.getImportantFlg()));
 		attributeTypeView.setRequiredFlg(Convert.toBoolean(attributeType.getRequiredFlg()));
 		attributeTypeView.setVisibleFlg(Convert.toBoolean(attributeType.getVisibleFlg()));
+		attributeTypeView.setDetailedDescription(attributeType.getDetailedDescription());
+		attributeTypeView.setHideOnSubmission(Convert.toBoolean(attributeType.getHideOnSubmission()));
+		attributeTypeView.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 
 		return attributeTypeView;
@@ -86,21 +95,24 @@ public class AttributeTypeView
 		CSVWriter writer = new CSVWriter(stringWriter);
 		codes.stream().forEach((code) -> {
 			writer.writeNext(new String[]{getAttributeType(),
-				getDescription(),
-				Boolean.toString(getArchitectureFlg()),
-				Boolean.toString(getVisibleFlg()),
-				Boolean.toString(getImportantFlg()),
-				Boolean.toString(getRequiredFlg()),
-				code.getCode(),
-				code.getLabel(),
-				code.getDescription(),
-				code.getDetailUrl(),
-				code.getGroupCode(),
-				code.getSortOrder() == null ? "" : code.getSortOrder().toString(),
-				code.getArchitectureCode(),
-				code.getBadgeUrl(),
-				code.getHighlightStyle(),
-				Boolean.toString(getAllowMultipleFlg())
+										  getDescription(),
+										  Boolean.toString(getArchitectureFlg()),
+										  Boolean.toString(getVisibleFlg()),
+										  Boolean.toString(getImportantFlg()),
+										  Boolean.toString(getRequiredFlg()),
+										  code.getCode(),
+										  code.getLabel(),
+										  code.getDescription(),
+										  code.getDetailUrl(),
+										  code.getGroupCode(),
+										  code.getSortOrder() == null ? "" : code.getSortOrder().toString(),
+										  code.getArchitectureCode(),
+										  code.getBadgeUrl(),
+										  code.getHighlightStyle(),
+										  Boolean.toString(getAllowMultipleFlg()),
+										  Boolean.toString(getHideOnSubmission()),
+										  getDefaultAttributeCode(),
+										  getDetailedDescription()
 			});
 		});
 		return stringWriter.toString();
@@ -205,6 +217,36 @@ public class AttributeTypeView
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+
+	public boolean getHideOnSubmission()
+	{
+		return hideOnSubmission;
+	}
+
+	public void setHideOnSubmission(boolean hideOnSubmission)
+	{
+		this.hideOnSubmission = hideOnSubmission;
+	}
+
+	public String getDefaultAttributeCode()
+	{
+		return defaultAttributeCode;
+	}
+
+	public void setDefaultAttributeCode(String defaultAttributeCode)
+	{
+		this.defaultAttributeCode = defaultAttributeCode;
+	}
+
+	public String getDetailedDescription()
+	{
+		return detailedDescription;
+	}
+
+	public void setDetailedDescription(String detailedDescription)
+	{
+		this.detailedDescription = detailedDescription;
 	}
 
 }
