@@ -55,6 +55,8 @@ public class MainAttributeParser
 	private static final int BADGE_URL = 13;
 	private static final int HIGHLIGHT_STYLE = 14;
 	private static final int ALLOW_MULTIPLE = 15;
+	private static final int HIDE_ON_SUBMISSION = 16;
+	private static final int DEFAULT_ATTRIBUTE_CODE = 17;
 
 	private static final String HEADER = "Attribute Type";
 
@@ -77,8 +79,10 @@ public class MainAttributeParser
 				attributeType.setAttributeType(data[TYPE].trim().toUpperCase());
 				attributeType.setDescription(data[DESC].trim());
 
-				//Default to true....Later an admin would need to determine which ones should only allow one.
+				//Defaults
 				attributeType.setAllowMultipleFlg(Boolean.TRUE);
+				attributeType.setHideOnSubmission(Boolean.FALSE);
+
 				attributeType.setArchitectureFlg(Convert.toBoolean(data[ARCH_FLG]));
 				attributeType.setVisibleFlg(Convert.toBoolean(data[VISIBLE]));
 				attributeType.setImportantFlg(Convert.toBoolean(data[IMPORTANT]));
@@ -118,6 +122,17 @@ public class MainAttributeParser
 					if (StringUtils.isNotBlank(allowMultiple)) {
 						attributeType.setAllowMultipleFlg(Convert.toBoolean(allowMultiple));
 					}
+				}
+
+				if (data.length > HIDE_ON_SUBMISSION) {
+					String hideOnSubmission = data[HIDE_ON_SUBMISSION].trim();
+					if (StringUtils.isNotBlank(hideOnSubmission)) {
+						attributeType.setHideOnSubmission(Convert.toBoolean(hideOnSubmission));
+					}
+				}
+
+				if (data.length > DEFAULT_ATTRIBUTE_CODE) {
+					attributeType.setDefaultAttributeCode(data[DEFAULT_ATTRIBUTE_CODE].trim());
 				}
 
 				if (attributeMap.containsKey(attributeType)) {

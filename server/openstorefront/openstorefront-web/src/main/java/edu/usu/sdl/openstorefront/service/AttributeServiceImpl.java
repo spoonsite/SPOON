@@ -209,6 +209,9 @@ public class AttributeServiceImpl
 			existing.setImportantFlg(attributeType.getImportantFlg());
 			existing.setRequiredFlg(attributeType.getRequiredFlg());
 			existing.setVisibleFlg(attributeType.getVisibleFlg());
+			existing.setDetailedDescription(attributeType.getDetailedDescription());
+			existing.setHideOnSubmission(attributeType.getHideOnSubmission());
+			existing.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 			persistenceService.persist(existing);
 		} else {
 			attributeType.populateBaseCreateFields();
@@ -580,6 +583,9 @@ public class AttributeServiceImpl
 						existing.setImportantFlg(attributeType.getImportantFlg());
 						existing.setRequiredFlg(attributeType.getRequiredFlg());
 						existing.setVisibleFlg(attributeType.getVisibleFlg());
+						existing.setDetailedDescription(attributeType.getDetailedDescription());
+						existing.setHideOnSubmission(attributeType.getHideOnSubmission());
+						existing.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 						existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
