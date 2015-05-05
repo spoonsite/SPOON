@@ -511,16 +511,16 @@ body {
                     <div style="clear:both;"></div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Caption</label>
+                    <label class="col-sm-2 control-label">Description</label>
                     <div class="col-sm-10">
                       <input
                       class="form-control"
                       type="text"
-                      name="caption"
-                      ng-model="resourceForm.caption"
+                      name="description"
+                      ng-model="resourceForm.description"
                       ng-minlength=0
                       ng-maxlength=250
-                      placeholder="Caption"
+                      placeholder="Description"
                       ng-disabled="showResourceUpload === 'true'"
                       />
                     </div>
@@ -562,23 +562,23 @@ body {
                     <div style="clear:both;"></div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Caption</label>
+                    <label class="col-sm-2 control-label">Description</label>
                     <div class="col-sm-10">
                       <input
                       class="form-control"
                       type="text"
-                      name="caption"
-                      ng-model="resourceForm.caption"
+                      name="description"
+                      ng-model="resourceForm.description"
                       ng-minlength=0
                       ng-maxlength=250
-                      placeholder="Caption"
+                      placeholder="Description"
                       ng-disabled="lastResourceFile || showResourceUpload !== 'true' || isFullResource"
                       />
                     </div>
                     <div style="clear:both;"></div>
                   </div>
                   <div class="col-sm-12">
-                    <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.caption ||  isFullResource">
+                    <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.description ||  isFullResource">
                       <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || isFullResource"/>
                     </span> <span>{{lastResourceFile}}</span>
                   </div>
@@ -592,13 +592,13 @@ body {
                 <table class="table table-stripped table-bordered" ng-show="resourceQueue.length || component.resources.length">
                   <tr>
                     <th>Type</th>
-                    <th>Caption</th>
+                    <th>Description</th>
                     <th>Mime Type</th>
                     <th>Preview/Link</th>
                   </tr>
                   <tr ng-repeat="item in resourceQueue">
                     <td>{{item.file.typeCode.description}}</td>
-                    <td>{{item.file.caption}}</td>
+                    <td>{{item.file.description}}</td>
                     <td>{{item.file.mimeType}}</td>
                     <td>
                       <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
@@ -608,7 +608,7 @@ body {
                   </tr>
                   <tr ng-repeat="item in component.resources">
                     <td>{{item.typeCode.description}}</td>
-                    <td>{{item.caption}}</td>
+                    <td>{{item.description}}</td>
                     <td>&mdash;</td>
                     <td>{{item.link}}</td>
                   </tr>

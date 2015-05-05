@@ -125,7 +125,25 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         component.component.notifyOfApprovalEmail = $scope.email;
       }
 
-      console.log('$scope.contactTypes', $scope.contactTypes);
+      _.each($scope.allAttributes, function(attribute) {
+        if (attribute.hideOnSubmission) {
+          var found = _.find(attribute.codes, {'code':attribute.defaultAttributeCode});
+          var exists = _.find(component.attributes, {'attributeType': attribute.attributeType});
+          if (found && !exists) {
+            component.attributes.push({
+              ComponentAttributePk: {
+                attributeCode: found.code,
+                attributeType: attribute.attributeType
+              }
+            });
+          }
+        }
+      });
+
+      // console.log('$scope.component.attributes', component.attributes);
+      
+
+      // console.log('$scope.contactTypes', $scope.contactTypes);
 
       var submitter = {
         'contactType': 'SUB',
@@ -144,7 +162,23 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         }
       })
 
-      console.log('contacts', component.contacts);
+      _.each(component.resources, function(resource){
+        if (resource.typeCode && resource.typeCode.code){
+          resource.resourceType = resource.typeCode.code;
+        } else if (resource.typeCode) {
+          console.log('resourceType missing?', resource.typeCode);
+        }
+      })
+
+      _.each(component.media, function(media){
+        if (media.typeCode && media.typeCode.code){
+          media.mediaTypeCode = media.typeCode.code;
+        } else if (media.typeCode) {
+          console.log('mediaType missing?', media.typeCode);
+        }
+      })
+
+      // console.log('contacts', component.contacts);
       
 
       var found = _.find(component.contacts, {'contactType': 'SUB'});
@@ -155,27 +189,27 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         component.contacts.push(submitter);
       }
 
-      console.log('$scope.component', component);
+      // console.log('$scope.component', component);
       Business.submissionservice.createSubmission(component).then(function(result){
         console.log('Success result', result);
       }, function(result){
         console.log('Fail result', result);
       });
-    }
+}
 
-    $scope.$watch('current', function(){
-      $scope.badgeFound = false;
-      if ($scope.current && $scope.current === 'submit') {
-        $scope.badgeFound = false;
-        _.each($scope.component.attributes, function(attribute){
-          $scope.setBadgeFound(attribute);
-        })
-      }
+$scope.$watch('current', function(){
+  $scope.badgeFound = false;
+  if ($scope.current && $scope.current === 'submit') {
+    $scope.badgeFound = false;
+    _.each($scope.component.attributes, function(attribute){
+      $scope.setBadgeFound(attribute);
     })
+  }
+})
 
 
 
-    $scope.checkAttributes = function(){
+$scope.checkAttributes = function(){
       // console.log('Compact list', _.compact($scope.component.attributes));
       // we need to compact the attributes list because it may have unused indexes.
       var list = angular.copy(_.compact($scope.component.attributes));
@@ -420,11 +454,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       $scope.allAttributes = result ? angular.copy(result) : [];
       $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
       console.log('required', $scope.requiredAttributes);
-      // _.remove($scope.requiredAttributes, function(attribute) {
-        // return attribute.attributeType === 'DI2ELEVEL' || attribute.attributeType === 'DI2EINTENT' || attribute.attributeType === 'DI2ESTATE';
-      // });
-    $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
-  });
+
+      $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
+    });
   }; 
   $scope.getAttributes();
   

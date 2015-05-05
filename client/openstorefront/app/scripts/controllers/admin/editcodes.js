@@ -120,8 +120,13 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
         type.allowMultipleFlg = type.allowMultipleFlg || false;
         type.importantFlg = type.importantFlg || false;
         type.hideOnSubmission = type.hideOnSubmission || false;
-        type.defaultAttributeCode = type.defaultAttributeCode || '';
+        type.defaultAttributeCode = type.defaultAttributeCode || null;
         type.detailedDescription = type.detailedDescription || null;
+        
+
+        if (!type.defaultAttributeCode) {
+          type.hideOnSubmission = false;
+        }
         // hideOnSubmission, defaultAttributeCode, detailedDescription  
 
 
