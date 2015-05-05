@@ -28,12 +28,14 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   $scope.dirty = false;
   $scope.addTypeFlg = false;
   $scope.changed = false;
+  $scope.editorOptions = getCkBasicConfig(true);
 
   $scope.data = {};
   $scope.data.allCodes = {};
   $scope.pagination = {};
   $scope.pagination.control = {};
   $scope.pagination.features = {'dates': false, 'max': false};
+  $scope.typeCodes = [];
 
 
   $scope.$watch('data', function(){
@@ -46,7 +48,10 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
     // console.log('we\'re getting types');
     $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
     if ($scope.pagination.control && $scope.pagination.control.refresh) {
-      $scope.pagination.control.refresh().then(function(){
+      $scope.pagination.control.refresh().then(function(result){
+        console.log('result', result);
+        
+        $scope.typeCodes = result.data;
         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
       });
     } else {
@@ -106,6 +111,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
       if ($scope.type && $scope.type.attributeType && cont) {
         $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminTypeRefresh');
         var type = angular.copy($scope.type);
+        
         type.attributeType = type.attributeType;
         type.description = type.description || '';
         type.visibleFlg = type.visibleFlg || false;
@@ -113,6 +119,10 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
         type.architectureFlg = type.architectureFlg || false;
         type.allowMultipleFlg = type.allowMultipleFlg || false;
         type.importantFlg = type.importantFlg || false;
+        type.hideOnSubmission = type.hideOnSubmission || false;
+        type.defaultAttributeCode = type.defaultAttributeCode || '';
+        type.detailedDescription = type.detailedDescription || null;
+        // hideOnSubmission, defaultAttributeCode, detailedDescription  
 
 
         // console.log('Type save', type);

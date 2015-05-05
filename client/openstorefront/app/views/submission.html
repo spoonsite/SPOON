@@ -147,10 +147,10 @@ body {
                   <th>Attribute Code</th>
                 </tr>
                 <!-- repeat on each attribute -->
-                <tr class="ng-scope" ng-repeat="attribute in requiredAttributes">
-                  <td><span class="required ng-binding">{{attribute.description}}</span></td>
+                <tr class="ng-scope" ng-repeat="attribute in requiredAttributes | shownattribute">
+                  <td ><span data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}" class="required ng-binding" >{{attribute.description}}</span></td>
                   <td>
-                    <select type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[$index]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                    <select ng-init="setDefaultAttribute($index, attribute, true)" type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[$index]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
                   </td>
                 </tr>
               </tbody>
@@ -210,8 +210,8 @@ body {
                   <th>Attribute Code</th>
                 </tr>
                 <!-- repeat on each attribute -->
-                <tr class="ng-scope" ng-repeat="attribute in attributes">
-                  <td><span class="ng-binding">{{attribute.description}}&nbsp;
+                <tr class="ng-scope" ng-repeat="attribute in attributes | shownattribute">
+                  <td ><span class="ng-binding" data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}">{{attribute.description}}&nbsp;
                     <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.description}} information" data-trigger="hover" ng-click="openInfo(attribute)"></i>
                   </span></td>
                   <td>
