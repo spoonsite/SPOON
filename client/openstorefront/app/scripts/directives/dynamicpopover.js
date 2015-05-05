@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.directive('dynamicPopover', function($compile){
+app.directive('dynamicPopover', ['$compile', function($compile){
   return {
     scope: {
       content: '='
@@ -35,13 +35,13 @@ app.directive('dynamicPopover', function($compile){
             content: $compile(scope.content)(scope),
             placement: attrs['placement'] || 'top',
             trigger: attrs['trigger'] || 'click',
-          // grab popover content from the next element
-        });
+            // grab popover content from the next element
+          });
         }
       })
     }
   }
-})
+}])
 $('body').on('click', function (e) {
   $('[dynamic-popover]').each(function () {
     //the 'is' for buttons that trigger popups
