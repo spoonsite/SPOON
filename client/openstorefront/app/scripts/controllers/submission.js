@@ -85,7 +85,42 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         component.component.notifyOfApprovalEmail = $scope.email;
       }
 
+      console.log('$scope.contactTypes', $scope.contactTypes);
+
+      var submitter = {
+        'contactType': 'SUB',
+        'firstName': $scope.name,
+        'email': $scope.email,
+        'organization': $scope.organization
+      }
+
+      component.contacts = component.contacts || [];
+
+      _.each(component.contacts, function(contact){
+        if (contact.contactType && contact.contactType.code){
+          contact.contactType = contact.contactType.code;
+        } else if (contact.contactType) {
+          console.log('contactType missing?', contact.contactType);
+        }
+      })
+
+      console.log('contacts', component.contacts);
+      
+
+      var found = _.find(component.contacts, {'contactType': 'SUB'});
+      if (found) {
+        var index = _.indexOf(component.contacts, found);
+        component.contacts[index] = submitter
+      } else {
+        component.contacts.push(submitter);
+      }
+
       console.log('$scope.component', component);
+      Business.submissionservice.createSubmission(component).then(function(result){
+        console.log('Success result', result);
+      }, function(result){
+        console.log('Fail result', result);
+      });
     }
 
     $scope.$watch('current', function(){
@@ -203,9 +238,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
     $scope.addTag = function(){
       if ( $scope.tagsForm.text ) {
-        $scope.component.tags.push($scope.tagsForm);
-        $scope.tagsForm = {};
-        $('#tagLabel').focus();
+        var found = _.find($scope.components.tags, {'text':$scope.tagsForm.text});
+        if (!found) {
+          $scope.component.tags.push($scope.tagsForm);
+          $scope.tagsForm = {};
+          $('#tagLabel').focus();
+        }
       }
     }
 
@@ -369,7 +407,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return foundType !== undefined ? foundType.codes : [];
   }; 
 
-  $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader'); 
+  $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader');  
   $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'); //
   $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader');  
 
@@ -408,12 +446,16 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       if (file._file){
         $scope.readFile(file._file, function(result){
           queue.push({file: file, dom:result});
-          $scope.$apply();
+          if(!$scope.$$phase) {
+            $scope.$apply();
+          }
           $scope.$emit('$TRIGGERUNLOAD', loader);
         });
       } else {
         queue.push({file: file, dom:'<span>No Link or Preview Available</span>'});
-        $scope.$apply();
+        if(!$scope.$$phase) {
+          $scope.$apply();
+        }
         $scope.$emit('$TRIGGERUNLOAD', loader);
       }
       // $scope.mediaUploader.uploadAll();
@@ -667,10 +709,12 @@ $scope.scrollTo = function(id, current, parent, $event) {
 
 
   $timeout(function(){
-    $scope.$apply(function(){
-      $('body').scrollspy({ target: '#scrollSpy', offset: 100 });
-      $scope.scrollTo('top', 'top');
-    })
+    if(!$scope.$$phase) {
+      $scope.$apply(function(){
+        $('body').scrollspy({ target: '#scrollSpy', offset: 100 });
+        $scope.scrollTo('top', 'top');
+      })
+    }
   })
 
 }])

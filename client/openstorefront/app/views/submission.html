@@ -384,7 +384,7 @@ body {
                 <th>Phone</th>
                 <th>Action</th>
               </tr>
-              <tr ng-repeat="contact in component.contacts" >
+              <tr ng-show="contact.contactType.code !== 'SUB' " ng-repeat="contact in component.contacts" >
                 <td>{{contact.contactType.description}}</td>
                 <td>{{contact.firstName}}</td>
                 <td>{{contact.lastName}}</td>
