@@ -21,6 +21,46 @@
 app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$anchorScroll', 'FileUploader', '$templateCache', '$uiModal', '$sce',
   function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $anchorScroll, FileUploader, $templateCache, $uiModal, $sce) { /*jshint unused: false*/
 
+    $scope.test = 'This is a test';
+    $scope.badgeFound = false;
+
+    $scope.name;
+    $scope.email;
+    $scope.organization;
+    $scope.current = 'top';
+
+
+    $scope.component = {};
+    $scope.component.attributes = [];
+
+    $scope.component.metadata = [];
+    $scope.metadataForm = {};
+
+    $scope.component.tags = [];
+    $scope.tagsForm = {};
+
+
+    $scope.contactForm = {};
+    $scope.component.contacts = [];
+
+    $scope.component.media = [];
+    $scope.mediaForm = {};
+    $scope.showMediaUpload = 'true';
+    $scope.isFull = false;
+
+
+    $scope.component.resources = [];
+    $scope.resourceForm = {};
+    $scope.showResourceUpload = 'false';
+    $scope.isFullResource = false;
+
+
+    $scope.dependencyForm = {};
+    $scope.component.externalDependencies = [];
+
+    $scope.details = {};
+
+    $scope.formMedia;
     $scope.config = {
       sources: [
       // {src: $sce.trustAsResourceUrl("http://familyhistorydatabase.org/tempfiles/Never Be Alone.mp3"), type: "audio/mp3"},
@@ -85,62 +125,91 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         component.component.notifyOfApprovalEmail = $scope.email;
       }
 
-      console.log('$scope.component', component);
-    }
+      _.each($scope.allAttributes, function(attribute) {
+        if (attribute.hideOnSubmission) {
+          var found = _.find(attribute.codes, {'code':attribute.defaultAttributeCode});
+          var exists = _.find(component.attributes, {'attributeType': attribute.attributeType});
+          if (found && !exists) {
+            component.attributes.push({
+              ComponentAttributePk: {
+                attributeCode: found.code,
+                attributeType: attribute.attributeType
+              }
+            });
+          }
+        }
+      });
 
-    $scope.$watch('current', function(){
-      $scope.badgeFound = false;
-      if ($scope.current && $scope.current === 'submit') {
-        $scope.badgeFound = false;
-        _.each($scope.component.attributes, function(attribute){
-          $scope.setBadgeFound(attribute);
-        })
+      // console.log('$scope.component.attributes', component.attributes);
+      
+
+      // console.log('$scope.contactTypes', $scope.contactTypes);
+
+      var submitter = {
+        'contactType': 'SUB',
+        'firstName': $scope.name,
+        'email': $scope.email,
+        'organization': $scope.organization
       }
-    })
 
+      component.contacts = component.contacts || [];
 
-    $scope.test = 'This is a test';
+      _.each(component.contacts, function(contact){
+        if (contact.contactType && contact.contactType.code){
+          contact.contactType = contact.contactType.code;
+        } else if (contact.contactType) {
+          console.log('contactType missing?', contact.contactType);
+        }
+      })
+
+      _.each(component.resources, function(resource){
+        if (resource.typeCode && resource.typeCode.code){
+          resource.resourceType = resource.typeCode.code;
+        } else if (resource.typeCode) {
+          console.log('resourceType missing?', resource.typeCode);
+        }
+      })
+
+      _.each(component.media, function(media){
+        if (media.typeCode && media.typeCode.code){
+          media.mediaTypeCode = media.typeCode.code;
+        } else if (media.typeCode) {
+          console.log('mediaType missing?', media.typeCode);
+        }
+      })
+
+      // console.log('contacts', component.contacts);
+      
+
+      var found = _.find(component.contacts, {'contactType': 'SUB'});
+      if (found) {
+        var index = _.indexOf(component.contacts, found);
+        component.contacts[index] = submitter
+      } else {
+        component.contacts.push(submitter);
+      }
+
+      // console.log('$scope.component', component);
+      Business.submissionservice.createSubmission(component).then(function(result){
+        console.log('Success result', result);
+      }, function(result){
+        console.log('Fail result', result);
+      });
+}
+
+$scope.$watch('current', function(){
+  $scope.badgeFound = false;
+  if ($scope.current && $scope.current === 'submit') {
     $scope.badgeFound = false;
-
-    $scope.name;
-    $scope.email;
-    $scope.organization;
-    $scope.current = 'top';
-
-
-    $scope.component = {};
-    $scope.component.attributes = [];
-
-    $scope.component.metadata = [];
-    $scope.metadataForm = {};
-
-    $scope.component.tags = [];
-    $scope.tagsForm = {};
+    _.each($scope.component.attributes, function(attribute){
+      $scope.setBadgeFound(attribute);
+    })
+  }
+})
 
 
-    $scope.contactForm = {};
-    $scope.component.contacts = [];
 
-    $scope.component.media = [];
-    $scope.mediaForm = {};
-    $scope.showMediaUpload = 'true';
-    $scope.isFull = false;
-
-
-    $scope.component.resources = [];
-    $scope.resourceForm = {};
-    $scope.showResourceUpload = 'false';
-    $scope.isFullResource = false;
-
-
-    $scope.dependencyForm = {};
-    $scope.component.externalDependencies = [];
-
-    $scope.details = {};
-
-    $scope.formMedia;
-
-    $scope.checkAttributes = function(){
+$scope.checkAttributes = function(){
       // console.log('Compact list', _.compact($scope.component.attributes));
       // we need to compact the attributes list because it may have unused indexes.
       var list = angular.copy(_.compact($scope.component.attributes));
@@ -149,6 +218,32 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         return false;
       }
       return true;
+    }
+
+    $scope.setDefaultAttribute = function(index, attribute, required){
+      console.log('inde', index);
+      console.log('attribute', attribute);
+      console.log('required', required);
+      
+      if (required) {
+        var found = _.find($scope.requiredAttributes, {'attributeType': attribute.attributeType});
+        if (attribute.defaultAttributeCode) {
+          found = _.find(attribute.codes, {code: attribute.defaultAttributeCode});
+          if (found) {
+            console.log('found', found);
+            $scope.component.attributes[index] = found;
+          }
+        }
+      } else {
+        var found = _.find($scope.attributes, {'attributeType': attribute.attributeType});
+        if (attribute.defaultAttributeCode) {
+          found = _.find(attribute.codes, {code: attribute.defaultAttributeCode});
+          if (found) {
+            console.log('found', found);
+            $scope.component.attributes[index] = found;
+          }
+        }
+      }
     }
 
     $scope.getCompactAttributes = function(attributePK){
@@ -203,9 +298,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
     $scope.addTag = function(){
       if ( $scope.tagsForm.text ) {
-        $scope.component.tags.push($scope.tagsForm);
-        $scope.tagsForm = {};
-        $('#tagLabel').focus();
+        var found = _.find($scope.component.tags, {'text':$scope.tagsForm.text});
+        if (!found) {
+          $scope.component.tags.push($scope.tagsForm);
+          $scope.tagsForm = {};
+          $('#tagLabel').focus();
+        }
       }
     }
 
@@ -354,11 +452,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.getAttributes = function (override) { 
     Business.getFilters(override, false).then(function (result) {
       $scope.allAttributes = result ? angular.copy(result) : [];
-      $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true});
+      $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
       console.log('required', $scope.requiredAttributes);
-      _.remove($scope.requiredAttributes, function(attribute) {
-        return attribute.attributeType === 'DI2ELEVEL' || attribute.attributeType === 'DI2EINTENT' || attribute.attributeType === 'DI2ESTATE';
-      });
+
       $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
     });
   }; 
@@ -369,7 +465,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return foundType !== undefined ? foundType.codes : [];
   }; 
 
-  $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader'); 
+  $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader');  
   $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'); //
   $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader');  
 
@@ -408,12 +504,16 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       if (file._file){
         $scope.readFile(file._file, function(result){
           queue.push({file: file, dom:result});
-          $scope.$apply();
+          if(!$scope.$$phase) {
+            $scope.$apply();
+          }
           $scope.$emit('$TRIGGERUNLOAD', loader);
         });
       } else {
         queue.push({file: file, dom:'<span>No Link or Preview Available</span>'});
-        $scope.$apply();
+        if(!$scope.$$phase) {
+          $scope.$apply();
+        }
         $scope.$emit('$TRIGGERUNLOAD', loader);
       }
       // $scope.mediaUploader.uploadAll();
@@ -645,6 +745,8 @@ $scope.scrollTo = function(id, current, parent, $event) {
           $anchorScroll();
         }
         $timeout(function(){
+          $scope.resetToggles();
+          
           var topScroll = $(document).height() - ($(window).scrollTop() + $(window).height()) ;
           var returnScroll = ($(window).scrollTop() - $('#'+id).offset().top);
           if (topScroll === 0 && returnScroll < 0 ) {
@@ -655,6 +757,7 @@ $scope.scrollTo = function(id, current, parent, $event) {
           window.scrollBy(0, -returnScroll);
         })
         $timeout(function(){
+          $scope.resetToggles();
           $('li.active').removeClass('active');
           if (parent) {
             $('[data-target="#'+parent+'"]').addClass('active');
@@ -667,11 +770,20 @@ $scope.scrollTo = function(id, current, parent, $event) {
 
 
   $timeout(function(){
-    $scope.$apply(function(){
-      $('body').scrollspy({ target: '#scrollSpy', offset: 100 });
-      $scope.scrollTo('top', 'top');
-    })
+    if(!$scope.$$phase) {
+      $scope.$apply(function(){
+        $('body').scrollspy({ target: '#scrollSpy', offset: 100 });
+        $scope.scrollTo('top', 'top');
+      })
+    }
   })
+
+  $scope.resetToggles = function(){
+    $timeout(function() {
+      $('[data-toggle=\'tooltip\']').tooltip();
+    }, 300);
+  }
+  $scope.resetToggles();
 
 }])
 .filter('makeattribute', function() {
@@ -683,6 +795,17 @@ $scope.scrollTo = function(id, current, parent, $event) {
       }
     })
     return input;
+  };
+})
+.filter('shownattribute', function() {
+  return function(input) {
+    var result = [];
+    _.each(input, function(attribute){
+      if (attribute && !attribute.hideOnSubmission) {
+        result.push(attribute)
+      }
+    })
+    return result;
   };
 })
 .controller('AttrsInfoCtrl', ['$scope', '$uiModalInstance', 'size', 'attribute', 'notificationsFactory', '$timeout', function ($scope, $uiModalInstance, size, attribute, Factory, $timeout) {

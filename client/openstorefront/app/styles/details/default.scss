@@ -74,6 +74,7 @@
 #detailsTabs ul + div {
   margin-left: 26px;
 }
+
 #detailsTabs ul{
   margin-left: -15px;
   margin-right: -15px;
@@ -81,6 +82,10 @@
   padding-right: 15px;
 }
 
+#updatedStuff ul{
+  margin-right: 0px !important;
+  margin-left: 0px !important;
+}
 
 tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .suggestion-item.selected em {
   color: #fff;

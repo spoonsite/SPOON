@@ -147,10 +147,10 @@ body {
                   <th>Attribute Code</th>
                 </tr>
                 <!-- repeat on each attribute -->
-                <tr class="ng-scope" ng-repeat="attribute in requiredAttributes">
-                  <td><span class="required ng-binding">{{attribute.description}}</span></td>
+                <tr class="ng-scope" ng-repeat="attribute in requiredAttributes | shownattribute">
+                  <td ><span data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}" class="required ng-binding" >{{attribute.description}}</span></td>
                   <td>
-                    <select type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[$index]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                    <select ng-init="setDefaultAttribute($index, attribute, true)" type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[$index]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
                   </td>
                 </tr>
               </tbody>
@@ -210,8 +210,8 @@ body {
                   <th>Attribute Code</th>
                 </tr>
                 <!-- repeat on each attribute -->
-                <tr class="ng-scope" ng-repeat="attribute in attributes">
-                  <td><span class="ng-binding">{{attribute.description}}&nbsp;
+                <tr class="ng-scope" ng-repeat="attribute in attributes | shownattribute">
+                  <td ><span class="ng-binding" data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}">{{attribute.description}}&nbsp;
                     <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.description}} information" data-trigger="hover" ng-click="openInfo(attribute)"></i>
                   </span></td>
                   <td>
@@ -384,7 +384,7 @@ body {
                 <th>Phone</th>
                 <th>Action</th>
               </tr>
-              <tr ng-repeat="contact in component.contacts" >
+              <tr ng-show="contact.contactType.code !== 'SUB' " ng-repeat="contact in component.contacts" >
                 <td>{{contact.contactType.description}}</td>
                 <td>{{contact.firstName}}</td>
                 <td>{{contact.lastName}}</td>
@@ -495,7 +495,7 @@ body {
           <h2 id="resources">Resources:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event): ''">Skip</button></small></h2>
           <panel class-list="edges" open-state="true" title="Add Resources" style="position:relative">
             <loader trigger="resourcePreviewLoader"></loader>
-            Current max upload size < 100Mb
+            Current max upload size &lt; 100Mb
             
             <div class="col-sm-12">
               <div class="input-group">
@@ -511,16 +511,16 @@ body {
                     <div style="clear:both;"></div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Caption</label>
+                    <label class="col-sm-2 control-label">Description</label>
                     <div class="col-sm-10">
                       <input
                       class="form-control"
                       type="text"
-                      name="caption"
-                      ng-model="resourceForm.caption"
+                      name="description"
+                      ng-model="resourceForm.description"
                       ng-minlength=0
                       ng-maxlength=250
-                      placeholder="Caption"
+                      placeholder="Description"
                       ng-disabled="showResourceUpload === 'true'"
                       />
                     </div>
@@ -562,23 +562,23 @@ body {
                     <div style="clear:both;"></div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Caption</label>
+                    <label class="col-sm-2 control-label">Description</label>
                     <div class="col-sm-10">
                       <input
                       class="form-control"
                       type="text"
-                      name="caption"
-                      ng-model="resourceForm.caption"
+                      name="description"
+                      ng-model="resourceForm.description"
                       ng-minlength=0
                       ng-maxlength=250
-                      placeholder="Caption"
+                      placeholder="Description"
                       ng-disabled="lastResourceFile || showResourceUpload !== 'true' || isFullResource"
                       />
                     </div>
                     <div style="clear:both;"></div>
                   </div>
                   <div class="col-sm-12">
-                    <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.caption ||  isFullResource">
+                    <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.description ||  isFullResource">
                       <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || isFullResource"/>
                     </span> <span>{{lastResourceFile}}</span>
                   </div>
@@ -592,13 +592,13 @@ body {
                 <table class="table table-stripped table-bordered" ng-show="resourceQueue.length || component.resources.length">
                   <tr>
                     <th>Type</th>
-                    <th>Caption</th>
+                    <th>Description</th>
                     <th>Mime Type</th>
                     <th>Preview/Link</th>
                   </tr>
                   <tr ng-repeat="item in resourceQueue">
                     <td>{{item.file.typeCode.description}}</td>
-                    <td>{{item.file.caption}}</td>
+                    <td>{{item.file.description}}</td>
                     <td>{{item.file.mimeType}}</td>
                     <td>
                       <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
@@ -608,7 +608,7 @@ body {
                   </tr>
                   <tr ng-repeat="item in component.resources">
                     <td>{{item.typeCode.description}}</td>
-                    <td>{{item.caption}}</td>
+                    <td>{{item.description}}</td>
                     <td>&mdash;</td>
                     <td>{{item.link}}</td>
                   </tr>
@@ -624,7 +624,7 @@ body {
           <h2 id="media">Media:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event): ''">Skip</button></small></h2>
           <panel class-list="edges" open-state="true" title="Add Media" style="position:relative">
             <loader trigger="mediaPreviewLoader"></loader>
-            Current max upload size < 100Mb
+            Current max upload size &lt; 100Mb
             <div class="col-sm-12 ">
               <div class="input-group">
                 <span class="input-group-addon">

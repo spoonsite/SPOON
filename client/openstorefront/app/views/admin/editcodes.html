@@ -7,10 +7,16 @@
   <tabset justified="false" type="">  <!-- pills -->
     <tab heading="Edit Type Details">
       <form name="myForm" style="margin-top:10px;" ng-submit="saveType(myForm.$valid)">
-        <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Description</div>
+        <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Label</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="form-control" type="text" id="description" ng-model="type.description"  ng-maxlength="255" maxlength="255" placeholder="Description (label)"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Type</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input ng-disabled="!addTypeFlg" class="form-control" type="text" id="attributeType" ng-model="type.attributeType"  ng-maxlength="20" maxlength="20" placeholder="Type key" required/></div>
+        <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Default Code <i ng-show="!typeCodes.length" class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="top" data-title="To set the default code for this type, you must have codes to select from." data-trigger="hover"></i></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><select ng-disabled="!typeCodes.length" class="form-control" type="text" id="defaultAttributeCode" ng-model="type.defaultAttributeCode"  ng-options="code.code as code.label for code in typeCodes"/></div>
+        <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Detailed Description</div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;">
+          <textarea ckeditor="editorOptions" id="detailedDescription" ng-model="type.detailedDescription" ng-watch="type.detailedDescription"></textarea>
+        </div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Visible Flag</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" id="visibleFlg" ng-model="type.visibleFlg" ng-checked="type.visibleFlg" data-toggle="tooltip" data-placement="top" title="Show up under visible list of filters (Filter By Attribute)"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Required Flag</div>
@@ -21,6 +27,8 @@
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" id="architectureFlg" ng-model="type.architectureFlg" ng-checked="type.architectureFlg" data-toggle="tooltip" data-placement="top" title="This attribute is an architecture"/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Allow Multiple Flag</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input class="" type="checkbox" id="allowMultipleFlg" ng-model="type.allowMultipleFlg" ng-checked="type.allowMultipleFlg" data-toggle="tooltip" data-placement="top" title="Allow multiple codes for this type per component"/></div>
+        <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Hide on Submission Flag <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="top" data-title="To set a type to 'hidden' on the submission form, you must have a default code value set for this type." data-trigger="hover"></i></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;" ><input ng-disabled="!type.defaultAttributeCode" class="" type="checkbox" id="submissionFlg" ng-model="type.hideOnSubmission" ng-checked="type.hideOnSubmission" data-toggle="tooltip" data-placement="top" title="Hide/show this type on the submission form"/></div>
         <button type="submit" class="btn btn-default" style="margin-top:20px;" title="Save Changes"><i class="fa fa-save"></i>&nbsp;Save</button>
       </form>
     </tab>
