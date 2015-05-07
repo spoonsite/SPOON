@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.storage.model.AlertType;
 import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -71,7 +72,8 @@ public class ComponentSubmissionResource
 			{
 			};
 			return sendSingleEntityResponse(entity);
-		} else {
+		}
+		else {
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 	}
@@ -83,6 +85,11 @@ public class ComponentSubmissionResource
 	@DataType(ComponentAll.class)
 	public Response createNewSubmission(ComponentAll componentAll)
 	{
+		String id = service.getPersistenceService().generateId();
+		componentAll.getComponent().setComponentId(id);
+		for (ComponentAttribute attribute : componentAll.getAttributes()) {
+			attribute.getComponentAttributePk().setComponentId(id);
+		}
 		return handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, false);
 	}
 
@@ -99,6 +106,9 @@ public class ComponentSubmissionResource
 	{
 		if (componentAll.getComponent() != null) {
 			componentAll.getComponent().setComponentId(componentId);
+			for (ComponentAttribute attribute : componentAll.getAttributes()) {
+				attribute.getComponentAttributePk().setComponentId(componentAll.getComponent().getComponentId());
+			}
 			return handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, true);
 		}
 		RestErrorModel restErrorModel = new RestErrorModel();
@@ -123,7 +133,8 @@ public class ComponentSubmissionResource
 				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().submitComponentSubmission(componentId);
 					response = Response.ok().build();
-				} else {
+				}
+				else {
 					response = Response.status(Response.Status.FORBIDDEN)
 							.type(MediaType.TEXT_PLAIN)
 							.entity("Unable to modify an approved submission.")
@@ -182,7 +193,8 @@ public class ComponentSubmissionResource
 							}
 
 							response = Response.status(Response.Status.OK).entity(componentAll).build();
-						} else {
+						}
+						else {
 							response = Response.status(Response.Status.FORBIDDEN)
 									.type(MediaType.TEXT_PLAIN)
 									.entity("Unable to modify an approved submission.")
@@ -191,12 +203,14 @@ public class ComponentSubmissionResource
 					}
 				}
 				return response;
-			} else {
+			}
+			else {
 				componentAll.populateCreateUpdateFields(false);
 				componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
 				return Response.created(URI.create("v1/resource/componentsubmissions/" + componentAll.getComponent().getComponentId())).entity(componentAll).build();
 			}
-		} else {
+		}
+		else {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 	}
@@ -224,7 +238,8 @@ public class ComponentSubmissionResource
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
 				|| OpenStorefrontConstant.ANONYMOUS_USER.equals(entity.getCreateUser())) {
 			return null;
-		} else {
+		}
+		else {
 			return Response.status(Response.Status.FORBIDDEN)
 					.type(MediaType.TEXT_PLAIN)
 					.entity("User cannot modify resource.")

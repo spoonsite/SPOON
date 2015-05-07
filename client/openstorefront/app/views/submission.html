@@ -33,7 +33,7 @@ body {
             </li>
             <hr style="margin: 2px 0;">
             <li data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
-              <a target="_self" href="#details" ng-click="vitalsCheck()? scrollTo('details', 'details', '', $event): ''">Details</a>
+              <a target="_self" href="#details" ng-click="initialSave($event)">Details</a>
               <ul class="nav">
                 <li data-target="#metadata" ng-class="{'disabled': !vitalsCheck()}">
                   <a target="_self" href="#metadata" ng-click="vitalsCheck()? scrollTo('metadata', 'details', 'details', $event): ''">Main Details</a>
@@ -57,7 +57,7 @@ body {
             </li> -->
             <hr style="margin: 2px 0;">
             <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck()}">
-              <a target="_self" href="#reviewAndSubmit" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): ''">Revew/Submit</a>
+              <a target="_self" href="#reviewAndSubmit" ng-click="updateSave($event)">Revew/Submit</a>
             </li>
           </ul>
         </div>
@@ -83,9 +83,15 @@ body {
             <form class="form-horizontal">
               <h2>1. Please enter your contact information.</h2>
               <div class="form-group required">
-                <label class="col-sm-2 control-label" for="inputName">Name</label>
+                <label class="col-sm-2 control-label" for="firstNameInput">First Name</label>
                 <div class="col-sm-10">
-                  <input type="text" id="inputName" class="form-control" placeholder="Name" required ng-model="name" autofocus="">
+                  <input type="text" id="firstNameInput" class="form-control" placeholder="First Name" required ng-model="firstName" autofocus="">
+                </div>
+                <div style="clear:both;"></div>
+              </div>              <div class="form-group required">
+                <label class="col-sm-2 control-label" for="lastNameInput">Last Name</label>
+                <div class="col-sm-10">
+                  <input type="text" id="lastNameInput" class="form-control" placeholder="Last Name" required ng-model="lastName" autofocus="">
                 </div>
                 <div style="clear:both;"></div>
               </div>
@@ -157,7 +163,7 @@ body {
             </table>
           </div>
           <div style="padding-bottom:15px;">
-            <button class="btn btn-default" ng-disabled="!vitalsCheck()" ng-click="vitalsCheck()? scrollTo('details', 'details', '', $event): ''">Continue to Step 3</button>
+            <button class="btn btn-default" ng-disabled="!vitalsCheck()" ng-click="initialSave($event)">Continue to Step 3</button>
           </div>
         </form>
       </div>
@@ -511,16 +517,16 @@ body {
                     <div style="clear:both;"></div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Description</label>
+                    <label class="col-sm-2 control-label">Caption</label>
                     <div class="col-sm-10">
                       <input
                       class="form-control"
                       type="text"
-                      name="description"
-                      ng-model="resourceForm.description"
+                      name="caption"
+                      ng-model="resourceForm.caption"
                       ng-minlength=0
                       ng-maxlength=250
-                      placeholder="Description"
+                      placeholder="Caption"
                       ng-disabled="showResourceUpload === 'true'"
                       />
                     </div>
@@ -562,23 +568,23 @@ body {
                     <div style="clear:both;"></div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Description</label>
+                    <label class="col-sm-2 control-label">Caption</label>
                     <div class="col-sm-10">
                       <input
                       class="form-control"
                       type="text"
-                      name="description"
-                      ng-model="resourceForm.description"
+                      name="caption"
+                      ng-model="resourceForm.caption"
                       ng-minlength=0
                       ng-maxlength=250
-                      placeholder="Description"
+                      placeholder="Caption"
                       ng-disabled="lastResourceFile || showResourceUpload !== 'true' || isFullResource"
                       />
                     </div>
                     <div style="clear:both;"></div>
                   </div>
                   <div class="col-sm-12">
-                    <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.description ||  isFullResource">
+                    <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.caption ||  isFullResource">
                       <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || isFullResource"/>
                     </span> <span>{{lastResourceFile}}</span>
                   </div>
@@ -592,13 +598,13 @@ body {
                 <table class="table table-stripped table-bordered" ng-show="resourceQueue.length || component.resources.length">
                   <tr>
                     <th>Type</th>
-                    <th>Description</th>
+                    <th>Caption</th>
                     <th>Mime Type</th>
                     <th>Preview/Link</th>
                   </tr>
                   <tr ng-repeat="item in resourceQueue">
                     <td>{{item.file.typeCode.description}}</td>
-                    <td>{{item.file.description}}</td>
+                    <td>{{item.file.caption}}</td>
                     <td>{{item.file.mimeType}}</td>
                     <td>
                       <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
@@ -608,7 +614,7 @@ body {
                   </tr>
                   <tr ng-repeat="item in component.resources">
                     <td>{{item.typeCode.description}}</td>
-                    <td>{{item.description}}</td>
+                    <td>{{item.caption}}</td>
                     <td>&mdash;</td>
                     <td>{{item.link}}</td>
                   </tr>
@@ -748,7 +754,7 @@ body {
 
 
           <div style="padding-bottom:15px;">
-            <button class="btn btn-default" ng-click="vitalsCheck()? scrollTo('reviewAndSubmit', 'submit', '', $event): ''; detailsDone = true">Review and Submit</button>
+            <button class="btn btn-default" ng-click="updateSave($event)">Review and Submit</button>
           </div>
         </form>
       </div>
@@ -775,10 +781,10 @@ body {
         <vg-media vg-src="config.sources" vg-tracks="config.tracks" vg-type="video" vg-native-controls="true"> </vg-media>
       </videogular> -->
 
-      <form name="optIn">
+      <form name="optInForm">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{email}}</i>)
+            <input type="checkbox" ng-checked="optIn" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{email}}</i>)
           </label>
         </div>
       </form>

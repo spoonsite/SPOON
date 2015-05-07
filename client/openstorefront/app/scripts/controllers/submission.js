@@ -24,12 +24,15 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.test = 'This is a test';
     $scope.badgeFound = false;
 
-    $scope.name;
+    $scope.firstName;
+    $scope.lastName;
     $scope.email;
     $scope.organization;
     $scope.current = 'top';
+    $scope.optIn = false;
 
 
+    $scope.componentId = null;
     $scope.component = {};
     $scope.component.attributes = [];
 
@@ -114,24 +117,50 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       return '';
     }
 
-    $scope.submit = function(){
-      var component = angular.copy($scope.component);
-      component.attributes = $scope.getCompactAttributes(true);
-      component.component = {};
-      component.component.name = component.componentName;
-      component.component.description = component.description;
-      component.component.organization = component.organization;
-      if ($scope.optIn) {
-        component.component.notifyOfApprovalEmail = $scope.email;
-      }
+    $scope.initialSave = function($event){
+      if ($scope.vitalsCheck()){
+        $scope.submit(true).then(function(){
+          $scope.scrollTo('details', 'details', '', $event);
+        }, function(){
+          if($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+          }
+        })
+      } 
+    }
 
+    $scope.updateSave = function($event){
+      if ($scope.vitalsCheck()){
+        $scope.submit(false).then(function(){
+          $scope.scrollTo('reviewAndSubmit', 'submit', '', $event)
+          $scope.detailsDone = true;
+        }, function(){
+          if($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+          }
+        })
+      } 
+    }
+
+    $scope.createInitialSubmit = function(){
+      console.log('$scope.component', $scope.component);
+      $scope.component.component = $scope.component.comopnent || {};
+      $scope.component.component.name = $scope.component.componentName;
+      $scope.component.component.description = $scope.component.description;
+      $scope.component.component.organization = $scope.component.organization;
+      $scope.component.component.activeStatus = $scope.component.activeStatus || 'A';
+      if ($scope.componentId) {
+        $scope.component.component.componentId = $scope.componentId; 
+      }
       _.each($scope.allAttributes, function(attribute) {
         if (attribute.hideOnSubmission) {
           var found = _.find(attribute.codes, {'code':attribute.defaultAttributeCode});
-          var exists = _.find(component.attributes, {'attributeType': attribute.attributeType});
+          var exists = _.find($scope.component.attributes, {'attributeType': attribute.attributeType});
           if (found && !exists) {
-            component.attributes.push({
-              ComponentAttributePk: {
+            $scope.component.attributes.push({
+              componentAttributePk: {
                 attributeCode: found.code,
                 attributeType: attribute.attributeType
               }
@@ -139,47 +168,15 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           }
         }
       });
-
-      // console.log('$scope.component.attributes', component.attributes);
-      
-
-      // console.log('$scope.contactTypes', $scope.contactTypes);
-
+      var component = angular.copy($scope.component);
+      component.attributes = $scope.getCompactAttributes(true);
       var submitter = {
         'contactType': 'SUB',
-        'firstName': $scope.name,
+        'firstName': $scope.firstName,
+        'lastName': $scope.lastName,
         'email': $scope.email,
         'organization': $scope.organization
       }
-
-      component.contacts = component.contacts || [];
-
-      _.each(component.contacts, function(contact){
-        if (contact.contactType && contact.contactType.code){
-          contact.contactType = contact.contactType.code;
-        } else if (contact.contactType) {
-          console.log('contactType missing?', contact.contactType);
-        }
-      })
-
-      _.each(component.resources, function(resource){
-        if (resource.typeCode && resource.typeCode.code){
-          resource.resourceType = resource.typeCode.code;
-        } else if (resource.typeCode) {
-          console.log('resourceType missing?', resource.typeCode);
-        }
-      })
-
-      _.each(component.media, function(media){
-        if (media.typeCode && media.typeCode.code){
-          media.mediaTypeCode = media.typeCode.code;
-        } else if (media.typeCode) {
-          console.log('mediaType missing?', media.typeCode);
-        }
-      })
-
-      // console.log('contacts', component.contacts);
-      
 
       var found = _.find(component.contacts, {'contactType': 'SUB'});
       if (found) {
@@ -188,28 +185,77 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       } else {
         component.contacts.push(submitter);
       }
+      
 
-      // console.log('$scope.component', component);
-      Business.submissionservice.createSubmission(component).then(function(result){
-        console.log('Success result', result);
-      }, function(result){
-        console.log('Fail result', result);
-      });
-}
+      var deferred = $q.defer();
 
-$scope.$watch('current', function(){
-  $scope.badgeFound = false;
-  if ($scope.current && $scope.current === 'submit') {
-    $scope.badgeFound = false;
-    _.each($scope.component.attributes, function(attribute){
-      $scope.setBadgeFound(attribute);
+      deferred.resolve(component);
+
+      return deferred.promise;
+    }
+
+
+    $scope.submit = function(initial){
+      var deferred = $q.defer();
+      if (initial){
+        $scope.createInitialSubmit().then(function(component){
+          console.log('$scope.component', component);
+          Business.submissionservice.createSubmission(component).then(function(result){
+            if (result && result.component && result.component.componentId){
+              $scope.componentId = result.component.componentId;
+              $scope.component.component = result.component;
+              $scope.component.contacts = result.contacts;
+            }
+            deferred.resolve();
+            console.log('Success result', result);
+          }, function(result){
+            deferred.reject();
+            console.log('Fail result', result);
+          });
+        })
+      } else {
+        $scope.createInitialSubmit().then(function(component){
+          component.attributes = $scope.getCompactAttributes(true);
+          if ($scope.optIn) {
+            component.component.notifyOfApprovalEmail = $scope.email;
+          }
+
+          component.contacts = component.contacts || [];
+
+          _.each(component.contacts, function(contact){
+            if (contact.contactType && contact.contactType.code){
+              contact.contactType = contact.contactType.code;
+            } else if (contact.contactType) {
+              console.log('contactType missing?', contact.contactType);
+            }
+          })
+
+          console.log('$scope.component', component);
+          Business.submissionservice.updateSubmission(component).then(function(result){
+            deferred.resolve();
+            console.log('Success result', result);
+          }, function(result){
+            deferred.reject();
+            console.log('Fail result', result);
+          });
+        })
+      }
+      return deferred.promise;
+    }
+
+    $scope.$watch('current', function(){
+      $scope.badgeFound = false;
+      if ($scope.current && $scope.current === 'submit') {
+        $scope.badgeFound = false;
+        _.each($scope.component.attributes, function(attribute){
+          $scope.setBadgeFound(attribute);
+        })
+      }
     })
-  }
-})
 
 
 
-$scope.checkAttributes = function(){
+    $scope.checkAttributes = function(){
       // console.log('Compact list', _.compact($scope.component.attributes));
       // we need to compact the attributes list because it may have unused indexes.
       var list = angular.copy(_.compact($scope.component.attributes));
@@ -253,8 +299,8 @@ $scope.checkAttributes = function(){
       _.each(realAttributes, function(attr){
         if (attr.constructor === Array){
           _.each(attr, function(item){
-            if (attributePK) {
-              item.ComponentAttributePk = {
+            if (attributePK && !item.componentAttributePk) {
+              item.componentAttributePk = {
                 'attributeType': item.attributeType,
                 'attributeCode': item.code,
               };
@@ -262,8 +308,8 @@ $scope.checkAttributes = function(){
             attributes.push(item);
           })
         } else {
-          if (attributePK) {
-            attr.ComponentAttributePk = {
+          if (attributePK && !attr.componentAttributePk) {
+            attr.componentAttributePk = {
               'attributeType': attr.attributeType,
               'attributeCode': attr.code,
             };
@@ -347,6 +393,7 @@ $scope.checkAttributes = function(){
 
   $scope.addLinkToMedia = function(){
     $scope.component.media.push({
+      mediaTypeCode: $scope.mediaForm.typeCode.code,
       typeCode: $scope.mediaForm.typeCode,
       caption: $scope.mediaForm.caption,
       link: $scope.mediaForm.link
@@ -382,8 +429,9 @@ $scope.checkAttributes = function(){
 
   $scope.addLinkToResource = function(){
     $scope.component.resources.push({
+      resourceType: $scope.resourceForm.typeCode.code,
       typeCode: $scope.resourceForm.typeCode,
-      caption: $scope.resourceForm.caption,
+      description: $scope.resourceForm.caption,
       link: $scope.resourceForm.link
     })
     $('#resourceUploadInput').val(null);
@@ -410,7 +458,7 @@ $scope.checkAttributes = function(){
   // validation section
   $scope.getStarted = function(){
     // return true;
-    return $scope.name && $scope.email && $scope.organization;
+    return $scope.firstName && $scope.lastName && $scope.email && $scope.organization;
   }
 
   $scope.vitalsCheck = function(log){
