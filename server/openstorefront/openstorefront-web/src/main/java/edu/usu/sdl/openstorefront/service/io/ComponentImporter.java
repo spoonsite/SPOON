@@ -19,9 +19,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +47,7 @@ public class ComponentImporter
 	@Override
 	protected void processFile(File file)
 	{
-		log.log(Level.INFO, "Processing Component: " + file);
+		log.log(Level.INFO, MessageFormat.format("Processing Component: {0}", file));
 
 		try {
 			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
@@ -53,7 +56,9 @@ public class ComponentImporter
 			});
 			if (componentAll != null) {
 				componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
-				serviceProxy.getSearchService().addIndex(componentAll.getComponent());
+				List<Component> components = new ArrayList<>();
+				components.add(componentAll.getComponent());
+				serviceProxy.getSearchService().indexComponents(components);
 
 				objectMapper.writeValue(file, componentAll);
 				//set it to the past so we don't keep picking it up.

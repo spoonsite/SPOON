@@ -6,10 +6,15 @@
       <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
         <div style="display:inline-block;" class="">
           <button type="button" title="Add Type" class="btn btn-default" ng-click="editType(false)"><i class="fa fa-plus"></i>&nbsp;Add New Type</button> 
-          <button type="button" title="Export All Active Codes" class="btn btn-default" ng-click="export()"><i class="fa fa-sign-out"></i>&nbsp;Export</button>    
+          <button type="button" title="Export All Active Codes" class="btn btn-default" ng-click="export()" ng-disabled="selectedTypes.length === 0"><i class="fa fa-sign-out"></i>&nbsp;Export</button>    
           <button type="button" title="Import" class="btn btn-default" ng-click="flags.showUpload = !flags.showUpload"><i class="fa fa-sign-in"></i>&nbsp;Import</button>  
         </div>
       </div>
+	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST" >
+		<p ng-repeat="type in selectedTypes">
+			<input type="hidden" name="type" value="{{type}}" />
+		</p>      
+	</form>		
       <filterquery data="data.allTypes" url="api/v1/resource/attributes/attributetypes" sort-by="description" sort-order="ASC" type="default" set-features="pagination.features" control="pagination.control"></filterquery>
       <div style="clear:both">
       </div>
@@ -17,7 +22,7 @@
         <div class="form-group">
           <label>Attribute File Import</label>
           <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().attributeUploader, this)" uploader="attributeUploader" id="attributeUploadFile" name="uploadFile" width="100" />
-          <p class="help-block">CSV Attributes</p>      
+          <p class="help-block">JSON Attributes</p>      
         </div>
         <button ng-click="confirmAttributeUpload(true)" class="btn btn-primary">Upload</button>   
         <br><br>
@@ -35,6 +40,7 @@
     <table class="table table-bordered table-striped admin-table stickytable">
       <thead>
         <tr>
+	  <th style="width: 25px;"><input type="checkbox" ng-click="selectAllTypes();" ng-model="selectAllTypes.flag" /></th>
           <th><a href="" ng-click="setPredicate('description');">Description&nbsp;<span ng-show="predicate === 'description'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
           <th><a href="" ng-click="setPredicate('attributeType');">Type code&nbsp;<span ng-show="predicate === 'attributeType'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
           <th><a  data-toggle="tooltip" data-placement="top" title="Shows to up under visible list of filters (Filter By Attribute)" href="" ng-click="setPredicate('visibleFlg');">Visible&nbsp;<span ng-show="predicate === 'visibleFlg'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
@@ -48,6 +54,7 @@
       </thead>
       <tbody>
         <tr ng-repeat="filter in data.allTypes.data">
+	  <td><input type="checkbox" ng-click="selectType(filter);" ng-model="filter.selected"  /></td>
           <td>{{filter.description}}</td>
           <td>{{filter.attributeType}}</td>
           <td ng-class="filter.visibleFlg? 'success':'danger'">{{filter.visibleFlg}}</td>

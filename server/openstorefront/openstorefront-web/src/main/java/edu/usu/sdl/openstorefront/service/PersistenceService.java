@@ -788,6 +788,8 @@ public class PersistenceService
 
 	public <T extends BaseEntity> T persist(T entity)
 	{
+		Objects.requireNonNull(entity, "Unable to persist a NULL entity.");
+
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {
@@ -797,6 +799,8 @@ public class PersistenceService
 					ReflectionUtil.updatePKFieldValue(entity, generateId());
 				}
 			}
+			entity.applyDefaultValues();
+
 			ValidationModel validationModel = new ValidationModel(entity);
 			validationModel.setSantize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -806,7 +810,7 @@ public class PersistenceService
 				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
 			}
 		} catch (Exception e) {
-			throw new OpenStorefrontRuntimeException("Unable to save record: " + StringProcessor.printObject(entity), e);
+			throw new OpenStorefrontRuntimeException("Unable to save record. (See stacktrace cause) \n Field Values: \n" + StringProcessor.printObject(entity), e);
 		} finally {
 			closeConnection(db);
 		}

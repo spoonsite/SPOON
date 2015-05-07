@@ -180,6 +180,7 @@ public interface ComponentService
 	public List<ComponentReviewView> getReviewByUser(String username);
 
 	/**
+	 * Pulls from cache
 	 *
 	 * @param componentId
 	 * @return
@@ -505,8 +506,7 @@ public interface ComponentService
 	public ComponentAdminWrapper getFilteredComponents(ComponentFilterParams filter, String componentId);
 
 	/**
-	 * Component name search
-	 * Used for getting the name through a typeahead
+	 * Component name search Used for getting the name through a typeahead
 	 *
 	 * @param search
 	 * @return

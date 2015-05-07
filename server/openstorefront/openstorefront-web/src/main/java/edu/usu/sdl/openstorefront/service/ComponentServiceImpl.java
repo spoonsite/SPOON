@@ -329,7 +329,9 @@ public class ComponentServiceImpl
 			component.setUpdateDts(TimeUtil.currentDate());
 			component.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(component);
-			getSearchService().addIndex(component);
+			List<Component> componentsToIndex = new ArrayList<>();
+			componentsToIndex.add(component);
+			getSearchService().indexComponents(componentsToIndex);
 		}
 		return component;
 	}
@@ -1022,7 +1024,9 @@ public class ComponentServiceImpl
 	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
 		getComponentServicePrivate().doSaveComponent(component);
-		getSearchService().addIndex(component.getComponent());
+		List<Component> componentsToIndex = new ArrayList<>();
+		componentsToIndex.add(component.getComponent());
+		getSearchService().indexComponents(componentsToIndex);
 		return component;
 	}
 
@@ -1069,7 +1073,11 @@ public class ComponentServiceImpl
 					oldComponent.setVersion(component.getComponent().getVersion());
 					oldComponent.setNotifyOfApprovalEmail(component.getComponent().getNotifyOfApprovalEmail());
 					oldComponent.setSubmittedDts(component.getComponent().getSubmittedDts());
-					oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
+					if (component.getComponent().getActiveStatus() == null) {
+						oldComponent.setActiveStatus(Component.ACTIVE_STATUS);
+					} else {
+						oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
+					}
 					oldComponent.setUpdateDts(TimeUtil.currentDate());
 					oldComponent.setUpdateUser(component.getComponent().getUpdateUser());
 					persistenceService.persist(oldComponent);
@@ -1237,7 +1245,9 @@ public class ComponentServiceImpl
 
 		if (lockSwitch.isSwitched()) {
 			getUserService().checkComponentWatches(component);
-			getSearchService().addIndex(component);
+			List<Component> componentsToIndex = new ArrayList<>();
+			componentsToIndex.add(component);
+			getSearchService().indexComponents(componentsToIndex);
 		}
 
 		return componentAll;
@@ -2298,6 +2308,7 @@ public class ComponentServiceImpl
 					}
 				}
 
+				List<Component> componentsToIndex = new ArrayList<>();
 				for (ComponentUpdateQueue componentUpdate : componentMap.values()) {
 					String componentId = componentUpdate.getComponentId();
 
@@ -2306,11 +2317,12 @@ public class ComponentServiceImpl
 						component.setLastActivityDts(componentUpdate.getUpdateDts());
 						persistenceService.persist(component);
 						getUserService().checkComponentWatches(component);
-						getSearchService().addIndex(persistenceService.findById(Component.class, componentId));
+						componentsToIndex.add(component);
 					} else {
 						log.log(Level.FINE, "Component not found to update last Activity. Component may have been removed.", "Check component Id: " + componentId);
 					}
 				}
+				getSearchService().indexComponents(componentsToIndex);
 
 				//remove processed records
 				for (ComponentUpdateQueue updateQueue : componentUpdateQueues) {
