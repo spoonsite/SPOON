@@ -107,6 +107,11 @@ public abstract class BaseEntity<T>
 		setAdminModified(SecurityUtil.isAdminUser());
 	}
 
+	public void applyDefaultValues()
+	{
+		ReflectionUtil.setDefaultsOnFields(this);
+	}
+
 	public String getActiveStatus()
 	{
 		return activeStatus;

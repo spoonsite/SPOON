@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
-import edu.usu.sdl.openstorefront.service.manager.NewFileHandler;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -58,20 +57,6 @@ public class AttributeImporter
 				attributeFiles.add(FileSystemManager.getImportAttribute(fileMap.getFilename()));
 			}
 			filesUpdatedOrAdded(attributeFiles.toArray(new File[0]));
-		} else {
-			//Put in defaults, if needed
-			for (FileMap fileMap : FileMap.values()) {
-				FileSystemManager.getImportAttribute(fileMap.getFilename(), new NewFileHandler()
-				{
-					@Override
-					public void handleNewFile(File newFile)
-					{
-						File files[] = new File[1];
-						files[0] = newFile;
-						filesUpdatedOrAdded(files, true);
-					}
-				});
-			}
 		}
 	}
 
@@ -107,7 +92,7 @@ public class AttributeImporter
 	private enum FileMap
 	{
 
-		ATTIBUTES("allattributes.csv", new MainAttributeParser()),
+		ATTIBUTES("allattributes.json", new MainAttributeParser()),
 		SVCV4("svcv-4_export.csv", new SvcAttributeParser());
 
 		private final String filename;

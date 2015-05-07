@@ -326,6 +326,51 @@ public class ReflectionUtil
 		return fieldFound;
 	}
 
+	/**
+	 * This will set default on the fields that are marked with a default and
+	 * are null
+	 *
+	 * @param entity
+	 */
+	public static void setDefaultsOnFields(Object entity)
+	{
+		Objects.requireNonNull(entity, "Entity must not be NULL");
+		List<Field> fields = getAllFields(entity.getClass());
+		for (Field field : fields) {
+			DefaultFieldValue defaultFieldValue = field.getAnnotation(DefaultFieldValue.class);
+			if (defaultFieldValue != null) {
+				field.setAccessible(true);
+				try {
+					if (field.get(entity) == null) {
+						String value = defaultFieldValue.value();
+						Class fieldClass = field.getType();
+						if (fieldClass.getSimpleName().equalsIgnoreCase(String.class.getSimpleName())) {
+							field.set(entity, value);
+						} else if (fieldClass.getSimpleName().equalsIgnoreCase(Long.class.getSimpleName())) {
+							field.set(entity, value);
+						} else if (fieldClass.getSimpleName().equalsIgnoreCase(Integer.class.getSimpleName())) {
+							field.set(entity, Integer.parseInt(value));
+						} else if (fieldClass.getSimpleName().equalsIgnoreCase(Boolean.class.getSimpleName())) {
+							field.set(entity, Convert.toBoolean(value));
+						} else if (fieldClass.getSimpleName().equalsIgnoreCase(Double.class.getSimpleName())) {
+							field.set(entity, Double.parseDouble(value));
+						} else if (fieldClass.getSimpleName().equalsIgnoreCase(Float.class.getSimpleName())) {
+							field.set(entity, Float.parseFloat(value));
+						} else if (fieldClass.getSimpleName().equalsIgnoreCase(BigDecimal.class.getSimpleName())) {
+							field.set(entity, Convert.toBigDecimal(value));
+						} else if (fieldClass.getSimpleName().equalsIgnoreCase(Date.class.getSimpleName())) {
+							field.set(entity, TimeUtil.fromString(value));
+						} else if (fieldClass.getSimpleName().equalsIgnoreCase(BigInteger.class.getSimpleName())) {
+							field.set(entity, new BigInteger(value));
+						}
+					}
+				} catch (IllegalArgumentException | IllegalAccessException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to get value on " + entity.getClass().getName(), "Check entity passed in.");
+				}
+			}
+		}
+	}
+
 	public static <T extends BaseEntity> boolean isPKFieldGenerated(T entity)
 	{
 		boolean generated = false;

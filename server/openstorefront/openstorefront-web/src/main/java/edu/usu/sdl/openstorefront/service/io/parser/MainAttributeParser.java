@@ -16,18 +16,18 @@
 package edu.usu.sdl.openstorefront.service.io.parser;
 
 import au.com.bytecode.opencsv.CSVReader;
+import com.fasterxml.jackson.core.type.TypeReference;
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeAll;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -39,118 +39,40 @@ public class MainAttributeParser
 
 	private static final Logger log = Logger.getLogger(MainAttributeParser.class.getName());
 
-	private static final int TYPE = 0;
-	private static final int DESC = 1;
-	private static final int ARCH_FLG = 2;
-	private static final int VISIBLE = 3;
-	private static final int IMPORTANT = 4;
-	private static final int REQUIRED = 5;
-	private static final int CODE = 6;
-	private static final int CODE_LABEL = 7;
-	private static final int CODE_DESCRIPTION = 8;
-	private static final int EXTERNAL_LINK = 9;
-	private static final int GROUP = 10;
-	private static final int SORT_ORDER = 11;
-	private static final int ARCHITECTURE_CODE = 12;
-	private static final int BADGE_URL = 13;
-	private static final int HIGHLIGHT_STYLE = 14;
-	private static final int ALLOW_MULTIPLE = 15;
-	private static final int HIDE_ON_SUBMISSION = 16;
-	private static final int DEFAULT_ATTRIBUTE_CODE = 17;
-
-	private static final String HEADER = "Attribute Type";
-
 	@Override
 	public String getHEADER()
 	{
-		return HEADER;
+		return "JSON";
+	}
+
+	@Override
+	public Map<AttributeType, List<AttributeCode>> parse(InputStream in)
+	{
+		try {
+			List<AttributeAll> attributeAllRecords = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<AttributeAll>>()
+			{
+			});
+			for (AttributeAll attributeAll : attributeAllRecords) {
+				attributeMap.put(attributeAll.getAttributeType(), attributeAll.getAttributeCodes());
+			}
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to process attribute file.", "Check the format and confirm data is correct JSON for an attribute.", ex);
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to close attribute import file.", ex);
+				}
+			}
+		}
+		return attributeMap;
 	}
 
 	@Override
 	protected void internalParse(CSVReader reader) throws IOException
 	{
-		int lineNumber = 1;
-		String data[] = reader.readNext();
-		while (data != null) {
-			if (data.length > EXTERNAL_LINK
-					&& getHEADER().equals(data[TYPE].trim()) == false) {
-
-				AttributeType attributeType = new AttributeType();
-				attributeType.setAttributeType(data[TYPE].trim().toUpperCase());
-				attributeType.setDescription(data[DESC].trim());
-
-				//Defaults
-				attributeType.setAllowMultipleFlg(Boolean.TRUE);
-				attributeType.setHideOnSubmission(Boolean.FALSE);
-
-				attributeType.setArchitectureFlg(Convert.toBoolean(data[ARCH_FLG]));
-				attributeType.setVisibleFlg(Convert.toBoolean(data[VISIBLE]));
-				attributeType.setImportantFlg(Convert.toBoolean(data[IMPORTANT]));
-				attributeType.setRequiredFlg(Convert.toBoolean(data[REQUIRED]));
-
-				AttributeCode attributeCode = new AttributeCode();
-				AttributeCodePk attributeCodePk = new AttributeCodePk();
-				attributeCodePk.setAttributeCode(data[CODE].trim().toUpperCase());
-				attributeCodePk.setAttributeType(attributeType.getAttributeType());
-				attributeCode.setAttributeCodePk(attributeCodePk);
-				attributeCode.setDescription(StringProcessor.stripeExtendedChars(data[CODE_DESCRIPTION].trim()));
-				attributeCode.setLabel(StringProcessor.stripeExtendedChars(data[CODE_LABEL].trim()));
-				attributeCode.setDetailUrl(data[EXTERNAL_LINK].trim());
-
-				if (data.length > GROUP) {
-					attributeCode.setGroupCode(data[GROUP].trim());
-				}
-
-				if (data.length > SORT_ORDER) {
-					attributeCode.setSortOrder(Convert.toInteger(data[SORT_ORDER].trim()));
-				}
-
-				if (data.length > ARCHITECTURE_CODE) {
-					attributeCode.setArchitectureCode(data[ARCHITECTURE_CODE].trim());
-				}
-
-				if (data.length > BADGE_URL) {
-					attributeCode.setBadgeUrl(data[BADGE_URL].trim());
-				}
-
-				if (data.length > HIGHLIGHT_STYLE) {
-					attributeCode.setHighlightStyle(data[HIGHLIGHT_STYLE].trim());
-				}
-
-				if (data.length > ALLOW_MULTIPLE) {
-					String allowMultiple = data[ALLOW_MULTIPLE].trim();
-					if (StringUtils.isNotBlank(allowMultiple)) {
-						attributeType.setAllowMultipleFlg(Convert.toBoolean(allowMultiple));
-					}
-				}
-
-				if (data.length > HIDE_ON_SUBMISSION) {
-					String hideOnSubmission = data[HIDE_ON_SUBMISSION].trim();
-					if (StringUtils.isNotBlank(hideOnSubmission)) {
-						attributeType.setHideOnSubmission(Convert.toBoolean(hideOnSubmission));
-					}
-				}
-
-				if (data.length > DEFAULT_ATTRIBUTE_CODE) {
-					attributeType.setDefaultAttributeCode(data[DEFAULT_ATTRIBUTE_CODE].trim());
-				}
-
-				if (attributeMap.containsKey(attributeType)) {
-					attributeMap.get(attributeType).add(attributeCode);
-				} else {
-					List<AttributeCode> attributeCodes = new ArrayList<>();
-					attributeCodes.add(attributeCode);
-					attributeMap.put(attributeType, attributeCodes);
-				}
-
-			} else {
-				if (data.length > TYPE && getHEADER().equals(data[TYPE]) == false) {
-					log.log(Level.WARNING, MessageFormat.format("Line: {0} is missing fields. (Skipping)  data length: {1}", new Object[]{lineNumber, data.length}));
-				}
-			}
-			data = reader.readNext();
-			lineNumber++;
-		}
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 }

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.test.search;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
@@ -25,6 +26,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import edu.usu.sdl.openstorefront.web.test.attribute.ArticleTest;
 import edu.usu.sdl.openstorefront.web.test.component.ComponentTest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +48,9 @@ public class IndexTest
 		ComponentAll componentAll = ComponentTest.createTestComponent();
 		try {
 			results.append("Adding Component Index...<br>");
-			service.getSearchService().addIndex(componentAll.getComponent());
+			List<Component> componentsToIndex = new ArrayList<>();
+			componentsToIndex.add(componentAll.getComponent());
+			service.getSearchService().indexComponents(componentsToIndex);
 
 			results.append("Searching Component Index...<br>");
 			SearchQuery query = new SearchQuery();
@@ -76,7 +80,9 @@ public class IndexTest
 
 			results.append("Adding Article Index...<br>");
 			ArticleView article = service.getAttributeService().getArticleView(attributeCode.getAttributeCodePk());
-			service.getSearchService().addIndex(article);
+			List<ArticleView> articlesToIndex = new ArrayList<>();
+			articlesToIndex.add(article);
+			service.getSearchService().indexArticles(articlesToIndex);
 
 			results.append("Searching Article Index...<br>");
 			SearchQuery query = new SearchQuery();
