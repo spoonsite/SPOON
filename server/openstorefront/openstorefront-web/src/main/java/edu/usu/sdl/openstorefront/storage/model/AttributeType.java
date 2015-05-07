@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.util.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -79,6 +80,7 @@ public class AttributeType
 	@NotNull
 	@ConsumeField
 	@APIDescription("Hides attribute on the submission form")
+	@DefaultFieldValue("false")
 	private Boolean hideOnSubmission;
 
 	@ConsumeField

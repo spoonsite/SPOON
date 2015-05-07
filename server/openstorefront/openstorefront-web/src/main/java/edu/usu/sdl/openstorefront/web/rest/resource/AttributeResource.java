@@ -26,7 +26,9 @@ import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeAll;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
+import edu.usu.sdl.openstorefront.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
@@ -69,6 +71,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -142,7 +145,7 @@ public class AttributeResource
 		attributeTypeViews.sort(new AttributeTypeViewComparator<>());
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 			if (attributeTypeView.getArchitectureFlg()) {
-				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
+				attributeTypeView.getCodes().sort(new AttributeCodeArchViewComparator<>());
 			} else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
@@ -151,59 +154,55 @@ public class AttributeResource
 		return attributeTypeViews;
 	}
 
-	@GET
-	@APIDescription("Exports attributes in csv formt. POST to Upload.action?UploadAttributes and then the file to import attributes (Requires Admin)")
+	@POST
+	@APIDescription("Exports attributes in json formt. POST to Upload.action?UploadAttributes and then the file to import attributes (Requires Admin)")
 	@RequireAdmin
-	@Produces("text/csv")
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("export")
-	public Response exportAttributes()
+	public Response exportAttributes(
+			@FormParam("type")
+			@RequiredParam List<String> types)
 	{
-		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
+		List<AttributeAll> attributes = new ArrayList<>();
 
 		AttributeType attributeTypeExample = new AttributeType();
 		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 
+		boolean restrictTypes = false;
+		Set<String> typeSet = new HashSet<>();
+		if (types != null) {
+			restrictTypes = true;
+			typeSet.addAll(types);
+		}
+
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
 		for (AttributeType attributeType : attributeTypes) {
-			AttributeTypeView attributeTypeView = AttributeTypeView.toView(attributeType);
-			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
-			attributeCodes.stream().forEach(code -> {
-				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
-			});
-			attributeTypeViews.add(attributeTypeView);
-		}
-		attributeTypeViews.sort(new AttributeTypeViewComparator<>());
-		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
-			if (attributeTypeView.getArchitectureFlg()) {
-				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
-			} else {
-				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
+			if (restrictTypes && typeSet.contains(attributeType.getAttributeType())) {
+				AttributeAll attributeAll = new AttributeAll();
+				attributeAll.setAttributeType(attributeType);
+
+				List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
+				attributeCodes.stream().forEach(code -> {
+					attributeAll.getAttributeCodes().add(code);
+				});
+				if (attributeType.getArchitectureFlg()) {
+					attributeAll.getAttributeCodes().sort(new AttributeCodeArchComparator<>());
+				} else {
+					attributeAll.getAttributeCodes().sort(new AttributeCodeComparator<>());
+				}
+				attributes.add(attributeAll);
 			}
 		}
-		StringBuilder data = new StringBuilder();
-		data.append("Attribute Type").append(",");
-		data.append("Description").append(",");
-		data.append("Architecture Flag").append(",");
-		data.append("Visible Flag").append(",");
-		data.append("Important Flag").append(",");
-		data.append("Required Flag").append(",");
-		data.append("Code").append(",");
-		data.append("Code Label").append(",");
-		data.append("Code Description").append(",");
-		data.append("External Link").append(",");
-		data.append("Group").append(",");
-		data.append("Sort Order").append(",");
-		data.append("Architecture Code").append(",");
-		data.append("Badge Url").append(",");
-		data.append("Highlight Style").append(",");
-		data.append("Allow Multiple Codes").append("\n");
 
-		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
-			data.append(attributeTypeView.export());
+		String data;
+		try {
+			data = StringProcessor.defaultObjectMapper().writeValueAsString(attributes);
+		} catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export attributes.  Unable able to generate JSON.", ex);
 		}
 
-		Response.ResponseBuilder response = Response.ok(data.toString());
-		response.header("Content-Disposition", "attachment; filename=\"allattributes.csv\"");
+		Response.ResponseBuilder response = Response.ok(data);
+		response.header("Content-Disposition", "attachment; filename=\"allattributes.json\"");
 		return response.build();
 	}
 
@@ -304,7 +303,7 @@ public class AttributeResource
 				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
 			}
 			if (attributeTypeView.getArchitectureFlg()) {
-				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
+				attributeTypeView.getCodes().sort(new AttributeCodeArchViewComparator<>());
 			} else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}

@@ -26,6 +26,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   $scope.pagination = {};
   $scope.pagination.control = {};
   $scope.pagination.features = {'dates': false, 'max': false};
+  $scope.selectedTypes = [];
 
   $scope.getFilters = function (override, all) {
     $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
@@ -162,14 +163,39 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     $('[data-toggle=\'tooltip\']').tooltip();
   }, 300);
   
+    $scope.selectType = function(attributeType){
+      if (attributeType.selected) {
+        attributeType.selected = !attributeType.selected;
+        if (attributeType.selected === false) {
+         $scope.selectedTypes = _.reject($scope.selectedTypes, function(type) { return type === attributeType.attributeType; });
+       } else {
+        $scope.selectedTypes.push(attributeType.attributeType);
+      }
+    } else {
+      attributeType.selected = true;
+      $scope.selectedTypes.push(attributeType.attributeType);
+    }
+  };
+
+  $scope.selectAllTypes = function(){
+    $scope.selectedTypes = [];
+    _.forEach($scope.data.allTypes.data, function(attributeType){                
+        attributeType.selected = !$scope.selectAllTypes.flag; //click happens before state change
+        if (attributeType.selected) {
+          $scope.selectedTypes.push(attributeType.attributeType);
+        }
+      });
+  };  
+  
   $scope.export = function(){
-    window.location.href = "api/v1/resource/attributes/export"; 
+   // window.location.href = "api/v1/resource/attributes/export"; 
+   document.exportForm.submit();
   };
 
   $scope.confirmAttributeUpload = function(isAttributeUploader){
     var cont = false;
     if (isAttributeUploader){
-      cont = confirm('Please verify that this file is the allattributes.csv file with a header similiar to this: (order and letter case matters)\nAttribute Type, Description, Architecture Flag, Visible Flag, Important Flag, Required Flag, Code, Code Label, Code Description, External Link, Group, Sort Order, Architecture Code, Badge Url');
+      cont = confirm('Please verify that this file is an attributes json file.');
       if (cont){
         $scope.attributeUploader.uploadAll();
         document.getElementById('attributeUploadFile').value = null;

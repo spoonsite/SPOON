@@ -155,46 +155,51 @@ public class UploadAction
 			log.log(Level.INFO, MessageFormat.format("(Admin) Uploading attributes: {0}", uploadFile));
 
 			//check content type
-			Set<String> allowTypes = new HashSet<>();
-			allowTypes.add("text/csv");
-			allowTypes.add("application/vnd.ms-excel");
-			allowTypes.add("application/vnd.oasis.opendocument.spreadsheet");
+			Set<String> allowSvcTypes = new HashSet<>();
+			allowSvcTypes.add("text/csv");
+			allowSvcTypes.add("application/vnd.ms-excel");
+			allowSvcTypes.add("application/vnd.oasis.opendocument.spreadsheet");
 
-			if (allowTypes.contains(uploadFile.getContentType()) == false) {
-				errors.put("uploadFile", "Format not supported.  Requires a csv text file.");
+			Set<String> allowAttrbuteTypes = new HashSet<>();
+			allowAttrbuteTypes.add("text/json");
+			allowAttrbuteTypes.add("application/json");
+
+			String bestGuessContentType = uploadFile.getContentType();
+			if (parser instanceof SvcAttributeParser) {
+				if (allowSvcTypes.contains(bestGuessContentType) == false) {
+
+					bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
+					if (allowSvcTypes.contains(bestGuessContentType) == false) {
+						errors.put("uploadFile", "Format not supported.  Requires a CSV text file.");
+					}
+				}
+			} else {
+				if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
+
+					bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
+					if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
+						errors.put("uploadFile", "Format not supported.  Requires a JSON text file.");
+					}
+				}
 			}
 
 			if (errors.isEmpty()) {
-				//parse
+
 				try (InputStream in = uploadFile.getInputStream()) {
-					try (CSVReader reader = new CSVReader(new InputStreamReader(in));) {
-						String[] first = reader.readNext();
-						if (!parser.getHEADER().equals("false") && !parser.getHEADER().equals(first[0])) {
-							errors.put("uploadFile", "The attributes file was mal formatted. Please check the header line and assure that it is formatted correctly.");
-						}
-					} catch (Exception e) {
-						throw new OpenStorefrontRuntimeException(e);
-					}
+					Map<AttributeType, List<AttributeCode>> attributeMap = parser.parse(in);
+
+					TaskRequest taskRequest = new TaskRequest();
+					taskRequest.setAllowMultiple(false);
+					taskRequest.setName("Uploading Attribute(s)");
+					taskRequest.setDetails("File name: " + uploadFile.getFileName());
+					service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
-				}
-				if (errors.isEmpty()) {
-					try (InputStream in = uploadFile.getInputStream()) {
-						Map<AttributeType, List<AttributeCode>> attributeMap = parser.parse(in);
-
-						TaskRequest taskRequest = new TaskRequest();
-						taskRequest.setAllowMultiple(false);
-						taskRequest.setName("Uploading Attribute(s)");
-						taskRequest.setDetails("File name: " + uploadFile.getFileName());
-						service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
+				} finally {
+					try {
+						uploadFile.delete();
 					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
-					} finally {
-						try {
-							uploadFile.delete();
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException(ex);
-						}
+						throw new OpenStorefrontRuntimeException(ex);
 					}
 				}
 			}

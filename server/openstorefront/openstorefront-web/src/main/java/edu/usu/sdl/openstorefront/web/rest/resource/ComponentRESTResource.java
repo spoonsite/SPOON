@@ -265,7 +265,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Gets a component <br>(Note: this only the top level component object only)")
+	@APIDescription("Export a component with full component details.")
 	@RequireAdmin
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
@@ -285,7 +285,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@APIDescription("Exports a set of components.  POST JSON to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
+	@APIDescription("Exports a set of components.  POST ZIP or JSON file to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
 	@RequireAdmin
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
@@ -2687,9 +2687,7 @@ public class ComponentRESTResource
 	{
 		ComponentTag example = new ComponentTag();
 		example.setComponentId(componentId);
-		service.getPersistenceService().deleteByExample(example);
-		Component temp = service.getPersistenceService().findById(Component.class, componentId);
-		service.getSearchService().addIndex(temp);
+		service.getComponentService().deleteAllBaseComponent(ComponentTag.class, componentId);
 	}
 
 	@DELETE
@@ -2710,9 +2708,7 @@ public class ComponentRESTResource
 		if (componentTag != null) {
 			response = ownerCheck(componentTag);
 			if (response == null) {
-				service.getComponentService().deactivateBaseComponent(ComponentTag.class, tagId);
-				Component temp = service.getPersistenceService().findById(Component.class, componentId);
-				service.getSearchService().addIndex(temp);
+				service.getComponentService().deleteBaseComponent(ComponentTag.class, tagId);
 			}
 		}
 		return response;
@@ -2738,8 +2734,6 @@ public class ComponentRESTResource
 			response = ownerCheck(tag);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tag.getTagId());
-				Component temp = service.getPersistenceService().findById(Component.class, componentId);
-				service.getSearchService().addIndex(temp);
 				response = Response.ok().build();
 			}
 		}

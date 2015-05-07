@@ -314,14 +314,18 @@ public class AttributeServiceImpl
 	public void saveArticle(AttributeCode attributeCode, String articleContents)
 	{
 		getAttributeServicePrivate().performSaveArticle(attributeCode, articleContents);
-		getSearchService().addIndex(ArticleView.toViewHtml(attributeCode, articleContents));
+		List<ArticleView> articleViews = new ArrayList<>();
+		articleViews.add(ArticleView.toViewHtml(attributeCode, articleContents));
+		getSearchService().indexArticles(articleViews);
 	}
 
 	@Override
 	public void saveArticle(ArticleView article)
 	{
 		getAttributeServicePrivate().performSaveArticle(article);
-		getSearchService().addIndex(article);
+		List<ArticleView> articleViews = new ArrayList<>();
+		articleViews.add(article);
+		getSearchService().indexArticles(articleViews);
 	}
 
 	@Override
@@ -569,6 +573,8 @@ public class AttributeServiceImpl
 		attributeMap.keySet().stream().forEach(attributeType -> {
 
 			try {
+				attributeType.applyDefaultValues();
+
 				ValidationModel validationModel = new ValidationModel(attributeType);
 				validationModel.setConsumeFieldsOnly(true);
 				ValidationResult validationResult = ValidationUtil.validate(validationModel);

@@ -179,7 +179,7 @@ public class ComponentSubmissionResource
 							List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
 							componentAll.getResources().addAll(componentResources);
 
-							componentAll.populateCreateUpdateFields(true);
+							componentAll.populateCreateUpdateFields(false);
 							componentAll.getComponent().setSubmittedDts(exstingComponent.getSubmittedDts());
 							componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
 
