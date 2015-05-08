@@ -87,6 +87,29 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     };
 
 
+    $scope.formFocused = function(form, reset){
+
+      var keys = _.keys(form);
+      if (!reset){
+        for (var i = 0; i < keys.length; i++){
+          if (keys[i][0] !== '$'){
+            if (form[keys[i]].$focused){
+              return true;
+            }
+          }
+        }
+        return false;
+      } else {
+        console.log('form', form);
+        console.log('form', $scope);
+        for (var i = 0; i < keys.length; i++){
+          if (keys[i][0] !== '$'){
+            form[keys[i]].$hasBeenFocused = false
+          }
+        }
+      }
+    }
+
     $scope.getMimeTypeClass = function(type){
       if (type.match('video.*')) {
         return 'fa-file-video-o'
@@ -154,12 +177,14 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       if ($scope.componentId) {
         $scope.component.component.componentId = $scope.componentId; 
       }
+      var component = angular.copy($scope.component);
+      component.attributes = $scope.getCompactAttributes(true);
       _.each($scope.allAttributes, function(attribute) {
         if (attribute.hideOnSubmission) {
           var found = _.find(attribute.codes, {'code':attribute.defaultAttributeCode});
-          var exists = _.find($scope.component.attributes, {'attributeType': attribute.attributeType});
+          var exists = _.find(component.attributes, {'attributeType': attribute.attributeType});
           if (found && !exists) {
-            $scope.component.attributes.push({
+            component.attributes.push({
               componentAttributePk: {
                 attributeCode: found.code,
                 attributeType: attribute.attributeType
@@ -168,8 +193,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           }
         }
       });
-      var component = angular.copy($scope.component);
-      component.attributes = $scope.getCompactAttributes(true);
       var submitter = {
         'contactType': 'SUB',
         'firstName': $scope.firstName,
@@ -200,19 +223,19 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       if (initial){
         $scope.createInitialSubmit().then(function(component){
           console.log('$scope.component', component);
-          Business.submissionservice.createSubmission(component).then(function(result){
-            if (result && result.component && result.component.componentId){
-              $scope.componentId = result.component.componentId;
-              $scope.component.component = result.component;
-              $scope.component.contacts = result.contacts;
-            }
-            deferred.resolve();
-            console.log('Success result', result);
-          }, function(result){
-            deferred.reject();
-            console.log('Fail result', result);
-          });
-        })
+          // Business.submissionservice.createSubmission(component).then(function(result){
+          //   if (result && result.component && result.component.componentId){
+          //     $scope.componentId = result.component.componentId;
+          //     $scope.component.component = result.component;
+          //     $scope.component.contacts = result.contacts;
+          //   }
+          deferred.resolve();
+          //   console.log('Success result', result);
+          // }, function(result){
+          //   deferred.reject();
+          //   console.log('Fail result', result);
+          // });
+      })
       } else {
         $scope.createInitialSubmit().then(function(component){
           component.attributes = $scope.getCompactAttributes(true);
@@ -231,14 +254,14 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           })
 
           console.log('$scope.component', component);
-          Business.submissionservice.updateSubmission(component).then(function(result){
+          // Business.submissionservice.updateSubmission(component).then(function(result){
             deferred.resolve();
-            console.log('Success result', result);
-          }, function(result){
-            deferred.reject();
-            console.log('Fail result', result);
-          });
-        })
+          //   console.log('Success result', result);
+          // }, function(result){
+          //   deferred.reject();
+          //   console.log('Fail result', result);
+          // });
+      })
       }
       return deferred.promise;
     }
@@ -330,10 +353,11 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.removeMetadata = function(index){
       $scope.component.metadata.splice(index, 1);
     }
-    $scope.addMetadata = function(){
+    $scope.addMetadata = function(form){
       if ($scope.metadataForm.value && $scope.metadataForm.label) {
         $scope.component.metadata.push($scope.metadataForm);
         $scope.metadataForm = {};
+        $scope.formFocused(form, true)
         $('#metadataLabel').focus();
       }
     }
@@ -342,12 +366,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.removeTag = function(index){
       $scope.component.tags.splice(index, 1);
     }
-    $scope.addTag = function(){
+    $scope.addTag = function(form){
       if ( $scope.tagsForm.text ) {
         var found = _.find($scope.component.tags, {'text':$scope.tagsForm.text});
         if (!found) {
           $scope.component.tags.push($scope.tagsForm);
           $scope.tagsForm = {};
+          $scope.formFocused(form, true)
           $('#tagLabel').focus();
         }
       }
@@ -357,10 +382,11 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.removeContact = function(index){
     $scope.component.contacts.splice(index, 1);
   }
-  $scope.addContact = function(){
+  $scope.addContact = function(form){
     if ( $scope.contactForm ) {
       $scope.component.contacts.push($scope.contactForm);
       $scope.contactForm = {};
+      $scope.formFocused(form, true)
       $('#contactType').focus();
     }
   }
@@ -445,11 +471,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.removeDependency = function(index){
     $scope.component.externalDependencies.splice(index, 1);
   }
-  $scope.addDependency = function(){
+  $scope.addDependency = function(form){
     console.log('$scope.dependencyForm', $scope.dependencyForm);
     
     if ( $scope.dependencyForm ) {
       $scope.component.externalDependencies.push($scope.dependencyForm);
+      $scope.formFocused(form, true)
       $scope.dependencyForm = {};
       $('#dependencyFormName').focus();
     }
