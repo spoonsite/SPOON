@@ -24,17 +24,19 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.test = 'This is a test';
     $scope.badgeFound = false;
 
-    $scope.firstName;
-    $scope.lastName;
-    $scope.email;
-    $scope.organization;
+    $scope.submitter = {};
+    $scope.submitter.firstName;
+    $scope.submitter.lastName;
+    $scope.submitter.email;
+    $scope.submitter.organization;
     $scope.current = 'top';
     $scope.optIn = false;
 
 
     $scope.componentId = null;
     $scope.component = {};
-    $scope.component.attributes = [];
+    $scope.component.component = {};
+    $scope.component.attributes = {};
 
     $scope.component.metadata = [];
     $scope.metadataForm = {};
@@ -168,11 +170,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
 
     $scope.createInitialSubmit = function(){
-      console.log('$scope.component', $scope.component);
-      $scope.component.component = $scope.component.comopnent || {};
-      $scope.component.component.name = $scope.component.componentName;
-      $scope.component.component.description = $scope.component.description;
-      $scope.component.component.organization = $scope.component.organization;
+      $scope.component.component = $scope.component.component || {};
       $scope.component.component.activeStatus = $scope.component.activeStatus || 'A';
       if ($scope.componentId) {
         $scope.component.component.componentId = $scope.componentId; 
@@ -193,13 +191,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           }
         }
       });
-      var submitter = {
-        'contactType': 'SUB',
-        'firstName': $scope.firstName,
-        'lastName': $scope.lastName,
-        'email': $scope.email,
-        'organization': $scope.organization
-      }
+      var submitter = angular.copy($scope.submitter);
+      submitter.contactType = 'SUB';
 
       var found = _.find(component.contacts, {'contactType': 'SUB'});
       if (found) {
@@ -212,6 +205,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
       var deferred = $q.defer();
 
+      console.log('$scope.component', $scope.component);
       deferred.resolve(component);
 
       return deferred.promise;
@@ -222,20 +216,19 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       var deferred = $q.defer();
       if (initial){
         $scope.createInitialSubmit().then(function(component){
-          console.log('$scope.component', component);
-          // Business.submissionservice.createSubmission(component).then(function(result){
-          //   if (result && result.component && result.component.componentId){
-          //     $scope.componentId = result.component.componentId;
-          //     $scope.component.component = result.component;
-          //     $scope.component.contacts = result.contacts;
-          //   }
-          deferred.resolve();
-          //   console.log('Success result', result);
-          // }, function(result){
-          //   deferred.reject();
-          //   console.log('Fail result', result);
-          // });
-      })
+          Business.submissionservice.createSubmission(component).then(function(result){
+            if (result && result.component && result.component.componentId){
+              $scope.componentId = result.component.componentId;
+              $scope.component = result;
+              $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+            }
+            console.log('Success result', $scope.component);
+            deferred.resolve();
+          }, function(result){
+            deferred.reject();
+            console.log('Fail result', result);
+          });
+        })
       } else {
         $scope.createInitialSubmit().then(function(component){
           component.attributes = $scope.getCompactAttributes(true);
@@ -281,25 +274,25 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.checkAttributes = function(){
       // console.log('Compact list', _.compact($scope.component.attributes));
       // we need to compact the attributes list because it may have unused indexes.
-      var list = angular.copy(_.compact($scope.component.attributes));
-      var requiredAttributes = _.filter(list, {requiredFlg: true});
-      if (requiredAttributes.length !== $scope.requiredAttributes.length) {
+      var list = angular.copy($scope.component.attributes);
+      
+      var requiredAttributes = _.filter(list, function(n){
+        return n.requiredFlg && !n.hideOnSubmission;
+      });
+      
+      if ((requiredAttributes.length )!== $scope.requiredAttributes.length) {
         return false;
       }
       return true;
     }
 
     $scope.setDefaultAttribute = function(index, attribute, required){
-      console.log('inde', index);
-      console.log('attribute', attribute);
-      console.log('required', required);
       
-      if (required) {
+      if (required && !$scope.component.attributes[index]) {
         var found = _.find($scope.requiredAttributes, {'attributeType': attribute.attributeType});
         if (attribute.defaultAttributeCode) {
           found = _.find(attribute.codes, {code: attribute.defaultAttributeCode});
           if (found) {
-            console.log('found', found);
             $scope.component.attributes[index] = found;
           }
         }
@@ -308,7 +301,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         if (attribute.defaultAttributeCode) {
           found = _.find(attribute.codes, {code: attribute.defaultAttributeCode});
           if (found) {
-            console.log('found', found);
             $scope.component.attributes[index] = found;
           }
         }
@@ -317,7 +309,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     $scope.getCompactAttributes = function(attributePK){
       // This is how we'll weed out the attributes we need for the submission
-      var realAttributes = _.compact($scope.component.attributes);
+      var realAttributes = $scope.component.attributes;
       var attributes = [];
       _.each(realAttributes, function(attr){
         if (attr.constructor === Array){
@@ -343,6 +335,27 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
       
       return attributes;      
+    }
+
+    $scope.setupAttributes = function(attributes){
+      var result = {};
+      _.each(attributes, function(attribute){
+        var foundAttr = _.find($scope.allAttributes, {'attributeType': attribute.componentAttributePk.attributeType});
+        if (foundAttr) {
+          var foundAttr = $filter('makeattribute')(foundAttr.codes, foundAttr);
+          var found = _.find(foundAttr, {'code': attribute.componentAttributePk.attributeCode});
+          var merged = _.merge(found, attribute);
+          if (merged.requiredFlg) {
+            result[attribute.componentAttributePk.attributeType] = merged;
+          } else {
+            if (!result[attribute.componentAttributePk.attributeType]) {
+              result[attribute.componentAttributePk.attributeType] = []
+            } 
+            result[attribute.componentAttributePk.attributeType].push(merged);
+          }
+        }
+      })
+      return result;
     }
 
     $scope.getComponent = function(){
@@ -379,7 +392,14 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
 
   // contact section
+  $scope.getContactTypeDesc = function(type){
+    var found = _.find($scope.contactTypes, {'code': type});
+    return  found? found.description : type;
+  }
   $scope.removeContact = function(index){
+    var originalLength = $scope.component.contacts.length;
+    var afterLength = $filter('contactsfilter')($scope.component.contacts, 'contactType').length;
+    index = index + (originalLength - afterLength);
     $scope.component.contacts.splice(index, 1);
   }
   $scope.addContact = function(form){
@@ -485,13 +505,20 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   // validation section
   $scope.getStarted = function(){
     // return true;
-    return $scope.firstName && $scope.lastName && $scope.email && $scope.organization;
+    return $scope.submitter.firstName && $scope.submitter.lastName && $scope.submitter.email && $scope.submitter.organization;
   }
 
   $scope.vitalsCheck = function(log){
     // return true;
-    return $scope.getStarted() && $scope.component && $scope.component.componentName && $scope.component.description && $scope.component.organization && $scope.checkAttributes();
+    if (false){
+      console.log('getStarted', $scope.getStarted());
+      console.log('component', $scope.component);
+    }
+    
+    return $scope.getStarted() && $scope.component && $scope.component.component && $scope.component.component.name && $scope.component.component.description && $scope.component.component.organization && $scope.checkAttributes();
   }
+
+
 
   $scope.loadLookup = function(lookup, entity, loader){
     $scope.$emit('$TRIGGERLOAD', loader);
@@ -866,6 +893,7 @@ $scope.scrollTo = function(id, current, parent, $event) {
     _.each(input, function(code){
       if (code) {
         code.requiredFlg = attribute.requiredFlg || false;
+        code.hideOnSubmission = attribute.hideOnSubmission || false;
         code.attributeType = attribute.attributeType;
       }
     })
@@ -881,6 +909,16 @@ $scope.scrollTo = function(id, current, parent, $event) {
       }
     })
     return result;
+  };
+})
+.filter('contactsfilter', function() {
+  return function(input, key) {
+    if (!input || !input.length || !key) {
+      return input;
+    }
+    return _.reject(input, function(n){
+      return n[key] === 'SUB';
+    });
   };
 })
 .controller('AttrsInfoCtrl', ['$scope', '$uiModalInstance', 'size', 'attribute', 'notificationsFactory', '$timeout', function ($scope, $uiModalInstance, size, attribute, Factory, $timeout) {
