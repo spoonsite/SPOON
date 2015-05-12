@@ -35,6 +35,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     $scope.componentId = null;
     $scope.component = {};
+    $scope.backup = {};
     $scope.component.component = {};
     $scope.component.attributes = {};
 
@@ -102,8 +103,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         }
         return false;
       } else {
-        console.log('form', form);
-        console.log('form', $scope);
+        // console.log('form', form);
+        // console.log('form', $scope);
         for (var i = 0; i < keys.length; i++){
           if (keys[i][0] !== '$'){
             form[keys[i]].$hasBeenFocused = false
@@ -205,7 +206,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
       var deferred = $q.defer();
 
-      console.log('$scope.component', $scope.component);
+      // console.log('$scope.component', $scope.component);
       deferred.resolve(component);
 
       return deferred.promise;
@@ -216,17 +217,29 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       var deferred = $q.defer();
       if (initial){
         $scope.createInitialSubmit().then(function(component){
+          var compare = angular.copy(component);
+          for(var i = 0; i < compare.attributes.length; i++){
+            compare.attributes[i] = {
+              componentAttributePk: compare.attributes[i].componentAttributePk
+            };
+          }
+          _.each(compare.attributes, function(attribute){
+          })
+          // console.log('INIT Diff', compare);
+          // console.log('INIT Diff', $scope.backup);
+          // console.log('INIT Diff', _.diff(compare,$scope.backup));
           Business.submissionservice.createSubmission(component).then(function(result){
             if (result && result.component && result.component.componentId){
+              $scope.backup = angular.copy(result);              
               $scope.componentId = result.component.componentId;
               $scope.component = result;
               $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
             }
-            console.log('Success result', $scope.component);
+            // console.log('Success result', $scope.component);
             deferred.resolve();
           }, function(result){
             deferred.reject();
-            console.log('Fail result', result);
+            // console.log('Fail result', result);
           });
         })
       } else {
@@ -242,20 +255,37 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             if (contact.contactType && contact.contactType.code){
               contact.contactType = contact.contactType.code;
             } else if (contact.contactType) {
-              console.log('contactType missing?', contact.contactType);
+              // console.log('contactType missing?', contact.contactType);
             }
           })
 
-          console.log('$scope.component', component);
-          // Business.submissionservice.updateSubmission(component).then(function(result){
+          // console.log('$scope.component', component);
+          var compare = angular.copy(component);
+          for(var i = 0; i < compare.attributes.length; i++){
+            compare.attributes[i] = {
+              componentAttributePk: compare.attributes[i].componentAttributePk
+            };
+          }
+          _.each(compare.attributes, function(attribute){
+          })
+          // console.log('UPDATE Diff', compare);
+          // console.log('UPDATE Diff', $scope.backup);
+          // console.log('UPDATE Diff', _.diff(compare,$scope.backup));
+          Business.submissionservice.updateSubmission(component).then(function(result){
+            if (result && result.component && result.component.componentId){
+              $scope.backup = angular.copy(result);              
+              $scope.componentId = result.component.componentId;
+              $scope.component = result;
+              $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+            }
             deferred.resolve();
-          //   console.log('Success result', result);
-          // }, function(result){
-          //   deferred.reject();
-          //   console.log('Fail result', result);
-          // });
-      })
-      }
+            // console.log('Success result', result);
+          }, function(result){
+            deferred.reject();
+            // console.log('Fail result', result);
+          });
+        })
+      }//
       return deferred.promise;
     }
 
@@ -287,7 +317,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
 
     $scope.setDefaultAttribute = function(index, attribute, required){
-      
+
       if (required && !$scope.component.attributes[index]) {
         var found = _.find($scope.requiredAttributes, {'attributeType': attribute.attributeType});
         if (attribute.defaultAttributeCode) {
@@ -492,7 +522,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.component.externalDependencies.splice(index, 1);
   }
   $scope.addDependency = function(form){
-    console.log('$scope.dependencyForm', $scope.dependencyForm);
+    // console.log('$scope.dependencyForm', $scope.dependencyForm);
     
     if ( $scope.dependencyForm ) {
       $scope.component.externalDependencies.push($scope.dependencyForm);
@@ -555,7 +585,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     Business.getFilters(override, false).then(function (result) {
       $scope.allAttributes = result ? angular.copy(result) : [];
       $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
-      console.log('required', $scope.requiredAttributes);
+      // console.log('required', $scope.requiredAttributes);
 
       $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
     });
@@ -626,7 +656,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     var reader;
     if (file.type.match('image.*')) {
-      console.log('file ===  image', file);
+      // console.log('file ===  image', file);
       var reader = new FileReader();
       // Closure to capture the file information.
       reader.onload = (function(theFile, callback) {
@@ -667,7 +697,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
       var isError = canPlay === 'no';
 
-      console.log(message, isError);
+      // console.log(message, isError);
 
       if (isError) {
         return;
@@ -696,7 +726,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     queueLimit: 50,  
     removeAfterUpload: true,
     onAfterAddingFile: function(file){
-      console.log('We loaded the loader!', file.file);
+      // console.log('We loaded the loader!', file.file);
       console.dir(file.file);
       $scope.$emit('$TRIGGERLOAD', 'mediaPreviewLoader');
       if (this.queue.length >= this.queueLimit) {
@@ -763,8 +793,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     queueLimit: 50,  
     removeAfterUpload: true,
     onAfterAddingFile: function(file){
-      console.log('We loaded the loader!', file.file);
-      console.dir(file.file);
+      // console.log('We loaded the loader!', file.file);
+      // console.dir(file.file);
       $scope.$emit('$TRIGGERLOAD', 'resourcePreviewLoader');
       if (this.queue.length >= this.queueLimit) {
         $scope.isFull = true;
