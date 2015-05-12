@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -228,6 +229,73 @@ public class ComponentSubmissionResource
 			response = ownerCheck(componentAll.getComponent());
 			if (response == null) {
 				response = Response.ok(componentAll).build();
+			}
+		}
+		return response;
+	}
+
+	@DELETE
+	@APIDescription("Removes media from the specified component")
+	@Path("/{id}/media/{mediaId}/force")
+	public Response deleteComponentMedia(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("mediaId")
+			@RequiredParam String mediaId)
+	{
+		Response response = Response.status(Response.Status.OK).build();
+		ComponentMedia componentMediaExample = new ComponentMedia();
+		componentMediaExample.setComponentMediaId(mediaId);
+		componentMediaExample.setComponentId(componentId);
+
+		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
+		if (componentMedia != null) {
+			response = ownerCheck(componentMedia);
+			if (response == null) {
+
+				//Need to check component to make sure it's not approved.
+				Component component = service.getPersistenceService().findById(Component.class, componentId);
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+					service.getComponentService().deleteBaseComponent(ComponentMedia.class, mediaId);
+				} else {
+					return Response.status(Response.Status.FORBIDDEN)
+							.type(MediaType.TEXT_PLAIN)
+							.entity("User cannot modify entity. Component is in a Approved state.")
+							.build();
+				}
+			}
+		}
+		return response;
+	}
+
+	@DELETE
+	@APIDescription("Remove a given resource from the specified component")
+	@Path("/{id}/resources/{resourceId}/force")
+	public Response deleteComponentResource(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("resourceId")
+			@RequiredParam String resourceId)
+	{
+		Response response = Response.status(Response.Status.OK).build();
+
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setComponentId(componentId);
+		componentResourceExample.setResourceId(resourceId);
+		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
+		if (componentResource != null) {
+			response = ownerCheck(componentResource);
+			if (response == null) {
+				Component component = service.getPersistenceService().findById(Component.class, componentId);
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+					service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
+				} else {
+					return Response.status(Response.Status.FORBIDDEN)
+							.type(MediaType.TEXT_PLAIN)
+							.entity("User cannot modify entity. Component is in a Approved state.")
+							.build();
+				}
+
 			}
 		}
 		return response;

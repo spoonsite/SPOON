@@ -36,7 +36,7 @@ limitations under the License.
 			</tr>
 			<tr ng-repeat="item in media | orderBy:predicate['media']:reverse['media']" >
 				<td>{{item.name}}</td>
-				<td><a href="{{item.mediaLink}}" >{{item.mediaLink}}</a></td>
+				<td><a href="{{item.mediaLink}}" target="_blank">{{item.mediaLink}}</a></td>
 				<td>{{item.orignalFileName}}</td>
 				<td>{{item.mimeType}}</td>
 				<td>{{item.updateUser}}</td>

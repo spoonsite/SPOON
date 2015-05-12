@@ -64,7 +64,7 @@ limitations under the License.
 				</c:forEach>
 			</ul>
 			
-			<h4 title="Services are actions related that act across resources or apply behaviour to the system.">
+			<h4 title="(/api/v1/service/) - Services are related actions that act across resources or apply behaviour to the system.">
 				Services
 			</h4>
 			<ul>

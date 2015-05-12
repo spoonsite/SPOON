@@ -1157,19 +1157,27 @@ public class ComponentServiceImpl
 	@Override
 	public void importComponents(List<ComponentAll> components, ComponentUploadOption options)
 	{
+		List<Component> componentsToIndex = new ArrayList<>();
 		components.forEach(component -> {
-			saveFullComponent(component, options);
+			saveFullComponent(component, options, false);
+			componentsToIndex.add(component.getComponent());
 		});
+		getSearchService().indexComponents(componentsToIndex);
 	}
 
 	@Override
 	public ComponentAll saveFullComponent(ComponentAll componentAll)
 	{
-		return saveFullComponent(componentAll, new ComponentUploadOption());
+		return saveFullComponent(componentAll, new ComponentUploadOption(), true);
 	}
 
 	@Override
 	public ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options)
+	{
+		return saveFullComponent(componentAll, options, true);
+	}
+
+	private ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options, boolean updateIndex)
 	{
 		LockSwitch lockSwitch = new LockSwitch();
 
@@ -1245,9 +1253,12 @@ public class ComponentServiceImpl
 
 		if (lockSwitch.isSwitched()) {
 			getUserService().checkComponentWatches(component);
-			List<Component> componentsToIndex = new ArrayList<>();
-			componentsToIndex.add(component);
-			getSearchService().indexComponents(componentsToIndex);
+
+			if (updateIndex) {
+				List<Component> componentsToIndex = new ArrayList<>();
+				componentsToIndex.add(component);
+				getSearchService().indexComponents(componentsToIndex);
+			}
 		}
 
 		return componentAll;

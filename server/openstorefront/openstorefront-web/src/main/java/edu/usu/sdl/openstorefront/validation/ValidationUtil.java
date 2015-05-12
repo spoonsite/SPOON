@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -78,6 +79,10 @@ public class ValidationUtil
 						validationResult.getRuleResults().addAll(validate(ValidationModel.copy(validateModel, dataObject)).getRuleResults());
 					});
 				} else {
+					if (validateModel.getApplyDefaults() && validateModel.getDataObject() instanceof BaseEntity) {
+						BaseEntity baseEntity = (BaseEntity) validateModel.getDataObject();
+						baseEntity.applyDefaultValues();
+					}
 					validationResult.getRuleResults().addAll(validateFields(validateModel, validateModel.getDataObject().getClass(), null, null));
 				}
 			}
