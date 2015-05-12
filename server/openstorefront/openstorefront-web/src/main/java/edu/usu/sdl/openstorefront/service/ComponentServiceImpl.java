@@ -2349,4 +2349,24 @@ public class ComponentServiceImpl
 
 	}
 
+	@Override
+	public void checkComponentCancelStatus(String componentId, String newApprovalStatus)
+	{
+		Component existingComponent = persistenceService.findById(Component.class, componentId);
+
+		if (ApprovalStatus.PENDING.equals(existingComponent.getApprovalState())
+				&& ApprovalStatus.NOT_SUBMITTED.equals(newApprovalStatus)) {
+			//cancel submission
+			existingComponent.setApprovalState(newApprovalStatus);
+			existingComponent.setUpdateUser(SecurityUtil.getCurrentUserName());
+			existingComponent.populateBaseUpdateFields();
+			persistenceService.persist(existingComponent);
+
+			AlertContext alertContext = new AlertContext();
+			alertContext.setAlertType(AlertType.COMPONENT_SUBMISSION);
+			alertContext.setDataTrigger(existingComponent);
+			getAlertService().checkAlert(alertContext);
+		}
+	}
+
 }
