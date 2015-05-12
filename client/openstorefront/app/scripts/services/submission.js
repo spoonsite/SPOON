@@ -47,7 +47,6 @@
     save(name, value);
   };
 
-
   submissionservice.getComponentDetails = function (id, override) {
     var result = $q.defer();
     if (id)

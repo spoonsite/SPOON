@@ -26,6 +26,33 @@
     }
   }
 
+  _.mixin({
+    shallowDiff: function(a,b) {
+      return _.omit(a, function(v,k) { return b[k] === v; })
+    },
+    diff: function(a,b) {
+      // console.log('a', a);
+      // console.log('b', b);
+      
+      var r = {};
+      _.each(a, function(v,k) {
+        if(b && b[k] === v) return;
+          // but what if it returns an empty object? still attach?
+          var temp = _.isObject(v)
+          ? b? _.diff(v, b[k]) : _.diff(v, '')
+          : v
+          ;
+          if (!angular.equals({}, temp) && temp) {
+            r[k] = temp
+          }
+        });
+      if (!angular.equals({}, r)){
+        return r;
+      }
+      return false;
+    }
+  });
+
   // function to convert letters for the job status into human readable form
   // (might think about moving this to the server so it doesn't require a code change)
   utils.calcStatus = function(val) {

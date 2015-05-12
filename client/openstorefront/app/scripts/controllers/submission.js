@@ -35,6 +35,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     $scope.componentId = null;
     $scope.component = {};
+    $scope.backup = {};
     $scope.component.component = {};
     $scope.component.attributes = {};
 
@@ -216,8 +217,20 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       var deferred = $q.defer();
       if (initial){
         $scope.createInitialSubmit().then(function(component){
+          var compare = angular.copy(component);
+          for(var i = 0; i < compare.attributes.length; i++){
+            compare.attributes[i] = {
+              componentAttributePk: compare.attributes[i].componentAttributePk
+            };
+          }
+          _.each(compare.attributes, function(attribute){
+          })
+          console.log('INIT Diff', compare);
+          console.log('INIT Diff', $scope.backup);
+          console.log('INIT Diff', _.diff(compare,$scope.backup));
           Business.submissionservice.createSubmission(component).then(function(result){
             if (result && result.component && result.component.componentId){
+              $scope.backup = angular.copy(result);              
               $scope.componentId = result.component.componentId;
               $scope.component = result;
               $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
@@ -246,16 +259,33 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             }
           })
 
-          console.log('$scope.component', component);
-          // Business.submissionservice.updateSubmission(component).then(function(result){
+          // console.log('$scope.component', component);
+          var compare = angular.copy(component);
+          for(var i = 0; i < compare.attributes.length; i++){
+            compare.attributes[i] = {
+              componentAttributePk: compare.attributes[i].componentAttributePk
+            };
+          }
+          _.each(compare.attributes, function(attribute){
+          })
+          console.log('UPDATE Diff', compare);
+          console.log('UPDATE Diff', $scope.backup);
+          console.log('UPDATE Diff', _.diff(compare,$scope.backup));
+          Business.submissionservice.updateSubmission(component).then(function(result){
+            if (result && result.component && result.component.componentId){
+              $scope.backup = angular.copy(result);              
+              $scope.componentId = result.component.componentId;
+              $scope.component = result;
+              $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+            }
             deferred.resolve();
-          //   console.log('Success result', result);
-          // }, function(result){
-          //   deferred.reject();
-          //   console.log('Fail result', result);
-          // });
-      })
-      }
+            console.log('Success result', result);
+          }, function(result){
+            deferred.reject();
+            console.log('Fail result', result);
+          });
+        })
+      }//
       return deferred.promise;
     }
 
@@ -287,7 +317,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
 
     $scope.setDefaultAttribute = function(index, attribute, required){
-      
+
       if (required && !$scope.component.attributes[index]) {
         var found = _.find($scope.requiredAttributes, {'attributeType': attribute.attributeType});
         if (attribute.defaultAttributeCode) {
