@@ -799,7 +799,6 @@ public class PersistenceService
 					ReflectionUtil.updatePKFieldValue(entity, generateId());
 				}
 			}
-			entity.applyDefaultValues();
 
 			ValidationModel validationModel = new ValidationModel(entity);
 			validationModel.setSantize(false);

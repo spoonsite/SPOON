@@ -238,7 +238,7 @@ public class AttributeServiceImpl
 	{
 		getAttributeServicePrivate().performSaveAttributeCode(attributeCode);
 
-		if (!updateIndexes) {
+		if (updateIndexes) {
 			ComponentAttributePk pk = new ComponentAttributePk();
 			pk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 			pk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
@@ -573,7 +573,6 @@ public class AttributeServiceImpl
 		attributeMap.keySet().stream().forEach(attributeType -> {
 
 			try {
-				attributeType.applyDefaultValues();
 
 				ValidationModel validationModel = new ValidationModel(attributeType);
 				validationModel.setConsumeFieldsOnly(true);

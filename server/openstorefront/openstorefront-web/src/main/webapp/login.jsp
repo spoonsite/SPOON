@@ -8,6 +8,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+		
 		<style>
 			.disclaimer{
 				
@@ -115,7 +117,25 @@
 				box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px inset;
 				transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 				-webkit-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-			}	
+			}
+			.loginError {
+				display: block;
+				color: red;
+				padding: 5px;
+				width: 100%;
+				text-align: center; 
+				border: red 2px solid;
+				font-size: 14px;
+			}
+			.clearError {
+				display: none;
+			}
+			.showError {
+				display: block;
+			}
+			.errorField {
+				border: red 2px solid;
+			}
 			body{
 				background-color: beige;
 			}
@@ -134,14 +154,22 @@
 				You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: 1) The USG routinely intercepts and monitors communication on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations, 2) At any time, the ISG may inspect and seize data stored on this IS, 3) Communications using, or data stored on this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG -authorized purpose. 4) This IS includes security measures (e.g. authentication and access controls) to protect USG interests not for your personal benefit or privacy. 5) Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communication, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential.
 			  </p>
 			</div>		
-			<div style="width: 300px; margin: 0px auto;">
+			<div style="width: 500px; margin: 0px auto;">
+				<p id="serverError" class="clearError" >
+					Unable to connect to server.  Refresh page and try again.
+				</p>	
+			
+				
+				
 				<input type="hidden" id="gotoPageId" name="gotoPage"  />	
-				<input type="text" name="username" placeholder="Username" class="form-control" autofocus autocomplete="false" style="width: 200px;">
+				<input type="text" name="username" id="username" placeholder="Username" class="form-control" autofocus autocomplete="false" style="width: 200px;">
+				<p id="usernameError" class="clearError"></p> 				
 				<br>
-				<input type="password" name="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;">
+				<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;">
+				<p id="passwordError" class="clearError"></p>					
 				<br>
 				<br>
-				<input type="submit" value="Log in" style="width: auto;" class="btn btn-primary" />
+				<input type="button" value="Log in" style="width: auto;" class="btn btn-primary" onclick="submitForm();" />									
 			</div>
 		  </form>
 		</div>
@@ -174,6 +202,55 @@
 				} else {
 					document.getElementById('gotoPageId').value = "${REFERENCED_URL}";
 				}
+			
+			function submitForm(){
+				$("#username").removeClass("errorField");	
+				$("#password").removeClass("errorField");
+				$("#usernameError").removeClass("showError");
+				$("#passwordError").removeClass("showError");
+				$("#serverError").removeClass("loginError");
+				$("#usernameError").addClass("clearError");
+				$("#passwordError").addClass("clearError");				
+				$("#serverError").addClass("clearError");
+				 	
+				 $.ajax({
+					 type: "POST",
+					 url: 'Login.action?Login',
+					 data: {
+						username: $('#username').val(),
+						password: $('#password').val()
+					 },
+					 success: function(data) {	
+						 if (data.success === false) {
+							if (data.errors.password){
+								$("#password").addClass("errorField");
+								$("#passwordError").removeClass("clearError");
+								$("#passwordError").addClass("showError");
+								$("#passwordError").html(data.errors.password);
+							} if (data.errors.username){
+								$("#username").addClass("errorField");
+								$("#usernameError").removeClass("clearError");
+								$("#usernameError").addClass("showError");
+								$("#usernameError").html(data.errors.username);
+							}							
+						 } else {
+							if (window.location.href.indexOf("login.jsp") > -1) {
+								window.location.href = data.message; 
+							} else {
+								var query = '';
+								if (window.location.href.indexOf("?") === -1) {
+									query = '?';
+								}
+								window.location.href = window.location.href + query + '&refresh=1';
+							}
+						 }						 
+					 },
+					 error: function(xhr, status, errorThrown) {	
+						$("#serverError").addClass("loginError");							
+					 }
+				 });
+			}			
+							
 		</script>		
 	</body>
 </html>
