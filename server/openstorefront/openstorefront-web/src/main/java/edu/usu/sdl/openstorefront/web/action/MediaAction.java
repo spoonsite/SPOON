@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
@@ -57,7 +58,8 @@ public class MediaAction
 	private String mediaId;
 
 	@ValidateNestedProperties({
-		@Validate(required = true, field = "mediaTypeCode", on = "UploadMedia")
+		@Validate(required = true, field = "mediaTypeCode", on = "UploadMedia"),
+		@Validate(required = true, field = "componentId", on = "UploadMedia")
 	})
 	private ComponentMedia componentMedia;
 
@@ -106,40 +108,65 @@ public class MediaAction
 	@HandlesEvent("UploadMedia")
 	public Resolution uploadMedia()
 	{
+		Resolution resolution = null;
 		Map<String, String> errors = new HashMap<>();
-		if (SecurityUtil.isAdminUser()) {
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			if (componentMedia != null) {
-				componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
-				componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
-				componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-				componentMedia.setOriginalName(file.getFileName());
-				componentMedia.setMimeType(file.getContentType());
 
-				ValidationModel validationModel = new ValidationModel(componentMedia);
-				validationModel.setConsumeFieldsOnly(true);
-				ValidationResult validationResult = ValidationUtil.validate(validationModel);
-				if (validationResult.valid()) {
-					try {
-						service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
-					} finally {
+		if (componentMedia != null) {
+			Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
+			if (component != null) {
+				boolean allow = false;
+				if (SecurityUtil.isAdminUser()) {
+					allow = true;
+					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+				} else if (SecurityUtil.isCurrentUserTheOwner(component)) {
+					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+						allow = true;
+					}
+				}
+				if (allow) {
+					componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+					componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+					componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+					componentMedia.setOriginalName(file.getFileName());
+					componentMedia.setMimeType(file.getContentType());
+
+					ValidationModel validationModel = new ValidationModel(componentMedia);
+					validationModel.setConsumeFieldsOnly(true);
+					ValidationResult validationResult = ValidationUtil.validate(validationModel);
+					if (validationResult.valid()) {
 						try {
-							file.delete();
+							service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
+
+							if (SecurityUtil.isAdminUser() == false) {
+								if (ApprovalStatus.PENDING.equals(component.getApprovalState())) {
+									service.getComponentService().checkComponentCancelStatus(componentMedia.getComponentId(), ApprovalStatus.NOT_SUBMITTED);
+								}
+							}
 						} catch (IOException ex) {
-							log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+							throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+						} finally {
+							try {
+								file.delete();
+							} catch (IOException ex) {
+								log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+							}
 						}
+					} else {
+						errors.put("file", validationResult.toHtmlString());
 					}
 				} else {
-					errors.put("file", validationResult.toHtmlString());
+					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 				}
 			} else {
-				errors.put("componentMedia", "Missing component media information");
+				errors.put("componentMedia", "Missing component; check Component Id");
 			}
-			return streamUploadResponse(errors);
+		} else {
+			errors.put("componentMedia", "Missing component media information");
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		if (resolution == null) {
+			resolution = streamUploadResponse(errors);
+		}
+		return resolution;
 	}
 
 	@HandlesEvent("GeneralMedia")

@@ -513,4 +513,14 @@ public interface ComponentService
 	 */
 	public Set<LookupModel> getTypeahead(String search);
 
+	/**
+	 * This checks the component approval state and handle alerting about
+	 * pending to not submitted state.
+	 *
+	 * @param componentId
+	 * @param newApprovalStatus
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void checkComponentCancelStatus(String componentId, String newApprovalStatus);
+
 }
