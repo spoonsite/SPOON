@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -79,12 +80,23 @@ public class AttributeCodePk
 		return getAttributeType() + ReflectionUtil.COMPOSITE_KEY_SEPERATOR + getAttributeCode();
 	}
 
+	/**
+	 * Creates a AttributeCodePk from key
+	 *
+	 * @param key
+	 * @return Null if it can't decode key
+	 */
 	public static AttributeCodePk fromKey(String key)
 	{
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		String keySplit[] = key.split(ReflectionUtil.COMPOSITE_KEY_SEPERATOR);
-		attributeCodePk.setAttributeType(keySplit[0]);
-		attributeCodePk.setAttributeCode(keySplit[1]);
+		AttributeCodePk attributeCodePk = null;
+		if (StringUtils.isNotBlank(key)) {
+			String keySplit[] = key.split(ReflectionUtil.COMPOSITE_KEY_SEPERATOR);
+			if (keySplit.length > 0) {
+				attributeCodePk = new AttributeCodePk();
+				attributeCodePk.setAttributeType(keySplit[0]);
+				attributeCodePk.setAttributeCode(keySplit[1]);
+			}
+		}
 		return attributeCodePk;
 	}
 

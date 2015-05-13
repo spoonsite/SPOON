@@ -206,28 +206,32 @@ public class AttributeResource
 		return response.build();
 	}
 
-	@GET
+	@POST
 	@APIDescription("Gets all articles")
 	@RequireAdmin
 	@Produces({MediaType.WILDCARD})
 	@DataType(ArticleView.class)
 	@Path("/articles/export")
-	public Response getComponentExport()
+	public Response getComponentExport(
+			@FormParam("typeCode")
+			@RequiredParam List<String> typeCodes)
 	{
-		List<ArticleView> articles = service.getAttributeService().getArticles();
-		if (articles != null) {
-			String componentJson;
-			try {
-				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(articles);
-			} catch (JsonProcessingException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to export articles.", ex);
-			}
-			Response.ResponseBuilder response = Response.ok(componentJson);
-			response.header("Content-Disposition", "attachment; filename=\"allArticlesExport.json\"");
-			return response.build();
-		} else {
-			return Response.status(Response.Status.NOT_FOUND).build();
+		List<ArticleView> articles = new ArrayList<>();
+		for (String typeCode : typeCodes) {
+			AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(typeCode);
+			ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
+			articles.add(articleView);
 		}
+
+		String articleJson;
+		try {
+			articleJson = StringProcessor.defaultObjectMapper().writeValueAsString(articles);
+		} catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export articles.", ex);
+		}
+		Response.ResponseBuilder response = Response.ok(articleJson);
+		response.header("Content-Disposition", "attachment; filename=\"articlesExport.json\"");
+		return response.build();
 	}
 
 	@GET
