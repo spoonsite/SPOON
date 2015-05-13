@@ -236,12 +236,8 @@
 						 } else {
 							if (window.location.href.indexOf("login.jsp") > -1) {
 								window.location.href = data.message; 
-							} else {
-								var query = '';
-								if (window.location.href.indexOf("?") === -1) {
-									query = '?';
-								}
-								window.location.href = window.location.href + query + '&refresh=1';
+							} else {							
+								window.location.reload();
 							}
 						 }						 
 					 },
