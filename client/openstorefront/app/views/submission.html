@@ -822,20 +822,20 @@ body {
       <form name="optInForm">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-checked="optIn" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{email}}</i>)
+            <input type="checkbox" ng-checked="optIn" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{submitter.email}}</i>)
           </label>
         </div>
       </form>
 
-      <h3>Component Preview</h3>
+      <h3>Component Quick View</h3>
       <div class="left liners">
         <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
           <a target="_self" class="btn btn-sm btn-default" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event):'';"><i class="fa fa-edit"></i>&nbsp;<small>Edit Required Information</small></a>
         </div>
-        <div class="line" ><strong>Component:&nbsp;</strong> {{component.componentName}}</div>
+        <div class="line" ><strong>Component:&nbsp;</strong> {{component.component.name}}</div>
         <!-- <div class="line" ><strong>Version:&nbsp;</strong> {{component.version}}</div> -->
-        <div class="line" ><strong>Organization:&nbsp;</strong> {{component.organization}}</div>
-        <div class="line" ><strong>Description:&nbsp;</strong><span dynamichtml="component.description"></span></div>
+        <div class="line" ><strong>Organization:&nbsp;</strong> {{component.component.organization}}</div>
+        <div class="line" ><strong>Description:&nbsp;</strong><span dynamichtml="component.component.description"></span></div>
         <!-- <div class="line" ><strong>Last Activity Date:&nbsp;</strong> {{getDate(component.lastActivityDate)}}</div> -->
         <!-- <div class="line" ><strong>Last View Date:&nbsp;</strong> {{getDate(component.lastViewedDate)}}</div> -->
         <!-- <div class="line" ><strong>Views:&nbsp;</strong> {{component.componentViews}}</div> -->
@@ -892,7 +892,7 @@ body {
               <th>Phone</th>
             </tr>
             <tr>
-              <td>{{contact.contactType.description}}</td>
+              <td>{{getContactTypeDesc(contact.contactType)}}</td>
               <td>{{contact.firstName}} {{contact.lastName}}</td>
               <td>{{contact.organization}}</td>
               <td>{{contact.email}}</td>
@@ -970,6 +970,7 @@ body {
       <div style="clear:both;"></div>
 
       <div class="col-sm-12" style="text-align: center; margin-bottom: 20px;">
+        <a style="display:inline-block" class="btn btn-primary btn-lg" ng-show="component.component.componentId" href="single?id={{component.component.componentId}}" target="_blank">Preview Component</a>
         <button style="display:inline-block" class="btn btn-primary btn-lg" ng-click="submit()">Submit Component</button>
       </div>
 
