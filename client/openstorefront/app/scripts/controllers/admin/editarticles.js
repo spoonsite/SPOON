@@ -23,6 +23,7 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
   $scope.predicate = 'title';
   $scope.reverse = false;
   $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
+  $scope.selectedTypes = [];
 
   // /***************************************************************
   // * If we don't have a landing page, we're going to set up one for now so that
@@ -46,6 +47,34 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       $scope.predicate = predicate;
       $scope.reverse = false;
     }
+  };
+
+  $scope.selectType = function(article){
+    if (article.selected) {
+        article.selected = !article.selected;
+        if (article.selected === false) {
+         $scope.selectedTypes = _.reject($scope.selectedTypes, function(type) { return type === article.attributeType + "#" + article.attributeCode; });
+       } else {
+        $scope.selectedTypes.push(article.attributeType + "#" + article.attributeCode);
+      }
+    } else {
+      article.selected = true;
+      $scope.selectedTypes.push(article.attributeType + "#" + article.attributeCode);
+    }
+  };
+
+  $scope.selectAllTypes = function(){
+    $scope.selectedTypes = [];
+    _.forEach($scope.articles, function(article){                
+        article.selected = !$scope.selectAllTypes.flag; //click happens before state change
+        if (article.selected) {
+          $scope.selectedTypes.push(article.attributeType + "#" + article.attributeCode);
+        }
+      });
+  };  
+  
+  $scope.export = function(){
+   document.exportForm.submit();
   };
 
 
@@ -152,18 +181,18 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
       }
     });
 
-    modalInstance.result.then(function (result) {
-      triggerAlert('Your changes to the article have been saved.', 'ArticleEditAlert', 'body', 6000);
-      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
-      $timeout(function(){
-        $scope.getArticles(true);
-      }, 1000);
-    }, function (result) {
-      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
-      $timeout(function(){
-        $scope.getArticles(true);
-      }, 1000);
-    });       
+//    modalInstance.result.then(function (result) {
+//      triggerAlert('Your changes to the article have been saved.', 'ArticleEditAlert', 'body', 6000);
+//      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
+//      $timeout(function(){
+//        $scope.getArticles(true);
+//      }, 1000);
+//    }, function (result) {
+//      $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
+//      $timeout(function(){
+//        $scope.getArticles(true);
+//      }, 1000);
+//    });       
   };
 
 
