@@ -10,11 +10,12 @@
           <button type="button" title="Import" class="btn btn-default" ng-click="flags.showUpload = !flags.showUpload"><i class="fa fa-sign-in"></i>&nbsp;Import</button>  
         </div>
       </div>
-	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST" >
-		<p ng-repeat="type in selectedTypes">
+	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST">
+		<p ng-repeat="type in selectedTypes"  style="display: none;" >
 			<input type="hidden" name="type" value="{{type}}" />
 		</p>      
 	</form>		
+		
       <filterquery data="data.allTypes" url="api/v1/resource/attributes/attributetypes" sort-by="description" sort-order="ASC" type="default" set-features="pagination.features" control="pagination.control"></filterquery>
       <div style="clear:both">
       </div>
@@ -70,6 +71,6 @@
           </td>
         </tbody>
       </tr>
-    </table>
+    </table>	  
   </div>
 </div>
