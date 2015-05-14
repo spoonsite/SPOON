@@ -50,7 +50,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };
 
     $scope.pagination.control.setPredicate = function(val){
-      $scope.setPredicate(val, 'components')
+      $scope.setPredicate(val, 'components');
     };
 
     $scope.refreshComponents = function () {
@@ -627,6 +627,17 @@ $scope.toggleAttributeStatus = function(attribute){
     });        
   }
 }; 
+
+$scope.deleteAttribute = function(attribute) {
+  var response = window.confirm("Are you sure you want to DELETE attribute "+ attribute.typeDescription + "?");
+  if (response) {
+    $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');
+    Business.componentservice.deleteAttribute($scope.componentForm.componentId, attribute.type, attribute.code).then(function (results) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'attributeFormLoader');
+      $scope.loadComponentAttributesView();              
+    });    
+  }  
+};
 
 $scope.saveAttribute = function(){
   $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');

@@ -204,7 +204,8 @@ limitations under the License.
           <td>{{attribute.codeDescription}}</td>					
           <td>{{attribute.orphan}}</td>																
           <td style="padding: 0px 3px !important;">&nbsp;						
-            <button class="btn btn-warning btn-sm" ng-click="toggleAttributeStatus(attribute);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
+            <button class="btn btn-warning btn-sm" ng-click="toggleAttributeStatus(attribute);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>	
+	   <button class="btn btn-danger btn-sm" ng-click="deleteAttribute(attribute);"  title="Delete Attribute"><i class="fa fa-trash"></i></button>		
           </td>
         </tr>					
       </table>
