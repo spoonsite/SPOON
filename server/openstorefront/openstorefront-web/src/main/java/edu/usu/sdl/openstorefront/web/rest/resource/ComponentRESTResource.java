@@ -728,7 +728,7 @@ public class ComponentRESTResource
 	@APIDescription("Remove an attribute from the entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}")
-	public void deleteComponentAttribute(
+	public void inactivateComponentAttribute(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("attributeType")
@@ -741,6 +741,26 @@ public class ComponentRESTResource
 		pk.setAttributeType(attributeType);
 		pk.setComponentId(componentId);
 		service.getComponentService().deactivateBaseComponent(ComponentAttribute.class, pk);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete an attribute from the entity (Hard Removal")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/attributes/{attributeType}/{attributeCode}/force")
+	public void deleteComponentAttribute(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("attributeType")
+			@RequiredParam String attributeType,
+			@PathParam("attributeCode")
+			@RequiredParam String attributeCode)
+	{
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setAttributeCode(attributeCode);
+		pk.setAttributeType(attributeType);
+		pk.setComponentId(componentId);
+		service.getComponentService().deleteBaseComponent(ComponentAttribute.class, pk);
 	}
 
 	@PUT
