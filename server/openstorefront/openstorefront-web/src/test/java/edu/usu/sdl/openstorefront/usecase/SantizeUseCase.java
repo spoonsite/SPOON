@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.usecase;
 
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 /**
@@ -45,6 +46,18 @@ public class SantizeUseCase
 		out = (String) linkSanitizer.santize("<a href='http://test.com/Media.action?GeneralMedia&name=Test'>test2</a>");
 		System.out.println(out);
 
+	}
+
+	@Test
+	public void testStringPadRemoval()
+	{
+		System.out.println(StringUtils.stripStart("0001", "0"));
+		System.out.println(StringUtils.stripStart("0301", "0"));
+		System.out.println(StringUtils.stripStart("5", "0"));
+		System.out.println(StringUtils.stripStart("0000", "0"));
+		System.out.println(StringUtils.stripStart("1000", "0"));
+		System.out.println(StringUtils.stripStart("0020", "0"));
+		System.out.println(StringUtils.stripStart("bob", "0"));
 	}
 
 }
