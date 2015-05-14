@@ -108,6 +108,29 @@
     return deferred.promise;
   }; 
 
+  submissionservice.submit = function (componentId) {
+    var deferred = $q.defer();
+    if (componentId){
+      var method = 'PUT';
+      var url = 'api/v1/resource/componentsubmissions/'+componentId+'/submit';
+      $http({
+        'method': method,
+        'url': url
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          deferred.resolve(data);
+        }
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    }
+    return deferred.promise;
+  }; 
+
   submissionservice.updateSubmission = function (requiredForComponent) {
     if (requiredForComponent.component.componentId){
       return submissionservice.createSubmission(requiredForComponent);  

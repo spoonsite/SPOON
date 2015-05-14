@@ -114,7 +114,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
 
     $scope.getMimeTypeClass = function(type){
-      if (type.match('video.*')) {
+      if (type && type.match('video.*')) {
         return 'fa-file-video-o'
       } else if (type.match('audio.*')){
         return 'fa-file-audio-o'
@@ -146,7 +146,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.initialSave = function($event){
       if ($scope.vitalsCheck()){
         $scope.submit(true).then(function(){
-          $scope.scrollTo('details', 'details', '', $event);
+          $scope.scrollTo('details', 'details', '', $event, 'tagLabel');
         }, function(){
           if($event) {
             $event.preventDefault();
@@ -159,6 +159,20 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.updateSave = function($event){
       if ($scope.vitalsCheck()){
         $scope.submit(false).then(function(){
+          $scope.scrollTo('reviewAndSubmit', 'submit', '', $event)
+          $scope.detailsDone = true;
+        }, function(){
+          if($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+          }
+        })
+      } 
+    }
+
+    $scope.finalSave = function($event){
+      if ($scope.vitalsCheck()){
+        $scope.submitForAproval(false).then(function(){
           $scope.scrollTo('reviewAndSubmit', 'submit', '', $event)
           $scope.detailsDone = true;
         }, function(){
@@ -214,6 +228,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
 
     $scope.submit = function(initial){
+      $scope.$broadcast('$LOAD', 'submissionLoader');
       var deferred = $q.defer();
       if (initial){
         $scope.createInitialSubmit().then(function(component){
@@ -223,30 +238,40 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
               componentAttributePk: compare.attributes[i].componentAttributePk
             };
           }
-          _.each(compare.attributes, function(attribute){
-          })
-          // console.log('INIT Diff', compare);
-          // console.log('INIT Diff', $scope.backup);
-          // console.log('INIT Diff', _.diff(compare,$scope.backup));
-          Business.submissionservice.createSubmission(component).then(function(result){
-            if (result && result.component && result.component.componentId){
-              $scope.backup = angular.copy(result);              
-              $scope.componentId = result.component.componentId;
-              $scope.component = result;
-              $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
-            }
-            // console.log('Success result', $scope.component);
+          if (_.diff(compare,$scope.backup)) {
+            console.log('INIT Diff', compare);
+            console.log('INIT Diff', $scope.backup);
+            console.log('INIT Diff', _.diff(compare,$scope.backup));
+            console.log('component', component);
+            
+            Business.submissionservice.createSubmission(component).then(function(result){
+              $scope.$broadcast('$UNLOAD', 'submissionLoader');
+              if (result && result.component && result.component.componentId){
+                $scope.backup = angular.copy(result);              
+                $scope.componentId = result.component.componentId;
+                $scope.component = result;
+                $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+              }
+              // console.log('Success result', $scope.component);
+              deferred.resolve();
+            }, function(result){
+              $scope.$broadcast('$UNLOAD', 'submissionLoader');
+              deferred.reject();
+              // console.log('Fail result', result);
+            });
+          } else {
+            $scope.$broadcast('$UNLOAD', 'submissionLoader');
+            console.log('The init diff didn happen');
             deferred.resolve();
-          }, function(result){
-            deferred.reject();
-            // console.log('Fail result', result);
-          });
+          }
         })
-      } else {
+      } else {//
         $scope.createInitialSubmit().then(function(component){
           component.attributes = $scope.getCompactAttributes(true);
           if ($scope.optIn) {
-            component.component.notifyOfApprovalEmail = $scope.email;
+            console.log('we opted in');
+            
+            component.component.notifyOfApprovalEmail = $scope.submitter.email;
           }
 
           component.contacts = component.contacts || [];
@@ -255,7 +280,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             if (contact.contactType && contact.contactType.code){
               contact.contactType = contact.contactType.code;
             } else if (contact.contactType) {
-              // console.log('contactType missing?', contact.contactType);
             }
           })
 
@@ -266,26 +290,56 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
               componentAttributePk: compare.attributes[i].componentAttributePk
             };
           }
-          _.each(compare.attributes, function(attribute){
-          })
-          // console.log('UPDATE Diff', compare);
-          // console.log('UPDATE Diff', $scope.backup);
-          // console.log('UPDATE Diff', _.diff(compare,$scope.backup));
-          Business.submissionservice.updateSubmission(component).then(function(result){
-            if (result && result.component && result.component.componentId){
-              $scope.backup = angular.copy(result);              
-              $scope.componentId = result.component.componentId;
-              $scope.component = result;
-              $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
-            }
+
+          if (_.diff(compare,$scope.backup)) {
+            console.log('UPDATE Diff', compare);
+            console.log('UPDATE Diff', $scope.backup);
+            console.log('UPDATE Diff', _.diff(compare,$scope.backup));
+            console.log('component', component);
+            
+            Business.submissionservice.updateSubmission(component).then(function(result){
+              $scope.$broadcast('$UNLOAD', 'submissionLoader');
+              if (result && result.component && result.component.componentId){
+                $scope.backup = angular.copy(result);              
+                $scope.componentId = result.component.componentId;
+                $scope.component = result;
+                $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+              }
+              deferred.resolve();
+              // console.log('Success result', result);
+            }, function(result){
+              $scope.$broadcast('$UNLOAD', 'submissionLoader');
+              deferred.reject();
+              // console.log('Fail result', result);
+            });
+          } else {
+            $scope.$broadcast('$UNLOAD', 'submissionLoader');
+            console.log('The component did not change', compare, $scope.backup);
             deferred.resolve();
-            // console.log('Success result', result);
-          }, function(result){
-            deferred.reject();
-            // console.log('Fail result', result);
-          });
+          }
         })
       }//
+      return deferred.promise;
+    }
+
+    $scope.submitForAproval = function(){
+      var deferred = $q.defer();
+      $scope.submit(false).then(function(){
+        if ($scope.component && $scope.component.component && $scope.component.component.componentId) {
+          console.log('component', $scope.component);
+          
+          Business.submissionservice.submit($scope.component.component.componentId).then(function(){
+            $scope.backup.component.approvalState = 'P';              
+            $scope.component.component.approvalState = 'P';
+            triggerAlert('Your component has been successfully submitted!', 'submitAlert', 'body', 8000);
+            deferred.resolve();
+          }, function(result){
+            deferred.reject();
+          });
+        } else {
+          deferred.reject();
+        }
+      })
       return deferred.promise;
     }
 
@@ -298,6 +352,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         })
       }
     })
+
+    $scope.makeThisHappen = function(canHappen, form, func){
+      if (canHappen){
+        func(form);
+        $scope.formFocused(form, true);
+      }
+    }
 
 
 
@@ -535,7 +596,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   // validation section
   $scope.getStarted = function(){
     // return true;
-    return $scope.submitter.firstName && $scope.submitter.lastName && $scope.submitter.email && $scope.submitter.organization;
+    return $scope.submitter.firstName && $scope.submitter.lastName && $scope.submitter.email && $scope.submitter.phone && $scope.submitter.organization;
   }
 
   $scope.vitalsCheck = function(log){
@@ -853,7 +914,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }      
   });
 
-$scope.scrollTo = function(id, current, parent, $event) {
+$scope.scrollTo = function(id, current, parent, $event, focusId) {
   var offset = 120;
   if($event) {
     $event.preventDefault();
@@ -887,6 +948,9 @@ $scope.scrollTo = function(id, current, parent, $event) {
             returnScroll = offset
           }
           window.scrollBy(0, -returnScroll);
+          if (focusId) {
+            $('#'+focusId).focus();
+          }
         })
         $timeout(function(){
           $scope.resetToggles();
