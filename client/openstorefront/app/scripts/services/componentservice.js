@@ -969,6 +969,27 @@ componentservice.inactivateAttribute = function (componentId, type, code) {
   return deferred.promise;
 }; 
 
+componentservice.deleteAttribute = function (componentId, type, code) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/attributes/' + encodeURIComponent(type) + '/' + encodeURIComponent(code) + '/force'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+}; 
+
 componentservice.activateAttribute = function (componentId, type, code) {
   var deferred = $q.defer();
 

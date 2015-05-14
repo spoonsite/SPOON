@@ -47,8 +47,7 @@ public class SvcAttributeParser
 	private static final int JCSFL_ALIGNMENT = 6;
 	private static final int JARM_ALIGNMENT = 7;
 	private static final int INTERNAL_COMMENTS = 8;
-	
-	
+
 	@Override
 	protected void internalParse(CSVReader reader) throws IOException
 	{
@@ -73,10 +72,15 @@ public class SvcAttributeParser
 
 			if (data.length > DESCRIPTION) {
 
-				if (StringUtils.isNotBlank(data[CODE].trim())) {
+				String code = data[UID].trim().toUpperCase();
+				if ("0".equals(code) == false) {
+					code = StringUtils.stripStart(code, "0");
+				}
+				if (StringUtils.isNotBlank(code)) {
 					AttributeCode attributeCode = new AttributeCode();
 					AttributeCodePk attributeCodePk = new AttributeCodePk();
-					attributeCodePk.setAttributeCode(data[UID].trim().toUpperCase());
+
+					attributeCodePk.setAttributeCode(code);
 					attributeCodePk.setAttributeType(attributeType.getAttributeType());
 					attributeCode.setAttributeCodePk(attributeCodePk);
 
@@ -91,6 +95,8 @@ public class SvcAttributeParser
 					attributeCode.setLabel(data[CODE].toUpperCase().trim() + " " + data[LABEL].trim());
 
 					attributeMap.get(attributeType).add(attributeCode);
+				} else {
+					log.log(Level.WARNING, MessageFormat.format("Skipping line: {0} + line is mssing UID or UID doesn't resolve. (0 padding is removed)", lineNumber));
 				}
 			} else {
 				log.log(Level.WARNING, MessageFormat.format("Skipping line: {0} + line is mssing required fields.", lineNumber));
@@ -101,7 +107,7 @@ public class SvcAttributeParser
 	@Override
 	public String getHEADER()
 	{
-		//TagValue_UID,TagValue_Number,TagValue_Service Name,TagNotes_Service Definition,TagNotes_Service Description,TagValue_Example Specification,TagValue_Example Solution,TagValue_DI2E Framework 
+		//TagValue_UID,TagValue_Number,TagValue_Service Name,TagNotes_Service Definition,TagNotes_Service Description,TagValue_Example Specification,TagValue_Example Solution,TagValue_DI2E Framework
 		return "TagValue_UID";
 	}
 
