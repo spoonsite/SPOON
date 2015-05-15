@@ -19,7 +19,8 @@
 app.directive('dynamicPopover', ['$compile', function($compile){
   return {
     scope: {
-      content: '='
+      content: '=',
+      contentString: '@'
     },
     link: function(scope, element, attrs) {
       console.log('attrs', attrs);
@@ -27,12 +28,13 @@ app.directive('dynamicPopover', ['$compile', function($compile){
 
       // define popover for this element
       scope.$watch('content', function() {
-        if (scope.content) {
+        if (scope.content || scope.contentString) {
+          var content = scope.content || scope.contentString;          
           $(element).popover({
             html: true,
             container: attrs['container'] || 'body',
             title: attrs['title'] || '', 
-            content: $compile(scope.content)(scope),
+            content: $compile(content)(scope),
             placement: attrs['placement'] || 'top',
             trigger: attrs['trigger'] || 'click',
             // grab popover content from the next element

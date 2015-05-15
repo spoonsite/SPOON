@@ -444,7 +444,7 @@ body {
               <td>{{contact.firstName}}</td>
               <td>{{contact.lastName}}</td>
               <td>{{contact.organization}}</td>
-              <td>{{contact.email}}</td>
+              <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{contact.email}}</td>
               <td>{{contact.phone}}</td>
               <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
                 <button class="btn btn-danger btn-sm" ng-click="removeContact($index);" title="Delete"><i class="fa fa-trash"></i></button>
@@ -552,7 +552,7 @@ body {
             <tr ng-repeat="dependency in component.externalDependencies" >
               <td>{{dependency.dependencyName}}</td>
               <td>{{dependency.version}}</td>
-              <td>{{dependency.dependencyReferenceLink}}</td>
+              <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{dependency.dependencyReferenceLink}}</td>
               <td>{{dependency.comment}}</td>
               <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
                 <button class="btn btn-danger btn-sm" ng-click="removeDependency($index);" title="Delete"><i class="fa fa-trash"></i></button>
@@ -580,7 +580,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Resource Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="typeCode" id="resourceFormType" ng-model="resourceForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="showResourceUpload === 'true'"></select>
+                  <select type="text" class="form-control" name="resourceType" id="resourceFormType" ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="showResourceUpload === 'true'"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
@@ -591,7 +591,7 @@ body {
                   class="form-control"
                   type="text"
                   name="caption"
-                  ng-model="resourceForm.caption"
+                  ng-model="resourceForm.description"
                   ng-minlength=0
                   ng-maxlength=250
                   placeholder="Caption"
@@ -609,7 +609,7 @@ body {
                   class="form-control"
                   placeholder="http:///www.example.com/image.png"
                   ng-model="resourceForm.link"
-                  ng-disabled="showResourceUpload === 'true' || !resourceForm.typeCode"
+                  ng-disabled="showResourceUpload === 'true' || !resourceForm.resourceType"
                   ng-minlength=0
                   ng-maxlength=250
                   />
@@ -617,7 +617,7 @@ body {
                 <div style="clear:both;"></div>
               </div>
               <div class="col-sm-12">
-                <button type="button" class="btn btn-primary" ng-click="addLinkToResource()" ng-disabled="showResourceUpload === 'true' || !resourceForm.typeCode || !resourceForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
+                <button type="button" class="btn btn-primary" ng-click="addLinkToResource()" ng-disabled="showResourceUpload === 'true' || !resourceForm.resourceType || !resourceForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
               </div>
             </label>
           </div>
@@ -631,7 +631,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Resource Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="typeCode"  ng-model="resourceForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || isFullResource"></select>
+                  <select type="text" class="form-control" name="resourceType"  ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || isFullResource"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
@@ -642,7 +642,7 @@ body {
                   class="form-control"
                   type="text"
                   name="caption"
-                  ng-model="resourceForm.caption"
+                  ng-model="resourceForm.description"
                   ng-minlength=0
                   ng-maxlength=250
                   placeholder="Caption"
@@ -652,8 +652,8 @@ body {
                 <div style="clear:both;"></div>
               </div>
               <div class="col-sm-12">
-                <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || !resourceForm.caption ||  isFullResource">
-                  <i class="fa fa-save"></i>&nbsp;Add File <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.typeCode || isFullResource"/>
+                <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.resourceType || !resourceForm.description ||  isFullResource">
+                  <i class="fa fa-save"></i>&nbsp;Add File <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.resourceType || isFullResource"/>
                 </span> <span>{{lastResourceFile}}</span>
               </div>
             </label>
@@ -671,20 +671,20 @@ body {
                 <th>Preview/Link</th>
               </tr>
               <tr ng-repeat="item in resourceQueue">
-                <td>{{item.file.typeCode.description}}</td>
-                <td>{{item.file.caption}}</td>
+                <td>{{getResourceTypeDesc(item.file.resourceType)}}</td>
+                <td>{{item.file.description}}</td>
                 <td>{{item.file.mimeType}}</td>
-                <td>
+                <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                   <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
                     <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
                   </button>
                 </td>
               </tr>
               <tr ng-repeat="item in component.resources">
-                <td>{{item.typeCode.description}}</td>
-                <td>{{item.caption}}</td>
+                <td>{{getResourceTypeDesc(item.resourceType)}}</td>
+                <td>{{item.description}}</td>
                 <td>&mdash;</td>
-                <td>{{item.link}}</td>
+                <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" dynamichtml="item.link"></td>
               </tr>
             </table>
           </div>
@@ -708,7 +708,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Media Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="typeCode" id="mediaFormType" ng-model="mediaForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"></select>
+                  <select type="text" class="form-control" name="typeCode" id="mediaFormType" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
@@ -729,8 +729,8 @@ body {
                 <div style="clear:both;"></div>
               </div>
               <div class="col-sm-12">
-                <span class="btn btn-primary btn-file" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.typeCode || !mediaForm.caption ||  isFull">
-                  <i class="fa fa-save"></i>&nbsp;Add File <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.typeCode || isFull"/>
+                <span class="btn btn-primary btn-file" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || !mediaForm.description ||  isFull">
+                  <i class="fa fa-save"></i>&nbsp;Add File <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || isFull"/>
                 </span> <span>{{lastMediaFile}}</span>
               </div>
             </label>
@@ -745,7 +745,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Media Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.typeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="showMediaUpload === 'true'"></select>
+                  <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="showMediaUpload === 'true'"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
@@ -774,7 +774,7 @@ body {
                   class="form-control"
                   placeholder="http:///www.example.com/image.png"
                   ng-model="mediaForm.link"
-                  ng-disabled="showMediaUpload === 'true' || !mediaForm.typeCode"
+                  ng-disabled="showMediaUpload === 'true' || !mediaForm.mediaTypeCode"
                   ng-minlength=0
                   ng-maxlength=250
                   />
@@ -782,7 +782,7 @@ body {
                 <div style="clear:both;"></div>
               </div>
               <div class="col-sm-12">
-                <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="showMediaUpload === 'true' || !mediaForm.typeCode || !mediaForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
+                <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="showMediaUpload === 'true' || !mediaForm.mediaTypeCode || !mediaForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
               </div>
             </label>
           </div>
@@ -790,8 +790,8 @@ body {
         <!-- onchange="angular.element(this).scope().addMedia()" -->
         <div id="srcList">
           <div class="col-sm-12">
-            <h3 style="margin-top: 20px;" ng-show="queue.length || component.componentMedia.length">Media Upload Queue</h3>
-            <table class="table table-stripped table-bordered" ng-show="queue.length || component.componentMedia.length">
+            <h3 style="margin-top: 20px;" ng-show="queue.length || component.media.length">Media Upload Queue</h3>
+            <table class="table table-stripped table-bordered" ng-show="queue.length || component.media.length">
               <tr>
                 <th>Type</th>
                 <th>Caption</th>
@@ -799,20 +799,21 @@ body {
                 <th>Preview/Link</th>
               </tr>
               <tr ng-repeat="item in queue">
-                <td>{{item.file.typeCode.description}}</td>
+                <td>{{getMediaTypeDesc(item.file.mediaTypeCode)}}</td>
                 <td>{{item.file.caption}}</td>
                 <td>{{item.file.mimeType}}</td>
-                <td>
+                <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                   <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
                     <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
                   </button>
                 </td>
               </tr>
-              <tr ng-repeat="item in component.componentMedia">
-                <td>{{item.typeCode.description}}</td>
+              <tr ng-repeat="item in component.media">
+                <td>{{getMediaTypeDesc(item.mediaTypeCode)}}</td>
                 <td>{{item.caption}}</td>
                 <td>&mdash;</td>
-                <td>{{item.link}}</td>
+                <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" dynamichtml="item.link"></td>
+                <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" dynamichtml="getMediaHtml(item)"></td>
               </tr>
             </table>
           </div>
@@ -911,7 +912,7 @@ body {
         <a target="_self" class="btn btn-sm btn-default" href="#details" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event, 'contactType'): ''"><i class="fa fa-edit"></i>&nbsp;<small><span ng-show="component.contacts.length">Edit</span><span ng-show="!(component.contacts.length)">Add</span> Contacts</small></a>
       </div>
       <div class="left" ng-show="component.contacts.length" ><strong>Points of Contact:&nbsp;</strong>
-        <div ng-repeat="contact in component.contacts">
+        <div>
           <table class="table table-striped table-bordered" style="table-layout:fixed">
             <tr>
               <th>Type</th>
@@ -920,11 +921,11 @@ body {
               <th>Email</th>
               <th>Phone</th>
             </tr>
-            <tr>
+            <tr ng-repeat="contact in component.contacts">
               <td>{{getContactTypeDesc(contact.contactType)}}</td>
               <td>{{contact.firstName}} {{contact.lastName}}</td>
               <td>{{contact.organization}}</td>
-              <td>{{contact.email}}</td>
+              <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{contact.email}}</td>
               <td>{{contact.phone}}</td>
             </tr>
           </table>
@@ -948,7 +949,7 @@ body {
           <tr ng-repeat="dependency in component.externalDependencies">
             <td>{{dependency.dependencyName}}</td>
             <td>{{dependency.version}}</td>
-            <td>{{dependency.dependancyReferenceLink}}</td>
+            <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >{{dependency.dependancyReferenceLink}}</td>
             <td>{{dependency.comment}}</td>           
           </tr>
         </table>
@@ -972,11 +973,8 @@ body {
       <div class="pageBreak" >
         <h4>Resources</h4>
         <hr style="border-top: 1px solid #555; margin-top: 0px;">
-        <div ng-repeat="item in resourceQueue">
-          <div dynamichtml="item.dom"></div>
-        </div>
         <div >
-          <table class="table table-stripped table-bordered" ng-show="resourceQueue.length || component.resource.length">
+          <table class="table table-stripped table-bordered" ng-show="resourceQueue.length || component.resources.length">
             <tr>
               <th>Description</th>
               <th>Caption</th>
@@ -984,10 +982,16 @@ body {
               <th>Preview/Link</th>
             </tr>
             <tr ng-repeat="item in component.resources">
-              <td>{{item.file.typeCode.description}}</td>
-              <td>{{item.file.caption}}</td>
+              <td>{{getResourceTypeDesc(item.resourceType)}}</td>
+              <td>{{item.description}}</td>
+              <td>{{item.mimeType}}</td>
+              <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" dynamichtml="item.link"></td>
+            </tr>
+            <tr ng-repeat="item in resourceQueue">
+              <td>{{getResourceTypeDesc(item.file.resourceType)}}</td>
+              <td>{{item.file.description}}</td>
               <td>{{item.file.mimeType}}</td>
-              <td>
+              <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                 <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
                   <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
                 </button>
@@ -1008,50 +1012,33 @@ body {
         <hr style="border-top: 1px solid #555; margin-top: 0px;">
         <div >
           <div>
-            <table class="table table-stripped table-bordered" ng-show="queue.length || component.componentMedia.length">
+            <table class="table table-stripped table-bordered" ng-show="queue.length || component.media.length">
               <tr>
                 <th>Description</th>
                 <th>Caption</th>
                 <th>Mime Type</th>
                 <th>Preview/Link</th>
+              </tr>
+              <tr ng-repeat="item in component.media">
+                <td>{{getMediaTypeDesc(item.mediaTypeCode)}}</td>
+                <td>{{item.caption}}</td>
+                <td>{{item.mimeType}}</td>
+                <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" dynamichtml="item.link"></td>
+                <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" dynamichtml="getMediaHtml(item)"></td>
               </tr>
               <tr ng-repeat="item in queue">
-                <td>{{item.file.typeCode.description}}</td>
+                <td>{{getMediaTypeDesc(item.file.mediaTypeCode)}}</td>
                 <td>{{item.file.caption}}</td>
                 <td>{{item.file.mimeType}}</td>
-                <td>
+                <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                   <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
-                    <!-- <img ng-if="image.typeCode.code === 'IMAGE'" ng-src="{{image.link}}" alt=""> -->
+                    <!-- <img ng-if="image.mediaTypeCode.code === 'IMAGE'" ng-src="{{image.link}}" alt=""> -->
                     <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
                   </button>
                 </td>
               </tr>
             </table>
           </div>
-        </div>
-        <div>
-          <div>
-            <table class="table table-stripped table-bordered" ng-show="queue.length || component.componentMedia.length">
-              <tr>
-                <th>Description</th>
-                <th>Caption</th>
-                <th>Mime Type</th>
-                <th>Preview/Link</th>
-              </tr>
-              <tr ng-repeat="item in component.componentMedia">
-                <td>{{item.file.typeCode.description}}</td>
-                <td>{{item.file.caption}}</td>
-                <td>{{item.file.mimeType}}</td>
-                <td>
-                  <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
-                    <!-- <img ng-if="image.typeCode.code === 'IMAGE'" ng-src="{{image.link}}" alt=""> -->
-                    <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
-                  </button>
-                </td>
-              </tr>
-            </table>
-          </div>
-          
         </div>
       </div>
       <div style="clear:both;"></div>
