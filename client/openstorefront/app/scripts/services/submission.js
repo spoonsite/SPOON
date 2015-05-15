@@ -81,13 +81,47 @@
     return result.promise;
   };
 
+  submissionservice.getSubmission = function (id, override) {
+    var result = $q.defer();
+    if (id)
+    {
+      var url = 'api/v1/resource/componentsubmissions/' + encodeURIComponent(id);
+      var value = null;
+      value = checkExpire('componentSubmission_' + id, minute * 2);
+      if (value && !override) {
+        result.resolve(value);
+      } else {
+        $http({
+          method: 'GET',
+          url: url
+        })
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            save('componentSubmission_' + id, data);
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
+          result.reject('There was an error');
+        });
+      }
+    } else {
+      result.reject('A unique ID is required to retrieve component details');
+    }
+    return result.promise;
+  };
+
   submissionservice.createSubmission = function (requiredForComponent) {
     var deferred = $q.defer();
     var method = 'POST';
     var url = 'api/v1/resource/componentsubmissions';
     if (requiredForComponent.component.componentId){
       method = 'PUT';
-      url = 'api/v1/resource/componentsubmissions/'+requiredForComponent.component.componentId;
+      url = 'api/v1/resource/componentsubmissions/'+encodeURIComponent(requiredForComponent.component.componentId);
     }
     $http({
       'method': method,
@@ -112,7 +146,7 @@
     var deferred = $q.defer();
     if (componentId){
       var method = 'PUT';
-      var url = 'api/v1/resource/componentsubmissions/'+componentId+'/submit';
+      var url = 'api/v1/resource/componentsubmissions/'+encodeURIComponent(componentId)+'/submit';
       $http({
         'method': method,
         'url': url

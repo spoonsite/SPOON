@@ -21,6 +21,7 @@
 app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$anchorScroll', 'FileUploader', '$templateCache', '$uiModal', '$sce',
   function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $anchorScroll, FileUploader, $templateCache, $uiModal, $sce) { /*jshint unused: false*/
 
+
     $scope.test = 'This is a test';
     $scope.badgeFound = false;
 
@@ -33,7 +34,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.optIn = false;
 
 
-    $scope.componentId = null;
+    $scope.componentId;
     $scope.component = {};
     $scope.backup = {};
     $scope.component.component = {};
@@ -90,6 +91,83 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     };
 
 
+    $scope.getMediaHtml = function(media){
+      return utils.getMediaHtml(media);
+    }
+
+    $scope.getSubmission = function(){
+      var deferred = $q.defer();
+      if ($scope.componentId !== null && $scope.componentId !== undefined) {
+        Business.submissionservice.getSubmission($scope.componentId, true).then(function(result){
+          $scope.$broadcast('$UNLOAD', 'submissionLoader');
+          if (result && result.component && result.component.componentId){
+            $scope.backup = angular.copy(result);              
+            $scope.componentId = result.component.componentId;
+            $scope.component = result;
+            $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+          }
+          deferred.resolve();
+        }, function(result){
+          $scope.$broadcast('$UNLOAD', 'submissionLoader');
+          deferred.reject();
+        });
+      }
+      return deferred.promise;
+    }
+
+    $scope.init = function(){
+      if ($location.search() && $location.search().id){
+        console.log('$location', $location.search());
+        $scope.componentId = $location.search().id;
+        $scope.$broadcast('$LOAD', 'submissionLoader');
+        $scope.getSubmission().then(function(){
+          var found = _.find($scope.component.contacts, {'contactType':'SUB'});
+          if (found){
+            $scope.submitter = found;
+          }
+          $scope.optIn = $scope.component.component.notifyOfApprovalEmail? true: false;
+        }, function(){
+          $scope.componentId = null;
+        });
+      } else {
+        $scope.componentId = null;
+      }
+    }
+
+    $scope.loadLookup = function(lookup, entity, loader){
+      var deferred = $q.defer();
+      Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+        deferred.resolve();
+        if (results) {
+          $scope[entity]= results;
+        }        
+      });      
+      return deferred.promise;
+    };
+    $scope.getAttributes = function (override) { 
+      var deferred = $q.defer();
+      Business.getFilters(override, false).then(function (result) {
+        deferred.resolve();
+        $scope.allAttributes = result ? angular.copy(result) : [];
+        $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
+      // console.log('required', $scope.requiredAttributes);
+
+      $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
+    });
+      return deferred.promise;
+    }; 
+
+    // WHERE WE CALL INIT()!
+    (function(){
+      $q.all($scope.getAttributes(),
+      //
+      $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader'),
+      $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'),
+      $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader')).then(function(){
+        $scope.init();
+      })
+    })()
+
     $scope.formFocused = function(form, reset){
 
       var keys = _.keys(form);
@@ -114,19 +192,22 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
 
     $scope.getMimeTypeClass = function(type){
-      if (type && type.match('video.*')) {
-        return 'fa-file-video-o'
-      } else if (type.match('audio.*')){
-        return 'fa-file-audio-o'
-      } else if (type.match('application.*')){
-        return 'fa-file-code-o'
-      } else if (type.match('text.*')){
-        return 'fa-file-text-o'
-      } else if (type.match('image.*')){
-        return 'fa-file-image-o'
-      } else {
-        return 'fa-file-o'
-      }
+      if (type) {
+
+        if (type.match('video.*')) {
+          return 'fa-file-video-o'
+        } else if (type.match('audio.*')){
+          return 'fa-file-audio-o'
+        } else if (type.match('application.*')){
+          return 'fa-file-code-o'
+        } else if (type.match('text.*')){
+          return 'fa-file-text-o'
+        } else if (type.match('image.*')){
+          return 'fa-file-image-o'
+        } else {
+          return 'fa-file-o'
+        }
+      } else {return ''};
     }
 
     $scope.setBadgeFound = function(attribute){
@@ -137,6 +218,22 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     $scope.getAttributeTypeDesc = function(type){
       var found = _.find($scope.allAttributes, {'attributeType': type});
+      if (found) {
+        return found.description;
+      }
+      return '';
+    }
+
+    $scope.getResourceTypeDesc = function(type){
+      var found = _.find($scope.resourceTypes, {'code': type});
+      if (found) {
+        return found.description;
+      }
+      return '';
+    }
+
+    $scope.getMediaTypeDesc = function(type){
+      var found = _.find($scope.mediaTypes, {'code': type});
       if (found) {
         return found.description;
       }
@@ -343,6 +440,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       return deferred.promise;
     }
 
+
+
     $scope.$watch('current', function(){
       $scope.badgeFound = false;
       if ($scope.current && $scope.current === 'submit') {
@@ -371,7 +470,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         return n.requiredFlg && !n.hideOnSubmission;
       });
       
-      if ((requiredAttributes.length )!== $scope.requiredAttributes.length) {
+      if (requiredAttributes.length !== $scope.requiredAttributes.length) {
         return false;
       }
       return true;
@@ -513,8 +612,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     if (val !== $scope.oldMediaState) {
       $scope.oldMediaState = val;
       $('#mediaUploadInput').val(null);
-      $scope.mediaForm.typeCode = null;
-      $scope.mediaForm.caption = null;
+      $scope.mediaForm.mediaTypeCode = null;
+      $scope.mediaForm.description = null;
       $scope.mediaForm.link = null;
       $scope.lastMediaFile = '';
     }
@@ -523,22 +622,17 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
   $scope.resetMediaInput = function(){
     $('#mediaUploadInput').val(null);
-    $scope.mediaForm.typeCode = null;
-    $scope.mediaForm.caption = null;
+    $scope.mediaForm.mediaTypeCode = null;
+    $scope.mediaForm.description = null;
     $scope.lastMediaFile = '';
   }
 
   $scope.addLinkToMedia = function(){
-    $scope.component.media.push({
-      mediaTypeCode: $scope.mediaForm.typeCode.code,
-      typeCode: $scope.mediaForm.typeCode,
-      caption: $scope.mediaForm.caption,
-      link: $scope.mediaForm.link
-    })
+    $scope.component.media.push(angular.copy($scope.mediaForm));
     $('#mediaUploadInput').val(null);
-    $scope.mediaForm.typeCode = null;
+    $scope.mediaForm.mediaTypeCode = null;
     $scope.mediaForm.link = null;
-    $scope.mediaForm.caption = null;
+    $scope.mediaForm.description = null;
     $scope.lastMediaFile = '';
   }  
 
@@ -549,8 +643,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     if (val !== $scope.oldResourceState) {
       $scope.oldResourceState = val;
       $('#resourceUploadInput').val(null);
-      $scope.resourceForm.typeCode = null;
-      $scope.resourceForm.caption = null;
+      $scope.resourceForm.resourceType = null;
+      $scope.resourceForm.description = null;
       $scope.resourceForm.link = null;
       $scope.lastResourceFile = '';
     }
@@ -559,22 +653,17 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
   $scope.resetResourceInput = function(){
     $('#resourceUploadInput').val(null);
-    $scope.resourceForm.typeCode = null;
-    $scope.resourceForm.caption = null;
+    $scope.resourceForm.resourceType = null;
+    $scope.resourceForm.description = null;
     $scope.lastResourceFile = '';
   }
 
   $scope.addLinkToResource = function(){
-    $scope.component.resources.push({
-      resourceType: $scope.resourceForm.typeCode.code,
-      typeCode: $scope.resourceForm.typeCode,
-      description: $scope.resourceForm.caption,
-      link: $scope.resourceForm.link
-    })
+    $scope.component.resources.push(angular.copy($scope.resourceForm));
     $('#resourceUploadInput').val(null);
-    $scope.resourceForm.typeCode = null;
+    $scope.resourceForm.resourceType = null;
     $scope.resourceForm.link = null;
-    $scope.resourceForm.caption = null;
+    $scope.resourceForm.description = null;
     $scope.lastResourceFile = '';
   }
 
@@ -611,16 +700,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
 
 
-  $scope.loadLookup = function(lookup, entity, loader){
-    $scope.$emit('$TRIGGERLOAD', loader);
-
-    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
-      $scope.$emit('$TRIGGERUNLOAD', loader);
-      if (results) {
-        $scope[entity]= results;
-      }        
-    });      
-  };
 
   $scope.openInfo = function(attribute){
     var modalInstance = $uiModal.open({
@@ -642,27 +721,15 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     });
   }
 
-  $scope.getAttributes = function (override) { 
-    Business.getFilters(override, false).then(function (result) {
-      $scope.allAttributes = result ? angular.copy(result) : [];
-      $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
-      // console.log('required', $scope.requiredAttributes);
-
-      $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
-    });
-  }; 
-  $scope.getAttributes();
   
   $scope.getCodesForType = function(type){
     var foundType = _.find($scope.allAttributes, {attributeType: type});
     return foundType !== undefined ? foundType.codes : [];
   }; 
 
-  $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader');  
-  $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'); //
-  $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader');  
 
-  
+
+
 
   // Media Handling functions
   $scope.srcList = []; //
@@ -691,20 +758,20 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       //   }
       // });
     // } else {
-      file.typeCode = $scope[form].typeCode;
-      file.caption = $scope[form].caption;
+      file.mediaTypeCode = $scope[form].mediaTypeCode;
+      file.description = $scope[form].description;
       file.mimeType = file._file? file._file.type: file.file.type;
       if (file._file){
         $scope.readFile(file._file, function(result){
           queue.push({file: file, dom:result});
-          if(!$scope.$$phase) {
+          if(!$rootScope.$$phase) {
             $scope.$apply();
           }
           $scope.$emit('$TRIGGERUNLOAD', loader);
         });
       } else {
         queue.push({file: file, dom:'<span>No Link or Preview Available</span>'});
-        if(!$scope.$$phase) {
+        if(!$rootScope.$$phase) {
           $scope.$apply();
         }
         $scope.$emit('$TRIGGERUNLOAD', loader);
@@ -725,8 +792,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         return function(e) {
           // Render thumbnail.
           callback(
-           ['<img class="thumb" src="', e.target.result,
-           '" title="', escape(theFile.name), '" width="230"    height="270"/>'].join('')
+           ['<img class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '" width="230"    height="270"/>'].join('')
            )
         };
       })(file, callback);
@@ -808,11 +874,11 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         "componentMedia.componentId" : $scope.componentForm.componentId
       });
       item.formData.push({
-        "componentMedia.typeCode" : $scope.mediaForm.typeCode
+        "componentMedia.mediaTypeCode" : $scope.mediaForm.mediaTypeCode
       });
-      if ($scope.mediaForm.caption) {
+      if ($scope.mediaForm.description) {
         item.formData.push({
-          "componentMedia.caption": $scope.mediaForm.caption
+          "componentMedia.description": $scope.mediaForm.description
         });
       }
       if ($scope.mediaForm.componentMediaId) {
@@ -966,7 +1032,7 @@ $scope.scrollTo = function(id, current, parent, $event, focusId) {
 
 
   $timeout(function(){
-    if(!$scope.$$phase) {
+    if(!$rootScope.$$phase) {
       $scope.$apply(function(){
         $('body').scrollspy({ target: '#scrollSpy', offset: 100 });
         $scope.scrollTo('top', 'top');

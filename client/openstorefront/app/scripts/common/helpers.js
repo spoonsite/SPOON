@@ -26,6 +26,48 @@
     }
   }
 
+  utils.getMediaHtml = function(media){
+    if (media && media.mimeType){
+      var type = media.mimeType;
+      if (type.match('video.*')) {
+        if (media.componentMediaId){
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
+          '<videogular> <vg-media vg-src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' vg-preload=\'\\\'none\\\'\' vg-native-controls=\'true\'></vg-media></videogular>',
+          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>'
+          ].join('');
+          return result;
+        }
+        return '<i class="fa fa-file-video-o"></i>'
+      } else if (type.match('audio.*')){
+        if (media.componentMediaId){
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
+          '<audio controls><source src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' type=\'audio/ogg\'><source src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' type=\'audio/mpeg\'></audio>',
+          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-audio-o"></i></button>'
+          ].join('');
+          return result;
+        }
+        return '<i class="fa fa-file-audio-o"></i>'
+      } else if (type.match('application.*')){
+        return '<i class="fa fa-file-code-o"></i>'
+      } else if (type.match('text.*')){
+        return '<i class="fa fa-file-text-o"></i>'
+      } else if (type.match('image.*')){
+        if (media.componentMediaId){
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
+          '<img class=\'thumb\' src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' title=\'', escape(media.fileName), '\' width=\'230\'    height=\'270\'/>',
+          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
+          ].join('');
+          return result;
+        }
+        return '<i class="fa fa-file-image-o"></i>'
+      } else {
+        return '<i class="fa fa-file-o"></i>'
+      }
+    } else {
+      return 'Missing Mime type, we cannot determine how to provide a preview.'
+    }
+  }
+
   _.mixin({
     shallowDiff: function(a,b) {
       return _.omit(a, function(v,k) { return b[k] === v; })
