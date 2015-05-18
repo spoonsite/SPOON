@@ -16,10 +16,13 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.security.ExternalUserManager;
+import edu.usu.sdl.openstorefront.security.UserRecord;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.AlertContext;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.AlertType;
@@ -28,6 +31,7 @@ import edu.usu.sdl.openstorefront.storage.model.AsyncTask;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
+import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
@@ -47,8 +51,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -389,6 +396,40 @@ public class SystemServiceImpl
 		AsyncTask task = persistenceService.findById(AsyncTask.class, taskId);
 		if (task != null) {
 			persistenceService.delete(task);
+		}
+	}
+
+	@Override
+	public void syncUserProfilesWithUserManagement(ExternalUserManager userManager)
+	{
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
+
+		//page through users
+		long pageSize = 200;
+		long maxRecords = persistenceService.countByExample(userProfileExample);
+		for (long i = 0; i < maxRecords; i = i + pageSize) {
+			QueryByExample queryByExample = new QueryByExample(userProfileExample);
+			queryByExample.setFirstResult((int) i);
+			queryByExample.setMaxResults((int) pageSize);
+			queryByExample.setReturnNonProxied(false);
+
+			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, queryByExample);
+			List<String> usernames = new ArrayList<>();
+			for (UserProfile userProfile : userProfiles) {
+				usernames.add(userProfile.getUsername());
+			}
+			List<UserRecord> userRecords = userManager.findUsers(usernames);
+			Set<String> activeUserSet = new HashSet<>();
+			for (UserRecord userRecord : userRecords) {
+				activeUserSet.add(userRecord.getUsername());
+			}
+			for (UserProfile userProfile : userProfiles) {
+				if (activeUserSet.contains(userProfile.getUsername()) == false) {
+					log.log(Level.INFO, "User not found in external user management, Inacvtivating user. (Sync Service)");
+					getUserService().deleteProfile(userProfile.getUsername());
+				}
+			}
 		}
 	}
 

@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
+import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import java.text.MessageFormat;
@@ -97,6 +98,7 @@ public class JobManager
 		addScheduledReportJob();
 		addComponentUpdate();
 		addComponentIntegrationJobs();
+		addUserProfileSyncjob();
 	}
 
 	private static void addComponentIntegrationJobs() throws SchedulerException
@@ -227,6 +229,26 @@ public class JobManager
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInMinutes(1)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addUserProfileSyncjob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding User Profile Sync Job");
+
+		JobDetail job = JobBuilder.newJob(UserProfileSyncJob.class)
+				.withIdentity("UserProfileSyncJob", JOB_GROUP_SYSTEM)
+				.withDescription("Run User Profile Sync")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("SUserProfileSyncJobrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInHours(24)
 						.repeatForever())
 				.build();
 
