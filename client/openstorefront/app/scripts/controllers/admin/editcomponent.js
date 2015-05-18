@@ -188,7 +188,10 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       });
       item.formData.push({
         "componentUploadOptions.uploadTags" : $scope.componentUploadOptions.uploadTags
-      });              
+      });
+      item.formData.push({
+        "componentUploadOptions.uploadIntegration" : $scope.componentUploadOptions.uploadIntegration
+      });      
     },
     onSuccessItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');

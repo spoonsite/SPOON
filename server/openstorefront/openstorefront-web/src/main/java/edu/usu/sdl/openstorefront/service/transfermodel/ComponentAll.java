@@ -87,6 +87,8 @@ public class ComponentAll
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
 
+	private IntegrationAll integrationAll;
+
 	public ComponentAll()
 	{
 	}
@@ -339,6 +341,16 @@ public class ComponentAll
 	public void setReviews(List<ReviewAll> reviews)
 	{
 		this.reviews = reviews;
+	}
+
+	public IntegrationAll getIntegrationAll()
+	{
+		return integrationAll;
+	}
+
+	public void setIntegrationAll(IntegrationAll integrationAll)
+	{
+		this.integrationAll = integrationAll;
 	}
 
 }
