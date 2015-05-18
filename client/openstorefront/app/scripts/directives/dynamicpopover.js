@@ -23,8 +23,8 @@ app.directive('dynamicPopover', ['$compile', function($compile){
       contentString: '@'
     },
     link: function(scope, element, attrs) {
-      console.log('attrs', attrs);
-      console.log('scope', scope);
+      // console.log('attrs', attrs);
+      // console.log('scope', scope);
 
       // define popover for this element
       scope.$watch('content', function() {

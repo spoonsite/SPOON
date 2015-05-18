@@ -26,16 +26,20 @@
     }
   }
 
-  utils.getMediaHtml = function(media){
+  utils.getMediaHtml = function(media, $sce){
     if (media && media.mimeType){
       var type = media.mimeType;
       if (type.match('video.*')) {
         if (media.componentMediaId){
-          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
-          '<videogular> <vg-media vg-src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' vg-preload=\'\\\'none\\\'\' vg-native-controls=\'true\'></vg-media></videogular>',
-          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>'
-          ].join('');
-          return result;
+          var srcs = [];
+          var result = $('<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" placement="top" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>');
+          srcs.push({src: $sce.trustAsResourceUrl('Media.action?LoadMedia&amp;mediaId='+media.componentMediaId).$$unwrapTrustedValue(), type: 'video/mp4'});             
+          srcs.push({src: $sce.trustAsResourceUrl('Media.action?LoadMedia&amp;mediaId='+media.componentMediaId).$$unwrapTrustedValue(), type: 'video/webm'});             
+          srcs.push({src: $sce.trustAsResourceUrl('Media.action?LoadMedia&amp;mediaId='+media.componentMediaId).$$unwrapTrustedValue(), type: 'video/ogg'}); 
+          var video = $('<videogular> <vg-media vg-src=\''+JSON.stringify(srcs)+'\' vg-preload="\'none\'" vg-native-controls=\'true\'></vg-media></videogular>');
+          result.attr('content-string', video.prop('outerHTML'));
+          
+          return result.prop('outerHTML');
         }
         return '<i class="fa fa-file-video-o"></i>'
       } else if (type.match('audio.*')){
@@ -44,6 +48,7 @@
           '<audio controls><source src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' type=\'audio/ogg\'><source src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' type=\'audio/mpeg\'></audio>',
           '" placement="top" trigger="click"><i class="fa fa-lg fa-file-audio-o"></i></button>'
           ].join('');
+          
           return result;
         }
         return '<i class="fa fa-file-audio-o"></i>'
@@ -53,10 +58,14 @@
         return '<i class="fa fa-file-text-o"></i>'
       } else if (type.match('image.*')){
         if (media.componentMediaId){
+          if (!media.fileName){
+            media.fileName = ' ';
+          }
           var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
-          '<img class=\'thumb\' src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' title=\'', escape(media.fileName), '\' width=\'230\'    height=\'270\'/>',
+          '<img class=\'thumb\' src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' title=\'', escape(media.fileName), '\' width=\'368\'    height=\'auto\'/>',
           '" placement="top" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
           ].join('');
+          
           return result;
         }
         return '<i class="fa fa-file-image-o"></i>'
@@ -78,8 +87,8 @@
       
       var r = {};
       _.each(a, function(v,k) {
-        if(b && b[k] === v) return;
-          // but what if it returns an empty object? still attach?
+        if (k !== 'createDts' && k !== 'updateDts') {
+          if(b && b[k] === v) return;
           var temp = _.isObject(v)
           ? b? _.diff(v, b[k]) : _.diff(v, '')
           : v
@@ -87,7 +96,8 @@
           if (!angular.equals({}, temp) && temp) {
             r[k] = temp
           }
-        });
+        }
+      });
       if (!angular.equals({}, r)){
         return r;
       }
