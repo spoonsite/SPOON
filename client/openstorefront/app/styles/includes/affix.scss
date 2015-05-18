@@ -148,6 +148,19 @@
   left:5px;
 }
 
+.bs-sidebar .nav .nav >li.active.edit:after,
+.bs-sidebar .nav .nav >li.edit:after{
+  content:"\f044";
+  color: #70B946;
+  font-family: FontAwesome;
+  border:none;
+  width:0;
+  height:0;
+  position:absolute;
+  top:0px;
+  left:5px;
+}
+
 .bs-docs-container .row,{
   position:relative;
 }

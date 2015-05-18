@@ -24,6 +24,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     $scope.test = 'This is a test';
     $scope.badgeFound = false;
+    $scope.lastMediaFile = '';
 
     $scope.submitter = {};
     $scope.submitter.firstName;
@@ -68,31 +69,25 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.details = {};
 
     $scope.formMedia;
-    $scope.config = {
-      sources: [
-      // {src: $sce.trustAsResourceUrl("http://familyhistorydatabase.org/tempfiles/Never Be Alone.mp3"), type: "audio/mp3"},
-      {src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.mp4"), type: "video/mp4"},
-      {src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.webm"), type: "video/webm"},
-      {src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.ogg"), type: "video/ogg"}
-      ],
-      tracks: [
-      {
-        src: "http://www.videogular.com/assets/subs/pale-blue-dot.vtt",
-        kind: "subtitles",
-        srclang: "en",
-        label: "English",
-        default: ""
-      }
-      ],
-      theme: "bower_components/bower_components/videogular-themes-default/videogular.css"
-      // plugins: {
-      //   poster: "http://www.videogular.com/assets/images/videogular.png"
-      // }
-    };
 
+    $scope.setEditable = function($event){
+      if ($scope.vitalsCheck()){
+        if ($scope.component.component) {
+          $scope.component.component.approvalState = 'N';
+          $scope.submit(true).then(function(){
+            $scope.scrollTo('vitals', 'vitals', '', $event, 'componentName');
+          }, function(){
+            if($event) {
+              $event.preventDefault();
+              $event.stopPropagation();
+            }
+          })
+        }
+      } 
+    }
 
     $scope.getMediaHtml = function(media){
-      return utils.getMediaHtml(media);
+      return utils.getMediaHtml(media, $sce);
     }
 
     $scope.getSubmission = function(){
@@ -101,9 +96,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         Business.submissionservice.getSubmission($scope.componentId, true).then(function(result){
           $scope.$broadcast('$UNLOAD', 'submissionLoader');
           if (result && result.component && result.component.componentId){
-            $scope.backup = angular.copy(result);              
+            $scope.backup = angular.copy(result);
+            $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
+            $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
             $scope.componentId = result.component.componentId;
-            $scope.component = result;
+            $scope.component = angular.copy(result);
+            $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
+            $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
             $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
           }
           deferred.resolve();
@@ -162,7 +161,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       $q.all($scope.getAttributes(),
       //
       $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader'),
-      $scope.loadLookup('MediaType', 'mediaTypes', 'mediaFormLoader'),
+      $scope.loadLookup('MediaType', 'mediaTypes', 'submissionLoader'),
       $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader')).then(function(){
         $scope.init();
       })
@@ -344,9 +343,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             Business.submissionservice.createSubmission(component).then(function(result){
               $scope.$broadcast('$UNLOAD', 'submissionLoader');
               if (result && result.component && result.component.componentId){
-                $scope.backup = angular.copy(result);              
+                $scope.backup = angular.copy(result);
+                $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
+                $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
                 $scope.componentId = result.component.componentId;
-                $scope.component = result;
+                $scope.component = angular.copy(result);
+                $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');              
+                $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');              
                 $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
               }
               // console.log('Success result', $scope.component);
@@ -356,12 +359,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
               deferred.reject();
               // console.log('Fail result', result);
             });
-          } else {
-            $scope.$broadcast('$UNLOAD', 'submissionLoader');
-            console.log('The init diff didn happen');
-            deferred.resolve();
-          }
-        })
+} else {
+  $scope.$broadcast('$UNLOAD', 'submissionLoader');
+  console.log('The init diff didn happen');
+  deferred.resolve();
+}
+})
       } else {//
         $scope.createInitialSubmit().then(function(component){
           component.attributes = $scope.getCompactAttributes(true);
@@ -397,9 +400,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             Business.submissionservice.updateSubmission(component).then(function(result){
               $scope.$broadcast('$UNLOAD', 'submissionLoader');
               if (result && result.component && result.component.componentId){
-                $scope.backup = angular.copy(result);              
+                $scope.backup = angular.copy(result);
+                $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
+                $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
                 $scope.componentId = result.component.componentId;
-                $scope.component = result;
+                $scope.component = angular.copy(result);
+                $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');              
+                $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');              
                 $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
               }
               deferred.resolve();
@@ -409,12 +416,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
               deferred.reject();
               // console.log('Fail result', result);
             });
-          } else {
-            $scope.$broadcast('$UNLOAD', 'submissionLoader');
-            console.log('The component did not change', compare, $scope.backup);
-            deferred.resolve();
-          }
-        })
+} else {
+  $scope.$broadcast('$UNLOAD', 'submissionLoader');
+  console.log('The component did not change', compare, $scope.backup);
+  deferred.resolve();
+}
+})
       }//
       return deferred.promise;
     }
@@ -613,7 +620,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       $scope.oldMediaState = val;
       $('#mediaUploadInput').val(null);
       $scope.mediaForm.mediaTypeCode = null;
-      $scope.mediaForm.description = null;
+      $scope.mediaForm.caption = null;
       $scope.mediaForm.link = null;
       $scope.lastMediaFile = '';
     }
@@ -623,7 +630,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.resetMediaInput = function(){
     $('#mediaUploadInput').val(null);
     $scope.mediaForm.mediaTypeCode = null;
-    $scope.mediaForm.description = null;
+    $scope.mediaForm.caption = null;
     $scope.lastMediaFile = '';
   }
 
@@ -632,7 +639,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $('#mediaUploadInput').val(null);
     $scope.mediaForm.mediaTypeCode = null;
     $scope.mediaForm.link = null;
-    $scope.mediaForm.description = null;
+    $scope.mediaForm.caption = null;
     $scope.lastMediaFile = '';
   }  
 
@@ -735,7 +742,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.srcList = []; //
   $scope.queue = [];
   $scope.resourceQueue = [];
-  $scope.addMedia = function (file, queue, form, loader) { //
+  $scope.addMedia = function (file, queue, form, loader, caption, typeCode) { //
     // if ($scope.mediaForm.link || 
     //   $scope.mediaUploader.queue.length === 0) {
 
@@ -748,7 +755,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       // $scope.saveEntity({
       //   alertId: 'saveMedia',
       //   alertDiv: 'componentWindowDiv',
-      //   loader: 'mediaFormLoader',
+      //   loader: 'submissionLoader',
       //   entityName: 'media',
       //   entity: $scope.mediaForm,
       //   entityId: $scope.mediaForm.componentMediaId,
@@ -758,9 +765,10 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       //   }
       // });
     // } else {
-      file.mediaTypeCode = $scope[form].mediaTypeCode;
-      file.description = $scope[form].description;
+      file[typeCode] = $scope[form][typeCode];
+      file[caption] = $scope[form][caption];
       file.mimeType = file._file? file._file.type: file.file.type;
+      
       if (file._file){
         $scope.readFile(file._file, function(result){
           queue.push({file: file, dom:result});
@@ -846,6 +854,64 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
   }
 
+  $scope.removeFromQueue = function(file){
+    console.log('MediaUploader', $scope.mediaUploader);
+    console.log('file', file);
+    console.log('Queue', $scope.mediaUploader.queue);
+
+    var found = _.find($scope.mediaUploader.queue, file.file);
+    if (found){
+      console.log('found', found);
+      found = _.indexOf($scope.mediaUploader.queue, found);
+      $scope.mediaUploader.queue.splice(found, 1);
+      console.log('MediaUploader', $scope.mediaUploader);
+    }
+    found = _.find($scope.queue, file);
+    if (found){
+      console.log('found', found);
+      found = _.indexOf($scope.queue, found);
+      $scope.queue.splice(found, 1);
+      console.log('QUEUE', $scope.queue);
+    }
+  }
+
+  $scope.hardDeleteEntity = function(options){
+    var response = window.confirm("Are you sure you want to DELETE "+ options.entityName + "?");
+    if (response && $scope.componentId) {
+      $scope.$emit('$TRIGGERLOAD', options.loader);
+      Business.submissionservice.forceRemoveEnity({
+        componentId: $scope.componentId,
+        entity: options.entityPath,
+        entityId: options.entityId
+      }).then(function (result) {          
+        $scope.$emit('$TRIGGERUNLOAD', options.loader);
+        options.loadEntity();
+      });
+    }
+  };
+
+  $scope.deleteMedia = function(media){
+    if (media.componentMediaId) {
+      $scope.hardDeleteEntity({
+        loader: 'submissionLoader',
+        entityName: 'Media',
+        entityPath: 'media',
+        entityId: media.componentMediaId,
+        loadEntity: function(){
+          $scope.getSubmission();
+        }        
+      }); 
+    } else {
+      var found = _.find($scope.component.media, media);
+      if (found){
+        console.log('found', found);
+        found = _.indexOf($scope.component.media, found);
+        $scope.component.media.splice(found, 1);
+        console.log('MediaUploader', $scope.component.media);
+      }
+    }
+  }; 
+
   // media uploader
   $scope.mediaUploader = new FileUploader({ //
     url: 'Media.action?UploadMedia',
@@ -864,11 +930,11 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       } else if (file.file) {
         $scope.lastMediaFile = file.file.name;
       }
-      $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaPreviewLoader');
+      $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaPreviewLoader', 'caption', 'mediaTypeCode');
       $scope.resetMediaInput();
     },
     onBeforeUploadItem: function(item) {
-      $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
+      $scope.$emit('$TRIGGERLOAD', 'submissionLoader');
 
       item.formData.push({
         "componentMedia.componentId" : $scope.componentForm.componentId
@@ -888,7 +954,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       }
     },
     onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader');
 
       //check response for a fail ticket or a error model
       if (response.success) {
@@ -907,11 +973,55 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       }
     },
     onErrorItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader');
       triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
     }      
   });     
 
+
+
+$scope.removeFromResourceQueue = function(file){
+  console.log('MediaUploader', $scope.resourceUploader);
+  console.log('file', file);
+  console.log('Queue', $scope.resourceUploader.queue);
+
+  var found = _.find($scope.resourceUploader.queue, file.file);
+  if (found){
+    console.log('found', found);
+    found = _.indexOf($scope.resourceUploader.queue, found);
+    $scope.resourceUploader.queue.splice(found, 1);
+    console.log('resourceUploader', $scope.resourceUploader);
+  }
+  found = _.find($scope.resourceQueue, file);
+  if (found){
+    console.log('found', found);
+    found = _.indexOf($scope.resourceQueue, found);
+    $scope.resourceQueue.splice(found, 1);
+    console.log('QUEUE', $scope.resourceQueue);
+  }
+}
+
+  $scope.deleteResource = function(resource){//
+    if (resource.resourceId) {
+      $scope.hardDeleteEntity({
+        loader: 'submissionLoader',
+        entityName: 'Resource',
+        entityPath: 'resources',
+        entityId: resource.resourceId,
+        loadEntity: function(){
+          $scope.loadResources();
+        }        
+      }); 
+    } else {
+      var found = _.find($scope.component.resources, resource);
+      if (found){
+        console.log('found', found);
+        found = _.indexOf($scope.component.resources, found);
+        $scope.component.resources.splice(found, 1);
+        console.log('MediaUploader', $scope.component.resources);
+      }
+    }
+  };
 
   // Resource uploader
   $scope.resourceUploader = new FileUploader({//
@@ -931,7 +1041,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       } else if (file.file) {
         $scope.lastResourceFile = file.file.name;
       }
-      $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'resourcePreviewLoader');
+      $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'resourcePreviewLoader', 'description', 'resourceType');
       $scope.resetResourceInput();
     },
     onBeforeUploadItem: function(item) {

@@ -83,11 +83,9 @@
 
   submissionservice.getSubmission = function (id, override) {
     var result = $q.defer();
-    if (id)
-    {
+    if (id) {
       var url = 'api/v1/resource/componentsubmissions/' + encodeURIComponent(id);
-      var value = null;
-      value = checkExpire('componentSubmission_' + id, minute * 2);
+      var value = checkExpire('componentSubmission_' + id, minute * 2);
       if (value && !override) {
         result.resolve(value);
       } else {
@@ -114,6 +112,28 @@
     }
     return result.promise;
   };
+
+
+  submissionservice.forceRemoveEnity = function (options) {
+    var deferred = $q.defer();
+
+    $http({
+      'method': 'DELETE',
+      'url': 'api/v1/resource/componentsubmissions/' + encodeURIComponent(options.componentId) + '/' + encodeURIComponent(options.entity) + '/' + encodeURIComponent(options.entityId) + '/force'
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+      if (data && isNotRequestError(data)) {
+        removeError();
+        deferred.resolve(data);
+      } else {
+        deferred.resolve(data);
+      }
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+      showServerError(data, 'body');
+      deferred.reject('There was an error');
+    });
+
+    return deferred.promise;
+  };    
 
   submissionservice.createSubmission = function (requiredForComponent) {
     var deferred = $q.defer();
