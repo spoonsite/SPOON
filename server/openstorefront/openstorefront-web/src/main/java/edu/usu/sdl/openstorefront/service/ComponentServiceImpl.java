@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.service.transfermodel.BulkComponentAttributeCh
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
+import edu.usu.sdl.openstorefront.service.transfermodel.IntegrationAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.QuestionAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
@@ -1246,6 +1247,33 @@ public class ComponentServiceImpl
 			}
 		}
 
+		if (options.getUploadIntegration()) {
+			if (componentAll.getIntegrationAll() != null) {
+				//Note: this should effect watches or component updating.
+
+				componentAll.getIntegrationAll().getIntegration().setComponentId(component.getComponentId());
+				validationModel = new ValidationModel(componentAll.getIntegrationAll().getIntegration());
+				validationModel.setConsumeFieldsOnly(true);
+				validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid()) {
+
+					saveComponentIntegration(componentAll.getIntegrationAll().getIntegration());
+
+					for (ComponentIntegrationConfig config : componentAll.getIntegrationAll().getConfigs()) {
+						validationModel = new ValidationModel(config);
+						validationModel.setConsumeFieldsOnly(true);
+						validationResult = ValidationUtil.validate(validationModel);
+						if (validationResult.valid()) {
+							config.setComponentId(component.getComponentId());
+							saveComponentIntegrationConfig(config);
+						}
+					}
+				} else {
+					throw new OpenStorefrontRuntimeException(validationResult.toString());
+				}
+			}
+		}
+
 		if (Component.INACTIVE_STATUS.equals(component.getActiveStatus())) {
 			getUserService().removeAllWatchesForComponent(component.getComponentId());
 			getSearchService().deleteById(component.getComponentId());
@@ -2096,6 +2124,22 @@ public class ComponentServiceImpl
 						allReviews.add(reviewAll);
 					}
 					componentAll.setReviews(allReviews);
+
+					ComponentIntegration componentIntegrationExample = new ComponentIntegration();
+					componentIntegrationExample.setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
+					componentIntegrationExample.setComponentId(componentId);
+
+					ComponentIntegration integration = persistenceService.queryOneByExample(ComponentIntegration.class, componentIntegrationExample);
+					if (integration != null) {
+						IntegrationAll integrationAll = new IntegrationAll();
+						integrationAll.setIntegration(integration);
+
+						ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
+						configExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
+						configExample.setComponentId(componentId);
+						integrationAll.setConfigs(persistenceService.queryByExample(ComponentIntegrationConfig.class, configExample));
+						componentAll.setIntegrationAll(integrationAll);
+					}
 
 					element = new Element(componentId, componentAll);
 					OSFCacheManager.getComponentCache().put(element);

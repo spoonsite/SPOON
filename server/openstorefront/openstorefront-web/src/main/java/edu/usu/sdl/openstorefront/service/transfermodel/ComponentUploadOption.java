@@ -25,6 +25,7 @@ public class ComponentUploadOption
 	private boolean uploadReviews;
 	private boolean uploadQuestions;
 	private boolean uploadTags;
+	private boolean uploadIntegration;
 
 	public ComponentUploadOption()
 	{
@@ -58,6 +59,16 @@ public class ComponentUploadOption
 	public void setUploadTags(boolean uploadTags)
 	{
 		this.uploadTags = uploadTags;
+	}
+
+	public boolean getUploadIntegration()
+	{
+		return uploadIntegration;
+	}
+
+	public void setUploadIntegration(boolean uploadIntegration)
+	{
+		this.uploadIntegration = uploadIntegration;
 	}
 
 }
