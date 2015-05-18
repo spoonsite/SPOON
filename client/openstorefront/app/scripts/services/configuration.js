@@ -373,11 +373,11 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       }).success(function(data, status, headers, config){
         if (data && isNotRequestError(data) ) {
           deferred.resolve(data);
-        } else {
-          deferred.reject(false);
+        } else {          
+          deferred.reject(status);
         }
       }).error(function(data, status, headers, config){
-        deferred.reject(false);
+        deferred.reject(status);
       });
     } else {
       deferred.reject(false);
