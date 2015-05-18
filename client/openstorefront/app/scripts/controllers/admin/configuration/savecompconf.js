@@ -71,7 +71,13 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
 $scope.calcStatus = function(val)
 {
   return utils.calcStatus(val);
-}
+};
+
+$scope.cancelEdit = function(){
+  $scope.config = null;
+  $scope.integrationConfigId = null;
+  $scope.data.issue = null;
+};
 
 $scope.getIntegrationConf = function(compId) {
   if (compId) {
@@ -95,7 +101,7 @@ $scope.getIntegrationConf = function(compId) {
       });
     }
   };
-  $scope.getIntegrationConf($scope.componentId)
+  $scope.getIntegrationConf($scope.componentId);
 
 
   $scope.getTypeahead = function(val){
@@ -150,8 +156,7 @@ $scope.getIntegrationConf = function(compId) {
       }
       conf.issueNumber = $scope.data.issue;
       conf.projectType = $scope.data.jiraProject.projectType;
-      conf.issueType = $scope.data.jiraProject.issueType
-      conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
+      conf.issueType = $scope.data.jiraProject.issueType;
       conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
       // console.log('conf', conf);
 
@@ -165,9 +170,12 @@ $scope.getIntegrationConf = function(compId) {
         $scope.getIntegrationConf($scope.componentId);
         $scope.config = null;
       }, function(result){
-        triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
-        // console.log('Failed', result);
-        
+        if (result === 304) {
+          triggerAlert('<i class="fa fa-warning"></i>&nbsp;Issue number already exsists. <br> It needs to be unique per project.', 'saveIntegrationConf','.modal-dialog', 5000);
+        } else {
+          triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
+        }
+        // console.log('Failed', result);        
       });
     } else {
       triggerAlert('<i class="fa fa-warning"></i>&nbsp;You must select a project and issue type!', 'newConfig', '.modal-dialog', 6000);

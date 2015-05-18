@@ -3174,8 +3174,24 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 
 		if (validationResult.valid()) {
-			integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
-			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
+			//check for exsiting config with the same ticket
+			ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
+			configExample.setComponentId(componentId);
+			configExample.setIntegrationType(integrationConfig.getIntegrationType());
+			configExample.setProjectType(integrationConfig.getProjectType());
+			configExample.setIssueType(integrationConfig.getIssueType());
+			configExample.setIssueNumber(integrationConfig.getIssueNumber());
+
+			long count = service.getPersistenceService().countByExample(configExample);
+			if (count > 0) {
+				RestErrorModel restErrorModel = new RestErrorModel();
+				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
+				return Response.status(Response.Status.NOT_MODIFIED).entity(restErrorModel).build();
+			} else {
+				integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
+				integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
+				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
+			}
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
