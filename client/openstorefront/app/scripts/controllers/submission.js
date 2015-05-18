@@ -71,7 +71,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     $scope.formMedia;
 
     $scope.setEditable = function($event){
-      if ($scope.vitalsCheck()){
+      var response = window.confirm("Are you sure you want to resume editing your submission? This action remove your submission from the admin's pending queue and you will have to re-submit it for approval.");
+      if (response && $scope.vitalsCheck()){
         if ($scope.component.component) {
           $scope.component.component.approvalState = 'N';
           $scope.submit(true).then(function(){
@@ -561,7 +562,10 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     // Metadata section
     $scope.removeMetadata = function(index){
-      $scope.component.metadata.splice(index, 1);
+      if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+
+        $scope.component.metadata.splice(index, 1);
+      }
     }
     $scope.addMetadata = function(form){
       if ($scope.metadataForm.value && $scope.metadataForm.label) {
@@ -574,7 +578,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     // tag section
     $scope.removeTag = function(index){
-      $scope.component.tags.splice(index, 1);
+      if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+        $scope.component.tags.splice(index, 1);
+      }
     }
     $scope.addTag = function(form){
       if ( $scope.tagsForm.text ) {
@@ -594,10 +600,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return  found? found.description : type;
   }
   $scope.removeContact = function(index){
-    var originalLength = $scope.component.contacts.length;
-    var afterLength = $filter('contactsfilter')($scope.component.contacts, 'contactType').length;
-    index = index + (originalLength - afterLength);
-    $scope.component.contacts.splice(index, 1);
+    if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+      var originalLength = $scope.component.contacts.length;
+      var afterLength = $filter('contactsfilter')($scope.component.contacts, 'contactType').length;
+      index = index + (originalLength - afterLength);
+      $scope.component.contacts.splice(index, 1);
+    }
   }
   $scope.addContact = function(form){
     if ( $scope.contactForm ) {
@@ -676,7 +684,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
   // contact section
   $scope.removeDependency = function(index){
-    $scope.component.externalDependencies.splice(index, 1);
+    if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+      $scope.component.externalDependencies.splice(index, 1);
+    }
   }
   $scope.addDependency = function(form){
     // console.log('$scope.dependencyForm', $scope.dependencyForm);
@@ -855,23 +865,25 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   }
 
   $scope.removeFromQueue = function(file){
-    console.log('MediaUploader', $scope.mediaUploader);
-    console.log('file', file);
-    console.log('Queue', $scope.mediaUploader.queue);
-
-    var found = _.find($scope.mediaUploader.queue, file.file);
-    if (found){
-      console.log('found', found);
-      found = _.indexOf($scope.mediaUploader.queue, found);
-      $scope.mediaUploader.queue.splice(found, 1);
+    if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
       console.log('MediaUploader', $scope.mediaUploader);
-    }
-    found = _.find($scope.queue, file);
-    if (found){
-      console.log('found', found);
-      found = _.indexOf($scope.queue, found);
-      $scope.queue.splice(found, 1);
-      console.log('QUEUE', $scope.queue);
+      console.log('file', file);
+      console.log('Queue', $scope.mediaUploader.queue);
+
+      var found = _.find($scope.mediaUploader.queue, file.file);
+      if (found){
+        console.log('found', found);
+        found = _.indexOf($scope.mediaUploader.queue, found);
+        $scope.mediaUploader.queue.splice(found, 1);
+        console.log('MediaUploader', $scope.mediaUploader);
+      }
+      found = _.find($scope.queue, file);
+      if (found){
+        console.log('found', found);
+        found = _.indexOf($scope.queue, found);
+        $scope.queue.splice(found, 1);
+        console.log('QUEUE', $scope.queue);
+      }
     }
   }
 
@@ -891,25 +903,28 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   };
 
   $scope.deleteMedia = function(media){
-    if (media.componentMediaId) {
-      $scope.hardDeleteEntity({
-        loader: 'submissionLoader',
-        entityName: 'Media',
-        entityPath: 'media',
-        entityId: media.componentMediaId,
-        loadEntity: function(){
-          $scope.getSubmission();
-        }        
-      }); 
-    } else {
-      var found = _.find($scope.component.media, media);
-      if (found){
-        console.log('found', found);
-        found = _.indexOf($scope.component.media, found);
-        $scope.component.media.splice(found, 1);
-        console.log('MediaUploader', $scope.component.media);
+    if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+
+      if (media.componentMediaId) {
+        $scope.hardDeleteEntity({
+          loader: 'submissionLoader',
+          entityName: 'Media',
+          entityPath: 'media',
+          entityId: media.componentMediaId,
+          loadEntity: function(){
+            $scope.getSubmission();
+          }        
+        }); 
+      } else {
+        var found = _.find($scope.component.media, media);
+        if (found){
+          console.log('found', found);
+          found = _.indexOf($scope.component.media, found);
+          $scope.component.media.splice(found, 1);
+          console.log('MediaUploader', $scope.component.media);
+        }
       }
-    }
+    }; 
   }; 
 
   // media uploader
@@ -981,46 +996,51 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
 
 $scope.removeFromResourceQueue = function(file){
-  console.log('MediaUploader', $scope.resourceUploader);
-  console.log('file', file);
-  console.log('Queue', $scope.resourceUploader.queue);
+  if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
 
-  var found = _.find($scope.resourceUploader.queue, file.file);
-  if (found){
-    console.log('found', found);
-    found = _.indexOf($scope.resourceUploader.queue, found);
-    $scope.resourceUploader.queue.splice(found, 1);
-    console.log('resourceUploader', $scope.resourceUploader);
-  }
-  found = _.find($scope.resourceQueue, file);
-  if (found){
-    console.log('found', found);
-    found = _.indexOf($scope.resourceQueue, found);
-    $scope.resourceQueue.splice(found, 1);
-    console.log('QUEUE', $scope.resourceQueue);
+    console.log('MediaUploader', $scope.resourceUploader);
+    console.log('file', file);
+    console.log('Queue', $scope.resourceUploader.queue);
+
+    var found = _.find($scope.resourceUploader.queue, file.file);
+    if (found){
+      console.log('found', found);
+      found = _.indexOf($scope.resourceUploader.queue, found);
+      $scope.resourceUploader.queue.splice(found, 1);
+      console.log('resourceUploader', $scope.resourceUploader);
+    }
+    found = _.find($scope.resourceQueue, file);
+    if (found){
+      console.log('found', found);
+      found = _.indexOf($scope.resourceQueue, found);
+      $scope.resourceQueue.splice(found, 1);
+      console.log('QUEUE', $scope.resourceQueue);
+    }
   }
 }
 
   $scope.deleteResource = function(resource){//
-    if (resource.resourceId) {
-      $scope.hardDeleteEntity({
-        loader: 'submissionLoader',
-        entityName: 'Resource',
-        entityPath: 'resources',
-        entityId: resource.resourceId,
-        loadEntity: function(){
-          $scope.loadResources();
-        }        
-      }); 
-    } else {
-      var found = _.find($scope.component.resources, resource);
-      if (found){
-        console.log('found', found);
-        found = _.indexOf($scope.component.resources, found);
-        $scope.component.resources.splice(found, 1);
-        console.log('MediaUploader', $scope.component.resources);
+    if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+      if (resource.resourceId) {
+        $scope.hardDeleteEntity({
+          loader: 'submissionLoader',
+          entityName: 'Resource',
+          entityPath: 'resources',
+          entityId: resource.resourceId,
+          loadEntity: function(){
+            $scope.loadResources();
+          }        
+        }); 
+      } else {
+        var found = _.find($scope.component.resources, resource);
+        if (found){
+          console.log('found', found);
+          found = _.indexOf($scope.component.resources, found);
+          $scope.component.resources.splice(found, 1);
+          console.log('MediaUploader', $scope.component.resources);
+        }
       }
-    }
+    };
   };
 
   // Resource uploader
@@ -1224,26 +1244,31 @@ $scope.scrollTo = function(id, current, parent, $event, focusId) {
       selected: '=',
       options: '@',
       list: '=',
-      onChange: '&'
+      onChange: '&',
+      ngDisabled: '='
     },
     template: $templateCache.get('multiselect/select.tmp.html'),
     link: function(scope, elem, attrs) {
       scope.addToSelection = function(selection){
-        scope.selected = scope.selected && scope.selected.constructor === Array? scope.selected: [];
-        _.contains(scope.selected, selection) || !selection? '':scope.selected.push(selection);
-        scope.onChange(true);
+        if (!scope.ngDisabled) {
+          scope.selected = scope.selected && scope.selected.constructor === Array? scope.selected: [];
+          _.contains(scope.selected, selection) || !selection? '':scope.selected.push(selection);
+          scope.onChange(true);
+        }
       }
       scope.removeItem = function(item){
-        var index = _.find(scope.selected, {label: item.label});
-        if (index) {
-          index = _.indexOf(scope.selected, index);
-          scope.selected.splice(index, 1);
-        }
-        if (scope.selected.length === 0){
-          var elements = elem.find('select')[0].options;
+        if (!scope.ngDisabled) {
+          var index = _.find(scope.selected, {label: item.label});
+          if (index) {
+            index = _.indexOf(scope.selected, index);
+            scope.selected.splice(index, 1);
+          }
+          if (scope.selected.length === 0){
+            var elements = elem.find('select')[0].options;
 
-          for(var i = 0; i < elements.length; i++){
-            elements[i].selected = false;
+            for(var i = 0; i < elements.length; i++){
+              elements[i].selected = false;
+            }
           }
         }
       }

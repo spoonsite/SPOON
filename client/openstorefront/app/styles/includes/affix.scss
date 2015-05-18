@@ -122,9 +122,31 @@
 .bs-sidebar .nav .nav >li.complete:before{
   border:none;
 }
+.bs-sidebar .nav >li.active.edit:before,
+.bs-sidebar .nav >li.edit:before{
+  border:none;
+}
+
+.bs-sidebar .nav .nav >li.active.edit:before,
+.bs-sidebar .nav .nav >li.edit:before{
+  border:none;
+}
 .bs-sidebar .nav >li.active.complete:after,
 .bs-sidebar .nav >li.complete:after{
   content:"\f00c";
+  color: #70B946;
+  font-family: FontAwesome;
+  border:none;
+  width:0;
+  height:0;
+  position:absolute;
+  top:8px;
+  left:5px;
+}
+
+.bs-sidebar .nav >li.active.edit:after,
+.bs-sidebar .nav >li.edit:after{
+  content:"\f044";
   color: #70B946;
   font-family: FontAwesome;
   border:none;

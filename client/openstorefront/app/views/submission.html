@@ -60,8 +60,8 @@ body {
             <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck(), 'complete': component.component.approvalState !== 'N'}">
               <a target="_self" href="#reviewAndSubmit" ng-click="updateSave($event)">Revew/Submit</a>
             </li>
-            <hr style="margin:2px 0;">
-            <li data-target="#" ng-show="component.component.approvalSate !=='N' && component.component.approvalState !=='A'" class="edit">
+            <hr ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  style="margin:2px 0;">
+            <li data-target="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  class="edit">
               <a target="_self" href="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" ng-click="setEditable($event)">Edit Component</a>
             </li>
           </ul>
@@ -180,7 +180,7 @@ body {
               <tr class="ng-scope" ng-repeat="attribute in requiredAttributes | shownattribute">
                 <td ><span data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}" class="required ng-binding" >{{attribute.description}}</span></td>
                 <td>
-                  <select ng-init="setDefaultAttribute(attribute.attributeType, attribute, true)" type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[attribute.attributeType]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute track by code.code "></select>
+                  <select  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')" ng-init="setDefaultAttribute(attribute.attributeType, attribute, true)" type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[attribute.attributeType]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute track by code.code "></select>
                 </td>
               </tr>
             </tbody>
@@ -301,8 +301,8 @@ body {
                   <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.description}} information" data-trigger="hover" ng-click="openInfo(attribute)"></i>
                 </span></td>
                 <td>
-                  <multiselect ng-if="attribute.allowMultipleFlg" on-change="vitalsCheck()" selected="component.attributes[attribute.attributeType]" options="code as code.label for code in list" list="attribute.codes | makeattribute:attribute"></multiselect>
-                  <select class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[attribute.attributeType]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                  <multiselect ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" on-change="vitalsCheck()" selected="component.attributes[attribute.attributeType]" options="code as code.label for code in list" list="attribute.codes | makeattribute:attribute"></multiselect>
+                  <select  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')" class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[attribute.attributeType]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
                   <div class="tags" ng-if="!attribute.allowMultipleFlg && component.attributes[attribute.attributeType]">
                     <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                       <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
@@ -328,7 +328,7 @@ body {
           <div class="form-group required" show-errors >
             <label class="col-sm-2 control-label ">Contact Type</label>
             <div class="col-sm-10">
-              <select type="text" name="contactType" id="contactType" class="form-control" ng-focus="contactUIForm.contactType.$focused=true" 
+              <select  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')" type="text" name="contactType" id="contactType" class="form-control" ng-focus="contactUIForm.contactType.$focused=true" 
               ng-blur="contactUIForm.contactType.$focused=false" ng-model="contactForm.contactType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in contactTypes | contactsfilter:'code'" placeholder="Select Type" required></select>
             </div>
             <div style="clear:both;"></div>
@@ -584,7 +584,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Resource Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="resourceType" id="resourceFormType" ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="showResourceUpload === 'true'"></select>
+                  <select  type="text" class="form-control" name="resourceType" id="resourceFormType" ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || showResourceUpload === 'true'"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
@@ -635,7 +635,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Resource Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="resourceType"  ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || isFullResource"></select>
+                  <select type="text" class="form-control" name="resourceType"  ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || lastResourceFile || showResourceUpload !== 'true' || isFullResource"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
@@ -715,7 +715,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Media Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="typeCode" id="mediaFormType" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"></select>
+                  <select type="text" class="form-control" name="typeCode" id="mediaFormType" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || lastMediaFile || showMediaUpload !== 'true' || isFull"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
@@ -752,7 +752,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Media Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="showMediaUpload === 'true'"></select>
+                  <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || showMediaUpload === 'true'"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
