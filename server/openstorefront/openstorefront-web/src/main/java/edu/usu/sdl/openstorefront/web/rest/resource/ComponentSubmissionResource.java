@@ -31,7 +31,9 @@ import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -43,6 +45,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Component Submission
@@ -170,11 +173,39 @@ public class ComponentSubmissionResource
 							List<ComponentMedia> componentMedia = service.getPersistenceService().queryByExample(ComponentMedia.class, componentMediaExample);
 							componentAll.getMedia().addAll(componentMedia);
 
+							//clean out duplicate media
+							Map<String, ComponentMedia> mediaMap = new HashMap<>();
+							for (ComponentMedia media : componentAll.getMedia()) {
+								String id = media.getComponentMediaId();
+								if (StringUtils.isBlank(id)) {
+									id = media.getLink();
+								}
+								if (mediaMap.containsKey(id) == false) {
+									mediaMap.put(id, media);
+								}
+							}
+							componentAll.getMedia().clear();
+							componentAll.getMedia().addAll(mediaMap.values());
+
 							ComponentResource componentResourceExample = new ComponentResource();
 							componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 							componentResourceExample.setComponentId(exstingComponent.getComponentId());
 							List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
 							componentAll.getResources().addAll(componentResources);
+
+							//clean out duplicate resouces
+							Map<String, ComponentResource> resourceMap = new HashMap<>();
+							for (ComponentResource resource : componentAll.getResources()) {
+								String id = resource.getResourceId();
+								if (StringUtils.isBlank(id)) {
+									id = resource.getResourceType() + "-" + resource.getLink();
+								}
+								if (mediaMap.containsKey(id) == false) {
+									resourceMap.put(id, resource);
+								}
+							}
+							componentAll.getResources().clear();
+							componentAll.getResources().addAll(resourceMap.values());
 
 							service.getComponentService().checkComponentCancelStatus(componentAll.getComponent().getComponentId(), approveStatus);
 

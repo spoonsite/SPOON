@@ -388,7 +388,7 @@
 					<artifactId>truecommons-key-swing</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>	
+		</dependency>
 	</dependencies>
 	
 	<build>

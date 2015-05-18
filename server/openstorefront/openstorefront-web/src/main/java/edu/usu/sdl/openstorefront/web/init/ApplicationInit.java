@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import edu.usu.sdl.openstorefront.service.manager.LDAPManager;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
@@ -64,6 +65,7 @@ public class ApplicationInit
 		startupManager(new UserAgentManager());
 		startupManager(new AsyncTaskManager());
 		startupManager(new ReportManager());
+		startupManager(new LDAPManager());
 	}
 
 	private void startupManager(Initializable initializable)
@@ -83,6 +85,7 @@ public class ApplicationInit
 		}
 
 		//Shutdown in reverse order to make sure the dependancies are good.
+		shutdownManager(new LDAPManager());
 		shutdownManager(new ReportManager());
 		shutdownManager(new AsyncTaskManager());
 		shutdownManager(new UserAgentManager());
