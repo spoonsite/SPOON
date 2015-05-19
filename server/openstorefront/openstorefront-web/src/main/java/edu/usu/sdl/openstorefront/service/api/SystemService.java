@@ -145,7 +145,6 @@ public interface SystemService
 	 *
 	 * @param globalIntegrationModel
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel);
 
 	/**

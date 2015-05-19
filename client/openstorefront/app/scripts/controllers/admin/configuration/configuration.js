@@ -76,7 +76,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     Business.configurationservice.getGlobalConfig().then(function(result) {
       // console.log('refreshRate', result);
       $scope.cron.global_cron = result? result.jiraRefreshRate? result.jiraRefreshRate: null: null;
-      $scope.cron.global_cron_display = result? result.componentCron? result.cronExpressionDescription + ' (' + result.jiraRefreshRate + ')': null: null;
+      $scope.cron.global_cron_display = result ? result.cronExpressionDescription + ' (' + result.jiraRefreshRate + ')': null;
     }, function() {
       $scope.cron.global_cron = null;
     });
