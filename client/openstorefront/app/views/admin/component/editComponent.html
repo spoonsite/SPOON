@@ -22,8 +22,9 @@ limitations under the License.
     <tab heading="General">			
       <hr>
       General and required information on a component.<br><br>
+      <button class="btn btn-primary pull-right" ng-click="setupModal(componentForm.componentId, 'A')"><i class="fa fa-cog"></i>&nbsp;Integrations</button>	  
       <div class="alert-warning" style="color: black; font-size: 18px; text-align: center;" ng-show="flags.showIntegrationBanner">
-        Data is being partially managed by an Integration. {{integrationText}}
+        Data is being partially managed by an Integration. {{integration.integrationText}}
       </div>
       <form class="form-horizontal" name='componentUIForm' role="form"  ng-submit="saveComponent()" style="padding-left: 10px; padding-right: 10px;">
         <div class="form-group">

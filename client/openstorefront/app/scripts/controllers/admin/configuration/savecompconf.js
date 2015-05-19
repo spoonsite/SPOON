@@ -170,8 +170,8 @@ $scope.getIntegrationConf = function(compId) {
         $scope.ticketContents = null;
         $scope.loading--;
       })
-    }, 1000);
-  }
+    }, 1500);
+  };
 
   $scope.$watch('loading', function(value){ //
     if (value > 0){
@@ -200,21 +200,21 @@ $scope.getIntegrationConf = function(compId) {
         // console.log('conf result', result);
         // console.log('conf', conf);
         $scope.$emit('$TRIGGEREVENT', '$UPDATECONFFORID', $scope.componentId);
-        triggerAlert('The configuration was saved', 'saveIntegrationConf','.modal-dialog', 5000);
+        triggerAlert('The configuration was saved', 'saveIntegrationConf','body', 5000);
         $scope.data.jiraProject = null;
         $scope.data.issue = null;
         $scope.getIntegrationConf($scope.componentId);
         $scope.config = null;
       }, function(result){
         if (result === 304) {
-          triggerAlert('<i class="fa fa-warning"></i>&nbsp;Issue number already exsists. <br> It needs to be unique per project.', 'saveIntegrationConf','.modal-dialog', 5000);
+          triggerAlert('<i class="fa fa-warning"></i>&nbsp;Issue number already exsists. <br> It needs to be unique per project.', 'saveIntegrationConf','body', 5000);
         } else {
-          triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
+          triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','body', 5000);
         }
         // console.log('Failed', result);        
       });
     } else {
-      triggerAlert('<i class="fa fa-warning"></i>&nbsp;You must select a project and issue type!', 'newConfig', '.modal-dialog', 6000);
+      triggerAlert('<i class="fa fa-warning"></i>&nbsp;You must select a project and issue type!', 'newConfig', 'body', 6000);
     }
     return false;
   }

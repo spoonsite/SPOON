@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import javax.ws.rs.QueryParam;
 
 /**
@@ -27,6 +29,18 @@ public class ComponentFilterParams
 
 	@QueryParam("approvalState")
 	private String approvalState;
+
+	public static ComponentFilterParams defaultFilter()
+	{
+		ComponentFilterParams filterQueryParams = new ComponentFilterParams();
+		filterQueryParams.setMax(Integer.MAX_VALUE);
+		filterQueryParams.setOffset(0);
+		filterQueryParams.setStatus(BaseEntity.ACTIVE_STATUS);
+		filterQueryParams.setAll(false);
+		filterQueryParams.setSortField("description");
+		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_DESCENDING);
+		return filterQueryParams;
+	}
 
 	public ComponentFilterParams()
 	{
