@@ -66,6 +66,7 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
@@ -262,6 +263,24 @@ public class ComponentRESTResource
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
 		return sendSingleEntityResponse(view);
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets a component  admin view")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentAdminView.class)
+	@Path("/{id}/admin")
+	public Response getComponentAdminView(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		ComponentAdminView componentAdminView = null;
+		ComponentAdminWrapper views = service.getComponentService().getFilteredComponents(ComponentFilterParams.defaultFilter(), componentId);
+		if (views.getComponents().isEmpty() == false) {
+			componentAdminView = views.getComponents().get(0);
+		}
+		return sendSingleEntityResponse(componentAdminView);
 	}
 
 	@GET

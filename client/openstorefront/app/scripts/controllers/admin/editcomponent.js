@@ -241,6 +241,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
     $scope.componentForm = component.component !== undefined ? angular.copy(component.component) : {};
     $scope.editorOptions = getCkBasicConfig(true);
+    $scope.integration = {};
 
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},
@@ -249,6 +250,46 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     
     $scope.predicate = [];
     $scope.reverse = [];      
+    
+    $scope.setupModal = function(componentId, enabled) {
+      var deferred = $q.defer();
+      var modalInstance = $uiModal.open({
+        templateUrl: 'views/admin/configuration/savecompconf.html',
+        controller: 'SavecompconfCtrl',
+        size: 'lg',
+        backdrop: 'static',
+        resolve: {
+          componentId: function(){
+            return componentId;
+          },
+          enabled: function() {
+            return enabled;
+          },   
+          size: function() {
+            return 'lg';
+          }
+        }
+      });
+
+      modalInstance.result.then(function (result) {        
+      }, function (result) {
+        $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
+         Business.componentservice.getComponent(componentId).then(function(results){
+           $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+           $scope.componentForm = results.component;        
+           $scope.integration.integrationText = results.integrationManagement;
+           if (results.integrationManagement){
+             $scope.flags.showIntegrationBanner = true;      
+           }  else {
+             $scope.flags.showIntegrationBanner = false;
+           }            
+         }, function(results){
+           $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+         });
+      });
+      deferred.resolve();
+      return deferred.promise;
+    };    
     
     var basicForm = {
       saveText: 'Add',
@@ -264,7 +305,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.flags = {};
     if (component.integrationManagement){
       $scope.flags.showIntegrationBanner = true;
-      $scope.integrationText = component.integrationManagement;
+      $scope.integration.integrationText = component.integrationManagement;
     }
     $scope.componentAttributeQueryFilter = angular.copy(utils.queryFilter);      
 

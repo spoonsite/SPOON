@@ -816,6 +816,27 @@ componentservice.deleteComponent = function (componentId) {
   return deferred.promise;
 };
 
+componentservice.getComponent = function (componentId) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + componentId + '/admin'
+  }).success(function (data, status, headers, config) { 
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
+  }).error(function (data, status, headers, config) { 
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};
+
 componentservice.getComponentLookupList = function () {
   var deferred = $q.defer();
 
