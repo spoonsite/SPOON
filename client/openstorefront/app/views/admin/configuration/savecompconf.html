@@ -14,6 +14,16 @@
 </div>
 <div class="modal-body" id="editCompConfModal" ng-show="componentId">
   <loader trigger="editLoad"></loader>
+  
+  <panel class-list="edges" open-state="false" title="Override Refresh Rate Interval" class="ng-isolate-scope">
+	   <div class="" style="padding-left:0px; padding-right: 0; position: relative;">
+		  {{cron.componentCron}} <button class="btn btn-danger" ng-click="removeCompRefresh()"><i class="fa fa-close"></i>&nbsp;Clear</button>
+		  <p ng-show="cron.cronExpressionDescription">{{cron.cronExpressionDescription}}</p> 		  
+		  <cron ng-model="cron.componentCron" id="cmpRefreshRate" callback="saveCompRefresh()"></cron>
+	   </div>
+  </panel>
+  
+  
   <form class="form-horizontal" role="form" ng-show="componentId && integrationConfs.length">
     <div class="form-group form-group-md col-md-12" style="margin:0px;  padding:0px;">
       <button class="btn btn-default" ng-click="getIntegrationConf(componentId)"><i class="fa fa-refresh"></i>&nbsp;Refresh Table</button>

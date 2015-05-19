@@ -412,7 +412,7 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
     var url = 'api/v1/resource/components/integration?status=ALL';
     $http({
       'method': 'GET',
-      'url': url,
+      'url': url
     }).success(function(data, status, headers, config){
       if (data && isNotRequestError(data) ) {
         deferred.resolve(data);
@@ -423,7 +423,25 @@ app.factory('configurationservice', ['localCache', '$http', '$q', function(local
       deferred.reject(false);
     });
     return deferred.promise;
-  }
+  };
+  
+  service.getComponentIntegration = function(componentId) {
+    var deferred = $q.defer();
+    var url = 'api/v1/resource/components/' + componentId +'/integration';
+    $http({
+      'method': 'GET',
+      'url': url
+    }).success(function(data, status, headers, config){
+      if (data && isNotRequestError(data) ) {
+        deferred.resolve(data);
+      } else {
+        deferred.reject(false);
+      }
+    }).error(function(data, status, headers, config){
+      deferred.reject(false);
+    });
+    return deferred.promise;
+  };  
 
   service.runJob = function(componentId) {
     var deferred = $q.defer();

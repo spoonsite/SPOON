@@ -34,11 +34,32 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
   $scope.data.grabCompId;
   $scope.data.issue;
   $scope.data.jiraProject;
+  $scope.cron = {};
+  $scope.cron.componentCron = 'Using Global'; 
+  $scope.integration={};
+  
+  $scope.loadIntegration = function(){
+    $scope.$emit('$TRIGGERLOAD', 'ticketContLoad');
+    Business.configurationservice.getComponentIntegration($scope.componentId).then(function(result){
+      $scope.$emit('$TRIGGERUNLOAD', 'ticketContLoad');
+      if (result) {        
+       $scope.integration = result;
+       if (result.refreshRate) {
+        $scope.cron.componentCron = result.refreshRate;
+        $scope.cron.cronExpressionDescription = result.cronExpressionDescription;
+       } else {
+         $scope.cron.componentCron = 'Using Global';
+         $scope.cron.cronExpressionDescription = null;
+       }
+      }
+    });
+  };
+  $scope.loadIntegration();
 
   $scope.$watch('componentId', function(value){
     if (!$scope.componentId) {
     }
-  })
+  });
 
   $scope.$watch('data', function(value) {
     if (value.grabCompId && typeof value.grabCompId === 'object') {
@@ -49,9 +70,9 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
             $scope.getTypeahead(result.name).then(function(results){
               $scope.component = _.find(results, {'code': $scope.componentId});
               $scope.getIntegrationConf($scope.componentId);
-            })
+            });
           }
-        })
+        });
       }
     }
     if (value.issue){
@@ -78,6 +99,21 @@ $scope.cancelEdit = function(){
   $scope.integrationConfigId = null;
   $scope.data.issue = null;
 };
+
+  $scope.saveCompRefresh = function(){
+    Business.configurationservice.saveCompRefresh($scope.componentId, $scope.cron.componentCron).then(function(result){
+      $scope.loadIntegration();
+    });
+    return false;
+  };
+  
+  $scope.removeCompRefresh = function(){
+    Business.configurationservice.removeCompRefresh($scope.componentId).then(function(result){
+       $scope.cron.componentCron = 'Using Global';
+       $scope.cron.cronExpressionDescription = null;
+    });
+    return false;
+  };
 
 $scope.getIntegrationConf = function(compId) {
   if (compId) {

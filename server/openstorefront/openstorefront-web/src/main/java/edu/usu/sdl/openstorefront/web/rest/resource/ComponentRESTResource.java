@@ -2968,10 +2968,15 @@ public class ComponentRESTResource
 	@DataType(ComponentIntegration.class)
 	@Path("/{id}/integration")
 	public Response getIntegration(
-			@QueryParam("id") String componentId)
+			@PathParam("id") String componentId)
 	{
-		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
-		ComponentIntegrationView view = ComponentIntegrationView.toView(integration);
+		ComponentIntegration integrationExample = new ComponentIntegration();
+		integrationExample.setComponentId(componentId);
+		ComponentIntegration integration = service.getPersistenceService().queryOneByExample(ComponentIntegration.class, integrationExample);
+		ComponentIntegrationView view = null;
+		if (integration != null) {
+			view = ComponentIntegrationView.toView(integration);
+		}
 		return sendSingleEntityResponse(view);
 	}
 
@@ -2998,7 +3003,7 @@ public class ComponentRESTResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Saves a component integration model")
+	@APIDescription("Updates a component integration refresh Time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
 	public Response saveRefreshRate(
@@ -3026,13 +3031,12 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Saves a component integration model")
+	@APIDescription("Removes the integration override time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
 	public Response deleteRefreshRate(
 			@PathParam("componentId")
-			@RequiredParam String componentId,
-			String cron)
+			@RequiredParam String componentId)
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		if (integration != null) {

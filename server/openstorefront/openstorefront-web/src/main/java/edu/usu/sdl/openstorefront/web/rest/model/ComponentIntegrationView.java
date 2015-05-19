@@ -16,10 +16,12 @@
 package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
+import java.text.ParseException;
 import java.util.Date;
+import net.redhogs.cronparser.CronExpressionDescriptor;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -31,6 +33,7 @@ public class ComponentIntegrationView
 	private String componentId;
 	private String componentName;
 	private String refreshRate;
+	private String cronExpressionDescription;
 	private String status;
 	private Date lastStartTime;
 	private Date lastEndTime;
@@ -39,40 +42,36 @@ public class ComponentIntegrationView
 
 	public ComponentIntegrationView()
 	{
-
 	}
 
 	public static ComponentIntegrationView toView(ComponentIntegration integration, ComponentIntegrationConfig integrationConfig)
 	{
-		ServiceProxy proxy = new ServiceProxy();
-		ComponentIntegrationView view = new ComponentIntegrationView();
-		Component temp = proxy.getPersistenceService().findById(Component.class, integration.getComponentId());
-
-		view.setComponentName(temp.getName());
-		view.setComponentId(integration.getComponentId());
-		view.setRefreshRate(integration.getRefreshRate());
-		view.setStatus(integration.getStatus());
-		view.setLastEndTime(integration.getLastEndTime());
-		view.setLastStartTime(integration.getLastStartTime());
-		view.setActiveStatus(integration.getActiveStatus());
+		ComponentIntegrationView view = toView(integration);
 		view.setErrorMessage(integrationConfig.getErrorMessage());
-
 		return view;
 	}
-	
+
 	public static ComponentIntegrationView toView(ComponentIntegration integration)
 	{
 		ServiceProxy proxy = new ServiceProxy();
 		ComponentIntegrationView view = new ComponentIntegrationView();
-		Component temp = proxy.getPersistenceService().findById(Component.class, integration.getComponentId());
+		String componentName = proxy.getComponentService().getComponentName(integration.getComponentId());
 
-		view.setComponentName(temp.getName());
+		view.setComponentName(componentName);
 		view.setComponentId(integration.getComponentId());
 		view.setRefreshRate(integration.getRefreshRate());
 		view.setStatus(integration.getStatus());
 		view.setLastEndTime(integration.getLastEndTime());
 		view.setLastStartTime(integration.getLastStartTime());
 		view.setActiveStatus(integration.getActiveStatus());
+
+		if (StringUtils.isNotBlank(view.getRefreshRate())) {
+			try {
+				view.setCronExpressionDescription(CronExpressionDescriptor.getDescription(integration.getRefreshRate()));
+			} catch (ParseException ex) {
+				view.setCronExpressionDescription("Unable to parse expression");
+			}
+		}
 
 		return view;
 	}
@@ -117,68 +116,54 @@ public class ComponentIntegrationView
 		this.refreshRate = refreshRate;
 	}
 
-	/**
-	 * @return the lastStartTime
-	 */
 	public Date getLastStartTime()
 	{
 		return lastStartTime;
 	}
 
-	/**
-	 * @param lastStartTime the lastStartTime to set
-	 */
 	public void setLastStartTime(Date lastStartTime)
 	{
 		this.lastStartTime = lastStartTime;
 	}
 
-	/**
-	 * @return the lastEndTime
-	 */
 	public Date getLastEndTime()
 	{
 		return lastEndTime;
 	}
 
-	/**
-	 * @param lastEndTime the lastEndTime to set
-	 */
 	public void setLastEndTime(Date lastEndTime)
 	{
 		this.lastEndTime = lastEndTime;
 	}
 
-	/**
-	 * @return the activeStatus
-	 */
 	public String getActiveStatus()
 	{
 		return activeStatus;
 	}
 
-	/**
-	 * @param activeStatus the activeStatus to set
-	 */
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
 	}
 
-	/**
-	 * @return the errorMessage
-	 */
 	public String getErrorMessage()
 	{
 		return errorMessage;
 	}
 
-	/**
-	 * @param errorMessage the errorMessage to set
-	 */
 	public void setErrorMessage(String errorMessage)
 	{
 		this.errorMessage = errorMessage;
+	}
+
+	public String getCronExpressionDescription()
+	{
+		return cronExpressionDescription;
+	}
+
+	public void setCronExpressionDescription(String cronExpressionDescription)
+	{
+		this.cronExpressionDescription = cronExpressionDescription;
 	}
 
 }
