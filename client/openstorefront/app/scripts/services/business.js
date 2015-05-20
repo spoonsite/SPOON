@@ -221,23 +221,26 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     if (!search) {
       deferred.reject('There was no search');
     } else {
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/typeahead',
-        'params': {'search': search}
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false' && isNotRequestError(data)) {
-          removeError();
-          deferred.resolve(data);
-        } else {
-          removeError();
-          triggerError(data);
-          deferred.reject('There was an error grabbing the typeahead');
-        }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error grabbing the typeahead');
-      });
+      //check local cache
+      var cachedResults = localCache.get("CMPNames", 'object');
+      
+      var getNames = function(names, deferred) {
+        var names = _.filter(names, function(item){
+          return item.description.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+        });
+        deferred.resolve(names);           
+      };
+      
+      if (!cachedResults) { 
+        business.componentservice.getComponentLookupList().then(function(data){
+          localCache.save("CMPNames", data);
+          cachedResults = data;
+          getNames(cachedResults, deferred);
+        });
+      }  else {
+        getNames(cachedResults, deferred);
+      }
+      
     }
     return deferred.promise;
   };
