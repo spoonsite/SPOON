@@ -45,7 +45,7 @@ limitations under the License.
       <button ng-click="componentUploader.uploadAll()" class="btn btn-primary">Upload</button>      
     </div>  
     <form name="exportForm" action="api/v1/resource/components/export" method="POST" >
-      <p ng-repeat="id in selectedComponents">
+      <p style="display: none;" ng-repeat="id in selectedComponents">
         <input type="hidden" name="id" value="{{id}}" />
       </p>      
     </form>
