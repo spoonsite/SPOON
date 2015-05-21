@@ -87,8 +87,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       } 
     }
 
-    $scope.getMediaHtml = function(media){
-      return utils.getMediaHtml(media, $sce);
+    $scope.getMediaHTML = function(media){
+      return utils.getMediaHTML(media, $sce);
+    }
+
+    $scope.getResourceHTML = function(resource){
+      return utils.getResourceHTML(resource, $sce);
     }
 
     $scope.getSubmission = function(){
@@ -264,6 +268,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             $event.stopPropagation();
           }
         })
+        $scope.mediaUploader.uploadAll();
+        $scope.resourceUploader.uploadAll();
       } 
     }
 
@@ -946,25 +952,29 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         $scope.lastMediaFile = file.file.name;
       }
       $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaPreviewLoader', 'caption', 'mediaTypeCode');
+      file.componentId = $scope.componentId;
+      file.mediaTypeCode = $scope.mediaForm.mediaTypeCode;
+      file.caption = $scope.mediaForm.caption;
+      file.componentMediaId = $scope.mediaForm.componentMediaId;
       $scope.resetMediaInput();
     },
     onBeforeUploadItem: function(item) {
       $scope.$emit('$TRIGGERLOAD', 'submissionLoader');
 
       item.formData.push({
-        "componentMedia.componentId" : $scope.componentForm.componentId
+        "componentMedia.componentId" : item.componentId
       });
       item.formData.push({
-        "componentMedia.mediaTypeCode" : $scope.mediaForm.mediaTypeCode
+        "componentMedia.mediaTypeCode" : item.mediaTypeCode
       });
-      if ($scope.mediaForm.description) {
+      if (item.description) {
         item.formData.push({
-          "componentMedia.description": $scope.mediaForm.description
+          "componentMedia.caption": item.caption
         });
       }
-      if ($scope.mediaForm.componentMediaId) {
+      if (item.componentMediaId) {
         item.formData.push({
-          "componentMedia.componentMediaId": $scope.mediaForm.componentMediaId
+          "componentMedia.componentMediaId": item.componentMediaId
         });
       }
     },
@@ -1062,26 +1072,30 @@ $scope.removeFromResourceQueue = function(file){
         $scope.lastResourceFile = file.file.name;
       }
       $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'resourcePreviewLoader', 'description', 'resourceType');
+      file.componentId = $scope.componentId;
+      file.resourceType = $scope.resourceForm.resourceType;
+      file.description = $scope.resourceForm.description;
+      file.resourceId = $scope.resourceForm.resourceId;
       $scope.resetResourceInput();
     },
     onBeforeUploadItem: function(item) {
       $scope.$emit('$TRIGGERLOAD', 'resourceFormLoader');
 
       item.formData.push({
-        "componentResource.componentId" : $scope.componentForm.componentId
+        "componentResource.componentId" : item.componentId
       });
       item.formData.push({
-        "componentResource.resourceType" : $scope.resourceForm.resourceType
+        "componentResource.resourceType" : item.resourceType
       });
       item.formData.push({
-        "componentResource.description" : $scope.resourceForm.description
+        "componentResource.description" : item.description
       });
       item.formData.push({
-        "componentResource.restricted" : $scope.resourceForm.restricted
+        "componentResource.restricted" : item.restricted
       });        
-      if ($scope.resourceForm.resourceId) {
+      if (item.resourceId) {
         item.formData.push({
-          "componentResource.resourceId" : $scope.resourceForm.resourceId
+          "componentResource.resourceId" : item.resourceId
         });
       }
     },

@@ -26,7 +26,7 @@
     }
   }
 
-  utils.getMediaHtml = function(media, $sce){
+  utils.getMediaHTML = function(media, $sce){
     if (media && media.mimeType){
       var type = media.mimeType;
       if (type.match('video.*')) {
@@ -58,11 +58,62 @@
         return '<i class="fa fa-file-text-o"></i>'
       } else if (type.match('image.*')){
         if (media.componentMediaId){
-          if (!media.fileName){
-            media.fileName = ' ';
+          if (!media.originalName){
+            media.originalName = ' ';
           }
           var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
-          '<img class=\'thumb\' src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' title=\'', escape(media.fileName), '\' width=\'368\'    height=\'auto\'/>',
+          '<img class=\'thumb\' src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' title=\'', escape(media.originalName), '\' width=\'368\'    height=\'auto\'/>',
+          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
+          ].join('');
+          
+          return result;
+        }
+        return '<i class="fa fa-file-image-o"></i>'
+      } else {
+        return '<i class="fa fa-file-o"></i>'
+      }
+    } else {
+      return 'Missing Mime type, we cannot determine how to provide a preview.'
+    }
+  }
+
+  utils.getResourceHTML = function(resource, $sce){
+    if (resource && resource.mimeType){
+      var type = resource.mimeType;
+      if (type.match('video.*')) {
+        if (resource.resourceId){
+          var srcs = [];
+          var result = $('<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" placement="top" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>');
+          srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/mp4'});             
+          srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/webm'});             
+          srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/ogg'}); 
+          var video = $('<videogular> <vg-media vg-src=\''+JSON.stringify(srcs)+'\' vg-preload="\'none\'" vg-native-controls=\'true\'></vg-media></videogular>');
+          result.attr('content-string', video.prop('outerHTML'));
+          
+          return result.prop('outerHTML');
+        }
+        return '<i class="fa fa-file-video-o"></i>'
+      } else if (type.match('audio.*')){
+        if (resource.resourceId){
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
+          '<audio controls><source src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' type=\'audio/ogg\'><source src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' type=\'audio/mpeg\'></audio>',
+          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-audio-o"></i></button>'
+          ].join('');
+          
+          return result;
+        }
+        return '<i class="fa fa-file-audio-o"></i>'
+      } else if (type.match('application.*')){
+        return '<i class="fa fa-file-code-o"></i>'
+      } else if (type.match('text.*')){
+        return '<i class="fa fa-file-text-o"></i>'
+      } else if (type.match('image.*')){
+        if (resource.resourceId){
+          if (!resource.originalName){
+            resource.originalName = ' ';
+          }
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
+          '<img class=\'thumb\' src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' title=\'', escape(resource.originalName), '\' width=\'368\'    height=\'auto\'/>',
           '" placement="top" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
           ].join('');
           
