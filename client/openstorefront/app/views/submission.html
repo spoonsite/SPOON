@@ -659,7 +659,7 @@ body {
                 <div style="clear:both;"></div>
               </div>
               <div class="col-sm-12">
-                <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.resourceType || !resourceForm.description ||  isFullResource">
+                <span class="btn btn-primary btn-file" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.resourceType ||  isFullResource">
                   <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="lastResourceFile || showResourceUpload !== 'true' || !resourceForm.resourceType || isFullResource || (component.component.approvalState && component.component.approvalState !=='N')"/>
                 </span> <span>{{lastResourceFile}}</span>
               </div>
@@ -740,7 +740,7 @@ body {
                 <div style="clear:both;"></div>
               </div>
               <div class="col-sm-12">
-                <span class="btn btn-primary btn-file" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || !mediaForm.caption || isFull">
+                <span class="btn btn-primary btn-file" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || isFull">
                   <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || isFull || (component.component.approvalState && component.component.approvalState !=='N')"/>
                 </span> <span>{{lastMediaFile}}</span>
               </div>
@@ -793,7 +793,7 @@ body {
                 <div style="clear:both;"></div>
               </div>
               <div class="col-sm-12">
-                <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="showMediaUpload === 'true' || !mediaForm.mediaTypeCode || !mediaForm.link || !mediaForm.caption"><i class="fa fa-save"></i>&nbsp;Add Link</button>
+                <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="showMediaUpload === 'true' || !mediaForm.mediaTypeCode || !mediaForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
               </div>
             </label>
           </div>
@@ -852,22 +852,6 @@ body {
         <br>
       </h1>
       <br>
-<!--         <videogular>
-          <vg-media vg-src="config.sources" vg-tracks="config.tracks"></vg-media>
-
-          <vg-controls vg-autohide="true" vg-autohide-time="2000">
-          <vg-play-pause-button></vg-play-pause-button>
-          <vg-time-display>{{ currentTime | date:'mm:ss' }} </vg-time-display>
-          <vg-scrub-bar><vg-scrub-bar-current-time></vg-scrub-bar-current-time> </vg-scrub-bar>
-          <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
-          <vg-volume> <vg-mute-button></vg-mute-button><vg-volume-bar></vg-volume-bar></vg-volume>
-          <vg-fullscreen-button></vg-fullscreen-button>
-        </vg-controls>
-
-      </videogular> -->
-<!--       <videogular>
-        <vg-media vg-src="config.sources" vg-tracks="config.tracks" vg-type="video" vg-native-controls="true"> </vg-media>
-      </videogular> -->
 
       <form name="optInForm">
         <div class="checkbox">
@@ -883,12 +867,8 @@ body {
           <a target="_self" class="btn btn-sm btn-default" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event, 'componentName'):'';"><i class="fa fa-edit"></i>&nbsp;<small>Edit Required Information</small></a>
         </div>
         <div class="line" ><strong>Component:&nbsp;</strong> {{component.component.name}}</div>
-        <!-- <div class="line" ><strong>Version:&nbsp;</strong> {{component.version}}</div> -->
         <div class="line" ><strong>Organization:&nbsp;</strong> {{component.component.organization}}</div>
         <div class="line" ><strong>Description:&nbsp;</strong><span dynamichtml="component.component.description"></span></div>
-        <!-- <div class="line" ><strong>Last Activity Date:&nbsp;</strong> {{getDate(component.lastActivityDate)}}</div> -->
-        <!-- <div class="line" ><strong>Last View Date:&nbsp;</strong> {{getDate(component.lastViewedDate)}}</div> -->
-        <!-- <div class="line" ><strong>Views:&nbsp;</strong> {{component.componentViews}}</div> -->
         <div class="line" ng-show="badgeFound"><strong>Badges:&nbsp;</strong></div>
         <div ng-show="badgeFound">
           <div ng-repeat="attribute in component.attributes" style="display:inline-block;">
