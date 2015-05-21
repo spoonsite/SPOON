@@ -25,15 +25,15 @@ body {
         <div style="position:relative;">
           <div class="bs-sidebar hidden-print affix" role="complementary" data-offset-top="-100" bs-affix  id="scrollSpy">
             <ul class="nav bs-sidenav">
-              <li data-target="#top" class="active" ng-class="getStarted()? 'complete':''">
+              <li ng-show="(component.component.approvalState && component.component.approvalState !=='N')" data-target="#top" class="active" ng-class="getStarted()? 'complete':''">
                 <a target="_self" href="#top" ng-click="scrollTo('top', 'top');">Getting started</a>
               </li>
               <hr style="margin: 2px 0;">
-              <li data-target="#vitals" ng-class="{'complete': vitalsCheck(), 'disabled': !getStarted()}">
+              <li ng-show="(component.component.approvalState && component.component.approvalState !=='N')" data-target="#vitals" ng-class="{'complete': vitalsCheck(), 'disabled': !getStarted()}">
                 <a target="_self" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event, 'componentName'):'';">Required Information</a>
               </li>
               <hr style="margin: 2px 0;">
-              <li data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
+              <li ng-show="(component.component.approvalState && component.component.approvalState !=='N')" data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
                 <a target="_self" href="#details" ng-click="initialSave($event)">Details</a>
                 <ul class="nav">
                   <li data-target="#metadata" ng-class="{'disabled': !vitalsCheck()}">
@@ -58,7 +58,10 @@ body {
             </li> -->
             <hr style="margin: 2px 0;">
             <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck(), 'complete': component.component.approvalState !== 'N'}">
-              <a target="_self" href="#reviewAndSubmit" ng-click="updateSave($event)">Revew/Submit</a>
+              <a target="_self" href="#reviewAndSubmit" ng-click="updateSave($event)">
+                <span ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')">Revew/Submit</span>
+                <span ng-show="(component.component.approvalState && component.component.approvalState !== 'N')">Component Preview</span>
+              </a>
             </li>
             <hr ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  style="margin:2px 0;">
             <li data-target="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  class="edit">
@@ -690,7 +693,8 @@ body {
                 <td>{{getResourceTypeDesc(item.resourceType)}}</td>
                 <td>{{item.description}}</td>
                 <td>&mdash;</td>
-                <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
+                <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
+                <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getResourceHTML(item)"></td>
                 <td><button class="btn btn-danger" ng-click="deleteResource(item)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
               </tr>
             </table>
@@ -822,7 +826,7 @@ body {
                 <td>{{item.caption}}</td>
                 <td>&mdash;</td>
                 <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
-                <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHtml(item)"></td>
+                <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHTML(item)"></td>
                 <td><button class="btn btn-danger" ng-click="deleteMedia(item)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
               </tr>
             </table>
@@ -840,7 +844,11 @@ body {
 
     <!-- REVIEW AND SUBMIT SECTION -->
     <div ng-show="current === 'submit'">
-      <h1 id="reviewAndSubmit">4. Review and submit the component:</h1>
+      <h1 ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" id="reviewAndSubmit">4. Review and submit the component:</h1>
+      <h1 ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')" id="reviewAndSubmit">Component Preview:
+        <br>
+        <small>Thanks for the submission! This component is currently waiting in the admin queue for approval!</small>
+      </h1>
       <br>
 <!--         <videogular>
           <vg-media vg-src="config.sources" vg-tracks="config.tracks"></vg-media>
@@ -1005,7 +1013,8 @@ body {
               <td>{{getResourceTypeDesc(item.resourceType)}}</td>
               <td>{{item.description}}</td>
               <td>{{item.mimeType}}</td>
-              <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
+              <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
+              <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getResourceHTML(item)"></td>
             </tr>
           </table>
         </div>
@@ -1044,7 +1053,7 @@ body {
                 <td>{{item.caption}}</td>
                 <td>{{item.mimeType}}</td>
                 <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
-                <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHtml(item)"></td>
+                <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHTML(item)"></td>
               </tr>
             </table>
           </div>
