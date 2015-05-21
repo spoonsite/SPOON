@@ -25,15 +25,15 @@ body {
         <div style="position:relative;">
           <div class="bs-sidebar hidden-print affix" role="complementary" data-offset-top="-100" bs-affix  id="scrollSpy">
             <ul class="nav bs-sidenav">
-              <li ng-show="(component.component.approvalState && component.component.approvalState !=='N')" data-target="#top" class="active" ng-class="getStarted()? 'complete':''">
+              <li ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" data-target="#top" class="active" ng-class="getStarted()? 'complete':''">
                 <a target="_self" href="#top" ng-click="scrollTo('top', 'top');">Getting started</a>
               </li>
-              <hr style="margin: 2px 0;">
-              <li ng-show="(component.component.approvalState && component.component.approvalState !=='N')" data-target="#vitals" ng-class="{'complete': vitalsCheck(), 'disabled': !getStarted()}">
+              <hr ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
+              <li ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" data-target="#vitals" ng-class="{'complete': vitalsCheck(), 'disabled': !getStarted()}">
                 <a target="_self" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event, 'componentName'):'';">Required Information</a>
               </li>
-              <hr style="margin: 2px 0;">
-              <li ng-show="(component.component.approvalState && component.component.approvalState !=='N')" data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
+              <hr ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
+              <li ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
                 <a target="_self" href="#details" ng-click="initialSave($event)">Details</a>
                 <ul class="nav">
                   <li data-target="#metadata" ng-class="{'disabled': !vitalsCheck()}">
@@ -56,7 +56,7 @@ body {
             <!-- <li data-target="#moreDetails" ng-class="{'disabled': !vitalsCheck()}">
               <a target="_self" href="#moreDetails" ng-click="vitalsCheck()? scrollTo('moreDetails', 'details', '', $event): ''">Extra Details</a>
             </li> -->
-            <hr style="margin: 2px 0;">
+            <hr ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
             <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck(), 'complete': component.component.approvalState !== 'N'}">
               <a target="_self" href="#reviewAndSubmit" ng-click="updateSave($event)">
                 <span ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')">Revew/Submit</span>
@@ -844,10 +844,12 @@ body {
 
     <!-- REVIEW AND SUBMIT SECTION -->
     <div ng-show="current === 'submit'">
-      <h1 ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" id="reviewAndSubmit">4. Review and submit the component:</h1>
-      <h1 ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')" id="reviewAndSubmit">Component Preview:
+      <h1 ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')" id="reviewAndSubmit">4. Review and submit the component:</h1>
+      <h1 ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" id="reviewAndSubmit">Component Preview:
+        <br>
         <br>
         <small>Thanks for the submission! This component is currently waiting in the admin queue for approval!</small>
+        <br>
       </h1>
       <br>
 <!--         <videogular>
