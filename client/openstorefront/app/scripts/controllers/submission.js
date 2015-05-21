@@ -109,57 +109,60 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
             $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
             $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+            if ($scope.component.component.approvalState !== 'N') {
+              $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
+            }
           }
           deferred.resolve();
         }, function(result){
           $scope.$broadcast('$UNLOAD', 'submissionLoader');
           deferred.reject();
         });
-      }
-      return deferred.promise;
-    }
+}
+return deferred.promise;
+}
 
-    $scope.init = function(){
-      if ($location.search() && $location.search().id){
-        console.log('$location', $location.search());
-        $scope.componentId = $location.search().id;
-        $scope.$broadcast('$LOAD', 'submissionLoader');
-        $scope.getSubmission().then(function(){
-          var found = _.find($scope.component.contacts, {'contactType':'SUB'});
-          if (found){
-            $scope.submitter = found;
-          }
-          $scope.optIn = $scope.component.component.notifyOfApprovalEmail? true: false;
-        }, function(){
-          $scope.componentId = null;
-        });
-      } else {
-        $scope.componentId = null;
+$scope.init = function(){
+  if ($location.search() && $location.search().id){
+    console.log('$location', $location.search());
+    $scope.componentId = $location.search().id;
+    $scope.$broadcast('$LOAD', 'submissionLoader');
+    $scope.getSubmission().then(function(){
+      var found = _.find($scope.component.contacts, {'contactType':'SUB'});
+      if (found){
+        $scope.submitter = found;
       }
-    }
+      $scope.optIn = $scope.component.component.notifyOfApprovalEmail? true: false;
+    }, function(){
+      $scope.componentId = null;
+    });
+  } else {
+    $scope.componentId = null;
+  }
+}
 
-    $scope.loadLookup = function(lookup, entity, loader){
-      var deferred = $q.defer();
-      Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
-        deferred.resolve();
-        if (results) {
-          $scope[entity]= results;
-        }        
-      });      
-      return deferred.promise;
-    };
-    $scope.getAttributes = function (override) { 
-      var deferred = $q.defer();
-      Business.getFilters(override, false).then(function (result) {
-        deferred.resolve();
-        $scope.allAttributes = result ? angular.copy(result) : [];
-        $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
+$scope.loadLookup = function(lookup, entity, loader){
+  var deferred = $q.defer();
+  Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+    deferred.resolve();
+    if (results) {
+      $scope[entity]= results;
+    }        
+  });      
+  return deferred.promise;
+};
+$scope.getAttributes = function (override) { 
+  var deferred = $q.defer();
+  Business.getFilters(override, false).then(function (result) {
+    deferred.resolve();
+    $scope.allAttributes = result ? angular.copy(result) : [];
+    $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
       // console.log('required', $scope.requiredAttributes);
 
       $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
     });
-      return deferred.promise;
-    }; 
+  return deferred.promise;
+}; 
 
     // WHERE WE CALL INIT()!
     (function(){
