@@ -25,9 +25,11 @@ import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.action.resolution.RangeResolutionBuilder;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -51,6 +54,9 @@ import net.sourceforge.stripes.validation.ValidateNestedProperties;
 public class MediaAction
 		extends BaseAction
 {
+
+	public static final String MISSING_IMAGE = "/image/close-red.png";
+	public static final long MISSING_MEDIA_IMAGE_SIZE = 10898;
 
 	private static final Logger log = Logger.getLogger(MediaAction.class.getName());
 
@@ -74,35 +80,40 @@ public class MediaAction
 	})
 	private GeneralMedia generalMedia;
 
+	@DefaultHandler
+	public Resolution audioTestPage()
+	{
+		//return new ForwardResolution("/WEB-INF/securepages/test/audioTest.jsp");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
 	@HandlesEvent("LoadMedia")
-	public Resolution sendMedia()
+	public Resolution sendMedia() throws FileNotFoundException
 	{
 		componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
 		if (componentMedia == null) {
 			throw new OpenStorefrontRuntimeException("Media not Found", "Check media Id");
 		}
 
-		return new StreamingResolution(componentMedia.getMimeType())
-		{
-
-			@Override
-			protected void stream(HttpServletResponse response) throws Exception
-			{
-				Path path = componentMedia.pathToMedia();
-				if (path != null && path.toFile().exists()) {
-					Files.copy(path, response.getOutputStream());
-				} else {
-					Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
-
-					log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{componentMedia.pathToMedia(), mediaId, component.getName(), component.getComponentId()}));
-
-					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream("/image/close-red.png")) {
-						FileSystemManager.copy(in, response.getOutputStream());
-					}
-				}
-			}
-
-		}.setFilename(componentMedia.getOriginalName());
+		InputStream in;
+		long length;
+		Path path = componentMedia.pathToMedia();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
+			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check media record: {1} on component {2} ({3}) ", new Object[]{componentMedia.pathToMedia(), mediaId, component.getName(), component.getComponentId()}));
+			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			length = MISSING_MEDIA_IMAGE_SIZE;
+		}
+		return new RangeResolutionBuilder()
+				.setContentType(componentMedia.getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(componentMedia.getOriginalName())
+				.createRangeResolution();
 	}
 
 	@HandlesEvent("UploadMedia")
@@ -170,7 +181,7 @@ public class MediaAction
 	}
 
 	@HandlesEvent("GeneralMedia")
-	public Resolution generalMedia()
+	public Resolution generalMedia() throws FileNotFoundException
 	{
 		GeneralMedia generalMediaExample = new GeneralMedia();
 		generalMediaExample.setName(name);
@@ -183,7 +194,7 @@ public class MediaAction
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
-					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream("/image/close-red.png")) {
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
 						FileSystemManager.copy(in, response.getOutputStream());
 					}
 				}
@@ -191,26 +202,25 @@ public class MediaAction
 			}.setFilename("MediaNotFound.png");
 		}
 
-		return new StreamingResolution(generalMedia.getMimeType())
-		{
+		InputStream in;
+		long length;
+		Path path = generalMedia.pathToMedia();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
+			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			length = MISSING_MEDIA_IMAGE_SIZE;
+		}
 
-			@Override
-			protected void stream(HttpServletResponse response) throws Exception
-			{
-				Path path = generalMedia.pathToMedia();
-				if (path != null && path.toFile().exists()) {
-					Files.copy(path, response.getOutputStream());
-				} else {
-
-					log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
-
-					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream("/image/close-red.png")) {
-						FileSystemManager.copy(in, response.getOutputStream());
-					}
-				}
-			}
-
-		}.setFilename(generalMedia.getOriginalFileName());
+		return new RangeResolutionBuilder()
+				.setContentType(generalMedia.getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(generalMedia.getOriginalFileName())
+				.createRangeResolution();
 	}
 
 	@HandlesEvent("UploadGeneralMedia")

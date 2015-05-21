@@ -52,6 +52,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
@@ -285,6 +286,26 @@ public class Application
 				Level.FINEST.getName(),
 				Level.ALL.getName());
 		return logLevels;
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets log info")
+	@Produces({MediaType.TEXT_HTML})
+	@DataType(LookupModel.class)
+	@Path("/log")
+	public String getLogFile(
+			@QueryParam("startDts") String startDts,
+			@QueryParam("endDts") String endDts,
+			@QueryParam("filename") String filename)
+	{
+		StringBuilder logData = new StringBuilder();
+
+		//read file filtering f
+		//note file name stripe any path changes
+		String pathToLog = System.getProperty("catalina.home") + "/logs/" + filename;
+
+		return logData.toString();
 	}
 
 }
