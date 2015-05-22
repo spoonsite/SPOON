@@ -33,12 +33,21 @@ app.directive('dynamicPopover', ['$compile', function($compile){
           $(element).popover({
             html: true,
             container: attrs['container'] || 'body',
-            title: attrs['title'] || '', 
+            title: function(){
+              // return attrs['title']+'<span class="close">&times;</span>';
+              return attrs['title'] || ''
+            }, 
             content: $compile(content)(scope),
             placement: attrs['placement'] || 'top',
             trigger: attrs['trigger'] || 'click',
             // grab popover content from the next element
           });
+          // .on('shown.bs.popover', function(e){
+          //   var popover = jQuery(this);
+          //   jQuery('body').last('div.popover .close').on('click', function(e){
+          //     popover.popover('hide');
+          //   });
+          // });;
         }
       })
     }

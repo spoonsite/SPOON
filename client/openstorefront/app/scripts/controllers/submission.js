@@ -97,9 +97,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
     $scope.getSubmission = function(){
       var deferred = $q.defer();
-      if ($scope.componentId !== null && $scope.componentId !== undefined) {
+      if ($scope.componentId !== null && $scope.componentId !== undefined){
         Business.submissionservice.getSubmission($scope.componentId, true).then(function(result){
-          $scope.$broadcast('$UNLOAD', 'submissionLoader');
+          $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
           if (result && result.component && result.component.componentId){
             $scope.backup = angular.copy(result);
             $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
@@ -109,68 +109,66 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
             $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
             $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
-            if ($scope.component.component.approvalState !== 'N') {
+            if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N') {
               $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
             }
           }
           deferred.resolve();
         }, function(result){
-          $scope.$broadcast('$UNLOAD', 'submissionLoader');
+          $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
           deferred.reject();
         });
-}
-return deferred.promise;
-}
+      }//
+      return deferred.promise;
+    }
 
-$scope.init = function(){
-  if ($location.search() && $location.search().id){
-    console.log('$location', $location.search());
-    $scope.componentId = $location.search().id;
-    $scope.$broadcast('$LOAD', 'submissionLoader');
-    $scope.getSubmission().then(function(){
-      var found = _.find($scope.component.contacts, {'contactType':'SUB'});
-      if (found){
-        $scope.submitter = found;
+    $scope.init = function(){
+      if ($location.search() && $location.search().id){
+        console.log('$location', $location.search());
+        $scope.componentId = $location.search().id;
+        $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Saving progress');
+        $scope.getSubmission().then(function(){
+          var found = _.find($scope.component.contacts, {'contactType':'SUB'});
+          if (found){
+            $scope.submitter = found;
+          }
+          $scope.optIn = $scope.component.component.notifyOfApprovalEmail? true: false;
+        }, function(){
+          $scope.componentId = null;
+        });
+      } else {
+        $scope.componentId = null;
       }
-      $scope.optIn = $scope.component.component.notifyOfApprovalEmail? true: false;
-    }, function(){
-      $scope.componentId = null;
-    });
-  } else {
-    $scope.componentId = null;
-  }
-}
+    }
 
-$scope.loadLookup = function(lookup, entity, loader){
-  var deferred = $q.defer();
-  Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
-    deferred.resolve();
-    if (results) {
-      $scope[entity]= results;
-    }        
-  });      
-  return deferred.promise;
-};
-$scope.getAttributes = function (override) { 
-  var deferred = $q.defer();
-  Business.getFilters(override, false).then(function (result) {
-    deferred.resolve();
-    $scope.allAttributes = result ? angular.copy(result) : [];
-    $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
-      // console.log('required', $scope.requiredAttributes);
-
-      $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
-    });
-  return deferred.promise;
-}; 
+    $scope.loadLookup = function(lookup, entity, loader){
+      var deferred = $q.defer();
+      Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+        deferred.resolve();
+        if (results) {
+          $scope[entity]= results;
+        }        
+      });      
+      return deferred.promise;
+    };
+    $scope.getAttributes = function (override) { 
+      var deferred = $q.defer();
+      Business.getFilters(override, false).then(function (result) {
+        deferred.resolve();
+        $scope.allAttributes = result ? angular.copy(result) : [];
+        $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
+        $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
+      });
+      return deferred.promise;
+    }; 
 
     // WHERE WE CALL INIT()!
     (function(){
       $q.all($scope.getAttributes(),
       //
-      $scope.loadLookup('ContactType', 'contactTypes', 'contactFormLoader'),
+      $scope.loadLookup('ContactType', 'contactTypes', 'submissionLoader'),
       $scope.loadLookup('MediaType', 'mediaTypes', 'submissionLoader'),
-      $scope.loadLookup('ResourceType', 'resourceTypes', 'resourceFormLoader')).then(function(){
+      $scope.loadLookup('ResourceType', 'resourceTypes', 'submissionLoader')).then(function(){
         $scope.init();
       })
     })()
@@ -271,7 +269,13 @@ $scope.getAttributes = function (override) {
             $event.stopPropagation();
           }
         })
+        _.each($scope.mediaUploader.queue, function(){
+          $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
+        })
         $scope.mediaUploader.uploadAll();
+        _.each($scope.resourceUploader.queue, function(){
+          $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
+        })
         $scope.resourceUploader.uploadAll();
       } 
     }
@@ -334,7 +338,7 @@ $scope.getAttributes = function (override) {
 
 
     $scope.submit = function(initial){
-      $scope.$broadcast('$LOAD', 'submissionLoader');
+      $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Saving progress');
       var deferred = $q.defer();
       if (initial){
         $scope.createInitialSubmit().then(function(component){
@@ -351,7 +355,7 @@ $scope.getAttributes = function (override) {
             console.log('component', component);
             
             Business.submissionservice.createSubmission(component).then(function(result){
-              $scope.$broadcast('$UNLOAD', 'submissionLoader');
+              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
               if (result && result.component && result.component.componentId){
                 $scope.backup = angular.copy(result);
                 $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
@@ -365,12 +369,12 @@ $scope.getAttributes = function (override) {
               // console.log('Success result', $scope.component);
               deferred.resolve();
             }, function(result){
-              $scope.$broadcast('$UNLOAD', 'submissionLoader');
+              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
               deferred.reject();
               // console.log('Fail result', result);
             });
 } else {
-  $scope.$broadcast('$UNLOAD', 'submissionLoader');
+  $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
   console.log('The init diff didn happen');
   deferred.resolve();
 }
@@ -408,7 +412,7 @@ $scope.getAttributes = function (override) {
             console.log('component', component);
             
             Business.submissionservice.updateSubmission(component).then(function(result){
-              $scope.$broadcast('$UNLOAD', 'submissionLoader');
+              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
               if (result && result.component && result.component.componentId){
                 $scope.backup = angular.copy(result);
                 $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
@@ -422,12 +426,12 @@ $scope.getAttributes = function (override) {
               deferred.resolve();
               // console.log('Success result', result);
             }, function(result){
-              $scope.$broadcast('$UNLOAD', 'submissionLoader');
+              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
               deferred.reject();
               // console.log('Fail result', result);
             });
 } else {
-  $scope.$broadcast('$UNLOAD', 'submissionLoader');
+  $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
   console.log('The component did not change', compare, $scope.backup);
   deferred.resolve();
 }
@@ -794,14 +798,14 @@ $scope.getAttributes = function (override) {
           if(!$rootScope.$$phase) {
             $scope.$apply();
           }
-          $scope.$emit('$TRIGGERUNLOAD', loader);
+          $scope.$emit('$TRIGGERUNLOAD', loader, 6000);
         });
       } else {
         queue.push({file: file, dom:'<span>No Link or Preview Available</span>'});
         if(!$rootScope.$$phase) {
           $scope.$apply();
         }
-        $scope.$emit('$TRIGGERUNLOAD', loader);
+        $scope.$emit('$TRIGGERUNLOAD', loader, 6000);
       }
       // $scope.mediaUploader.uploadAll();
     // }
@@ -899,13 +903,13 @@ $scope.getAttributes = function (override) {
   $scope.hardDeleteEntity = function(options){
     var response = window.confirm("Are you sure you want to DELETE "+ options.entityName + "?");
     if (response && $scope.componentId) {
-      $scope.$emit('$TRIGGERLOAD', options.loader);
+      $scope.$emit('$TRIGGERLOAD', options.loader, 'Loading data');
       Business.submissionservice.forceRemoveEnity({
         componentId: $scope.componentId,
         entity: options.entityPath,
         entityId: options.entityId
       }).then(function (result) {          
-        $scope.$emit('$TRIGGERUNLOAD', options.loader);
+        $scope.$emit('$TRIGGERUNLOAD', options.loader, 6000);
         options.loadEntity();
       });
     }
@@ -945,7 +949,7 @@ $scope.getAttributes = function (override) {
     onAfterAddingFile: function(file){
       // console.log('We loaded the loader!', file.file);
       console.dir(file.file);
-      $scope.$emit('$TRIGGERLOAD', 'mediaPreviewLoader');
+      $scope.$emit('$TRIGGERLOAD', 'mediaLoader', 'Adding Files');
       if (this.queue.length >= this.queueLimit) {
         $scope.isFull = true;
       }
@@ -954,7 +958,7 @@ $scope.getAttributes = function (override) {
       } else if (file.file) {
         $scope.lastMediaFile = file.file.name;
       }
-      $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaPreviewLoader', 'caption', 'mediaTypeCode');
+      $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaLoader', 'caption', 'mediaTypeCode');
       file.componentId = $scope.componentId;
       file.mediaTypeCode = $scope.mediaForm.mediaTypeCode;
       file.caption = $scope.mediaForm.caption;
@@ -962,15 +966,13 @@ $scope.getAttributes = function (override) {
       $scope.resetMediaInput();
     },
     onBeforeUploadItem: function(item) {
-      $scope.$emit('$TRIGGERLOAD', 'submissionLoader');
-
       item.formData.push({
         "componentMedia.componentId" : item.componentId
       });
       item.formData.push({
         "componentMedia.mediaTypeCode" : item.mediaTypeCode
       });
-      if (item.description) {
+      if (item.caption) {
         item.formData.push({
           "componentMedia.caption": item.caption
         });
@@ -982,13 +984,11 @@ $scope.getAttributes = function (override) {
       }
     },
     onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 80000);
 
       //check response for a fail ticket or a error model
       if (response.success) {
         triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
-        $scope.cancelMediaEdit();
-        $scope.loadMedia();          
       } else {
         if (response.errors) {
           var uploadError = response.errors.file;
@@ -1001,9 +1001,14 @@ $scope.getAttributes = function (override) {
       }
     },
     onErrorItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 80000);
       triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
-    }      
+    },
+    onCompleteAll: function(){
+      $scope.getSubmission();
+      $scope.mediaUploader.queue = {};
+      $scope.queue = {};
+    }
   });     
 
 
@@ -1065,7 +1070,7 @@ $scope.removeFromResourceQueue = function(file){
     onAfterAddingFile: function(file){
       // console.log('We loaded the loader!', file.file);
       // console.dir(file.file);
-      $scope.$emit('$TRIGGERLOAD', 'resourcePreviewLoader');
+      $scope.$emit('$TRIGGERLOAD', 'submissionLoader','Adding Files');
       if (this.queue.length >= this.queueLimit) {
         $scope.isFull = true;
       }
@@ -1074,7 +1079,7 @@ $scope.removeFromResourceQueue = function(file){
       } else if (file.file) {
         $scope.lastResourceFile = file.file.name;
       }
-      $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'resourcePreviewLoader', 'description', 'resourceType');
+      $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'submissionLoader', 'description', 'resourceType');
       file.componentId = $scope.componentId;
       file.resourceType = $scope.resourceForm.resourceType;
       file.description = $scope.resourceForm.description;
@@ -1082,8 +1087,6 @@ $scope.removeFromResourceQueue = function(file){
       $scope.resetResourceInput();
     },
     onBeforeUploadItem: function(item) {
-      $scope.$emit('$TRIGGERLOAD', 'resourceFormLoader');
-
       item.formData.push({
         "componentResource.componentId" : item.componentId
       });
@@ -1103,7 +1106,7 @@ $scope.removeFromResourceQueue = function(file){
       }
     },
     onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
 
       //check response for a fail ticket or a error model
       if (response.success) {
@@ -1122,9 +1125,14 @@ $scope.removeFromResourceQueue = function(file){
       }
     },
     onErrorItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
+      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
       triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);      
-    }      
+    },
+    onCompleteAll: function(){
+      $scope.getSubmission();
+      $scope.resourceUploader.queue = {};
+      $scope.resourceQueue = {};
+    }
   });
 
 $scope.scrollTo = function(id, current, parent, $event, focusId) {
@@ -1253,6 +1261,97 @@ $scope.scrollTo = function(id, current, parent, $event, focusId) {
     'code': 'CODE2'
   }]
 })
+.directive('masked', ['$timeout', function ($timeout) {
+  return {
+    restrict: 'A',
+    link: function postLink(scope, element, attrs) { /*jshint unused:false*/
+      scope[attrs['masked']]        = scope[attrs['masked']] || {};
+      scope[attrs['masked']].elips  = 0;
+      scope[attrs['masked']].total  = 0;
+      scope[attrs['masked']].msg    = 'Loading';
+
+      scope.$watch(attrs['masked'], function(){
+
+        if (scope[attrs['masked']].total && scope[attrs['masked']].total > 0 && scope[attrs['masked']].total < 2){
+          console.log(attrs['masked'] + 'LOADER ------  ' , scope[attrs['masked']]);
+          scope[attrs['masked']].elips = 0;
+          element.addClass('loaderMasked');
+          console.log('element', element);
+          $(window).on('scroll',windowScroll);
+          clearInterval(timer);
+          timer = setInterval(function (counter) {
+            scope.$apply(function(){
+              resetMsgPosition(false);
+            });
+          }, 500);
+        } else if (!scope[attrs['masked']].total) {
+          $(window).off('scroll',windowScroll);
+          $('#'+attrs['masked']+'_msg').remove();
+          element.removeClass('loaderMasked');
+          clearInterval(timer);
+        }
+      }, true);
+
+      var timer;
+      var getElipses = function (scrolled) {
+        switch (scope[attrs['masked']].elips) {
+          case 0:
+          if (!scrolled){
+            scope[attrs['masked']].elips++;
+          }
+          return scope[attrs['masked']].msg + '.\u00A0\u00A0';
+          break;
+          case 1:
+          if (!scrolled){
+            scope[attrs['masked']].elips++;
+          }
+          return scope[attrs['masked']].msg + '..\u00A0';
+          break;
+          case 2:
+          if (!scrolled){
+            scope[attrs['masked']].elips = 0;
+          }
+          return scope[attrs['masked']].msg + '...';
+          break;
+        }
+      }
+      var resetMsgPosition = function(scrolled){
+        var scrollTop     = $(window).scrollTop(),
+        elementOffset     = element.offset().top,
+        distance          = (elementOffset - scrollTop),
+        newHeight         = (element.height()/2) + 'px';
+        if (element.height() > $(window).height() || distance < 0){
+          if ((element.height() - (scrollTop - elementOffset)) > $(window).height()) {
+            newHeight     = ((scrollTop - elementOffset) + ($(window).height()/2)) + 'px'; 
+          } else {
+            newHeight     = ((scrollTop - elementOffset) + ((element.height() - (scrollTop - elementOffset))/2)) + 'px'; 
+          }
+        }
+        $('#'+attrs['masked']+'_msg').remove();
+        element.append('<div style="text-align: center; font-size: 20px; width: 100%; position: absolute; top:'+newHeight+'; z-index:2; color:#FFF " id="'+attrs['masked']+'_msg">'+getElipses(scrolled)+'</div>');
+      }
+      var windowScroll = function() {
+        scope.$apply(function(){
+          resetMsgPosition(true)
+        })
+      };
+      scope.$on('$LOADMASK', function (event, value, msg) {
+        if (value === attrs['masked']) {
+          if (!msg) {
+            msg = 'Loading';
+          }
+          scope[attrs['masked']].msg = msg;
+          scope[attrs['masked']].total++;
+        }
+      });
+      scope.$on('$UNLOADMASK', function (event, value, time) {
+        if (value === attrs['masked']) {
+          scope[attrs['masked']].total = scope[attrs['masked']].total - 1 < 0? 0 : scope[attrs['masked']].total - 1;
+        }
+      });
+    }
+  };
+}])
 .directive('multiselect', ['$templateCache', '$timeout', function($templateCache, $timeout) {
   return {
     restrict: 'E',

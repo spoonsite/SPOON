@@ -164,14 +164,14 @@ var app = angular
     //   $('.popover').remove();
     // })
 
-    $rootScope.$on('$TRIGGERLOAD', function(event, value){
+    $rootScope.$on('$TRIGGERLOAD', function(event, value, msg){
       $timeout(function() {
-        $rootScope.$broadcast('$LOAD', value);
+        $rootScope.$broadcast('$LOADMASK', value, msg);
       }, 10);
     });
-    $rootScope.$on('$TRIGGERUNLOAD', function(event, value){
+    $rootScope.$on('$TRIGGERUNLOAD', function(event, value, msg){
       $timeout(function() {
-        $rootScope.$broadcast('$UNLOAD', value);
+        $rootScope.$broadcast('$UNLOADMASK', value, msg);
       }, 10);
     });
     $rootScope.$on('$TRIGGEREVENT', function(event, trigger, data, data2){
