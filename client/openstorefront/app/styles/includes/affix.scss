@@ -274,7 +274,24 @@
 }
 
 
-
+.loaderMasked {
+    position: relative;
+    min-height:100px;
+}
+.loaderMasked:before {
+    position:absolute;
+    display:block;
+    content:" ";
+    width: 100%;
+    height: 100%;
+    background-color: rgba(70, 70, 70, 0.8);
+    z-index:1;
+}
+.centered {
+    display:inline-block;
+    text-align: center;
+    width: 100%;
+}
 
 
 /*
