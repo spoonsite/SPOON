@@ -11,10 +11,10 @@ body {
     }
   </style>
   <![endif]-->
-  <div class="container bs-docs-container" ng-controller="SubmissionCtrl" >
-    <loader trigger="submissionLoader"></loader>
-
-    <div style="width: inherit;">
+  <div masked="submissionLoader" class="container bs-docs-container">
+    <!-- <loader trigger="submissionLoader"></loader> -->
+    <div  ng-controller="SubmissionCtrl" >
+      <div style="width: inherit;">
       <!--     <div class="row banner">
         <img src="images/logo/logo-words.svg" alt="" style="padding: 7px; width: auto; height:inherit;">
       </div> -->
@@ -694,6 +694,7 @@ body {
                 <td>{{item.description}}</td>
                 <td>&mdash;</td>
                 <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
+                <!-- <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" ></td> -->
                 <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getResourceHTML(item)"></td>
                 <td><button class="btn btn-danger" ng-click="deleteResource(item)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
               </tr>
@@ -708,129 +709,132 @@ body {
       <!-- MEDIA -->
       <h2 id="media">Media:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event, 'resourceFormType'): ''">Skip</button></small></h2>
       <panel class-list="edges" open-state="true" title="Add Media" style="position:relative">
-        <loader trigger="mediaPreviewLoader"></loader>
-        Current max upload size &lt; 100Mb
-        <div class="col-sm-12 ">
-          <div class="input-group">
-            <span class="input-group-addon">
-              <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="radio" ng-model="showMediaUpload" value="true" ng-click="toggleShowMedia(true)">
-            </span>
-            <label for="displayGrades" class="form-control select-hover">
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Media Type</label>
-                <div class="col-sm-10">
-                  <select type="text" class="form-control" name="typeCode" id="mediaFormType" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || lastMediaFile || showMediaUpload !== 'true' || isFull"></select>
+        <div masked="mediaLoader" >
+          Current max upload size &lt; 100Mb
+          <div class="col-sm-12 ">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="radio" ng-model="showMediaUpload" value="true" ng-click="toggleShowMedia(true)">
+              </span>
+              <label for="displayGrades" class="form-control select-hover">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Media Type</label>
+                  <div class="col-sm-10">
+                    <select type="text" class="form-control" name="typeCode" id="mediaFormType" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || lastMediaFile || showMediaUpload !== 'true' || isFull"></select>
+                  </div>
+                  <div style="clear:both;"></div>
                 </div>
-                <div style="clear:both;"></div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Caption</label>
-                <div class="col-sm-10">
-                  <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
-                  class="form-control"
-                  type="text"
-                  name="caption"
-                  ng-model="mediaForm.caption"
-                  ng-minlength=0
-                  ng-maxlength=250
-                  placeholder="Caption"
-                  ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"
-                  />
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Caption</label>
+                  <div class="col-sm-10">
+                    <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
+                    class="form-control"
+                    type="text"
+                    name="caption"
+                    ng-model="mediaForm.caption"
+                    ng-minlength=0
+                    ng-maxlength=250
+                    placeholder="Caption"
+                    ng-disabled="lastMediaFile || showMediaUpload !== 'true' || isFull"
+                    />
+                  </div>
+                  <div style="clear:both;"></div>
                 </div>
-                <div style="clear:both;"></div>
-              </div>
-              <div class="col-sm-12">
-                <span class="btn btn-primary btn-file" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || isFull">
-                  <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || isFull || (component.component.approvalState && component.component.approvalState !=='N')"/>
-                </span> <span>{{lastMediaFile}}</span>
-              </div>
-            </label>
+                <div class="col-sm-12">
+                  <span class="btn btn-primary btn-file" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || isFull">
+                    <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="lastMediaFile || showMediaUpload !== 'true' || !mediaForm.mediaTypeCode || isFull || (component.component.approvalState && component.component.approvalState !=='N')"/>
+                  </span> <span>{{lastMediaFile}}</span>
+                </div>
+              </label>
+            </div>
           </div>
-        </div>
-        <div class="col-sm-12">
-          <div class="input-group">
-            <span class="input-group-addon">
-              <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="radio" ng-model="showMediaUpload" value="false" ng-click="toggleShowMedia(false)">
-            </span>
-            <label for="displayGrades" class="form-control select-hover">
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Media Type</label>
-                <div class="col-sm-10">
-                  <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || showMediaUpload === 'true'"></select>
-                </div>
-                <div style="clear:both;"></div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Caption</label>
-                <div class="col-sm-10">
-                  <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
-                  class="form-control"
-                  type="text"
-                  name="caption"
-                  ng-model="mediaForm.caption"
-                  ng-minlength=0
-                  ng-maxlength=250
-                  placeholder="Caption"
-                  ng-disabled="showMediaUpload === 'true'"
-                  />
-                </div>
-                <div style="clear:both;"></div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Link</label>
-                <div class="col-sm-10">
-                  <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="text"
-                  id="link"
-                  name="link"
-                  class="form-control"
-                  placeholder="http:///www.example.com/image.png"
-                  ng-model="mediaForm.link"
-                  ng-disabled="showMediaUpload === 'true' || !mediaForm.mediaTypeCode"
-                  ng-minlength=0
-                  ng-maxlength=250
-                  />
-                </div>
-                <div style="clear:both;"></div>
-              </div>
-              <div class="col-sm-12">
-                <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="showMediaUpload === 'true' || !mediaForm.mediaTypeCode || !mediaForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
-              </div>
-            </label>
-          </div>
-        </div>
-        <!-- onchange="angular.element(this).scope().addMedia()" -->
-        <div id="srcList">
           <div class="col-sm-12">
-            <h3 style="margin-top: 20px;" ng-show="queue.length || component.media.length">Media Upload Queue</h3>
-            <table class="table table-stripped table-bordered" ng-show="queue.length || component.media.length">
-              <tr>
-                <th>Type</th>
-                <th>Caption</th>
-                <th>Mime Type</th>
-                <th>Preview/Link</th>
-                <th>Actions</th>
-              </tr>
-              <tr ng-repeat="item in queue">
-                <td>{{getMediaTypeDesc(item.file.mediaTypeCode)}}</td>
-                <td>{{item.file.caption}}</td>
-                <td>{{item.file.mimeType}}</td>
-                <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">
-                  <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
-                    <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
-                  </button>
-                </td>
-                <td><button class="btn btn-danger" ng-click="removeFromQueue(item)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
-              </tr>
-              <tr ng-repeat="item in component.media">
-                <td>{{getMediaTypeDesc(item.mediaTypeCode)}}</td>
-                <td>{{item.caption}}</td>
-                <td>&mdash;</td>
-                <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
-                <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHTML(item)"></td>
-                <td><button class="btn btn-danger" ng-click="deleteMedia(item)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
-              </tr>
-            </table>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="radio" ng-model="showMediaUpload" value="false" ng-click="toggleShowMedia(false)">
+              </span>
+              <label for="displayGrades" class="form-control select-hover">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Media Type</label>
+                  <div class="col-sm-10">
+                    <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || showMediaUpload === 'true'"></select>
+                  </div>
+                  <div style="clear:both;"></div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Caption</label>
+                  <div class="col-sm-10">
+                    <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
+                    class="form-control"
+                    type="text"
+                    name="caption"
+                    ng-model="mediaForm.caption"
+                    ng-minlength=0
+                    ng-maxlength=250
+                    placeholder="Caption"
+                    ng-disabled="showMediaUpload === 'true'"
+                    />
+                  </div>
+                  <div style="clear:both;"></div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Link</label>
+                  <div class="col-sm-10">
+                    <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="text"
+                    id="link"
+                    name="link"
+                    class="form-control"
+                    placeholder="http:///www.example.com/image.png"
+                    ng-model="mediaForm.link"
+                    ng-disabled="showMediaUpload === 'true' || !mediaForm.mediaTypeCode"
+                    ng-minlength=0
+                    ng-maxlength=250
+                    />
+                  </div>
+                  <div style="clear:both;"></div>
+                </div>
+                <div class="col-sm-12">
+                  <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="showMediaUpload === 'true' || !mediaForm.mediaTypeCode || !mediaForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
+                </div>
+              </label>
+            </div>
           </div>
+          <!-- onchange="angular.element(this).scope().addMedia()" -->
+          <div id="srcList">
+            <div class="col-sm-12">
+              <h3 style="margin-top: 20px;" ng-show="queue.length || component.media.length">Media Upload Queue</h3>
+              <table class="table table-stripped table-bordered" ng-show="queue.length || component.media.length">
+                <tr>
+                  <th>Type</th>
+                  <th>Caption</th>
+                  <th>Mime Type</th>
+                  <th>Preview/Link</th>
+                  <th>Actions</th>
+                </tr>
+                <tr ng-repeat="item in queue">
+                  <td>{{getMediaTypeDesc(item.file.mediaTypeCode)}}</td>
+                  <td>{{item.file.caption}}</td>
+                  <td>{{item.file.mimeType}}</td>
+                  <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">
+                    <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
+                      <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
+                    </button>
+                  </td>
+                  <td><button class="btn btn-danger" ng-click="removeFromQueue(item)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
+                </tr>
+                <tr ng-repeat="item in component.media">
+                  <td>{{getMediaTypeDesc(item.mediaTypeCode)}}</td>
+                  <td>{{item.caption}}</td>
+                  <td>&mdash;</td>
+                  <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
+                  <!-- <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;"></td> -->
+                  <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHTML(item)"></td>
+                  <td><button class="btn btn-danger" ng-click="deleteMedia(item)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div style="clear:both;"></div>
         </div>
       </panel>
       <!-- END MEDIA -->
@@ -996,6 +1000,7 @@ body {
               <td>{{item.description}}</td>
               <td>{{item.mimeType}}</td>
               <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
+              <!-- <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" ></td> -->
               <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getResourceHTML(item)"></td>
             </tr>
           </table>
@@ -1035,6 +1040,7 @@ body {
                 <td>{{item.caption}}</td>
                 <td>{{item.mimeType}}</td>
                 <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
+                <!-- <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;"></td> -->
                 <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHTML(item)"></td>
               </tr>
             </table>
@@ -1054,5 +1060,6 @@ body {
     </div>
     <!-- REVIEW AND SUBMIT SECTION -->
   </div>
+</div>
 </div>
 </div>
