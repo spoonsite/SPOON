@@ -66,6 +66,8 @@ public class ApplicationInit
 		startupManager(new AsyncTaskManager());
 		startupManager(new ReportManager());
 		startupManager(new LDAPManager());
+
+		//	startupManager(new DBLogManager());
 	}
 
 	private void startupManager(Initializable initializable)
@@ -85,6 +87,7 @@ public class ApplicationInit
 		}
 
 		//Shutdown in reverse order to make sure the dependancies are good.
+		//	shutdownManager(new DBLogManager());
 		shutdownManager(new LDAPManager());
 		shutdownManager(new ReportManager());
 		shutdownManager(new AsyncTaskManager());

@@ -287,4 +287,46 @@ public class StringProcessor
 		return value;
 	}
 
+	/**
+	 * This will produce html highlighted stacktrace
+	 *
+	 * @param throwable
+	 * @return
+	 */
+	public static String parseStackTraceHtml(Throwable throwable)
+	{
+		StringBuilder exception = new StringBuilder();
+
+		if (throwable != null) {
+			String message = throwable.getMessage();
+			if (StringUtils.isNotBlank(message)) {
+				exception.append("<b>Message:</b> <span style='color: red;'><b>").append(message.replace("\n", "<br>")).append("</b><br>");
+			}
+			for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
+				String style = "color: grey; font-size: 10px;";
+				if (stackTraceElement.getClassName().contains("edu.usu.sdl")) {
+					style = "color: black; font-size: 12px; font-wieght: bold;";
+				}
+				exception.append("<span style='")
+						.append(style).append("'>")
+						.append(stackTraceElement.getClassName()).append(" (")
+						.append(stackTraceElement.getMethodName()).append(") : ")
+						.append(stackTraceElement.getLineNumber()).append(" ")
+						.append("</span><br>");
+			}
+			if (throwable.getSuppressed().length > 0) {
+				exception.append("Suppress Exceptions: ");
+				for (Throwable suppressed : throwable.getSuppressed()) {
+					exception.append(parseStackTraceHtml(suppressed)).append("<br>");
+				}
+			}
+
+			if (throwable.getCause() != null) {
+
+			}
+		}
+
+		return exception.toString();
+	}
+
 }
