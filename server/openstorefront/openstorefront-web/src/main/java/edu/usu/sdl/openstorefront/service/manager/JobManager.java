@@ -24,11 +24,11 @@ import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.BaseJob;
 import edu.usu.sdl.openstorefront.service.job.ComponentUpdateJob;
-import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
+import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
@@ -257,15 +257,15 @@ public class JobManager
 
 	private static void addCleanUpErrorsJob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding Error Clean up Job");
+		log.log(Level.INFO, "Adding System Clean up Job");
 
-		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
-				.withIdentity("CleanUpErrorsJob", JOB_GROUP_SYSTEM)
-				.withDescription("Removes old error tickets")
+		JobDetail job = JobBuilder.newJob(SystemCleanupJob.class)
+				.withIdentity("SystemCleanupJob", JOB_GROUP_SYSTEM)
+				.withDescription("Removes old error tickets and db log cleanup")
 				.build();
 
 		Trigger trigger = newTrigger()
-				.withIdentity("CleanUpErrorsJobTrigger", JOB_GROUP_SYSTEM)
+				.withIdentity("SystemCleanupJob", JOB_GROUP_SYSTEM)
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInMinutes(5)
@@ -465,7 +465,7 @@ public class JobManager
 		//TODO: Add the ability to run a temp background job
 		throw new UnsupportedOperationException("Method is not supported yet");
 //		String job
-//		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+//		JobDetail job = JobBuilder.newJob(SystemCleanupJob.class)
 //				.withIdentity("DynamicJob-" + UUID.randomUUID().toString(), JOB_GROUP_SYSTEM)
 //				.build();
 //

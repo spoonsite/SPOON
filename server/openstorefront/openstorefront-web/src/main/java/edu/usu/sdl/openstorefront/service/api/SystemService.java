@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
 import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
@@ -189,5 +190,17 @@ public interface SystemService
 	 * @param userManager
 	 */
 	public void syncUserProfilesWithUserManagement(ExternalUserManager userManager);
+
+	/**
+	 * Inserts a new log record.
+	 *
+	 * @param logRecord
+	 */
+	public void addLogRecord(DBLogRecord logRecord);
+
+	/**
+	 * This enforces max log records kept in the DB.
+	 */
+	public void cleanUpOldLogRecords();
 
 }

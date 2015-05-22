@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.security.ExternalUserManager;
 import edu.usu.sdl.openstorefront.security.UserRecord;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
+import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
@@ -30,6 +31,7 @@ import edu.usu.sdl.openstorefront.storage.model.AlertType;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.AsyncTask;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
+import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
@@ -439,6 +441,31 @@ public class SystemServiceImpl
 					getUserService().deleteProfile(userProfile.getUsername());
 				}
 			}
+		}
+	}
+
+	@Override
+	public void addLogRecord(DBLogRecord logRecord)
+	{
+		logRecord.setLogId(persistenceService.generateId());
+		persistenceService.saveNonBaseEntity(logRecord);
+	}
+
+	@Override
+	public void cleanUpOldLogRecords()
+	{
+		long count = persistenceService.countClass(DBLogRecord.class);
+		long max = DBLogManager.getMaxLogEntries();
+
+		if (count > max) {
+			log.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
+
+			long limit = count - max;
+			String query = "SELECT FROM DBLogRecord ORDER BY eventDts ASC LIMIT " + limit;
+			List<DBLogRecord> logRecords = persistenceService.query(query, null);
+			logRecords.stream().forEach((record) -> {
+				persistenceService.delete(record);
+			});
 		}
 	}
 
