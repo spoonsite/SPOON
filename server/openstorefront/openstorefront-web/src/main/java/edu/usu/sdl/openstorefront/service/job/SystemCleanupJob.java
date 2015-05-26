@@ -22,7 +22,7 @@ import org.quartz.JobExecutionContext;
  *
  * @author dshurtleff
  */
-public class ErrorTicketCleanupJob
+public class SystemCleanupJob
 		extends BaseJob
 {
 
@@ -30,6 +30,7 @@ public class ErrorTicketCleanupJob
 	protected void executeInternaljob(JobExecutionContext context)
 	{
 		service.getSystemService().cleanupOldErrors();
+		service.getSystemService().cleanUpOldLogRecords();
 	}
 
 }

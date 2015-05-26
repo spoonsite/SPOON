@@ -819,6 +819,21 @@ public class PersistenceService
 
 	public <T extends BaseEntity> T saveNonPkEntity(T entity)
 	{
+		return saveNonBaseEntity(entity);
+	}
+
+	/**
+	 * This is used for non-base entity object. Keep in mind they still need to
+	 * be registered with the DB.
+	 *
+	 * @param <T>
+	 * @param entity
+	 * @return
+	 */
+	public <T> T saveNonBaseEntity(T entity)
+	{
+		Objects.requireNonNull(entity, "Unable to persist a NULL entity.");
+
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {

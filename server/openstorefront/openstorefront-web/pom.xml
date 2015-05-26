@@ -33,6 +33,11 @@
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 		</repository>
+		<repository>
+		  <id>xmappr-repo-googlecode</id>
+		  <name>Xmappr Repository</name>
+		  <url>http://xmappr.googlecode.com/svn/repo/</url>
+		</repository>		
 	</repositories>
 
 	<pluginRepositories>
