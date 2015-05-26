@@ -15,7 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.service.manager.resource;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -25,31 +29,47 @@ import java.util.logging.LogRecord;
  * @author dshurtleff
  */
 public class DBLogHandler
-		extends Handler
+    extends Handler
 {
 
-	@Override
-	public void publish(LogRecord record)
-	{
-		if (record != null) {
-			DBLogRecord logRecord = DBLogRecord.fromLogRecord(record);
-			//need to Bufffer; Handle error *use report error
+    private final ExecutorService asyncLoggerService = Executors.newSingleThreadExecutor();
+    private boolean active = true;
 
-			//ServiceProxy serviceProxy = new ServiceProxy();
-			//serviceProxy.getSystemService().addLogRecord(logRecord);
-		}
-	}
+    @Override
+    public void publish(LogRecord record)
+    {
+        if (record != null && active) {
+            try {
+                DBLogRecord logRecord = DBLogRecord.fromLogRecord(record);
 
-	@Override
-	public void flush()
-	{
-		//Nothing is Buffered
-	}
+                Runnable task = () -> {
+                    ServiceProxy serviceProxy = new ServiceProxy();
+                    serviceProxy.getSystemService().addLogRecord(logRecord);
+                };
+                asyncLoggerService.submit(task);
+            } catch (Exception e) {
+                getErrorManager().error("Failed to log Record", e, 1);
+            }
 
-	@Override
-	public void close() throws SecurityException
-	{
-		//Nothing to close
-	}
+        }
+    }
+
+    @Override
+    public void flush()
+    {
+        //Nothing is Buffered
+    }
+
+    @Override
+    public void close() throws SecurityException
+    {
+        active = false;
+        asyncLoggerService.shutdown();
+        try {
+            asyncLoggerService.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            getErrorManager().error("Failed to shutdown db logger", ex, 2);
+        }
+    }
 
 }
