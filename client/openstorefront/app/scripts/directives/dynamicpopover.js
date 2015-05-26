@@ -16,49 +16,49 @@
 
 'use strict';
 
-app.directive('dynamicPopover', ['$compile', function($compile){
+app.directive('dynamicPopover', ['$compile', '$timeout', function($compile, $timeout){
   return {
     scope: {
       content: '=',
       contentString: '@'
     },
     link: function(scope, element, attrs) {
-      // console.log('attrs', attrs);
-      // console.log('scope', scope);
-
-      // define popover for this element
-      scope.$watch('content', function() {
+      var addPopover = function(){
         if (scope.content || scope.contentString) {
-          var content = scope.content || scope.contentString;          
+          var content = scope.content || scope.contentString;
+          console.log('we added the popover');
           $(element).popover({
             html: true,
             container: attrs['container'] || 'body',
             title: function(){
-              // return attrs['title']+'<span class="close">&times;</span>';
               return attrs['title'] || ''
             }, 
             content: $compile(content)(scope),
             placement: attrs['placement'] || 'top',
             trigger: attrs['trigger'] || 'click',
-            // grab popover content from the next element
-          });
-          // .on('shown.bs.popover', function(e){
-          //   var popover = jQuery(this);
-          //   jQuery('body').last('div.popover .close').on('click', function(e){
-          //     popover.popover('hide');
-          //   });
-          // });;
+          })
+          $timeout(function(){
+            element.popover('show');
+            // $timeout(function(){
+            //   element.popover('hide');
+            //   $timeout(function(){
+            //     element.popover('show');
+            //   }, 100)
+            // },100)
+          },150)
+          element.off('click', addPopover); 
         }
-      })
+        $('body').on('click', function (e) {
+          if (!element.is(e.target) && element.has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+            element.popover('hide');
+          }
+        });
+      }
+
+      // define popover for this element
+      scope.$watch('content', function() {
+        element.on('click', addPopover);
+      });
     }
   }
 }])
-$('body').on('click', function (e) {
-  $('[dynamic-popover]').each(function () {
-    //the 'is' for buttons that trigger popups
-    //the 'has' for icons within a button that triggers a popup
-    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-      $(this).popover('hide');
-    }
-  });
-});
