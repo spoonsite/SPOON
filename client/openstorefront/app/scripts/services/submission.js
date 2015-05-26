@@ -113,6 +113,38 @@
     return result.promise;
   };
 
+  submissionservice.getSubmissions = function (id, override) {
+    var result = $q.defer();
+    if (id) {
+      var url = 'api/v1/resource/componentsubmissions/';
+      var value = checkExpire('componentSubmissions_' + id, minute * 2);
+      if (value && !override) {
+        result.resolve(value);
+      } else {
+        $http({
+          method: 'GET',
+          url: url
+        })
+        .success(function (data, status, headers, config) { /*jshint unused:false*/
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            save('componentSubmissions_' + id, data);
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
+          result.reject('There was an error');
+        });
+      }
+    } else {
+      result.reject('A unique ID is required to retrieve component details');
+    }
+    return result.promise;
+  };
+
 
   submissionservice.forceRemoveEnity = function (options) {
     var deferred = $q.defer();
@@ -162,11 +194,39 @@
     return deferred.promise;
   }; 
 
-  submissionservice.submit = function (componentId) {
+  submissionservice.submit = function (componentId, reverse) {
     var deferred = $q.defer();
     if (componentId){
       var method = 'PUT';
-      var url = 'api/v1/resource/componentsubmissions/'+encodeURIComponent(componentId)+'/submit';
+      var url = 'api/v1/resource/componentsubmissions/'+encodeURIComponent(componentId);
+      if (reverse){
+        url = url + '/unsubmit';
+      } else {
+        url = url + '/submit';
+      }
+      $http({
+        'method': method,
+        'url': url
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          deferred.resolve(data);
+        }
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    }
+    return deferred.promise;
+  }; 
+
+  submissionservice.deactivateSubmission = function (componentId) {
+    var deferred = $q.defer();
+    if (componentId){
+      var method = 'PUT';
+      var url = 'api/v1/resource/componentsubmissions/'+encodeURIComponent(componentId)+'/inactivate';
       $http({
         'method': method,
         'url': url
@@ -193,6 +253,32 @@
       deferred.reject('The component id was missing');
       return deferred.promise;
     }
+  };    
+
+  submissionservice.setNotifyMe = function (email, submission) {
+    var deferred = $q.defer();
+    if (!submission || !submission.componentId){
+      return deferred.reject('An email and submission is required');
+    } else {
+      var method = 'PUT';
+      var url = 'api/v1/resource/componentsubmissions/'+encodeURIComponent(submission.componentId)+'/setNotifyMe';
+      $http({
+        'method': method,
+        'url': url,
+        'data': email
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          deferred.resolve(data);
+        } else {
+          deferred.resolve(data);
+        }
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    }
+    return deferred.promise;
   };    
 
 
