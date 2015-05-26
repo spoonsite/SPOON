@@ -21,11 +21,11 @@ import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -318,7 +318,7 @@ public class ComponentSubmissionResource
 		return response;
 	}
 
-	private Response ownerCheck(BaseEntity entity)
+	private Response ownerCheck(StandardEntity entity)
 	{
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
 				|| OpenStorefrontConstant.ANONYMOUS_USER.equals(entity.getCreateUser())) {

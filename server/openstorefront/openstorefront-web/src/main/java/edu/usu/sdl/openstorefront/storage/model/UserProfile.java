@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class UserProfile
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK

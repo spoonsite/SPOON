@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
@@ -47,7 +47,7 @@ public class AsyncCallbackTest
 	protected void runInternalTest()
 	{
 		LookupModel lookupModel = new LookupModel();
-		lookupModel.setCode(BaseEntity.PENDING_STATUS);
+		lookupModel.setCode(StandardEntity.PENDING_STATUS);
 
 		results.append("Before: ").append(lookupModel.getCode()).append("<br>");
 
@@ -66,12 +66,12 @@ public class AsyncCallbackTest
 			public void afterExecute(TaskFuture taskFuture)
 			{
 				if (OpenStorefrontConstant.TaskStatus.FAILED.equals(taskFuture.getStatus())) {
-					lookupModel.setCode(BaseEntity.ACTIVE_STATUS);
+					lookupModel.setCode(StandardEntity.ACTIVE_STATUS);
 				}
 			}
 		});
 		taskRequest.setTask((Callable) () -> {
-			lookupModel.setCode(BaseEntity.INACTIVE_STATUS);
+			lookupModel.setCode(StandardEntity.INACTIVE_STATUS);
 			return true;
 		});
 

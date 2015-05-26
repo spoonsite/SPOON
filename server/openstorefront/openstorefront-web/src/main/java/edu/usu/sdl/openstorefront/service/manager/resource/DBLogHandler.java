@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.service.manager.resource;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
+import edu.usu.sdl.openstorefront.util.Convert;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -29,47 +31,50 @@ import java.util.logging.LogRecord;
  * @author dshurtleff
  */
 public class DBLogHandler
-    extends Handler
+		extends Handler
 {
 
-    private final ExecutorService asyncLoggerService = Executors.newSingleThreadExecutor();
-    private boolean active = true;
+	private final ExecutorService asyncLoggerService = Executors.newSingleThreadExecutor();
+	private boolean active = true;
 
-    @Override
-    public void publish(LogRecord record)
-    {
-        if (record != null && active) {
-            try {
-                DBLogRecord logRecord = DBLogRecord.fromLogRecord(record);
+	@Override
+	public void publish(LogRecord record)
+	{
+		if (record != null && active) {
+			try {
+				//Filter Audit logging as it can fill the logs and it's better captured else where
+				boolean logSecurityFilter = Convert.toBoolean(PropertiesManager.getValue(PropertiesManager.KEY_DBLOG_LOG_SECURITY, "false"));
+				if (logSecurityFilter || record.getSourceClassName().equals("edu.usu.sdl.openstorefront.web.rest.SecurityFilter") == false) {
+					DBLogRecord logRecord = DBLogRecord.fromLogRecord(record);
 
-                Runnable task = () -> {
-                    ServiceProxy serviceProxy = new ServiceProxy();
-                    serviceProxy.getSystemService().addLogRecord(logRecord);
-                };
-                asyncLoggerService.submit(task);
-            } catch (Exception e) {
-                getErrorManager().error("Failed to log Record", e, 1);
-            }
+					Runnable task = () -> {
+						ServiceProxy serviceProxy = new ServiceProxy();
+						serviceProxy.getSystemService().addLogRecord(logRecord);
+					};
+					asyncLoggerService.submit(task);
+				}
+			} catch (Exception e) {
+				getErrorManager().error("Failed to log Record", e, 1);
+			}
+		}
+	}
 
-        }
-    }
+	@Override
+	public void flush()
+	{
+		//Nothing is Buffered
+	}
 
-    @Override
-    public void flush()
-    {
-        //Nothing is Buffered
-    }
-
-    @Override
-    public void close() throws SecurityException
-    {
-        active = false;
-        asyncLoggerService.shutdown();
-        try {
-            asyncLoggerService.awaitTermination(3, TimeUnit.SECONDS);
-        } catch (InterruptedException ex) {
-            getErrorManager().error("Failed to shutdown db logger", ex, 2);
-        }
-    }
+	@Override
+	public void close() throws SecurityException
+	{
+		active = false;
+		asyncLoggerService.shutdown();
+		try {
+			asyncLoggerService.awaitTermination(3, TimeUnit.SECONDS);
+		} catch (InterruptedException ex) {
+			getErrorManager().error("Failed to shutdown db logger", ex, 2);
+		}
+	}
 
 }

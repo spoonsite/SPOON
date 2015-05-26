@@ -56,6 +56,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -467,6 +468,13 @@ public class SystemServiceImpl
 				persistenceService.delete(record);
 			});
 		}
+	}
+
+	@Override
+	public void clearAllLogRecord()
+	{
+		int recordsRemoved = persistenceService.deleteByQuery(DBLogRecord.class, "", new HashMap<>());
+		log.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
 	}
 
 }

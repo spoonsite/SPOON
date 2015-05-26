@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
 import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -34,6 +33,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ContactType;
 import edu.usu.sdl.openstorefront.storage.model.MediaType;
 import edu.usu.sdl.openstorefront.storage.model.ResourceType;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
@@ -264,7 +264,7 @@ public class DataConvertUseCase
 			Component componentDetail = componentAll.getComponent();
 
 			//defaults
-			componentDetail.setActiveStatus(BaseEntity.ACTIVE_STATUS);
+			componentDetail.setActiveStatus(StandardEntity.ACTIVE_STATUS);
 
 			//map form old
 			componentDetail.setComponentId("" + oldAsset.getId());

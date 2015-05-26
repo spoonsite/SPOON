@@ -17,12 +17,10 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.LogRecord;
-import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -31,7 +29,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class DBLogRecord
-		implements Serializable
+		extends BaseEntity<DBLogRecord>
 {
 
 	@PK(generated = true)
@@ -53,9 +51,6 @@ public class DBLogRecord
 	private Integer threadId;
 	private String stackTrace;
 	private List<String> parameters = new ArrayList<>();
-
-	@Version
-	private String storageVersion;
 
 	public DBLogRecord()
 	{
@@ -188,16 +183,6 @@ public class DBLogRecord
 	public void setStackTrace(String stackTrace)
 	{
 		this.stackTrace = stackTrace;
-	}
-
-	public String getStorageVersion()
-	{
-		return storageVersion;
-	}
-
-	public void setStorageVersion(String storageVersion)
-	{
-		this.storageVersion = storageVersion;
 	}
 
 	public List<String> getParameters()

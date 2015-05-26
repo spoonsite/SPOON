@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
  * @param <T>
  */
 public abstract class BaseComponent<T>
-		extends BaseEntity<BaseComponent>
+		extends StandardEntity<BaseComponent>
 {
 
 	@NotNull

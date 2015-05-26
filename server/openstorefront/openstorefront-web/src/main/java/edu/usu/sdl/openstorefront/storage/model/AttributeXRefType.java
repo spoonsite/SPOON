@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class AttributeXRefType
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK
@@ -45,7 +45,6 @@ public class AttributeXRefType
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String fieldId;
-
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField

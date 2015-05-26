@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.util;
 
 import edu.usu.sdl.openstorefront.security.UserContext;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -131,7 +131,7 @@ public class SecurityUtil
 	 * @param entity (if null it will return false)
 	 * @return
 	 */
-	public static boolean isCurrentUserTheOwner(BaseEntity entity)
+	public static boolean isCurrentUserTheOwner(StandardEntity entity)
 	{
 		if (entity != null) {
 			return getCurrentUserName().equals(entity.getCreateUser());

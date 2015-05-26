@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class ScheduledReport
-		extends BaseEntity<ScheduledReport>
+		extends StandardEntity<ScheduledReport>
 {
 
 	@PK(generated = true)

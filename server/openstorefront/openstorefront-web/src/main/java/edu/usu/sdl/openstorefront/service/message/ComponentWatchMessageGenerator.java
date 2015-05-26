@@ -18,8 +18,8 @@ package edu.usu.sdl.openstorefront.service.message;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.QuestionAll;
 import edu.usu.sdl.openstorefront.service.transfermodel.ReviewAll;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
 import java.text.SimpleDateFormat;
@@ -163,12 +163,12 @@ public class ComponentWatchMessageGenerator
 		return "To stop receiving updates on this component, please login and uncheck the notify flag for this component from your \"Watches\". ";
 	}
 
-	private <T extends BaseEntity> boolean changed(List<T> entities, Date lastViewDts)
+	private <T extends StandardEntity> boolean changed(List<T> entities, Date lastViewDts)
 	{
 		boolean changed = false;
 
-		for (BaseEntity baseEntity : entities) {
-			if (baseEntity.getUpdateDts().after(lastViewDts)) {
+		for (StandardEntity standardEntity : entities) {
+			if (standardEntity.getUpdateDts().after(lastViewDts)) {
 				changed = true;
 				break;
 			}

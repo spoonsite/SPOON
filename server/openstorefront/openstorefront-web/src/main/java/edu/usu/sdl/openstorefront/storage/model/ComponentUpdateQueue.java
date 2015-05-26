@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.util.PK;
  * @author dshurtleff
  */
 public class ComponentUpdateQueue
-		extends BaseEntity<ComponentUpdateQueue>
+		extends StandardEntity<ComponentUpdateQueue>
 {
 
 	@PK(generated = true)

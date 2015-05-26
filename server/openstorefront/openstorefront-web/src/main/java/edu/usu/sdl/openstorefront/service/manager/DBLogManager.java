@@ -27,67 +27,67 @@ import java.util.logging.Logger;
  * @author dshurtleff
  */
 public class DBLogManager
-    implements Initializable
+		implements Initializable
 {
 
-    private static final Logger log = Logger.getLogger(DBLogManager.class.getName());
-    private static DBLogHandler logHandler;
+	private static final Logger log = Logger.getLogger(DBLogManager.class.getName());
+	private static DBLogHandler logHandler;
 
-    public static long getMaxLogEntries()
-    {
-        long max;
-        String maxRecords = PropertiesManager.getValue(PropertiesManager.KEY_DBLOG_MAX_RECORD, "100000");
-        max = Convert.toLong(maxRecords);
-        return max;
-    }
+	public static long getMaxLogEntries()
+	{
+		long max;
+		String maxRecords = PropertiesManager.getValue(PropertiesManager.KEY_DBLOG_MAX_RECORD, "100000");
+		max = Convert.toLong(maxRecords);
+		return max;
+	}
 
-    public static void init()
-    {
-        String useDBLogger = PropertiesManager.getValue(PropertiesManager.KEY_DBLOG_ON, "true");
-        if (Convert.toBoolean(useDBLogger)) {
-            log.log(Level.CONFIG, "Using DB Logger");
+	public static void init()
+	{
+		String useDBLogger = PropertiesManager.getValue(PropertiesManager.KEY_DBLOG_ON, "true");
+		if (Convert.toBoolean(useDBLogger)) {
+			log.log(Level.CONFIG, "Using DB Logger");
 
-            logHandler = new DBLogHandler();
-            logHandler.setLevel(Level.ALL);
+			logHandler = new DBLogHandler();
+			logHandler.setLevel(Level.ALL);
 
-            Logger rootLogger = LogManager.getLogManager().getLogger("");
-            if (rootLogger != null) {
-                rootLogger.addHandler(logHandler);
-            }
+			Logger rootLogger = LogManager.getLogManager().getLogger("");
+			if (rootLogger != null) {
+				rootLogger.addHandler(logHandler);
+			}
 
-            Logger openstorefrontLogger = LogManager.getLogManager().getLogger("edu.usu.sdl.openstorefront");
-            if (openstorefrontLogger != null) {
-                openstorefrontLogger.addHandler(logHandler);
-            }
-        }
-    }
+			Logger openstorefrontLogger = LogManager.getLogManager().getLogger("edu.usu.sdl.openstorefront");
+			if (openstorefrontLogger != null) {
+				openstorefrontLogger.addHandler(logHandler);
+			}
+		}
+	}
 
-    public static void cleanup()
-    {
-        Logger rootLogger = LogManager.getLogManager().getLogger("");
-        if (rootLogger != null) {
-            rootLogger.removeHandler(logHandler);
-        }
+	public static void cleanup()
+	{
+		Logger rootLogger = LogManager.getLogManager().getLogger("");
+		if (rootLogger != null) {
+			rootLogger.removeHandler(logHandler);
+		}
 
-        Logger openstorefrontLogger = LogManager.getLogManager().getLogger("edu.usu.sdl.openstorefront");
-        if (openstorefrontLogger != null) {
-            openstorefrontLogger.removeHandler(logHandler);
-        }
-        if (logHandler != null) {
-            logHandler.close();
-        }
-    }
+		Logger openstorefrontLogger = LogManager.getLogManager().getLogger("edu.usu.sdl.openstorefront");
+		if (openstorefrontLogger != null) {
+			openstorefrontLogger.removeHandler(logHandler);
+		}
+		if (logHandler != null) {
+			logHandler.close();
+		}
+	}
 
-    @Override
-    public void initialize()
-    {
-        DBLogManager.init();
-    }
+	@Override
+	public void initialize()
+	{
+		DBLogManager.init();
+	}
 
-    @Override
-    public void shutdown()
-    {
-        DBLogManager.cleanup();
-    }
+	@Override
+	public void shutdown()
+	{
+		DBLogManager.cleanup();
+	}
 
 }

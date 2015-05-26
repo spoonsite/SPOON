@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
@@ -36,6 +35,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -164,20 +164,20 @@ public class ComponentAll
 		}
 	}
 
-	private <T extends BaseEntity> void populateCreateUpdateFieldsBaseComponent(T baseEntity, boolean update)
+	private <T extends StandardEntity> void populateCreateUpdateFieldsBaseComponent(T standardEntity, boolean update)
 	{
 		List<T> entities = new ArrayList<>();
-		entities.add(baseEntity);
+		entities.add(standardEntity);
 		populateCreateUpdateFieldsBaseComponent(entities, update);
 	}
 
-	private <T extends BaseEntity> void populateCreateUpdateFieldsBaseComponent(List<T> baseEntities, boolean update)
+	private <T extends StandardEntity> void populateCreateUpdateFieldsBaseComponent(List<T> baseEntities, boolean update)
 	{
-		for (BaseEntity baseEntity : baseEntities) {
+		for (StandardEntity standardEntity : baseEntities) {
 			if (update) {
-				baseEntity.populateBaseUpdateFields();
+				standardEntity.populateBaseUpdateFields();
 			} else {
-				baseEntity.populateBaseCreateFields();
+				standardEntity.populateBaseCreateFields();
 			}
 		}
 	}

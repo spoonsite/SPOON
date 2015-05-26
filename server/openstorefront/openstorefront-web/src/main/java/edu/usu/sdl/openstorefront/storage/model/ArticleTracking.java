@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Tracks article events")
 public class ArticleTracking
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK(generated = true)
