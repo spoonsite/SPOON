@@ -67,7 +67,7 @@ body {
             </li>
             <hr ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  style="margin:2px 0;">
             <li data-target="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  class="edit">
-              <a target="_self" href="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" ng-click="setEditable($event)">Edit Component</a>
+              <a target="_self" href="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N' && component.component.approvalState !=='A')" ng-click="setEditable($event)">Edit Component</a>
             </li>
           </ul>
         </div>
@@ -1078,8 +1078,8 @@ body {
       <div style="clear:both;"></div>
 
       <div class="col-sm-12" style="text-align: center; margin-bottom: 20px;">
-        <button ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="setEditable($event)">Edit Component</button>
-        <a style="display:inline-block" class="btn btn-primary btn-lg" ng-show="component.component.componentId" href="single?id={{component.component.componentId}}" target="_blank">Preview Component</a>
+        <button ng-show="(component.component.approvalState && component.component.approvalState !== 'N' && component.component.approvalState !=='A')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="setEditable($event)">Edit Component</button>
+        <a style="display:inline-block" class="btn btn-primary btn-lg" ng-show="component.component.componentId && component.component.approvalState !=='N'" href="single?id={{component.component.componentId}}" target="_blank">Preview Component</a>
         <button ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="finalSave($event)">Submit Component</button>
       </div>
 
