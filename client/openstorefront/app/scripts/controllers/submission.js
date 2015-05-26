@@ -14,6 +14,10 @@
 * limitations under the License.
 */
 
+/*Until we figure it out, IE9 is having issues uploading files. A warning message has been put in*/
+/*There is an issue with Chrome using up all of its sockets when preview files... no workaround*/
+
+
 'use strict';
 
 /*global isEmpty*/
@@ -21,591 +25,597 @@
 app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$anchorScroll', 'FileUploader', '$templateCache', '$uiModal', '$sce',
   function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $anchorScroll, FileUploader, $templateCache, $uiModal, $sce) { /*jshint unused: false*/
 
+  //
+  $scope.test = 'This is a test';
+  $scope.badgeFound = false;
+  $scope.lastMediaFile = '';
 
-    $scope.test = 'This is a test';
-    $scope.badgeFound = false;
-    $scope.lastMediaFile = '';
-
-    $scope.submitter = {};
-    $scope.submitter.firstName;
-    $scope.submitter.lastName;
-    $scope.submitter.email;
-    $scope.submitter.organization;
-    $scope.current = 'top';
-    $scope.optIn = false;
-
-
-    $scope.componentId;
-    $scope.component = {};
-    $scope.backup = {};
-    $scope.component.component = {};
-    $scope.component.attributes = {};
-
-    $scope.component.metadata = [];
-    $scope.metadataForm = {};
-
-    $scope.component.tags = [];
-    $scope.tagsForm = {};
+  $scope.submitter = {};
+  $scope.submitter.firstName;
+  $scope.submitter.lastName;
+  $scope.submitter.email;
+  $scope.submitter.organization;
+  $scope.current = 'top';
+  $scope.optIn = false;
 
 
-    $scope.contactForm = {};
-    $scope.component.contacts = [];
+  $scope.componentId;
+  $scope.component = {};
+  $scope.backup = {};
+  $scope.component.component = {};
+  $scope.component.attributes = {};
 
-    $scope.component.media = [];
-    $scope.mediaForm = {};
-    $scope.showMediaUpload = 'true';
-    $scope.isFull = false;
+  $scope.component.metadata = [];
+  $scope.metadataForm = {};
 
-
-    $scope.component.resources = [];
-    $scope.resourceForm = {};
-    $scope.showResourceUpload = 'false';
-    $scope.isFullResource = false;
+  $scope.component.tags = [];
+  $scope.tagsForm = {};
 
 
-    $scope.dependencyForm = {};
-    $scope.component.externalDependencies = [];
+  $scope.contactForm = {};
+  $scope.component.contacts = [];
 
-    $scope.details = {};
+  $scope.component.media = [];
+  $scope.mediaForm = {};
+  $scope.showMediaUpload = 'true';
+  $scope.isFull = false;
 
-    $scope.formMedia;
 
-    $scope.setEditable = function($event){
-      var response = window.confirm("Are you sure you want to resume editing your submission? This action remove your submission from the admin's pending queue and you will have to re-submit it for approval.");
-      if (response && $scope.vitalsCheck()){
-        if ($scope.component.component) {
-          $scope.component.component.approvalState = 'N';
-          $scope.submit(true).then(function(){
-            $scope.scrollTo('vitals', 'vitals', '', $event, 'componentName');
-          }, function(){
-            if($event) {
-              $event.preventDefault();
-              $event.stopPropagation();
-            }
-          })
-        }
-      } 
-    }
+  $scope.component.resources = [];
+  $scope.resourceForm = {};
+  $scope.showResourceUpload = 'false';
+  $scope.isFullResource = false;
 
-    $scope.getMediaHTML = function(media){
-      return utils.getMediaHTML(media, $sce);
-    }
 
-    $scope.getResourceHTML = function(resource){
-      return utils.getResourceHTML(resource, $sce);
-    }
+  $scope.dependencyForm = {};
+  $scope.component.externalDependencies = [];
 
-    $scope.getSubmission = function(){
-      var deferred = $q.defer();
-      if ($scope.componentId !== null && $scope.componentId !== undefined){
-        Business.submissionservice.getSubmission($scope.componentId, true).then(function(result){
-          $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-          if (result && result.component && result.component.componentId){
-            $scope.backup = angular.copy(result);
-            $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
-            $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
-            $scope.componentId = result.component.componentId;
-            $scope.component = angular.copy(result);
-            $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
-            $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
-            $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
-            if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N') {
-              $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
-            }
-          }
-          deferred.resolve();
-        }, function(result){
-          $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-          deferred.reject();
-        });
-      }//
-      return deferred.promise;
-    }
+  $scope.details = {};
 
-    $scope.init = function(){
-      if ($location.search() && $location.search().id){
-        console.log('$location', $location.search());
-        $scope.componentId = $location.search().id;
-        $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Saving progress');
-        $scope.getSubmission().then(function(){
-          var found = _.find($scope.component.contacts, {'contactType':'SUB'});
-          if (found){
-            $scope.submitter = found;
-          }
-          $scope.optIn = $scope.component.component.notifyOfApprovalEmail? true: false;
-        }, function(){
-          $scope.componentId = null;
-        });
-      } else {
-        $scope.componentId = null;
-      }
-    }
+  $scope.formMedia;
 
-    $scope.loadLookup = function(lookup, entity, loader){
-      var deferred = $q.defer();
-      Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
-        deferred.resolve();
-        if (results) {
-          $scope[entity]= results;
-        }        
-      });      
-      return deferred.promise;
-    };
-    $scope.getAttributes = function (override) { 
-      var deferred = $q.defer();
-      Business.getFilters(override, false).then(function (result) {
-        deferred.resolve();
-        $scope.allAttributes = result ? angular.copy(result) : [];
-        $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
-        $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
-      });
-      return deferred.promise;
-    }; 
-
-    // WHERE WE CALL INIT()!
-    (function(){
-      $q.all($scope.getAttributes(),
-      //
-      $scope.loadLookup('ContactType', 'contactTypes', 'submissionLoader'),
-      $scope.loadLookup('MediaType', 'mediaTypes', 'submissionLoader'),
-      $scope.loadLookup('ResourceType', 'resourceTypes', 'submissionLoader')).then(function(){
-        $scope.init();
-      })
-    })()
-
-    $scope.formFocused = function(form, reset){
-
-      var keys = _.keys(form);
-      if (!reset){
-        for (var i = 0; i < keys.length; i++){
-          if (keys[i][0] !== '$'){
-            if (form[keys[i]].$focused){
-              return true;
-            }
-          }
-        }
-        return false;
-      } else {
-        // console.log('form', form);
-        // console.log('form', $scope);
-        for (var i = 0; i < keys.length; i++){
-          if (keys[i][0] !== '$'){
-            form[keys[i]].$hasBeenFocused = false
-          }
-        }
-      }
-    }
-
-    $scope.getMimeTypeClass = function(type){
-      if (type) {
-
-        if (type.match('video.*')) {
-          return 'fa-file-video-o'
-        } else if (type.match('audio.*')){
-          return 'fa-file-audio-o'
-        } else if (type.match('application.*')){
-          return 'fa-file-code-o'
-        } else if (type.match('text.*')){
-          return 'fa-file-text-o'
-        } else if (type.match('image.*')){
-          return 'fa-file-image-o'
-        } else {
-          return 'fa-file-o'
-        }
-      } else {return ''};
-    }
-
-    $scope.setBadgeFound = function(attribute){
-      if (attribute && attribute.badgeUrl) {
-        $scope.badgeFound = true;
-      }
-    }
-
-    $scope.getAttributeTypeDesc = function(type){
-      var found = _.find($scope.allAttributes, {'attributeType': type});
-      if (found) {
-        return found.description;
-      }
-      return '';
-    }
-
-    $scope.getResourceTypeDesc = function(type){
-      var found = _.find($scope.resourceTypes, {'code': type});
-      if (found) {
-        return found.description;
-      }
-      return '';
-    }
-
-    $scope.getMediaTypeDesc = function(type){
-      var found = _.find($scope.mediaTypes, {'code': type});
-      if (found) {
-        return found.description;
-      }
-      return '';
-    }
-
-    $scope.initialSave = function($event){
-      if ($scope.vitalsCheck()){
+  $scope.setEditable = function($event){
+    var response = window.confirm("Are you sure you want to resume editing your submission? This action remove your submission from the admin's pending queue and you will have to re-submit it for approval.");
+    if (response && $scope.vitalsCheck()){
+      if ($scope.component.component) {
+        $scope.component.component.approvalState = 'N';
         $scope.submit(true).then(function(){
-          $scope.scrollTo('details', 'details', '', $event, 'tagLabel');
+          $scope.scrollTo('vitals', 'vitals', '', $event, 'componentName');
         }, function(){
           if($event) {
             $event.preventDefault();
             $event.stopPropagation();
           }
         })
-      } 
-    }
-
-    $scope.updateSave = function($event){
-      if ($scope.vitalsCheck()){
-        $scope.submit(false).then(function(){
-          $scope.scrollTo('reviewAndSubmit', 'submit', '', $event)
-          $scope.detailsDone = true;
-        }, function(){
-          if($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-          }
-        })
-        _.each($scope.mediaUploader.queue, function(){
-          $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
-        })
-        $scope.mediaUploader.uploadAll();
-        _.each($scope.resourceUploader.queue, function(){
-          $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
-        })
-        $scope.resourceUploader.uploadAll();
-      } 
-    }
-
-    $scope.finalSave = function($event){
-      if ($scope.vitalsCheck()){
-        $scope.submitForAproval(false).then(function(){
-          $scope.scrollTo('reviewAndSubmit', 'submit', '', $event)
-          $scope.detailsDone = true;
-        }, function(){
-          if($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-          }
-        })
-      } 
-    }
-
-    $scope.createInitialSubmit = function(){
-      $scope.component.component = $scope.component.component || {};
-      $scope.component.component.activeStatus = $scope.component.activeStatus || 'A';
-      if ($scope.componentId) {
-        $scope.component.component.componentId = $scope.componentId; 
       }
-      var component = angular.copy($scope.component);
-      component.attributes = $scope.getCompactAttributes(true);
-      _.each($scope.allAttributes, function(attribute) {
-        if (attribute.hideOnSubmission) {
-          var found = _.find(attribute.codes, {'code':attribute.defaultAttributeCode});
-          var exists = _.find(component.attributes, {'attributeType': attribute.attributeType});
-          if (found && !exists) {
-            component.attributes.push({
-              componentAttributePk: {
-                attributeCode: found.code,
-                attributeType: attribute.attributeType
-              }
-            });
+    } 
+  }
+
+  $scope.getMediaHTML = function(media){
+    return utils.getMediaHTML(media, $sce);
+  }
+
+  $scope.getResourceHTML = function(resource){
+    return utils.getResourceHTML(resource, $sce);
+  }
+
+  $scope.getSubmission = function(){
+    var deferred = $q.defer();
+    if ($scope.componentId !== null && $scope.componentId !== undefined){
+      Business.submissionservice.getSubmission($scope.componentId, true).then(function(result){
+        $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+        if (result && result.component && result.component.componentId){
+          $scope.backup = angular.copy(result);
+          $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
+          $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
+          $scope.componentId = result.component.componentId;
+          $scope.component = angular.copy(result);
+          $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
+          $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
+          $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+          if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N') {
+            $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
           }
         }
+        deferred.resolve();
+      }, function(result){
+        $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+        deferred.reject();
       });
-      var submitter = angular.copy($scope.submitter);
-      submitter.contactType = 'SUB';
+    }//
+    return deferred.promise;
+  }
 
-      var found = _.find(component.contacts, {'contactType': 'SUB'});
-      if (found) {
-        var index = _.indexOf(component.contacts, found);
-        component.contacts[index] = submitter
-      } else {
-        component.contacts.push(submitter);
-      }
-      
-
-      var deferred = $q.defer();
-
-      // console.log('$scope.component', $scope.component);
-      deferred.resolve(component);
-
-      return deferred.promise;
-    }
-
-
-    $scope.submit = function(initial){
+  $scope.init = function(){
+    if ($location.search() && $location.search().id){
+      // console.log('$location', $location.search());
+      $scope.componentId = $location.search().id;
       $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Saving progress');
-      var deferred = $q.defer();
-      if (initial){
-        $scope.createInitialSubmit().then(function(component){
-          var compare = angular.copy(component);
-          for(var i = 0; i < compare.attributes.length; i++){
-            compare.attributes[i] = {
-              componentAttributePk: compare.attributes[i].componentAttributePk
-            };
-          }
-          if (_.diff(compare,$scope.backup)) {
-            console.log('INIT Diff', compare);
-            console.log('INIT Diff', $scope.backup);
-            console.log('INIT Diff', _.diff(compare,$scope.backup));
-            console.log('component', component);
-            
-            Business.submissionservice.createSubmission(component).then(function(result){
-              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-              if (result && result.component && result.component.componentId){
-                $scope.backup = angular.copy(result);
-                $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
-                $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
-                $scope.componentId = result.component.componentId;
-                $scope.component = angular.copy(result);
-                $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');              
-                $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');              
-                $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
-              }
-              // console.log('Success result', $scope.component);
-              deferred.resolve();
-            }, function(result){
-              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-              deferred.reject();
-              // console.log('Fail result', result);
-            });
-} else {
-  $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-  console.log('The init diff didn happen');
-  deferred.resolve();
-}
-})
-      } else {//
-        $scope.createInitialSubmit().then(function(component){
-          component.attributes = $scope.getCompactAttributes(true);
-          if ($scope.optIn) {
-            console.log('we opted in');
-            
-            component.component.notifyOfApprovalEmail = $scope.submitter.email;
-          }
-
-          component.contacts = component.contacts || [];
-
-          _.each(component.contacts, function(contact){
-            if (contact.contactType && contact.contactType.code){
-              contact.contactType = contact.contactType.code;
-            } else if (contact.contactType) {
-            }
-          })
-
-          // console.log('$scope.component', component);
-          var compare = angular.copy(component);
-          for(var i = 0; i < compare.attributes.length; i++){
-            compare.attributes[i] = {
-              componentAttributePk: compare.attributes[i].componentAttributePk
-            };
-          }
-
-          if (_.diff(compare,$scope.backup)) {
-            console.log('UPDATE Diff', compare);
-            console.log('UPDATE Diff', $scope.backup);
-            console.log('UPDATE Diff', _.diff(compare,$scope.backup));
-            console.log('component', component);
-            
-            Business.submissionservice.updateSubmission(component).then(function(result){
-              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-              if (result && result.component && result.component.componentId){
-                $scope.backup = angular.copy(result);
-                $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
-                $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
-                $scope.componentId = result.component.componentId;
-                $scope.component = angular.copy(result);
-                $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');              
-                $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');              
-                $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
-              }
-              deferred.resolve();
-              // console.log('Success result', result);
-            }, function(result){
-              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-              deferred.reject();
-              // console.log('Fail result', result);
-            });
-} else {
-  $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-  console.log('The component did not change', compare, $scope.backup);
-  deferred.resolve();
-}
-})
-      }//
-      return deferred.promise;
+      $scope.getSubmission().then(function(){
+        var found = _.find($scope.component.contacts, {'contactType':'SUB'});
+        if (found){
+          $scope.submitter = found;
+        }
+        $scope.optIn = $scope.component.component.notifyOfApprovalEmail? true: false;
+      }, function(){
+        $scope.componentId = null;
+      });
+    } else {
+      $scope.componentId = null;
     }
+  }
 
-    $scope.submitForAproval = function(){
-      var deferred = $q.defer();
+  $scope.loadLookup = function(lookup, entity, loader){
+    var deferred = $q.defer();
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      deferred.resolve();
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+    return deferred.promise;
+  };
+  $scope.getAttributes = function (override) { 
+    var deferred = $q.defer();
+    Business.getFilters(override, false).then(function (result) {
+      deferred.resolve();
+      $scope.allAttributes = result ? angular.copy(result) : [];
+      $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
+      $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
+    });
+    return deferred.promise;
+  }; 
+
+  // WHERE WE CALL INIT()!
+  (function(){
+    $q.all($scope.getAttributes(),
+    //
+    $scope.loadLookup('ContactType', 'contactTypes', 'submissionLoader'),
+    $scope.loadLookup('MediaType', 'mediaTypes', 'submissionLoader'),
+    $scope.loadLookup('ResourceType', 'resourceTypes', 'submissionLoader')).then(function(){
+      $scope.init();
+    })
+  })()
+
+  $scope.formFocused = function(form, reset){
+
+    var keys = _.keys(form);
+    if (!reset){
+      for (var i = 0; i < keys.length; i++){
+        if (keys[i][0] !== '$'){
+          if (form[keys[i]].$focused){
+            return true;
+          }
+        }
+      }
+      return false;
+    } else {
+      // console.log('form', form);
+      // console.log('form', $scope);
+      for (var i = 0; i < keys.length; i++){
+        if (keys[i][0] !== '$'){
+          form[keys[i]].$hasBeenFocused = false
+        }
+      }
+    }
+  }
+
+  $scope.getMimeTypeClass = function(type){
+    if (type) {
+
+      if (type.match('video.*')) {
+        return 'fa-file-video-o'
+      } else if (type.match('audio.*')){
+        return 'fa-file-audio-o'
+      } else if (type.match('application.*')){
+        return 'fa-file-code-o'
+      } else if (type.match('text.*')){
+        return 'fa-file-text-o'
+      } else if (type.match('image.*')){
+        return 'fa-file-image-o'
+      } else {
+        return 'fa-file-o'
+      }
+    } else {return ''};
+  }
+
+  $scope.setBadgeFound = function(attribute){
+    if (attribute && attribute.badgeUrl) {
+      $scope.badgeFound = true;
+    }
+  }
+
+  $scope.getAttributeTypeDesc = function(type){
+    var found = _.find($scope.allAttributes, {'attributeType': type});
+    if (found) {
+      return found.description;
+    }
+    return '';
+  }
+
+  $scope.getResourceTypeDesc = function(type){
+    var found = _.find($scope.resourceTypes, {'code': type});
+    if (found) {
+      return found.description;
+    }
+    return '';
+  }
+
+  $scope.getMediaTypeDesc = function(type){
+    var found = _.find($scope.mediaTypes, {'code': type});
+    if (found) {
+      return found.description;
+    }
+    return '';
+  }
+
+  $scope.initialSave = function($event){
+    if ($scope.vitalsCheck()){
+      $scope.submit(true).then(function(){
+        $scope.scrollTo('details', 'details', '', $event, 'tagLabel');
+      }, function(){
+        if($event) {
+          $event.preventDefault();
+          $event.stopPropagation();
+        }
+      })
+      _.each($scope.mediaUploader.queue, function(){
+        $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
+      })
+      $scope.mediaUploader.uploadAll();
+      _.each($scope.resourceUploader.queue, function(){
+        $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
+      })
+    } 
+  }
+
+  $scope.updateSave = function($event){
+    if ($scope.vitalsCheck()){
       $scope.submit(false).then(function(){
-        if ($scope.component && $scope.component.component && $scope.component.component.componentId) {
-          console.log('component', $scope.component);
-          
-          Business.submissionservice.submit($scope.component.component.componentId).then(function(){
-            $scope.backup.component.approvalState = 'P';              
-            $scope.component.component.approvalState = 'P';
-            triggerAlert('Your component has been successfully submitted!', 'submitAlert', 'body', 8000);
+        $scope.scrollTo('reviewAndSubmit', 'submit', '', $event)
+        $scope.detailsDone = true;
+      }, function(){
+        if($event) {
+          $event.preventDefault();
+          $event.stopPropagation();
+        }
+      })
+      _.each($scope.mediaUploader.queue, function(){
+        $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
+      })
+      $scope.mediaUploader.uploadAll();
+      _.each($scope.resourceUploader.queue, function(){
+        $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
+      })
+      $scope.resourceUploader.uploadAll();
+    } 
+  }
+
+  $scope.finalSave = function($event){
+    if ($scope.vitalsCheck()){
+      $scope.submitForAproval(false).then(function(){
+        $scope.scrollTo('reviewAndSubmit', 'submit', '', $event)
+        $scope.detailsDone = true;
+      }, function(){
+        if($event) {
+          $event.preventDefault();
+          $event.stopPropagation();
+        }
+      })
+      _.each($scope.mediaUploader.queue, function(){
+        $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
+      })
+      $scope.mediaUploader.uploadAll();
+      _.each($scope.resourceUploader.queue, function(){
+        $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
+      })
+    } 
+  }
+
+  $scope.createInitialSubmit = function(){
+    $scope.component.component = $scope.component.component || {};
+    $scope.component.component.activeStatus = $scope.component.activeStatus || 'A';
+    if ($scope.componentId) {
+      $scope.component.component.componentId = $scope.componentId; 
+    }
+    var component = angular.copy($scope.component);
+    component.attributes = $scope.getCompactAttributes(true);
+    _.each($scope.allAttributes, function(attribute) {
+      if (attribute.hideOnSubmission) {
+        var found = _.find(attribute.codes, {'code':attribute.defaultAttributeCode});
+        var exists = _.find(component.attributes, {'attributeType': attribute.attributeType});
+        if (found && !exists) {
+          component.attributes.push({
+            componentAttributePk: {
+              attributeCode: found.code,
+              attributeType: attribute.attributeType
+            }
+          });
+        }
+      }
+    });
+    var submitter = angular.copy($scope.submitter);
+    submitter.contactType = 'SUB';
+
+    var found = _.find(component.contacts, {'contactType': 'SUB'});
+    if (found) {
+      var index = _.indexOf(component.contacts, found);
+      component.contacts[index] = submitter
+    } else {
+      component.contacts.push(submitter);
+    }
+    
+
+    var deferred = $q.defer();
+
+    deferred.resolve(component);
+
+    return deferred.promise;
+  }
+
+
+  $scope.submit = function(initial){
+    $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Saving progress');
+    var deferred = $q.defer();
+    if (initial){
+      $scope.createInitialSubmit().then(function(component){
+        var compare = angular.copy(component);
+        for(var i = 0; i < compare.attributes.length; i++){
+          compare.attributes[i] = {
+            componentAttributePk: compare.attributes[i].componentAttributePk
+          };
+        }
+        if (_.diff(compare,$scope.backup)) {
+
+          Business.submissionservice.createSubmission(component).then(function(result){
+            $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            if (result && result.component && result.component.componentId){
+              $scope.backup = angular.copy(result);
+              $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
+              $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
+              $scope.componentId = result.component.componentId;
+              $scope.component = angular.copy(result);
+              $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');              
+              $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');              
+              $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+            }
             deferred.resolve();
           }, function(result){
+            $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
             deferred.reject();
           });
-        } else {
-          deferred.reject();
+        } else {//
+          $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+          deferred.resolve();
         }
       })
-      return deferred.promise;
-    }
+    } else {//
+      $scope.createInitialSubmit().then(function(component){
+        component.attributes = $scope.getCompactAttributes(true);
+        if ($scope.optIn) {
+          // console.log('we opted in');
+          
+          component.component.notifyOfApprovalEmail = $scope.submitter.email;
+        }
 
+        component.contacts = component.contacts || [];
 
-
-    $scope.$watch('current', function(){
-      $scope.badgeFound = false;
-      if ($scope.current && $scope.current === 'submit') {
-        $scope.badgeFound = false;
-        _.each($scope.component.attributes, function(attribute){
-          $scope.setBadgeFound(attribute);
+        _.each(component.contacts, function(contact){
+          if (contact.contactType && contact.contactType.code){
+            contact.contactType = contact.contactType.code;
+          } else if (contact.contactType) {
+          }
         })
+
+        // console.log('$scope.component', component);
+        var compare = angular.copy(component);
+        for(var i = 0; i < compare.attributes.length; i++){
+          compare.attributes[i] = {
+            componentAttributePk: compare.attributes[i].componentAttributePk
+          };
+        }
+
+        if (_.diff(compare,$scope.backup)) {
+          // console.log('UPDATE Diff', compare);
+          // console.log('UPDATE Diff', $scope.backup);
+          // console.log('UPDATE Diff', _.diff(compare,$scope.backup));
+          // console.log('component', component);
+          
+          Business.submissionservice.updateSubmission(component).then(function(result){
+            $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            if (result && result.component && result.component.componentId){
+              $scope.backup = angular.copy(result);
+              $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
+              $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
+              $scope.componentId = result.component.componentId;
+              $scope.component = angular.copy(result);
+              $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');              
+              $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');              
+              $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+            }
+            deferred.resolve();
+            // console.log('Success result', result);
+          }, function(result){
+            $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            deferred.reject();
+            // console.log('Fail result', result);
+          });
+        } else {//
+          $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+          // console.log('The component did not change', compare, $scope.backup);
+          deferred.resolve();
+        }
+      })
+    }//
+    return deferred.promise;
+  }
+
+  $scope.submitForAproval = function(){
+    var deferred = $q.defer();
+    $scope.submit(false).then(function(){
+      if ($scope.component && $scope.component.component && $scope.component.component.componentId) {
+        // console.log('component', $scope.component);
+        
+        Business.submissionservice.submit($scope.component.component.componentId).then(function(){
+          $scope.backup.component.approvalState = 'P';              
+          $scope.component.component.approvalState = 'P';
+          triggerAlert('Your component has been successfully submitted!', 'submitAlert', 'body', 8000);
+          deferred.resolve();
+        }, function(result){
+          deferred.reject();
+        });
+      } else {
+        deferred.reject();
+      }
+    })
+    return deferred.promise;
+  }
+
+
+
+  $scope.$watch('current', function(){
+    $scope.badgeFound = false;
+    if ($scope.current && $scope.current === 'submit') {
+      $scope.badgeFound = false;
+      _.each($scope.component.attributes, function(attribute){
+        $scope.setBadgeFound(attribute);
+      })
+    }
+  })
+
+  $scope.makeThisHappen = function(canHappen, form, func){
+    if (canHappen){
+      func(form);
+      $scope.formFocused(form, true);
+    }
+  }
+
+
+
+  $scope.checkAttributes = function(){
+    // console.log('Compact list', _.compact($scope.component.attributes));
+    // we need to compact the attributes list because it may have unused indexes.
+    var list = angular.copy($scope.component.attributes);
+    
+    var requiredAttributes = _.filter(list, function(n){
+      return n.requiredFlg && !n.hideOnSubmission;
+    });
+    
+    if (requiredAttributes.length !== $scope.requiredAttributes.length) {
+      return false;
+    }
+    return true;
+  }
+
+  $scope.setDefaultAttribute = function(index, attribute, required){
+
+    if (required && !$scope.component.attributes[index]) {
+      var found = _.find($scope.requiredAttributes, {'attributeType': attribute.attributeType});
+      if (attribute.defaultAttributeCode) {
+        found = _.find(attribute.codes, {code: attribute.defaultAttributeCode});
+        if (found) {
+          $scope.component.attributes[index] = found;
+        }
+      }
+    } else {
+      var found = _.find($scope.attributes, {'attributeType': attribute.attributeType});
+      if (attribute.defaultAttributeCode) {
+        found = _.find(attribute.codes, {code: attribute.defaultAttributeCode});
+        if (found) {
+          $scope.component.attributes[index] = found;
+        }
+      }
+    }
+  }
+
+  $scope.getCompactAttributes = function(attributePK){
+    // This is how we'll weed out the attributes we need for the submission
+    var realAttributes = $scope.component.attributes;
+    var attributes = [];
+    _.each(realAttributes, function(attr){
+      if (attr.constructor === Array){
+        _.each(attr, function(item){
+          if (attributePK && !item.componentAttributePk) {
+            item.componentAttributePk = {
+              'attributeType': item.attributeType,
+              'attributeCode': item.code,
+            };
+          }
+          attributes.push(item);
+        })
+      } else {
+        if (attributePK && !attr.componentAttributePk) {
+          attr.componentAttributePk = {
+            'attributeType': attr.attributeType,
+            'attributeCode': attr.code,
+          };
+        }
+        attributes.push(attr);
       }
     })
 
-    $scope.makeThisHappen = function(canHappen, form, func){
-      if (canHappen){
-        func(form);
-        $scope.formFocused(form, true);
-      }
-    }
+    
+    return attributes;      
+  }
 
-
-
-    $scope.checkAttributes = function(){
-      // console.log('Compact list', _.compact($scope.component.attributes));
-      // we need to compact the attributes list because it may have unused indexes.
-      var list = angular.copy($scope.component.attributes);
-      
-      var requiredAttributes = _.filter(list, function(n){
-        return n.requiredFlg && !n.hideOnSubmission;
-      });
-      
-      if (requiredAttributes.length !== $scope.requiredAttributes.length) {
-        return false;
-      }
-      return true;
-    }
-
-    $scope.setDefaultAttribute = function(index, attribute, required){
-
-      if (required && !$scope.component.attributes[index]) {
-        var found = _.find($scope.requiredAttributes, {'attributeType': attribute.attributeType});
-        if (attribute.defaultAttributeCode) {
-          found = _.find(attribute.codes, {code: attribute.defaultAttributeCode});
-          if (found) {
-            $scope.component.attributes[index] = found;
-          }
-        }
-      } else {
-        var found = _.find($scope.attributes, {'attributeType': attribute.attributeType});
-        if (attribute.defaultAttributeCode) {
-          found = _.find(attribute.codes, {code: attribute.defaultAttributeCode});
-          if (found) {
-            $scope.component.attributes[index] = found;
-          }
-        }
-      }
-    }
-
-    $scope.getCompactAttributes = function(attributePK){
-      // This is how we'll weed out the attributes we need for the submission
-      var realAttributes = $scope.component.attributes;
-      var attributes = [];
-      _.each(realAttributes, function(attr){
-        if (attr.constructor === Array){
-          _.each(attr, function(item){
-            if (attributePK && !item.componentAttributePk) {
-              item.componentAttributePk = {
-                'attributeType': item.attributeType,
-                'attributeCode': item.code,
-              };
-            }
-            attributes.push(item);
-          })
+  $scope.setupAttributes = function(attributes){
+    var result = {};
+    _.each(attributes, function(attribute){
+      var foundAttr = _.find($scope.allAttributes, {'attributeType': attribute.componentAttributePk.attributeType});
+      if (foundAttr) {
+        var foundAttr = $filter('makeattribute')(foundAttr.codes, foundAttr);
+        var found = _.find(foundAttr, {'code': attribute.componentAttributePk.attributeCode});
+        var merged = _.merge(found, attribute);
+        if (merged.requiredFlg) {
+          result[attribute.componentAttributePk.attributeType] = merged;
         } else {
-          if (attributePK && !attr.componentAttributePk) {
-            attr.componentAttributePk = {
-              'attributeType': attr.attributeType,
-              'attributeCode': attr.code,
-            };
-          }
-          attributes.push(attr);
+          if (!result[attribute.componentAttributePk.attributeType]) {
+            result[attribute.componentAttributePk.attributeType] = []
+          } 
+          result[attribute.componentAttributePk.attributeType].push(merged);
         }
-      })
-
-      
-      return attributes;      
-    }
-
-    $scope.setupAttributes = function(attributes){
-      var result = {};
-      _.each(attributes, function(attribute){
-        var foundAttr = _.find($scope.allAttributes, {'attributeType': attribute.componentAttributePk.attributeType});
-        if (foundAttr) {
-          var foundAttr = $filter('makeattribute')(foundAttr.codes, foundAttr);
-          var found = _.find(foundAttr, {'code': attribute.componentAttributePk.attributeCode});
-          var merged = _.merge(found, attribute);
-          if (merged.requiredFlg) {
-            result[attribute.componentAttributePk.attributeType] = merged;
-          } else {
-            if (!result[attribute.componentAttributePk.attributeType]) {
-              result[attribute.componentAttributePk.attributeType] = []
-            } 
-            result[attribute.componentAttributePk.attributeType].push(merged);
-          }
-        }
-      })
-      return result;
-    }
-
-    $scope.getComponent = function(){
-      return JSON.stringify($scope.component, null, 4);
-    }
-
-    // Metadata section
-    $scope.removeMetadata = function(index){
-      if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
-
-        $scope.component.metadata.splice(index, 1);
       }
+    })
+    return result;
+  }
+
+  $scope.getComponent = function(){
+    return JSON.stringify($scope.component, null, 4);
+  }
+
+  // Metadata section
+  $scope.removeMetadata = function(index){
+    if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+
+      $scope.component.metadata.splice(index, 1);
     }
-    $scope.addMetadata = function(form){
-      if ($scope.metadataForm.value && $scope.metadataForm.label) {
-        $scope.component.metadata.push($scope.metadataForm);
-        $scope.metadataForm = {};
+  }
+  $scope.addMetadata = function(form){
+    if ($scope.metadataForm.value && $scope.metadataForm.label) {
+      $scope.component.metadata.push($scope.metadataForm);
+      $scope.metadataForm = {};
+      $scope.formFocused(form, true)
+      $('#metadataLabel').focus();
+    }
+  }
+
+  // tag section
+  $scope.removeTag = function(index){
+    if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+      $scope.component.tags.splice(index, 1);
+    }
+  }
+  $scope.addTag = function(form){
+    if ( $scope.tagsForm.text ) {
+      var found = _.find($scope.component.tags, {'text':$scope.tagsForm.text});
+      if (!found) {
+        $scope.component.tags.push($scope.tagsForm);
+        $scope.tagsForm = {};
         $scope.formFocused(form, true)
-        $('#metadataLabel').focus();
+        $('#tagLabel').focus();
       }
     }
-
-    // tag section
-    $scope.removeTag = function(index){
-      if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
-        $scope.component.tags.splice(index, 1);
-      }
-    }
-    $scope.addTag = function(form){
-      if ( $scope.tagsForm.text ) {
-        var found = _.find($scope.component.tags, {'text':$scope.tagsForm.text});
-        if (!found) {
-          $scope.component.tags.push($scope.tagsForm);
-          $scope.tagsForm = {};
-          $scope.formFocused(form, true)
-          $('#tagLabel').focus();
-        }
-      }
-    }
+  }
 
   // contact section
   $scope.getContactTypeDesc = function(type){
@@ -721,8 +731,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.vitalsCheck = function(log){
     // return true;
     if (false){
-      console.log('getStarted', $scope.getStarted());
-      console.log('component', $scope.component);
+      // console.log('getStarted', $scope.getStarted());
+      // console.log('component', $scope.component);
     }
     
     return $scope.getStarted() && $scope.component && $scope.component.component && $scope.component.component.name && $scope.component.component.description && $scope.component.component.organization && $scope.checkAttributes();
@@ -765,7 +775,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.srcList = []; //
   $scope.queue = [];
   $scope.resourceQueue = [];
-  $scope.addMedia = function (file, queue, form, loader, caption, typeCode) { //
+  $scope.addMedia = function (inputFile, queue, form, loader, caption, typeCode) { //
     // if ($scope.mediaForm.link || 
     //   $scope.mediaUploader.queue.length === 0) {
 
@@ -788,20 +798,21 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       //   }
       // });
     // } else {
+      var file = {}
       file[typeCode] = $scope[form][typeCode];
       file[caption] = $scope[form][caption];
-      file.mimeType = file._file? file._file.type: file.file.type;
+      file.mimeType = inputFile._file? inputFile._file.type: inputFile.file.type;
       
-      if (file._file){
-        $scope.readFile(file._file, function(result){
-          queue.push({file: file, dom:result});
+      if (inputFile._file){
+        $scope.readFile(inputFile._file, function(result){
+          queue.push({'file': file, 'dom':result});
           if(!$rootScope.$$phase) {
             $scope.$apply();
           }
           $scope.$emit('$TRIGGERUNLOAD', loader, 6000);
         });
       } else {
-        queue.push({file: file, dom:'<span>No Link or Preview Available</span>'});
+        queue.push({'file': file, 'dom':'<span>No Link or Preview Available</span>'});
         if(!$rootScope.$$phase) {
           $scope.$apply();
         }
@@ -879,23 +890,15 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
   $scope.removeFromQueue = function(file){
     if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
-      console.log('MediaUploader', $scope.mediaUploader);
-      console.log('file', file);
-      console.log('Queue', $scope.mediaUploader.queue);
-
       var found = _.find($scope.mediaUploader.queue, file.file);
       if (found){
-        console.log('found', found);
         found = _.indexOf($scope.mediaUploader.queue, found);
         $scope.mediaUploader.queue.splice(found, 1);
-        console.log('MediaUploader', $scope.mediaUploader);
       }
       found = _.find($scope.queue, file);
       if (found){
-        console.log('found', found);
         found = _.indexOf($scope.queue, found);
         $scope.queue.splice(found, 1);
-        console.log('QUEUE', $scope.queue);
       }
     }
   }
@@ -931,10 +934,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       } else {
         var found = _.find($scope.component.media, media);
         if (found){
-          console.log('found', found);
+          // console.log('found', found);
           found = _.indexOf($scope.component.media, found);
           $scope.component.media.splice(found, 1);
-          console.log('MediaUploader', $scope.component.media);
         }
       }
     }; 
@@ -948,7 +950,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     removeAfterUpload: true,
     onAfterAddingFile: function(file){
       // console.log('We loaded the loader!', file.file);
-      console.dir(file.file);
+      // console.dir('FILE---------', file.file);
       $scope.$emit('$TRIGGERLOAD', 'mediaLoader', 'Adding Files');
       if (this.queue.length >= this.queueLimit) {
         $scope.isFull = true;
@@ -973,15 +975,24 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         "componentMedia.mediaTypeCode" : item.mediaTypeCode
       });
       if (item.caption) {
+        // console.log('we happened to hit this');
+        
         item.formData.push({
           "componentMedia.caption": item.caption
         });
       }
       if (item.componentMediaId) {
+        // console.log('we happened to hit this');
         item.formData.push({
           "componentMedia.componentMediaId": item.componentMediaId
         });
       }
+      $timeout(function(){
+        delete item.componentId
+        delete item.mediaTypeCode
+        delete item.caption
+        delete item.componentMediaId
+      })
     },
     onSuccessItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 80000);
@@ -1013,29 +1024,29 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
 
 
-$scope.removeFromResourceQueue = function(file){
-  if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
+  $scope.removeFromResourceQueue = function(file){ //
+    if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
 
-    console.log('MediaUploader', $scope.resourceUploader);
-    console.log('file', file);
-    console.log('Queue', $scope.resourceUploader.queue);
+      // console.log('MediaUploader', $scope.resourceUploader);
+      // console.log('file', file);
+      // console.log('Queue', $scope.resourceUploader.queue);
 
-    var found = _.find($scope.resourceUploader.queue, file.file);
-    if (found){
-      console.log('found', found);
-      found = _.indexOf($scope.resourceUploader.queue, found);
-      $scope.resourceUploader.queue.splice(found, 1);
-      console.log('resourceUploader', $scope.resourceUploader);
-    }
-    found = _.find($scope.resourceQueue, file);
-    if (found){
-      console.log('found', found);
-      found = _.indexOf($scope.resourceQueue, found);
-      $scope.resourceQueue.splice(found, 1);
-      console.log('QUEUE', $scope.resourceQueue);
+      var found = _.find($scope.resourceUploader.queue, file.file);
+      if (found){
+        // console.log('found', found);
+        found = _.indexOf($scope.resourceUploader.queue, found);
+        $scope.resourceUploader.queue.splice(found, 1);
+        // console.log('resourceUploader', $scope.resourceUploader);
+      }
+      found = _.find($scope.resourceQueue, file);
+      if (found){
+        // console.log('found', found);
+        found = _.indexOf($scope.resourceQueue, found);
+        $scope.resourceQueue.splice(found, 1);
+        // console.log('QUEUE', $scope.resourceQueue);
+      }
     }
   }
-}
 
   $scope.deleteResource = function(resource){//
     if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
@@ -1052,10 +1063,10 @@ $scope.removeFromResourceQueue = function(file){
       } else {
         var found = _.find($scope.component.resources, resource);
         if (found){
-          console.log('found', found);
+          // console.log('found', found);
           found = _.indexOf($scope.component.resources, found);
           $scope.component.resources.splice(found, 1);
-          console.log('MediaUploader', $scope.component.resources);
+          // console.log('MediaUploader', $scope.component.resources);
         }
       }
     };
@@ -1135,21 +1146,21 @@ $scope.removeFromResourceQueue = function(file){
     }
   });
 
-$scope.scrollTo = function(id, current, parent, $event, focusId) {
-  var offset = 120;
-  if($event) {
-    $event.preventDefault();
-    $event.stopPropagation();
-  }
-  $('li a:focus').blur();
-  $scope.current = current;
-  $timeout(function(){
-    $('[data-spy="scroll"]').each(function () {
-      var $spy = $(this).scrollspy('refresh')
-    })
-
+  $scope.scrollTo = function(id, current, parent, $event, focusId) {//
+    var offset = 120;
+    if($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
+    $('li a:focus').blur();
+    $scope.current = current;
     $timeout(function(){
-      if ($location.hash() !== id) {
+      $('[data-spy="scroll"]').each(function () {
+        var $spy = $(this).scrollspy('refresh')
+      })
+
+      $timeout(function(){
+        if ($location.hash() !== id) {
           // set the $location.hash to `newHash` and
           // $anchorScroll will automatically scroll to it
           $location.hash(id);
@@ -1273,10 +1284,8 @@ $scope.scrollTo = function(id, current, parent, $event, focusId) {
       scope.$watch(attrs['masked'], function(){
 
         if (scope[attrs['masked']].total && scope[attrs['masked']].total > 0 && scope[attrs['masked']].total < 2){
-          console.log(attrs['masked'] + 'LOADER ------  ' , scope[attrs['masked']]);
           scope[attrs['masked']].elips = 0;
           element.addClass('loaderMasked');
-          console.log('element', element);
           $(window).on('scroll',windowScroll);
           clearInterval(timer);
           timer = setInterval(function (counter) {
