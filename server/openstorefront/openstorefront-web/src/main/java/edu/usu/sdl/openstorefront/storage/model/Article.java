@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class Article
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)

@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
  * @author jlaw
  */
 public class ErrorTicket
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK

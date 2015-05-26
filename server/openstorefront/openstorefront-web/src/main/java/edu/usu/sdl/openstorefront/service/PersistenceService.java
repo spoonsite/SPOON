@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -149,7 +150,7 @@ public class PersistenceService
 		return attached;
 	}
 
-	public <T extends BaseEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
+	public <T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
 	{
 		T found = findById(entity, id);
 		if (found != null) {

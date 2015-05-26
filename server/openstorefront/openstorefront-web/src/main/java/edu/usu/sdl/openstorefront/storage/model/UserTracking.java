@@ -35,7 +35,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class UserTracking
-		extends BaseEntity
+		extends StandardEntity
 		implements ExportImport
 {
 
@@ -243,17 +243,17 @@ public class UserTracking
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 		writer.writeNext(new String[]{getCreateUser(),
-			getOrganization(),
-			TranslateUtil.translate(UserTypeCode.class, getUserTypeCode()),
-			df.format(getCreateDts()),
-			TranslateUtil.translate(TrackEventCode.class, getTrackEventTypeCode()),
-			getClientIp(),
-			getBrowser(),
-			getBrowserVersion(),
-			getOsPlatform(),
-			getUserAgent(),
-			getDeviceType(),
-			getTrackingId()
+									  getOrganization(),
+									  TranslateUtil.translate(UserTypeCode.class, getUserTypeCode()),
+									  df.format(getCreateDts()),
+									  TranslateUtil.translate(TrackEventCode.class, getTrackEventTypeCode()),
+									  getClientIp(),
+									  getBrowser(),
+									  getBrowserVersion(),
+									  getOsPlatform(),
+									  getUserAgent(),
+									  getDeviceType(),
+									  getTrackingId()
 		});
 		return stringWriter.toString();
 	}

@@ -33,6 +33,36 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
     return deferred.promise;
   }; 
   
+  var getLogRecords = function(queryParamFilter) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/service/application/logrecords?' + queryParamFilter.toQuery()
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+  
+  var clearAllLogRecords = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/service/application/logrecords'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+  
   var resetIndexer = function () {
       var deferred = $q.defer();
 
@@ -244,7 +274,8 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
       updateLogLevel: updateLogLevel,
       getAppProperties: getAppProperties,
       updateAppProperty: updateAppProperty,
-      getLoggers: getLoggers
+      getLoggers: getLoggers,
+      clearAllLogRecords: clearAllLogRecords
       
   };
     

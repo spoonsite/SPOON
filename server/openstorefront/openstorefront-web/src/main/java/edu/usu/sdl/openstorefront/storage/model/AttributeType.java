@@ -32,7 +32,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Allows for grouping the metadata into categories")
 public class AttributeType
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK

@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -67,7 +67,7 @@ public class FilterQueryParams
 	private int offset;
 
 	@QueryParam("status")
-	@DefaultValue(BaseEntity.ACTIVE_STATUS)
+	@DefaultValue(StandardEntity.ACTIVE_STATUS)
 	@Size(min = 0, max = 3)
 	@Sanitize(TextSanitizer.class)
 	private String status;
@@ -99,7 +99,7 @@ public class FilterQueryParams
 		FilterQueryParams filterQueryParams = new FilterQueryParams();
 		filterQueryParams.setMax(Integer.MAX_VALUE);
 		filterQueryParams.setOffset(0);
-		filterQueryParams.setStatus(BaseEntity.ACTIVE_STATUS);
+		filterQueryParams.setStatus(StandardEntity.ACTIVE_STATUS);
 		filterQueryParams.setAll(false);
 		filterQueryParams.setSortField("description");
 		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_DESCENDING);

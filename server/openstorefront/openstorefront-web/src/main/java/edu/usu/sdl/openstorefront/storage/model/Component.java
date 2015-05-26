@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class Component
-		extends BaseEntity<Component>
+		extends StandardEntity<Component>
 {
 
 	@PK(generated = true)

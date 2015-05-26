@@ -41,7 +41,6 @@ import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.storage.model.Alert;
 import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
@@ -99,65 +98,6 @@ public class UserServiceImpl
 	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
 
 	private static final int MAX_NAME_CHECK = 100;
-
-	@Override
-	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId)
-	{
-		return getBaseEntity(subComponentClass, userId, false);
-	}
-
-	@Override
-	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId, boolean all)
-	{
-		try {
-			T baseComponentExample = subComponentClass.newInstance();
-			baseComponentExample.setUpdateUser(userId);
-			if (all == false) {
-				baseComponentExample.setActiveStatus(BaseEntity.ACTIVE_STATUS);
-			}
-			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
-		} catch (InstantiationException | IllegalAccessException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
-		}
-	}
-
-	@Override
-	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId)
-	{
-		return getBaseEntity(subComponentClass, userId, false);
-	}
-
-	@Override
-	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId, boolean all)
-	{
-		try {
-			T baseComponentExample = subComponentClass.newInstance();
-//			baseComponentExample.setCreateUser(userId);
-			if (all == false) {
-				baseComponentExample.setActiveStatus(BaseEntity.ACTIVE_STATUS);
-			}
-			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
-		} catch (InstantiationException | IllegalAccessException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
-		}
-	}
-
-	@Override
-	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk)
-	{
-		return deactivateBaseEntity(subComponentClass, pk, false);
-	}
-
-	@Override
-	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk, Boolean all)
-	{
-		T found = persistenceService.findById(subComponentClass, pk);
-		if (found != null) {
-			found.setActiveStatus(T.INACTIVE_STATUS);
-			persistenceService.persist(found);
-		}
-		return found;
-	}
 
 	@Override
 	public List<UserWatch> getWatches(String userId)

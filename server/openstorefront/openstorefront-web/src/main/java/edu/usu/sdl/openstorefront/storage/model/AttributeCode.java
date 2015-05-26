@@ -36,7 +36,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @APIDescription("Attribute code are used to link metadata and create articles on topics")
 public class AttributeCode
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK

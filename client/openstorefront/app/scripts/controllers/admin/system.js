@@ -288,7 +288,17 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
   $scope.$on('$REFRESH_LOGGERS', function(){
       triggerAlert('Saved successfully', 'editLogger', 'body', 3000);
       $scope.refreshLoggers();
-  });  
+  });
+  
+  $scope.viewLog =function(){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/viewLog.html',
+      controller: 'adminViewLogCtrl',      
+      size: 'lg',
+      resolve: {        
+      }
+    });    
+  };
 
 }]);
 
@@ -358,3 +368,59 @@ app.controller('adminEditLoggingCtrl', ['$scope', '$uiModalInstance', 'logger', 
     
 }]);
 
+app.controller('adminViewLogCtrl', ['$scope', '$uiModalInstance', 'business', function ($scope, $uiModalInstance, Business) {
+    
+    $scope.logRecords = [];
+    
+    $scope.predicate = [];
+    $scope.reverse = [];  
+
+    $scope.pagination = {};
+    $scope.pagination.control;
+    $scope.pagination.features = {'dates': true, 'max': true};  
+
+    $scope.setPredicate = function (predicate, table) {
+      if ($scope.predicate[table] === predicate) {
+        $scope.reverse[table] = !$scope.reverse[table];
+      } else {
+        $scope.predicate[table] = predicate;
+        $scope.reverse[table] = false;
+      }
+      if (table === 'logs') {
+        $scope.pagination.control.changeSortOrder(predicate);
+      }
+    };    
+    
+    $scope.refreshData = function() {  
+      $scope.$emit('$TRIGGERLOAD', 'logLoader');
+      if ($scope.pagination.control && $scope.pagination.control.refresh) {
+        $scope.pagination.control.refresh().then(function(){
+          $scope.$emit('$TRIGGERUNLOAD', 'logLoader');
+        });
+      } else {
+        $scope.$emit('$TRIGGERUNLOAD', 'logLoader');
+      }     
+    };   
+    
+    $scope.showDetails = function(record){
+       if (record.details) {
+         record.details = !record.details;
+       } else {
+         record.details = true;
+       }     
+    };  
+    
+    $scope.clearAll = function () {
+      var response = window.confirm("Clear all DB log records?");
+      if (response) {
+        Business.systemservice.clearAllLogRecords().then(function (result) {
+          $scope.refreshData();
+        });
+      }
+    };
+        
+    $scope.cancel = function(){
+     $uiModalInstance.dismiss('cancel');
+    };
+    
+}]);

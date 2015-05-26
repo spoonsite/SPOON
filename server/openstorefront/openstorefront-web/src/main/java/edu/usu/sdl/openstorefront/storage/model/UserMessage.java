@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Holds Information about a notification message")
 public class UserMessage
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	public static final String SORT_FIELD_USERNAME = "username";

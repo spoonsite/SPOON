@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 public class Report
-		extends BaseEntity<Report>
+		extends StandardEntity<Report>
 {
 
 	@PK(generated = true)

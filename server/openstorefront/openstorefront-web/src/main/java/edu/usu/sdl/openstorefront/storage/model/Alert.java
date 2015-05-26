@@ -32,7 +32,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class Alert
-		extends BaseEntity<Alert>
+		extends StandardEntity<Alert>
 {
 
 	@PK(generated = true)

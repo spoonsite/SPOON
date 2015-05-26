@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class UserWatch
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK(generated = true)

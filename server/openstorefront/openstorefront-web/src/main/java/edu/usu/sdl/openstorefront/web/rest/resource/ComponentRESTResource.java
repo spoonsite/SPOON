@@ -32,7 +32,6 @@ import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -57,6 +56,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -3312,7 +3312,7 @@ public class ComponentRESTResource
 		}
 	}
 
-	private Response ownerCheck(BaseEntity entity)
+	private Response ownerCheck(StandardEntity entity)
 	{
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
 				|| SecurityUtil.isAdminUser()) {

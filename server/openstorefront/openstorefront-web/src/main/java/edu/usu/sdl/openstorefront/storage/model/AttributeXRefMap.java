@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class AttributeXRefMap
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK(generated = true)

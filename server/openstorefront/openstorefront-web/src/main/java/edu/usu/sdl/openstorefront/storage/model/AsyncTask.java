@@ -27,7 +27,7 @@ import java.util.Date;
  * @author dshurtleff
  */
 public class AsyncTask
-		extends BaseEntity<AsyncTask>
+		extends StandardEntity<AsyncTask>
 {
 
 	@PK()

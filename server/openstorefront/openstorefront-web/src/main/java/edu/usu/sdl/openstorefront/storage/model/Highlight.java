@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class Highlight
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK(generated = true)
