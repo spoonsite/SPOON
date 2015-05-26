@@ -59,9 +59,9 @@ body {
               <a target="_self" href="#moreDetails" ng-click="vitalsCheck()? scrollTo('moreDetails', 'details', '', $event): ''">Extra Details</a>
             </li> -->
             <hr ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
-            <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck(), 'complete': component.component.approvalState !== 'N'}">
+            <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck(), 'complete': component.component.approvalState && component.component.approvalState !== 'N'}">
               <a target="_self" href="#reviewAndSubmit" ng-click="updateSave($event)">
-                <span ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')">Revew/Submit</span>
+                <span ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')">Review/Submit</span>
                 <span ng-show="(component.component.approvalState && component.component.approvalState !== 'N')">Component Preview</span>
               </a>
             </li>
@@ -129,7 +129,9 @@ body {
                 ng-maxlength=200                  
                 placeholder="xxx-xxx-xxxx"
                 required
+                ng-pattern='/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/'
                 />
+                <p ng-show="submitterForm.inputPhone.$error.pattern && !submitterForm.inputPhone.$focused" class="help-block">Not a valid phone number.</p>
               </div>
               <div style="clear:both;"></div>
             </div>

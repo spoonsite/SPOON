@@ -99,6 +99,18 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return utils.getResourceHTML(resource, $sce);
   }
 
+  $scope.getUserInfo = function(){
+    var deferred = $q.defer();
+    Business.userservice.getCurrentUserProfile().then(function(result){
+      if (result) {
+        $scope.userInfo = result;
+        deferred.resolve(result);
+        // console.log('result', result);
+      }
+    });
+    return deferred.promise;
+  }
+
   $scope.getSubmission = function(){
     var deferred = $q.defer();
     if ($scope.componentId !== null && $scope.componentId !== undefined){
@@ -135,12 +147,33 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         var found = _.find($scope.component.contacts, {'contactType':'SUB'});
         if (found){
           $scope.submitter = found;
+        } else {
+          $scope.submitter = {};
+          $scope.getUserInfo().then(function(userInfo){
+            console.log('userInfo', userInfo);
+            $scope.submitter.firstName = userInfo.firstName;
+            $scope.submitter.lastName = userInfo.lastName;
+            $scope.submitter.email = userInfo.email;
+            $scope.submitter.organization = userInfo.organization;
+            $scope.submitter.phone = userInfo.phone;;
+          }, function(){
+          })
         }
         $scope.optIn = $scope.component.component.notifyOfApprovalEmail? true: false;
       }, function(){
         $scope.componentId = null;
       });
     } else {
+      $scope.submitter = {};
+      $scope.getUserInfo().then(function(userInfo){
+        console.log('userInfo', userInfo);
+        $scope.submitter.firstName = userInfo.firstName;
+        $scope.submitter.lastName = userInfo.lastName;
+        $scope.submitter.email = userInfo.email;
+        $scope.submitter.organization = userInfo.organization;
+        $scope.submitter.phone = userInfo.phone;;
+      }, function(){
+      })
       $scope.componentId = null;
     }
   }
