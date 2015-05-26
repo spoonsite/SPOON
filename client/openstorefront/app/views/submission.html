@@ -11,6 +11,8 @@ body {
     }
   </style>
   <![endif]-->
+
+  <!-- Until we figure it out, IE9 is having issues uploading files. A warning message has been put in -->
   <div masked="submissionLoader" class="container bs-docs-container">
     <!-- <loader trigger="submissionLoader"></loader> -->
     <div  ng-controller="SubmissionCtrl" >
@@ -57,15 +59,15 @@ body {
               <a target="_self" href="#moreDetails" ng-click="vitalsCheck()? scrollTo('moreDetails', 'details', '', $event): ''">Extra Details</a>
             </li> -->
             <hr ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
-            <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck(), 'complete': component.component.approvalState !== 'N'}">
+            <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck(), 'complete': component.component.approvalState && component.component.approvalState !== 'N'}">
               <a target="_self" href="#reviewAndSubmit" ng-click="updateSave($event)">
-                <span ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')">Revew/Submit</span>
+                <span ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')">Review/Submit</span>
                 <span ng-show="(component.component.approvalState && component.component.approvalState !== 'N')">Component Preview</span>
               </a>
             </li>
             <hr ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  style="margin:2px 0;">
             <li data-target="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  class="edit">
-              <a target="_self" href="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" ng-click="setEditable($event)">Edit Component</a>
+              <a target="_self" href="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N' && component.component.approvalState !=='A')" ng-click="setEditable($event)">Edit Component</a>
             </li>
           </ul>
         </div>
@@ -81,6 +83,12 @@ body {
           <div class="col-md-12 hidden-sm hidden-xs">
             <div id="top" style="padding:0px 0px 25px 0px;">
               <h1>Clearinghouse Component Submission Form.</h1>
+              <!--[if lt IE 10]>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-warning" style="color:#ff811a"></i></span>
+                <span class="form-control">There is a known issue with uploading files on IE9 in this submission form. If this will be an issue for your submission, please switch to <strong><a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong><a href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong><a href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</span>
+              </div>
+              <![endif]-->
             </div>
           </div>
         </div>
@@ -88,6 +96,8 @@ body {
           <div style="padding:0px 15px;">
             <form name="submitterForm" class="form-horizontal">
               <h2>1. Please enter your contact information.</h2>
+              <hr>
+
               <div class="form-group required">
                 <label class="col-sm-2 control-label" for="firstNameInput">First Name</label>
                 <div class="col-sm-10">
@@ -119,7 +129,9 @@ body {
                 ng-maxlength=200                  
                 placeholder="xxx-xxx-xxxx"
                 required
+                ng-pattern='/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/'
                 />
+                <p ng-show="submitterForm.inputPhone.$error.pattern && !submitterForm.inputPhone.$focused" class="help-block">Not a valid phone number.</p>
               </div>
               <div style="clear:both;"></div>
             </div>
@@ -147,10 +159,10 @@ body {
           <div id="top" style="padding:35px 0px 25px 0px;">
             <br>
             <br>
-            <h4><i class="fa fa-warning"></i>&nbsp;This form will not add a component to the Clearhingouse Website, but will submit it for review under the DI2E Evaluation process. DI2E Administrators will then dertermine if it will later be added to the Clearinghouse Website.</h4>
-            <br>
-            <br>
-            <br>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-warning" style="color:#ff811a"></i></span>
+              <span class="form-control">This form will <strong>not</strong> add a component to the Clearhingouse Website, but will submit it for review under the DI2E Evaluation process. DI2E Administrators will then dertermine if it will later be added to the Clearinghouse Website.</span>
+            </div>
             <br>
             <br>
           </div>
@@ -162,6 +174,8 @@ body {
     <!-- VITAL INFORMATION SECTION -->
     <div ng-show="current === 'vitals'">
       <h1 id="vitals">2. Enter Required Component Information:</h1>
+      <hr>
+
       <form name="requiredInfo" class="form-signin">
         <div class="required">
           <label style="position:relative; padding-right:15px; padding-top:7px;" for="name">Name</label>
@@ -417,7 +431,8 @@ body {
           <div class="form-group">
             <label class="col-sm-2 control-label">Phone</label>
             <div class="col-sm-10">
-              <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="tel"
+              <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
+              type="tel"
               id="phone"
               name="phone"
               class="form-control"
@@ -426,13 +441,18 @@ body {
               ng-focus="contactUIForm.phone.$focused=true" 
               ng-blur="contactUIForm.phone.$focused=false;  contactUIForm.phone.$hasBeenFocused = true;" 
               placeholder="xxx-xxx-xxxx"
+              ng-pattern='/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/'
               on-enter="makeThisHappen(!contactUIForm.$invalid, contactUIForm, addContact)"
               />
+              <p ng-show="contactUIForm.phone.$error.pattern && !contactUIForm.phone.$focused && contactUIForm.phone.$hasBeenFocused && formFocused(contactUIForm)" class="help-block">Not a valid phone number.</p>
             </div>
             <div style="clear:both;"></div>
+            <div class="col-sm-offset-2">
+              <small style="margin-left:15px;">(An email <strong>or</strong> phone number is required)</small>
+            </div>
           </div>
           <div class="col-sm-12">
-            <button type="button" class="col-md-offset-2 btn btn-primary" ng-click="addContact(contactUIForm)" ng-disabled="contactUIForm.$invalid || !contactForm.contactType || !contactForm.firstName || !contactForm.lastName || !contactForm.organization"><i class="fa fa-save"></i>&nbsp;Add</button>
+            <button type="button" class="col-md-offset-2 btn btn-primary" ng-click="addContact(contactUIForm)" ng-disabled="contactUIForm.$invalid || !contactForm.contactType || !contactForm.firstName || !contactForm.lastName || !contactForm.organization || !(contactForm.email || contactForm.phone)"><i class="fa fa-save"></i>&nbsp;Add</button>
           </div>
           <div style="clear:both;"></div>
           <h3 style="margin-top: 20px;" ng-show="(component.contacts | contactsfilter:'contactType').length">Added Contacts</h3>
@@ -577,7 +597,12 @@ body {
       <panel class-list="edges" open-state="true" title="Add Resources" style="position:relative">
         <loader trigger="resourcePreviewLoader"></loader>
         Current max upload size &lt; 100Mb
-
+        <!--[if lt IE 10]>
+        <div class="input-group" style="margin:5px 0px; padding:0px 15px;">
+          <span class="input-group-addon"><i class="fa fa-warning" style="color:#ff811a"></i></span>
+          <span class="form-control">There is a known issue with uploading files on IE9 in this submission form. If this will be an issue for your submission, please switch to <strong><a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong><a href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong><a href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</span>
+        </div>
+        <![endif]-->
         <div class="col-sm-12">
           <div class="input-group">
             <span class="input-group-addon">
@@ -635,6 +660,7 @@ body {
               <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="radio" ng-model="showResourceUpload" value="true" ng-click="toggleShowResource(true)">
             </span>
             <label for="displayGrades" class="form-control select-hover">
+
               <div class="form-group">
                 <label class="col-sm-2 control-label">Resource Type</label>
                 <div class="col-sm-10">
@@ -711,6 +737,12 @@ body {
       <panel class-list="edges" open-state="true" title="Add Media" style="position:relative">
         <div masked="mediaLoader" >
           Current max upload size &lt; 100Mb
+          <!--[if lt IE 10]>
+          <div class="input-group" style="margin:5px 0px; padding:0px 15px;">
+            <span class="input-group-addon"><i class="fa fa-warning" style="color:#ff811a"></i></span>
+            <span class="form-control">There is a known issue with uploading files on IE9 in this submission form. If this will be an issue for your submission, please switch to <strong><a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a></strong> or <strong><a href="https://www.google.com/intl/en-US/chrome/browser/">Chrome</a></strong>, or <strong><a href="http://browsehappy.com/">upgrade your browser</a></strong> to improve your experience</span>
+          </div>
+          <![endif]-->
           <div class="col-sm-12 ">
             <div class="input-group">
               <span class="input-group-addon">
@@ -852,11 +884,15 @@ body {
       <h1 ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" id="reviewAndSubmit">Component Preview:
         <br>
         <br>
-        <small>Thanks for the submission! This component is currently waiting in the admin queue for approval!</small>
+        <small>Thank you for the submission! This component is currently waiting in the admin queue for approval!</small>
         <br>
       </h1>
+      <hr>
+      <div ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')" class="input-group" style="margin: 0px; padding: 0px;">
+        <span class="input-group-addon"><i class="fa fa-warning" style="color:#ff811a"></i></span>
+        <span class="form-control">This component must be submitted before an admin can approve it.</span>
+      </div>
       <br>
-
       <form name="optInForm">
         <div class="checkbox">
           <label>
@@ -909,7 +945,7 @@ body {
         </table>
       </div>
       <div style="clear:both;"></div>
-      
+
       <hr>
 
       <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
@@ -936,7 +972,7 @@ body {
         </div>
       </div>
       <div style="clear:both;"></div>
-      
+
       <hr>
 
       <div class="col-sm-12" style="padding-left:0px; padding-right:0px;">
@@ -1050,9 +1086,9 @@ body {
       <div style="clear:both;"></div>
 
       <div class="col-sm-12" style="text-align: center; margin-bottom: 20px;">
-        <button ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="setEditable($event)">Edit Component</button>
-        <a style="display:inline-block" class="btn btn-primary btn-lg" ng-show="component.component.componentId" href="single?id={{component.component.componentId}}" target="_blank">Preview Component</a>
-        <button style="display:inline-block" class="btn btn-primary btn-lg" ng-click="finalSave($event)">Submit Component</button>
+        <button ng-show="(component.component.approvalState && component.component.approvalState !== 'N' && component.component.approvalState !=='A')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="setEditable($event)">Edit Component</button>
+        <a style="display:inline-block" class="btn btn-primary btn-lg" ng-show="component.component.componentId && component.component.approvalState !=='N'" href="single?id={{component.component.componentId}}" target="_blank">Preview Component</a>
+        <button ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="finalSave($event)">Submit Component</button>
       </div>
 
 

@@ -34,7 +34,8 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
       //
       { 'title': 'User Profile', 'include': 'views/userprofiletab.html' },
       { 'title': 'Watches', 'include': 'views/watchestab.html' },
-      { 'title': 'Component Reviews', 'include': 'views/feedbacktab.html' }
+      { 'title': 'Component Reviews', 'include': 'views/feedbacktab.html' },
+      { 'title': 'Submissions', 'include': 'views/submissions.html' }
     //
     ]
   };
