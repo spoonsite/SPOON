@@ -522,14 +522,28 @@ public class ComponentRESTResource
 			@RequiredParam RequiredForComponent component)
 	{
 		component.getComponent().setComponentId(componentId);
+		Set<String> attributeKeySet = new HashSet<>();
 		component.getAttributes().forEach(attribute -> {
 			attribute.getComponentAttributePk().setComponentId(componentId);
 			attribute.setComponentId(componentId);
+			attributeKeySet.add(attribute.getComponentAttributePk().pkValue());
 		});
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+
+			//pick up all existing active attribute not already in the update
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+			componentAttributeExample.setComponentId(componentId);
+			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+			for (ComponentAttribute componentAttribute : componentAttributes) {
+				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue()) == false) {
+					component.getAttributes().add(componentAttribute);
+				}
+			}
+
 			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
 			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
