@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.security.ExternalUserManager;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
@@ -240,6 +241,14 @@ public interface UserService
 	 * @param emailAddress (Only sends to this email if set)
 	 */
 	public void sendRecentChangeEmail(Date lastRunDts, String emailAddress);
+
+	/**
+	 * Performs the sync task with the user profiles with an external user
+	 * manager
+	 *
+	 * @param userManager
+	 */
+	public void syncUserProfilesWithUserManagement(ExternalUserManager userManager);
 
 //  This will be fleshed out more later
 //	/**

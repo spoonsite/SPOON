@@ -43,7 +43,7 @@ public class UserProfileSyncJob
 				String userManagementClass = PropertiesManager.getValue(PropertiesManager.KEY_EXTERNAL_USER_MANAGER, "IniRealmManager");
 				Class userManagerClass = Class.forName("edu.usu.sdl.openstorefront.security." + userManagementClass);
 				ExternalUserManager userManager = (ExternalUserManager) userManagerClass.newInstance();
-				service.getSystemService().syncUserProfilesWithUserManagement(userManager);
+				service.getUserService().syncUserProfilesWithUserManagement(userManager);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
 				throw new OpenStorefrontRuntimeException(ex);
 			}

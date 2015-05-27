@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
-import edu.usu.sdl.openstorefront.security.ExternalUserManager;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
@@ -182,14 +181,6 @@ public interface SystemService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeAsyncTask(String taskId);
-
-	/**
-	 * Performs the sync task with the user profiles with an external user
-	 * manager
-	 *
-	 * @param userManager
-	 */
-	public void syncUserProfilesWithUserManagement(ExternalUserManager userManager);
 
 	/**
 	 * Inserts a new log record.
