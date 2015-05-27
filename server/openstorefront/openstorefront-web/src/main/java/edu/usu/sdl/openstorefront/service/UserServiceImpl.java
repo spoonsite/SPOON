@@ -17,7 +17,9 @@ package edu.usu.sdl.openstorefront.service;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.security.ExternalUserManager;
 import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.security.UserRecord;
 import edu.usu.sdl.openstorefront.service.api.UserService;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
@@ -70,9 +72,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Message;
@@ -860,6 +864,40 @@ public class UserServiceImpl
 		result.setCount(persistenceService.countByExample(queryByExample));
 
 		return result;
+	}
+
+	@Override
+	public void syncUserProfilesWithUserManagement(ExternalUserManager userManager)
+	{
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
+
+		//page through users
+		long pageSize = 200;
+		long maxRecords = persistenceService.countByExample(userProfileExample);
+		for (long i = 0; i < maxRecords; i = i + pageSize) {
+			QueryByExample queryByExample = new QueryByExample(userProfileExample);
+			queryByExample.setFirstResult((int) i);
+			queryByExample.setMaxResults((int) pageSize);
+			queryByExample.setReturnNonProxied(false);
+
+			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, queryByExample);
+			List<String> usernames = new ArrayList<>();
+			for (UserProfile userProfile : userProfiles) {
+				usernames.add(userProfile.getUsername());
+			}
+			List<UserRecord> userRecords = userManager.findUsers(usernames);
+			Set<String> activeUserSet = new HashSet<>();
+			for (UserRecord userRecord : userRecords) {
+				activeUserSet.add(userRecord.getUsername());
+			}
+			for (UserProfile userProfile : userProfiles) {
+				if (activeUserSet.contains(userProfile.getUsername()) == false) {
+					log.log(Level.INFO, "User not found in external user management, Inacvtivating user. (Sync Service)");
+					deleteProfile(userProfile.getUsername());
+				}
+			}
+		}
 	}
 
 }
