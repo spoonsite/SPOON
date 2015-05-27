@@ -74,8 +74,7 @@ public class ComponentSubmissionResource
 			{
 			};
 			return sendSingleEntityResponse(entity);
-		}
-		else {
+		} else {
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 	}
@@ -141,8 +140,7 @@ public class ComponentSubmissionResource
 				}
 				component.setNotifyOfApprovalEmail(email);
 				service.getPersistenceService().persist(component);
-			}
-			else {
+			} else {
 				response = Response.status(Response.Status.FORBIDDEN)
 						.type(MediaType.TEXT_PLAIN)
 						.entity("Unable to modify an approved submission.")
@@ -169,8 +167,7 @@ public class ComponentSubmissionResource
 				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().submitComponentSubmission(componentId);
 					response = Response.ok().build();
-				}
-				else {
+				} else {
 					response = Response.status(Response.Status.FORBIDDEN)
 							.type(MediaType.TEXT_PLAIN)
 							.entity("Unable to modify an approved submission.")
@@ -197,8 +194,7 @@ public class ComponentSubmissionResource
 				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().checkComponentCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
 					response = Response.ok().build();
-				}
-				else {
+				} else {
 					response = Response.status(Response.Status.FORBIDDEN)
 							.type(MediaType.TEXT_PLAIN)
 							.entity("Unable to modify an approved submission.")
@@ -210,7 +206,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@APIDescription("Inactivates Component Submission for approval.")
+	@APIDescription("Inactivates a incomplete Component Submission .")
 	@Path("/{componentId}/inactivate")
 	public Response inactivateComponent(
 			@PathParam("componentId")
@@ -222,8 +218,15 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerCheck(component);
 			if (response == null) {
-				service.getComponentService().deactivateComponent(componentId);
-				response = Response.ok().build();
+				if (ApprovalStatus.NOT_SUBMITTED.equals(component.getApprovalState())) {
+					service.getComponentService().deactivateComponent(componentId);
+					response = Response.ok().build();
+				} else {
+					response = Response.status(Response.Status.FORBIDDEN)
+							.type(MediaType.TEXT_PLAIN)
+							.entity("Can only modify a Not Submitted submission.")
+							.build();
+				}
 			}
 		}
 		return response;
@@ -298,8 +301,7 @@ public class ComponentSubmissionResource
 							componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
 
 							response = Response.status(Response.Status.OK).entity(componentAll).build();
-						}
-						else {
+						} else {
 							response = Response.status(Response.Status.FORBIDDEN)
 									.type(MediaType.TEXT_PLAIN)
 									.entity("Unable to modify an approved submission.")
@@ -308,14 +310,12 @@ public class ComponentSubmissionResource
 					}
 				}
 				return response;
-			}
-			else {
+			} else {
 				componentAll.populateCreateUpdateFields(false);
 				componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
 				return Response.created(URI.create("v1/resource/componentsubmissions/" + componentAll.getComponent().getComponentId())).entity(componentAll).build();
 			}
-		}
-		else {
+		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 	}
@@ -361,8 +361,7 @@ public class ComponentSubmissionResource
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
 				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().deleteBaseComponent(ComponentMedia.class, mediaId);
-				}
-				else {
+				} else {
 					return Response.status(Response.Status.FORBIDDEN)
 							.type(MediaType.TEXT_PLAIN)
 							.entity("User cannot modify entity. Component is in a Approved state.")
@@ -394,8 +393,7 @@ public class ComponentSubmissionResource
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
 				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
-				}
-				else {
+				} else {
 					return Response.status(Response.Status.FORBIDDEN)
 							.type(MediaType.TEXT_PLAIN)
 							.entity("User cannot modify entity. Component is in a Approved state.")
@@ -412,8 +410,7 @@ public class ComponentSubmissionResource
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
 				|| OpenStorefrontConstant.ANONYMOUS_USER.equals(entity.getCreateUser())) {
 			return null;
-		}
-		else {
+		} else {
 			return Response.status(Response.Status.FORBIDDEN)
 					.type(MediaType.TEXT_PLAIN)
 					.entity("User cannot modify resource.")

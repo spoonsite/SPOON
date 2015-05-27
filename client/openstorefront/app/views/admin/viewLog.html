@@ -13,6 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
+<style>
+	.highlight-FINE {
+		background: lightgreen;
+	}
+	.highlight-WARNING {
+		background: #ffcc66;
+	}
+	.highlight-SEVERE {
+		background: lightcoral;
+	}	
+</style>
+
 <div>  
 	<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i> &nbsp;View Log Records
 		<button type="button" title="Close" class="btn btn-default pull-right" ng-click="cancel()"><i class="fa fa-close"></i></button>
@@ -37,7 +49,7 @@ limitations under the License.
 			</tr>
 			<tr ng-repeat-start="record in logRecords.logRecords" >
 				<td>{{record.eventDts| date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
-				<td>{{record.level}}</td>
+				<td class="highlight-{{record.level}}">{{record.level}}</td>
 				<td>{{record.loggerName}}</td>								
 				<td>{{record.message | limitTo: 100}}</td>						
 				<td style="padding:0px 3px !important;">
