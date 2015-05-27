@@ -118,8 +118,9 @@ public class LdapClient
 					.append(user)
 					.append(") ");
 		}
-		filter.append("    )"
-				+ ")");
+		filter.append("    )")
+				.append("   (! (userAccountControl:1.2.840.113556.1.4.803:=2)) ")
+				.append(")");
 
 		LdapSearch ldapSearch = new LdapSearch();
 		ldapSearch.setSearchBase(contextRoot);
