@@ -5,8 +5,8 @@
       <div class="panel panel-primary">
         <div class="panel-heading text-center watch-content-title panel-title">USER SUBMISSIONS</div>
         <div class="panel-body">
-          <div ng-controller="UserSubmissionCtrl">
-            <button class="btn btn-default"><i class="fa fa-plus"></i>&nbsp;Create new submission</button>
+          <div ng-controller="UserSubmissionCtrl">            
+	    <a href="submission.html" target="_blank" class="btn btn-default"><i class="fa fa-plus"></i>&nbsp;Create new submission</a>		
             <table class="table table-stripped table-bordered" ng-show="submissions.length">
               <tr>
                 <th class="imitateLink" ng-click="setPredicate('name')">Name&nbsp;<span ng-show="predicate === 'name'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></th>
