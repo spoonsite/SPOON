@@ -16,7 +16,7 @@
 'use strict';
 
 
-app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q) { /*jshint unused:false*/
+app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$location', 'Lightbox', '$timeout', '$q', '$uiModal', function ($rootScope, $scope, Business, $location, Lightbox, $timeout, $q, $uiModal) { /*jshint unused:false*/
 
   $scope.sendEvent          = $rootScope.sendEvent;
   $scope.user               = {};
@@ -151,6 +151,38 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.openLightboxModal = function (index, imageArray) {
     Lightbox.openModal(imageArray, index);
   };
+
+  $scope.openFilePreview = function(file, files){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/content/filepreview.html',
+      controller: 'OpenFilePreviewCtrl',
+      backdrop: 'static',
+      backdropClass: 'noModalBackgrounds',
+      windowClass: 'noModalBackgrounds',
+      size: 'lg',
+      resolve: {
+        file: function(){
+          return file;
+        },
+        files: function(){
+          return files;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (result) {
+      $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
+      $timeout(function(){
+        $scope.getHighlights(true);
+      }, 1000);
+    }, function (result) {
+      $timeout(function(){
+        $scope.getHighlights(true);
+      }, 1000);
+      $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
+    });
+    console.log('file', file);
+  }
 
   /***************************************************************
   * This function take the reviews array from the component details and sets up
@@ -775,5 +807,31 @@ $scope.evaluationDetails = function (attributes) {
 };
 
 
+
+}]);
+
+
+app.controller('OpenFilePreviewCtrl',['$scope', '$uiModalInstance', 'file', 'files', 'business', '$location', function ($scope, $uiModalInstance, file, files, Business, $location) {
+
+  $scope.file = file || {};
+  $scope.files = files || [];
+
+  $scope.current = _.find($scope.files, $scope.file);
+  if ($scope.current) {
+    var index = _.indexOf($scope.files, $scope.current);
+    if (index) {
+      $scope.initialSlide = index;
+    }
+  }
+
+  $scope.ok = function () {
+    $uiModalInstance.close();
+  };
+
+  $scope.cancel = function () {
+    console.log('we hit this');
+    
+    $uiModalInstance.dismiss('cancel');
+  };
 
 }]);

@@ -26,6 +26,42 @@
     }
   }
 
+  utils.getBasicFileType = function(file){
+    var type = file.mimeType || '';
+    if (type.match('video.*')) {
+      return 'video'
+    } else if (type.match('audio.*')){
+      return 'audio'
+    } else if (type.match('application.*')){
+      return 'application'
+    } else if (type.match('text.*')){
+      return 'text'
+    } else if (type.match('image.*')){
+      return 'image'
+    } else {
+      return 'other'
+    }
+  }
+
+
+  utils.getMimeTypeClass = function(type){
+    if (type) {
+      if (type.match('video.*')) {
+        return 'fa-file-video-o'
+      } else if (type.match('audio.*')){
+        return 'fa-file-audio-o'
+      } else if (type.match('application.*')){
+        return 'fa-file-code-o'
+      } else if (type.match('text.*')){
+        return 'fa-file-text-o'
+      } else if (type.match('image.*')){
+        return 'fa-file-image-o'
+      } else {
+        return 'fa-file-o'
+      }
+    } else {return ''};
+  }
+
   utils.getMediaHTML = function(media, $sce){
     if (media && media.mimeType){
       var type = media.mimeType;

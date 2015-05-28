@@ -2,7 +2,6 @@
   border:1px solid dimgray;
   background: lightgray;
   position: absolute;
-  border-radius: 4px;
 }
 .carousel .itemData p{
   background: black;
@@ -30,6 +29,38 @@
   position: absolute;
   display: block;
 }
+.cycle-prev.full, .cycle-next.full{
+}
+.cycle-next.full{
+  background: none;
+  position: absolute;
+  top: 50%;
+  content: "";
+  display: inline-block;
+  /* By using an em scale, the arrows will size with the font */
+  width: 1.8em;
+  height: 1.8em;
+  border-right: 0.6em solid white;
+  border-top: 0.6em solid white;
+  border-radius:4px; 
+  transform: rotate(45deg);
+  margin-right: 0.5em;
+}
+.cycle-prev.full{
+  background: none;
+  position: absolute;
+  top: 50%;
+  content: "";
+  display: inline-block;
+  /* By using an em scale, the arrows will size with the font */
+  width: 1.8em;
+  height: 1.8em;
+  border-left: 0.6em solid white;
+  border-bottom: 0.6em solid white;
+  border-radius:4px; 
+  transform: rotate(45deg);
+  margin-right: 0.5em;
+}
 .cycle-prev {
   background-position: 0 0;
   left: 0px
@@ -55,4 +86,19 @@
 
 .cycle-prev.disabled, .cycle-next.disabled {
   visibility: hidden;
+}
+
+
+.noModalBackgrounds .modal-content{
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.noModalBackgrounds.modal-backdrop{
+  opacity:0.8;
+}
+
+.noModalBackgrounds .carousel{
+  background:none;
+  border:none;
 }

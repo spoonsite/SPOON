@@ -79,7 +79,7 @@
     <div class="section-headers"><h4>Screenshots / Media</h4></div>
     <br>
     <div class="containers" ng-class="getIsUpdated('media')? 'updatedForUser': ''" >
-      <photo data-fx="carousel" data-wrap="false" style="height: 175px; position: relative; display: block;" photos="details.details.componentMedia"></photo>
+      <photo callback="openFilePreview(file, files)" data-fx="carousel" data-wrap="false" style="height: 175px; position: relative; display: block;" files="details.details.componentMedia"></photo>
       <!-- 
       <ul style="list-style-type: none;">
         <li ng-repeat="image in getImages(details.details.componentMedia) | limitTo:3" style="display:inline; padding:5px 10px 10px 0;" style="display:inline">
