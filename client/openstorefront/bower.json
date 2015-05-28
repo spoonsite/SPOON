@@ -32,7 +32,8 @@
     "videogular-controls": "~1.2.0",
     "videogular-buffering": "~1.2.0",
     "videogular-poster": "~1.2.0",
-    "videogular-overlay-play": "~1.2.0"
+    "videogular-overlay-play": "~1.2.0",
+    "jquery-cycle2": "~2.1.6"
   },
   "devDependencies": {
     "angular-scenario": "1.2.23"
