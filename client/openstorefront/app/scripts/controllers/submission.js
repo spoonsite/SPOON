@@ -234,22 +234,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   }
 
   $scope.getMimeTypeClass = function(type){
-    if (type) {
-
-      if (type.match('video.*')) {
-        return 'fa-file-video-o'
-      } else if (type.match('audio.*')){
-        return 'fa-file-audio-o'
-      } else if (type.match('application.*')){
-        return 'fa-file-code-o'
-      } else if (type.match('text.*')){
-        return 'fa-file-text-o'
-      } else if (type.match('image.*')){
-        return 'fa-file-image-o'
-      } else {
-        return 'fa-file-o'
-      }
-    } else {return ''};
+    return utils.getMimeTypeClass(type);
   }
 
   $scope.setBadgeFound = function(attribute){
