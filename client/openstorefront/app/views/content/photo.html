@@ -1,0 +1,13 @@
+<div id="wrapper">
+  <div class="carousel" style="margin: 0px 30px;">
+    <div class="item" ng-repeat="photo in photos" >
+      <div class="itemData" style="margin: 5px; position:relative;" >
+        <img ng-src="{{photo.link}}" style="height: 150px; width:auto;" alt="{{photo.fileName}}"/>
+        <p >{{photo.fileName}}</p>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <a href="javascript:void(0);" id="prev" class="cycle-prev imitateLink">&lt;</a>
+  <a href="javascript:void(0);" id="next" class="cycle-next imitateLink">&gt;</a>
+</div>

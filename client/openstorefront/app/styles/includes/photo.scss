@@ -1,0 +1,58 @@
+.carousel {
+  border:1px solid dimgray;
+  background: lightgray;
+  position: absolute;
+  border-radius: 4px;
+}
+.carousel .itemData p{
+  background: black;
+  color: white;
+  margin: 0;
+  padding: 5px;
+  position: absolute;
+  bottom: 0;
+  opacity: .6;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.cycle-prev, .cycle-next{
+  height:21px;
+  background: transparent no-repeat 0 0 image-url('carousel_control.png');
+  top: 70px;
+  margin-left: 10px;
+  width: 15px;
+  overflow: hidden;
+  text-indent: -999px;
+  position: absolute;
+  display: block;
+}
+.cycle-prev {
+  background-position: 0 0;
+  left: 0px
+}
+.cycle-prev:hover {
+  left:  1px
+}     
+.cycle-next{
+  right: 0px;
+  background-position: -18px 0;
+}
+.cycle-next:hover {
+  right: 1px
+}       
+
+.carousel .item{
+  border: 1px solid transparent;
+}
+
+.cycle-slide-active{
+  border:1px solid black !important;
+}
+
+.cycle-prev.disabled, .cycle-next.disabled {
+  visibility: hidden;
+}
