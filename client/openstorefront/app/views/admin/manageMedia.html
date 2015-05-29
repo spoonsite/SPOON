@@ -43,7 +43,8 @@ limitations under the License.
 				<td>{{item.updateDts | date:'MM/dd/yyyy h:mm a'}}</td>				
 				<td style="padding:0px 3px !important;  width: 200px;">&nbsp;
 					<button class="btn btn-danger btn-sm" ng-click="removeMedia(item);"  title="Remove Media"><i class="fa fa-trash"></i></button>
-				</td>
+          <span dynamichtml="getMediaHTML(item)"></span>
+        </td>
 			</tr>
 	</table>	
 	

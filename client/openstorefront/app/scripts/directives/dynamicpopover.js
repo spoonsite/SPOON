@@ -26,7 +26,6 @@ app.directive('dynamicPopover', ['$compile', '$timeout', function($compile, $tim
       var addPopover = function(){
         if (scope.content || scope.contentString) {
           var content = scope.content || scope.contentString;
-          console.log('we added the popover');
           $(element).popover({
             html: true,
             container: attrs['container'] || 'body',
