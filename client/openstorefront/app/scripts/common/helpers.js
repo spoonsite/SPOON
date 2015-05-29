@@ -62,16 +62,24 @@
     } else {return ''};
   }
 
-  utils.getMediaHTML = function(media, $sce){
+  utils.getMediaHTML = function(media, $sce, placement){
+    placement = placement || 'top';
+    var link = 'Media.action?LoadMedia&amp;mediaId=';
+    if (media.mediaLink) {
+      link = media.mediaLink;
+      media.componentMediaId = true;
+    } else if (media.componentMediaId) {
+      link = link + media.componentMediaId
+    }
     if (media && media.mimeType){
       var type = media.mimeType;
       if (type.match('video.*')) {
         if (media.componentMediaId){
           var srcs = [];
-          var result = $('<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" placement="top" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>');
-          srcs.push({src: $sce.trustAsResourceUrl('Media.action?LoadMedia&amp;mediaId='+media.componentMediaId).$$unwrapTrustedValue(), type: 'video/mp4'});             
-          srcs.push({src: $sce.trustAsResourceUrl('Media.action?LoadMedia&amp;mediaId='+media.componentMediaId).$$unwrapTrustedValue(), type: 'video/webm'});             
-          srcs.push({src: $sce.trustAsResourceUrl('Media.action?LoadMedia&amp;mediaId='+media.componentMediaId).$$unwrapTrustedValue(), type: 'video/ogg'}); 
+          var result = $('<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" placement="'+placement+'" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>');
+          srcs.push({src: $sce.trustAsResourceUrl(link).$$unwrapTrustedValue(), type: 'video/mp4'});             
+          srcs.push({src: $sce.trustAsResourceUrl(link).$$unwrapTrustedValue(), type: 'video/webm'});             
+          srcs.push({src: $sce.trustAsResourceUrl(link).$$unwrapTrustedValue(), type: 'video/ogg'}); 
           var video = $('<videogular> <vg-media vg-src=\''+JSON.stringify(srcs)+'\' vg-preload="\'none\'" vg-native-controls=\'true\'></vg-media></videogular>');
           result.attr('content-string', video.prop('outerHTML'));
           
@@ -80,9 +88,9 @@
         return '<i class="fa fa-file-video-o"></i>'
       } else if (type.match('audio.*')){
         if (media.componentMediaId){
-          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
-          '<audio controls><source src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' type=\'audio/ogg\'><source src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' type=\'audio/mpeg\'></audio>',
-          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-audio-o"></i></button>'
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" content-string="',
+          '<audio controls><source src=\''+link+'\' type=\'audio/ogg\'><source src=\''+link+'\' type=\'audio/mpeg\'></audio>',
+          '" placement="'+placement+'" trigger="click"><i class="fa fa-lg fa-file-audio-o"></i></button>'
           ].join('');
           
           return result;
@@ -94,12 +102,14 @@
         return '<i class="fa fa-file-text-o"></i>'
       } else if (type.match('image.*')){
         if (media.componentMediaId){
-          if (!media.originalName){
+          if (!media.originalName && media.orignalFileName){
+            media.originalName = media.orignalFileName;
+          } else if (!media.originalName) {
             media.originalName = ' ';
           }
-          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
-          '<img class=\'thumb\' src=\'Media.action?LoadMedia&amp;mediaId=',media.componentMediaId,'\' title=\'', escape(media.originalName), '\' width=\'368\'    height=\'auto\'/>',
-          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" content-string="',
+          '<img class=\'thumb\' src=\''+link+'\' title=\'', escape(media.originalName), '\' width=\'368\'    height=\'auto\'/>',
+          '" placement="'+placement+'" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
           ].join('');
           
           return result;
@@ -119,7 +129,7 @@
       if (type.match('video.*')) {
         if (resource.resourceId){
           var srcs = [];
-          var result = $('<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" placement="top" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>');
+          var result = $('<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" placement="top" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>');
           srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/mp4'});             
           srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/webm'});             
           srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/ogg'}); 
@@ -131,7 +141,7 @@
         return '<i class="fa fa-file-video-o"></i>'
       } else if (type.match('audio.*')){
         if (resource.resourceId){
-          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" content-string="',
           '<audio controls><source src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' type=\'audio/ogg\'><source src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' type=\'audio/mpeg\'></audio>',
           '" placement="top" trigger="click"><i class="fa fa-lg fa-file-audio-o"></i></button>'
           ].join('');
@@ -148,7 +158,7 @@
           if (!resource.originalName){
             resource.originalName = ' ';
           }
-          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content-string="',
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" content-string="',
           '<img class=\'thumb\' src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' title=\'', escape(resource.originalName), '\' width=\'368\'    height=\'auto\'/>',
           '" placement="top" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
           ].join('');

@@ -16,7 +16,7 @@
 
  'use strict';
 
- app.controller('AdminMediaCtrl', ['$scope', 'business', '$rootScope', '$uiModal', function ($scope, Business, $rootScope, $uiModal) {
+ app.controller('AdminMediaCtrl', ['$scope', 'business', '$rootScope', '$uiModal', '$sce', function ($scope, Business, $rootScope, $uiModal, $sce) {
 
   $scope.predicate = [];
   $scope.reverse = [];   
@@ -29,6 +29,10 @@
       $scope.reverse[table] = false;
     }
   };    
+
+  $scope.getMediaHTML = function(media){
+    return utils.getMediaHTML(media, $sce, 'left');
+  }
 
   $scope.refreshMedia = function(){
     $scope.$emit('$TRIGGERLOAD', 'mediaLoader');

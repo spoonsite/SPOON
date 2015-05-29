@@ -364,11 +364,9 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
         if (!branch) {
           branch = _.find($scope.systemTools, {'label': search.tool});
           if (branch) {
-            console.log('branch', branch);
             $scope.editor(branch, $scope.myTree, $scope.systemTree);
           }
         } else {
-          console.log('branch', branch);
           $scope.editor(branch, $scope.myTree, $scope.systemTree);
         }
       }
