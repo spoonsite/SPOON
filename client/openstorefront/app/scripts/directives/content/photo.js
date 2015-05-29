@@ -62,6 +62,15 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
 
         carousel.cycle(options);
 
+        carousel.on('cycle-before', function(event, opts){
+          $('video').each(function(e){
+            $(this)[0].pause();
+          })
+          $('audio').each(function(e){
+            $(this)[0].pause();
+          })
+        })
+
         $timeout(function(){
           carousel.cycle('stop');
           if (scope.init && !isNaN(parseInt(scope.init))){
