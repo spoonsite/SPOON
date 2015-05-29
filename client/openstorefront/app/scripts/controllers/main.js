@@ -50,42 +50,79 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   //   }
   // });
 
-  Business.highlightservice.getHighlights().then(function(result){
-    if (result) {
-      $scope.highlights = result;
-    } else {
-      $scope.highlights = null;
-    }
-  });
+Business.highlightservice.getHighlights().then(function(result){
+  if (result) {
+    $scope.highlights = result;
+  } else {
+    $scope.highlights = null;
+  }
+});
 
-  Business.highlightservice.getRecentlyAdded().then(function(result){
-    if (result) {
-      var recents = [];
-      _.each(result, function(item){
-        var temp = item;
-        temp.description = getShortDescription(item.description);
-        recents.push(temp);
-      })
-      $scope.recentlyAdded = recents;
-    } else {
+Business.highlightservice.getRecentlyAdded().then(function(result){
+  if (result) {
+    var recents = [];
+    _.each(result, function(item){
+      var temp = item;
+      recents.push(temp);
+    })
+    $scope.recentlyAdded = recents;
+    $timeout(function(){
+      $('.shortDescription').dotdotdot({
+        /*  The text to add as ellipsis. */
+        ellipsis  : '... ',
+
+        /*  How to cut off the text/html: 'word'/'letter'/'children' */
+        wrap    : 'word',
+
+        /*  Wrap-option fallback to 'letter' for long words */
+        fallbackToLetter: true,
+
+        /*  jQuery-selector for the element to keep and put after the ellipsis. */
+        after   : null,
+
+        /*  Whether to update the ellipsis: true/'window' */
+        watch   : true,
+
+        /*  Optionally set a max-height, if null, the height will be measured. */
+        height    : 55,
+
+        /*  Deviation for the height-option. */
+        tolerance : 0,
+
+          /*  Callback function that is fired after the ellipsis is added,
+          receives two parameters: isTruncated(boolean), orgContent(string). */
+          callback  : function( isTruncated, orgContent ) {},
+
+          lastCharacter : {
+
+            /*  Remove these characters from the end of the truncated text. */
+            remove    : [ ' ', ',', ';', '.', '!', '?' ],
+
+            /*  Don't add an ellipsis if this array contains 
+            the last character of the truncated text. */
+            noEllipsis  : []
+          }
+        })
+      })//
+    } else { //
       $scope.recentlyAdded = null;
     }
   });
 
-  $scope.getTypeahead = function(){
-    Business.typeahead($scope.searchKey).then(function(result){
-      $scope.typeahead = result || [];
-    }, function(){
-      $scope.typeahead = [];
-    })
-  }
-
-  $scope.$watch('searchKey', function(newValue, oldValue){
-    if ($scope.searchKey) {
-      $rootScope.searchKey = $scope.searchKey;
-      $scope.getTypeahead();
-    }
+$scope.getTypeahead = function(){
+  Business.typeahead($scope.searchKey).then(function(result){
+    $scope.typeahead = result || [];
+  }, function(){
+    $scope.typeahead = [];
   })
+}
+
+$scope.$watch('searchKey', function(newValue, oldValue){
+  if ($scope.searchKey) {
+    $rootScope.searchKey = $scope.searchKey;
+    $scope.getTypeahead();
+  }
+})
 
   //////////////////////////////////////////////////////////////////////////////
   // Event Watchers
