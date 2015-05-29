@@ -72,9 +72,9 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
       })
 
       scope.getWinHeight = function(video){
-        var result = $(window).height() - 200;
+        var result = $(window).height() - 100;
         if (video) {
-          return result - 100;
+          return result - 50;
         }
         return result;
       }
