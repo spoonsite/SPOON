@@ -1825,16 +1825,20 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
       restrict: 'EA',
       replace: true,
       templateUrl: 'template/modal/backdrop.html',
-      link: function (scope) {
-
-        scope.animate = false;
-
-        //trigger CSS transitions
-        $timeout(function () {
-          scope.animate = true;
-        });
+      compile: function (tElement, tAttrs) {
+        tElement.addClass(tAttrs.backdropClass);
+        return linkFn;
       }
     };
+
+    function linkFn(scope, element, attrs) {
+      scope.animate = false;
+
+      //trigger CSS transitions
+      $timeout(function () {
+        scope.animate = true;
+      });
+    }
   }])
 
   .directive('modalWindow', ['$uiModalStack', '$timeout', function ($uiModalStack, $timeout) {
@@ -1985,10 +1989,22 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
         var body = $document.find('body').eq(0),
             currBackdropIndex = backdropIndex();
 
+        // if (currBackdropIndex >= 0 && !backdropDomEl) {
+        //   backdropScope = $rootScope.$new(true);
+        //   backdropScope.index = currBackdropIndex;
+        //   backdropDomEl = $compile('<div modal-backdrop></div>')(backdropScope);
+        //   body.append(backdropDomEl);
+        // }
+
         if (currBackdropIndex >= 0 && !backdropDomEl) {
           backdropScope = $rootScope.$new(true);
           backdropScope.index = currBackdropIndex;
-          backdropDomEl = $compile('<div modal-backdrop></div>')(backdropScope);
+          var angularBackgroundDomEl = angular.element('<div modal-backdrop="modal-backdrop"></div>');
+          angularBackgroundDomEl.attr('backdrop-class', modal.backdropClass);
+          if (modal.animation) {
+            angularBackgroundDomEl.attr('modal-animation', 'true');
+          }
+          backdropDomEl = $compile(angularBackgroundDomEl)(backdropScope);
           body.append(backdropDomEl);
         }
 
@@ -2121,8 +2137,10 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
                 scope: modalScope,
                 deferred: modalResultDeferred,
                 content: tplAndVars[0],
+                animation: modalOptions.animation,
                 backdrop: modalOptions.backdrop,
                 keyboard: modalOptions.keyboard,
+                backdropClass: modalOptions.backdropClass,
                 windowClass: modalOptions.windowClass,
                 windowTemplateUrl: modalOptions.windowTemplateUrl,
                 size: modalOptions.size
