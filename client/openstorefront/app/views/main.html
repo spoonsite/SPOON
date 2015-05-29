@@ -87,8 +87,10 @@ limitations under the License.
                 <a href="{{highlight.link}}">
                   <span class="listing_short_title_text">{{highlight.title}}</span>     
                 </a>
-                <div style="font-size: 12px; color: #555555;" dynamichtml="highlight.description">
-                </div>    
+                <div read-more>
+                  <div style="font-size: 12px; color: #555555;" dynamichtml="highlight.description">
+                  </div>    
+                </div>
               </li>
             </ul>
           </div>
@@ -108,13 +110,13 @@ limitations under the License.
                 <a>
                   <span class="listing_short_title_text">{{item.name}}</span>
                 </a>
-                <div  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
+                <div class="shortDescription"  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
               </div>
               <div ng-if="item.listingType === 'COMPONENT'" class="imitateLink" ng-click="goTo('single', {id: item.componentId})">
                 <a>
                   <span class="listing_short_title_text">{{item.name}}</span>
                 </a>
-                <div  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
+                <div class="shortDescription"  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
               </div>
             </li>
           </ul>
