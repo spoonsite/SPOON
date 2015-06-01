@@ -418,6 +418,8 @@ public class ComponentServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id: " + componentId);
 		}
 
+		result.setApprovalState(tempComponent.getApprovalState());
+
 		Component tempParentComponent;
 		if (tempComponent.getParentComponentId() != null) {
 			tempParentComponent = persistenceService.findById(Component.class, tempComponent.getParentComponentId());
