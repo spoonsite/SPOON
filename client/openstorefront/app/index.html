@@ -202,6 +202,8 @@ limitations under the License.
   <script type="text/javascript" src="scripts/directives/content/stickydiv.js"></script>
   <script type="text/javascript" src="scripts/directives/content/photo.js"></script>
   <script type="text/javascript" src="scripts/directives/content/readmore.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/draggable.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/alwaysontop.js"></script>
 
   <!-- Grab our Controller -->
   <script type="text/javascript" src="scripts/controllers/main.js"></script>
@@ -270,7 +272,9 @@ limitations under the License.
   <!-- This is the profile modal -->
   <div modal controller-name="UserProfileCtrl" modalId='profileModal' modalclasses="fullWidthModal">
   </div>
-
+  
+  <div alwaysontop draggable style="min-width: 300px; min-height: 300px; top:0px; left:0px;">
+  </div>
 
 </body>
 </html>

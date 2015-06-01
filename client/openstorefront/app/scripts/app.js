@@ -297,8 +297,8 @@ var app = angular
           && $location.path() !== '/admin' 
           && $location.path() !== '/print')) {
           $location.search({});
-        }
-      });
+      }
+    });
 
       /***************************************************************
       * This function is what is called when the view has finally been loaded
@@ -574,6 +574,13 @@ var app = angular
         $rootScope.logout();
       });
 
+      // $rootScope.$on('$APPEND', function(event, args, elem) {
+      //   console.log('args', args);
+      //   console.log('elem', elem);
+      //   console.log('event', event);
+
+      // });
+
       // $rootScope.start = function() {
       //   closeModals();
       //   $idle.watch();
@@ -587,7 +594,35 @@ var app = angular
       // };
       
       $idle.watch();
+      function manipulationTarget( elem, content ) {
+        return jQuery.nodeName( elem, "table" ) &&
+        jQuery.nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ?
 
+        elem.getElementsByTagName("tbody")[0] ||
+        elem.appendChild( elem.ownerDocument.createElement("tbody") ) :
+        elem;
+      }
+      function isBody(el) {
+        return document.body === el;
+      }
+
+
+      // extending append so that we can catch it for our 'alwas-on-top' stuff
+      jQuery.fn.extend({
+        append: function() {
+          return this.domManip( arguments, function( elem ) {
+
+            if ( this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9 ) {
+              var target = manipulationTarget( this, elem );
+              if (isBody(target)){
+                $rootScope.$broadcast('$APPEND', arguments, elem)
+              } 
+              
+              target.appendChild( elem );
+            }
+          });
+        },
+      })
 
     } // end of run function
   ] // end of injected dependencies for .run
