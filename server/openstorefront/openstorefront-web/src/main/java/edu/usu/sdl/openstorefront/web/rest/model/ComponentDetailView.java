@@ -130,6 +130,7 @@ public class ComponentDetailView
 		description = component.getDescription();
 		approvedDate = component.getApprovedDts();
 		approvedUser = component.getApprovedUser();
+		approvalState = component.getApprovalState();
 		createUser = component.getCreateUser();
 		createDts = component.getCreateDts();
 		version = component.getVersion();
