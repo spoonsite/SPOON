@@ -22,8 +22,6 @@ app.directive('alwaysontop', ['$document', '$timeout', function($document, $time
     link: function(scope, element, attr) {
       element.addClass('alwaysOnTop');
       var css = element.css('left');
-      console.log('css', css);
-      
       element.css({
         position: 'fixed',
         background: 'rgba(0, 0, 0, .6)',
@@ -32,10 +30,8 @@ app.directive('alwaysontop', ['$document', '$timeout', function($document, $time
       })
       scope.$on('$APPEND', function(event, args, elem){
         $timeout(function(){
-
           var first = $('body .alwaysOnTop:first');
           $('body .alwaysOnTop').last().nextAll().each(function(){
-            console.log(this);
             $(this).insertBefore(first);
           });
         });
