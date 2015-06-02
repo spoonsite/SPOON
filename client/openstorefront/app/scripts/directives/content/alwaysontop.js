@@ -26,7 +26,10 @@ app.directive('alwaysontop', ['$document', '$timeout', function($document, $time
         position: 'fixed',
         background: 'rgba(0, 0, 0, .6)',
         border: '1px solid black',
-        zIndex: '20000'
+        zIndex: '20000',
+        WebkitBoxShadow: '0px 5px 10px 1px rgba(0,0,0,0.5)',
+        MozBoxShadow: '0px 5px 10px 1px rgba(0,0,0,0.5)',
+        boxShadow: '0px 5px 10px 1px rgba(0,0,0,0.5)'
       })
       scope.$on('$APPEND', function(event, args, elem){
         $timeout(function(){
