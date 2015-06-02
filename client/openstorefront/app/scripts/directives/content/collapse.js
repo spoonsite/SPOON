@@ -16,9 +16,9 @@
 
 'use strict';
 
-app.directive('collapse', ['$timeout', function($timeout) {
+app.directive('draggableCollapse', ['$timeout', function($timeout) {
   // id needs to be unique across all implementations of the directive
-  var nextId2 = 1;
+  var draggableCollapseCount = 1;
   return {
     restrict: 'A',
     scope:{
@@ -32,20 +32,23 @@ app.directive('collapse', ['$timeout', function($timeout) {
     templateUrl: 'views/content/collapse.html',
     link: function postlink(scope, element, attrs) {
       
+      scope.dragTarget = (scope.isDraggable !=='true' && scope.isDraggable !== 'false')? scope.isDraggable || 'draggableTarget':'draggableTarget';
+      scope.closeTarget = (scope.isCloseable !=='true' && scope.isCloseable !== 'false')? scope.isCloseable || 'closeTarget':'closeTarget';
+
       scope.open = (scope.openState !== 'false' && scope.openState !== '0' && scope.openState !== '' && scope.openState !== undefined && scope.openState !== null)? true: false;
       
       // set up the uniqueID for the panel
-      scope.panelId = nextId2++;
+      scope.panelId = draggableCollapseCount++;
       $timeout(function(){
 
         if (scope.open) {
-          $('#collapseThis'+scope.panelId).collapse('show');
+          $('#collapseThat'+scope.panelId).collapse('show');
         }
-        $('#collapseThis'+scope.panelId).on('hidden.bs.collapse', function () {
+        $('#collapseThat'+scope.panelId).on('hidden.bs.collapse', function () {
           scope.open = false;
           scope.$apply();
         })
-        $('#collapseThis'+scope.panelId).on('shown.bs.collapse', function () {
+        $('#collapseThat'+scope.panelId).on('shown.bs.collapse', function () {
           scope.open = true;
           scope.$apply();
         })

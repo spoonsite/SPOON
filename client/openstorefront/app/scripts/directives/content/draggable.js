@@ -98,8 +98,6 @@ app.directive('draggable', ['$document', '$timeout', '$draggableStack',  functio
           closeElement = $(closeElement[0]);
         }
         
-        console.log('closeElement', closeElement);
-        console.log('draggableElement', draggableElement);
         
 
         if (closeElement === draggableElement) {
@@ -144,7 +142,6 @@ app.directive('draggable', ['$document', '$timeout', '$draggableStack',  functio
       });
 
       scope.close = function (evt) {
-        console.log('evt', evt);
         
         var draggable = $draggableStack.getTop();
         if (draggable && (evt.target === evt.currentTarget)) {
@@ -212,16 +209,15 @@ app.directive('draggable', ['$document', '$timeout', '$draggableStack',  functio
   $draggableStack.open = function (draggableInstance, draggable) {
 
     var openable = true;
-    if (!draggable.allowMultiples)
-    var openKeys = openedWindows.keys();
-    _.each(openKeys, function(key){
-      var that = openedWindows.get(key);
-      console.log('window', that);
-      console.log('draggable', draggable);
-      if (that.value.draggableId === draggable.id) {
-        openable = false;
-      }
-    })
+    if (!draggable.allowMultiples) {
+      var openKeys = openedWindows.keys();
+      _.each(openKeys, function(key){
+        var that = openedWindows.get(key);
+        if (that.value.draggableId === draggable.id) {
+          openable = false;
+        }
+      })
+    }
     
     if (!openable){
       // we could throw an error here, but this is just to warn the coders...
@@ -246,7 +242,6 @@ app.directive('draggable', ['$document', '$timeout', '$draggableStack',  functio
         'moveTarget': draggable.moveTarget,
         'closeTarget': draggable.closeTarget,
       }).html(draggable.content);
-      console.log('dra', draggable);
       if (draggable.alwaysontop){
         angularDomEl.attr({
           'alwaysontop': ''

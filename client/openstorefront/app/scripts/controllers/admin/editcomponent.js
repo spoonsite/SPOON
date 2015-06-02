@@ -26,6 +26,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.selectedComponents = [];
     $scope.selectAllComps = {};
     $scope.selectAllComps.flag = false;
+    $scope.submitter = null;
     $scope.pagination = {};
     $scope.pagination.control = {};
     $scope.pagination.control.approvalState ='ALL';
@@ -232,16 +233,17 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $(window).resize(stickThatTable);
     $timeout(stickThatTable, 100);
 
-}]);
+  }]);
 
-app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', 'FileUploader', 
-  function ($scope, $q, $filter, $uiModalInstance, component, editMode, Business, $uiModal, FileUploader) {
+app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', '$draggable', 'FileUploader', '$rootScope',
+  function ($scope, $q, $filter, $uiModalInstance, component, editMode, Business, $uiModal, $draggable, FileUploader, $rootScope) {
 
     $scope.editMode = editMode;
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
     $scope.componentForm = component.component !== undefined ? angular.copy(component.component) : {};
     $scope.editorOptions = getCkBasicConfig(true);
     $scope.integration = {};
+    $scope.sendAdminMessage   = $rootScope.openAdminMessage;
 
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},
@@ -274,32 +276,68 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
       modalInstance.result.then(function (result) {        
       }, function (result) {
         $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
-         Business.componentservice.getComponent(componentId).then(function(results){
-           $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
-           $scope.componentForm = results.component;        
-           $scope.integration.integrationText = results.integrationManagement;
-           if (results.integrationManagement){
-             $scope.flags.showIntegrationBanner = true;      
-           }  else {
-             $scope.flags.showIntegrationBanner = false;
-           }            
-         }, function(results){
-           $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
-         });
+        Business.componentservice.getComponent(componentId).then(function(results){
+         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+         $scope.componentForm = results.component;
+         $scope.integration.integrationText = results.integrationManagement;
+         if (results.integrationManagement){
+           $scope.flags.showIntegrationBanner = true;      
+         }  else {
+           $scope.flags.showIntegrationBanner = false;
+         }            
+       }, function(results){
+         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+       });
       });
       deferred.resolve();
       return deferred.promise;
     };    
-    
+
+    $scope.sendToSubmitter = function() {
+      var temp = [];
+      var templates = {
+        types: [{
+          title: 'Please add to these sections'
+        },{
+          title: 'Please review these sections'
+        },{
+          title: 'Please remove items from these sections'
+        }],
+        templates: [{
+          title: 'Description'
+        }, {
+          title: 'Attributes'
+        }, {
+          title: 'Contacts'
+        }, {
+          title: 'Resources'
+        }, {
+          title: 'Media'
+        }, {
+          title: 'Depenencies'
+        }, {
+          title: 'Tags'
+        }
+        ]
+      }
+
+      temp.push($scope.submitter);
+      if (temp && temp.length) {
+        $scope.sendAdminMessage('users', temp, 'Please Review Your Submission "'+ component.name +'"', templates, true);
+      } else {
+        triggerAlert('You are unable to send a message to this user. (They could be deactivated or without an email address)', 'failedMessage', 'body', '8000')
+      }
+    }
+
     var basicForm = {
       saveText: 'Add',
       edit: false
     };
-    
+
     var basicFilter = {
       status: $scope.statusFilterOptions[0]
     };    
-    
+
     $scope.generalForm = {};   
     $scope.generalForm.requiredAttribute = {};
     $scope.flags = {};
@@ -317,38 +355,38 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.contactForm = angular.copy(basicForm);
     $scope.contactQueryFilter = angular.copy(utils.queryFilter);   
     $scope.contactQueryFilter.status = $scope.statusFilterOptions[0].code;
-    
+
     $scope.resourceForm = angular.copy(basicForm);
     $scope.resourceQueryFilter = angular.copy(utils.queryFilter);   
     $scope.resourceQueryFilter.status = $scope.statusFilterOptions[0].code;
-    
+
     $scope.mediaForm = angular.copy(basicForm);
     $scope.mediaQueryFilter = angular.copy(utils.queryFilter);   
     $scope.mediaQueryFilter.status = $scope.statusFilterOptions[0].code;    
-    
+
     $scope.dependencyForm = angular.copy(basicForm);
     $scope.dependencyFilter = angular.copy(utils.queryFilter);   
     $scope.dependencyFilter.status = $scope.statusFilterOptions[0].code;      
-    
+
     $scope.metadataForm = angular.copy(basicForm);
     $scope.metadataFilter = angular.copy(utils.queryFilter);   
     $scope.metadataFilter.status = $scope.statusFilterOptions[0].code;    
-    
+
     $scope.evaluationForm = {};
-    
+
     $scope.tagForm = angular.copy(basicForm);
     $scope.tagFilter = angular.copy(utils.queryFilter);   
     $scope.tagFilter.status = $scope.statusFilterOptions[0].code;        
-    
+
     $scope.reviewFilter = angular.copy(utils.queryFilter);   
     $scope.reviewFilter.status = $scope.statusFilterOptions[0].code;     
 
     $scope.questionFilter = angular.copy(utils.queryFilter);   
     $scope.questionFilter.status = $scope.statusFilterOptions[0].code;      
     $scope.questionDetailsShow = [];
-    
+
     $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
-    
+
     $scope.setPredicate = function (predicate, table) {
       if ($scope.predicate[table] === predicate) {
         $scope.reverse[table] = !$scope.reverse[table];
@@ -357,7 +395,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
         $scope.reverse[table] = false;
       }
     };
-    
+
 //<editor-fold   desc="COMMON Section">    
 
 $scope.loadLookup = function(lookup, entity, loader){
@@ -566,7 +604,7 @@ $scope.saveComponent = function(){
 
   var missingRequiredAttributes = false;
   _.forEach($scope.requiredAttributes, function(attribute) {
-        
+
     var found = false;   
     _.forOwn($scope.generalForm.requiredAttribute, function (value, key) {
       if (attribute.attributeType === key) {
@@ -718,7 +756,13 @@ $scope.loadContacts = function() {
   $scope.loadEntity({
     filter: $scope.contactQueryFilter,
     entity: 'contacts',
-    loader: 'contactFormLoader'
+    loader: 'contactFormLoader',
+    callback: function(result){
+      var found = _.find(result, {'contactType': 'SUB'});
+      if (found){
+        $scope.submitter = angular.copy(found);
+      }
+    }
   });
 };
 $scope.loadContacts();    
@@ -1375,3 +1419,18 @@ $scope.close = function () {
 };
 
 }]);
+
+app.controller('messageSubmitterCtrl',['$scope', '$draggableInstance', 'submitter', 'business', '$location', function ($scope, $draggableInstance, submitter, Business, $location) {
+
+  $scope.submitter = submitter || {};
+
+  $scope.ok = function () {
+    $draggableInstance.close();
+  };
+
+  $scope.cancel = function () {
+    $draggableInstance.dismiss('cancel');
+  };
+
+}]);
+

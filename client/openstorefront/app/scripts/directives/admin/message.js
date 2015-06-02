@@ -20,44 +20,90 @@
 //     <img src='img/content/car.png'/>
 // </message>
 
-app.directive('message', ['$uiModal', 'business', function ($uiModal, Business) {
+app.directive('message', ['$uiModal', '$draggable', 'business', function ($uiModal, $draggable, Business) {
   return {
     transclude: true,
     restrict: 'EA',
     template: '<div></div>',
-    scope: {},
+    scope: {
+      modal: '@'
+    },
     link: function(scope, element, attrs) {
-      scope.$on('$OPENADMINMESSAGE', function(event, type, contacts, subject, message) {
-        scope.open('lg', type, contacts, subject, message);
+      scope.$on('$OPENADMINMESSAGE', function(event, type, contacts, subject, message, modal) {
+        scope.open('lg', type, contacts, subject, message, modal);
       })
 
-      scope.open = function (size, type, contacts, subject, message) {
-        var modalInstance = $uiModal.open({
-          templateUrl: 'views/admin/message/adminMessageContent.html',
-          controller: 'adminMessageCtrl',
-          size: size,
-          resolve: {
-            type: function () {
-              return type;
-            },
-            contacts: function () {
-              return contacts;
-            },
-            subject: function () {
-              return subject;
-            },
-            message: function () {
-              return message;
+      scope.open = function(size, type, contacts, subject, message, modal){
+        console.log('here we go again');
+        
+        modal?
+        (function(){
+          var draggableInstance = $draggable.open({
+            alwaysontop: true,
+            templateUrl: 'views/admin/component/messagesubmitter.html',
+            controller: 'adminMessageCtrlDraggable',
+            size: size,
+            top: 100,
+            left: 100,
+            closeTarget: 'theTarget',
+            moveTarget: 'draggableTarget',
+            id: 'messageSubmitter',
+            resolve: {
+              type: function () {
+                return type;
+              },
+              contacts: function () {
+                return contacts;
+              },
+              subject: function () {
+                return subject;
+              },
+              message: function () {
+                return message;
+              },
+              disabledContacts: function(){
+                return modal;
+              }
             }
-          }
-        });
+          });
 
-        modalInstance.result.then(function (selectedItem) {
-          scope.selected = selectedItem;
-        }, function () {
+          draggableInstance.result.then(function (selectedItem) {
+            scope.selected = selectedItem;
+          }, function (result) {
+          });
+        })(size, type, contacts, subject, message)
+        :
+        (function (size, type, contacts, subject, message) {
+          var modalInstance = $uiModal.open({
+            templateUrl: 'views/admin/message/adminMessageContent.html',
+            controller: 'adminMessageCtrlModal',
+            size: size,
+            resolve: {
+              type: function () {
+                return type;
+              },
+              contacts: function () {
+                return contacts;
+              },
+              subject: function () {
+                return subject;
+              },
+              message: function () {
+                return message;
+              },
+              disabledContacts: function(){
+                return modal;
+              }
+            }
+          });
+
+          modalInstance.result.then(function (selectedItem) {
+            scope.selected = selectedItem;
+          }, function () {
           // console.log('Modal dismissed at: ' + new Date());
         });
-      };
+        })(size, type, contacts, subject, message)
+      }
     }
   };
 }]);
@@ -68,9 +114,13 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
     templateUrl: 'views/admin/message/contactTemplate.html',
     scope: {
       type: '=',
-      contacts: '='
+      contacts: '=',
+      disabled: '@'
     },
     link: function(scope, element, attrs) {
+
+      console.log('attrs', attrs);
+      
       var oldContacts;
       scope.disableTo = true;
       scope.getContactList = function() {
@@ -173,13 +223,38 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
   };
 }]);
 
-app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'type', 'contacts', 'subject', 'message', 'business', function ($scope, $uiModalInstance, type, contacts, subject, message, Business) {
+var messageCtrl = function ($scope, $uiModalInstance, type, contacts, subject, message, disabledContacts, Business) {
   $scope.form = {};
   $scope.form.subjectField = subject? subject: '';
   $scope.form.type = type;
   $scope.form.contacts = contacts;
-  $scope.editorContent = message? message: '';
-  $scope.editorContentWatch;
+  $scope.form.disabledContacts = disabledContacts || false;
+  $scope.prep = $scope.form.disabledContacts;
+
+  if (!$scope.form.disabledContacts) {
+    $scope.editorContent = message? message: '';
+    $scope.editorContentWatch;
+  } else {
+    $scope.message = message || [];
+    $scope.editorContent = '';
+    $scope.editorContentWatch;
+  }
+
+  console.log('$scope.message', $scope.message);
+  
+  $scope.clearIncluded = function(){
+    _.each($scope.message.templates, function(mess){
+      mess.included = false;
+    })
+  }
+
+  $scope.addToTemplates = function(type, messages){
+
+  }
+
+  var config = getCkConfig();
+  config.height = '100px';
+  $scope.editorOptions = config;
 
   var getUsernames = function(users) {
     var result = [];
@@ -238,7 +313,9 @@ app.controller('adminMessageCtrl',['$scope', '$uiModalInstance', 'type', 'contac
   $scope.cancel = function () {
     $uiModalInstance.dismiss('cancel');
   };
-}]);
+}
+app.controller('adminMessageCtrlModal',['$scope', '$uiModalInstance', 'type', 'contacts', 'subject', 'message', 'disabledContacts', 'business', messageCtrl]);
+app.controller('adminMessageCtrlDraggable',['$scope', '$draggableInstance', 'type', 'contacts', 'subject', 'message', 'disabledContacts', 'business', messageCtrl]);
 
 app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', 'size', 'business', '$q', function ($scope, $uiModalInstance, type, contacts, size, Business, $q) {
   $scope.userTypes = {};
@@ -247,6 +324,8 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
   $scope.data = {};
   $scope.size = size;
   $scope.data.selectedUsers = contacts? contacts: [];
+
+
 
   $scope.reverse = false;
 
@@ -276,7 +355,10 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
     Business.userservice.getAllUserProfiles().then(function(result) {
       $scope.userProfiles = result? result: [];
       _.each($scope.userProfiles, function(user){
-        user.text = user.firstName + ' ' + user.lastName + ' (' + user.organization + ')';
+        console.log('user', user);
+        if (user && typeof user === 'object') {
+          user.text = user.firstName + ' ' + user.lastName + ' (' + user.organization + ')';
+        }
       });
       if ($scope.data.selectedUsers) {
         _.each ($scope.data.selectedUsers, function(user){
@@ -359,7 +441,12 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
       });
     } else {
       subList = _.filter(source, function(item) {
-        return item.text.toLowerCase().indexOf(query.toLowerCase()) > -1;
+        if (item && typeof item === 'object'){
+          return item.text.toLowerCase().indexOf(query.toLowerCase()) > -1;
+        } else {
+          console.log('item', item);
+          return null;
+        }
       });
     }
     deferred.resolve(subList);

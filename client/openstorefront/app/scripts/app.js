@@ -363,8 +363,8 @@ var app = angular
         $analytics.eventTrack(name,{'category': category, 'label': label});
       };
 
-      $rootScope.openAdminMessage = function(type, contacts, subject, message) {
-        $rootScope.$broadcast('$OPENADMINMESSAGE', type, contacts, subject, message);
+      $rootScope.openAdminMessage = function(type, contacts, subject, message, modal) {
+        $rootScope.$broadcast('$OPENADMINMESSAGE', type, contacts, subject, message, modal);
       }
 
 
