@@ -33,11 +33,13 @@
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 		</repository>
+		<!--
 		<repository>
 		  <id>xmappr-repo-googlecode</id>
 		  <name>Xmappr Repository</name>
 		  <url>http://xmappr.googlecode.com/svn/repo/</url>
 		</repository>		
+		-->
 	</repositories>
 
 	<pluginRepositories>
@@ -165,6 +167,28 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-graphdb</artifactId>
 			<version>${orientdb.verison}</version>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>asm</groupId>
+		   <artifactId>asm</artifactId>
+		  </exclusion>
+		  <exclusion>
+		   <groupId>asm</groupId>
+		   <artifactId>asm-analysis</artifactId>
+		  </exclusion>
+		  <exclusion>
+		   <groupId>asm</groupId>
+		   <artifactId>asm-commons</artifactId>
+		  </exclusion>
+		  <exclusion>
+		   <groupId>asm</groupId>
+		   <artifactId>asm-tree</artifactId>
+		  </exclusion>
+		  <exclusion>
+		   <groupId>asm</groupId>
+		   <artifactId>asm-util</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>		 
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
@@ -393,6 +417,12 @@
 					<artifactId>truecommons-key-swing</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.pegdown</groupId>
+			<artifactId>pegdown</artifactId>
+			<version>1.5.0</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 	

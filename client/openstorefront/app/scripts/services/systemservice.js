@@ -33,6 +33,22 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
     return deferred.promise;
   }; 
   
+  var getHelp = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/help'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+  
+  
   var getLogRecords = function(queryParamFilter) {
     var deferred = $q.defer();
     
@@ -275,7 +291,8 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
       getAppProperties: getAppProperties,
       updateAppProperty: updateAppProperty,
       getLoggers: getLoggers,
-      clearAllLogRecords: clearAllLogRecords
+      clearAllLogRecords: clearAllLogRecords,
+      getHelp: getHelp
       
   };
     
