@@ -98,7 +98,23 @@ var app = angular
   })
   .when('/help', {
     templateUrl: 'views/helpSingle.html',
-    controller: 'helpSingleCtrl'
+    controller: 'helpSingleCtrl',
+    resolve: {
+      printView: function() {
+        return {};
+      }
+    }
+  })
+  .when('/helpprint', {
+    templateUrl: 'views/helpPrint.html',
+    controller: 'helpSingleCtrl',
+    resolve: {
+      printView: function() {
+        return {
+          print: true
+        };
+      }
+    }
   })  
   .otherwise({
     redirectTo: '/'

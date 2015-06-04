@@ -26,13 +26,13 @@ app.controller('helpCtrl', ['$scope', '$draggableInstance', 'business',
     $scope.helpSection = {};     
    
     $scope.loadHelp = function() {
-      $scope.$emit('$TRIGGERLOAD', 'tagsLoader');   
+      $scope.$emit('$TRIGGERLOAD', 'helpLoader');   
       Business.systemservice.getHelp().then(function(results){
-        $scope.$emit('$TRIGGERUNLOAD', 'tagsLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'helpLoader');
         $scope.help = results;        
         $scope.showHelpSection($scope.help.helpSection);        
       }, function(results) {
-        $scope.$emit('$TRIGGERUNLOAD', 'tagsLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'helpLoader');
       });
     };
     $scope.loadHelp();
@@ -51,27 +51,50 @@ app.controller('helpCtrl', ['$scope', '$draggableInstance', 'business',
       $draggableInstance.close();
    };
    
+   $scope.print = function() {
+    $scope.popupWin = utils.openWindow('helpprint', '', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', $scope.popupWin);     
+   };   
     
 }]);
 
 
-app.controller('helpSingleCtrl', ['$scope', 'business', 
-  function ($scope, Business) {
+app.controller('helpSingleCtrl', ['$scope', 'business', 'printView', '$timeout',  
+  function ($scope, Business, printView, $timeout) {
  
     $scope.control = {};
     $scope.control.showHelp = true;
    
     $scope.help = {};
     $scope.helpSection = {}; 
-   
+    
+    $scope.helpFlat = [];
+    $scope.popupWin;
+    
+    $scope.flattenHelp = function(helpAll) {
+      $scope.helpFlat.push(helpAll.helpSection);
+       _.forEach(helpAll.childSections, function(section) {
+          $scope.flattenHelp(section);
+       });
+    };
+    
     $scope.loadHelp = function() {
-      $scope.$emit('$TRIGGERLOAD', 'tagsLoader');   
+      $scope.$emit('$TRIGGERLOAD', 'helpLoader');   
       Business.systemservice.getHelp().then(function(results){
-        $scope.$emit('$TRIGGERUNLOAD', 'tagsLoader');
+        $scope.$emit('$TRIGGERUNLOAD', 'helpLoader');
         $scope.help = results;        
-        $scope.showHelpSection($scope.help.helpSection);        
+        $scope.showHelpSection($scope.help.helpSection);    
+        
+        //flatten help
+        $scope.flattenHelp($scope.help);
+        
+        if (printView.print) {
+          $timeout(function(){
+            window.print();
+          }, 1000);
+        }
+        
       }, function(results) {
-        $scope.$emit('$TRIGGERUNLOAD', 'tagsLoader');
+     //   $scope.$emit('$TRIGGERUNLOAD', 'helpLoader');
       });
     };
     $scope.loadHelp();
@@ -82,6 +105,12 @@ app.controller('helpSingleCtrl', ['$scope', 'business',
      }
      $scope.helpSection = helpSection;     
      $scope.helpSection.selected = true;    
+   };   
+    
+    
+   $scope.print = function() {
+    $scope.popupWin = utils.openWindow('helpprint', '', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840', $scope.popupWin);     
    };
+    
     
 }]);

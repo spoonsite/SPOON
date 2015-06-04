@@ -469,7 +469,7 @@ public class SystemServiceImpl
 			//Root Section
 			HelpSection helpSectionRoot = new HelpSection();
 			helpSectionRoot.setTitle(PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE));
-			helpSectionRoot.setContent("<center>Version: " + PropertiesManager.getApplicationVersion() + "</center>");
+			helpSectionRoot.setContent("<center><h2>User Guide</h2>Version: " + PropertiesManager.getApplicationVersion() + "</center>");
 			helpSectionAll.setHelpSection(helpSectionRoot);
 
 			for (HelpSection helpSection : helpSections) {
@@ -525,7 +525,15 @@ public class SystemServiceImpl
 			} else {
 				titleNumber = parentSection + sectionNumber + " ";
 			}
-			helpSection.getHelpSection().setTitle(titleNumber + titleSplit[1]);
+
+			StringBuilder restOfTitle = new StringBuilder();
+			for (int i = 1; i < titleSplit.length; i++) {
+				if (restOfTitle.length() != 0) {
+					restOfTitle.append(" ");
+				}
+				restOfTitle.append(titleSplit[i]);
+			}
+			helpSection.getHelpSection().setTitle(titleNumber + restOfTitle.toString());
 
 			if (titleNumber.endsWith(". ") == false) {
 				StringBuilder temp = new StringBuilder();
