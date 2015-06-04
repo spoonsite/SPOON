@@ -1,4 +1,4 @@
-![](media/sdl.png)
+![Logo](../../../../../../client/openstorefront/app/images/help/sdl.png)
 
 <span style="font-size: 24px;">User Guide</span>
 
