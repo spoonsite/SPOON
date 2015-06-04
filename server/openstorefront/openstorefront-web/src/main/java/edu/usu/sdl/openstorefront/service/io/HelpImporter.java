@@ -57,10 +57,7 @@ public class HelpImporter
 	private static final Logger log = Logger.getLogger(HelpImporter.class.getName());
 
 	private static final long PROCESSING_TIMEOUT = 100000L;
-	private static final String IMAGE_START = "![](media/";
-	private static final String IMAGE_END = ".png)";
-	private static final String IMAGE_START_REPLACE = "<img src='images/help/";
-	private static final String IMAGE_END_REPLACE = ".png'>";
+	private static final String IMAGE_URL_REPLACE = "../../../../../../client/openstorefront/app/";
 
 	@Override
 	public void initialize()
@@ -182,8 +179,7 @@ public class HelpImporter
 
 	private void addHelpSection(List<HelpSection> helpSections, HelpSection helpSection)
 	{
-		helpSection.setContent(helpSection.getContent().replace(IMAGE_START, IMAGE_START_REPLACE));
-		helpSection.setContent(helpSection.getContent().replace(IMAGE_END, IMAGE_END_REPLACE));
+		helpSection.setContent(helpSection.getContent().replace(IMAGE_URL_REPLACE, ""));
 		helpSections.add(helpSection);
 	}
 

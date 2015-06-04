@@ -1,4 +1,3 @@
-![Logo](../../../../../../client/openstorefront/app/images/help/sdl.png)
 
 <span style="font-size: 24px;">User Guide</span>
 
@@ -9,8 +8,8 @@ Version 1.4
 # 1. Overview
 ------
 
-The Open Storefront application is a catalog of software components that
-are of interest to the DI2E community. Components include Government off
+The Open Storefront application is a software cataloging system that is used to catalog components
+of interest to the DI2E community. Components include Government off
 the shelf (GOTS), commercial off the shelf (COTS), and Open Source
 software (OSS). The component evaluations done by DI2E's Centers of
 Excellence are displayed in the Storefront and give details on the
@@ -23,10 +22,11 @@ following:
 -   Links to documentation, source code and other artifacts
 -   Evaluation information
 
-The application can also be used as a general cataloging system.
-
-**Open Storefront is developed by Space Dynamics Laboratory and is
+**Open Storefront is developed by Space Dynamics Laboratory for DI2E and is
 licensed under Apache V2.**
+
+![Logo](../../../../../../client/openstorefront/app/images/logo2.png)
+![Logo](../../../../../../client/openstorefront/app/images/help/sdl.png)
 
 # 2.  User Features
 ------
@@ -100,14 +100,14 @@ accepting any character in those locations as the user intended.
 ### 2.1.4 Case Insensitivity
 ------
 
-Searching is case **insensitive** and allows mixing of case. In the
+Searching is case **insensitive** and allows mixing of case. In the
 examples below, the exact same results would be returned regardless of
 the capitalization.
 
-Search examples: "create a common framework" **OR** "Create a Common
+Search examples: "create a common framework" **OR** "Create a Common
 Framework"
 
-Search examples: create common framework **OR** cReatE CoMmoN
+Search examples: create common framework **OR** cReatE CoMmoN
 FraMewoRk
 
 ### 2.1.5 Noise Words
@@ -185,7 +185,7 @@ screen and on the home page.
 1.  View Component Details by clicking on the listing title in the
     search results screen.
 
-2.  Click on the Tag icon ![](media/tags.png) to open the tag panel.
+2.  Click on the Tag icon ![tag](../../../../../../client/openstorefront/app/images/help/tags.png) to open the tag panel.
 
 3.  Enter a new tag in the text field.
 
@@ -218,7 +218,7 @@ place.
 1.  View Component Details by clicking on the listing title in the
     search results screen.
 
-2.  Click on the Watch icon ![](media/view.png) to add the component
+2.  Click on the Watch icon ![watch](../../../../../../client/openstorefront/app/images/help/view.png) to add the component
     to your watch list.
 
 **To activate email:**
@@ -233,7 +233,7 @@ place.
 
 1.  Open the watch list from the user menu.
 
-2.  Click on the ![](media/removewatch.png) icon.
+2.  Click on the ![removewatch](../../../../../../client/openstorefront/app/images/help/removewatch.png) icon.
 
 **NOTE:** Watches can also be removed from the component detail view of
 the component being watched.
@@ -265,7 +265,7 @@ specific component of the interface with the rest of the community.
 1.  Open the component review dialog from the user menu.
 
 2.  Expand the desired review by clicking the expand
-    ![](media/expand.png) icon.
+    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
 
 3.  Click the **Edit** button and adjust the information in the form.
 
@@ -276,12 +276,12 @@ specific component of the interface with the rest of the community.
 1.  Open the component review dialog from the user menu.
 
 2.  Expand the desired review by clicking the expand
-    ![](media/expand.png) icon.
+    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
 
 3.  Click on the **Delete** button.
 
 **NOTE:** A review may also be removed from the component detail screen
-by then clicking on the delete icon ![](media/trash.png) next to the
+by then clicking on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
 title of the review. You can only remove reviews you post.
 
 ## 2.7 Questions
@@ -309,7 +309,7 @@ with the component.
 
 2.  Click on the "Q&A" tab.
 
-3.  Click on the edit icon ![](media/edit.png) next to the question.
+3.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the question.
 
 4.  Fill out the form.
 
@@ -322,13 +322,13 @@ with the component.
 
 2.  Click on the "Q&A" tab.
 
-3.  Click on the delete icon ![](media/trash.png) next to the
+3.  Click on the delete icon ![delete](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
     question .
 
 **To answer a question:**
 
 1.  Expand the question by clicking on the expand
-    ![](media/expand.png) icon.
+    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
 
 2.  Fill out the form.
 
@@ -370,12 +370,12 @@ features.
 1.  View Component Details by clicking on the listing title in the
     search results screen.
 
-2.  Click on the Print icon ![](media/print.png) to bring up the
+2.  Click on the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the
     print window.
 
 In the print window, you can customize what is printed by selecting
 **Custom Template**. Once what you view in the print window is ready,
-click the Print icon ![](media/print.png) to bring up the browser
+click the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the browser
 print dialog and complete printing.
 
 ## 2.10 User Profile
@@ -447,7 +447,7 @@ emailed to the email address listed in their profile.
 
 1.  Navigate to the User Profiles Tool.
 
-2.  Click on the message icon ![](media/mail.png) next to the user
+2.  Click on the message icon ![mail](../../../../../../client/openstorefront/app/images/help/mail.png) next to the user
     (or users) that you want to message.
 
 3.  Fill out the form.
@@ -471,7 +471,7 @@ messages – just messages going forward.
 
 1.  Navigate to User Profiles Tool.
 
-2.  Click on the activate/inactivate ![](media/toggle.png) icon and use
+2.  Click on the activate/inactivate ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) icon and use
     the filter option to view active/inactive users.
 
 ## 3.2 Components *
@@ -498,20 +498,20 @@ the component to **Pending** until all data is entered.
 
 **To edit component:**
 
-1.  Click on the edit icon ![](media/edit.png) in the action column
+1.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) in the action column
     on the component you wish to edit.
 
 2.  Make changes by filling out the appropriate form.
 
 **To preview component:**
 
-1.  Click on the preview ![](media/view.png) icon in the action
+1.  Click on the preview ![view](../../../../../../client/openstorefront/app/images/help/view.png) icon in the action
     column on the component you wish to view. A new tab in browser will
     open and display the component detail page.
 
 **To toggle active status:**
 
-1.  Click on the activate/inactivate ![](media/toggle.png) icon in the
+1.  Click on the activate/inactivate ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) icon in the
     action column on the component you wish to edit.
 
 **NOTE:** Use Filter Options to show active/inactive components.
@@ -523,7 +523,7 @@ Inactive components are not visible to or searchable by users.
 **WARNING:** This is a hard delete and it will remove all associated data
 (media, user reviews, question…etc.)
 
-1.  Click the delete icon ![](media/trash.png) to remove.
+1.  Click the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to remove.
 
 2.  Confirm that you want to delete the component by clicking **OK** on
     the confirmation dialog.
@@ -560,7 +560,7 @@ the home page.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the Edit icon ![](media/edit.png) on the component
+2.  Click on the Edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component
     to approve.
 
 3.  Select **Approved** in the approval status dropdown.
@@ -582,7 +582,7 @@ they can be hosted locally.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the **Edit** icon ![](media/edit.png) on the component.
+2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
 
 3.  Click the **Resources** tab.
 
@@ -605,7 +605,7 @@ hosted externally.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the **Edit** icon ![](media/edit.png) on the component.
+2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
 
 3.  Click the **Media** tab.
 
@@ -628,7 +628,7 @@ them.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the **Edit** icon ![](media/edit.png) on the component.
+2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
 
 3.  Click the Evaluation Information tab.
 
@@ -639,7 +639,7 @@ evaluation section shows for a component. For example, if a new section
 is added, existing components would show their existing evaluation
 sections until a value is entered. The existing column shows the value
 that is currently saved, if any. To remove the value click the delete
-![](media/trash.png) icon.
+![trash](../../../../../../client/openstorefront/app/images/help/trash.png) icon.
 
 ### 3.3  Attributes *
 ----------
@@ -731,7 +731,7 @@ component. For example: Component listing may contain and attribute for
 
 2.  Select **Manage Codes**.
 
-3.  Click **Add New Code** or the ![](media/edit.png) edit icon.
+3.  Click **Add New Code** or the ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) edit icon.
 
 4.  Fill out the form.
 
@@ -782,7 +782,7 @@ images can be accomplished with having to manually update all links.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the **Edit** icon ![](media/edit.png) on the component.
+2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
 
 3.  Select **Attributes** tab.
 
@@ -968,8 +968,8 @@ Descriptions of Alert Triggers:
 
 1.  Navigate to the Alerts Tool.
 
-2.  Click **Inactivate** ![](media/toggle.png) or **Delete**
-    ![](media/trash.png) to cancel the scheduled report. Click
+2.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
+    ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
     **Inactivate** to temporarily pause it.
 
 ## 3.8 Reports * 
@@ -1033,8 +1033,8 @@ scheduled interval.
 
 2.  Select the Scheduled tab.
 
-3.  Click **Inactivate** ![](media/toggle.png) or **Delete**
-    ![](media/trash.png) to cancel the scheduled report. Click
+3.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
+    ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
     **Inactivate** to temporarily pause it.
 
 ### 3.9 Event Tracking *

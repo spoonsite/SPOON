@@ -51,6 +51,9 @@ limitations under the License.
 <div style="background: rgba(255, 255, 255, 1); width: 1000px; height: 600px;" ng-show="control.showHelp" >
 	<loader trigger="helpLoader"></loader>
 	<div class="help-nav">
+		<button class='btn btn-info detailsTitleButton' id="printLink" ng-click="print()" data-toggle="tooltip" data-placement="bottom" data-title="Go to Print View" data-trigger="hover">
+			      <i class="fa fa-print imitateLink"></i>
+		</button>
 		<ul style="list-style: none; margin-left: -35px;">
 			<li ng-repeat="section in help.childSections">	
 				<a href="" ng-click="showHelpSection(section.helpSection)" ng-class="section.helpSection.selected ? 'help_selected' : ''">{{section.helpSection.title}}</a>
