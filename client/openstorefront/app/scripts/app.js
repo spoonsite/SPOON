@@ -96,6 +96,10 @@ var app = angular
     templateUrl: 'views/print.html',
     controller: 'PrintCtrl'
   })
+  .when('/help', {
+    templateUrl: 'views/helpSingle.html',
+    controller: 'helpSingleCtrl'
+  })  
   .otherwise({
     redirectTo: '/'
   });

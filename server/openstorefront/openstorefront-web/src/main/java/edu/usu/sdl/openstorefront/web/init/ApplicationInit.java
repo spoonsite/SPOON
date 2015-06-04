@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.init;
 
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
+import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
@@ -45,72 +46,73 @@ import net.java.truevfs.access.TVFS;
  */
 @WebListener
 public class ApplicationInit
-    implements ServletContextListener
+		implements ServletContextListener
 {
 
-    private static final Logger log = Logger.getLogger(ApplicationInit.class.getName());
+	private static final Logger log = Logger.getLogger(ApplicationInit.class.getName());
 
-    @Override
-    public void contextInitialized(ServletContextEvent sce)
-    {
-        //Order is important
-        startupManager(new FileSystemManager());
-        startupManager(new DBManager());
-        startupManager(new SolrManager());
-        startupManager(new OSFCacheManager());
-        startupManager(new JiraManager());
-        startupManager(new LookupImporter());
-        startupManager(new AttributeImporter());
-        startupManager(new MailManager());
-        startupManager(new JobManager());
-        startupManager(new UserAgentManager());
-        startupManager(new AsyncTaskManager());
-        startupManager(new ReportManager());
-        startupManager(new LDAPManager());
+	@Override
+	public void contextInitialized(ServletContextEvent sce)
+	{
+		//Order is important
+		startupManager(new FileSystemManager());
+		startupManager(new DBManager());
+		startupManager(new SolrManager());
+		startupManager(new OSFCacheManager());
+		startupManager(new JiraManager());
+		startupManager(new LookupImporter());
+		startupManager(new AttributeImporter());
+		startupManager(new MailManager());
+		startupManager(new JobManager());
+		startupManager(new UserAgentManager());
+		startupManager(new AsyncTaskManager());
+		startupManager(new ReportManager());
+		startupManager(new LDAPManager());
+		startupManager(new HelpImporter());
 
-        startupManager(new DBLogManager());
-    }
+		startupManager(new DBLogManager());
+	}
 
-    private void startupManager(Initializable initializable)
-    {
-        log.log(Level.INFO, MessageFormat.format("Starting up:{0}", initializable.getClass().getSimpleName()));
-        initializable.initialize();
-    }
+	private void startupManager(Initializable initializable)
+	{
+		log.log(Level.INFO, MessageFormat.format("Starting up:{0}", initializable.getClass().getSimpleName()));
+		initializable.initialize();
+	}
 
-    @Override
-    public void contextDestroyed(ServletContextEvent sce)
-    {
-        try {
-            log.log(Level.INFO, "Unmount Truevfs");
-            TVFS.umount();
-        } catch (Exception e) {
-            log.log(Level.SEVERE, MessageFormat.format("Failed to unmount: {0}", e.getMessage()));
-        }
+	@Override
+	public void contextDestroyed(ServletContextEvent sce)
+	{
+		try {
+			log.log(Level.INFO, "Unmount Truevfs");
+			TVFS.umount();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, MessageFormat.format("Failed to unmount: {0}", e.getMessage()));
+		}
 
-        //Shutdown in reverse order to make sure the dependancies are good.
-        shutdownManager(new DBLogManager());
-        shutdownManager(new LDAPManager());
-        shutdownManager(new ReportManager());
-        shutdownManager(new AsyncTaskManager());
-        shutdownManager(new UserAgentManager());
-        shutdownManager(new JobManager());
-        shutdownManager(new MailManager());
-        shutdownManager(new JiraManager());
-        shutdownManager(new OSFCacheManager());
-        shutdownManager(new SolrManager());
-        shutdownManager(new DBManager());
-        shutdownManager(new FileSystemManager());
-    }
+		//Shutdown in reverse order to make sure the dependancies are good.
+		shutdownManager(new DBLogManager());
+		shutdownManager(new LDAPManager());
+		shutdownManager(new ReportManager());
+		shutdownManager(new AsyncTaskManager());
+		shutdownManager(new UserAgentManager());
+		shutdownManager(new JobManager());
+		shutdownManager(new MailManager());
+		shutdownManager(new JiraManager());
+		shutdownManager(new OSFCacheManager());
+		shutdownManager(new SolrManager());
+		shutdownManager(new DBManager());
+		shutdownManager(new FileSystemManager());
+	}
 
-    private void shutdownManager(Initializable initializable)
-    {
-        //On shutdown we want it to roll through
-        log.log(Level.INFO, MessageFormat.format("Shutting down:{0}", initializable.getClass().getSimpleName()));
-        try {
-            initializable.shutdown();
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Unable to Shutdown: " + initializable.getClass().getSimpleName(), e);
-        }
-    }
+	private void shutdownManager(Initializable initializable)
+	{
+		//On shutdown we want it to roll through
+		log.log(Level.INFO, MessageFormat.format("Shutting down:{0}", initializable.getClass().getSimpleName()));
+		try {
+			initializable.shutdown();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Unable to Shutdown: " + initializable.getClass().getSimpleName(), e);
+		}
+	}
 
 }
