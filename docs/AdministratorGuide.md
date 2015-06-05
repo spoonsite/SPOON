@@ -12,16 +12,16 @@ Utah State University Research Foundation
 
 North Logan, Utah 84341
 
-![](media/image1.png)
+![logo](images/sdl.png)
 
 
 #Overview
 -----
 
-The Open Storefront application is a catalog of software components that
-are of interest to the DI2E community. Components include Government off
+The Open Storefront application is a software cataloging system that is used to catalog components
+of interest to the DI2E community. Components include Government off
 the shelf (GOTS), commercial off the shelf (COTS), and Open Source
-software (OSS). The component evaluations done by DI2E’s Centers of
+software (OSS). The component evaluations done by DI2E's Centers of
 Excellence are displayed in the Storefront and give details on the
 following:
 
@@ -37,23 +37,20 @@ following:
 
 -   Evaluation information
 
-The application can also be used as general cataloging system.
+**Open Storefront is developed by Space Dynamics Laboratory and is
+licensed under Apache V2.**
 
-Open Storefront is developed by Space Dynamics Laboratory and is
-licensed under Apache V2.
+## 1.  Client Architecture
+------
 
-1.  Client Architecture
-    ===================
+##1.1 Client Architecture Diagram
 
-    1.  <span id="_Toc398129580" class="anchor"><span id="_Toc398195575" class="anchor"><span id="_Toc419188292" class="anchor"></span></span></span>Client Architecture Diagram
-        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+![clientarch](images/clientarch.png)
 
-![](media/image3.png)
+Figure 1. Client Architecture Diagram
 
-Figure . Client Architecture Diagram
-
-<span id="_Toc398129581" class="anchor"><span id="_Toc398195576" class="anchor"><span id="_Toc419188293" class="anchor"></span></span></span>Client Details
------------------------------------------------------------------------------------------------------------------------------------------------------------
+##1.2 Client Details
+-----
 
 The client core structure is based on Angular.js. The UI core elements
 are based on Bootstrap, Angular-strap, and JQuery UI components.
@@ -73,107 +70,108 @@ Component definitions are as shown below:
 -   **Services:** Handle the interaction with the server and any
     business logic associated with the data.
 
-    1.  <span id="_Toc398129582" class="anchor"><span id="_Toc398195577" class="anchor"><span id="_Toc419188294" class="anchor"></span></span></span>Client Build Platforms/Tools
-        -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+##1.3 Client Build Platforms/Tools
+-----
 
 The client build environment relies on the following platforms/tools:
 
-  **Platform/Tool**   **Description**
-  ------------------- ------------------------------------------------------
-  Node.js             Provide the runtime environment for the build tools
-  Ruby/Compass        Used for dynamic css generation
-  Bower               Handles the third-party web components
-  Yeoman              Used to generate the structure of the code artifacts
-  Grunt               Builds the code
+  **Node.js** -             Provide the runtime environment for the build tools
+  **Ruby/Compass** -        Used for dynamic css generation
+  **Bower** -               Handles the third-party web components
+  **Yeoman** -              Used to generate the structure of the code artifacts
+  **Grunt** -               Builds the code
 
-1.  <span id="_Toc398129583" class="anchor"><span id="_Toc398195578" class="anchor"><span id="_Toc419188295" class="anchor"></span></span></span>Server Architecture
-    ================================================================================================================================================================
+## 2.  Server Architecture
+------
 
-    1.  <span id="_Toc398129584" class="anchor"><span id="_Toc398195579" class="anchor"><span id="_Toc419188296" class="anchor"></span></span></span>Server Architecture Diagram
-        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+##2.1 Server Architecture Diagram
 
-The server architecture is shown in Figure 2.
+![serverarch](images/serverarch.png)
 
-![](media/image4.png)
+Figure 2. Server Architecture Diagram
 
-Figure . Server Architecture Diagram
-
-<span id="_Toc398129585" class="anchor"><span id="_Toc398195580" class="anchor"><span id="_Toc419188297" class="anchor"></span></span></span>Server Details
------------------------------------------------------------------------------------------------------------------------------------------------------------
+##2.2 Server Details
+-----
 
 Component definitions are as shown below:
 
-  **Component**        **Definition**
-  -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Security**         Authentication and authorization is delegated to OpenAm. This is configured through a custom realm using the Apache Shiro library. All request are passed through this filter.
-  **REST API**         The REST API is the component that handles the data interaction between the clients and provides the interface with which the clients can communicate. The REST API is broken into two sections: resources and services. Resources handle the CRUD operations on the data. Service handle operation across data sets. This provides a clean and clear API for integrators.
-  **API Docs**         The API docs are generated live based on the currently running code. This keeps the documents always current and reduces maintenance. Other system related call backs (e.g., retrieving binary resources, login handling, etc.) are handled through the Stripes framework.
-  **Business Layer**   **Managers**
-                       **Services**
-                       **Models**
-                       **Import/ Export**
+  -  **Security**        - Authentication and authorization is delegated to OpenAm. This is configured through a custom realm using the Apache Shiro library. All request are passed through this filter.
+  -  **REST API**       - The REST API is the component that handles the data interaction between the clients and provides the interface with which the clients can communicate. The REST API is broken into two sections: resources and services. Resources handle the CRUD operations on the data. Service handle operation across data sets. This provides a clean and clear API for integrators.
+  -  **API Docs**       - The API docs are generated live based on the currently running code. This keeps the documents always current and reduces maintenance. Other system related call backs (e.g., retrieving binary resources, login handling, etc.) are handled through the Stripes framework.
+  -  **Business Layer**  - Handles all rules applied to the data as well transaction support.
+  
+>-  **Managers**   - The role of the manager class is to handle the interaction with a resource. This allow for clean initialization and shutdown of resources and provides centralized access.
+  -   **Services**    - Each service is in charge of handling a specific group of Entity models. Services provide transaction support and business logic handling. All service are accessed through a service proxy class.  The service proxy class provides auto transaction and service interception support.
+  -   **Models**  - The entity models represent the data in the system and provide the bridge from the application to the underlying storage.  
+  -   **Import/ Export** -The entity models represent the data in the system and provide the bridge from the application to the underlying storage. 
 
-<span id="_Toc398129586" class="anchor"><span id="_Toc398195581" class="anchor"><span id="_Toc419188298" class="anchor"></span></span></span>Server Build Platforms/Tools
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-The client build environment relies on the following platforms/tools:
+The server build environment relies on the following platforms/tools:
 
-  **Platform/Tool**   **Description**
-  ------------------- --------------------------------------------------------------------
-  Java                Core language and platform
-  Maven               Used for the project structure, building and dependency management
+  -  **Java**     -            Core language and platform
+  -  **Maven**   -            Used for the project structure, building and dependency management
 
-1.  <span id="_Toc398129587" class="anchor"><span id="_Toc398195582" class="anchor"><span id="_Toc419188299" class="anchor"></span></span></span>Runtime Environment
-    ================================================================================================================================================================
+#3. Runtime Environment
+-----
 
-    1.  <span id="_Toc398129588" class="anchor"><span id="_Toc398195583" class="anchor"><span id="_Toc419188300" class="anchor"></span></span></span>Runtime Environment Diagram
-        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+##3.1 Runtime Environment Diagram
 
-The runtime environment is shown in Figure 3.
+![deployarch](images/deployarch.png)
 
-![](media/image5.png)
+Figure 3 . Runtime Environment diagram
 
-Figure . Runtime Environment diagram
-
-<span id="_Toc398129589" class="anchor"><span id="_Toc398195584" class="anchor"><span id="_Toc419188301" class="anchor"></span></span></span>Runtime Details
-------------------------------------------------------------------------------------------------------------------------------------------------------------
+##3.2 Runtime Details
+-----
 
 The runtime environment relies upon the following applications:
 
-  **Application**   **Description**
-  ----------------- -----------------------------------------------------------------------------------
-  Proxy Server      This is an external system that proxies requests to the application server.
-  Tomcat 7          Tomcat is the web container used to host the storefront application.
-  Java 8            It the runtime platform which runs Tomcat
-  OS/VM             Is the host machines operating system
-  Solr              Enterprise search appliance run externally
-  OpenAM            OpenAM runs externally and a policy agent in Tomcat make sure the site is secure.
+-  **Proxy Server**   -   This is an external system that proxies requests to the application server.
+-  **Tomcat 7**  -    Tomcat is the web container used to host the storefront application.
+-  **Java 8**  -            It the runtime platform which runs Tomcat
+-  **OS/VM**  -             Is the host machines operating system
+-  **Solr**          -    Enterprise search appliance runs externally
+-  **OpenAM**    -        OpenAM runs externally and a policy agent in Tomcat make sure the site is secure.
 
-<span id="_Toc398129590" class="anchor"><span id="_Toc398195585" class="anchor"><span id="_Toc419188302" class="anchor"></span></span></span>**Runtime Component Integration Vectors**
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+##3.3 Runtime Component Integration Vectors
+----
 
-<span id="_Toc398113412" class="anchor"><span id="_Toc398113589"
-class="anchor"><span id="_Toc389823604"
-class="anchor"></span></span></span>
+![component vectors](images/civarch.png)
 
-The runtime component integration vectors are shown in Figure 4.
+Figure 4. Runtime Component Integration Vectors
 
-![](media/image6.png)
+##3.4 Component Integration Vectors Details
+-----
 
-Figure . Runtime Component Integration Vectors
+The component integration vectors (CIV) are show below.
 
-<span id="_Toc398129592" class="anchor"><span id="_Toc398195586" class="anchor"><span id="_Toc419188303" class="anchor"></span></span></span>Component Integration Vectors Details
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-----
 
-The component integration vectors (CIV) are show in the table below.
+ **Source Component**:  openstorefront           
+ **Class**:  C  
+ **Target Component**:      Solr/ESA                 
+**Notes**
 
-  **Source Component**     **Class**   **Target Component**     **Notes**
-  ------------------------ ----------- ------------------------ ---------------------------------------------------------------------------------------------------
-  openstorefront           C           Solr/ESA                 
-  openstorefront           C           OpenAM                   OpenAM with their policy agent; requires a hard tie to the application and the application server
-  openstorefront           B           JEE Application Server   Currently configured to deploy on Tomcat
-  Orient DB                B           openstorefront           Embedded
-  JEE Application Server   A           OS/VM                    Currently targeted for CentOS
+ **Source Component**:  openstorefront           
+ **Class**:  C  
+ **Target Component**:      OpenAM        
+**Notes**: OpenAM with their policy agent; requires a hard tie to the application and the application server
+
+ **Source Component**:  openstorefront           
+ **Class**:  B  
+ **Target Component**:      Solr/ESA                 
+**Notes**: JEE Application Server   Currently configured to deploy on Tomcat
+
+ **Source Component**:    Orient DB           
+ **Class**:  B  
+ **Target Component**:     openstorefront                
+**Notes**: Embedded
+
+ **Source Component**:   JEE Application Server           
+ **Class**:  A  
+ **Target Component**:      OS/VM                 
+**Notes**: Currently targeted for CentOS
+
+------
 
 The CIVs represent an integration activity involving a source, Component
 A, and a target, Component B.
@@ -184,7 +182,7 @@ The CIVs, as defined by the DI2E PMO, are as follows:
     environment (providing resources) for A; B does not actively manage
     A (e.g. OS, VM).
 
--   **Class B: A-contained In-B**. Component A “lives in” B; B manages
+-   **Class B: A-contained In-B**. Component A “lives in�? B; B manages
     the lifecycle of A, from cradle to grave. (e.g. Widget in OWF; EJB
     in JEE server; OSGi bundle in Karaf; SCA).
 
@@ -197,46 +195,46 @@ The CIVs, as defined by the DI2E PMO, are as follows:
     (e.g. subscriber/publisher relationship; A integrates with another
     component that offers data from B).
 
-Ports
+##3.5 Ports
 -----
 
 The applicable ports are shown below:
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Port                                                                                                                                    Description                                                                      Type
-                                                                                                                                                                                                                           
-  (Defaults)                                                                                                                                                                                                               
-  --------------------------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------- -----------------------------------------------------------------
-  8080                                                                                                                                    Tomcat HTTP                                                                      Inbound
+-----
 
-  8009                                                                                                                                    Tomcat AJP                                                                       Inbound
-                                                                                                                                                                                                                           
-                                                                                                                                                                                                                           (Open if not using 8080)
+**Port (Defaults):**  8080
+**Description:** Tomcat HTTP
+**Type:** Inbound
 
-  2424                                                                                                                                    OrientDB                                                                         Internal
-                                                                                                                                                                                                                           
-                                                                                                                                                                                                                           (Shouldn’t be exposed externally)
+**Port (Defaults):**  8009
+**Description:** Tomcat AJP
+**Type:** Inbound  (Open if not using 8080)
 
-  2480                                                                                                                                    OrientDB                                                                         Internal
-                                                                                                                                                                                                                           
-                                                                                                                                                                                                                           (Shouldn’t be exposed externally)
+**Port (Defaults):**  2424
+**Description:** OrientDB
+**Type:** Internal  (Shouldn't be exposed externally)
 
-  8983                                                                                                                                    ESA/Solr                                                                         Outbound
-                                                                                                                                                                                                                           
-                                                                                                                                                                                                                           (Used internally doesn’t need to be exposed outside the system)
+**Port (Defaults):**  2480
+**Description:** OrientDB
+**Type:** Internal  (Shouldn't be exposed externally)
 
-  8080                                                                                                                                    OpenAM running on Tomcat; Setups on this vary so this just represents one case   Outbound
-                                                                                                                                                                                                                           
-                                                                                                                                                                                                                           (External application)
+**Port (Defaults):**  8983
+**Description:** ESA/Solr
+**Type:** Outbound (Used internally doesn't need to be exposed outside the system)
 
-  All ports are configurable via configuration for the respected applications. Addition port maybe be using depending on configuration.
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+**Port (Defaults):**  8080
+**Description:** OpenAM running on Tomcat; Setups on this vary so this just represents one case
+**Type:** Outbound  (External application)
 
-1.  Installation
-    ============
+----
 
-    1.  High level instructions for a fresh install
-        -------------------------------------------
+  All ports are configurable via configuration for the respected applications. Addition ports maybe be using depending on configuration.
+
+#4.  Installation
+ -----
+
+##4.1  High level instructions for a fresh install
+-------------------------------------------
 
 Prior to the install, setup an ESA or Solr instance and make sure it's
 running. Then, perform the following steps:
@@ -257,8 +255,8 @@ running. Then, perform the following steps:
 
 8.  Import data
 
-    1.  Suggested VM Configuration
-        --------------------------
+##4.2  Suggested VM Configuration
+--------------------------
 
 The following is the recommended VM configuration:
 
@@ -278,17 +276,17 @@ The following is the recommended VM configuration:
 
     -   DISK: 20GB
 
-    1.  Platform Dependencies
-        ---------------------
+##4.3  Platform Dependencies
+---------------------
 
 The Storefront is dependent upon:
 
 -   Java 8
 
--   Tomcat 7 &gt;v50
+-   Tomcat 7 v50+
 
-    1.  External Dependencies
-        ---------------------
+##4.4  External Dependencies
+---------------------
 
 The Storefront relies upon the following external dependencies:
 
@@ -296,15 +294,15 @@ The Storefront relies upon the following external dependencies:
 
 -   ESA
 
--   Solr
+-   Solr (Optional if using ESA)
 
-**NOTE:** Base Solr will require some changes to the schema.xml to make
-sure all field are available
+**NOTE:** The base Solr package will require some changes to the schema.xml to make
+sure all field are available.
 
-### To Use Solr
+###4.4.1 To Use Solr
 
 Download Version 4.3.1
-from <http://archive.apache.org/dist/lucene/solr/>, and then perform the
+from [solr home](http://archive.apache.org/dist/lucene/solr/), and then perform the
 following steps:
 
 1.  Unpackage
@@ -320,14 +318,14 @@ following steps:
 
 5.  Start Solr from (solr install dir)/example - java -jar start.jar
 
-    1.  System Setup
-        ------------
+##4.5  System Setup
+------------
 
 Unless otherwise noted, run as sudo.
 
 **NOTE:** You can use Nano or another text editor.
 
-### Install Java
+###4.5.1 Install Java
 
 Use the following steps to install Java.
 
@@ -357,33 +355,34 @@ Use the following steps to install Java.
     http://www.cyberciti.biz/faq/linux-unix-set-java\_home-path-variable/,
     and then perform the following:
 
-    a.  nano /etc/profile
+	a.  nano /etc/profile
 
-    b.  Add to the bottom:
+	b.  Add to the bottom:
 
--   \#Java Path
+		-   #Java Path
 
--   export PATH=\$PATH:/usr/java/latest/bin
+		-   export PATH=\$PATH:/usr/java/latest/bin
 
--   export JAVA\_HOME=/usr/java/latest
+		-   export JAVA\_HOME=/usr/java/latest
 
-a.  Save/Exit then source /etc/profile
+	c.  Save/Exit then source /etc/profile
 
-b.  nano /etc/bash.bashrc
+	d.  nano /etc/bash.bashrc
 
-c.  Add to the bottom:
+	e.  Add to the bottom:
 
--   \#Java Path
+		-   #Java Path
 
--   export PATH=\$PATH:/usr/java/latest/bin
+		-   export PATH=\$PATH:/usr/java/latest/bin
 
--   export JAVA\_HOME=/usr/java/latest
+		-   export JAVA\_HOME=/usr/java/latest
 
-1.  Save/Exit then source /etc/bash.bashrc
+7.  Save/Exit then source /etc/bash.bashrc
 
-2.  Confirm that java –version runs
+8.  Confirm that java -version runs
 
-    1.  ### Install Tomcat Public Package
+###4.5.2 Install Tomcat Public Package
+------
 
 Use the following steps to install the Tomcat public package.
 
@@ -395,10 +394,9 @@ Use the following steps to install the Tomcat public package.
 
 4.  ln -s /usr/local/tomcat/apache-tomcat-7.0.55
     /usr/local/tomcat/latest
+	(Use ln -nsf (target) (link) to repoint)
 
-Use ln –nsf (target) (link) to repoint
-
-5\. nano /usr/local/tomcat/latest/bin/setenv.sh
+5. nano /usr/local/tomcat/latest/bin/setenv.sh
 
 > Add line: CATALINA\_OPTS=-Xmx1024m
 
@@ -414,7 +412,7 @@ memory affects the amount of concurrent users the server can support.
 >
 > 8GB -&gt; -Xmx6144m (Make sure to use a 64bit VM)
 
-**OPTIONAL**: In the conf/server.xml
+**OPTIONAL:** In the conf/server.xml
 
 -   Add http compression on. Compression="on"
 
@@ -426,11 +424,11 @@ memory affects the amount of concurrent users the server can support.
 > documentation: <http://tomcat.apache.org/tomcat-7.0-doc/index.html>.
 > The default settings will suffice for most deployments.
 
-6\. Setup Tomcat as a service using the following:
+>6\. Setup Tomcat as a service using the following:
 
-http://www.davidghedini.com/pg/entry/install\_tomcat\_7\_on\_centos
+[See Installing tomcat 7 on CentOS](http://www.davidghedini.com/pg/entry/install\_tomcat\_7\_on\_centos)
 
-a.  nano /etc/init.d/tomcat
+>a.  nano /etc/init.d/tomcat
 
 > \#!/bin/bash
 >
@@ -476,18 +474,19 @@ a.  nano /etc/init.d/tomcat
 >
 > exit 0
 
-a.  chmod 755 /etc/init.d/tomcat
+>b.  chmod 755 /etc/init.d/tomcat
 
-b.  chkconfig --add tomcat
+>c.  chkconfig --add tomcat
 
-c.  chkconfig --level 234 tomcat on
+>d.  chkconfig --level 234 tomcat on
 
-7\. Open port iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
+>7\. Open port iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
 
-### Install Tomcat Using JPackage
+###4.5.3 Install Tomcat Using JPackage
+-----
 
 Use the following steps to install Tomcat using JPackage
-(http://www.jpackage.org/)
+[See jpackage.org](http://www.jpackage.org/)
 
 1.  At www.jpackage.org, follow the installation instructions to setup
     the repository for your system install (e.g. yum, apt, and urpmi)
@@ -496,11 +495,12 @@ Use the following steps to install Tomcat using JPackage
     from the version 6 repo.
 
 **NOTE:** JPackage version has a mistake in the package. The ecj jar
-library is old and doesn't work with JDK1.8.; however, this is easily
+library is old and doesn't work with JDK1.8 ; however, this is easily
 corrected. Download 7.0.54 from apache.org and replace ecj-xxx.jar in
 tomcat/lib directory with ecj-xxx.jar from the 7.0.54 version.
 
-### Server Control
+###4.5.4 Server Control
+----
 
 Use the following commands to control the server.
 
@@ -516,13 +516,13 @@ Use the following commands to control the server.
 > **NOTE:** Using this is not recommended as it not always successful
 > due the script not waiting for shutdown.
 
-Deploying application
+###4.6 Deploying application
 ---------------------
 
 To deploy the application, copy openstorefront.war to
 /usr/local/tomcat/latest/webapps
 
-Application Configuration
+###4.7 Application Configuration
 -------------------------
 
 The application configuration and data are stored in
@@ -554,8 +554,6 @@ On initial setup modify the following:
 
 2.  For OpenAM Integration:
 
-<!-- -->
-
 a.  \#Security Header
 
 > openam.url=&lt;Url to open am something like
@@ -584,31 +582,31 @@ a.  \#Security Header
 >
 > openam.header.admingroupname=STORE-Admin
 
-a.  Edit shiro.ini under the config directory
+b.  Edit shiro.ini under the config directory
 
 > under \[main\]
 >
-> uncomment (remove \#)
+>> uncomment (remove \#)
 >
-> headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
+>> headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
 >
-> securityManager.realms = \$headerRealm
+>> securityManager.realms = \$headerRealm
 >
 > under \[users\]
 >
-> comment out
+>> comment out
 >
-> \#admin = secret, administrator
+>> \#admin = secret, administrator
 >
-> \#user = user
+>> \#user = user
 >
 > under \[roles\]
 >
-> comment out
+>> comment out
 >
-> \#admin = administrator
+>> \#admin = administrator
 
-Importing Data
+##4.8 Importing Data
 --------------
 
 Import data using the following steps.
@@ -617,30 +615,29 @@ Import data using the following steps.
     > admin tools. (Requires an Admin Login)
 
 2.  When the application is first started, it will load a default set of
-    “lookup” types. These can be later changed using the admin tools. On
+    "lookup" types. These can be later changed using the admin tools. On
     a new install, no attributes, articles or components are loaded.
     They can be entered or imported using the application admin tools.
 
-    1.  Logging Notes
-        -------------
+##4.9  Logging Notes
+-------------
 
 You can view the logs messages in the Catalina log file:
 /usr/local/tomcat/latest/logs
 
-### Log Level Definitions
+###4.9.1 Log Level Definitions
+-------
 
 See the following table for the log definitions.
 
-  **Level**   **Description**
-  ----------- ------------------------------------------------------------------
-  SEVERE      Something didn't run correctly or as expected
-  WARN        Behavior may not be desired but, the system was able to continue
-  INFO        System admin message
-  FINE        Developer message
-  FINER       Detailed developer messages
-  FINEST      Trace information
+-  **SEVERE**    -  Something didn't run correctly or as expected
+-  **WARN**      - Behavior may not be desired but, the system was able to continue
+-  **INFO**   -  System admin message
+-  **FINE**    - Developer message
+-  **FINER**    - Detailed developer messages
+-  **FINEST**    -  Trace information
 
-Setup OpenAM
+###4.10 Setup OpenAM
 ------------
 
 See the example below for OpenAM setup. Your configuration may be
@@ -653,7 +650,8 @@ are unable will not work, if the container was started prior to OpenAM).
 application server will not start unless the OpenAM server is available.
 This is a known issue with the OpenAM Policy agent.
 
-### Versions Used
+###4.10.1 Versions Used
+------
 
 The following versions were used:
 
@@ -672,14 +670,15 @@ The following versions were used:
 
 -   64 bit JRE 1.7.0\_67-b01
 
-    1.  ### Installation of OpenAM Java EE Policy Agent into Tomcat 7.0.55
+###4.10.2 Installation of OpenAM Java EE Policy Agent into Tomcat 7.0.55
+--------
 
 Use the following steps to install OpenAM Java EE Policy Agent on
 Tomcat.
 
 1.  Make sure the Agent Profile has already been created in OpenAM
 
-2.  Create a pwd.txt file at C:\\Temp\\pwd.txt and add your Agent
+2.  Create a *pwd.txt* file at C:\\Temp\\pwd.txt�and add your Agent
     Profile password to it
 
 3.  Shutdown the Tomcat server that is going to run your web application
@@ -688,73 +687,69 @@ Tomcat.
 
 5.  Extract Tomcat-v6-7-Agent-3.3.0.zip to a known directory
 
-6.  CD into the j2ee\_agents/tomcat\_v6\_agent/bin directory
+6.  CD�into the�j2ee\_agents/tomcat\_v6\_agent/bin�directory
 
-7.  Execute agentadmin --install to install the agent
+7.  Execute�agentadmin --install�to install the agent
 
-    1.  ### References
+###4.10.3 References
+------
 
 -   <http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/index/chap-apache-tomcat.html>
 
 -   <http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/#chap-apache-tomcat>
 
-    1.  ### Configuration of OpenAM
+###4.10.4 Configuration of OpenAM
+------
 
 See
-<http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/getting-started/>
+[Open AM Getting Started](http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/getting-started/)
 for OpenAM configuration information.
 
-### Configure the Policy in OpenAM
+###4.10.5 Configure the Policy in OpenAM
+-------
 
 Use the following steps to configure the OpenAM policy.
 
 1.  Open up OpenAM in a web
-    browser http://c00788.usurf.usu.edu:8080/openam
+    browser�http://c00788.usurf.usu.edu:8080/openam
 
 2.  Log into OpenAM using amadmin
 
-3.  Click on Access Control &gt; /(Top Level Realm) &gt; Policies
+3.  Click on�Access Control -> /(Top Level Realm) -> Policies
 
-4.  Click on New Policy
+4.  Click on�New Policy
 
-<!-- -->
+>>a.  Give the Policy a name of�Storefront Policy
 
-a.  Give the Policy a name of Storefront Policy
+>>b.  In the Rules table click�New
 
-b.  In the Rules table click New
+>>>i.  Select URL Policy Agent and click **Next**
 
-<!-- -->
+>>>ii. Enter the following in Step 2 of 2: New Rule
 
-i.  Select URL Policy Agent and click **Next**
+>>>-   Name: Allow Storefront Access
 
-ii. Enter the following in Step 2 of 2: New Rule
+>>>-   Resource Name:�http://c00788.usurf.usu.edu:8081/agentsample/
 
--   Name: Allow Storefront Access
+>>>-   Check the boxes for�GET�and�POST
 
--   Resource Name: http://c00788.usurf.usu.edu:8081/agentsample/\*
+>>c.  In the Subjects table click�**New**
 
--   Check the boxes for GET and POST
+>>>i.  Select Authenticated Users and click Next
 
-a.  In the Subjects table click **New**
+>>>ii. Name the rule All Authenticated Users
 
-<!-- -->
+>>>iii. Click **Finish**
 
-i.  Select Authenticated Users and click Next
+>>d.  Create a new response provider
 
-ii. Name the rule All Authenticated Users
-
-iii. Click **Finish**
-
-<!-- -->
-
-a.  Create a new response provider
-
--   In the Dynamic Attribute make sure uid and isMemberOf is
+>>-   In the Dynamic Attribute make sure�uid�and�isMemberOf�is
     selected (ctrl-click)
 
--   Click on **Finish**
+>>-   Click on **Finish**
 
-    1.  ### Creating the Agent Profile
+###4.10.6 Creating the Agent Profile
+-----
 
 Use the following steps to create the agent profile.
 
@@ -766,28 +761,29 @@ Use the following steps to create the agent profile.
 3.  Click on **Access Control** &gt; **Top Level Realm** &gt;
     **Agents** &gt; **J2EE**
 
-4.  Create a new J2EE agent by clicking on the **New...** button under
+4.  Create a new J2EE agent by clicking on the�**New...**�button under
     Agent
 
 5.  Create the agent with the following parameters:
 
--   Name: myagent
+>-   Name:�myagent
 
--   Password: password
+>-   Password:�password
 
--   Configuration: Centralized
+>-   Configuration:�Centralized
 
--   Server URL: http://c00788.usurf.usu.edu:8080/openam
+>-   Server URL: http://c00788.usurf.usu.edu:8080/openam
 
--   Agent URL: http://c00788.usurf.usu.edu:8081/agentsample
+>-   Agent URL: http://c00788.usurf.usu.edu:8081/agentsample
 
-1.  Configuration
-    =============
+#5.  Configuration
+------
 
-    1.  Security
-        --------
+##5.1  Security
+--------
 
-        1.  ### Supported Realms
+###5.1.1 Supported Realms
+------
 
 Configure in /var/openstorefront/config/shiro.ini
 
@@ -810,73 +806,78 @@ Configure in /var/openstorefront/config/shiro.ini
 -   ldapRealm.contextFactory.environment\[some.obscure.jndi.key\] = some
     value
 
-    1.  #### Database
+####5.1.1.1 Database
 
 See
-<http://stackoverflow.com/questions/17441019/how-to-configure-jdbcrealm-to-obtain-its-datasource-from-jndi>
+[Configure JDBC Realm](http://stackoverflow.com/questions/17441019/how-to-configure-jdbcrealm-to-obtain-its-datasource-from-jndi)
 for how to configure JDBCRealm to obtain its DataSource from JNDI.
 
-\[main\]
+> \[main\]
 
-dataSource = org.apache.shiro.jndi.JndiObjectFactory
+-  dataSource = org.apache.shiro.jndi.JndiObjectFactory
 
-dataSource.resourceName = java://app/jdbc/myDataSource
+-  dataSource.resourceName = java://app/jdbc/myDataSource
 
-jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
+-  jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
 
-jdbcRealm.permissionsLookupEnabled = true
+-  jdbcRealm.permissionsLookupEnabled = true
 
-jdbcRealm.dataSource = \$dataSource
+-  jdbcRealm.dataSource = \$dataSource
 
-\# you can customize the authenticationQuery, userRolesQuery and
-permissionsQuery
+ \# you can customize the authenticationQuery, userRolesQuery and
+permissionsQuery,  if needed.
 
-\# if needed.
+- securityManager.realms = \$realm
 
-securityManager.realms = \$realm
+####5.1.1.2 OPENAM (Request Header) 
+-----
 
-#### OPENAM (Request Header) 
+>\[main\]
 
-\[main\]
+\#Also, remember to comment out the users and roles to remove the INIRealm
 
-\#Also, remember to comment out the users and roles to remove the
-INIRealm
+- headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
 
-headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
+- securityManager.realms = \$headerRealm
 
-securityManager.realms = \$headerRealm
-
-#### Integration with OpenAM
+####5.1.1.3 Integration with OpenAM
+-----
 
 Configure in: /var/openstorefront/config/openstorefront.properties
 
-  ------------------------------------------------------------------------------------------------------------
-  Property                       Description                                                  Default
-  ------------------------------ ------------------------------------------------------------ ----------------
-  openam.url                     http:/.../openam (Full URL to open am instance)              
+  
+**Property:** openam.url  
+**Description:** http:/.../openam (Full URL to open am instance)              
 
-  logout.url                     http:/.../openam/UI/Logout                                   
-                                                                                              
-                                 Full URL to logout                                           
+**Property:**   logout.url
+**Description:** http:/.../openam/UI/Logout   (Full URL to logout)   
 
-  openam.header.username         HTTP Header for Username                                     sAMAccountName
+**Property:**  openam.header.username
+**Description:** HTTP Header for Username    (**Default:** sAMAccountName)   
 
-  openam.header.firstname        HTTP Header for Firstname                                    givenname
+**Property:** openam.header.firstname 
+**Description:** HTTP Header for Firstname    (**Default:** givenname)        
 
-  openam.header.lastname         HTTP Header for Lastname                                     sn
+**Property:**  openam.header.lastname 
+**Description:** HTTP Header for Lastname      (**Default:** sn)      
 
-  openam.header.email            HTTP Header for email                                        mail
+**Property:**  openam.header.email 
+**Description:** HTTP Header for email      (**Default:** mail)      
 
-  openam.header.group            HTTP Header for group                                        memberOf
+**Property:**  openam.header.group 
+**Description:** HTTP Header for group      (**Default:** memberOf)      
 
-  openam.header.ldapguid         HTTP Header for ldapguid                                     memberid
+**Property:**  openam.header.ldapguid 
+**Description:** HTTP Header for ldapguid      (**Default:** memberid)      
 
-  openam.header.organization     HTTP Header for organization                                 
+**Property:**  openam.header.organization 
+**Description:** HTTP Header for organization    
 
-  openam.header.admingroupname   HTTP Header for Admin Group Name \*Handles multiple values   STORE-Admin
-  ------------------------------------------------------------------------------------------------------------
+**Property:**  openam.header.admingroupname 
+**Description:** HTTP Header for Admin Group Name \*Handles multiple values  (**Default:** STORE-Admin)    
 
-### User Types
+###5.1.2 User Types
+-----
 
 The user types are:
 
@@ -886,8 +887,8 @@ The user types are:
 -   Administrator: This is an unrestricted user that can use the
     administrator tools in the application.
 
-    1.  Integration External LDAP (User Syncing)
-        ----------------------------------------
+##5.2  Integration External LDAP (User Syncing)
+----------------------------------------
 
 When a user is not located in the external management system then the
 user profile in the application will be deactivated.
@@ -914,7 +915,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
   ldapmanager.attribute.organization    Attribute to map to organization                                                    company
   ldapmanager.attribute.guid            Attribute to map to guid                                                            objectGUID
 
-Jira Integration
+##5.3 Jira Integration
 ----------------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
@@ -927,7 +928,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
   jira.connection.wait.seconds   Wait time if the pool is empty                                 60
   jira.server.url                Jira server to connect to                                      https://jira.di2e.net
 
-Mail Server
+##5.4 Mail Server
 -----------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
@@ -938,14 +939,14 @@ Configure in: /var/openstorefront/config/openstorefront.properties
   mail.server.user     Login Credentials for mail server                              
   mail.server.pw       Login Credentials for mail server                              
   mail.smtp.port       Mail Port (25 common)                                          
-  mail.use.ssl         Set to “true” if server requires it                            
-  mail.use.tls         Set to “true” if server requires it                            
+  mail.use.ssl         Set to “true�? if server requires it                            
+  mail.use.tls         Set to “true�? if server requires it                            
   mail.from.name       From Name                                                      Storefront Notification
   mail.from.address    From Email Address                                             donotreply@storefront.net
   mail.reply.name      Reply name (usually display at the bottom the message)         Support
   mail.reply.address   Reply email (usually display at the bottom the message)        helpdesk@di2e.net
 
-Other Application Properties
+##5.5 Other Application Properties
 ----------------------------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
@@ -977,13 +978,13 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 
   message.maxretires                   Max times the user message will try to send if unable to deliver.                                                                                                          5
 
-  message.recentchanges.days           Time between “recent changes” messages from being sent.                                                                                                                    28
+  message.recentchanges.days           Time between “recent changes�? messages from being sent.                                                                                                                    28
 
   app.title                            Title of the application. Used in emails but, also other places.                                                                                                           DI2E Storefront
 
   external.usermanager                 Specifies the manager that is used for external user management. The manager must be supported by the application. ( IniRealmManager or LdapUserManager)                   IniRealmManager
 
-  external.sync.activate               Set to ‘true’ to run the sync                                                                                                                                              False
+  external.sync.activate               Set to ‘true' to run the sync                                                                                                                                              False
 
   dblog.on                             Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   True
 
@@ -992,18 +993,18 @@ Configure in: /var/openstorefront/config/openstorefront.properties
   dblog.logSecurityFilter              Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          False
   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Database Management
-===================
+#6. Database Management
+-----
 
 [**DATABASE
 REFRESH**](https://confluence.di2e.net/display/STORE/Database+Refresh)**:**
 The application handles all database interaction transparently, so
-direct database access and manipulation is not needed.  
+direct database access and manipulation is not needed. �
 
 See the following for information on outside control (should rarely be
 needed/used).
 
-Refreshing the Database
+##6.1 Refreshing the Database
 -----------------------
 
 **CAUTION:** This will wipe out all data in the application. Data, such
@@ -1016,20 +1017,19 @@ directory or use the following console tools steps:
 1.  Stop the Tomcat server  (e.g. service tomcat stop)
 
 2.  Remove the folder /var/openstorefront/db
-     (rm -rf /var/openstorefront/db)
+    (rm -rf�/var/openstorefront/db)
 
 3.  Start the tomcat server
 
 When the application loads it will create a new database and populate
-the data from whatever is currently in the import folders (Attributes
-and lookups only- component and articles will need to be manually
-trigger or uploaded via the Admin Tools UI ).   
+the data from whatever is currently in the import folders (lookups only; attributes, component, articles will need to be manually
+trigger or uploaded via the Admin Tools UI).
 
 The initial load of the application may take a few minutes. If the
 import directories are empty, the application will load default lookup
-and attributes files that are packaged with the application.
+files that are packaged with the application.
 
- Installing Database Console
+##6.2 Installing Database Console
 ----------------------------
 
 **CAUTION:** Viewing (Querying) information is fine; however, use
@@ -1037,30 +1037,28 @@ extreme caution when modifying any records as all logic is handled by
 the application.
 
 1.  Download Orient DB (Currently using the 1.7.x series) at
-    <http://www.orientechnologies.com/download/>
-
-<!-- -->
+    [Orient DB.org](http://www.orientechnologies.com/download/)
 
 2.  Extract the archive
 
 3.  Run the console ./bin/console.sh 
 
-4.  Connect to the DB. Connect remote: localhost/openstorefront
-    &lt;user&gt; &lt;password&gt;  (see the
+4.  Connect to the DB: connect remote: localhost/openstorefront
+    (user) (password) (see the
     /var/openstorefront/config/openstorefront.properties for
     connection information)
 
 The database supports an SQL like interface and then adds other
 functionality on top.
 
--   See <http://www.orientechnologies.com/docs/last/orientdb.wiki/Backup-and-Restore.html> for
+-   See�[Orient DB Backup](http://www.orientechnologies.com/docs/last/orientdb.wiki/Backup-and-Restore.html)�for
     information about backup
 
--   See <http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html> for
+-   See�[Orient DB Export/Import](http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html)�for
     export and imports.
 
-External Application API
-========================
+#7. External Application API
+-----
 
 The API document is directly reflected from the live code so it is
 always current for the running version of the application. The API
@@ -1068,18 +1066,19 @@ documentation can be accessed by login in as an admin and following the
 link from the admin tools. A print view of the API can be generated form
 there as well.
 
-1.  Development
-    ===========
+#8.1  Development
+ ------
 
-    1.  Development Client
-        ------------------
+#8.1 Development Client
+------------------
 
-        1.  ### Quick start
+###8.1.1 Quick start
+-----
 
 If you want to contribute to this project and you know Git, Yoeman,
 Bower, and Grunt, these build instructions should suffice:
 
-1.  To build Open-Storefront:
+\1.  To build�Open-Storefront:
 
 > \$ git clone https://github.com/dshurt/Open-Storefront.git
 >
@@ -1087,7 +1086,7 @@ Bower, and Grunt, these build instructions should suffice:
 >
 > \$ grunt build
 
-1.  Install the following:
+\2.  Install the following:
 
 -   Git 1.9.4
 
@@ -1103,36 +1102,36 @@ Bower, and Grunt, these build instructions should suffice:
 
 -   ruby (with sass and compass)
 
-    1.  #### Installing Components
+####8.1.1.1 Installing Components
+------
 
-    2.  #### Installing and Configuring Git
+####8.1.1.2 Installing and Configuring Git
+------
 
 Use the following steps to install and configure Git on your OS:
 
 1.  Linux: Install the package Git using \$ sudo apt-get install git
 
-2.  Tip, also install gitk* *to visualize your Git log using \$ sudo
+2.  Tip, also install�gitk to visualize your Git log using \$ sudo
     apt-get install gitk
 
--   Windows, Mac OSX: Download from: <http://git-scm.com/>
+-   Windows, Mac OSX: Download from: [GIT]<http://git-scm.com/>
 
-1.  Tip for Mac OSX: Also
-    install [GitX](file:///\\hera\C4ISR_DSP\NRO\DI2E\Storefront\documentation\GitX) (<http://gitx.frim.nl/>)
+\3.  Tip for Mac OSX: Also
+    install[GitX](file:///\\hera\C4ISR_DSP\NRO\DI2E\Storefront\documentation\GitX)�(<http://gitx.frim.nl/>)
     to visualize your Git log.
 
--   More info [in github's git installation
-    > instructions](http://help.github.com/git-installation-redirect):
+-   More info�[in github's git installation
+    > [instructions](http://help.github.com/git-installation-redirect):
     > <https://help.github.com/articles/set-up-git/>
 
-1.  Check if Git is installed correctly:
+\4.  Check if Git is installed correctly:
 
     \$ git --version
 
     git version 1.7.1
 
-<!-- -->
-
-a.  Configure Git correctly:
+\a.  Configure Git correctly:
 
     \$ git config --global user.name "My Full Name"
 
@@ -1152,7 +1151,7 @@ WARNING: the field user.name is your full name, not your username*.*
 -   More info on GitHub:
     <https://help.github.com/articles/setting-your-email-in-git/>.
 
-a.  Get a GitHub account
+\b.  Get a GitHub account
 
 -   And add your public key on GitHub, using the instructions here:
     <https://help.github.com/articles/generating-ssh-keys/>
@@ -1160,28 +1159,28 @@ a.  Get a GitHub account
 -   To learn more about Git, read the free book [Git
     Pro](http://progit.org/book/) (<http://git-scm.com/book/en/v2>).
 
-    1.  #### Getting the Sources Locally
+####8.1.1.3 Getting the Sources Locally
+-----
 
 You should fork the code before changing or cloning it (recommended).
 This will make it easier to share your changes later. For more info on
-forking, read [GitHub's help on
-forking](file:///\\hera\C4ISR_DSP\NRO\DI2E\Storefront\documentation\GitHub's%20help%20on%20forking)
-(<https://help.github.com/articles/fork-a-repo/>).
+forking, read�[GitHub's help on forking](<https://help.github.com/articles/fork-a-repo/>).
 
 To fork the code:
 
-1.  For example, Open-Storefront:
+1.  For example,�Open-Storefront:
 
-2.  Go to [the specific
+2.  Go to�[the specific
     repository (Open-Storefront)](https://github.com/dshurt/Open-Storefront)
 
-3.  Click the top right **Fork** button 
+3.  Click the top right **Fork** button�
 
 NOTE: By forking the repository, you can commit and push your changes
 without our consent and we can easily review and then merge your changes
 into the blessed repository.
 
-#### Clone a Fork Locally
+####8.1.1.4 Clone a Fork Locally
+------
 
 Use the following steps to locally clone a fork.
 
@@ -1199,8 +1198,8 @@ Use the following steps to locally clone a fork.
 >
 > \$ ls
 
-WARNING: You can clone with the *SSH URL*. It is possible that
-the *HTTPS URL* can be unreliable.
+WARNING: You can clone with the�*SSH URL*. It is possible that
+the�*HTTPS URL*�can be unreliable.
 
 NOTE: It's recommended to name the cloned directory the same as the
 repository (the default), so the helper scripts work.
@@ -1211,46 +1210,42 @@ repository (the default), so the helper scripts work.
 2.  Use Git checkout \$ git checkout 5.2.0.Final to switch to a more
     stable branch or tag.
 
-    1.  #### Share your Changes with a Pull Request
+####8.1.1.5 Share your Changes with a Pull Request
+---
 
 A pull request is like a patch file, but easier to apply, more powerful
 and you'll be credited as the author.
 
 1.  Creating a pull request:
 
-<!-- -->
-
-a.  Push all your commits to a topic branch on your fork on GitHub (if
+>\a.  Push all your commits to a topic branch on your fork on GitHub (if
     you haven't already).
 
 -   You can only have one pull request per branch, so it's advisable to
     use topic branches to avoid mixing your changes.
 
-a.  Surf to that topic branch on your fork on GitHub.
+>\b.  Surf to that topic branch on your fork on GitHub.
 
-b.  Click the **Pull Request** button at the top of the page.
+>\c.  Click the **Pull Request** button at the top of the page.
 
-<!-- -->
+\2.  Accepting a pull request:
 
-1.  Accepting a pull request:
+>\a.  Surf to the pull request page on GitHub.
 
-<!-- -->
+>\b.  Review the changes
 
-a.  Surf to the pull request page on GitHub.
-
-b.  Review the changes
-
-c.  Click the **Merge help** button on the bottom of the page and follow
+>\c.  Click the **Merge help** button on the bottom of the page and follow
     the instructions of GitHub to apply those changes on the master.
 
 -   Or, use the **Merge** button if there are no merge conflicts.
 
-    1.  ### Installing and Configuring NPM
+###8.1.2 Installing and Configuring NPM
+-----
 
-Installing node.js (<https://nodejs.org/>) on your computer will also
+Installing�[node.js](https://nodejs.org/) on your computer will also
 install the node package manager (npm), but if you'd rather just go
 straight to the source, you can follow the
-instructions (<https://raw.githubusercontent.com/npm/npm/master/README.md>)
+instructions�(<https://raw.githubusercontent.com/npm/npm/master/README.md>)
 in order to install the npm manually.
 
 No special configuration is required, but details on npm configuration
@@ -1280,7 +1275,8 @@ dependencies with Bower, and building and running your application with
 Grunt. Grunt and Bower have also been installed globally, so you should
 be able to use them in other projects from now on.
 
-### Notes for Redhat/Centos users:
+###8.1.4 Notes for Redhat/Centos users:
+-----
 
 See the following notes for Redhat/Centos users.
 
@@ -1308,9 +1304,11 @@ See the following notes for Redhat/Centos users.
 
 -   yum install maven
 
-    1.  ### Building with Grunt
+###8.1.5 Building with Grunt
+------
 
-        1.  #### Before Running the Build
+####8.1.5.1  Before Running the Build
+-------
 
 Before running the build, make sure all of the correct dependencies
 installed.
@@ -1335,7 +1333,7 @@ site.
 **NOTE:** If Bower is not installed correctly (globally), you will run
 into issues with the npm install creating the Bower components.
 
-#### Running the build
+####8.1.5.2 Running the build
 
 Go into a project's front end base directory, for example Open-
 
@@ -1364,7 +1362,7 @@ offline) or experience hiccups. In that case, you'll see an IO error, so
 just run the build again. After the first successful build, any
 subsequent build should be fast and stable.
 
-#### Running tests
+####8.1.5.3 Running tests
 
 Open-Storefront uses Karma to run tests for the frontend, so those tests
 need to be run differently than others.
@@ -1373,10 +1371,10 @@ need to be run differently than others.
 
 -   \$ grunt test
 
-    1.  Development Server
-        ------------------
+##8.2  Development Server
+------------------
 
-        1.  ### Key Components Used
+###8.2.1 Key Components Used
 
 The following components were used in the development:
 
@@ -1390,7 +1388,7 @@ The application is a JEE webapp, so any JEE 6 (web-profile) compliant
 server should work with some server configuration. The current
 deployment target is Tomcat 7.
 
-### Key Libraries Used
+###8.2.2 Key Libraries Used
 
 The following key libraries were used in the development:
 
@@ -1405,7 +1403,7 @@ The following key libraries were used in the development:
 
 -   Orient DB- No SQL/Multi-Model database
 
-    1.  ### Building with Maven
+   ### Building with Maven
 
 run "mvn install" from \$PROJECT\_HOME/server/openstorefront
 
@@ -1457,7 +1455,7 @@ following steps:
 1.  Unpackage
 
 2.  Replace (solr install dir) /example/solr/collection1/conf/schema.xml
-    with the scheme.xml include in this project’s doc folder.
+    with the scheme.xml include in this project's doc folder.
 
 3.  configure openstorefront to point to Solr
 
@@ -1508,5 +1506,5 @@ done only for bug fixes and needed improvements to existing features.
 The REST API versioning follows <http://semver.org/> where major version
 represents incompatible API changes. The REST endpoints include a
 version number which represents the major version. The version in the
-URL doesn’t change with minor versions. However, the API follows with
+URL doesn't change with minor versions. However, the API follows with
 the version of the application.
