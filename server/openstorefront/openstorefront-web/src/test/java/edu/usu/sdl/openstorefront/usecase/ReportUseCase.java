@@ -1,0 +1,69 @@
+/*
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package edu.usu.sdl.openstorefront.usecase;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
+import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.util.List;
+import org.junit.Test;
+
+/**
+ *
+ * @author dshurtleff
+ */
+public class ReportUseCase
+{
+
+	@Test
+	public void testFullComponentReport()
+	{
+
+		try (InputStream in = new FileInputStream("C:\\temp\\allComponents.json"); BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("C:\\temp\\compreport.html")))) {
+			List<ComponentAll> components = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ComponentAll>>()
+			{
+			});
+
+			for (ComponentAll componentAll : components) {
+				out.write("Name: " + componentAll.getComponent().getName() + "<br>");
+				out.write("Organization: " + componentAll.getComponent().getName() + "<br>");
+				out.write("Description: " + componentAll.getComponent().getName() + "<br>");
+				out.write("Component Vitals <br>");
+				out.write("<table border='1'>");
+				for (ComponentAttribute componentAttribute : componentAll.getAttributes()) {
+					out.write("<td><b>" + componentAttribute.getComponentAttributePk().getAttributeType() + "</b></td>");
+					out.write("<td><b>" + componentAttribute.getComponentAttributePk().getAttributeCode() + "</b></td>");
+
+				}
+				out.write("</table>");
+
+				out.write("<br><hr><br>");
+			}
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+}
