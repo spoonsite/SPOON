@@ -141,7 +141,7 @@ public class ReportResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets a report record.")
+	@APIDescription("Gets the actual report")
 	@Produces({MediaType.WILDCARD})
 	@DataType(Report.class)
 	@Path("/{id}/report")
