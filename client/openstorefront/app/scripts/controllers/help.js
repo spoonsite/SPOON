@@ -36,6 +36,15 @@ app.controller('helpCtrl', ['$scope', '$draggableInstance', 'business',
       });
     };
     $scope.loadHelp();
+    
+    $scope.displayFeedback = function(){
+      Business.systemservice.getShowFeedback().then(function(results){
+          if (results && results.code === "TRUE") {
+            $scope.control.showFeedback = true;
+          }
+      });      
+    };
+    $scope.displayFeedback();
    
    $scope.showHelpSection = function(helpSection) {
      
@@ -98,6 +107,15 @@ app.controller('helpSingleCtrl', ['$scope', 'business', 'printView', '$timeout',
       });
     };
     $scope.loadHelp();
+    
+    $scope.displayFeedback = function(){
+      Business.systemservice.getShowFeedback().then(function(results){
+          if (results && results.code === "TRUE") {
+            $scope.control.showFeedback = true;
+          }
+      });      
+    };
+    $scope.displayFeedback();    
    
    $scope.showHelpSection = function(helpSection) {
      if ($scope.helpSection.selected) {
