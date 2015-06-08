@@ -44,6 +44,7 @@ public class ReportOption
 
 	@Min(1)
 	@Max(300)
+	@ConsumeField
 	private Integer maxWaitSeconds;
 
 	@Version
