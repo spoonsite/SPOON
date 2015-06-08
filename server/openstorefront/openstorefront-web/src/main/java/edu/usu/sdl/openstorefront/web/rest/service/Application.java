@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -361,6 +362,22 @@ public class Application
 	public void clearAllDBLogs()
 	{
 		service.getSystemService().clearAllLogRecord();
+	}
+
+	@GET
+	@APIDescription("Gets information about whether the Jira User Feedback is available or not.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/showfeedback")
+	public LookupModel getShowFeedBack()
+	{
+		LookupModel lookupModel = new LookupModel();
+		lookupModel.setCode(PropertiesManager.getValue(PropertiesManager.KEY_ALLOW_JIRA_FEEDBACK, "True").toUpperCase());
+		if (Convert.toBoolean(lookupModel.getCode())) {
+			lookupModel.setDescription("Allow jira feedback");
+		} else {
+			lookupModel.setDescription("Do not allow jira feedback");
+		}
+		return lookupModel;
 	}
 
 }
