@@ -527,7 +527,7 @@ To deploy the application, copy openstorefront.war to
 
 The application configuration and data are stored in
 /var/openstorefront/. Make sure the user running the application has r/w
-permission for that directory. Â All directories are created upon
+permission for that directory.  All directories are created upon
 application startup. The high level directory map is stored under
 /var/openstorefront/.
 
@@ -713,7 +713,7 @@ Use the following steps to configure the OpenAM policy.
 1.  Open up OpenAM in a web
     browser http://c00788.usurf.usu.edu:8080/openam
 
-2.  Log into OpenAM usingÂ amadmin
+2.  Log into OpenAM using amadmin
 
 3.  Click on Access Control -> /(Top Level Realm) -> Policies
 
@@ -754,11 +754,11 @@ Use the following steps to configure the OpenAM policy.
 Use the following steps to create the agent profile.
 
 1.  Open up OpenAM in a web
-    browserÂ http://c00788.usurf.usu.edu:8080/openam
+    browser http://c00788.usurf.usu.edu:8080/openam
 
-2.  Log into OpenAM usingÂ amadmin
+2.  Log into OpenAM using amadmin
 
-3.  Click onÂ **Access Control** &gt; **Top Level Realm** &gt;
+3.  Click on **Access Control** &gt; **Top Level Realm** &gt;
     **Agents** &gt; **J2EE**
 
 4.  Create a new J2EE agent by clicking on the **New...** button under
@@ -845,36 +845,27 @@ permissionsQuery,  if needed.
 
 Configure in: /var/openstorefront/config/openstorefront.properties
 
+( **Property** -description ( **Default** ))
   
-**Property:** openam.url  
-**Description:** http:/.../openam (Full URL to open am instance)              
+-  **openam.url**  -http:/.../openam (Full URL to open am instance)              
 
-**Property:**   logout.url
-**Description:** http:/.../openam/UI/Logout   (Full URL to logout)   
+-  **logout.url** - http:/.../openam/UI/Logout   (Full URL to logout)   
 
-**Property:**  openam.header.username
-**Description:** HTTP Header for Username    (**Default:** sAMAccountName)   
+-  **openam.header.username**  - HTTP Header for Username    ( **sAMAccountName** )   
 
-**Property:** openam.header.firstname 
-**Description:** HTTP Header for Firstname    (**Default:** givenname)        
+-  **openam.header.firstname**  - HTTP Header for Firstname    ( **givenname** )        
 
-**Property:**  openam.header.lastname 
-**Description:** HTTP Header for Lastname      (**Default:** sn)      
+-  **openam.header.lastname** - HTTP Header for Lastname      ( **sn** )      
 
-**Property:**  openam.header.email 
-**Description:** HTTP Header for email      (**Default:** mail)      
+-  **openam.header.email**  - HTTP Header for email      ( **mail** )      
 
-**Property:**  openam.header.group 
-**Description:** HTTP Header for group      (**Default:** memberOf)      
+-  **openam.header.group**  - HTTP Header for group      ( **memberOf** )      
 
-**Property:**  openam.header.ldapguid 
-**Description:** HTTP Header for ldapguid      (**Default:** memberid)      
+- **openam.header.ldapguid** - HTTP Header for ldapguid      ( **memberid** )      
 
-**Property:**  openam.header.organization 
-**Description:** HTTP Header for organization    
+-  **openam.header.organization** - HTTP Header for organization    
 
-**Property:**  openam.header.admingroupname 
-**Description:** HTTP Header for Admin Group Name \*Handles multiple values  (**Default:** STORE-Admin)    
+-  **openam.header.admingroupname** - HTTP Header for Admin Group Name \*Handles multiple values  ( **STORE-Admin** )    
 
 ###5.1.2 User Types
 -----
@@ -900,104 +891,82 @@ there.
 
 Configure in: /var/openstorefront/config/openstorefront.properties
 
-  Property                              Description                                                                         Default
-  ------------------------------------- ----------------------------------------------------------------------------------- ----------------
-  ldapmanager.url                       Full URL to the LDAP (ldap://ldapHost:389 or ldap://localhost:389/o=JNDITutorial)   
-  ldapmanager.userDnTemplate            uid={0},ou=users,dc=mycompany,dc=com; Reserved, not currently used                  
-  ldapmanager.authenticationMechanism   NONE, SIMPLE, DIGEST-MD5, etc.                                                      SIMPLE
-  ldapmanager.security.sasl.realm       May be needed for SASL authentication                                               
-  ldapmanager.binddn                    The LDAP user to use in the connection (Full DN name)                               
-  ldapmanager.credentials               The LDAP credentials                                                                
-  ldapmanager.contextRoot               Root to directory to search                                                         
-  ldapmanager.attribute.username        Attribute to map to username                                                        sAMAccountName
-  ldapmanager.attribute.email           Attribute to map to email                                                           mail
-  ldapmanager.attribute.fullname        Attribute to map to fullname                                                        name
-  ldapmanager.attribute.organization    Attribute to map to organization                                                    company
-  ldapmanager.attribute.guid            Attribute to map to guid                                                            objectGUID
+( **Property** -description ( **Default** ))
+
+-   **ldapmanager.url**                       -Full URL to the LDAP (ldap://ldapHost:389 or ldap://localhost:389/o=JNDITutorial)   
+-   **ldapmanager.userDnTemplate**   -         uid={0},ou=users,dc=mycompany,dc=com; Reserved, not currently used                  
+-   **ldapmanager.authenticationMechanism** -  NONE, SIMPLE, DIGEST-MD5, etc.                                                      ( **SIMPLE** )
+-   **ldapmanager.security.sasl.realm** -      May be needed for SASL authentication                                               
+-   **ldapmanager.binddn** -                    The LDAP user to use in the connection (Full DN name)                               
+-   **ldapmanager.credentials** -               The LDAP credentials                                                                
+-   **ldapmanager.contextRoot** -               Root to directory to search                                                         
+-   **ldapmanager.attribute.username** -        Attribute to map to username                                                       ( **sAMAccountName** )
+-   **ldapmanager.attribute.email** -           Attribute to map to email                                                           ( **mail** )
+-   **ldapmanager.attribute.fullname** -        Attribute to map to fullname                                                        ( **name** )
+-   **ldapmanager.attribute.organization** -    Attribute to map to organization                                                    ( **company** )
+-   **ldapmanager.attribute.guid** -            Attribute to map to guid                                                            ( **objectGUID** )
 
 ##5.3 Jira Integration
 ----------------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
 
-  Property                       Description                                                    Default
-  ------------------------------ -------------------------------------------------------------- -----------------------
-  tools.login.user               Login Credentials for Integrations (currently just for jira)   
-  tools.login.pw                 Login Credentials for Integrations (currently just for jira)   
-  jira.connectionpool.size       Resource pool size                                             20
-  jira.connection.wait.seconds   Wait time if the pool is empty                                 60
-  jira.server.url                Jira server to connect to                                      https://jira.di2e.net
+( **Property** -description ( **Default** ))
+
+-  **tools.login.user** -               Login Credentials for Integrations (currently just for jira)   
+-  **tools.login.pw** -                 Login Credentials for Integrations (currently just for jira)   
+-  **jra.connectionpool.size** -       Resource pool size                                             ( **20** )
+-  **jira.connection.wait.seconds** -   Wait time if the pool is empty                                 ( **60** )
+-  **jira.server.url** -                Jira server to connect to                                      ( **https://jira.di2e.net** )
 
 ##5.4 Mail Server
 -----------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
 
-  Property             Description                                                    Default
-  -------------------- -------------------------------------------------------------- ---------------------------
-  mail.smtp.url        Login Credentials for Integrations (currently just for jira)   localhost
-  mail.server.user     Login Credentials for mail server                              
-  mail.server.pw       Login Credentials for mail server                              
-  mail.smtp.port       Mail Port (25 common)                                          
-  mail.use.ssl         Set to â€œtrueâ€? if server requires it                            
-  mail.use.tls         Set to â€œtrueâ€? if server requires it                            
-  mail.from.name       From Name                                                      Storefront Notification
-  mail.from.address    From Email Address                                             donotreply@storefront.net
-  mail.reply.name      Reply name (usually display at the bottom the message)         Support
-  mail.reply.address   Reply email (usually display at the bottom the message)        helpdesk@di2e.net
+( **Property** -description ( **Default** ))
+
+-  **mail.smtp.url** -        Login Credentials for Integrations (currently just for jira)   ( **localhost** )
+-  **mail.server.user** -     Login Credentials for mail server                              
+-  **mail.server.pw** -       Login Credentials for mail server                              
+-  **mail.smtp.port** -       Mail Port (25 common)                                          
+-  **mail.use.ssl** -         Set to true if server requires it                            
+-  **mail.use.tls** -         Set to true if server requires it                            
+-  **mail.from.name** -       From Name                                                      ( **Storefront Notification** )
+-  **mail.from.address** -    From Email Address                                             ( **donotreply@storefront.net** )
+-  **mail.reply.name** -      Reply name (usually display at the bottom the message)         ( **Support** )
+-  **mail.reply.address** -   Reply email (usually display at the bottom the message)        ( **helpdesk@di2e.net** )
 
 ##5.5 Other Application Properties
 ----------------------------
 
 Configure in: /var/openstorefront/config/openstorefront.properties
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Property                             Description                                                                                                                                                                Default
-  ------------------------------------ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- --------------------------------
-  errorticket.max                      Max amount of ticket to hold (culls the oldest records upon filling)                                                                                                       5000
+( **Property** -description ( **Default** ))
 
-  trackingrecords.max.age.days         Max age of tracking records                                                                                                                                                365
-
-  solr.server.url                      URL to the SOLR instance to use.                                                                                                                                           http://localhost:8983/solr/esa
-                                                                                                                                                                                                                  
-                                       NOTE: it should point to the appropriate collection.                                                                                                                       
-
-  db.connectionpool.min                DB min pool size                                                                                                                                                           5
-
-  db.connectionpool.max                DB max pool size                                                                                                                                                           40
-
-  db.user                              Should match orientdb-server-config.xml                                                                                                                                    
-
-  db.pw                                Should match orientdb-server-config.xml                                                                                                                                    
-
-  job.working.state.override.minutes   Max job running time. Use for Integrations. To determine if a job got stuck.                                                                                               30
-
-  message.archive.days                 User message max age of archives                                                                                                                                           30
-
-  message.queue.minmintues             User message queue time or the time the message waits before sending.                                                                                                      10
-
-  message.maxretires                   Max times the user message will try to send if unable to deliver.                                                                                                          5
-
-  message.recentchanges.days           Time between â€œrecent changesâ€? messages from being sent.                                                                                                                    28
-
-  app.title                            Title of the application. Used in emails but, also other places.                                                                                                           DI2E Storefront
-
-  external.usermanager                 Specifies the manager that is used for external user management. The manager must be supported by the application. ( IniRealmManager or LdapUserManager)                   IniRealmManager
-
-  external.sync.activate               Set to â€˜true' to run the sync                                                                                                                                              False
-
-  dblog.on                             Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   True
-
-  dblog.maxrecords                     Maximum database records to store                                                                                                                                          100000
-
-  dblog.logSecurityFilter              Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          False
+-  **errorticket.max**          -            Max amount of ticket to hold (culls the oldest records upon filling)                                                                                                       ( **5000** )
+-  **trackingrecords.max.age.days**  -       Max age of tracking records                                                                                                                                                ( **365** )
+-  **solr.server.url**     -                 URL to the SOLR instance to use. ; it should point to the appropriate collection.                                                                               ( **http://localhost:8983/solr/esa** )
+-  **db.connectionpool.min**    -            DB min pool size                                                                                                                                                           ( **5** )
+-  **db.connectionpool.max** -               DB max pool size                                                                                                                                                           ( **40** )
+-  **db.user**             -                 Should match orientdb-server-config.xml                                                                                                                                    
+-  **db.pw**            -                    Should match orientdb-server-config.xml                                                                                                                                    
+-  **ob.working.state.override.minutes** -  Max job running time. Use for Integrations. To determine if a job got stuck.                                                                                               ( **30** )
+-  **message.archive.days**        -         User message max age of archives                                                                                                                                           ( **30** )
+-  **message.queue.minmintues**    -         User message queue time or the time the message waits before sending.                                                                                                      ( **10** )
+-  **message.maxretires**    -               Max times the user message will try to send if unable to deliver.                                                                                                          ( **5** )
+-  **message.recentchanges.days**   -        Time between "recent changes" messages from being sent.                                                                                                                    ( **28** )
+-  **app.title**   -                         Title of the application. Used in emails but, also other places.                                                                                                           ( **DI2E Storefront** )
+-  **external.usermanager**   -              Specifies the manager that is used for external user management. The manager must be supported by the application. ( IniRealmManager or LdapUserManager)                   ( **IniRealmManager** )
+-  **external.sync.activate**  -             Set to 'true' to run the sync                                                                                                                                              (**False**)
+-  **dblog.on**        -                     Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   ( **True** )
+-  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **100000** )
+-  **dblog.logSecurityFilter**  -            Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          ( **False** )
   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #6. Database Management
 -----
 
-[**DATABASE
-REFRESH**](https://confluence.di2e.net/display/STORE/Database+Refresh)**:**
 The application handles all database interaction transparently, so
 direct database access and manipulation is not needed.  
 
@@ -1014,7 +983,7 @@ preserved by performing an export from the component admin tool.
 Make a backup by copying all of the files in the /var/openstorefront/db
 directory or use the following console tools steps:
 
-1.  Stop the Tomcat server Â (e.g. service tomcat stop)
+1.  Stop the Tomcat server  (e.g. service tomcat stop)
 
 2.  Remove the folder /var/openstorefront/db
     (rm -rf /var/openstorefront/db)
@@ -1041,7 +1010,7 @@ the application.
 
 2.  Extract the archive
 
-3.  Run the console ./bin/console.shÂ 
+3.  Run the console ./bin/console.sh 
 
 4.  Connect to the DB: connect remote: localhost/openstorefront
     (user) (password) (see the
@@ -1078,7 +1047,7 @@ there as well.
 If you want to contribute to this project and you know Git, Yoeman,
 Bower, and Grunt, these build instructions should suffice:
 
-\1.  To build Open-Storefront:
+1)  To build Open-Storefront:
 
 > \$ git clone https://github.com/dshurt/Open-Storefront.git
 >
@@ -1086,7 +1055,7 @@ Bower, and Grunt, these build instructions should suffice:
 >
 > \$ grunt build
 
-\2.  Install the following:
+2)  Install the following:
 
 -   Git 1.9.4
 
@@ -1110,14 +1079,14 @@ Bower, and Grunt, these build instructions should suffice:
 
 Use the following steps to install and configure Git on your OS:
 
-1.  Linux: Install the package Git using \$ sudo apt-get install git
+1)  Linux: Install the package Git using \$ sudo apt-get install git
 
-2.  Tip, also install gitk to visualize your Git log using \$ sudo
+2)  Tip, also install gitk to visualize your Git log using \$ sudo
     apt-get install gitk
 
 -   Windows, Mac OSX: Download from: [GIT]<http://git-scm.com/>
 
-\3.  Tip for Mac OSX: Also
+3)  Tip for Mac OSX: Also
     install[GitX](file:///\\hera\C4ISR_DSP\NRO\DI2E\Storefront\documentation\GitX) (<http://gitx.frim.nl/>)
     to visualize your Git log.
 
@@ -1125,13 +1094,13 @@ Use the following steps to install and configure Git on your OS:
     > [instructions](http://help.github.com/git-installation-redirect):
     > <https://help.github.com/articles/set-up-git/>
 
-\4.  Check if Git is installed correctly:
+4)  Check if Git is installed correctly:
 
     \$ git --version
 
     git version 1.7.1
 
-\a.  Configure Git correctly:
+>a)  Configure Git correctly:
 
     \$ git config --global user.name "My Full Name"
 
@@ -1143,12 +1112,12 @@ Use the following steps to install and configure Git on your OS:
 
     user.email=gds...@gmail.com
 
-WARNING: the fieldÂ user.nameÂ is your full name,Â not your username*.*
+WARNING: the field user.name is your full name, not your username*.*
 
--   NOTE: the fieldÂ user.emailÂ should match an email address of your
+-   NOTE: the field user.email should match an email address of your
     GitHub account.
 
--   More info onÂ GitHub:
+-   More info on GitHub:
     <https://help.github.com/articles/setting-your-email-in-git/>.
 
 \b.  Get a GitHub account
@@ -1156,7 +1125,7 @@ WARNING: the fieldÂ user.nameÂ is your full name,Â not your username*.*
 -   And add your public key on GitHub, using the instructions here:
     <https://help.github.com/articles/generating-ssh-keys/>
 
--   To learn more about Git, read the free bookÂ [Git
+-   To learn more about Git, read the free book [Git
     Pro](http://progit.org/book/) (<http://git-scm.com/book/en/v2>).
 
 ####8.1.1.3 Getting the Sources Locally
@@ -1173,7 +1142,7 @@ To fork the code:
 2.  Go to [the specific
     repository (Open-Storefront)](https://github.com/dshurt/Open-Storefront)
 
-3.  Click the top right **Fork** buttonÂ
+3.  Click the top right **Fork** button
 
 NOTE: By forking the repository, you can commit and push your changes
 without our consent and we can easily review and then merge your changes
@@ -1226,7 +1195,7 @@ and you'll be credited as the author.
 
 >\b.  Surf to that topic branch on your fork on GitHub.
 
->\c.  Click the **Pull Request**Â buttonÂ at the top of the page.
+>\c.  Click the **Pull Request** button at the top of the page.
 
 \2.  Accepting a pull request:
 
@@ -1234,10 +1203,10 @@ and you'll be credited as the author.
 
 >\b.  Review the changes
 
->\c.  Click the **Merge help** buttonÂ on the bottom of the page and follow
+>\c.  Click the **Merge help** button on the bottom of the page and follow
     the instructions of GitHub to apply those changes on the master.
 
--   Or, use the **Merge** buttonÂ if there are no merge conflicts.
+-   Or, use the **Merge** button if there are no merge conflicts.
 
 ###8.1.2 Installing and Configuring NPM
 -----
@@ -1335,7 +1304,7 @@ into issues with the npm install creating the Bower components.
 
 ####8.1.5.2 Running the build
 
-Go into a project's front end base directory, for exampleÂ Open-
+Go into a project's front end base directory, for example Open-
 
 -   Storefront/client/openstorefront:
 
@@ -1403,53 +1372,49 @@ The following key libraries were used in the development:
 
 -   Orient DB- No SQL/Multi-Model database
 
-   ### Building with Maven
+###8.2.3 Building with Maven
 
 run "mvn install" from \$PROJECT\_HOME/server/openstorefront
 
 (Skip tests)\
 Mav -Dmaven.test.skip=true or -DskipTests=true install
 
-### Deploying
+###8.2.4 Deploying
 
 Copy the war artifact to the webapp directory for Tomcat. Some IDEs can
 handle this. See application server documentation for other deployment
 mechanisms.
 
-### Building 
+###8.2.5 Building 
 
 This puts the client and server pieces together for a simple deployment.
 
 1.  Build Client from client/openstorefront/
 
-<!-- -->
+>\a.  npm install
 
-a.  npm install
+>\b.  grunt build-prod or grunt build-debug for ease debugging
 
-b.  grunt build-prod or grunt build-debug for ease debugging
+>>\1.  Build Server from server/openstorefront/
 
-    1.  Build Server from server/openstorefront/
+>\c.  mvn install
 
-<!-- -->
-
-a.  mvn install
-
-    1.  Running
-        -------
+##8.3  Running
+-------
 
 The application is targeted to run in Tomcat 7; however, it may run in
 other compatible containers with little or no changes.
 
 **NOTE:** Searching requires an external ESA/(Solr) instance setup.
 
-Setting up Solr
+##8.4 Setting up Solr
 ---------------
 
 ESA uses Solr 4.3.1, so the application is setup to use that specific
 version.
 
 Download Version 4.3.1
-fromÂ <http://archive.apache.org/dist/lucene/solr/> and perform the
+from [Solr](http://archive.apache.org/dist/lucene/solr/) and perform the
 following steps:
 
 1.  Unpackage
@@ -1459,15 +1424,15 @@ following steps:
 
 3.  configure openstorefront to point to Solr
 
-    a.  /var/openstorefront/config/openstorefront.properties
+ >\a.  /var/openstorefront/config/openstorefront.properties
 
 4.  edit solr.server.url to
     solr.server.url=http://localhost:8983/solr/collection1
 
 5.  Start Solr from (solr install dir)/example - java -jar start.jar
 
-    1.  Testing
-        -------
+ ##8.5 Testing
+-------
 
 -   Unit test run as part of the Maven install.
 
@@ -1478,11 +1443,11 @@ following steps:
 
     -   npm test (requires Chrome Web Browser to be installed)
 
-    1.  Contributing Patches
-        --------------------
+##8.6  Contributing Patches
+--------------------
 
 The code is hosted on the public GitHub
-(<https://github.com/di2e/openstorefront>). Create a pull request to the
+[https://github.com/di2e/openstorefront](<https://github.com/di2e/openstorefront>). Create a pull request to the
 current release branch. A pull request will be reviewed prior to merge.
 Please file bugs or enhancement by submitting a ticket to:
 
@@ -1491,7 +1456,7 @@ Please file bugs or enhancement by submitting a ticket to:
 If you are unable to obtain a login account then submit an issue ticket
 on the GitHub site.
 
-Versioning Strategy
+8.7 Versioning Strategy
 -------------------
 
 The software is versioned based on the following:
