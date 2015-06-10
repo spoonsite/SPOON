@@ -78,6 +78,18 @@
         <url-pattern>/index.html</url-pattern>
     </filter-mapping>
 	
+	<!--
+	<filter>
+		<filter-name>SassCompiler</filter-name>
+		<filter-class>com.darrinholst.sass_java.SassCompilingFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>SassCompiler</filter-name>
+		<url-pattern>*.css</url-pattern>
+	</filter-mapping>	
+	-->
+	
     <filter>
         <display-name>Stripes Filter</display-name>
         <filter-name>StripesFilter</filter-name>
