@@ -218,11 +218,14 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
               if (filter){
                 architecture = filter.architectureFlg;
               }
+              scope.$emit('$TRIGGERLOAD', 'resultsLoader');
               Business.componentservice.doSearch(scope.search.type, scope.search.code, architecture).then(function(result){
+                scope.$emit('$TRIGGERUNLOAD', 'resultsLoader');
                 if (result)
                 {
                   if (result.data && result.data.length > 0) { 
                     scope.data = angular.copy(result.data);
+                    $timeout(scope.shortenDescription, 200);
                   } else {
                     scope.data = [];
                   }
@@ -236,6 +239,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                   })
                 })
               }, function(){
+                scope.$emit('$TRIGGERUNLOAD', 'resultsLoader');
                 scope.data = [];
                 $timeout(function(){
                   scope.init();
@@ -259,6 +263,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
               scope.showCompare = true;
             }
+             
           }, 100);
         } //
       }
@@ -321,44 +326,38 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         $('[data-toggle=\'tooltip\']').tooltip();
       };
 
-      $timeout(function(){
-        element.find('.shortDescription').dotdotdot({
-          /*  The text to add as ellipsis. */
-          ellipsis  : '... ',
+      scope.shortenDescription = function() {
+          element.find('.shortDescription').dotdotdot({
+            /*  The text to add as ellipsis. */
+            ellipsis: '... ',
+            /*  How to cut off the text/html: 'word'/'letter'/'children' */
+            wrap: 'word',
+            /*  Wrap-option fallback to 'letter' for long words */
+            fallbackToLetter: true,
+            /*  jQuery-selector for the element to keep and put after the ellipsis. */
+            after: null,
+            /*  Whether to update the ellipsis: true/'window' */
+            watch: true,
+            /*  Optionally set a max-height, if null, the height will be measured. */
+            height: 150,
+            /*  Deviation for the height-option. */
+            tolerance: 0,
+            /*  Callback function that is fired after the ellipsis is added,
+             receives two parameters: isTruncated(boolean), orgContent(string). */
+            callback: function (isTruncated, orgContent) {
+            },
+            lastCharacter: {
+              /*  Remove these characters from the end of the truncated text. */
+              remove: [' ', ',', ';', '.', '!', '?'],
+              /*  Don't add an ellipsis if this array contains 
+               the last character of the truncated text. */
+              noEllipsis: []
+            }
+          });
+      };
 
-          /*  How to cut off the text/html: 'word'/'letter'/'children' */
-          wrap    : 'word',
 
-          /*  Wrap-option fallback to 'letter' for long words */
-          fallbackToLetter: true,
-
-          /*  jQuery-selector for the element to keep and put after the ellipsis. */
-          after   : null,
-
-          /*  Whether to update the ellipsis: true/'window' */
-          watch   : true,
-
-          /*  Optionally set a max-height, if null, the height will be measured. */
-          height    : 150,
-
-          /*  Deviation for the height-option. */
-          tolerance : 0,
-
-          /*  Callback function that is fired after the ellipsis is added,
-          receives two parameters: isTruncated(boolean), orgContent(string). */
-          callback  : function( isTruncated, orgContent ) {},
-
-          lastCharacter : {
-
-            /*  Remove these characters from the end of the truncated text. */
-            remove    : [ ' ', ',', ';', '.', '!', '?' ],
-
-            /*  Don't add an ellipsis if this array contains 
-            the last character of the truncated text. */
-            noEllipsis  : []
-          }
-        })
-      })//
+      $timeout(scope.shortenDescription)//
 
     }//
   };

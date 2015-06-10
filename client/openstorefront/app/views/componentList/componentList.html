@@ -13,7 +13,11 @@
     </label>
     <br />
     <div ng-class="listOfClasses">
+	<loader trigger="resultsLoader"></loader>
+	
       <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
+      <p ng-show="!data.length">No items found</p>
+      <p ng-show="data.length">Found: {{data.length}}</p>
       <table class="table table-striped" id="resultsTable">
         <tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;">
           <td ng-show="showitem(item)" style="white-space: inherit;" id="{{getComponentScroll(item)}}">
@@ -60,6 +64,7 @@
           </td>
         </tr>
       </table>
+	  
     </div>
   </div>
 </div>

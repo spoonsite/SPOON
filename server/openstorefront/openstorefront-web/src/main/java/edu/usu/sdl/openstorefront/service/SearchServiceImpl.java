@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.service.manager.SolrManager;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrAndOr;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrEquals;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
@@ -66,6 +65,8 @@ public class SearchServiceImpl
 {
 
 	private static final Logger log = Logger.getLogger(SearchServiceImpl.class.getName());
+
+	private static final String SPECIAL_ARCH_SEARCH_CODE = "0";
 
 	@Override
 	public List<ComponentSearchView> getAll()
@@ -354,18 +355,21 @@ public class SearchServiceImpl
 	public List<ComponentSearchView> architectureSearch(AttributeCodePk pk, FilterQueryParams filter)
 	{
 		List<ArticleView> articles = this.getAttributeService().getArticlesForCodeLike(pk);
-		Map<String, Component> componentMap = new HashMap<>();
-		List<Component> components = new ArrayList<>();
 
-		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, pk);
+		List<ComponentSearchView> views = new ArrayList<>();
+		for (ArticleView article : articles) {
+			views.add(ComponentSearchView.toView(article));
+		}
+
+		AttributeCode attributeCodeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
+		attributeCodePkExample.setAttributeType(pk.getAttributeType());
+		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
+		attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
+
+		AttributeCode attributeCode = persistenceService.queryOneByExample(AttributeCode.class, attributeCodeExample);
 		if (attributeCode == null) {
-			AttributeCode attributeCodeExample = new AttributeCode();
-			AttributeCodePk attributeCodePkExample = new AttributeCodePk();
-			attributeCodePkExample.setAttributeType(pk.getAttributeType());
-			attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
-			attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
-
-			attributeCode = persistenceService.queryOneByExample(AttributeCode.class, attributeCodeExample);
+			attributeCode = persistenceService.findById(AttributeCode.class, pk);
 		}
 
 		AttributeCode attributeExample = new AttributeCode();
@@ -383,7 +387,11 @@ public class SearchServiceImpl
 		}
 
 		QueryByExample queryByExample = new QueryByExample(attributeExample);
-		queryByExample.setLikeExample(attributeCodeLikeExample);
+
+		//check for like skip
+		if (SPECIAL_ARCH_SEARCH_CODE.equals(pk.getAttributeCode()) == false) {
+			queryByExample.setLikeExample(attributeCodeLikeExample);
+		}
 
 		List<AttributeCode> attributeCodes = persistenceService.queryByExample(AttributeCode.class, queryByExample);
 		List<String> ids = new ArrayList();
@@ -392,31 +400,21 @@ public class SearchServiceImpl
 		});
 
 		if (ids.isEmpty() == false) {
+
 			String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
 
 			Map<String, Object> params = new HashMap<>();
 			params.put("attributeType", pk.getAttributeType());
 			params.put("attributeCodeIdListParam", ids);
 			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
+			Set<String> uniqueComponents = new HashSet<>();
+			componentAttributes.forEach(componentAttribute -> {
+				uniqueComponents.add(componentAttribute.getComponentId());
+			});
 
-			for (ComponentAttribute componentAttribute : componentAttributes) {
-				Component temp = persistenceService.findById(Component.class, componentAttribute.getComponentAttributePk().getComponentId());
-				if (ApprovalStatus.APPROVED.equals(temp.getApprovalState())) {
-					componentMap.put(temp.getComponentId(), temp);
-				}
-			}
+			views.addAll(getComponentService().getSearchComponentList(new ArrayList<>(uniqueComponents)));
 		}
 
-		// eliminate duplicate componentID on search results
-		components.addAll(componentMap.values());
-
-		List<ComponentSearchView> views = new ArrayList<>();
-		for (ArticleView article : articles) {
-			views.add(ComponentSearchView.toView(article));
-		}
-		for (Component component : components) {
-			views.add(ComponentSearchView.toView(component));
-		}
 		return views;
 	}
 
