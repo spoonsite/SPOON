@@ -182,7 +182,7 @@ The CIVs, as defined by the DI2E PMO, are as follows:
     environment (providing resources) for A; B does not actively manage
     A (e.g. OS, VM).
 
--   **Class B: A-contained In-B**. Component A â€œlives inâ€? B; B manages
+-   **Class B: A-contained In-B**. Component A Ã¢â‚¬Å“lives inÃ¢â‚¬? B; B manages
     the lifecycle of A, from cradle to grave. (e.g. Widget in OWF; EJB
     in JEE server; OSGi bundle in Karaf; SCA).
 
@@ -527,7 +527,7 @@ To deploy the application, copy openstorefront.war to
 
 The application configuration and data are stored in
 /var/openstorefront/. Make sure the user running the application has r/w
-permission for that directory.  All directories are created upon
+permission for that directory. Â All directories are created upon
 application startup. The high level directory map is stored under
 /var/openstorefront/.
 
@@ -678,7 +678,7 @@ Tomcat.
 
 1.  Make sure the Agent Profile has already been created in OpenAM
 
-2.  Create a *pwd.txt* file at C:\\Temp\\pwd.txt and add your Agent
+2.  Create a *pwd.txt* file at C:\\Temp\\pwd.txtÂ and add your Agent
     Profile password to it
 
 3.  Shutdown the Tomcat server that is going to run your web application
@@ -687,9 +687,9 @@ Tomcat.
 
 5.  Extract Tomcat-v6-7-Agent-3.3.0.zip to a known directory
 
-6.  CD into the j2ee\_agents/tomcat\_v6\_agent/bin directory
+6.  CDÂ into theÂ j2ee\_agents/tomcat\_v6\_agent/binÂ directory
 
-7.  Execute agentadmin --install to install the agent
+7.  ExecuteÂ agentadmin --installÂ to install the agent
 
 ###4.10.3 References
 ------
@@ -711,17 +711,17 @@ for OpenAM configuration information.
 Use the following steps to configure the OpenAM policy.
 
 1.  Open up OpenAM in a web
-    browser http://c00788.usurf.usu.edu:8080/openam
+    browserÂ http://c00788.usurf.usu.edu:8080/openam
 
-2.  Log into OpenAM using amadmin
+2.  Log into OpenAM usingÂ amadmin
 
-3.  Click on Access Control -> /(Top Level Realm) -> Policies
+3.  Click onÂ Access Control -> /(Top Level Realm) -> Policies
 
-4.  Click on New Policy
+4.  Click onÂ New Policy
 
->>a.  Give the Policy a name of Storefront Policy
+>>a.  Give the Policy a name ofÂ Storefront Policy
 
->>b.  In the Rules table click New
+>>b.  In the Rules table clickÂ New
 
 >>>i.  Select URL Policy Agent and click **Next**
 
@@ -729,11 +729,11 @@ Use the following steps to configure the OpenAM policy.
 
 >>>-   Name: Allow Storefront Access
 
->>>-   Resource Name: http://c00788.usurf.usu.edu:8081/agentsample/
+>>>-   Resource Name:Â http://c00788.usurf.usu.edu:8081/agentsample/
 
->>>-   Check the boxes for GET and POST
+>>>-   Check the boxes forÂ GETÂ andÂ POST
 
->>c.  In the Subjects table click **New**
+>>c.  In the Subjects table clickÂ **New**
 
 >>>i.  Select Authenticated Users and click Next
 
@@ -743,7 +743,7 @@ Use the following steps to configure the OpenAM policy.
 
 >>d.  Create a new response provider
 
->>-   In the Dynamic Attribute make sure uid and isMemberOf is
+>>-   In the Dynamic Attribute make sureÂ uidÂ andÂ isMemberOfÂ is
     selected (ctrl-click)
 
 >>-   Click on **Finish**
@@ -754,23 +754,23 @@ Use the following steps to configure the OpenAM policy.
 Use the following steps to create the agent profile.
 
 1.  Open up OpenAM in a web
-    browser http://c00788.usurf.usu.edu:8080/openam
+    browserÂ http://c00788.usurf.usu.edu:8080/openam
 
-2.  Log into OpenAM using amadmin
+2.  Log into OpenAM usingÂ amadmin
 
-3.  Click on **Access Control** &gt; **Top Level Realm** &gt;
+3.  Click onÂ **Access Control** &gt; **Top Level Realm** &gt;
     **Agents** &gt; **J2EE**
 
-4.  Create a new J2EE agent by clicking on the **New...** button under
+4.  Create a new J2EE agent by clicking on theÂ **New...**Â button under
     Agent
 
 5.  Create the agent with the following parameters:
 
->-   Name: myagent
+>-   Name:Â myagent
 
->-   Password: password
+>-   Password:Â password
 
->-   Configuration: Centralized
+>-   Configuration:Â Centralized
 
 >-   Server URL: http://c00788.usurf.usu.edu:8080/openam
 
@@ -962,13 +962,15 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **dblog.on**        -                     Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   ( **True** )
 -  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **100000** )
 -  **dblog.logSecurityFilter**  -            Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          ( **False** )
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-  **jirafeedback.show** - Allows for user submited jira feedback  (**True**)
+
 
 #6. Database Management
 -----
 
 The application handles all database interaction transparently, so
-direct database access and manipulation is not needed.  
+direct database access and manipulation is not needed. Â 
 
 See the following for information on outside control (should rarely be
 needed/used).
@@ -983,10 +985,10 @@ preserved by performing an export from the component admin tool.
 Make a backup by copying all of the files in the /var/openstorefront/db
 directory or use the following console tools steps:
 
-1.  Stop the Tomcat server  (e.g. service tomcat stop)
+1.  Stop the Tomcat server Â (e.g. service tomcat stop)
 
 2.  Remove the folder /var/openstorefront/db
-    (rm -rf /var/openstorefront/db)
+    (rm -rfÂ /var/openstorefront/db)
 
 3.  Start the tomcat server
 
@@ -1010,7 +1012,7 @@ the application.
 
 2.  Extract the archive
 
-3.  Run the console ./bin/console.sh 
+3.  Run the console ./bin/console.shÂ 
 
 4.  Connect to the DB: connect remote: localhost/openstorefront
     (user) (password) (see the
@@ -1020,10 +1022,10 @@ the application.
 The database supports an SQL like interface and then adds other
 functionality on top.
 
--   See [Orient DB Backup](http://www.orientechnologies.com/docs/last/orientdb.wiki/Backup-and-Restore.html) for
+-   SeeÂ [Orient DB Backup](http://www.orientechnologies.com/docs/last/orientdb.wiki/Backup-and-Restore.html)Â for
     information about backup
 
--   See [Orient DB Export/Import](http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html) for
+-   SeeÂ [Orient DB Export/Import](http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html)Â for
     export and imports.
 
 #7. External Application API
@@ -1047,7 +1049,7 @@ there as well.
 If you want to contribute to this project and you know Git, Yoeman,
 Bower, and Grunt, these build instructions should suffice:
 
-1)  To build Open-Storefront:
+1)  To buildÂ Open-Storefront:
 
 > \$ git clone https://github.com/dshurt/Open-Storefront.git
 >
@@ -1081,16 +1083,16 @@ Use the following steps to install and configure Git on your OS:
 
 1)  Linux: Install the package Git using \$ sudo apt-get install git
 
-2)  Tip, also install gitk to visualize your Git log using \$ sudo
+2)  Tip, also installÂ gitk to visualize your Git log using \$ sudo
     apt-get install gitk
 
 -   Windows, Mac OSX: Download from: [GIT]<http://git-scm.com/>
 
 3)  Tip for Mac OSX: Also
-    install[GitX](file:///\\hera\C4ISR_DSP\NRO\DI2E\Storefront\documentation\GitX) (<http://gitx.frim.nl/>)
+    install[GitX](file:///\\hera\C4ISR_DSP\NRO\DI2E\Storefront\documentation\GitX)Â (<http://gitx.frim.nl/>)
     to visualize your Git log.
 
--   More info [in github's git installation
+-   More infoÂ [in github's git installation
     > [instructions](http://help.github.com/git-installation-redirect):
     > <https://help.github.com/articles/set-up-git/>
 
@@ -1112,12 +1114,12 @@ Use the following steps to install and configure Git on your OS:
 
     user.email=gds...@gmail.com
 
-WARNING: the field user.name is your full name, not your username*.*
+WARNING: the fieldÂ user.nameÂ is your full name,Â not your username*.*
 
--   NOTE: the field user.email should match an email address of your
+-   NOTE: the fieldÂ user.emailÂ should match an email address of your
     GitHub account.
 
--   More info on GitHub:
+-   More info onÂ GitHub:
     <https://help.github.com/articles/setting-your-email-in-git/>.
 
 \b.  Get a GitHub account
@@ -1125,7 +1127,7 @@ WARNING: the field user.name is your full name, not your username*.*
 -   And add your public key on GitHub, using the instructions here:
     <https://help.github.com/articles/generating-ssh-keys/>
 
--   To learn more about Git, read the free book [Git
+-   To learn more about Git, read the free bookÂ [Git
     Pro](http://progit.org/book/) (<http://git-scm.com/book/en/v2>).
 
 ####8.1.1.3 Getting the Sources Locally
@@ -1133,13 +1135,13 @@ WARNING: the field user.name is your full name, not your username*.*
 
 You should fork the code before changing or cloning it (recommended).
 This will make it easier to share your changes later. For more info on
-forking, read [GitHub's help on forking](<https://help.github.com/articles/fork-a-repo/>).
+forking, readÂ [GitHub's help on forking](<https://help.github.com/articles/fork-a-repo/>).
 
 To fork the code:
 
-1.  For example, Open-Storefront:
+1.  For example,Â Open-Storefront:
 
-2.  Go to [the specific
+2.  Go toÂ [the specific
     repository (Open-Storefront)](https://github.com/dshurt/Open-Storefront)
 
 3.  Click the top right **Fork** button
@@ -1167,8 +1169,8 @@ Use the following steps to locally clone a fork.
 >
 > \$ ls
 
-WARNING: You can clone with the *SSH URL*. It is possible that
-the *HTTPS URL* can be unreliable.
+WARNING: You can clone with theÂ *SSH URL*. It is possible that
+theÂ *HTTPS URL*Â can be unreliable.
 
 NOTE: It's recommended to name the cloned directory the same as the
 repository (the default), so the helper scripts work.
@@ -1195,7 +1197,7 @@ and you'll be credited as the author.
 
 >\b.  Surf to that topic branch on your fork on GitHub.
 
->\c.  Click the **Pull Request** button at the top of the page.
+>\c.  Click the **Pull Request**Â buttonÂ at the top of the page.
 
 \2.  Accepting a pull request:
 
@@ -1203,18 +1205,18 @@ and you'll be credited as the author.
 
 >\b.  Review the changes
 
->\c.  Click the **Merge help** button on the bottom of the page and follow
+>\c.  Click the **Merge help** buttonÂ on the bottom of the page and follow
     the instructions of GitHub to apply those changes on the master.
 
--   Or, use the **Merge** button if there are no merge conflicts.
+-   Or, use the **Merge** buttonÂ if there are no merge conflicts.
 
 ###8.1.2 Installing and Configuring NPM
 -----
 
-Installing [node.js](https://nodejs.org/) on your computer will also
+InstallingÂ [node.js](https://nodejs.org/) on your computer will also
 install the node package manager (npm), but if you'd rather just go
 straight to the source, you can follow the
-instructions (<https://raw.githubusercontent.com/npm/npm/master/README.md>)
+instructionsÂ (<https://raw.githubusercontent.com/npm/npm/master/README.md>)
 in order to install the npm manually.
 
 No special configuration is required, but details on npm configuration
@@ -1304,7 +1306,7 @@ into issues with the npm install creating the Bower components.
 
 ####8.1.5.2 Running the build
 
-Go into a project's front end base directory, for example Open-
+Go into a project's front end base directory, for exampleÂ Open-
 
 -   Storefront/client/openstorefront:
 
