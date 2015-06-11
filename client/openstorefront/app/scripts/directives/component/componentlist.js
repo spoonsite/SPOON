@@ -41,6 +41,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       filters: '=',
       clickCallback: '=',
       blankTarget: '=',
+      showResultCount: '=',
       hideMore: '@',
       // list: '=',
       // search: '&',
