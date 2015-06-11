@@ -182,7 +182,7 @@ The CIVs, as defined by the DI2E PMO, are as follows:
     environment (providing resources) for A; B does not actively manage
     A (e.g. OS, VM).
 
--   **Class B: A-contained In-B**. Component A â€œlives inâ€? B; B manages
+-   **Class B: A-contained In-B**. Component "lives in"  B; B manages
     the lifecycle of A, from cradle to grave. (e.g. Widget in OWF; EJB
     in JEE server; OSGi bundle in Karaf; SCA).
 
@@ -963,7 +963,6 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **100000** )
 -  **dblog.logSecurityFilter**  -            Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          ( **False** )
 -  **jirafeedback.show** - Allows users to provide jira feedback (True/False) ( **True** )
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #6. Database Management
 -----
