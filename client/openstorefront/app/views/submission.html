@@ -2,6 +2,7 @@
 body {
   position: relative;
   background:#ddd;
+  background: url('/openstorefront/images/squared_metal.png');
 }
 </style>
 <!--[if gte IE 9]>
@@ -13,6 +14,47 @@ body {
   <![endif]-->
 
   <!-- Until we figure it out, IE9 is having issues uploading files. A warning message has been put in -->
+  <div class=" top color_primary_background navbar navbar-default navigation" style="  border-bottom: 3px solid #FF811A;"> 
+	  <div class="container-fluid">
+        <div ng-cloak>
+          <!-- fa fa-home -->
+          <a class="navbar-brand" href="javascript: void(0)" ng-click="sendHome();">
+            <div style="height: 50px; width: 180px; text-align:center; display:inline-block;">
+              <!-- <div style="padding: 6px; width: 300px;">
+                <div style="">
+                  <span class='logo' data-toggle="tooltip" data-placement="bottom" data-title="Go Back To Home Page" data-trigger="hover">
+                    <span class="hidden-xs">DI2E</span>&nbsp;Clearinghouse
+                  </span>
+                  &nbsp;<i class="ic ic-home2"></i>
+                </div>
+              </div> -->
+              <div style="width: 250px; text-align: left; border-radius: 0px 8px 8px 0px; background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 81%, rgba(255,255,255,0) 100%); background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(81%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: -o-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=1 );" data-toggle="tooltip" data-placement="bottom" data-title="Go Back To Home Page" data-trigger="hover">
+                <!-- <div style="width: 250px; text-align: left; background: white; border-radius: 0px 8px 8px 0px; border: 1px solid #343f54;" data-toggle="tooltip" data-placement="bottom" data-title="Go Back To Home Page" data-trigger="hover"> -->
+                <!-- <img src="images/logo/logo-only-words.svg" alt="" style="height: 44px; margin: 3px 31px;"> -->
+                <img ng-cloak src="images/logo/logo-only-words.svg" alt="" style="height: 49px; margin: 3px 15px 0px 15px">
+              </div>
+            </div>             
+          </a>
+        </div> 
+      </div>  
+      <div class="collapse navbar-collapse center navSearch" id="bs-example-navbar-collapse-1" style="text-align: center;">
+		  <span style="text-align: center; width: 100%; font-size: 35px; color: white;">
+			Clearinghouse Submission Form
+		  </span>
+      </div>
+      <div class="collapse navbar-collapse center navSearch" id="bs-example-navbar-collapse-2">
+        <ul class="nav navbar-nav">
+          <li ng-show="user.info.admin"><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); send('/admin'); ">Admin Tools</a></li>
+          <li ng-show="user.info.admin" class="divider"></li>
+          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'User Profile'); ">User Profile</a></li>
+          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Watches'); ">Watches</a></li>   
+          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Component Feedback'); ">Component Feedback</a></li>
+          <li class="divider"></li>
+          <li ng-show="user.isLoggedIn"><a href="/openstorefront/Login.action?Logout" ng-click="localCache.clear()">Logout</a></li>   
+        </ul>
+      </div>
+    </div>
+  </div>  
   <div masked="submissionLoader" class="container bs-docs-container">
     <!-- <loader trigger="submissionLoader"></loader> -->
     <div  ng-controller="SubmissionCtrl" >
@@ -82,7 +124,7 @@ body {
         <div class="row">
           <div class="col-md-12 hidden-sm hidden-xs">
             <div id="top" style="padding:0px 0px 25px 0px;">
-              <h1>Clearinghouse Component Submission Form.</h1>
+              
               <!--[if lt IE 10]>
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-warning" style="color:#ff811a"></i></span>
