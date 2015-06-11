@@ -962,6 +962,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **dblog.on**        -                     Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   ( **True** )
 -  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **100000** )
 -  **dblog.logSecurityFilter**  -            Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          ( **False** )
+-  **jirafeedback.show** - Allows users to provide jira feedback (True/False) ( **True** )
   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #6. Database Management
