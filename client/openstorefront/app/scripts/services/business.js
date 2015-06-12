@@ -225,10 +225,10 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       var cachedResults = localCache.get("CMPNames", 'object');
       
       var getNames = function(names, deferred) {
-        var names = _.filter(names, function(item){
+        var found = _.filter(names, function(item){
           return item.description.toLowerCase().indexOf(search.toLowerCase()) !== -1;
         });
-        deferred.resolve(names);           
+        deferred.resolve(found);           
       };
       
       if (!cachedResults) { 
