@@ -368,7 +368,7 @@ app.controller('adminEditLoggingCtrl', ['$scope', '$uiModalInstance', 'logger', 
     
 }]);
 
-app.controller('adminViewLogCtrl', ['$scope', '$uiModalInstance', 'business', function ($scope, $uiModalInstance, Business) {
+app.controller('adminViewLogCtrl', ['$scope', '$uiModalInstance', 'business', '$sce', function ($scope, $uiModalInstance, Business, $sce) {
     
     $scope.logRecords = [];
     
@@ -418,7 +418,11 @@ app.controller('adminViewLogCtrl', ['$scope', '$uiModalInstance', 'business', fu
         });
       }
     };
-        
+       
+    $scope.getLogContent = function(record) {
+      return $sce.trustAsHtml(record.stackTrace);
+    };    
+    
     $scope.cancel = function(){
      $uiModalInstance.dismiss('cancel');
     };

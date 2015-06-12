@@ -115,6 +115,9 @@ public class RangeResolution
 						out.print("--" + MULTIPART_BOUNDARY + "--\r\n");
 					}
 				}
+			} catch (IOException io) {
+				//Ignore Client Abort
+				log.log(Level.FINEST, "Range Resolution Error ", io);
 			} finally {
 				try {
 					in.close();

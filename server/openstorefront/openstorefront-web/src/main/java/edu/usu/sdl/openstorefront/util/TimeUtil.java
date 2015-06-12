@@ -64,21 +64,39 @@ public class TimeUtil
 		return daysInMillis;
 	}
 
+	/**
+	 * Get the start of the day passed in
+	 *
+	 * @param date
+	 * @return beginning of day or null if date was null
+	 */
 	public static Date beginningOfDay(Date date)
 	{
-		Instant instant = Instant.ofEpochMilli(date.getTime()).truncatedTo(ChronoUnit.DAYS);
-		return new Date(instant.toEpochMilli());
+		if (date != null) {
+			Instant instant = Instant.ofEpochMilli(date.getTime()).truncatedTo(ChronoUnit.DAYS);
+			return new Date(instant.toEpochMilli());
+		}
+		return date;
 	}
 
+	/**
+	 * Get the end of the day passed in
+	 *
+	 * @param date
+	 * @return end of the day or null if date was null
+	 */
 	public static Date endOfDay(Date date)
 	{
-		Instant instant = Instant.ofEpochMilli(date.getTime());
-		LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-		localDateTime = localDateTime.withHour(23)
-				.withMinute(59)
-				.withSecond(59)
-				.with(ChronoField.MILLI_OF_SECOND, 999);
-		return new Date(localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli());
+		if (date != null) {
+			Instant instant = Instant.ofEpochMilli(date.getTime());
+			LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+			localDateTime = localDateTime.withHour(23)
+					.withMinute(59)
+					.withSecond(59)
+					.with(ChronoField.MILLI_OF_SECOND, 999);
+			return new Date(localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli());
+		}
+		return date;
 
 	}
 

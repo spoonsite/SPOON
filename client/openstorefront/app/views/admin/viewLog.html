@@ -61,19 +61,12 @@ limitations under the License.
 					<p><b>Thread Id:</b> {{record.threadId}} </p>
 					<p><b>Source Class:</b> {{record.sourceClass}} </p>
 					<p><b>Source Method:</b> {{record.sourceMethod}} </p>
-					<div><b>Method Parameters:</b> 
-						<ul>
-							<li ng-repeat="param in record.parameters">
-								{{param}} 
-							</li>
-						</ul>
-					</div>
 					<div><b>Message:</b><br>
 						{{record.message}} 						
 					</div>
 					<br>
 					<div><b>Stack Track:</b><br>
-						{{record.stackTrace}} 
+						<p ng-bind-html="getLogContent(record)"></p>
 					</div>
 				</td>				
 			</tr>

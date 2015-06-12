@@ -4,6 +4,14 @@ body {
   background:#ddd;
   background: url('/openstorefront/images/squared_metal.png');
 }
+
+.help-text{
+	color: grey;
+	font-weight: normal;
+	font-style: italic;
+	padding-left: 5px;
+}
+
 </style>
 <!--[if gte IE 9]>
   <style type="text/css">
@@ -18,19 +26,9 @@ body {
 	  <div class="container-fluid">
         <div ng-cloak>
           <!-- fa fa-home -->
-          <a class="navbar-brand" href="javascript: void(0)" ng-click="sendHome();">
+          <a class="navbar-brand" href="index.html" >
             <div style="height: 50px; width: 180px; text-align:center; display:inline-block;">
-              <!-- <div style="padding: 6px; width: 300px;">
-                <div style="">
-                  <span class='logo' data-toggle="tooltip" data-placement="bottom" data-title="Go Back To Home Page" data-trigger="hover">
-                    <span class="hidden-xs">DI2E</span>&nbsp;Clearinghouse
-                  </span>
-                  &nbsp;<i class="ic ic-home2"></i>
-                </div>
-              </div> -->
               <div style="width: 250px; text-align: left; border-radius: 0px 8px 8px 0px; background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 81%, rgba(255,255,255,0) 100%); background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(81%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: -o-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); background: linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 81%,rgba(255,255,255,0) 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=1 );" data-toggle="tooltip" data-placement="bottom" data-title="Go Back To Home Page" data-trigger="hover">
-                <!-- <div style="width: 250px; text-align: left; background: white; border-radius: 0px 8px 8px 0px; border: 1px solid #343f54;" data-toggle="tooltip" data-placement="bottom" data-title="Go Back To Home Page" data-trigger="hover"> -->
-                <!-- <img src="images/logo/logo-only-words.svg" alt="" style="height: 44px; margin: 3px 31px;"> -->
                 <img ng-cloak src="images/logo/logo-only-words.svg" alt="" style="height: 49px; margin: 3px 15px 0px 15px">
               </div>
             </div>             
@@ -41,17 +39,6 @@ body {
 		  <span style="text-align: center; width: 100%; font-size: 35px; color: white;">
 			Clearinghouse Submission Form
 		  </span>
-      </div>
-      <div class="collapse navbar-collapse center navSearch" id="bs-example-navbar-collapse-2">
-        <ul class="nav navbar-nav">
-          <li ng-show="user.info.admin"><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); send('/admin'); ">Admin Tools</a></li>
-          <li ng-show="user.info.admin" class="divider"></li>
-          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'User Profile'); ">User Profile</a></li>
-          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Watches'); ">Watches</a></li>   
-          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Component Feedback'); ">Component Feedback</a></li>
-          <li class="divider"></li>
-          <li ng-show="user.isLoggedIn"><a href="/openstorefront/Login.action?Logout" ng-click="localCache.clear()">Logout</a></li>   
-        </ul>
       </div>
     </div>
   </div>  
@@ -223,12 +210,14 @@ body {
           <label style="position:relative; padding-right:15px; padding-top:7px;" for="name">Name</label>
           <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="text" id="componentName" class="form-control" placeholder="Component Name" required ng-model="component.component.name" autofocus>
           <label style="position:relative; padding-right:15px; padding-top:7px;" for="description">Description</label>
+	  <div class="help-text">Describe the component with a description about what is it, purpose, features and capabilities</div>
           <textarea type="text" id="description" class="form-control" placeholder="Component Description" required ng-model="component.component.description" style="min-width: 100%; min-height:150px;"></textarea>
           <label style="position:relative; padding-right:15px; padding-top:7px;" for="organization">Organization</label>
           <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="text" id="organization" class="form-control" placeholder="Organization" required ng-model="component.component.organization">
         </div>
         <div style="padding-top:15px;">
           <label for="requiredAttributes">Required Attributes</label>
+	 <div class="help-text">Vitals that categorize the component</div>	  
           <table id="requiredAttributes" class="table table-striped table-bordered">
             <tbody>
               <tr>
@@ -259,7 +248,8 @@ body {
 
       <!-- META DATA -->
       <h2 id="metadata">Main Details<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('contacts', 'details', 'details', $event, 'contactType'): ''">Skip</button></small></h2>
-      <panel class-list="edges" open-state="true" title="Add Tag">
+      <panel class-list="edges" open-state="true" title="Add Tags">
+	<div class="help-text">Add keywords that can help potential user discover the component</div>
         <form name="tagsUIForm" class="form-horizontal">
           <div class="form-group required">
             <label class="col-sm-2 control-label">Tag Text</label>
@@ -293,7 +283,41 @@ body {
           </div>
         </form>
       </panel>
-      <panel class-list="edges" open-state="true" title="Add Metadata">
+ 
+      <panel title="Select Applicable Attributes" open-state="true" class-list="edges">
+	<div class="help-text">Add filterable vitals that categorize the component.  Select the applicable values.</div>	  
+        <form name="attributesForm" class="form-horizontal">
+          <table id="attributes" class="table table-striped table-bordered">
+            <tbody>
+              <tr>
+                <th>Attribute Type</th>
+                <th>Attribute Code</th>
+              </tr>
+              <!-- repeat on each attribute -->
+              <tr class="ng-scope" ng-repeat="attribute in attributes | shownattribute">
+                <td ><span class="ng-binding" data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}">{{attribute.description}}&nbsp;
+                  <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.description}} information" data-trigger="hover" ng-click="openInfo(attribute)"></i>
+                </span></td>
+                <td>
+                  <multiselect ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" on-change="vitalsCheck()" selected="component.attributes[attribute.attributeType]" options="code as code.label for code in list" list="attribute.codes | makeattribute:attribute"></multiselect>
+                  <select  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')" class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[attribute.attributeType]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                  <div class="tags" ng-if="!attribute.allowMultipleFlg && component.attributes[attribute.attributeType]">
+                    <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
+                      <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
+                        <span ng-bind="component.attributes[attribute.attributeType].label"></span>
+                        <a class="remove-button" ng-click="component.attributes[attribute.attributeType] = ''" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </panel>
+
+     <panel class-list="edges" open-state="true" title="Add Metadata">
+	<div class="help-text">Add non-filterable items of information. (Eg. Label: CMAP Compatible   Value: 1.3+)</div>	  
         <form name="metadataUIForm" class="form-horizontal">
           <div class="form-group required">
             <label class="col-sm-2 control-label">Label</label>
@@ -345,44 +369,14 @@ body {
             </li>
           </ul>
         </div>
-      </panel>
-      <panel title="Select Applicable Attributes" open-state="true" class-list="edges">
-        <form name="attributesForm" class="form-horizontal">
-          <table id="attributes" class="table table-striped table-bordered">
-            <tbody>
-              <tr>
-                <th>Attribute Type</th>
-                <th>Attribute Code</th>
-              </tr>
-              <!-- repeat on each attribute -->
-              <tr class="ng-scope" ng-repeat="attribute in attributes | shownattribute">
-                <td ><span class="ng-binding" data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}">{{attribute.description}}&nbsp;
-                  <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.description}} information" data-trigger="hover" ng-click="openInfo(attribute)"></i>
-                </span></td>
-                <td>
-                  <multiselect ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" on-change="vitalsCheck()" selected="component.attributes[attribute.attributeType]" options="code as code.label for code in list" list="attribute.codes | makeattribute:attribute"></multiselect>
-                  <select  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')" class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[attribute.attributeType]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
-                  <div class="tags" ng-if="!attribute.allowMultipleFlg && component.attributes[attribute.attributeType]">
-                    <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
-                      <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
-                        <span ng-bind="component.attributes[attribute.attributeType].label"></span>
-                        <a class="remove-button" ng-click="component.attributes[attribute.attributeType] = ''" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
-                      </li>
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
-      </panel>
-
+      </panel>	  
       <hr>
       <!-- END META DATA -->
 
       <!-- CONTACTS -->
       <h2 id="contacts">Contacts<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event, 'mediaFormType'): ''">Skip</button></small></h2>
       <panel class-list="edges" open-state="true" title="Add Contact">
+	<div class="help-text">Add government, technical, and other points of contact.</div>	  
         <form name="contactUIForm" class="form-horizontal">
           <div class="form-group required" show-errors >
             <label class="col-sm-2 control-label ">Contact Type</label>
@@ -452,7 +446,7 @@ body {
             <p ng-show="contactUIForm.organization.$error.required && !contactUIForm.organization.$focused && contactUIForm.organization.$hasBeenFocused && formFocused(contactUIForm)" class="help-block">An organization is required.</p>
             <div style="clear:both;"></div>
           </div>
-          <div class="form-group">
+          <div class="form-group required">
             <label class="col-sm-2 control-label">Email</label>
             <div class="col-sm-10">
               <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
@@ -466,11 +460,12 @@ body {
               on-enter="makeThisHappen(!contactUIForm.$invalid, contactUIForm, addContact)"
               ng-maxlength=200
               maxlength=200
+	      required
               />
             </div>
             <div style="clear:both;"></div>
           </div>
-          <div class="form-group">
+          <div class="form-group required">
             <label class="col-sm-2 control-label">Phone</label>
             <div class="col-sm-10">
               <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
@@ -485,16 +480,14 @@ body {
               placeholder="xxx-xxx-xxxx"
               ng-pattern='/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/'
               on-enter="makeThisHappen(!contactUIForm.$invalid, contactUIForm, addContact)"
+	     required		  
               />
               <p ng-show="contactUIForm.phone.$error.pattern && !contactUIForm.phone.$focused && contactUIForm.phone.$hasBeenFocused && formFocused(contactUIForm)" class="help-block">Not a valid phone number.</p>
             </div>
             <div style="clear:both;"></div>
-            <div class="col-sm-offset-2">
-              <small style="margin-left:15px;">(An email <strong>or</strong> phone number is required)</small>
-            </div>
           </div>
           <div class="col-sm-12">
-            <button type="button" class="col-md-offset-2 btn btn-primary" ng-click="addContact(contactUIForm)" ng-disabled="contactUIForm.$invalid || !contactForm.contactType || !contactForm.firstName || !contactForm.lastName || !contactForm.organization || !(contactForm.email || contactForm.phone)"><i class="fa fa-save"></i>&nbsp;Add</button>
+            <button type="button" class="col-md-offset-2 btn btn-primary" ng-click="addContact(contactUIForm)" ng-disabled="contactUIForm.$invalid || !contactForm.contactType || !contactForm.firstName || !contactForm.lastName || !contactForm.organization || !contactForm.email || !contactForm.phone"><i class="fa fa-save"></i>&nbsp;Add</button>
           </div>
           <div style="clear:both;"></div>
           <h3 style="margin-top: 20px;" ng-show="(component.contacts | contactsfilter:'contactType').length">Added Contacts</h3>
@@ -529,6 +522,7 @@ body {
       <!-- DEPENDENCIES -->
       <h2 id="dependencies">Dependencies:</h2>
       <panel class-list="edges" open-state="true" title="Add Dependency">
+	<div class="help-text">Describe what is needed to utilize the component. Enter each dependency separately.  (Eg. Java 7+,  MySql 5+)</div>	  
         <form name="dependencyUIForm" class="form-horizontal">
           <div class="form-group required">
             <label class="col-sm-2 control-label">Name</label>
@@ -638,6 +632,7 @@ body {
       <h2 id="resources">Resources:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event, 'dependencyFormName'): ''">Skip</button></small></h2>
       <panel class-list="edges" open-state="true" title="Add Resources" style="position:relative">
         <loader trigger="resourcePreviewLoader"></loader>
+	<div class="help-text">Add links to home page, documentation, binaries, etc... If there is no external link for a resource it may be uploaded so that it may be shared with the community.  Preferably, the resource should be managed externally.</div>	  	
         Current max upload size &lt; 100Mb
         <!--[if lt IE 10]>
         <div class="input-group" style="margin:5px 0px; padding:0px 15px;">
@@ -659,7 +654,7 @@ body {
                 <div style="clear:both;"></div>
               </div>
               <div class="form-group">
-                <label class="col-sm-2 control-label">Caption</label>
+                <label class="col-sm-2 control-label">Description</label>
                 <div class="col-sm-10">
                   <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
                   class="form-control"
@@ -778,6 +773,7 @@ body {
       <h2 id="media">Media:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event, 'resourceFormType'): ''">Skip</button></small></h2>
       <panel class-list="edges" open-state="true" title="Add Media" style="position:relative">
         <div masked="mediaLoader" >
+	<div class="help-text">Add screen shots, company logos, short videos clips, etc... Typically, media is uploaded as that makes it the most accessible.  External resources can be pointed to by using an external link. External resources work best with a valid SSL certificate and are unrestricted (ie. no login).</div>	  			
           Current max upload size &lt; 100Mb
           <!--[if lt IE 10]>
           <div class="input-group" style="margin:5px 0px; padding:0px 15px;">

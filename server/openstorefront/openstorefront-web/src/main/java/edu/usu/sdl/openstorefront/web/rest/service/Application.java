@@ -316,10 +316,10 @@ public class Application
 		DBLogRecord logRecordExample = new DBLogRecord();
 
 		DBLogRecord logStartExample = new DBLogRecord();
-		logStartExample.setEventDts(filterQueryParams.getStart());
+		logStartExample.setEventDts(TimeUtil.beginningOfDay(filterQueryParams.getStart()));
 
 		DBLogRecord logEndExample = new DBLogRecord();
-		logEndExample.setEventDts(filterQueryParams.getEnd());
+		logEndExample.setEventDts(TimeUtil.endOfDay(filterQueryParams.getEnd()));
 
 		QueryByExample queryByExample = new QueryByExample(logRecordExample);
 
