@@ -50,6 +50,9 @@ types of searches that can be performed are:
 
 4.  Case insensitivity
 
+**Note:** The type ahead on the search field only looks at the title to see if  it contains the text.  
+The user can then select the suggestion by clicking on it or continue with a full text search.
+
 ### 2.1.1 Search Field Differentiation or Specificity
 -------
 
