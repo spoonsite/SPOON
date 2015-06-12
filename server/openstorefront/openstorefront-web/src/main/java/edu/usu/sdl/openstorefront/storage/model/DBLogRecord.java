@@ -17,9 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.LogRecord;
 import javax.validation.constraints.NotNull;
 
@@ -50,7 +48,6 @@ public class DBLogRecord
 	private String sourceMethod;
 	private Integer threadId;
 	private String stackTrace;
-	private List<String> parameters = new ArrayList<>();
 
 	public DBLogRecord()
 	{
@@ -74,13 +71,6 @@ public class DBLogRecord
 				dBLogRecord.setStackTrace(StringProcessor.parseStackTraceHtml(logRecord.getThrown()));
 			}
 
-			if (logRecord.getParameters() != null) {
-				for (Object param : logRecord.getParameters()) {
-					if (param != null) {
-						dBLogRecord.getParameters().add(param.toString());
-					}
-				}
-			}
 		}
 		return dBLogRecord;
 	}
@@ -183,16 +173,6 @@ public class DBLogRecord
 	public void setStackTrace(String stackTrace)
 	{
 		this.stackTrace = stackTrace;
-	}
-
-	public List<String> getParameters()
-	{
-		return parameters;
-	}
-
-	public void setParameters(List<String> parameters)
-	{
-		this.parameters = parameters;
 	}
 
 }

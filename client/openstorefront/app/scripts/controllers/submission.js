@@ -36,7 +36,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.submitter.email;
   $scope.submitter.organization;
   $scope.current = 'top';
-  $scope.optIn = false;
+  $scope.optIn = true;
 
 
   $scope.componentId;
@@ -73,6 +73,10 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.details = {};
 
   $scope.formMedia;
+  
+  $scope.sendHome = function() {
+      window.location.href = "/";
+  };
 
   $scope.setEditable = function($event){
     var response = window.confirm("Are you sure you want to resume editing your submission? This action remove your submission from the admin's pending queue and you will have to re-submit it for approval.");
@@ -171,7 +175,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         $scope.submitter.lastName = userInfo.lastName;
         $scope.submitter.email = userInfo.email;
         $scope.submitter.organization = userInfo.organization;
-        $scope.submitter.phone = userInfo.phone;;
+        $scope.submitter.phone = userInfo.phone;        
       }, function(){
       })
       $scope.componentId = null;
@@ -383,6 +387,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             componentAttributePk: compare.attributes[i].componentAttributePk
           };
         }
+        if ($scope.optIn) {
+          component.component.notifyOfApprovalEmail = $scope.submitter.email;
+        }        
         if (_.diff(compare,$scope.backup)) {
 
           Business.submissionservice.createSubmission(component).then(function(result){
