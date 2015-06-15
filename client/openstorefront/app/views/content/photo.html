@@ -8,7 +8,7 @@
         <img ng-if="isImage(file)" ng-src="{{file.link}}" style="height: 150px; width:auto;" alt="{{file.fileName}}"/>
         <div style="height:150px; width: 150px; text-align: center;" ng-if="!isImage(file)"><i style="font-size: 150px;" class="fa" ng-class="getMimeTypeClass(file.mimeType)"></i></div>
         <!-- <videogular> <vg-media vg-src="['src':'{{file.link}}','type':'{{file.mimeType}}']" vg-preload="'none'" vg-native-controls="true"></vg-media></videogular> -->
-        <p>{{file.fileName}}</p>
+        <p>{{file.originalFileName}}</p>
       </div>
     </div>
     <div class="clearfix"></div>
@@ -20,7 +20,7 @@
         <videogular  style="max-height:{{getWinHeight()}}px;" ng-if="isVideo(file)"> <vg-media vg-src="file.srcs" vg-preload="'none'" vg-native-controls="true"></vg-media></videogular>
         <audio style="max-height:{{getWinHeight()}}px;"  ng-if="isAudio(file)" controls><source ng-src="{{file.link}}" type="audio/ogg"><source ng-src="{{file.link}}" type="audio/mpeg"></audio>
         <div style="height:150px; width: 150px; text-align: center;" ng-if="isOther(file)"><i style="font-size: 150px;" class="fa" ng-class="getMimeTypeClass(file.mimeType)"></i></div>
-        <p ng-if="isImage(file) || isOther(file)">{{file.fileName}}</p>
+        <p ng-if="isImage(file) || isOther(file)">{{file.originalFileName}}</p>
       </div>
       <div class="col-sm-12" style="text-align:center">
         <p ng-if="file.caption">{{file.caption}}</p>
