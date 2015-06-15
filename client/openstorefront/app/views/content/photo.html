@@ -1,4 +1,6 @@
-<div ng-if="fx === 'center'" ><i class="imitateLink" style="color: black; background-color: white; font-size: 60px; position: absolute; opacity: .7; right: -165px; z-index: 20000; top: 4px; height: 38px; line-height: 40px; width: 40px; border-radius: 20px;" ng-click="doCallback()">&times;</i></div>
+<div ng-if="fx === 'center'" style="position: fixed; top: 10px; left: 50%; z-index: 10000;">
+	<i class="fa fa-close imitateLink" style="color: black; background-color: white; font-size: 38px;  opacity: .7; right: -165px; z-index: 20000; top: 4px; height: 38px; line-height: 40px; width: 40px; border-radius: 20px; text-align: center;" title="Close"  ng-click="doCallback()"></i>	
+ </div>
 <div id="wrapper" style="height: {{getWinHeight()}}px">
   <div ng-if="fx === 'carousel'" class="carousel" style="margin: 0px 30px;">
     <div class="item imitateLink" ng-repeat="file in files" style="vertical-align: middle !important;" ng-click="doCallback({file: file, files: files})">
@@ -12,7 +14,7 @@
     <div class="clearfix"></div>
   </div>
   <div ng-if="fx === 'center'" class="carousel" style="margin: 0px 30px; width: calc(100% - 60px)">
-    <div class="item" ng-repeat="file in files" style="vertical-align: middle !important; top: 50% !important; transform: translateY(-50%);">
+    <div class="item" ng-repeat="file in files" style="vertical-align: middle !important; top: 50% !important;  -webkit-transform: translateY(-50%); -ms-transform: translateY(-50%);">
       <div class="itemData" style="margin: 5px; position:relative;" >
         <img ng-if="isImage(file)" ng-src="{{file.link}}" style="height: {{getWinHeight()}}px; width:auto;" alt="{{file.fileName}}"/>
         <videogular  style="max-height:{{getWinHeight()}}px;" ng-if="isVideo(file)"> <vg-media vg-src="file.srcs" vg-preload="'none'" vg-native-controls="true"></vg-media></videogular>
@@ -29,6 +31,8 @@
     </div>
   </div>
   <div class="clearfix"></div>
-  <a href="javascript:void(0);" id="prev" class="cycle-prev imitateLink" style="left:-165px; z-index: 20000;" ng-class="{'full':fullClass}">&lt;</a>
-  <a href="javascript:void(0);" id="next" class="cycle-next imitateLink" style="right:-165px; z-index: 20000;" ng-class="{'full':fullClass}">&gt;</a>
+  
+  <a href="javascript:void(0);" id="prev" class="cycle-prev imitateLink" style="left:-165px; z-index: 20000; top: {{getWinHeight()/2}}px; " ng-class="{'full':fullClass}">&lt;</a>
+  <a href="javascript:void(0);" id="next" class="cycle-next imitateLink" style="right:-165px; z-index: 20000; top: {{getWinHeight()/2}}px;" ng-class="{'full':fullClass}">&gt;</a>
+
 </div>

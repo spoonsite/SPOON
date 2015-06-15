@@ -165,7 +165,7 @@
 				<input type="text" name="username" id="username" placeholder="Username" class="form-control" autofocus autocomplete="false" style="width: 200px;">
 				<p id="usernameError" class="clearError"></p> 				
 				<br>
-				<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;">
+				<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;" onkeypress="if (event.keyCode === 13){ submitForm(); } ">
 				<p id="passwordError" class="clearError"></p>					
 				<br>
 				<br>
