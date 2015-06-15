@@ -129,7 +129,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };    
     
     $scope.preview = function(component) {
-      utils.openWindow('single?id='+ component.component.componentId, 'Component Preview');
+      utils.openWindow('single?id='+ component.component.componentId, 'Component Preview', "resizable=yes,scrollbars=yes,height=650,width=1000");
     };    
     
     $scope.deleteComponent = function(component){
