@@ -58,8 +58,8 @@ app.controller('AdminLookupCtrl', ['$scope', 'business', '$rootScope', '$uiModal
 
 }]);
 
-app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'lookupEntity', 'business', '$uiModal', 'FileUploader',
-  function ($scope, $uiModalInstance, lookupEntity, Business, $uiModal, FileUploader) {
+app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'lookupEntity', 'business', '$uiModal', 'FileUploader', '$timeout',
+  function ($scope, $uiModalInstance, lookupEntity, Business, $uiModal, FileUploader, $timeout) {
   
     $scope.showInactive = false;
     $scope.statusFilterOptions = [
@@ -77,7 +77,9 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
     
     $scope.importFile = function(){      
       $scope.uploader.uploadAll();
-      document.getElementById('uploadFile').value = null;
+      $timeout(function(){
+        document.getElementById('uploadFile').value = null;
+      }, 200);
     };
     
     $scope.uploader = new FileUploader({

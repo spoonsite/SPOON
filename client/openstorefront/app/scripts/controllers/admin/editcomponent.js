@@ -235,8 +235,8 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
 
   }]);
 
-app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', '$draggable', 'FileUploader', '$rootScope',
-  function ($scope, $q, $filter, $uiModalInstance, component, editMode, Business, $uiModal, $draggable, FileUploader, $rootScope) {
+app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', '$draggable', 'FileUploader', '$rootScope', '$timeout',
+  function ($scope, $q, $filter, $uiModalInstance, component, editMode, Business, $uiModal, $draggable, FileUploader, $rootScope, $timeout) {
 
     $scope.editMode = editMode;
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
@@ -859,7 +859,10 @@ $scope.saveResource = function () {
     });
   } else {      
     $scope.resourceUploader.uploadAll();
-    document.resourceUIForm.uploadFile.value = null;
+    $timeout( function(){
+      document.resourceUIForm.uploadFile.value = null;
+    }, 200);
+    
   }
 };   
 
@@ -983,7 +986,9 @@ $scope.saveMedia = function () {
     });
   } else {      
     $scope.mediaUploader.uploadAll();
-    document.mediaUIForm.uploadFile.value = null;
+    $timeout( function(){
+      document.mediaUIForm.uploadFile.value = null;
+    }, 200);
   }
 };   
 
