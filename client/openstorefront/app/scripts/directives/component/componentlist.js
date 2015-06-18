@@ -147,6 +147,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         }
       }
 
+      scope.$watch('data', function() {
+        $timeout(scope.shortenDescription, 100);
+      });
+
       // scope.$watch('data', function() {
       //
       if (scope.data && scope.data.length) {
@@ -358,7 +362,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       };
 
 
-      $timeout(scope.shortenDescription)//
+      $timeout(scope.shortenDescription, 100);//
 
     }//
   };
