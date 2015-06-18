@@ -198,6 +198,12 @@ public class AttributeServiceImpl
 	public void performSaveAttributeType(AttributeType attributeType)
 	{
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
+
+		ValidationResult validationResult = attributeType.customValidation();
+		if (validationResult.valid() == false) {
+			throw new OpenStorefrontRuntimeException(validationResult.toString());
+		}
+
 		if (existing != null) {
 			//remove to inactivate
 			existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
@@ -1192,15 +1198,6 @@ public class AttributeServiceImpl
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setTotalNumber(persistenceService.countByExample(queryByExample));
 		return result;
-	}
-
-	private String reverseSortOrder(String order)
-	{
-		if (order.equals("ASC")) {
-			return "DESC";
-		} else {
-			return "ASC";
-		}
 	}
 
 	@Override

@@ -338,7 +338,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
+	@APIDescription("Gets attribute code base on filter. Always sorted by sort Order or label")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/attributetypes/{type}/attributecodes")
@@ -352,7 +352,7 @@ public class AttributeResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		List<AttributeCode> attributeCodes = getAttributeCodesFunc(type, filterQueryParams);
+		List<AttributeCode> attributeCodes = getAttributeCodesForType(type, filterQueryParams);
 
 		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
 		{
@@ -361,9 +361,9 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
+	@APIDescription("Gets attribute code base on filter. Always sorted by sort Order or label")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(AttributeCode.class)
+	@DataType(AttributeCodeWrapper.class)
 	@Path("/attributetypes/{type}/attributecodeviews")
 	public Response getAttributeCodeViews(
 			@PathParam("type")
@@ -374,22 +374,11 @@ public class AttributeResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-
 		AttributeCodeWrapper views = service.getAttributeService().getFilteredCodes(filterQueryParams, type);
-
-		GenericEntity<AttributeCodeWrapper> entity = new GenericEntity<AttributeCodeWrapper>(views)
-		{
-		};
-		return sendSingleEntityResponse(entity);
+		return sendSingleEntityResponse(views);
 	}
 
-	/**
-	 *
-	 * @param type
-	 * @param filterQueryParams
-	 * @return
-	 */
-	private List<AttributeCode> getAttributeCodesFunc(String type, FilterQueryParams filterQueryParams)
+	private List<AttributeCode> getAttributeCodesForType(String type, FilterQueryParams filterQueryParams)
 	{
 		AttributeCode attributeCodeExample = new AttributeCode();
 		attributeCodeExample.setActiveStatus(filterQueryParams.getStatus());
@@ -603,7 +592,7 @@ public class AttributeResource
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes")
-	public Response postNewEntity(AttributeType attributeType)
+	public Response postAttributeType(AttributeType attributeType)
 	{
 		return handleAttributePostPutType(attributeType, true);
 	}
@@ -613,7 +602,7 @@ public class AttributeResource
 	@APIDescription("Updates a attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
-	public Response updateEntityValue(
+	public Response updateAttributeType(
 			@PathParam("type")
 			@RequiredParam String type,
 			AttributeType attributeType)
@@ -632,6 +621,7 @@ public class AttributeResource
 		ValidationModel validationModel = new ValidationModel(attributeType);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(attributeType.customValidation());
 		if (validationResult.valid()) {
 			attributeType.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());

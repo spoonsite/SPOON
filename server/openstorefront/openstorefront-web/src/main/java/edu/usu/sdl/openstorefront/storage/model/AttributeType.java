@@ -17,14 +17,18 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -93,6 +97,25 @@ public class AttributeType
 
 	public AttributeType()
 	{
+	}
+
+	public ValidationResult customValidation()
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		if (Convert.toBoolean(getHideOnSubmission())) {
+			if (Convert.toBoolean(getRequiredFlg())) {
+				if (StringUtils.isBlank(getDefaultAttributeCode())) {
+					RuleResult result = new RuleResult();
+					result.setFieldName("hideOnSubmission");
+					result.setEntityClassName(getClass().getSimpleName());
+					result.setValidationRule("Hide requires Default Code");
+					result.setMessage("Default Code is requried when hide on submission and the attribute is required.");
+					validationResult.getRuleResults().add(result);
+				}
+			}
+		}
+		return validationResult;
 	}
 
 	@Override
