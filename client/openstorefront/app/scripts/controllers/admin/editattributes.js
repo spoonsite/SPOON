@@ -198,13 +198,17 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
       cont = confirm('Please verify that this file is an attributes json file.');
       if (cont){
         $scope.attributeUploader.uploadAll();
-        document.getElementById('attributeUploadFile').value = null;
+        $timeout( function(){
+          document.getElementById('attributeUploadFile').value = null;
+        }, 200);
       }
     } else {
       cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
       if (cont){
         $scope.svcv4uploader.uploadAll(); 
-        document.getElementById('svcv4UploadFile').value = null;
+        $timeout( function(){
+          document.getElementById('svcv4UploadFile').value = null;
+        }, 200);
       }
     }
   };

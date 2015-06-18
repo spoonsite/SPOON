@@ -87,8 +87,8 @@
 
 }]);
 
-app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url', 'alias', 'single', 'business', '$uiModal', 'FileUploader',
-  function ($scope, $uiModalInstance, title, url, alias, single, Business, $uiModal, FileUploader) {
+app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url', 'alias', 'single', 'business', '$uiModal', 'FileUploader', '$timeout',
+  function ($scope, $uiModalInstance, title, url, alias, single, Business, $uiModal, FileUploader, $timeout) {
     $scope.title = title;
     $scope.url = url;
     $scope.single = single;
@@ -98,7 +98,9 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
     $scope.saveMedia = function(mediaUIForm){
       $scope.mediaUIForm = mediaUIForm;
       $scope.mediaUploader.uploadAll();
-      document.mediaUIForm.uploadFile.value = null;
+      $timeout( function(){
+        document.mediaUIForm.uploadFile.value = null;
+      }, 200);      
     };
     
     var getNewFileUpload = function () {
