@@ -1168,7 +1168,9 @@ public class AttributeServiceImpl
 		AttributeTypeWrapper result = new AttributeTypeWrapper();
 
 		AttributeType attributeExample = new AttributeType();
-		attributeExample.setActiveStatus(filter.getStatus());
+		if (filter.getAll() == null || filter.getAll() == false) {
+			attributeExample.setActiveStatus(filter.getStatus());
+		}
 
 		QueryByExample queryByExample = new QueryByExample(attributeExample);
 
