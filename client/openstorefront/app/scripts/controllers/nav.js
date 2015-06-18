@@ -108,7 +108,12 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
 
   $scope.getTypeahead = function(){
     Business.typeahead($scope.searchKey).then(function(result){
-      $scope.typeahead = result || [];
+      result = result || [];
+      _.forEach(result, function(item){
+        item.description = '"' + item.description + '"';
+      });
+
+      $scope.typeahead = result;
     }, function(){
       $scope.typeahead = [];
     })

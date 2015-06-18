@@ -93,7 +93,7 @@
             <button type="submit" class="btn btn-warning pull-right"><i class="fa fa-search"></i></button>
           </div>
           <div class="navSearchBar">
-            <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" typeahead="key as key.description for key in typeahead | filter:$viewValue | limitTo:8" placeholder="New Search">
+            <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" placeholder="New Search">
           </div>
         </form>
       </div>
