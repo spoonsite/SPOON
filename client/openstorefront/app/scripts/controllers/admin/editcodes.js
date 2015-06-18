@@ -36,13 +36,29 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   $scope.pagination.control = {};
   $scope.pagination.features = {'dates': false, 'max': false};
   $scope.typeCodes = [];
-
+  $scope.defaultCodesLookup = [];
+  
+  $scope.loadCodesForDefault = function() {
+      var filter = angular.copy(utils.queryFilter);
+      filter.sortField = 'label';
+      filter.sortOrder = 'ASC';
+      Business.get({
+        url: 'api/v1/resource/attributes/attributetypes/' + $scope.type.attributeType + '/attributecodeviews',
+        filterObj: filter
+      }).then(function(data){
+        $scope.defaultCodesLookup = data.data;
+        $scope.defaultCodesLookup.push({});
+      });
+  }; 
+  $timeout(function(){
+    $scope.loadCodesForDefault();
+  }, 100);
 
   $scope.$watch('data', function(){
     if ($scope.data.allCodes) {
       $scope.type.codes = $scope.data.allCodes.data || [];
-    }
-  }, true)
+    }    
+  }, true);
 
   $scope.getCodes = function (override, all) {
     // console.log('we\'re getting types');
@@ -60,7 +76,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   };
   $timeout(function(){
     $scope.getCodes();
-  },10)
+  },10);
 
 
   $scope.setFeatures = {
@@ -124,7 +140,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
         type.detailedDescription = type.detailedDescription || null;
         
 
-        if (!type.defaultAttributeCode) {
+        if (!type.defaultAttributeCode && type.requiredFlg) {
           type.hideOnSubmission = false;
         }
         // hideOnSubmission, defaultAttributeCode, detailedDescription  
