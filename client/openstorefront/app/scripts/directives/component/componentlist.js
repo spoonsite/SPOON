@@ -49,7 +49,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
     },
     link: function postLink(scope, element, attrs) {
       if (scope.data) {
-
       }
       
       scope.getShortDescription = getShortDescription;
@@ -213,6 +212,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           clearTimeout(timer);
         } else { 
           setTimeout(function() {
+            
             if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
               var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
               scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
@@ -228,8 +228,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                 scope.$emit('$TRIGGERUNLOAD', 'resultsLoader');
                 if (result)
                 {
-                  if (result.data && result.data.length > 0) { 
-                    scope.data = angular.copy(result.data);
+                  if (result.data && result.data.length > 0) {                                         
+                    scope.data = result.data;
                     $timeout(scope.shortenDescription, 200);
                   } else {
                     scope.data = [];
@@ -268,7 +268,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
               scope.showCompare = true;
             }
-             
+            
+
           }, 100);
         } //
       }
@@ -367,3 +368,5 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
     }//
   };
 }]);
+
+

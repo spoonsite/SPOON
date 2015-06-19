@@ -656,25 +656,25 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.applyFilters = function() {
     if ($scope.filteredTotal) {
+              
       var results =
       // We must use recursive filtering or we will get incorrect results
       // the order DOES matter here.
       $filter('orderBy')
-        //
         ($filter('ratingFilter')
-          ($filter('tagFilter')
-            ($filter('componentFilter')
-              ($filter('filter')
-              //filter by the string
-              ($scope.total, $scope.query),
-            // filter the data by the filters
-            $scope.filters),
-          // filter the data by the tags
-          $scope.tagsFilter),
-        // filter the data by the ratings
-        $scope.ratingsFilter),
-      // Then order-by the orderProp
-      $scope.orderProp);
+                ($filter('tagFilter')
+                        ($filter('componentFilter')
+                                ($filter('filter')
+                                        //filter by the string
+                                                ($scope.total, $scope.query),
+                                                // filter the data by the filters
+                                                $scope.filters),
+                                        // filter the data by the tags
+                                        $scope.tagsFilter),
+                                // filter the data by the ratings
+                                $scope.ratingsFilter),
+                        // Then order-by the orderProp
+                        $scope.orderProp);
 
       // make sure we reset the data and then copy over the results  
       $scope.filteredTotal = [''];
@@ -695,9 +695,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.showMessage = true;
       }
       // after a slight wait, reapply the popovers for the results ratings.
-      $timeout(function() {
-        setupPopovers();
+      $timeout(function () {
+        setupPopovers();                    
       }, 300);
+    
     }
   };
 
@@ -705,6 +706,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our Event Watchers
   //////////////////////////////////////////////////////////////////////////////
+
 
   /***************************************************************
   * Event for callSearch caught here. This is triggered by the nav

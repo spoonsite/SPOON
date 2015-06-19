@@ -29,6 +29,9 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
     templateUrl: 'views/content/photo.html',
     link: function postlink(scope, element, attrs) {
       scope.fx = attrs.fx;
+      scope.fullStylePrev = {};
+      scope.fullStyleNext = {};
+      
       scope.doCallback = function(data){
         if (scope.callback){
           scope.callback(data);
@@ -36,7 +39,7 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
       }
       var item = 'item' + uniqueId++;
       element.find('#prev').attr('id', 'prev'+item);
-      element.find('#next').attr('id', 'next'+item);
+      element.find('#next').attr('id', 'next'+item);      
 
       $timeout(function(){
 
@@ -58,7 +61,20 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
           options.centerHorz = true;
           options.centervert = true;
           scope.fullClass = true;
+          scope.fullStylePrev = {
+            left: '-165px',
+            'z-index': 20000,
+            top: (scope.getWinHeight()/2) + 'px'
+          };
+          
+          scope.fullStyleNext = {
+            right: '-165px',
+            'z-index': 20000,
+            top: (scope.getWinHeight()/2) + 'px'            
+          };
         }
+        
+        
 
         carousel.cycle(options);
 
@@ -94,17 +110,23 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
       scope.isImage = function(file){
         if (utils.getBasicFileType(file) === 'image'){
           return true;
+        } else if (file.mediaTypeCode === 'IMG') {
+          return true;
         }
         return false;
       }
       scope.isVideo = function(file){
         if (utils.getBasicFileType(file) === 'video'){
           return true;
+        } else if (file.mediaTypeCode === 'VID') {
+          return true;
         }
         return false;
       }
       scope.isAudio = function(file){
         if (utils.getBasicFileType(file) === 'audio'){
+          return true;
+        } else if (file.mediaTypeCode === 'AUD') {
           return true;
         }
         return false;

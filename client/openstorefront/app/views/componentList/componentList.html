@@ -41,15 +41,19 @@
                     <div ng-show="!blankTarget" id="{{item.componentId}}" style="display:inline-block">
                       <div class="results-content-title-content" >{{item.name}}
                         <br ng-show="item.attributes.length">
+						
                         <div ng-repeat="attribute in item.attributes" style="display:inline-block;">
                           <img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style="padding-left: 5px; margin-top:-5px; width: 40px; height: auto;">
                         </div>
+			
                         <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
                       </div>
                     </div>
                   </div>
                   <div class="results-content-description">
+					  
                     <div class="shortDescription" ng-bind-html="item.description"></div>
+		
                     <br>
                     <span class="componentListDate pull-left" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span>
                     <span class="componentListDate pull-right checkbox" style="margin-top: -5px; margin-bottom: 0px; padding-left: 0px;" ng-show="item.updateDts && showCompare">

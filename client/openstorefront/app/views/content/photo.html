@@ -16,7 +16,7 @@
   <div ng-if="fx === 'center'" class="carousel" style="margin: 0px 30px; width: calc(100% - 60px)">
     <div class="item" ng-repeat="file in files" style="vertical-align: middle !important; top: 50% !important;  -webkit-transform: translateY(-50%); -ms-transform: translateY(-50%);">
       <div class="itemData" style="margin: 5px; position:relative;" >
-        <img ng-if="isImage(file)" ng-src="{{file.link}}" style="height: {{getWinHeight()}}px; width:auto;" alt="{{file.fileName}}"/>
+        <img ng-if="isImage(file)" ng-src="{{file.link}}" style="height: auto; width:100%;" alt="{{file.fileName}}"/>
         <videogular  style="max-height:{{getWinHeight()}}px;" ng-if="isVideo(file)"> <vg-media vg-src="file.srcs" vg-preload="'none'" vg-native-controls="true"></vg-media></videogular>
         <audio style="max-height:{{getWinHeight()}}px;"  ng-if="isAudio(file)" controls><source ng-src="{{file.link}}" type="audio/ogg"><source ng-src="{{file.link}}" type="audio/mpeg"></audio>
         <div style="height:150px; width: 150px; text-align: center;" ng-if="isOther(file)"><i style="font-size: 150px;" class="fa" ng-class="getMimeTypeClass(file.mimeType)"></i></div>
@@ -32,7 +32,8 @@
   </div>
   <div class="clearfix"></div>
   
-  <a href="javascript:void(0);" id="prev" class="cycle-prev imitateLink" style="left:-165px; z-index: 20000; top: {{getWinHeight()/2}}px; " ng-class="{'full':fullClass}">&lt;</a>
-  <a href="javascript:void(0);" id="next" class="cycle-next imitateLink" style="right:-165px; z-index: 20000; top: {{getWinHeight()/2}}px;" ng-class="{'full':fullClass}">&gt;</a>
+  <a href="javascript:void(0);" id="prev"  class="cycle-prev imitateLink" ng-style="fullStylePrev" ng-class="{'full':fullClass}">&lt;</a>
+  <a  href="javascript:void(0);" id="next" class="cycle-next imitateLink" ng-style="fullStyleNext" ng-class="{'full':fullClass}">&gt;</a>
 
+  
 </div>

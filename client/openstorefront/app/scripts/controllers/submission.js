@@ -1333,13 +1333,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           if (!scrolled){
             scope[attrs['masked']].elips++;
           }
-          return scope[attrs['masked']].msg + '.\u00A0\u00A0';
+          return scope[attrs['masked']].msg + '...';
           break;
           case 1:
           if (!scrolled){
             scope[attrs['masked']].elips++;
           }
-          return scope[attrs['masked']].msg + '..\u00A0';
+          return scope[attrs['masked']].msg + '...';
           break;
           case 2:
           if (!scrolled){

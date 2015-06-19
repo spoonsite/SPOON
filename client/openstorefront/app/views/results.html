@@ -32,7 +32,7 @@ limitations under the License.
       </select>
       <br>
       <label for="searchFilter">Filter By Text: </label>
-      <input type="text" id="searchFilter" class="form-control" placeholder="Filter Search" ng-model="query" ng-options="key.name as key.name for key in typeahead" bs-typeahead/>
+      <input type="text" id="searchFilter" class="form-control" placeholder="Filter Search" ng-model="query" />
       <br>
       <label for="tagsFilter">Filter By Tag: </label>
       <tags-input class="bootstrap" min-length="1" ng-model="tagsFilter" replace-spaces-with-dashes="false" add-from-autocomplete-only="true" on-tag-added="applyFilters(); sendEvent('Filter Set', 'Tag', $tag.text+' added');" on-tag-removed="applyFilters(); sendEvent('Filter Set', 'Tag', $tag.text+' removed');"><auto-complete min-length="1" source="checkTagsList($query, tagsFilter, tagsList)"></auto-complete></tags-input>
@@ -124,7 +124,7 @@ limitations under the License.
     <div style='position:relative; height: 100%;'>
       <loader trigger="mainLoader"></loader>
       <!-- Placeholder for the pagination controls -->
-      <div ng-show="moreThan200" class="pagination row row-centered">
+      <div ng-show="moreThan200"  class="pagination row row-centered">
         <div style="text-align: center;">
           <span class="glyphicon glyphicon-fast-backward imitateLink" ng-click="pageNumber=1">&nbsp;</span>
           <span class="glyphicon glyphicon-chevron-left imitateLink" ng-click="pageNumber=pageNumber-1">&nbsp;</span>
@@ -186,9 +186,11 @@ limitations under the License.
           <div ng-if="data.data.length > 0">
             <component-list click-callback="updateDetails" class-list="" list="list" filters="filters" data="data.data" cols="3" search="doSearchKey"></component-list>
           </div>
+	<!--
           <div ng-show="moreThan200" class="moreThan200">
             <button class="btn btn-default">Load More Results...</button>
           </div>
+	-->
         </div>
       </div>
     </div>
