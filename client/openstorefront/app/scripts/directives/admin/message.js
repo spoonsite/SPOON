@@ -34,7 +34,6 @@ app.directive('message', ['$uiModal', '$draggable', 'business', function ($uiMod
       })
 
       scope.open = function(size, type, contacts, subject, message, modal){
-        console.log('here we go again');
         
         modal?
         (function(){
@@ -119,7 +118,6 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
     },
     link: function(scope, element, attrs) {
 
-      console.log('attrs', attrs);
       
       var oldContacts;
       scope.disableTo = true;
@@ -247,7 +245,6 @@ var messageCtrl = function ($scope, $uiModalInstance, type, contacts, subject, m
   })
 
 
-  console.log('$scope.message', $scope.message);
   $scope.oldType;
   $scope.clearIncluded = function(type){
     if ($scope.oldType !== type) {
@@ -500,7 +497,6 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
         if (item && typeof item === 'object'){
           return item.text.toLowerCase().indexOf(query.toLowerCase()) > -1;
         } else {
-          console.log('item', item);
           return null;
         }
       });
