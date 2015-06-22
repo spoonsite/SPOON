@@ -1,24 +1,29 @@
 <div draggable-collapse open-state="true" title="Send To Submitter" class-list="modal-title" is-draggable="true" is-closeable="true">
   <div ng-show="prep">
-    Stack your letter with a few template messages:
+    <strong><i>Stack your letter with a few template messages:</i></strong>
     <form>
+      <h3>Template message</h3>
       <div>
         <div ng-repeat="mess in message.types" class="radio">
           <label>
-            <input type="radio" ng-model="form.type" value="{{mess.title}}"> &quot;{{mess.title}}&quot;
+            <input type="radio" ng-model="form.type" value="{{$index}}" ng-click="clearIncluded($index)"> &quot;{{mess.title}}&quot;
           </label>
         </div>
       </div>
+      <h3>Template sections</h3>
       <div>
         <div ng-repeat="mess in message.templates" class="checkbox">
           <label>
-            <input type="checkbox" ng-model="mess.included" ng-checked="mess.included">&quot;{{mess.title}}&quot;
+            <input type="checkbox" ng-model="mess.included" ng-checked="mess.included" ng-change="addToTemplates(form.type, message);">&quot;{{mess.title}}&quot;
           </label>
         </div>
       </div>
-      <button class="btn btn-default" ng-click="addToTemplates(form.type, message); form.type = null; clearIncluded()"><i class="fa fa-plus"></i>&nbsp;Add</button>
+      <div ng-repeat="template in form.templates">
+        <div ng-bind-html="template.message"></div>
+      </div>
     </form> 
     <br>
+    <button class="btn btn-default" ng-click="contin()">Continue</button>
     <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
   </div>
   <div ng-show="!prep">
@@ -33,7 +38,7 @@
           <h5 style="display:inline-block; float:right; text-align: right;">Subject:&nbsp;</h5>
           <div style="clear: both"></div>
         </div>
-        <textarea ckeditor="editorOptions" ng-model="editorContent" ng-watch="editorContentWatch"></textarea>
+        <textarea ckeditor="editorOptions" ng-model="form.editorContent" ng-watch="form.editorContentWatch"></textarea>
       </form>
     </div>
     <div class="modal-footer">

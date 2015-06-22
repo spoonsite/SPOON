@@ -314,7 +314,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
         }, {
           title: 'Media'
         }, {
-          title: 'Depenencies'
+          title: 'Dependencies'
         }, {
           title: 'Tags'
         }
@@ -323,7 +323,9 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
 
       temp.push($scope.submitter);
       if (temp && temp.length) {
-        $scope.sendAdminMessage('users', temp, 'Please Review Your Submission "'+ component.name +'"', templates, true);
+        console.log('component', component);
+        
+        $scope.sendAdminMessage('users', temp, 'Please Review Your Submission "'+ component.component.name +'"', templates, true);
       } else {
         triggerAlert('You are unable to send a message to this user. (They could be deactivated or without an email address)', 'failedMessage', 'body', '8000')
       }
@@ -1420,6 +1422,7 @@ $scope.toggleQuestionResponseStatus = function(questionResponse, question){
 
 
 $scope.close = function () {
+  $scope.$emit('$TRIGGEREVENT', '$CLOSEMSG');
   $uiModalInstance.dismiss('close');
 };
 
@@ -1429,6 +1432,7 @@ app.controller('messageSubmitterCtrl',['$scope', '$draggableInstance', 'submitte
 
   $scope.submitter = submitter || {};
 
+
   $scope.ok = function () {
     $draggableInstance.close();
   };
@@ -1437,5 +1441,8 @@ app.controller('messageSubmitterCtrl',['$scope', '$draggableInstance', 'submitte
     $draggableInstance.dismiss('cancel');
   };
 
+  $scope.$on('$CLOSEMSG', function(){
+    $draggableInstance.dismiss('cancel');
+  })
 }]);
 
