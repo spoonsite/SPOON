@@ -230,6 +230,7 @@ var messageCtrl = function ($scope, $uiModalInstance, type, contacts, subject, m
   $scope.form.contacts = contacts;
   $scope.form.disabledContacts = disabledContacts || false;
   $scope.prep = $scope.form.disabledContacts;
+  $scope.form.templates = [];
 
   if (!$scope.form.disabledContacts) {
     $scope.editorContent = message? message: '';
@@ -240,16 +241,71 @@ var messageCtrl = function ($scope, $uiModalInstance, type, contacts, subject, m
     $scope.editorContentWatch;
   }
 
+
+  $scope.$on('$CLOSEMSG', function(){
+    $uiModalInstance.dismiss('cancel');
+  })
+
+
   console.log('$scope.message', $scope.message);
-  
-  $scope.clearIncluded = function(){
-    _.each($scope.message.templates, function(mess){
-      mess.included = false;
-    })
+  $scope.oldType;
+  $scope.clearIncluded = function(type){
+    if ($scope.oldType !== type) {
+      _.each($scope.message.templates, function(mess){
+        var found = false;
+        if ($scope.form.templates && $scope.form.templates[type]){
+          found = _.find($scope.form.templates[type].templates, {title: mess.title});
+        }
+        if (!found) {
+          mess.included = false;
+        } else {
+          mess.included = true;
+        }
+      })
+    } 
+    $scope.oldType = type;
+  }
+
+  $scope.contin = function(){
+    var template = []
+    template.push('Dear ' + contacts[0].name + ',<br/><br/>');
+    _.each($scope.form.templates, function(thing){
+      if (thing && thing.message){
+        template.push(thing.message);
+      }
+    });
+    template.push('We appreciate your submission! Please contact us if you have any questions.<br/><br/>Sincerely,<br/>Clearinghouse Administration');
+    $scope.form.editorContent = template.join('<br/>');
+    $scope.editorContent = template.join('<br/>');
+    $scope.form.editorContentWatch = template.join('<br/>');
+    $scope.editorContentWatch = template.join('<br/>');
+    $scope.prep = false;
   }
 
   $scope.addToTemplates = function(type, messages){
+    var sections = _.pluck(messages.templates, function(item){
+      if (item.included){
+        return item;
+      }
+      return;
+    });
+    sections = sections.filter(function(e){return e});
 
+    if (sections.length && messages && messages.types[type]) {
+      $scope.form.templates[type] = {};
+      $scope.form.templates[type].templates = sections;
+      $scope.form.templates[type].message = '<strong><i>'+ messages.types[type].title + '</i></strong>';
+      $scope.form.templates[type].message += '<ul>';
+      _.each(sections, function(template){
+        $scope.form.templates[type].message += '<li>';
+        $scope.form.templates[type].message += template.title;
+        $scope.form.templates[type].message += '</li>';
+      })
+      $scope.form.templates[type].message += '</ul>';
+    } else {
+      $scope.form.templates[type] = {};
+    }
+    $scope.clearIncluded(type);
   }
 
   var config = getCkConfig();
