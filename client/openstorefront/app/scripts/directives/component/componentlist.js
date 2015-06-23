@@ -380,7 +380,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             the last character of the truncated text. */
             noEllipsis: []
           }
-        });
+        }).removeClass('shortDescription');
       };//
       $timeout(scope.shortenDescription, 100);
     }
