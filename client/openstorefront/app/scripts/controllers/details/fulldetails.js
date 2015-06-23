@@ -171,15 +171,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     });
 
     modalInstance.result.then(function (result) {
-      $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
-      $timeout(function(){
-        $scope.getHighlights(true);
-      }, 1000);
     }, function (result) {
-      $timeout(function(){
-        $scope.getHighlights(true);
-      }, 1000);
-      $scope.$emit('$TRIGGERLOAD', 'adminHighlights');
     });
     console.log('file', file);
   }

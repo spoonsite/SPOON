@@ -45,10 +45,12 @@ var app = angular
     'multi-select',
     'angular.filter',
     'notifications',
-    "com.2fdevs.videogular",
-    "com.2fdevs.videogular.plugins.controls",
-    "com.2fdevs.videogular.plugins.overlayplay",
-    "com.2fdevs.videogular.plugins.poster",
+    'com.2fdevs.videogular',
+    'com.2fdevs.videogular.plugins.controls',
+    'com.2fdevs.videogular.plugins.overlayplay',
+    'com.2fdevs.videogular.plugins.poster',
+    'pasvaz.bindonce',
+    'infinite-scroll'
   // end of dependency injections
   ]
 // end of the module creation

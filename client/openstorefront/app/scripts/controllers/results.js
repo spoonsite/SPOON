@@ -654,6 +654,10 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function applies the filters that have been given to us to filter the
   * data with
   ***************************************************************/
+  //componentList will be overridden by the component list directive
+  //it is the 'handler'
+  $scope.componentList = {};
+  $scope.componentList.resetLimit;
   $scope.applyFilters = function() {
     if ($scope.filteredTotal) {
               
@@ -697,6 +701,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // after a slight wait, reapply the popovers for the results ratings.
       $timeout(function () {
         setupPopovers();                    
+        $scope.componentList.resetLimit('.page1');
       }, 300);
     
     }
