@@ -20,7 +20,7 @@
         <p ng-show="data.length">Found: {{data.length}}</p>
       </div>  
       <table class="table table-striped" id="resultsTable">
-        <tbody infinite-scroll='loadMore()' infinite-scroll-distance='.5' infinite-scroll-immediate-check='true' window-element="page1">
+        <tbody infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check='true' window-element="page1">
           <tr ng-repeat="item in data | limitTo: limit" class="moreSection" style="margin-bottom: 20px;">
             <td ng-show="showitem(item)" style="white-space: inherit;" id="{{getComponentScroll(item)}}">
               <div class="container-fluid">
