@@ -22,7 +22,7 @@
 /***************************************************************
 * TODO:: Make this directive work in the modal on the results page.
 ***************************************************************/
-app.directive('componentList', ['localCache', 'business', '$timeout', '$location', function (localCache, Business, $timeout, $location) {/*jshint unused:false*/
+app.directive('componentList', ['localCache', 'business', '$timeout', '$location', '$q', function (localCache, Business, $timeout, $location, $q) {/*jshint unused:false*/
   var uniqueId = 1;
   var getTemplateUrl = function(element, attrs) {
     var mode = attrs.mode || null;
@@ -51,13 +51,16 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
     link: function postLink(scope, element, attrs) {
       if (scope.data) {
       }
+
+      scope.finished = 0;
       
       scope.limit = 10;
+      scope.paused = false;
 
       scope.loadMore = function() {
-        if (scope.data.length) {
-          if (scope.limit + 3 < scope.data.length) {
-            scope.limit += 3;
+        if (scope.data.length && !scope.paused) {
+          if (scope.limit + 6 <= scope.data.length) {
+            scope.limit += 6;
             $timeout(scope.shortenDescription, 0);
           } else if (scope.limit !== scope.data.length) {
             scope.limit = scope.data.length
@@ -72,6 +75,24 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         
         $(thing).scrollTop(0);
         scope.limit = 10;
+      }
+      scope.internalHandler.pauseLimit = function(thing){
+        scope.paused = true;
+      }
+      scope.internalHandler.resumeLimit = function(thing){
+        scope.paused = false;
+      }
+      scope.internalHandler.dotdotdotFinished = function(){
+        var timeout;
+        var deferred = $q.defer();
+        scope.$watch('finished', function(){
+          clearTimeout(timeout);
+          timeout = setTimeout(function(){
+            deferred.resolve();
+            scope.finished = 0;
+          }, 300);
+        })
+        return deferred.promise;
       }
 
       scope.getShortDescription = getShortDescription;
@@ -372,6 +393,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           /*  Callback function that is fired after the ellipsis is added,
           receives two parameters: isTruncated(boolean), orgContent(string). */
           callback: function (isTruncated, orgContent) {
+            scope.finished++;
           },
           lastCharacter: {
             /*  Remove these characters from the end of the truncated text. */

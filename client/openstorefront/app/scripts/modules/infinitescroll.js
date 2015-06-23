@@ -20,10 +20,15 @@ mod.directive('infiniteScroll', [
             $window = angular.element($window);
           }
         }
+        var top;
+        $timeout(function(){
+          top = elem.offset().top;
+          console.log('top', top);
+        })
         scrollDistance = 0;
         if (attrs.infiniteScrollDistance != null) {
           scope.$watch(attrs.infiniteScrollDistance, function(value) {
-            return scrollDistance = parseInt(value, 10);
+            return scrollDistance = parseFloat(value, 10);
           });
         }
         scrollEnabled = true;
@@ -39,11 +44,16 @@ mod.directive('infiniteScroll', [
         }
         handler = function() {
           var elementBottom, remaining, shouldScroll, windowBottom;
-          windowBottom = $window.height() + $window.scrollTop();
-          elementBottom = elem.offset().top + elem.height();
-          remaining = elementBottom - windowBottom;
-          shouldScroll = remaining <= $window.height() * scrollDistance;
-          // console.log('$window', $window);
+          // windowBottom = $window.height() + $window.scrollTop(); // the distance from the top to the bottom of the window
+          // elementBottom = elem.offset().top + elem.height() - top; // the distance from the top of the element to the bottom of the element
+          // remaining = elementBottom - windowBottom; // subtract the distances to see what remains of the element.
+          // console.log('remainingHeight', elem.height() - $window.height() + (elem.offset().top));
+          // console.log('scrollDistance', scrollDistance);
+          // console.log('scrollDistance', $window.height() * scrollDistance);
+          shouldScroll = (elem.height() - $window.height() + (elem.offset().top)) <= ($window.height() * scrollDistance); // if the scrolldistance times the height of the window (431px) is greater than the remaining element, add more...
+          // console.log('elem.offset().top', elem.offset().top - top);
+          // console.log('elem.height', elem.height());
+          // console.log('$window.height()', $window.height());
           // console.log('windowBottom', windowBottom);
           // console.log('elementBottom', elementBottom);
           // console.log('remaining', remaining);
