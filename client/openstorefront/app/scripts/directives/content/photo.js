@@ -43,6 +43,9 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
 
       $timeout(function(){
 
+      
+
+
         var carousel = element.find('.carousel');
         var options = {
           slides:'> div.item',
@@ -94,6 +97,34 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
             carousel.cycle('goto', parseInt(scope.init));
           }
         })
+
+
+        var keys = function(e) {
+          switch(e.which) {
+            case 37: // left
+            carousel.cycle('prev');
+            break;
+
+            // case 38: // up
+            // break;
+
+            case 39: // right
+            carousel.cycle('next');
+            break;
+
+            // case 40: // down
+            // break;
+
+            default: return; // exit this handler for other keys
+          }
+          e.preventDefault(); // prevent the default action (scroll / move caret)
+        }
+
+        $(document).on('keydown', keys);
+
+        scope.$on('$destroy', function() {
+          $(document).off('keydown', keys);
+        });
       })
 
       scope.getWinHeight = function(video){

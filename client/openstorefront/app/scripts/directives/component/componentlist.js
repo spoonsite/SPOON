@@ -43,6 +43,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       blankTarget: '=',
       showResultCount: '=',
       hideMore: '@',
+      handler: '='
       // list: '=',
       // search: '&',
       // setFilters: '=',
@@ -51,6 +52,28 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       if (scope.data) {
       }
       
+      scope.limit = 10;
+
+      scope.loadMore = function() {
+        if (scope.data.length) {
+          if (scope.limit + 3 < scope.data.length) {
+            scope.limit += 3;
+            $timeout(scope.shortenDescription, 0);
+          } else if (scope.limit !== scope.data.length) {
+            scope.limit = scope.data.length
+            $timeout(scope.shortenDescription, 0);
+          }
+        }
+      };
+
+      scope.internalHandler = scope.handler || {};
+      scope.internalHandler.resetLimit = function(thing){
+        console.log('thing', $(thing));
+        
+        $(thing).scrollTop(0);
+        scope.limit = 10;
+      }
+
       scope.getShortDescription = getShortDescription;
 
       if (scope.search && (!scope.search.type || !scope.search.code)) {
@@ -212,7 +235,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           clearTimeout(timer);
         } else { 
           setTimeout(function() {
-            
+
             if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
               var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
               scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
@@ -253,7 +276,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                   })
                 })
               });
-            } else {
+            } else {//
               $timeout(function(){
                 scope.init();
                 $timeout(function(){
@@ -268,8 +291,6 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             if (attrs.list !== null && attrs.list !== undefined && attrs.list !== '') {
               scope.showCompare = true;
             }
-            
-
           }, 100);
         } //
       }
@@ -333,39 +354,36 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       };
 
       scope.shortenDescription = function() {
-          element.find('.shortDescription').dotdotdot({
-            /*  The text to add as ellipsis. */
-            ellipsis: '... ',
-            /*  How to cut off the text/html: 'word'/'letter'/'children' */
-            wrap: 'word',
-            /*  Wrap-option fallback to 'letter' for long words */
-            fallbackToLetter: true,
-            /*  jQuery-selector for the element to keep and put after the ellipsis. */
-            after: null,
-            /*  Whether to update the ellipsis: true/'window' */
-            watch: true,
-            /*  Optionally set a max-height, if null, the height will be measured. */
-            height: 150,
-            /*  Deviation for the height-option. */
-            tolerance: 0,
-            /*  Callback function that is fired after the ellipsis is added,
-             receives two parameters: isTruncated(boolean), orgContent(string). */
-            callback: function (isTruncated, orgContent) {
-            },
-            lastCharacter: {
-              /*  Remove these characters from the end of the truncated text. */
-              remove: [' ', ',', ';', '.', '!', '?'],
-              /*  Don't add an ellipsis if this array contains 
-               the last character of the truncated text. */
-              noEllipsis: []
-            }
-          });
-      };
-
-
-      $timeout(scope.shortenDescription, 100);//
-
-    }//
+        element.find('.shortDescription').dotdotdot({
+          /*  The text to add as ellipsis. */
+          ellipsis: '... ',
+          /*  How to cut off the text/html: 'word'/'letter'/'children' */
+          wrap: 'word',
+          /*  Wrap-option fallback to 'letter' for long words */
+          fallbackToLetter: true,
+          /*  jQuery-selector for the element to keep and put after the ellipsis. */
+          after: null,
+          /*  Whether to update the ellipsis: true/'window' */
+          watch: true,
+          /*  Optionally set a max-height, if null, the height will be measured. */
+          height: 150,
+          /*  Deviation for the height-option. */
+          tolerance: 0,
+          /*  Callback function that is fired after the ellipsis is added,
+          receives two parameters: isTruncated(boolean), orgContent(string). */
+          callback: function (isTruncated, orgContent) {
+          },
+          lastCharacter: {
+            /*  Remove these characters from the end of the truncated text. */
+            remove: [' ', ',', ';', '.', '!', '?'],
+            /*  Don't add an ellipsis if this array contains 
+            the last character of the truncated text. */
+            noEllipsis: []
+          }
+        });
+      };//
+      $timeout(scope.shortenDescription, 100);
+    }
   };
 }]);
 
