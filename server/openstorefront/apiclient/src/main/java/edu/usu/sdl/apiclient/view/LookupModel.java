@@ -13,36 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.storage.model;
+package edu.usu.sdl.apiclient.view;
 
-import edu.usu.sdl.openstorefront.doc.ConsumeField;
-import edu.usu.sdl.openstorefront.util.PK;
-import javax.persistence.OneToOne;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
 
 /**
  *
  * @author dshurtleff
  */
-public class ComponentAttribute
-		extends BaseComponent
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class LookupModel
+		implements Serializable
 {
 
-	@PK
-	@ConsumeField
-	@OneToOne(orphanRemoval = true)
-	private ComponentAttributePk componentAttributePk;
+	public static final String CODE_FIELD = "code";
+	public static final String DESCRIPTION_FIELD = "description";
 
-	public ComponentAttribute()
+	private String code;
+	private String description;
+
+	public LookupModel()
 	{
 	}
 
-	public ComponentAttributePk getComponentAttributePk()
+	public String getCode()
 	{
-		return componentAttributePk;
+		return code;
 	}
 
-	public void setComponentAttributePk(ComponentAttributePk componentAttributePk)
+	public void setCode(String code)
 	{
-		this.componentAttributePk = componentAttributePk;
+		this.code = code;
 	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
 }
