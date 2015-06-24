@@ -31,22 +31,25 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
       scope.fx = attrs.fx;
       scope.fullStylePrev = {};
       scope.fullStyleNext = {};
-      
-      scope.doCallback = function(data){
+      scope.current = {};
+      var carousel;
+
+      scope.doCallback = function($index, data){
+        console.log('$index', $index);
+        console.log('data', data);
+        
+        carousel.cycle('goto', parseInt($index));
         if (scope.callback){
           scope.callback(data);
         }
       }
       var item = 'item' + uniqueId++;
       element.find('#prev').attr('id', 'prev'+item);
-      element.find('#next').attr('id', 'next'+item);      
+      element.find('#next').attr('id', 'next'+item);
 
       $timeout(function(){
 
-      
-
-
-        var carousel = element.find('.carousel');
+        carousel = element.find('.carousel');
         var options = {
           slides:'> div.item',
           fx: attrs['fx'],
@@ -65,19 +68,15 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
           options.centervert = true;
           scope.fullClass = true;
           scope.fullStylePrev = {
-            left: '-165px',
             'z-index': 20000,
             top: (scope.getWinHeight()/2) + 'px'
           };
-          
+
           scope.fullStyleNext = {
-            right: '-165px',
             'z-index': 20000,
             top: (scope.getWinHeight()/2) + 'px'            
           };
-        }
-        
-        
+        } //
 
         carousel.cycle(options);
 
@@ -90,14 +89,17 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
           })
         })
 
+        carousel.on('cycle-update-view', function(event, optionHash, slideOptionsHash, currentSlideEl){
+          scope.current = optionHash._currSlide;
+        });
+
         $timeout(function(){
           carousel.cycle('stop');
           if (scope.init && !isNaN(parseInt(scope.init))){
-            console.log('scope.init', scope.init);
+            // console.log('scope.init', scope.init);
             carousel.cycle('goto', parseInt(scope.init));
           }
         })
-
 
         var keys = function(e) {
           switch(e.which) {
@@ -115,6 +117,13 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
             // case 40: // down
             // break;
 
+            case 13: // down
+            if (attrs.fx !== 'center'){
+              var file = scope.files[scope.current] || {};
+              scope.doCallback(scope.current, {file:file, files: scope.files});
+            }
+            break;
+
             default: return; // exit this handler for other keys
           }
           e.preventDefault(); // prevent the default action (scroll / move caret)
@@ -125,9 +134,10 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
         scope.$on('$destroy', function() {
           $(document).off('keydown', keys);
         });
+
       })
 
-      scope.getWinHeight = function(video){
+      scope.getWinHeight = function(video){ //
         var result = $(window).height() - 100;
         if (video) {
           return result - 50;
@@ -177,8 +187,7 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
             }
           //
           ];
-          console.log('file', file);
-          
+          // console.log('file', file);
         }
       })
     }
