@@ -153,7 +153,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           }
         } else if (!article) {
           if (item.listingType !== 'Article')
-          count++;
+            count++;
         }
       })
       return count;
@@ -535,8 +535,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
       $timeout(function(){
         $('.page1').focus();
-        $scope.scrollTo('componentScroll'+article.attributes[0].type.replace(/\W/g, '')+article.attributes[0].code.replace(/\W/g, ''));
-      }, 500);
+        // $scope.componentList.pauseLimit();
+        $scope.componentList.dotdotdotFinished().then(function(){
+          $scope.scrollTo('componentScroll'+article.attributes[0].type.replace(/\W/g, '')+article.attributes[0].code.replace(/\W/g, ''));
+        });
+        // $timeout(function(){
+          // $scope.componentList.resumeLimit();
+        // })
+    }, 0);
     } else {
       $scope.isArticle = false;
 
@@ -588,8 +594,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.showDetails = true;
         $timeout(function(){
           $('.page1').focus();
-          $scope.scrollTo('componentScroll'+$scope.details.details.componentId.replace(/\W/g, ''));
-        }, 500);
+          // $scope.componentList.pauseLimit();
+          $scope.componentList.dotdotdotFinished().then(function(){
+            $scope.scrollTo('componentScroll'+$scope.details.details.componentId.replace(/\W/g, ''));
+          });
+          // $timeout(function(){
+            // $scope.componentList.resumeLimit();
+          // })
+      }, 0);
       });
     } //
   }; //
@@ -660,17 +672,17 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.componentList.resetLimit;
   $scope.applyFilters = function() {
     if ($scope.filteredTotal) {
-              
+
       var results =
       // We must use recursive filtering or we will get incorrect results
       // the order DOES matter here.
       $filter('orderBy')
-        ($filter('ratingFilter')
-                ($filter('tagFilter')
-                        ($filter('componentFilter')
-                                ($filter('filter')
+      ($filter('ratingFilter')
+        ($filter('tagFilter')
+          ($filter('componentFilter')
+            ($filter('filter')
                                         //filter by the string
-                                                ($scope.total, $scope.query),
+                                        ($scope.total, $scope.query),
                                                 // filter the data by the filters
                                                 $scope.filters),
                                         // filter the data by the tags
@@ -703,7 +715,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         setupPopovers();                    
         $scope.componentList.resetLimit('.page1');
       }, 300);
-    
+
     }
   };
 
