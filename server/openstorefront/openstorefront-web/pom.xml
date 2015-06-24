@@ -167,28 +167,28 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-graphdb</artifactId>
 			<version>${orientdb.verison}</version>
-		 <exclusions>
-		  <exclusion>
-		   <groupId>asm</groupId>
-		   <artifactId>asm</artifactId>
-		  </exclusion>
-		  <exclusion>
-		   <groupId>asm</groupId>
-		   <artifactId>asm-analysis</artifactId>
-		  </exclusion>
-		  <exclusion>
-		   <groupId>asm</groupId>
-		   <artifactId>asm-commons</artifactId>
-		  </exclusion>
-		  <exclusion>
-		   <groupId>asm</groupId>
-		   <artifactId>asm-tree</artifactId>
-		  </exclusion>
-		  <exclusion>
-		   <groupId>asm</groupId>
-		   <artifactId>asm-util</artifactId>
-		  </exclusion>
-		 </exclusions>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-analysis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-commons</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-tree</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>		 
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
@@ -419,7 +419,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.pegdown</groupId>
+  			<groupId>org.pegdown</groupId>
 			<artifactId>pegdown</artifactId>
 			<version>1.5.0</version>
 			<type>jar</type>

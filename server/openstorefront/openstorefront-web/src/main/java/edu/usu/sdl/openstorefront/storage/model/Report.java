@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.util.PK;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +58,7 @@ public class Report
 	private String runStatus;
 
 	@ConsumeField
+	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 
 	private Boolean scheduled;

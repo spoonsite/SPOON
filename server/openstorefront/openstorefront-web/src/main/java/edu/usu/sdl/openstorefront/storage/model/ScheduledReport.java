@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.util.PK;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -53,6 +54,7 @@ public class ScheduledReport
 	private String reportFormat;
 
 	@ConsumeField
+	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 
 	@ConsumeField

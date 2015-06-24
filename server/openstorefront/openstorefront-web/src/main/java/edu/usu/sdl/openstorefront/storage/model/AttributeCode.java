@@ -42,6 +42,7 @@ public class AttributeCode
 	@PK
 	@NotNull
 	@ConsumeField
+	@OneToOne(orphanRemoval = true)
 	private AttributeCodePk attributeCodePk;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
