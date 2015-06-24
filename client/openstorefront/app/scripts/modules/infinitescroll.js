@@ -23,7 +23,7 @@ mod.directive('infiniteScroll', [
         var top;
         $timeout(function(){
           top = elem.offset().top;
-          console.log('top', top);
+          // console.log('top', top);
         })
         scrollDistance = 0;
         if (attrs.infiniteScrollDistance != null) {
