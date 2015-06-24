@@ -89,14 +89,14 @@ public abstract class BaseAction
 
 	protected boolean doesFileExceedLimit(FileBean fileBean, long limit)
 	{
-		boolean valid = true;
+		boolean exceeds = false;
 
 		if (fileBean != null) {
 			if (fileBean.getSize() > limit) {
-				valid = false;
+				exceeds = true;
 			}
 		}
-		return valid;
+		return exceeds;
 	}
 
 	protected void deleteTempFile(FileBean fileBean)
