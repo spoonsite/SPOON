@@ -877,6 +877,14 @@ $scope.resourceUploader = new FileUploader({
   alias: 'file',
   queueLimit: 1,  
   removeAfterUpload: true,
+  onAfterAddingFile: function(file){
+    if (file._file && file._file.size && file._file.size >= 104857600) {
+      triggerAlert('The file you have selected exceeds the file size limit of 100MB and will not be uploaded.', 'mediaLoader', 'body', 7000);
+      this.removeFromQueue(file);          
+      $scope.cancelResourceEdit();
+      return;
+    }
+  },
   onBeforeUploadItem: function(item) {
     $scope.$emit('$TRIGGERLOAD', 'resourceFormLoader');
 
@@ -1003,6 +1011,14 @@ $scope.mediaUploader = new FileUploader({
   alias: 'file',
   queueLimit: 1,  
   removeAfterUpload: true,
+  onAfterAddingFile: function(file){
+    if (file._file && file._file.size && file._file.size >= 104857600) {
+      triggerAlert('The file you have selected exceeds the file size limit of 100MB and will not be uploaded.', 'mediaLoader', 'body', 7000);
+      this.removeFromQueue(file);          
+      $scope.cancelMediaEdit();
+      return;
+    }
+  },
   onBeforeUploadItem: function(item) {
     $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
 

@@ -75,7 +75,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.formMedia;
   
   $scope.sendHome = function() {
-      window.location.href = "/";
+    window.location.href = "/";
   };
 
   $scope.setEditable = function($event){
@@ -977,6 +977,14 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       // console.log('We loaded the loader!', file.file);
       // console.dir('FILE---------', file.file);
       $scope.$emit('$TRIGGERLOAD', 'mediaLoader', 'Adding Files');
+      if (file._file && file._file.size && file._file.size >= 104857600) {
+        triggerAlert('The file you have selected exceeds the file size limit of 100MB and will not be uploaded.', 'mediaLoader', 'body', 7000);
+        this.removeFromQueue(file);
+        $scope.$emit('$TRIGGERUNLOAD', 'mediaLoader', 6000);
+        $scope.resetMediaInput();
+        return;
+      }
+      
       if (this.queue.length >= this.queueLimit) {
         $scope.isFull = true;
       }
@@ -1107,6 +1115,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       // console.log('We loaded the loader!', file.file);
       // console.dir(file.file);
       $scope.$emit('$TRIGGERLOAD', 'submissionLoader','Adding Files');
+      if (file._file && file._file.size && file._file.size >= 104857600) {
+        triggerAlert('The file you have selected exceeds the file size limit of 100MB and will not be uploaded.', 'mediaLoader', 'body', 7000);
+        this.removeFromQueue(file);
+        $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 6000);
+        $scope.resetResourceInput();
+        return;
+      }
       if (this.queue.length >= this.queueLimit) {
         $scope.isFull = true;
       }
