@@ -66,4 +66,23 @@ public class ComponentService
 		return resources;
 	}
 
+	/**
+	 * This is only available in 1.4+
+	 *
+	 * @return
+	 */
+	public List<ComponentResourceView> getComponentAllResources()
+	{
+		List<ComponentResourceView> resources = new ArrayList<>();
+		APIResponse response = callAPI("api/v1/resource/components/resources", null);
+		try {
+			resources = getObjectMapper().readValue(response.getResponseBody(), new TypeReference<List<ComponentResourceView>>()
+			{
+			});
+		} catch (IOException ex) {
+			throw new HandlingException(ex);
+		}
+		return resources;
+	}
+
 }

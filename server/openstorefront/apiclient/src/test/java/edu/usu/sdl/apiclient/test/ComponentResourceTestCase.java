@@ -20,6 +20,7 @@ import edu.usu.sdl.apiclient.LoginModel;
 import edu.usu.sdl.apiclient.view.ComponentResourceView;
 import edu.usu.sdl.apiclient.view.LookupModel;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -29,11 +30,11 @@ import org.junit.Test;
 public class ComponentResourceTestCase
 {
 
-	@Test
-	public void testResourceLookup()
-	{
-		LoginModel loginModel = new LoginModel();
+	private LoginModel loginModel = new LoginModel();
 
+	@Before
+	public void init()
+	{
 		//production uses IDToken1
 		loginModel.setUsernameField("username");
 		loginModel.setUsername("user");
@@ -50,15 +51,29 @@ public class ComponentResourceTestCase
 		//loginModel.setSecurityUrl("https://idam.di2e.net/openam/UI/Login?goto=https%3A%2F%2Fstorefront.di2e.net%3A443%2Fopenstorefront%2FLogin.action)";
 		//loginModel.setServerUrl("https://storefront.di2e.net/openstorefront/");
 		//loginModel.setLogoffUrl("https://idam.di2e.net/openam/UI/Logout/");
+	}
+
+	@Test
+	public void testResourceLookup()
+	{
 		ComponentService componentService = new ComponentService(loginModel);
 		List<LookupModel> components = componentService.getComponentLookupList();
 		if (components.isEmpty() == false) {
 			List<ComponentResourceView> resources = componentService.getComponentResources(components.get(0).getCode());
 			resources.forEach(resource -> {
-				System.out.println(resource.getResourceType() + " - " + resource.getLink());
+				System.out.println(resource.getResourceTypeDesc() + " - " + resource.getLink());
 			});
 		}
+	}
 
+	@Test
+	public void testAllResourceLookup()
+	{
+		ComponentService componentService = new ComponentService(loginModel);
+		List<ComponentResourceView> resources = componentService.getComponentAllResources();
+		resources.forEach(resource -> {
+			System.out.println(resource.getResourceTypeDesc() + " - " + resource.getLink());
+		});
 	}
 
 }
