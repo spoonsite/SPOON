@@ -508,7 +508,7 @@ the component to **Pending** until all data is entered.
 
 **To preview component:**
 
-1.  Click on the preview ![view](../../../../../../client/openstorefront/app/images/help/view.png) icon in the action
+1.  Click on the preview ![view](../../../../../../client/openstorefront/app/images/help/viewsm.png) icon in the action
     column on the component you wish to view. A new tab in browser will
     open and display the component detail page.
 
