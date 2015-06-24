@@ -181,6 +181,25 @@ public class ComponentRESTResource
 	}
 
 	@GET
+	@APIDescription("Get all resources for ")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentResourceView.class)
+	@Path("/resources")
+	public Response getComponentAllResources()
+	{
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
+		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+
+		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
+
+		GenericEntity<List<ComponentResourceView>> entity = new GenericEntity<List<ComponentResourceView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
 	@APIDescription("Get valid component approval statuses")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)

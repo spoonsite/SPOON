@@ -15,12 +15,14 @@
  */
 package edu.usu.sdl.apiclient.view;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Date;
 
 /**
  *
  * @author dshurtleff
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ComponentResourceView
 {
 
@@ -37,6 +39,7 @@ public class ComponentResourceView
 	private Date updateDts;
 	private String activeStatus;
 	private String originalLink;
+	private String componentId;
 
 	public ComponentResourceView()
 	{
@@ -170,6 +173,16 @@ public class ComponentResourceView
 	public void setOriginalFileName(String originalFileName)
 	{
 		this.originalFileName = originalFileName;
+	}
+
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
 	}
 
 }
