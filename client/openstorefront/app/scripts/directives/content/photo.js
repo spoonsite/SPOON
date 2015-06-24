@@ -118,7 +118,10 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
             // break;
 
             case 13: // down
-            if (attrs.fx !== 'center'){
+            if (attrs.fx === 'center'){
+              break;
+            }
+            if (attrs.fx !== 'center' && !$('.modal-content').find('photo').length){
               var file = scope.files[scope.current] || {};
               scope.doCallback(scope.current, {file:file, files: scope.files});
             }
