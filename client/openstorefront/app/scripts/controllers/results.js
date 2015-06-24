@@ -669,7 +669,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //componentList will be overridden by the component list directive
   //it is the 'handler'
   $scope.componentList = {};
-  $scope.componentList.resetLimit;
+  $scope.componentList.resetLimit = function(){};
   $scope.applyFilters = function() {
     if ($scope.filteredTotal) {
 

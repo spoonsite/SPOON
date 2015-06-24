@@ -58,7 +58,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       scope.paused = false;
 
       scope.loadMore = function() {
-        if (scope.data.length && !scope.paused) {
+        if (scope.data && scope.data.length && !scope.paused) {
           if (scope.limit + 6 <= scope.data.length) {
             scope.limit += 6;
             $timeout(scope.shortenDescription, 0);
@@ -71,7 +71,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
 
       scope.internalHandler = scope.handler || {};
       scope.internalHandler.resetLimit = function(thing){
-        console.log('thing', $(thing));
+        // console.log('thing', $(thing));
         
         $(thing).scrollTop(0);
         scope.limit = 10;
