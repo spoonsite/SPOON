@@ -10,6 +10,7 @@
 	</properties>
 	<modules>
 	 <module>openstorefront-web</module>
+	 <module>apiclient</module>
 	</modules>
 	
 	<dependencies>

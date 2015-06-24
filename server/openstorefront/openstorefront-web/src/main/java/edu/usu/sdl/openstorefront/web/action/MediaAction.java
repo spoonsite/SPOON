@@ -135,35 +135,38 @@ public class MediaAction
 					}
 				}
 				if (allow) {
-					componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
-					componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
-					componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-					componentMedia.setOriginalName(file.getFileName());
-					componentMedia.setMimeType(file.getContentType());
 
-					ValidationModel validationModel = new ValidationModel(componentMedia);
-					validationModel.setConsumeFieldsOnly(true);
-					ValidationResult validationResult = ValidationUtil.validate(validationModel);
-					if (validationResult.valid()) {
-						try {
-							service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
-
-							if (SecurityUtil.isAdminUser() == false) {
-								if (ApprovalStatus.PENDING.equals(component.getApprovalState())) {
-									service.getComponentService().checkComponentCancelStatus(componentMedia.getComponentId(), ApprovalStatus.NOT_SUBMITTED);
-								}
-							}
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
-						} finally {
-							try {
-								file.delete();
-							} catch (IOException ex) {
-								log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
-							}
-						}
+					if (doesFileExceedLimit(file)) {
+						deleteTempFile(file);
+						errors.put("file", "File size exceeds max allowed.");
 					} else {
-						errors.put("file", validationResult.toHtmlString());
+
+						componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+						componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+						componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+						componentMedia.setOriginalName(file.getFileName());
+						componentMedia.setMimeType(file.getContentType());
+
+						ValidationModel validationModel = new ValidationModel(componentMedia);
+						validationModel.setConsumeFieldsOnly(true);
+						ValidationResult validationResult = ValidationUtil.validate(validationModel);
+						if (validationResult.valid()) {
+							try {
+								service.getComponentService().saveMediaFile(componentMedia, file.getInputStream());
+
+								if (SecurityUtil.isAdminUser() == false) {
+									if (ApprovalStatus.PENDING.equals(component.getApprovalState())) {
+										service.getComponentService().checkComponentCancelStatus(componentMedia.getComponentId(), ApprovalStatus.NOT_SUBMITTED);
+									}
+								}
+							} catch (IOException ex) {
+								throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+							} finally {
+								deleteTempFile(file);
+							}
+						} else {
+							errors.put("file", validationResult.toHtmlString());
+						}
 					}
 				} else {
 					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
@@ -245,11 +248,7 @@ public class MediaAction
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 					} finally {
-						try {
-							file.delete();
-						} catch (IOException ex) {
-							log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
-						}
+						deleteTempFile(file);
 					}
 				} else {
 					errors.put("file", validationResult.toHtmlString());

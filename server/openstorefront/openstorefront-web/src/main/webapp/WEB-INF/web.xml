@@ -108,7 +108,7 @@
         </init-param>
         <init-param>
             <param-name>FileUpload.MaximumPostSize</param-name>
-            <param-value>100mb</param-value>
+            <param-value>1gb</param-value>
         </init-param>
     </filter>
 	

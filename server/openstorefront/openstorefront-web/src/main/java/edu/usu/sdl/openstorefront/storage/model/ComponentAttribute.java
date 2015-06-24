@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.PK;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -28,6 +29,7 @@ public class ComponentAttribute
 
 	@PK
 	@ConsumeField
+	@OneToOne(orphanRemoval = true)
 	private ComponentAttributePk componentAttributePk;
 
 	public ComponentAttribute()
