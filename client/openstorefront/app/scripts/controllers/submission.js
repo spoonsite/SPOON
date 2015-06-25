@@ -29,6 +29,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.test = 'This is a test';
   $scope.badgeFound = false;
   $scope.lastMediaFile = '';
+  $scope.hideMultiSelect = true;
 
   $scope.submitter = {};
   $scope.submitter.firstName;
@@ -73,10 +74,26 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.details = {};
 
   $scope.formMedia;
+  $scope.tempAttribute;
   
   $scope.sendHome = function() {
     window.location.href = "/";
   };
+
+  $scope.addTo = function(item, collection){
+    console.log('we hit this');
+    
+    if (!_.isArray(collection)){
+      console.log('it wasnt an array');
+      collection = [];
+    }
+    _.contains(collection, item)? console.log('it had it already'): collection.push(item);
+    console.log('collection', collection);
+  }
+  $scope.removeFrom = function(item, collection){
+    collection.splice(item, 1);
+    console.log('collection', collection);
+  }
 
   $scope.setEditable = function($event){
     var response = window.confirm("Are you sure you want to resume editing your submission? This action remove your submission from the admin's pending queue and you will have to re-submit it for approval.");
@@ -128,7 +145,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           $scope.component = angular.copy(result);
           $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
           $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
+          $scope.hideMultiSelect = true;
           $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+          $scope.hideMultiSelect = false;
           if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N') {
             $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
           }
@@ -402,7 +421,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
               $scope.component = angular.copy(result);
               $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');              
               $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');              
+              $scope.hideMultiSelect = true;
               $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+              $scope.hideMultiSelect = false;
             }
             deferred.resolve();
           }, function(result){
@@ -456,7 +477,9 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
               $scope.component = angular.copy(result);
               $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');              
               $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');              
+              $scope.hideMultiSelect = true;
               $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+              $scope.hideMultiSelect = false;
             }
             deferred.resolve();
             // console.log('Success result', result);
@@ -558,8 +581,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     var realAttributes = $scope.component.attributes;
     var attributes = [];
     _.each(realAttributes, function(attr){
-      if (attr.constructor === Array){
-        _.each(attr, function(item){
+      if (_.isArray(attr.items) ){
+        _.each(attr.items, function(item){
           if (attributePK && !item.componentAttributePk) {
             item.componentAttributePk = {
               'attributeType': item.attributeType,
@@ -585,22 +608,38 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
   $scope.setupAttributes = function(attributes){
     var result = {};
+    // cycle through the given attributes on a component to merge the models for the form/view/directives etc...
     _.each(attributes, function(attribute){
+      // if the attribute is found within our list of attributes
       var foundAttr = _.find($scope.allAttributes, {'attributeType': attribute.componentAttributePk.attributeType});
       if (foundAttr) {
+        // grab the new model through our filter
         var foundAttr = $filter('makeattribute')(foundAttr.codes, foundAttr);
+        // find the code we were given
         var found = _.find(foundAttr, {'code': attribute.componentAttributePk.attributeCode});
+        // and merge them
         var merged = _.merge(found, attribute);
         if (merged.requiredFlg) {
+          // if it is a required attribute it doesn't go into the array and isn't used in the multiple select
           result[attribute.componentAttributePk.attributeType] = merged;
         } else {
-          if (!result[attribute.componentAttributePk.attributeType]) {
-            result[attribute.componentAttributePk.attributeType] = []
-          } 
-          result[attribute.componentAttributePk.attributeType].push(merged);
+          // otherwise it needs to be put into the array...
+          if (!result[attribute.componentAttributePk.attributeType] || !result[attribute.componentAttributePk.attributeType].items) {
+            result[attribute.componentAttributePk.attributeType] = {items:[]};
+          }
+          result[attribute.componentAttributePk.attributeType].items.push(merged);
         }
       }
     })
+console.log('result', result);
+
+    //This is what resolved the angular error.
+    // for each attribute in our list
+    _.each($scope.allAttributes, function(attribute){
+      // make sure it exists in the array so that angular is happy...
+      result[attribute.attributeType] = result[attribute.attributeType] || {items:[]};
+    })
+
     return result;
   }
 
@@ -1050,8 +1089,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     },
     onCompleteAll: function(){
       $scope.getSubmission();
-      $scope.mediaUploader.queue = {};
-      $scope.queue = {};
+      $scope.mediaUploader.queue = [];
+      $scope.queue = [];
     }
   });     
 
@@ -1181,8 +1220,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     },
     onCompleteAll: function(){
       $scope.getSubmission();
-      $scope.resourceUploader.queue = {};
-      $scope.resourceQueue = {};
+      $scope.resourceUploader.queue = [];
+      $scope.resourceQueue = [];
     }
   });
 
@@ -1406,29 +1445,31 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     restrict: 'E',
     replace: true,
     scope: {
+      isDisabled: '=',
       selected: '=',
-      options: '@',
       list: '=',
-      onChange: '&',
-      ngDisabled: '='
+      options: '@',
+      onChange: '&'
     },
     template: $templateCache.get('multiselect/select.tmp.html'),
     link: function(scope, elem, attrs) {
+      console.log('scope', scope);
+      
+      (scope.selected && _.isArray(scope.selected.items))? null: _.isObject(scope.selected)? scope.selected.items = []: scope.selected = {items:[]};
       scope.addToSelection = function(selection){
-        if (!scope.ngDisabled) {
-          scope.selected = scope.selected && scope.selected.constructor === Array? scope.selected: [];
-          _.contains(scope.selected, selection) || !selection? '':scope.selected.push(selection);
+        if (!scope.isDisabled) {
+          _.contains(scope.selected.items, selection) || !selection? null:scope.selected.items.push(selection);
           scope.onChange(true);
         }
       }
       scope.removeItem = function(item){
-        if (!scope.ngDisabled) {
-          var index = _.find(scope.selected, {label: item.label});
+        if (!scope.isDisabled) {
+          var index = _.find(scope.selected.items, {label: item.label});
           if (index) {
-            index = _.indexOf(scope.selected, index);
-            scope.selected.splice(index, 1);
+            index = _.indexOf(scope.selected.items, index);
+            scope.selected.items.splice(index, 1);
           }
-          if (scope.selected.length === 0){
+          if (scope.selected.items.length === 0){
             var elements = elem.find('select')[0].options;
 
             for(var i = 0; i < elements.length; i++){
@@ -1439,4 +1480,21 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       }
     }
   };
-}]);
+}])
+.directive("select", function() {
+  // This is a quick fix for the 'second' key change if using the keyboard for 
+  // the select change.
+    return {
+      restrict: "E",
+      require: "?ngModel",
+      scope: false,
+      link: function (scope, element, attrs, ngModel) {
+        if (!ngModel) {
+          return;
+        }
+        element.bind("keyup", function() {
+          element.triggerHandler("change");
+        })
+      }
+   }
+});
