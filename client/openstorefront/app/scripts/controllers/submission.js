@@ -81,18 +81,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   };
 
   $scope.addTo = function(item, collection){
-    console.log('we hit this');
-    
     if (!_.isArray(collection)){
-      console.log('it wasnt an array');
       collection = [];
     }
-    _.contains(collection, item)? console.log('it had it already'): collection.push(item);
-    console.log('collection', collection);
+    _.contains(collection, item)? '': collection.push(item);
   }
   $scope.removeFrom = function(item, collection){
     collection.splice(item, 1);
-    console.log('collection', collection);
   }
 
   $scope.setEditable = function($event){
@@ -173,7 +168,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         } else {
           $scope.submitter = {};
           $scope.getUserInfo().then(function(userInfo){
-            console.log('userInfo', userInfo);
             $scope.submitter.firstName = userInfo.firstName;
             $scope.submitter.lastName = userInfo.lastName;
             $scope.submitter.email = userInfo.email;
@@ -189,7 +183,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     } else {
       $scope.submitter = {};
       $scope.getUserInfo().then(function(userInfo){
-        console.log('userInfo', userInfo);
         $scope.submitter.firstName = userInfo.firstName;
         $scope.submitter.lastName = userInfo.lastName;
         $scope.submitter.email = userInfo.email;
@@ -1453,7 +1446,6 @@ console.log('result', result);
     },
     template: $templateCache.get('multiselect/select.tmp.html'),
     link: function(scope, elem, attrs) {
-      console.log('scope', scope);
       
       (scope.selected && _.isArray(scope.selected.items))? null: _.isObject(scope.selected)? scope.selected.items = []: scope.selected = {items:[]};
       scope.addToSelection = function(selection){
