@@ -585,8 +585,7 @@ public class ComponentServiceImpl
 	{
 		Objects.requireNonNull(componentId, "Component Id is required");
 
-		OSFCacheManager.getComponentCache().remove(componentId);
-		OSFCacheManager.getComponentLookupCache().remove(componentId);
+		cleanupCache(componentId);
 
 		ComponentUpdateQueue componentUpdateQueue = new ComponentUpdateQueue();
 		componentUpdateQueue.setComponentId(componentId);
@@ -596,6 +595,14 @@ public class ComponentServiceImpl
 		componentUpdateQueue.populateBaseCreateFields();
 		persistenceService.persist(componentUpdateQueue);
 
+	}
+
+	private void cleanupCache(String componentId)
+	{
+		Objects.requireNonNull(componentId, "Component Id is required");
+
+		OSFCacheManager.getComponentCache().remove(componentId);
+		OSFCacheManager.getComponentLookupCache().remove(componentId);
 	}
 
 	@Override
@@ -1136,6 +1143,7 @@ public class ComponentServiceImpl
 					getUserService().queueUserMessage(userMessage);
 				}
 			}
+			cleanupCache(component.getComponent().getComponentId());
 		} else {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}

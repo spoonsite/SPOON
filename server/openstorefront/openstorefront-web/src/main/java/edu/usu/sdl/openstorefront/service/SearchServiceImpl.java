@@ -28,6 +28,8 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
@@ -127,6 +129,21 @@ public class SearchServiceImpl
 			solrQuery.setFields(SolrComponentModel.ID_FIELD, SolrComponentModel.ISCOMPONENT_FIELD);
 			solrQuery.setStart(filter.getOffset());
 			solrQuery.setRows(filter.getMax());
+
+			Field sortField = ReflectionUtil.getField(new SolrComponentModel(), filter.getSortField());
+			if (sortField != null) {
+				String sortFieldText = filter.getSortField();
+				org.apache.solr.client.solrj.beans.Field fieldAnnotation = sortField.getAnnotation(org.apache.solr.client.solrj.beans.Field.class);
+				if (fieldAnnotation != null) {
+					sortFieldText = fieldAnnotation.value();
+				}
+				SolrQuery.ORDER order = SolrQuery.ORDER.desc;
+				if (OpenStorefrontConstant.SORT_ASCENDING.equalsIgnoreCase(filter.getSortOrder())) {
+					order = SolrQuery.ORDER.asc;
+				}
+				solrQuery.addSort(sortFieldText, order);
+			}
+
 			solrQuery.setIncludeScore(true);
 
 			QueryResponse response = SolrManager.getServer().query(solrQuery);

@@ -84,33 +84,21 @@ public class SearchResultAttribute
 		this.code = code;
 	}
 
-	/**
-	 * @return the badgeUrl
-	 */
 	public String getBadgeUrl()
 	{
 		return badgeUrl;
 	}
 
-	/**
-	 * @param badgeUrl the badgeUrl to set
-	 */
 	public void setBadgeUrl(String badgeUrl)
 	{
 		this.badgeUrl = badgeUrl;
 	}
 
-	/**
-	 * @return the label
-	 */
 	public String getLabel()
 	{
 		return label;
 	}
 
-	/**
-	 * @param label the label to set
-	 */
 	public void setLabel(String label)
 	{
 		this.label = label;
