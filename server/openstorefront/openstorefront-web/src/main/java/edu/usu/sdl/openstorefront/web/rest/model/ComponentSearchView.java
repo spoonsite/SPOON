@@ -50,7 +50,7 @@ public class ComponentSearchView
 	private Date releaseDate;
 	private Date approvedDts;
 	private Date lastActivityDts;
-	private List<ComponentTag> tags;
+	private List<ComponentTag> tags = new ArrayList<>();
 
 	private String activeStatus;
 	private String createUser;
@@ -58,7 +58,7 @@ public class ComponentSearchView
 	private String updateUser;
 	private Date updateDts;
 
-	private List<SearchResultAttribute> attributes;
+	private List<SearchResultAttribute> attributes = new ArrayList<>();
 
 	public ComponentSearchView()
 	{
