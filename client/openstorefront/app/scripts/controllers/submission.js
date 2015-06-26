@@ -624,7 +624,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         }
       }
     })
-console.log('result', result);
 
     //This is what resolved the angular error.
     // for each attribute in our list
