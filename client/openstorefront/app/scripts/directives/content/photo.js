@@ -18,7 +18,7 @@
 
 app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse, $sce) {
   // id needs to be unique across all implementations of the directive.
-  var uniqueId= 0;
+  var uniqueId = 0;
   return {
     restrict: 'E',
     scope:{
@@ -43,101 +43,121 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
           scope.callback(data);
         }
       }
+
+
+
       var item = 'item' + uniqueId++;
       element.find('#prev').attr('id', 'prev'+item);
       element.find('#next').attr('id', 'next'+item);
 
-      $timeout(function(){
-
-        carousel = element.find('.carousel');
-        var options = {
-          slides:'> div.item',
-          fx: attrs['fx'],
-
-          timeout: 0,
-          caption:'.caption',
-          next:"#next"+item,
-          prev:"#prev"+item,
-          allowWrap: (attrs['wrap'] === 'true')? true: false,
-          slideCount: scope.files.length || 0,
-          _nextBoundry: scope.files.length || 0
-        }
-        if (attrs.fx === 'center'){
-          options.fx = 'fade';
-          options.centerHorz = true;
-          options.centervert = true;
-          scope.fullClass = true;
-          scope.fullStylePrev = {
-            'z-index': 20000,
-            top: (scope.getWinHeight()/2) + 'px'
-          };
-
-          scope.fullStyleNext = {
-            'z-index': 20000,
-            top: (scope.getWinHeight()/2) + 'px'            
-          };
-        } //
-
-        carousel.cycle(options);
-
-        carousel.on('cycle-before', function(event, opts){
-          $('video').each(function(e){
-            $(this)[0].pause();
-          })
-          $('audio').each(function(e){
-            $(this)[0].pause();
-          })
-        })
-
-        carousel.on('cycle-update-view', function(event, optionHash, slideOptionsHash, currentSlideEl){
-          scope.current = optionHash._currSlide;
-        });
-
+      scope.reInit = function(){
         $timeout(function(){
-          carousel.cycle('stop');
-          if (scope.init && !isNaN(parseInt(scope.init))){
-            // console.log('scope.init', scope.init);
-            carousel.cycle('goto', parseInt(scope.init));
+
+          carousel = element.find('.carousel');
+          var options = {
+            slides:'> div.item',
+            fx: attrs['fx'],
+
+            timeout: 0,
+            caption:'.caption',
+            next:"#next"+item,
+            prev:"#prev"+item,
+            allowWrap: (attrs['wrap'] === 'true')? true: false,
+            slideCount: scope.files.length || 0,
+            _nextBoundry: scope.files.length || 0
+          }
+          if (attrs.fx === 'center'){
+            options.fx = 'fade';
+            options.centerHorz = true;
+            options.centervert = true;
+            scope.fullClass = true;
+            scope.fullStylePrev = {
+              'z-index': 20000,
+              top: (scope.getWinHeight()/2) + 'px'
+            };
+
+            scope.fullStyleNext = {
+              'z-index': 20000,
+              top: (scope.getWinHeight()/2) + 'px'            
+            };
+          } //
+
+          carousel.cycle(options);
+
+          carousel.on('cycle-before', function(event, opts){
+            $('video').each(function(e){
+              $(this)[0].pause();
+            })
+            $('audio').each(function(e){
+              $(this)[0].pause();
+            })
+          })
+
+          carousel.on('cycle-update-view', function(event, optionHash, slideOptionsHash, currentSlideEl){
+            scope.current = optionHash._currSlide;
+          });
+
+          $timeout(function(){
+            carousel.cycle('stop');
+            if (scope.init && !isNaN(parseInt(scope.init))){
+              // console.log('scope.init', scope.init);
+              carousel.cycle('goto', parseInt(scope.init));
+            }
+          })
+
+          var keys = function(e) {
+            switch(e.which) {
+              case 37: // left
+              carousel.cycle('prev');
+              break;
+
+              // case 38: // up
+              // break;
+
+              case 39: // right
+              carousel.cycle('next');
+              break;
+
+              // case 40: // down
+              // break;
+
+              case 13: // down
+              if (attrs.fx === 'center'){
+                break;
+              }
+              if (attrs.fx !== 'center' && !$('.modal-content').find('photo').length){
+                var file = scope.files[scope.current] || {};
+                scope.doCallback(scope.current, {file:file, files: scope.files});
+              }
+              break;
+
+              default: return; // exit this handler for other keys
+            }
+            e.preventDefault(); // prevent the default action (scroll / move caret)
+          }
+
+          $(document).on('keydown', keys);
+
+          scope.$on('$destroy', function() {
+            $(document).off('keydown', keys);
+          });
+
+        })
+      } //
+      scope.reInit();
+      scope.$on('$RESETCAROUSEL', function(){
+        // scope.reInit();
+        // for some reason after this is made, all of the images are set to opacity:0
+        // need to override that to bring them back.
+        $timeout(function(){
+          if (attrs.fx !== 'center'){
+            element.find('.item').each(function(e){
+              $(this).css({
+                opacity: 1
+              })
+            })
           }
         })
-
-        var keys = function(e) {
-          switch(e.which) {
-            case 37: // left
-            carousel.cycle('prev');
-            break;
-
-            // case 38: // up
-            // break;
-
-            case 39: // right
-            carousel.cycle('next');
-            break;
-
-            // case 40: // down
-            // break;
-
-            case 13: // down
-            if (attrs.fx === 'center'){
-              break;
-            }
-            if (attrs.fx !== 'center' && !$('.modal-content').find('photo').length){
-              var file = scope.files[scope.current] || {};
-              scope.doCallback(scope.current, {file:file, files: scope.files});
-            }
-            break;
-
-            default: return; // exit this handler for other keys
-          }
-          e.preventDefault(); // prevent the default action (scroll / move caret)
-        }
-
-        $(document).on('keydown', keys);
-
-        scope.$on('$destroy', function() {
-          $(document).off('keydown', keys);
-        });
-
       })
 
       scope.getWinHeight = function(video){ //
