@@ -381,18 +381,19 @@ limitations under the License.
               ng-model="resourceForm.originalLink"                  
               ng-maxlength=250                  
               placeholder="http:///www.example.com/resource"
+              ng-disabled="resourceForm.uploadInput"
               ng-focus />
             </div>
           </div>	
           <div class="form-group"  >
             <label class="col-sm-2 control-label">Upload Local Resource</label>
             <div class="col-sm-10">
-              <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().resourceUploader, this)" uploader="resourceUploader" name="uploadFile" width="100" ng-disabled="resourceForm.originalLink" />
+              <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().resourceUploader, this); angular.element(this).scope().setUploadInput('resourceUploader', 'resourceForm')" uploader="resourceUploader" name="uploadFile" width="100" ng-disabled="resourceForm.originalLink" />
             </div>
             <p class="help-block" ng-show="resourceForm.localResourceName">Current Local Resource: {{resourceForm.originalFileName}} ({{resourceForm.localResourceName}})</p>               
           </div>  
           <br>
-          <button type="submit" class="btn btn-primary" ng-disabled="resourceUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{resourceForm.saveText}}</button>  
+          <button type="submit" class="btn btn-primary" ng-disabled="resourceUIForm.$invalid  || !(resourceForm.uploadInput || resourceForm.originalLink)"><i class="fa fa-save"></i>&nbsp;{{resourceForm.saveText}}</button>  
           <a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancelResourceEdit()" ng-show="resourceForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a> 
         </form>       
       </panel>					
@@ -457,7 +458,7 @@ limitations under the License.
         <div class="form-group"  >
           <label class="col-sm-2  control-label">Upload Media</label>		
           <div class="col-sm-10">
-            <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().mediaUploader, this)" uploader="mediaUploader" name="uploadFile" width="100" ng-disabled="mediaForm.originalLink" />
+            <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().mediaUploader, this); angular.element(this).scope().setUploadInput('mediaUploader', 'mediaForm')" uploader="mediaUploader" name="uploadFile" width="100" ng-disabled="mediaForm.originalLink"/>
           </div>
           <p class="help-block" ng-show="mediaForm.fileName">Current Local Media: {{mediaForm.originalFileName}} ({{mediaForm.fileName}})</p>								
         </div>				
@@ -470,12 +471,13 @@ limitations under the License.
             class="form-control" 
             placeholder="http:///www.example.com/image.png"
             ng-model="mediaForm.originalLink"								
+            ng-disabled="mediaForm.uploadInput"
             ng-minlength=0
             ng-maxlength=250								
             ng-focus />
           </div>
         </div>	
-        <button type="submit" class="btn btn-primary" ng-disabled="mediaUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{mediaForm.saveText}}</button>	
+        <button type="submit" class="btn btn-primary" ng-disabled="mediaUIForm.$invalid || !(mediaForm.uploadInput || mediaForm.originalLink)"><i class="fa fa-save"></i>&nbsp;{{mediaForm.saveText}}</button>	
         <a  ng-href=""  name="cancelSave" ng-click="cancelMediaEdit()" ng-show="mediaForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>	
       </form>			
     </panel>

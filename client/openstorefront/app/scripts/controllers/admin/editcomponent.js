@@ -323,7 +323,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
 
       temp.push($scope.submitter);
       if (temp && temp.length) {
-        console.log('component', component);
+        // console.log('component', component);
         
         $scope.sendAdminMessage('users', temp, 'Please Review Your Submission "'+ component.component.name +'"', templates, true);
       } else {
@@ -970,6 +970,22 @@ $scope.toggleMediaStatus = function(media){
     }
   });
 };    
+
+$scope.setUploadInput = function(uploader, form){
+  if ($scope[uploader] 
+    && $scope[uploader]._directives 
+    && $scope[uploader]._directives.select 
+    && $scope[uploader]._directives.select.length 
+    && $scope[uploader]._directives.select[0].element 
+    && $scope[uploader]._directives.select[0].element.length 
+    && $scope[uploader]._directives.select[0].element[0].files
+    && $scope[uploader]._directives.select[0].element[0].files.length) {
+    $scope[form].uploadInput = true;
+  } else {
+    $scope[uploader].clearQueue();
+    $scope[form].uploadInput = false;
+  }
+}
 
 $scope.saveMedia = function () {
   $scope.mediaForm.link = $scope.mediaForm.originalLink;
