@@ -561,7 +561,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
           $scope.sendPageView(result.name);
           $scope.details.details = result;
-
+          $scope.$emit('$TRIGGEREVENT', '$RESETCAROUSEL')
           // Code here will be linted with JSHint.
           /* jshint ignore:start */
           // Code here will be linted with ignored by JSHint.
