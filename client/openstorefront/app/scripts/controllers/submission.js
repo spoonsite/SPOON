@@ -123,9 +123,55 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
         deferred.resolve(result);
         // console.log('result', result);
       }
+    }, function(result){
+      deferred.reject(result);
     });
     return deferred.promise;
   }
+
+  $scope.leaveOverride = false;
+
+  $scope.getUserInfo().then(function(result){
+    window.onbeforeunload = function (event) {
+      if ($scope.leaveOverride) {
+
+      } else if (!$scope.component.component.approvalState || $scope.component.component.approvalState === 'N') {
+        var message = 'Important: Your component has not yet been submitted. Please finish the form and click on the \'Save Component\' to submit your component. Otherwise you may return to this form later through the user menu on the Clearinghouse website to submit your component.';
+        if (typeof event == 'undefined') {
+          event = window.event;
+        }
+        if (event) {
+          event.returnValue = message;
+        }
+        return message;
+      }
+    }
+  }, function(result){
+    console.log('we hit this side');
+    window.onbeforeunload = function (event) {
+      if ($scope.leaveOverride) {
+
+      } else if (!$scope.component.component.approvalState || $scope.component.component.approvalState === 'N') {
+        var message = 'Important: Please finish the form and click on the \'Save Component\' button before leaving this page. Otherwise your component will not be submitted and your work will be lost.';
+        if (typeof event == 'undefined') {
+          event = window.event;
+        }
+        if (event) {
+          event.returnValue = message;
+        }
+        return message;
+      } else if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N'){
+        var message = 'Important: Once you leave this page, you will no longer be able to adjust your component submission.';
+        if (typeof event == 'undefined') {
+          event = window.event;
+        }
+        if (event) {
+          event.returnValue = message;
+        }
+        return message;
+      }
+    }
+  })
 
   $scope.getSubmission = function(){
     var deferred = $q.defer();
@@ -148,7 +194,14 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           }
         }
         deferred.resolve();
-      }, function(result){
+      }, function(data){
+        console.log('data', data);
+        
+        if (data.status === 403) {
+          var confirmation = window.confirm('You were not logged in or not the owner of this component submission. Please log in and return to this submission form through the user menu.');
+          $scope.leaveOverride = true;
+          window.location = "";
+        }
         $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
         deferred.reject();
       });
@@ -1284,6 +1337,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   }
   $scope.resetToggles();
 
+
 }])
 .filter('makeattribute', function() {
   return function(input, attribute) {
@@ -1445,7 +1499,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     },
     template: $templateCache.get('multiselect/select.tmp.html'),
     link: function(scope, elem, attrs) {
-      
+
       (scope.selected && _.isArray(scope.selected.items))? null: _.isObject(scope.selected)? scope.selected.items = []: scope.selected = {items:[]};
       scope.addToSelection = function(selection){
         if (!scope.isDisabled) {
@@ -1475,17 +1529,17 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 .directive("select", function() {
   // This is a quick fix for the 'second' key change if using the keyboard for 
   // the select change.
-    return {
-      restrict: "E",
-      require: "?ngModel",
-      scope: false,
-      link: function (scope, element, attrs, ngModel) {
-        if (!ngModel) {
-          return;
-        }
-        element.bind("keyup", function() {
-          element.triggerHandler("change");
-        })
+  return {
+    restrict: "E",
+    require: "?ngModel",
+    scope: false,
+    link: function (scope, element, attrs, ngModel) {
+      if (!ngModel) {
+        return;
       }
-   }
+      element.bind("keyup", function() {
+        element.triggerHandler("change");
+      })
+    }
+  }
 });
