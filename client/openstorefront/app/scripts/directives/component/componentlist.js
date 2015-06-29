@@ -253,10 +253,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       ***************************************************************/
       scope.setupData = function() {
         if (timer) {
-          clearTimeout(timer);
         } else { 
-          setTimeout(function() {
-
+          timer = setTimeout(function() {
             if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
               var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
               scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
@@ -282,6 +280,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                   scope.data = [];
                 }
                 $timeout(function(){
+                  clearTimeout(timer);
+                  timer = false;
                   scope.init();
                   $timeout(function(){
                     scope.$apply();
@@ -291,6 +291,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                 scope.$emit('$TRIGGERUNLOAD', 'resultsLoader');
                 scope.data = [];
                 $timeout(function(){
+                  clearTimeout(timer);
+                  timer = false;
                   scope.init();
                   $timeout(function(){
                     scope.$apply();
@@ -299,6 +301,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
               });
             } else {//
               $timeout(function(){
+                clearTimeout(timer);
+                timer = false;
                 scope.init();
                 $timeout(function(){
                   scope.$apply();
