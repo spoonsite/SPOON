@@ -104,7 +104,7 @@
             result.reject(false);
           }
         }).error(function (data, status, headers, config) {
-          result.reject('There was an error');
+          result.reject({data:data, status:status, headers:headers, config:config});
         });
       }
     } else {
