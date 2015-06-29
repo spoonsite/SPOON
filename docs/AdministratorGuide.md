@@ -882,19 +882,19 @@ The user types are:
 -----
 
 Add these lines to the shiro.ini file:
-/submission.html = anon
-/bower_components/** = anon
-/fonts/** = anon
-/images/** = anon
-/scripts/** = anon
-/styles/** = anon
-/views/** = anon
-/Media.action = anon
-/Resource.action = anon
-/api/v1/resource/componentsubmissions/** = anon
-/api/v1/resource/attributes = anon
-/api/v1/resource/lookuptypes/** = anon
-/api/v1/resource/userprofiles/currentuser = anon
+-   /submission.html = anon
+-   /bower_components/** = anon
+-   /fonts/** = anon
+-   /images/** = anon
+-   /scripts/** = anon
+-   /styles/** = anon
+-   /views/** = anon
+-   /Media.action = anon
+-   /Resource.action = anon
+-   /api/v1/resource/componentsubmissions/** = anon
+-   /api/v1/resource/attributes = anon
+-   /api/v1/resource/lookuptypes/** = anon
+-   /api/v1/resource/userprofiles/currentuser = anon
 
 ##5.2  Integration External LDAP (User Syncing)
 ----------------------------------------
