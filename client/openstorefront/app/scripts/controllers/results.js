@@ -281,12 +281,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       });
       $scope.setupData();
       setupFilters();
+      adjustFilters();
       // var end = new Date().getTime();
       // var time = end - start;
       // console.log('Total Execution time ****: ' + time);
       $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
       $scope.initializeData(key);
-      adjustFilters();
     }, function(result){
       if (result && result.data && result.data.length > 0)
       {
@@ -491,7 +491,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         }
       }
     }
-    $scope.resetFilters = JSON.parse(JSON.stringify($scope.filters));
+    Business.getFilters(false, false).then(function(result) {
+      $scope.resetFilters = JSON.parse(JSON.stringify(result));
+    })
   };
 
   /***************************************************************
