@@ -36,7 +36,7 @@ limitations under the License.
 				<p ng-show="reportUIForm.reportFormat.$error.required && !reportUIForm.reportFormat.$focused" class="help-block">Report Format is required.</p>
 			</div>  
 		</div>  		
-		<panel class-list="edges" open-state="true" title="Report Options" ng-show="options.useage">
+		<panel class-list="edges" open-state="true" title="Report Options" ng-show="options.useage || options.submission">
 
 			<div class="form-group" show-errors >
 				<label class="control-label col-sm-2">Start Date</label>

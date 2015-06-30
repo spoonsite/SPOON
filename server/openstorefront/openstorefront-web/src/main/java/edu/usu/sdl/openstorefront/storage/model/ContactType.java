@@ -28,6 +28,7 @@ public class ContactType
 
 	public static final String TECHINCAL = "TEC";
 	public static final String GOVERNMENT = "GOV";
+	public static final String SUBMITTER = "SUB";
 
 	public ContactType()
 	{

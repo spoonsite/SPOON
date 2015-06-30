@@ -64,6 +64,9 @@ public abstract class BaseReport
 				case ReportType.LINK_VALIDATION:
 					baseReport = new ExternalLinkValidationReport(report);
 					break;
+				case ReportType.SUBMISSION:
+					baseReport = new SubmissionsReport(report);
+					break;
 				default:
 					throw new OpenStorefrontRuntimeException("Report Type not supported", "Check type and/or add support. Type: " + report.getReportType(), ErrorTypeCode.REPORT);
 			}
