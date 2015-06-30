@@ -123,7 +123,7 @@ public class JobManager
 		} else {
 			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
 					.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
-					.withDescription("Component Integration Job")
+					.withDescription("Component Integration Job for " + serviceProxy.getComponentService().getComponentName(componentIntegration.getComponentId()))
 					.build();
 
 			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
