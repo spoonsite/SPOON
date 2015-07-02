@@ -383,7 +383,7 @@ body {
       <!-- END META DATA -->
 
       <!-- CONTACTS -->
-      <h2 id="contacts">Contacts<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event, 'mediaFormType'): ''">Skip</button></small></h2>
+      <h2 id="contacts">Contacts<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event, 'mediaFormType'): ''">Skip</button></small></h2>
       <panel class-list="edges" open-state="true" title="Add Contact">
 	<div class="help-text">Add government, technical, and other points of contact.</div>	  
         <form name="contactUIForm" class="form-horizontal">
@@ -529,7 +529,7 @@ body {
 
 
       <!-- DEPENDENCIES -->
-      <h2 id="dependencies">Dependencies:</h2>
+      <h2 id="dependencies">Dependencies:<button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event, 'resourceFormType'): ''">Skip</button></small></h2>
       <panel class-list="edges" open-state="true" title="Add Dependency">
 	<div class="help-text">Describe what is needed to utilize the component. Enter each dependency separately.  (Eg. Java 7+,  MySql 5+)</div>	  
         <form name="dependencyUIForm" class="form-horizontal">
@@ -638,7 +638,7 @@ body {
       <hr>
 
       <!-- EXTERNAL RESOURCES -->
-      <h2 id="resources">Resources:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('dependencies', 'details', 'details', $event, 'dependencyFormName'): ''">Skip</button></small></h2>
+      <h2 id="resources">Resources:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('media', 'details', 'details', $event, 'dependencyFormName'): ''">Skip</button></small></h2>
       <panel class-list="edges" open-state="true" title="Add Resources" style="position:relative">
         <loader trigger="resourcePreviewLoader"></loader>
 	<div class="help-text">Add links to home page, documentation, binaries, etc... If there is no external link for a resource it may be uploaded so that it may be shared with the community.  Preferably, the resource should be managed externally.</div>	  	
@@ -779,7 +779,7 @@ body {
       <hr>
 
       <!-- MEDIA -->
-      <h2 id="media">Media:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('resources', 'details', 'details', $event, 'resourceFormType'): ''">Skip</button></small></h2>
+      <h2 id="media">Media:<small></h2>
       <panel class-list="edges" open-state="true" title="Add Media" style="position:relative">
         <div masked="mediaLoader" >
 	<div class="help-text">Add screen shots, company logos, short videos clips, etc... Typically, media is uploaded as that makes it the most accessible.  External resources can be pointed to by using an external link. External resources work best with a valid SSL certificate and are unrestricted (ie. no login).</div>	  			
