@@ -1,11 +1,11 @@
 <span style="width: calc(100% - 71px); display: inline-block; float:right">
-  <select class="form-control" ng-disabled="disabled" style="display:inline-block;" ng-change="checkForToContacts()" ng-model="toField" ng-options="option as option.title for option in toOptions">
+  <select class="form-control" ng-disabled="isDisabled" style="display:inline-block;" ng-change="checkForToContacts()" ng-model="toField" ng-options="option as option.title for option in toOptions">
   </select>
 </span>
 <h5 style="display:inline-block; float:right; text-align: right;">
   To Group:&nbsp;
 </h5>
-<button ng-disabled="disabled" ng-show="toField.value !== 'all'" class="pull-right btn btn-default btn-small" type="button" ng-click="checkForToContacts()">
+<button ng-disabled="isDisabled" ng-show="toField.value !== 'all'" class="pull-right btn btn-default btn-small" type="button" ng-click="checkForToContacts()">
   <i class="fa fa-edit">
   </i>
 </button>
