@@ -114,7 +114,7 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
     scope: {
       type: '=',
       contacts: '=',
-      disabled: '@'
+      isDisabled: '@'
     },
     link: function(scope, element, attrs) {
 
