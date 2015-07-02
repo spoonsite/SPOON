@@ -77,7 +77,6 @@ public class BeanComparator<T>
 					f.setAccessible(true);
 					if (f.get(o) instanceof Date) {
 						int compare = 0;
-						System.out.println(f.get(o));
 						DateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
 						if (BeanUtils.getProperty(obj1, sortField) != null && BeanUtils.getProperty(obj2, sortField) == null) {
 							return 1;
