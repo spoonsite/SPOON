@@ -122,14 +122,18 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
 
 
       var resetHeight = function(idleft, idright) {
-        var left = $('#' + idleft).outerHeight();
-        var right = $('#' + idright).outerHeight();
 
-        if (left > right) {
-          element.find('#' + idright).css('height', left + 'px');
-        } else {
-          element.find('#' + idleft).css('height', right + 'px');
-        }
+        element.find('#' + idright).css('height', '');
+        element.find('#' + idleft).css('height', '');
+        $timeout(function(){
+          var left = $('#' + idleft).outerHeight();
+          var right = $('#' + idright).outerHeight();
+          if (left > right) {
+            element.find('#' + idright).css('height', left + 'px');
+          } else {
+            element.find('#' + idleft).css('height', right + 'px');
+          }
+        },10)
       }
 
       /***************************************************************
@@ -152,19 +156,19 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
         if (scope.detailsright && scope.detailsleft) {
           $timeout(function(){
            // element.find('*').css('height', 'auto');
-            resetHeight('linersleft', 'linersright');
-            resetHeight('tagsleft', 'tagsright');
-            resetHeight('badgeleft', 'badgeright');
-            resetHeight('detailsleft', 'detailsright');
-            resetHeight('factorsleft', 'factorsright');
-            resetHeight('resourcesleft', 'resourcesright');
-            resetHeight('attributesleft', 'attributesright');
-            resetHeight('contactsleft', 'contactsright');
-            resetHeight('subcomponentsleft', 'subcomponentsright');
-            resetHeight('dependenciesleft', 'dependenciesright');
-            resetHeight('reviewsleft', 'reviewsright');
-            resetHeight('questionsleft', 'questionsright');
-          }, 100);
+           resetHeight('linersleft', 'linersright');
+           resetHeight('tagsleft', 'tagsright');
+           resetHeight('badgeleft', 'badgeright');
+           resetHeight('detailsleft', 'detailsright');
+           resetHeight('factorsleft', 'factorsright');
+           resetHeight('resourcesleft', 'resourcesright');
+           resetHeight('attributesleft', 'attributesright');
+           resetHeight('contactsleft', 'contactsright');
+           resetHeight('subcomponentsleft', 'subcomponentsright');
+           resetHeight('dependenciesleft', 'dependenciesright');
+           resetHeight('reviewsleft', 'reviewsright');
+           resetHeight('questionsleft', 'questionsright');
+         }, 100);
         }
       }
 
