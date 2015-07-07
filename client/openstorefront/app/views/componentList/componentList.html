@@ -28,12 +28,12 @@
                   <div class="results-content">
                     <div class="results-content-title" ng-click="clickCallback(item.componentId, item)">
                       <div ng-show="blankTarget" style="display:inline-block">
-                        <a ng-if="item.listingType === 'Article'" ng-href-i="#/landing?type={{item.articleAttributeType}}&code={{item.articleAttributeCode}}" target="_blank">
+                        <a ng-if="item.listingType === 'Article'" ng-href="#/landing?type={{item.articleAttributeType}}&code={{item.articleAttributeCode}}" target="_blank">
                           <div class="results-content-title-content" ><span ng-bind="item.name"></span>
                             <span style="font-size:13px;">&nbsp;(Article)</span>
                           </div>
                         </a>
-                        <a ng-if="item.listingType !== 'Article'" ng-href-i="#/single?id={{item.componentId}}" target="_blank">
+                        <a ng-if="item.listingType !== 'Article'" ng-href="#/single?id={{item.componentId}}" target="_blank">
                           <div class="results-content-title-content" ><span ng-bind="item.name"></span>
                           </div>
                         </a>
