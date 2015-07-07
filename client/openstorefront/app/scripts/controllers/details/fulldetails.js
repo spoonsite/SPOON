@@ -81,6 +81,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     
   })
 
+  /***************************************************************
+  * This function is used by the reviews section in the details to remove
+  * and add the ellipsis
+  ***************************************************************/
+  $scope.toggleclass = function(id, className) {
+    toggleclass(id, className);
+  };
+
   $scope.setComponentId = function(id) {
     var deferred = $q.defer();
     $rootScope.refId = id;
