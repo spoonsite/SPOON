@@ -54,11 +54,18 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       $scope.setPredicate(val, 'components');
     };
 
-    $scope.refreshComponents = function () {
+    if ($scope.pagination.control) {
+      $scope.pagination.control.onRefresh = function(){
+        $scope.selectedComponents = [];
+        $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+      }
+    }
 
+    $scope.refreshComponents = function () {
       if ($scope.pagination.control && $scope.pagination.control.refresh) {
         $scope.$emit('$TRIGGERLOAD', 'componentLoader');
         $scope.pagination.control.refresh().then(function(){
+          $scope.selectedComponents = [];
           $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
         });
       }
@@ -981,10 +988,10 @@ $scope.setUploadInput = function(uploader, form){
     && $scope[uploader]._directives.select[0].element[0].files
     && $scope[uploader]._directives.select[0].element[0].files.length) {
     $scope[form].uploadInput = true;
-  } else {
-    $scope[uploader].clearQueue();
-    $scope[form].uploadInput = false;
-  }
+} else {
+  $scope[uploader].clearQueue();
+  $scope[form].uploadInput = false;
+}
 }
 
 $scope.saveMedia = function () {

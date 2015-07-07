@@ -126,6 +126,11 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
             deferred.resolve();
           });
         }
+
+        if (scope.internalControl && scope.internalControl.onRefresh){
+          scope.internalControl.onRefresh();
+        }
+
         return deferred.promise;
       }
 
