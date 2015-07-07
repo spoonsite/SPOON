@@ -69,7 +69,7 @@ limitations under the License.
   </thead>
   <tbody>
     <tr ng-repeat="component in filteredComponents" >
-      <td><input type="checkbox" ng-click="selectComponent(component);" ng-model="component.selected"  /></td>
+      <td><input type="checkbox" ng-click="selectComponent(component);" ng-checked="component.selected" ng-model="component.selected"  /></td>
       <td>{{component.component.name}}</td>
       <td>{{component.component.description | limitTo: 100}}</td>
       <td>{{component.component.lastActivityDts | date:'MM/dd/yyyy h:mm:ss.sss a' }}</td>

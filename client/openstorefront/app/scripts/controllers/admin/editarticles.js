@@ -51,135 +51,138 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
 
   $scope.selectType = function(article){
     if (article.selected) {
-        article.selected = !article.selected;
-        if (article.selected === false) {
-         $scope.selectedTypes = _.reject($scope.selectedTypes, function(type) { return type === article.attributeType + "#" + article.attributeCode; });
-       } else {
-        $scope.selectedTypes.push(article.attributeType + "#" + article.attributeCode);
-      }
-    } else {
-      article.selected = true;
+      article.selected = !article.selected;
+      if (article.selected === false) {
+       $scope.selectedTypes = _.reject($scope.selectedTypes, function(type) { return type === article.attributeType + "#" + article.attributeCode; });
+     } else {
       $scope.selectedTypes.push(article.attributeType + "#" + article.attributeCode);
     }
-  };
+  } else {
+    article.selected = true;
+    $scope.selectedTypes.push(article.attributeType + "#" + article.attributeCode);
+  }
+};
 
-  $scope.selectAllTypes = function(){
-    $scope.selectedTypes = [];
-    _.forEach($scope.articles, function(article){                
+$scope.selectAllTypes = function(){
+  $scope.selectedTypes = [];
+  _.forEach($scope.articles, function(article){                
         article.selected = !$scope.selectAllTypes.flag; //click happens before state change
         if (article.selected) {
           $scope.selectedTypes.push(article.attributeType + "#" + article.attributeCode);
         }
       });
-  };  
-  
-  $scope.export = function(){
-   document.exportForm.submit();
-  };
+};  
+
+$scope.export = function(){
+ document.exportForm.submit();
+};
 
 
-  $scope.getArticles = function(override){
-    var deferred = $q.defer();
-    Business.articleservice.getArticles(override, true).then(function(result){
-      $scope.articles = result? angular.copy(result): [];
-      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
-      deferred.resolve();
-    }, function(){
-      $scope.articles = [];
-      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
-      deferred.resolve();
-    })
-    return deferred.promise;
+$scope.getArticles = function(override){
+  var deferred = $q.defer();
+  Business.articleservice.getArticles(override, true).then(function(result){
+    $scope.articles = result? angular.copy(result): [];
+    $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
+    deferred.resolve();
+    $scope.selectedTypes = [];
+    
+  }, function(){
+    $scope.articles = [];
+    $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
+    deferred.resolve();
+    $scope.selectedTypes = [];
+  })
+  return deferred.promise;
+}
+$scope.getArticles(true);
+
+
+$scope.getArticleDesc = function(desc){
+  if (desc && desc !== undefined  && desc !== null && desc !== '') {
+    return desc;
   }
-  $scope.getArticles(true);
+  return ' ';
+}
 
-
-  $scope.getArticleDesc = function(desc){
-    if (desc && desc !== undefined  && desc !== null && desc !== '') {
-      return desc;
-    }
-    return ' ';
-  }
-
-  $scope.editContent = function(type, code){
-    var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/editlandingform.html',
-      controller: 'AdminEditLandingCtrl',
-      size: 'lg',
-      backdrop: 'static',
-      resolve: {
-        type: function () {
-          return type;
-        },
-        code: function () {
-          return code;
-        }
-      }
-    });
-
-    modalInstance.result.then(function (result) {
-      $scope.getArticles(true);
-    }, function (result) {
-      $scope.getArticles(true);
-    });
-  }
-  
-  $scope.changeActivity = function(article){
-    if (article && article.attributeType && article.attributeCode) {
-      var message = "Warning: You are about to change the active status of an Attribute Code. This will activate or deactivate the code and all related metadata. Continue?";
-      var conf = confirm(message);
-      if (conf) {
-        if (article.attributeCodeActiveStatus === 'A') {
-          $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
-          Business.articleservice.deactivateCode(article.attributeType, article.attributeCode).then(function(){
-            $timeout(function(){
-              $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
-              $scope.getArticles(true);
-            }, 1000);
-          }, function(){
-            $timeout(function(){
-              $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
-              $scope.getArticles(true);
-            }, 1000);
-          })
-        } else {
-          Business.articleservice.activateCode(article.attributeType, article.attributeCode).then(function(){
-            $timeout(function(){
-              $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
-              $scope.getArticles(true);
-            }, 1000);
-          }, function(){
-            $timeout(function(){
-              $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
-              $scope.getArticles(true);
-            }, 1000);
-          })
-        }
+$scope.editContent = function(type, code){
+  var modalInstance = $uiModal.open({
+    templateUrl: 'views/admin/editlandingform.html',
+    controller: 'AdminEditLandingCtrl',
+    size: 'lg',
+    backdrop: 'static',
+    resolve: {
+      type: function () {
+        return type;
+      },
+      code: function () {
+        return code;
       }
     }
-  }
+  });
 
-  $scope.importFile = function(){
-    var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/fileupload.html',
-      controller: 'AdminAddMediaCtrl',
-      backdrop: 'static',
-      size: 'sm',
-      resolve: {
-        title: function () {
-          return "Import Articles File";
-        },
-        url: function () {
-          return "Upload.action?UploadArticles";
-        },
-        single: function () {
-          return true;
-        },
-        alias: function () {
-          return 'uploadFile';
-        }
+  modalInstance.result.then(function (result) {
+    $scope.getArticles(true);
+  }, function (result) {
+    $scope.getArticles(true);
+  });
+}
+
+$scope.changeActivity = function(article){
+  if (article && article.attributeType && article.attributeCode) {
+    var message = "Warning: You are about to change the active status of an Attribute Code. This will activate or deactivate the code and all related metadata. Continue?";
+    var conf = confirm(message);
+    if (conf) {
+      if (article.attributeCodeActiveStatus === 'A') {
+        $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
+        Business.articleservice.deactivateCode(article.attributeType, article.attributeCode).then(function(){
+          $timeout(function(){
+            $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
+            $scope.getArticles(true);
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
+            $scope.getArticles(true);
+          }, 1000);
+        })
+      } else {
+        Business.articleservice.activateCode(article.attributeType, article.attributeCode).then(function(){
+          $timeout(function(){
+            $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
+            $scope.getArticles(true);
+          }, 1000);
+        }, function(){
+          $timeout(function(){
+            $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
+            $scope.getArticles(true);
+          }, 1000);
+        })
       }
-    });
+    }
+  }
+}
+
+$scope.importFile = function(){
+  var modalInstance = $uiModal.open({
+    templateUrl: 'views/admin/fileupload.html',
+    controller: 'AdminAddMediaCtrl',
+    backdrop: 'static',
+    size: 'sm',
+    resolve: {
+      title: function () {
+        return "Import Articles File";
+      },
+      url: function () {
+        return "Upload.action?UploadArticles";
+      },
+      single: function () {
+        return true;
+      },
+      alias: function () {
+        return 'uploadFile';
+      }
+    }
+  });
 
 //    modalInstance.result.then(function (result) {
 //      triggerAlert('Your changes to the article have been saved.', 'ArticleEditAlert', 'body', 6000);
@@ -193,39 +196,39 @@ app.controller('adminEditArticlesCtrl',['$scope','business', '$uiModal', '$timeo
 //        $scope.getArticles(true);
 //      }, 1000);
 //    });       
-  };
+};
 
 
 
-  $scope.deleteArticle = function(article){
-    var conf = confirm("You are about to remove an article permanently. Would you like to continue?");
-    if (conf) {
-      Business.articleservice.deleteArticle(article).then(function(result){
-        triggerAlert('The article was deleted.', 'articleAlert', 'body', 6000)
-        $scope.getArticles(true);
-      })
-    }
-  }
-
-  if ($scope.type && $scope.code) {
-    $scope.getArticles(true).then(function(){
-      $scope.editContent($scope.type, $scope.code, $scope.articles);
+$scope.deleteArticle = function(article){
+  var conf = confirm("You are about to remove an article permanently. Would you like to continue?");
+  if (conf) {
+    Business.articleservice.deleteArticle(article).then(function(result){
+      triggerAlert('The article was deleted.', 'articleAlert', 'body', 6000)
+      $scope.getArticles(true);
     })
   }
+}
 
-  $timeout(function() {
-    $('[data-toggle=\'tooltip\']').tooltip();
-  }, 300);
+if ($scope.type && $scope.code) {
+  $scope.getArticles(true).then(function(){
+    $scope.editContent($scope.type, $scope.code, $scope.articles);
+  })
+}
 
-  var stickThatTable = function(){
-    var offset = $('.top').outerHeight() + $('#editArticlesToolbar').outerHeight();
-    $(".stickytable").stickyTableHeaders({
-      fixedOffset: offset
-    });
-  }
+$timeout(function() {
+  $('[data-toggle=\'tooltip\']').tooltip();
+}, 300);
 
-  $(window).resize(stickThatTable);
-  $timeout(stickThatTable, 100);
+var stickThatTable = function(){
+  var offset = $('.top').outerHeight() + $('#editArticlesToolbar').outerHeight();
+  $(".stickytable").stickyTableHeaders({
+    fixedOffset: offset
+  });
+}
+
+$(window).resize(stickThatTable);
+$timeout(stickThatTable, 100);
 
 }]);
 

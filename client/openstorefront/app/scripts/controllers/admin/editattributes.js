@@ -60,6 +60,13 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     $scope.setPredicate(val, false);
   };
 
+  if ($scope.pagination.control) {
+    $scope.pagination.control.onRefresh = function(){
+      $scope.selectedTypes = [];
+      $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+    }
+  }
+
   $scope.editLanding = function(type, code) {
     $scope.$parent.editLanding(type, code);
   };
@@ -163,72 +170,72 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     $('[data-toggle=\'tooltip\']').tooltip();
   }, 300);
   
-    $scope.selectType = function(attributeType){
-      if (attributeType.selected) {
-        attributeType.selected = !attributeType.selected;
-        if (attributeType.selected === false) {
-         $scope.selectedTypes = _.reject($scope.selectedTypes, function(type) { return type === attributeType.attributeType; });
-       } else {
-        $scope.selectedTypes.push(attributeType.attributeType);
-      }
-    } else {
-      attributeType.selected = true;
+  $scope.selectType = function(attributeType){
+    if (attributeType.selected) {
+      attributeType.selected = !attributeType.selected;
+      if (attributeType.selected === false) {
+       $scope.selectedTypes = _.reject($scope.selectedTypes, function(type) { return type === attributeType.attributeType; });
+     } else {
       $scope.selectedTypes.push(attributeType.attributeType);
     }
-  };
+  } else {
+    attributeType.selected = true;
+    $scope.selectedTypes.push(attributeType.attributeType);
+  }
+};
 
-  $scope.selectAllTypes = function(){
-    $scope.selectedTypes = [];
-    _.forEach($scope.data.allTypes.data, function(attributeType){                
+$scope.selectAllTypes = function(){
+  $scope.selectedTypes = [];
+  _.forEach($scope.data.allTypes.data, function(attributeType){                
         attributeType.selected = !$scope.selectAllTypes.flag; //click happens before state change
         if (attributeType.selected) {
           $scope.selectedTypes.push(attributeType.attributeType);
         }
       });
-  };  
-  
-  $scope.export = function(){
+};  
+
+$scope.export = function(){
    // window.location.href = "api/v1/resource/attributes/export"; 
    document.exportForm.submit();
-  };
+ };
 
-  $scope.confirmAttributeUpload = function(isAttributeUploader){
-    var cont = false;
-    if (isAttributeUploader){
-      cont = confirm('Please verify that this file is an attributes json file.');
-      if (cont){
-        $scope.attributeUploader.uploadAll();
-        $timeout( function(){
-          document.getElementById('attributeUploadFile').value = null;
-        }, 200);
-      }
-    } else {
-      cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
-      if (cont){
-        $scope.svcv4uploader.uploadAll(); 
-        $timeout( function(){
-          document.getElementById('svcv4UploadFile').value = null;
-        }, 200);
-      }
+ $scope.confirmAttributeUpload = function(isAttributeUploader){
+  var cont = false;
+  if (isAttributeUploader){
+    cont = confirm('Please verify that this file is an attributes json file.');
+    if (cont){
+      $scope.attributeUploader.uploadAll();
+      $timeout( function(){
+        document.getElementById('attributeUploadFile').value = null;
+      }, 200);
     }
-  };
+  } else {
+    cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
+    if (cont){
+      $scope.svcv4uploader.uploadAll(); 
+      $timeout( function(){
+        document.getElementById('svcv4UploadFile').value = null;
+      }, 200);
+    }
+  }
+};
 
-  $scope.attributeUploader = new FileUploader({
-    url: 'Upload.action?UploadAttributes',
-    alias: 'uploadFile',
-    queueLimit: 1, 
-    removeAfterUpload: true,
-    filters: [{
-      name: 'csv',    
-      fn: function(item) {
-        return true;
-      }
-    }],
-    onBeforeUploadItem: function(item) {
-      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-    },
-    onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+$scope.attributeUploader = new FileUploader({
+  url: 'Upload.action?UploadAttributes',
+  alias: 'uploadFile',
+  queueLimit: 1, 
+  removeAfterUpload: true,
+  filters: [{
+    name: 'csv',    
+    fn: function(item) {
+      return true;
+    }
+  }],
+  onBeforeUploadItem: function(item) {
+    $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+  },
+  onSuccessItem: function (item, response, status, headers) {
+    $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
 
       //check response for a fail ticket or a error model
       if (response.success) {
