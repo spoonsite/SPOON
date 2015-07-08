@@ -121,13 +121,16 @@ app.directive('photo', ['$timeout', '$parse', '$sce', function($timeout, $parse,
               // case 40: // down
               // break;
 
-              case 13: // down
+              case 13: // enter
               if (attrs.fx === 'center'){
                 break;
               }
               if (attrs.fx !== 'center' && !$('.modal-content').find('photo').length){
-                var file = scope.files[scope.current] || {};
-                scope.doCallback(scope.current, {file:file, files: scope.files});
+                if (element.has(e.target).length || e.target === $('body')[0]){
+                  var file = scope.files[scope.current] || {};
+                  scope.doCallback(scope.current, {file:file, files: scope.files});
+                } else {
+                }
               }
               break;
 
