@@ -335,24 +335,28 @@ public class SearchServiceImpl
 				pk.setAttributeType(article.getAttributeType());
 				AttributeCode code = getAttributeService().findCodeForType(pk);
 				AttributeType type = getAttributeService().findType(article.getAttributeType());
+				if (type == null || code == null) {
+					log.log(Level.FINE, MessageFormat.format("Unable to find attribute type and/or code (Skipping Index) for:  {0}", pk.toString()));
+				} else {
 
-				solrDocModel.setIsComponent(Boolean.FALSE);
+					solrDocModel.setIsComponent(Boolean.FALSE);
 
-				solrDocModel.setId(pk.toKey());
-				solrDocModel.setNameString(article.getTitle());
-				solrDocModel.setName(article.getTitle());
-				solrDocModel.setDescription(article.getDescription());
-				solrDocModel.setUpdateDts(article.getUpdateDts());
+					solrDocModel.setId(pk.toKey());
+					solrDocModel.setNameString(article.getTitle());
+					solrDocModel.setName(article.getTitle());
+					solrDocModel.setDescription(article.getDescription());
+					solrDocModel.setUpdateDts(article.getUpdateDts());
 
-				String attributeList = type.getAttributeType() + "," + StringProcessor.blankIfNull(type.getDescription()) + "," + code.getLabel() + "," + StringProcessor.blankIfNull(code.getDescription());
-				solrDocModel.setTags("");
-				solrDocModel.setAttributes(attributeList);
+					String attributeList = type.getAttributeType() + "," + StringProcessor.blankIfNull(type.getDescription()) + "," + code.getLabel() + "," + StringProcessor.blankIfNull(code.getDescription());
+					solrDocModel.setTags("");
+					solrDocModel.setAttributes(attributeList);
 
-				String htmlArticle = article.getHtml();
-				String plainText = StringProcessor.stripHtml(htmlArticle);
+					String htmlArticle = article.getHtml();
+					String plainText = StringProcessor.stripHtml(htmlArticle);
 
-				solrDocModel.setArticleHtml(plainText.replace("<>", "").replace("\n", ""));
-				solrDocs.add(solrDocModel);
+					solrDocModel.setArticleHtml(plainText.replace("<>", "").replace("\n", ""));
+					solrDocs.add(solrDocModel);
+				}
 			} else {
 				log.log(Level.FINE, "Html content is required to index article. (skipping)");
 			}

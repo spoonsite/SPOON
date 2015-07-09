@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.action.resolution;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -91,7 +92,8 @@ public class RangeResolution
 							long skip;
 
 							skip = byteRange.getStart() - count;
-							in.skip(skip);
+							long actualbytesSkiped = in.skip(skip);
+							log.log(Level.FINEST, MessageFormat.format("Actual Bytes Skipped from range: {0}", actualbytesSkiped));
 							count += skip;
 						}
 						while ((bufferLength = in.read(buffer, 0, (int) Math.min(

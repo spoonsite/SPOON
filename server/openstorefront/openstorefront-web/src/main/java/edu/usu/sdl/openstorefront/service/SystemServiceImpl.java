@@ -346,6 +346,7 @@ public class SystemServiceImpl
 	{
 		Objects.requireNonNull(generalMedia);
 		Objects.requireNonNull(fileInput);
+		Objects.requireNonNull(generalMedia.getName(), "Name must be set.");
 
 		generalMedia.setFileName(generalMedia.getName());
 		try (InputStream in = fileInput) {

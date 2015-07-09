@@ -49,7 +49,7 @@ public class RecentChangeNotifyJob
 		if (lastRunDtsString != null) {
 			lastRunDts = TimeUtil.fromString(lastRunDtsString);
 
-			if (System.currentTimeMillis() > (lastRunDts.getTime() + daysInMillis)) {
+			if (lastRunDts == null || System.currentTimeMillis() > (lastRunDts.getTime() + daysInMillis)) {
 				process = true;
 			}
 		}

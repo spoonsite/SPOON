@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.codemonkey.simplejavamail.Email;
 
 /**
@@ -98,7 +99,9 @@ public class SystemErrorAlertMessageGenerator
 			for (int i = 0; i < max; i++) {
 				ErrorTicket ticket = tickets.get(i);
 				String ticketData = serviceProxy.getSystemService().errorTicketInfo(ticket.getErrorTicketId());
-				email.addAttachment("error-" + ticket.getErrorTicketId() + ".txt", ticketData.getBytes(Charset.defaultCharset()), "text/plain");
+				if (StringUtils.isNotBlank(ticketData)) {
+					email.addAttachment("error-" + ticket.getErrorTicketId() + ".txt", ticketData.getBytes(Charset.defaultCharset()), "text/plain");
+				}
 			}
 		} else {
 			log.log(Level.WARNING, MessageFormat.format("System Error Message was queue...however no error tickets found within window. "

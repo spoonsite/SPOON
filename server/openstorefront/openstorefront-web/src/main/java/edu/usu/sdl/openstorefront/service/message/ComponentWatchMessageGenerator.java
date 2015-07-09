@@ -22,9 +22,12 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserWatch;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.codemonkey.simplejavamail.Email;
 
 /**
@@ -34,6 +37,8 @@ import org.codemonkey.simplejavamail.Email;
 public class ComponentWatchMessageGenerator
 		extends BaseMessageGenerator
 {
+
+	private static final Logger log = Logger.getLogger(ComponentWatchMessageGenerator.class.getName());
 
 	public ComponentWatchMessageGenerator(MessageContext messageContext)
 	{
@@ -55,6 +60,10 @@ public class ComponentWatchMessageGenerator
 
 		UserMessage userMessage = messageContext.getUserMessage();
 		ComponentAll componentAll = serviceProxy.getComponentService().getFullComponent(userMessage.getComponentId());
+		if (componentAll == null) {
+			log.log(Level.WARNING, MessageFormat.format("Unable to find component that the user message is pointed to (Not Sending message).  ID: {0}", userMessage.getComponentId()));
+			return null;
+		}
 
 		UserWatch userWatchExample = new UserWatch();
 		userWatchExample.setUsername(userMessage.getUsername());
