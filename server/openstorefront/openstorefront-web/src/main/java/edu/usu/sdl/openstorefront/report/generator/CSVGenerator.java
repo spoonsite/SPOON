@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -43,6 +44,8 @@ public class CSVGenerator
 	@Override
 	public void init()
 	{
+		Objects.requireNonNull(report, "The generator requires the report to exist.");
+		Objects.requireNonNull(report.getReportId(), "The report id is required.");
 		try {
 			writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(report.pathToReport().toFile())));
 		} catch (FileNotFoundException ex) {

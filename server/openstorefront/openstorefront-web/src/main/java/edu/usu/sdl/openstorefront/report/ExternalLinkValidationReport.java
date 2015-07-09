@@ -219,10 +219,15 @@ public class ExternalLinkValidationReport
 				LinkCheckModel processed;
 				try {
 					processed = task.get(timeOutTime, TimeUnit.MILLISECONDS);
-					LinkCheckModel reportModel = linkMap.get(processed.getId());
-					reportModel.setStatus(processed.getStatus());
-					reportModel.setCheckResults(processed.getCheckResults());
-					reportModel.setHttpStatus(processed.getHttpStatus());
+					if (processed != null) {
+						LinkCheckModel reportModel = linkMap.get(processed.getId());
+						reportModel.setStatus(processed.getStatus());
+						reportModel.setCheckResults(processed.getCheckResults());
+						reportModel.setHttpStatus(processed.getHttpStatus());
+					} else {
+						//This shouldn't occur, however if it does at least show a message.
+						log.log(Level.WARNING, MessageFormat.format("A link check task failed to return results.  Status at Completed Abnormally? {0}", task.isCompletedAbnormally()));
+					}
 				} catch (TimeoutException e) {
 					task.cancel(true);
 				}

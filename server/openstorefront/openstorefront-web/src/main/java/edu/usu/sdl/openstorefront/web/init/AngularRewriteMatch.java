@@ -44,8 +44,13 @@ public class AngularRewriteMatch
 
 		log.log(Level.FINEST, MessageFormat.format("Matching virtual route: {0}?{1}  going to angularLogin.jsp", new Object[]{basicPath, query}));
 		RequestDispatcher rd = request.getRequestDispatcher("/angularLogin.jsp");
-		rd.forward(request, response);
-		return true;
+		if (rd == null) {
+			log.log(Level.SEVERE, "Unable to find a dispatcher for /angularLogin.jsp make sure it exists.  (Returned as No Match)");
+			return false;
+		} else {
+			rd.forward(request, response);
+			return true;
+		}
 	}
 
 }
