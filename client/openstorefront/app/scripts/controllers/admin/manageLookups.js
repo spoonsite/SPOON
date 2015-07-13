@@ -109,17 +109,14 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
           triggerAlert('Uploaded successfully', 'importCode', '#lookupWindowDiv', 3000);          
           $scope.flags.showUpload = false;
           $scope.refreshLookupCodes();
-          document.getElementById('uploadFile').value = null;
         } else {
           if (response.errors) {
             var uploadError = response.errors.uploadFile;
             var enityError = response.errors.entityName;
             var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
             triggerAlert('Unable to import codes. Message: <br> ' + errorMessage, 'importCode', '#lookupWindowDiv', 6000);
-            document.getElementById('uploadFile').value = null;
           } else {
             triggerAlert('Unable to import codes. ', 'importCode', '#lookupWindowDiv', 6000);
-            document.getElementById('uploadFile').value = null;
           }
         }
       },
@@ -127,7 +124,10 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
         $scope.$emit('$TRIGGERUNLOAD', 'lookupCodeLoader');
         triggerAlert('Unable to import codes. Failure communicating with server. ', 'importCode', '#lookupWindowDiv', 6000);
         $scope.uploader.clearQueue();
-        document.getElementById('uploadFile').value = null;
+      },
+      onCompleteAll: function(){        
+          document.getElementById('uploadFile').value = null;
+          $scope.uploader.queue = [];      
       }      
     });
     

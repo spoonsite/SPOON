@@ -393,7 +393,7 @@ limitations under the License.
             <p class="help-block" ng-show="resourceForm.localResourceName">Current Local Resource: {{resourceForm.originalFileName}} ({{resourceForm.localResourceName}})</p>               
           </div>  
           <br>
-          <button type="submit" class="btn btn-primary" ng-disabled="resourceUIForm.$invalid  || !(resourceForm.uploadInput || resourceForm.originalLink)"><i class="fa fa-save"></i>&nbsp;{{resourceForm.saveText}}</button>  
+          <button type="submit" class="btn btn-primary" ng-disabled="resourceUIForm.$invalid  || !(resourceForm.uploadInput || resourceForm.originalLink || resourceForm.localResourceName)"><i class="fa fa-save"></i>&nbsp;{{resourceForm.saveText}}</button>  
           <a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancelResourceEdit()" ng-show="resourceForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a> 
         </form>       
       </panel>					
@@ -477,7 +477,7 @@ limitations under the License.
             ng-focus />
           </div>
         </div>	
-        <button type="submit" class="btn btn-primary" ng-disabled="mediaUIForm.$invalid || !(mediaForm.uploadInput || mediaForm.originalLink)"><i class="fa fa-save"></i>&nbsp;{{mediaForm.saveText}}</button>	
+        <button type="submit" class="btn btn-primary" ng-disabled="mediaUIForm.$invalid || !(mediaForm.uploadInput || mediaForm.originalLink || mediaForm.fileName)"><i class="fa fa-save"></i>&nbsp;{{mediaForm.saveText}}</button>	
         <a  ng-href=""  name="cancelSave" ng-click="cancelMediaEdit()" ng-show="mediaForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>	
       </form>			
     </panel>

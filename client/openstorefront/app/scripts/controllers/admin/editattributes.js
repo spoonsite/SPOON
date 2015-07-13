@@ -233,8 +233,7 @@ $scope.attributeUploader = new FileUploader({
 
       //check response for a fail ticket or a error model
       if (response.success) {
-        triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing.', 'importAttributes', 'body', 3000);          
-        document.getElementById('attributeUploadFile').value = null;
+        triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing.', 'importAttributes', 'body', 3000);                 
         $scope.flags.showUpload = false;
         $scope.getFilters(true);
       } else {
@@ -244,19 +243,20 @@ $scope.attributeUploader = new FileUploader({
           if (uploadError){
             errorMessage = uploadError;
           }          
-          triggerAlert('Unable to import attributes. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);
-          document.getElementById('attributeUploadFile').value = null;
+          triggerAlert('Unable to import attributes. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);          
         } else {
-          triggerAlert('Unable to import attributes. ', 'importAttributes', 'body', 6000);
-          document.getElementById('attributeUploadFile').value = null;
+          triggerAlert('Unable to import attributes. ', 'importAttributes', 'body', 6000);          
         }
       }
     },
     onErrorItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-      triggerAlert('Unable to import attributes. Failure communicating with server. ', 'importAttributes', 'body', 6000);    
-      document.getElementById('attributeUploadFile').value = null;
-    }      
+      triggerAlert('Unable to import attributes. Failure communicating with server. ', 'importAttributes', 'body', 6000);
+    },
+    onCompleteAll: function(){        
+     document.getElementById('attributeUploadFile').value = null;
+     $scope.attributeUploader.queue = [];      
+    }       
   });  
 
 $scope.svcv4uploader = new FileUploader({
@@ -280,8 +280,7 @@ $scope.svcv4uploader = new FileUploader({
       if (response.success) {
         triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing', 'importAttributes', 'body', 3000);          
         $scope.flags.showUpload = false;
-        $scope.getFilters(true);
-        document.getElementById('svcv4UploadFile').value = null;
+        $scope.getFilters(true);        
       } else {
         if (response.errors) {
           var uploadError = response.errors.uploadFile;  
@@ -289,19 +288,20 @@ $scope.svcv4uploader = new FileUploader({
           if (uploadError){
             errorMessage = uploadError;
           }          
-          triggerAlert('Unable to import svcv4 data. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);
-          document.getElementById('svcv4UploadFile').value = null;
+          triggerAlert('Unable to import svcv4 data. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);          
         } else {
-          triggerAlert('Unable to import  svcv4 data. ', 'importAttributes', 'body', 6000);
-          document.getElementById('svcv4UploadFile').value = null;
+          triggerAlert('Unable to import  svcv4 data. ', 'importAttributes', 'body', 6000);          
         }
       }
     },
     onErrorItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-      triggerAlert('Unable to import  svcv4 data. Failure communicating with server. ', 'importAttributes', 'body', 6000);  
-      document.getElementById('svcv4UploadFile').value = null;
-    }    
+      triggerAlert('Unable to import  svcv4 data. Failure communicating with server. ', 'importAttributes', 'body', 6000);        
+    },
+    onCompleteAll: function(){        
+     document.getElementById('svcv4UploadFile').value = null;
+     $scope.svcv4uploader.queue = [];      
+    }     
   });  
 
 var stickThatTable = function(){

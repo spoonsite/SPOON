@@ -917,25 +917,25 @@ $scope.resourceUploader = new FileUploader({
           triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000); 
           $scope.cancelResourceEdit();
           $scope.loadResources();
-          document.resourceUIForm.uploadFile.value = null;
         } else {
           if (response.errors) {
             var uploadError = response.errors.file;
             var enityError = response.errors.componentResource;
             var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
             triggerAlert('Unable to upload resource. Message: <br> ' + errorMessage, 'saveResource', 'componentWindowDiv', 6000);
-            document.resourceUIForm.uploadFile.value = null;
           } else {
             triggerAlert('Unable to upload resource. ', 'saveResource', 'componentWindowDiv', 6000);
-            document.resourceUIForm.uploadFile.value = null;
           }
         }
       },
       onErrorItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
-        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);      
+        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);              
+      },
+      onCompleteAll: function(){        
         document.resourceUIForm.uploadFile.value = null;
-      }      
+        $scope.resourceUploader.queue = [];      
+      }     
     });     
 
 
@@ -1018,7 +1018,7 @@ $scope.saveMedia = function () {
       }
     });
   } else {      
-    $scope.mediaUploader.uploadAll();
+    $scope.mediaUploader.uploadAll();    
   }
 };   
 
@@ -1067,24 +1067,27 @@ $scope.mediaUploader = new FileUploader({
           triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
           $scope.cancelMediaEdit();          
           $scope.loadMedia();     
-          document.mediaUIForm.uploadFile.value = null;
+          
         } else {
           if (response.errors) {
             var uploadError = response.errors.file;
             var enityError = response.errors.componentMedia;
             var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
             triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'componentWindowDiv', 6000);
-            document.mediaUIForm.uploadFile.value = null;
           } else {
             triggerAlert('Unable to upload media. ', 'saveMedia', 'componentWindowDiv', 6000);
-            document.mediaUIForm.uploadFile.value = null;
+        
           }
         }
       },
       onErrorItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
         triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
+        
+      },
+      onCompleteAll: function(){        
         document.mediaUIForm.uploadFile.value = null;
+        $scope.mediaUploader.queue = [];      
       }      
     });     
 
