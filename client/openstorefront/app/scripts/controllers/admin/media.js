@@ -122,7 +122,6 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
             $scope.mediaUploader.clearQueue();
             $scope.mediaUploader.cancelAll();            
             triggerAlert('Uploaded successfully', 'saveMedia', 'body', 3000);
-            document.mediaUIForm.uploadFile.value = null;
             $scope.close();
             $scope.$emit('$TRIGGEREVENT', '$REFRESH_MEDIA');
           } else {
@@ -140,11 +139,9 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
               }
               $scope.mediaUploader.clearQueue();
               $scope.mediaUploader.cancelAll();               
-              triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'body', 30000);
-              document.mediaUIForm.uploadFile.value = null;
+              triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'body', 30000);              
             } else {
-              triggerAlert('Unable to upload media. ', 'saveMedia', 'body', 6000);
-              document.mediaUIForm.uploadFile.value = null;
+              triggerAlert('Unable to upload media. ', 'saveMedia', 'body', 6000);              
             }
           }
         },
@@ -153,7 +150,10 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
           triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'body', 6000);          
           $scope.mediaUploader.clearQueue();
           $scope.mediaUploader.cancelAll();
+        },
+        onCompleteAll: function(){        
           document.mediaUIForm.uploadFile.value = null;
+          $scope.mediaUploader.queue = [];      
         }
       });
 };
