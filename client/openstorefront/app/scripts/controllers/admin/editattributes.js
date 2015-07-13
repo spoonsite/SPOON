@@ -205,17 +205,11 @@ $scope.export = function(){
     cont = confirm('Please verify that this file is an attributes json file.');
     if (cont){
       $scope.attributeUploader.uploadAll();
-      $timeout( function(){
-        document.getElementById('attributeUploadFile').value = null;
-      }, 200);
     }
   } else {
     cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
     if (cont){
       $scope.svcv4uploader.uploadAll(); 
-      $timeout( function(){
-        document.getElementById('svcv4UploadFile').value = null;
-      }, 200);
     }
   }
 };
@@ -240,6 +234,7 @@ $scope.attributeUploader = new FileUploader({
       //check response for a fail ticket or a error model
       if (response.success) {
         triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing.', 'importAttributes', 'body', 3000);          
+        document.getElementById('attributeUploadFile').value = null;
         $scope.flags.showUpload = false;
         $scope.getFilters(true);
       } else {
@@ -250,14 +245,17 @@ $scope.attributeUploader = new FileUploader({
             errorMessage = uploadError;
           }          
           triggerAlert('Unable to import attributes. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);
+          document.getElementById('attributeUploadFile').value = null;
         } else {
           triggerAlert('Unable to import attributes. ', 'importAttributes', 'body', 6000);
+          document.getElementById('attributeUploadFile').value = null;
         }
       }
     },
     onErrorItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
       triggerAlert('Unable to import attributes. Failure communicating with server. ', 'importAttributes', 'body', 6000);    
+      document.getElementById('attributeUploadFile').value = null;
     }      
   });  
 
@@ -283,6 +281,7 @@ $scope.svcv4uploader = new FileUploader({
         triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing', 'importAttributes', 'body', 3000);          
         $scope.flags.showUpload = false;
         $scope.getFilters(true);
+        document.getElementById('svcv4UploadFile').value = null;
       } else {
         if (response.errors) {
           var uploadError = response.errors.uploadFile;  
@@ -291,14 +290,17 @@ $scope.svcv4uploader = new FileUploader({
             errorMessage = uploadError;
           }          
           triggerAlert('Unable to import svcv4 data. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);
+          document.getElementById('svcv4UploadFile').value = null;
         } else {
           triggerAlert('Unable to import  svcv4 data. ', 'importAttributes', 'body', 6000);
+          document.getElementById('svcv4UploadFile').value = null;
         }
       }
     },
     onErrorItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-      triggerAlert('Unable to import  svcv4 data. Failure communicating with server. ', 'importAttributes', 'body', 6000);    
+      triggerAlert('Unable to import  svcv4 data. Failure communicating with server. ', 'importAttributes', 'body', 6000);  
+      document.getElementById('svcv4UploadFile').value = null;
     }    
   });  
 
