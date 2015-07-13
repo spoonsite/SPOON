@@ -205,17 +205,11 @@ $scope.export = function(){
     cont = confirm('Please verify that this file is an attributes json file.');
     if (cont){
       $scope.attributeUploader.uploadAll();
-      $timeout( function(){
-        document.getElementById('attributeUploadFile').value = null;
-      }, 200);
     }
   } else {
     cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
     if (cont){
       $scope.svcv4uploader.uploadAll(); 
-      $timeout( function(){
-        document.getElementById('svcv4UploadFile').value = null;
-      }, 200);
     }
   }
 };
@@ -239,7 +233,7 @@ $scope.attributeUploader = new FileUploader({
 
       //check response for a fail ticket or a error model
       if (response.success) {
-        triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing.', 'importAttributes', 'body', 3000);          
+        triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing.', 'importAttributes', 'body', 3000);                 
         $scope.flags.showUpload = false;
         $scope.getFilters(true);
       } else {
@@ -249,16 +243,20 @@ $scope.attributeUploader = new FileUploader({
           if (uploadError){
             errorMessage = uploadError;
           }          
-          triggerAlert('Unable to import attributes. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);
+          triggerAlert('Unable to import attributes. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);          
         } else {
-          triggerAlert('Unable to import attributes. ', 'importAttributes', 'body', 6000);
+          triggerAlert('Unable to import attributes. ', 'importAttributes', 'body', 6000);          
         }
       }
     },
     onErrorItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-      triggerAlert('Unable to import attributes. Failure communicating with server. ', 'importAttributes', 'body', 6000);    
-    }      
+      triggerAlert('Unable to import attributes. Failure communicating with server. ', 'importAttributes', 'body', 6000);
+    },
+    onCompleteAll: function(){        
+     document.getElementById('attributeUploadFile').value = null;
+     $scope.attributeUploader.queue = [];      
+    }       
   });  
 
 $scope.svcv4uploader = new FileUploader({
@@ -282,7 +280,7 @@ $scope.svcv4uploader = new FileUploader({
       if (response.success) {
         triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing', 'importAttributes', 'body', 3000);          
         $scope.flags.showUpload = false;
-        $scope.getFilters(true);
+        $scope.getFilters(true);        
       } else {
         if (response.errors) {
           var uploadError = response.errors.uploadFile;  
@@ -290,16 +288,20 @@ $scope.svcv4uploader = new FileUploader({
           if (uploadError){
             errorMessage = uploadError;
           }          
-          triggerAlert('Unable to import svcv4 data. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);
+          triggerAlert('Unable to import svcv4 data. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);          
         } else {
-          triggerAlert('Unable to import  svcv4 data. ', 'importAttributes', 'body', 6000);
+          triggerAlert('Unable to import  svcv4 data. ', 'importAttributes', 'body', 6000);          
         }
       }
     },
     onErrorItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-      triggerAlert('Unable to import  svcv4 data. Failure communicating with server. ', 'importAttributes', 'body', 6000);    
-    }    
+      triggerAlert('Unable to import  svcv4 data. Failure communicating with server. ', 'importAttributes', 'body', 6000);        
+    },
+    onCompleteAll: function(){        
+     document.getElementById('svcv4UploadFile').value = null;
+     $scope.svcv4uploader.queue = [];      
+    }     
   });  
 
 var stickThatTable = function(){

@@ -867,11 +867,7 @@ $scope.saveResource = function () {
       }
     });
   } else {      
-    $scope.resourceUploader.uploadAll();
-    $timeout( function(){
-      document.resourceUIForm.uploadFile.value = null;
-    }, 200);
-    
+    $scope.resourceUploader.uploadAll();   
   }
 };   
 
@@ -934,8 +930,12 @@ $scope.resourceUploader = new FileUploader({
       },
       onErrorItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
-        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);      
-      }      
+        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);              
+      },
+      onCompleteAll: function(){        
+        document.resourceUIForm.uploadFile.value = null;
+        $scope.resourceUploader.queue = [];      
+      }     
     });     
 
 
@@ -1018,10 +1018,7 @@ $scope.saveMedia = function () {
       }
     });
   } else {      
-    $scope.mediaUploader.uploadAll();
-    $timeout( function(){
-      document.mediaUIForm.uploadFile.value = null;
-    }, 200);
+    $scope.mediaUploader.uploadAll();    
   }
 };   
 
@@ -1068,8 +1065,9 @@ $scope.mediaUploader = new FileUploader({
         //check response for a fail ticket or a error model
         if (response.success) {
           triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
-          $scope.cancelMediaEdit();
-          $scope.loadMedia();          
+          $scope.cancelMediaEdit();          
+          $scope.loadMedia();     
+          
         } else {
           if (response.errors) {
             var uploadError = response.errors.file;
@@ -1078,12 +1076,18 @@ $scope.mediaUploader = new FileUploader({
             triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'componentWindowDiv', 6000);
           } else {
             triggerAlert('Unable to upload media. ', 'saveMedia', 'componentWindowDiv', 6000);
+        
           }
         }
       },
       onErrorItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
         triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
+        
+      },
+      onCompleteAll: function(){        
+        document.mediaUIForm.uploadFile.value = null;
+        $scope.mediaUploader.queue = [];      
       }      
     });     
 
