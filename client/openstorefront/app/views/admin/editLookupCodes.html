@@ -26,10 +26,10 @@ limitations under the License.
       Active <span class="caret"></span>
     </button>  		
     <button class="btn btn-default" ng-click="refreshLookupCodes()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
-    <span style="position: absolute; right: 0px; padding-right: 20px;">
+    <span id="toolbar" style="position: absolute; right: 0px; padding-right: 20px;">
       <button class="btn btn-default" ng-click="addLookupCode()" title="Add Code"><i class="fa fa-plus"></i>&nbsp;Add</button>
       <button class="btn btn-default" ng-click="export()" title="Export Codes"><i class="fa fa-sign-out"></i>&nbsp;Export</button>
-      <button class="btn btn-default" ng-click="flags.showUpload=!flags.showUpload;" title="Import Codes"><i class="fa fa-sign-in"></i>&nbsp;Import</button>			
+      <button class="btn btn-default" ng-click="toggleImport()" title="Import Codes"><i class="fa fa-sign-in"></i>&nbsp;Import</button>			
     </span>		
     <div ng-show="flags.showUpload" style="border: 2px lightgrey solid; padding: 20px;" >			
       <div class="form-group">
